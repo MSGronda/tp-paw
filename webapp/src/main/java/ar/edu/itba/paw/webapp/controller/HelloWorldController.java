@@ -20,8 +20,13 @@ public class HelloWorldController {
     }
 
     @RequestMapping("/")
+    public ModelAndView home() {
+        return new ModelAndView("helloworld/index");
+    }
+
+    @RequestMapping("/hello")
     public ModelAndView helloWorld() {
-        ModelAndView mav = new ModelAndView("helloworld/index");
+        ModelAndView mav = new ModelAndView("helloworld/hello");
         mav.addObject("user", userService.createUser("a@a.a", "1234", "A A"));
         return mav;
     }
@@ -29,7 +34,7 @@ public class HelloWorldController {
     @RequestMapping(value = "/register", method = RequestMethod.POST)
     public ModelAndView register(@RequestParam String email, @RequestParam String password, @RequestParam String nombre) {
         User user = userService.createUser(email, password, nombre);
-        ModelAndView mav = new ModelAndView("helloworld/index");
+        ModelAndView mav = new ModelAndView("helloworld/hello");
         mav.addObject("user", user);
 
         return mav;
