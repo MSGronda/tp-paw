@@ -9,20 +9,15 @@
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
   <link href="${pageContext.request.contextPath}/css/materialize.min.css" type="text/css" rel="stylesheet" media="screen,projection"/>
   <link href="${pageContext.request.contextPath}/css/style.css" type="text/css" rel="stylesheet" media="screen,projection"/>
+  <link href="${pageContext.request.contextPath}/css/main.css" type="text/css" rel="stylesheet" media="screen,projection"/>
+
 </head>
 <body>
-<nav class="light-blue lighten-1" role="navigation">
-  <div class="nav-wrapper container"><a id="logo-container" href="#" class="brand-logo">Logo</a>
-    <ul class="right hide-on-med-and-down">
-      <li><a href="#">Navbar Link</a></li>
-    </ul>
 
-    <ul id="nav-mobile" class="sidenav">
-      <li><a href="#">Navbar Link</a></li>
-    </ul>
-    <a href="#" data-target="nav-mobile" class="sidenav-trigger"><i class="material-icons">menu</i></a>
-  </div>
-</nav>
+<jsp:include page="../components/navbar.jsp"/>
+
+
+
 <div class="section no-pad-bot" id="index-banner">
   <div class="container">
     <br><br>
