@@ -1,4 +1,6 @@
 package ar.edu.itba.paw.persistence;
 
-public interface ReviewDao {
+import ar.edu.itba.paw.models.Review;
+
+public interface ReviewDao extends RWDao<Integer,Review> {
 }

@@ -1,4 +1,6 @@
 package ar.edu.itba.paw.services;
 
-public interface ReviewService {
+import ar.edu.itba.paw.models.Review;
+
+public interface ReviewService extends RWService<Integer, Review> {
 }

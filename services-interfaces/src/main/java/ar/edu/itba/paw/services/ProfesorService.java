@@ -1,4 +1,6 @@
 package ar.edu.itba.paw.services;
 
-public interface ProfesorService {
+import ar.edu.itba.paw.models.Profesor;
+
+public interface ProfesorService extends RWService<Integer, Profesor>{
 }

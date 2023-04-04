@@ -1,4 +1,7 @@
 package ar.edu.itba.paw.persistence;
 
-public interface CarreraDao {
+import ar.edu.itba.paw.models.Carrera;
+
+public interface CarreraDao extends RWDao<Integer, Carrera> {
+
 }

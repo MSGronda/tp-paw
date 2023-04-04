@@ -1,4 +1,6 @@
 package ar.edu.itba.paw.services;
 
-public interface MateriaService {
+import ar.edu.itba.paw.models.Materia;
+
+public interface MateriaService extends RWService<Integer, Materia> {
 }

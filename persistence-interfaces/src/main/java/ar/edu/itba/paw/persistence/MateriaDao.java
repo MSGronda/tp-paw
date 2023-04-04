@@ -1,4 +1,7 @@
 package ar.edu.itba.paw.persistence;
 
-public interface MateriaDao {
+import ar.edu.itba.paw.models.Materia;
+
+public interface MateriaDao extends RWDao<Integer,Materia> {
+
 }

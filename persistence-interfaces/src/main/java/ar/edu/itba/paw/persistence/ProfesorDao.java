@@ -1,4 +1,7 @@
 package ar.edu.itba.paw.persistence;
 
-public interface ProfesorDao {
+import ar.edu.itba.paw.models.Profesor;
+
+public interface ProfesorDao extends RWDao<Integer,Profesor> {
+
 }

@@ -1,4 +1,6 @@
 package ar.edu.itba.paw.services;
 
-public interface CarreraService {
+import ar.edu.itba.paw.models.Carrera;
+
+public interface CarreraService extends RWService<Integer, Carrera> {
 }
