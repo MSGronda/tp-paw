@@ -18,8 +18,13 @@ public class ProfesorServiceImpl implements ProfesorService {
     }
 
     @Override
-    public Optional<Profesor> findById(Integer integer) {
-        return profesorDao.findById(integer);
+    public Optional<Profesor> findById(Long id) {
+        return profesorDao.findById(id);
+    }
+
+    @Override
+    public Optional<Profesor> findByIdWithoutMaterias(Long id){
+        return profesorDao.findByIdWithoutMaterias(id);
     }
 
     @Override

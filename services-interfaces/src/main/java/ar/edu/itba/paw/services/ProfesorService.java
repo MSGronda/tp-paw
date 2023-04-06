@@ -2,5 +2,8 @@ package ar.edu.itba.paw.services;
 
 import ar.edu.itba.paw.models.Profesor;
 
-public interface ProfesorService extends BaseService<Integer, Profesor>{
+import java.util.Optional;
+
+public interface ProfesorService extends BaseService<Long, Profesor>{
+    Optional<Profesor> findByIdWithoutMaterias(Long id);
 }

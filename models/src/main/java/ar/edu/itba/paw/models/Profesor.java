@@ -3,17 +3,21 @@ package ar.edu.itba.paw.models;
 import java.util.List;
 
 public class Profesor {
-    private final int id;
+    private final long id;
     private final String nombre;
-    private final List<Integer> idMaterias;
+    private List<Long> idMaterias;
 
-    public Profesor(int id, String nombre, List<Integer> idMaterias) {
+    public Profesor(long id, String nombre){
+        this.id = id;
+        this.nombre = nombre;
+    }
+    public Profesor(long id, String nombre, List<Long> idMaterias) {
         this.id = id;
         this.nombre = nombre;
         this.idMaterias = idMaterias;
     }
 
-    public int getId() {
+    public long getId() {
         return id;
     }
 
@@ -21,7 +25,11 @@ public class Profesor {
         return nombre;
     }
 
-    public List<Integer> getIdMaterias() {
+    public List<Long> getIdMaterias() {
         return idMaterias;
+    }
+
+    public void setIdMaterias(List<Long> idMaterias) {
+        this.idMaterias = idMaterias;
     }
 }
