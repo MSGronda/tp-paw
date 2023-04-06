@@ -61,7 +61,7 @@ public class ProfessorJdbcDao implements ProfessorDao {
     @Override
     public Professor create(String name , List<Long> subjects) {
         Map<String, Object> data = new HashMap<>();
-        data.put("subName", name);
+        data.put("profName", name);
 
         Number key = jdbcInsertProfesor.executeAndReturnKey(data);
 
