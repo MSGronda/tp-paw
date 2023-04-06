@@ -18,12 +18,22 @@ public class MateriaServiceImpl implements MateriaService {
     }
 
     @Override
-    public Optional<Materia> findById(Integer id) {
+    public Optional<Materia> findById(Long id) {
         return materiaDao.findById(id);
     }
 
     @Override
     public List<Materia> getAll() {
         return materiaDao.getAll();
+    }
+
+    @Override
+    public List<Materia> getAllByCarrera(Long idCarrera){
+        return materiaDao.getAllByCarrera(idCarrera);
+    }
+
+    @Override
+    public Materia create(String name, String depto, List<Long> idCorrelativas, List<Long> idProfesores, List<Long> idCarreras, Integer creditos){
+        return materiaDao.create(name, depto, idCorrelativas, idProfesores, idCarreras, creditos);
     }
 }

@@ -3,23 +3,32 @@ package ar.edu.itba.paw.models;
 import java.util.List;
 
 public class Materia {
-    private final int id;
+    private final long id;
     private final String nombre;
     private final String depto;
-    private final List<Integer> correlativas;
-    private final List<Integer> idProfesores;
-    private final List<Integer> idCarreras;
+    private List<Long> correlativas;
+    private List<Long> idProfesores;
+    private List<Long> idCarreras;
+    private final Integer creditos;
 
-    public Materia(int id, String nombre, String depto, List<Integer> correlativas, List<Integer> idProfesores, List<Integer> idCarreras) {
+    public Materia(long id, String nombre, String depto, List<Long> correlativas, List<Long> idProfesores, List<Long> idCarreras, int creditos) {
         this.id = id;
         this.nombre = nombre;
         this.depto = depto;
         this.correlativas = correlativas;
         this.idProfesores = idProfesores;
         this.idCarreras = idCarreras;
+        this.creditos = creditos;
     }
 
-    public int getId() {
+    public Materia(long id, String nombre, String depto, int creditos) {
+        this.id = id;
+        this.nombre = nombre;
+        this.depto = depto;
+        this.creditos = creditos;
+    }
+
+    public long getId() {
         return id;
     }
 
@@ -31,15 +40,17 @@ public class Materia {
         return depto;
     }
 
-    public List<Integer> getCorrelativas() {
+    public List<Long> getCorrelativas() {
         return correlativas;
     }
 
-    public List<Integer> getIdProfesores() {
+    public List<Long> getIdProfesores() {
         return idProfesores;
     }
 
-    public List<Integer> getIdCarreras() {
+    public List<Long> getIdCarreras() {
         return idCarreras;
     }
+
+    public Integer getCreditos(){ return creditos; }
 }
