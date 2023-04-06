@@ -3,14 +3,16 @@ package ar.edu.itba.paw.persistence;
 import ar.edu.itba.paw.models.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Repository;
 
 import javax.sql.DataSource;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 @Repository
 public class SubjectJdbcDao implements SubjectDao {
@@ -22,56 +24,12 @@ public class SubjectJdbcDao implements SubjectDao {
     private final JdbcTemplate jdbcTemplate;
     private final SimpleJdbcInsert jdbcInsert;
 
-    private static final RowMapper<Subject> ROW_MAPPER_SUBJECT = SubjectJdbcDao::rowMapperSubject;
-    private static Subject rowMapperSubject(ResultSet rs, int rowNum) throws SQLException {
-        return new Subject(
-                rs.getLong("id"),
-                rs.getString("subName"),
-                rs.getString("department"),
-                rs.getInt("credits")
-        );
-    }
-
-    private static final RowMapper<Long> ROW_MAPPER_PROFESSOR_ID = SubjectJdbcDao::rowMapperProfessorId;
-
-    //select * from professorSubject where idSub=?,id
-    private static Long rowMapperProfessorId(ResultSet rs, int rowNum) throws SQLException {
-        return rs.getLong("idProf");
-    }
-
-    private static final RowMapper<Long> ROW_MAPPER_PREREQ_ID = SubjectJdbcDao::rowMapperPrereqId;
-    private static Long rowMapperPrereqId(ResultSet rs, int rowNum) throws SQLException {
-        return rs.getLong("idCor");
-    }
-
-    private static final RowMapper<Long> ROW_MAPPER_DEGREE_ID = SubjectJdbcDao::rowMapperDegreeId;
-    private static Long rowMapperDegreeId(ResultSet rs, int rowNum) throws SQLException {
-        return rs.getLong("idPrereq");
-    }
-
     @Autowired
     public SubjectJdbcDao(final DataSource ds) {
         this.jdbcTemplate = new JdbcTemplate(ds);
         this.jdbcInsert = new SimpleJdbcInsert(ds)
                 .withTableName(TABLE_SUB)
                 .usingGeneratedKeyColumns("id");
-    }
-
-    private Optional<Subject> findByIdRaw(Long id){
-        return jdbcTemplate.query("SELECT * FROM " + TABLE_SUB + " WHERE id = ?", ROW_MAPPER_SUBJECT, id)
-                .stream().findFirst();
-    }
-
-    private List<Long> findPrerequisites(Long id){
-        return jdbcTemplate.query("Select * FROM " + TABLE_PREREQ + " WHERE idSub = ?", ROW_MAPPER_PREREQ_ID, id );
-    }
-
-    private List<Long> findProfessors(Long id){
-        return jdbcTemplate.query("Select * FROM " + TABLE_PROF_SUB + " WHERE idSub = ?", ROW_MAPPER_PROFESSOR_ID, id );
-    }
-
-    private List<Long> findDegrees(Long id){
-        return jdbcTemplate.query("Select * FROM " + TABLE_SUB_DEG + " WHERE idSub = ?", ROW_MAPPER_DEGREE_ID, id );
     }
 
     @Override
@@ -97,7 +55,7 @@ public class SubjectJdbcDao implements SubjectDao {
     }
     @Override
     public List<Subject> getAll() {
-        return jdbcTemplate.query("SELECT * FROM " + TABLE_SUB, ROW_MAPPER_SUBJECT);
+        return jdbcTemplate.query("SELECT * FROM " + TABLE_SUB, SubjectJdbcDao::rowMapperSubject);
 
     }
     @Override
@@ -141,5 +99,42 @@ public class SubjectJdbcDao implements SubjectDao {
 
     }
 
+    private static Subject rowMapperSubject(ResultSet rs, int rowNum) throws SQLException {
+        return new Subject(
+            rs.getLong("id"),
+            rs.getString("subName"),
+            rs.getString("department"),
+            rs.getInt("credits")
+        );
+    }
 
+    //select * from professorSubject where idSub=?,id
+    private static Long rowMapperProfessorId(ResultSet rs, int rowNum) throws SQLException {
+        return rs.getLong("idProf");
+    }
+
+    private static Long rowMapperPrereqId(ResultSet rs, int rowNum) throws SQLException {
+        return rs.getLong("idCor");
+    }
+
+    private static Long rowMapperDegreeId(ResultSet rs, int rowNum) throws SQLException {
+        return rs.getLong("idPrereq");
+    }
+
+    private Optional<Subject> findByIdRaw(Long id){
+        return jdbcTemplate.query("SELECT * FROM " + TABLE_SUB + " WHERE id = ?", SubjectJdbcDao::rowMapperSubject, id)
+            .stream().findFirst();
+    }
+
+    private List<Long> findPrerequisites(Long id){
+        return jdbcTemplate.query("Select * FROM " + TABLE_PREREQ + " WHERE idSub = ?", SubjectJdbcDao::rowMapperPrereqId, id );
+    }
+
+    private List<Long> findProfessors(Long id){
+        return jdbcTemplate.query("Select * FROM " + TABLE_PROF_SUB + " WHERE idSub = ?", SubjectJdbcDao::rowMapperProfessorId, id );
+    }
+
+    private List<Long> findDegrees(Long id){
+        return jdbcTemplate.query("Select * FROM " + TABLE_SUB_DEG + " WHERE idSub = ?", SubjectJdbcDao::rowMapperDegreeId, id );
+    }
 }

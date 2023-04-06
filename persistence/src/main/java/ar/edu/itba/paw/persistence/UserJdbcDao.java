@@ -3,7 +3,6 @@ package ar.edu.itba.paw.persistence;
 import ar.edu.itba.paw.models.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Repository;
 
@@ -17,8 +16,6 @@ import java.util.Optional;
 
 @Repository
 public class UserJdbcDao implements UserDao {
-    private static final RowMapper<User> ROW_MAPPER = UserJdbcDao::rowMapper;
-
     private final JdbcTemplate jdbcTemplate;
     private final SimpleJdbcInsert jdbcInsert;
 
@@ -31,13 +28,13 @@ public class UserJdbcDao implements UserDao {
     }
 
     public Optional<User> findById(Long id) {
-        return jdbcTemplate.query("SELECT * FROM users WHERE id = ?", ROW_MAPPER, id)
+        return jdbcTemplate.query("SELECT * FROM users WHERE id = ?", UserJdbcDao::rowMapper, id)
             .stream().findFirst();
     }
 
     @Override
     public List<User> getAll() {
-        return jdbcTemplate.query("SELECT * FROM users", ROW_MAPPER);
+        return jdbcTemplate.query("SELECT * FROM users", UserJdbcDao::rowMapper);
     }
 
     @Override
