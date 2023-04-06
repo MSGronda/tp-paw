@@ -15,7 +15,9 @@ CREATE TABLE IF NOT EXISTS professors
 CREATE TABLE IF NOT EXISTS subjects
 (
     id          SERIAL PRIMARY KEY,
-    subName     VARCHAR(100) NOT NULL
+    subName     VARCHAR(100) NOT NULL,
+    department  VARCHAR(100) NOT NULL,
+    credits     INTEGER NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS degrees
@@ -24,7 +26,7 @@ CREATE TABLE IF NOT EXISTS degrees
     degName     VARCHAR(100) NOT NULL
 );
 
-CREATE TABLE IF NOT EXISTS review
+CREATE TABLE IF NOT EXISTS reviews
 (
     id          SERIAL PRIMARY KEY,
     idUser      INTEGER NOT NULL REFERENCES users,

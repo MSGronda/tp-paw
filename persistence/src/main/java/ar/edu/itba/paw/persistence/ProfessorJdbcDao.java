@@ -1,6 +1,6 @@
 package ar.edu.itba.paw.persistence;
 
-import ar.edu.itba.paw.models.Profesor;
+import ar.edu.itba.paw.models.Professor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
@@ -13,9 +13,9 @@ import java.sql.SQLException;
 import java.util.*;
 
 @Repository
-public class ProfesorJdbcDao implements ProfesorDao {
-    private static final RowMapper<Profesor> ROW_MAPPER_PROF = ProfesorJdbcDao::rowMapperProf;
-    private static final RowMapper<Long> ROW_MAPPER_MATPROF = ProfesorJdbcDao::rowMapperMatProf;
+public class ProfessorJdbcDao implements ProfessorDao {
+    private static final RowMapper<Professor> ROW_MAPPER_PROF = ProfessorJdbcDao::rowMapperProf;
+    private static final RowMapper<Long> ROW_MAPPER_MATPROF = ProfessorJdbcDao::rowMapperMatProf;
 
     private final JdbcTemplate jdbcTemplate;
     private final SimpleJdbcInsert jdbcInsertProfesor;
@@ -25,8 +25,8 @@ public class ProfesorJdbcDao implements ProfesorDao {
     private final String matProfTable = "professorSubjects";
 
 
-    private static Profesor rowMapperProf(ResultSet rs, int rowNum) throws SQLException {
-        return new Profesor(
+    private static Professor rowMapperProf(ResultSet rs, int rowNum) throws SQLException {
+        return new Professor(
                 rs.getLong("Id"),
                 rs.getString("Nombre")
         );
@@ -36,7 +36,7 @@ public class ProfesorJdbcDao implements ProfesorDao {
     }
 
     @Autowired
-    public ProfesorJdbcDao(final DataSource ds) {
+    public ProfessorJdbcDao(final DataSource ds) {
         this.jdbcTemplate = new JdbcTemplate(ds);
         this.jdbcInsertProfesor = new SimpleJdbcInsert(ds)
                 .withTableName(profTable)
@@ -49,7 +49,7 @@ public class ProfesorJdbcDao implements ProfesorDao {
 
     // No incluye las materias que enseña, el atributo es null
     @Override
-    public Optional<Profesor> findByIdWithoutSubjects(Long id) {
+    public Optional<Professor> findByIdWithoutSubjects(Long id) {
         return jdbcTemplate.query("SELECT * FROM " + profTable + " WHERE id = ?", ROW_MAPPER_PROF, id).stream().findFirst();
     }
 
@@ -62,29 +62,29 @@ public class ProfesorJdbcDao implements ProfesorDao {
 
     // Incluye una lista de todas las materias que esta enseñando el profesor.
     @Override
-    public Optional<Profesor> findById(Long id) {
-        Optional<Profesor> resp = findByIdWithoutSubjects(id);
+    public Optional<Professor> findById(Long id) {
+        Optional<Professor> resp = findByIdWithoutSubjects(id);
 
         Optional<List<Long>> materias = findSubjectsByIdProfesor(id);
 
         // TODO fijate si esto tiene sentido
         if(resp.isPresent()){
             if(materias.isPresent())
-                resp.get().setIdMaterias(materias.get());
+                resp.get().setSubjectIds(materias.get());
             else
-                resp.get().setIdMaterias(new ArrayList<>());
+                resp.get().setSubjectIds(new ArrayList<>());
         }
 
         return resp;
     }
 
     @Override
-    public void insert(Profesor profesor) {
-        create(profesor.getNombre(), profesor.getIdMaterias());
+    public void insert(Professor professor) {
+        create(professor.getName(), professor.getSubjectIds());
     }
 
     @Override
-    public Profesor create(String name , List<Long> materias) {
+    public Professor create(String name , List<Long> materias) {
         Map<String, Object> data = new HashMap<>();
         data.put("Nombre", name);
 
@@ -99,11 +99,11 @@ public class ProfesorJdbcDao implements ProfesorDao {
             jdbcInsertMateriaProfesor.executeAndReturnKey(matProf);
         }
 
-        return new Profesor(key.longValue(), name, materias);
+        return new Professor(key.longValue(), name, materias);
     }
 
 
-    public List<Profesor> getAll() {
+    public List<Professor> getAll() {
         return null;
     }
 
@@ -113,7 +113,7 @@ public class ProfesorJdbcDao implements ProfesorDao {
     }
 
     @Override
-    public void update(Profesor profesor) {
+    public void update(Professor professor) {
 
     }
 }

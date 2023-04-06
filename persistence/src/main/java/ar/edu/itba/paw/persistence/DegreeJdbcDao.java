@@ -1,25 +1,25 @@
 package ar.edu.itba.paw.persistence;
 
-import ar.edu.itba.paw.models.Carrera;
+import ar.edu.itba.paw.models.Degree;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Optional;
 
 @Repository
-public class CarreraJdbcDao implements CarreraDao {
+public class DegreeJdbcDao implements DegreeDao {
     @Override
-    public Optional<Carrera> findById(Integer integer) {
+    public Optional<Degree> findById(Integer integer) {
         return Optional.empty();
     }
 
     @Override
-    public List<Carrera> getAll() {
+    public List<Degree> getAll() {
         return null;
     }
 
     @Override
-    public void insert(Carrera carrera) {
+    public void insert(Degree degree) {
 
     }
 
@@ -29,7 +29,7 @@ public class CarreraJdbcDao implements CarreraDao {
     }
 
     @Override
-    public void update(Carrera carrera) {
+    public void update(Degree degree) {
 
     }
 }

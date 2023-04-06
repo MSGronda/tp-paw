@@ -1,6 +1,6 @@
 package ar.edu.itba.paw.persistence;
 
-import ar.edu.itba.paw.models.Materia;
+import ar.edu.itba.paw.models.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
@@ -13,11 +13,11 @@ import java.sql.SQLException;
 import java.util.*;
 
 @Repository
-public class MateriaJdbcDao implements MateriaDao {
+public class SubjectJdbcDao implements SubjectDao {
 
-    private static final RowMapper<Materia> ROW_MAPPER = MateriaJdbcDao::rowMapper;
-    private static Materia rowMapper(ResultSet rs, int rowNum) throws SQLException {
-        return new Materia(
+    private static final RowMapper<Subject> ROW_MAPPER = SubjectJdbcDao::rowMapper;
+    private static Subject rowMapper(ResultSet rs, int rowNum) throws SQLException {
+        return new Subject(
                 rs.getLong("id"),
                 rs.getString("nombre"),
                 rs.getString("depto"),
@@ -28,19 +28,19 @@ public class MateriaJdbcDao implements MateriaDao {
         );
     }
 
-    private static final RowMapper<Long> ROW_MAPPER_PROFESORES = MateriaJdbcDao::rowMapperProfesores;
+    private static final RowMapper<Long> ROW_MAPPER_PROFESORES = SubjectJdbcDao::rowMapperProfesores;
 
     //select * from professorSubject where idSub=?,id
     private static Long rowMapperProfesores(ResultSet rs, int rowNum) throws SQLException {
         return rs.getLong("idProf");
     }
 
-    private static final RowMapper<Long> ROW_MAPPER_CORRELATIVAS = MateriaJdbcDao::rowMapperCorrelativas;
+    private static final RowMapper<Long> ROW_MAPPER_CORRELATIVAS = SubjectJdbcDao::rowMapperCorrelativas;
     private static Long rowMapperCorrelativas(ResultSet rs, int rowNum) throws SQLException {
         return rs.getLong("idCor");
     }
 
-    private static final RowMapper<Long> ROW_MAPPER_CARRERAS = MateriaJdbcDao::rowMapperCarreras;
+    private static final RowMapper<Long> ROW_MAPPER_CARRERAS = SubjectJdbcDao::rowMapperCarreras;
     private static Long rowMapperCarreras(ResultSet rs, int rowNum) throws SQLException {
         return rs.getLong("idCar");
     }
@@ -56,14 +56,14 @@ public class MateriaJdbcDao implements MateriaDao {
     private final SimpleJdbcInsert jdbcInsert;
 
     @Autowired
-    public MateriaJdbcDao(final DataSource ds) {
+    public SubjectJdbcDao(final DataSource ds) {
         this.jdbcTemplate = new JdbcTemplate(ds);
         this.jdbcInsert = new SimpleJdbcInsert(ds)
                 .withTableName(MATERIA)
                 .usingGeneratedKeyColumns("id");
     }
 
-    private Optional<Materia> findByIdWithoutAll(Long id){
+    private Optional<Subject> findByIdWithoutAll(Long id){
         return jdbcTemplate.query("SELECT * FROM " + MATERIA + " WHERE id = ?", ROW_MAPPER, id)
                 .stream().findFirst();
     }
@@ -86,8 +86,8 @@ public class MateriaJdbcDao implements MateriaDao {
         return list;
     }
     @Override
-    public Optional<Materia> findById(Long id) {
-        Optional<Materia> resp = findByIdWithoutAll(id);
+    public Optional<Subject> findById(Long id) {
+        Optional<Subject> resp = findByIdWithoutAll(id);
         if(!resp.isPresent())
             return Optional.empty();
 
@@ -97,35 +97,35 @@ public class MateriaJdbcDao implements MateriaDao {
 
         List<Long> carreras = findCarrerasWithId(id);
 
-        Materia mat = new Materia(
+        Subject mat = new Subject(
                 resp.get().getId(),
-                resp.get().getNombre(),
-                resp.get().getDepto(),
+                resp.get().getName(),
+                resp.get().getDepartment(),
                 correlativas,
                 profesores,
                 carreras,
-                resp.get().getCreditos()
+                resp.get().getCredits()
         );
         return Optional.of(mat);
     }
     @Override
-    public List<Materia> getAll() {
+    public List<Subject> getAll() {
         return jdbcTemplate.query("SELECT * FROM " + MATERIA, ROW_MAPPER);
 
     }
     @Override
-    public List<Materia> getAllByCarrera(Long idCarrera){
+    public List<Subject> getAllByCarrera(Long idCarrera){
         return null;
         //return jdbcTemplate.query("SELECT * FROM " + CARRERAMATERIA + "," + COURSE + "WHERE idMat=id and idCarr= ?", ROW_MAPPER, idCarrera);
     }
 
     @Override
-    public void insert(Materia materia) {
-        create(materia.getNombre(), materia.getDepto(), materia.getCorrelativas(), materia.getIdProfesores(), materia.getIdCarreras(), materia.getCreditos());
+    public void insert(Subject subject) {
+        create(subject.getName(), subject.getDepartment(), subject.getPrerequisites(), subject.getProfessorIds(), subject.getDegreeIds(), subject.getCredits());
     }
 
     @Override
-    public Materia create(String name, String depto, List<Long> idCorrelativas, List<Long> idProfesores, List<Long> idCarreras, int creditos){
+    public Subject create(String name, String depto, List<Long> idCorrelativas, List<Long> idProfesores, List<Long> idCarreras, int creditos){
         Map<String, Object> data = new HashMap<>();
         data.put("name", name);
         data.put("depto", depto);
@@ -136,7 +136,7 @@ public class MateriaJdbcDao implements MateriaDao {
 
         Number key = jdbcInsert.executeAndReturnKey(data);
 
-        return new Materia(key.longValue(), name, depto, idCorrelativas, idProfesores, idCarreras, creditos);
+        return new Subject(key.longValue(), name, depto, idCorrelativas, idProfesores, idCarreras, creditos);
     }
 
     @Override
@@ -145,7 +145,7 @@ public class MateriaJdbcDao implements MateriaDao {
     }
 
     @Override
-    public void update(Materia materia) {
+    public void update(Subject subject) {
 
     }
 
