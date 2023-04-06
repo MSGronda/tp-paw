@@ -54,28 +54,26 @@ public class ProfessorJdbcDao implements ProfessorDao {
     }
 
     // Dado un ID de prof, busco todos los ids de las materias en cual esta ese prof
-    public Optional<List<Long>> findSubjectsByIdProfesor(Long id) {
-        List<Long> list = jdbcTemplate.query("SELECT * FROM " + matProfTable + " WHERE idProf = ?", ROW_MAPPER_MATPROF, id);
-
-        return  Optional.of(list);
+    public List<Long> findSubjectsByIdProfesor(Long id) {
+        return jdbcTemplate.query("SELECT * FROM " + matProfTable + " WHERE idProf = ?", ROW_MAPPER_MATPROF, id);
     }
 
     // Incluye una lista de todas las materias que esta enseñando el profesor.
     @Override
     public Optional<Professor> findById(Long id) {
-        Optional<Professor> resp = findByIdWithoutSubjects(id);
+        Optional<Professor> optProf = findByIdWithoutSubjects(id);
+        if(!optProf.isPresent()) return Optional.empty();
 
-        Optional<List<Long>> materias = findSubjectsByIdProfesor(id);
+        Professor prof = optProf.get();
 
-        // TODO fijate si esto tiene sentido
-        if(resp.isPresent()){
-            if(materias.isPresent())
-                resp.get().setSubjectIds(materias.get());
-            else
-                resp.get().setSubjectIds(new ArrayList<>());
-        }
+        List<Long> subjects = findSubjectsByIdProfesor(id);
 
-        return resp;
+        Professor inflatedProf = new Professor(
+            prof.getId(),
+            prof.getName(),
+            subjects
+        );
+        return Optional.of(inflatedProf);
     }
 
     @Override

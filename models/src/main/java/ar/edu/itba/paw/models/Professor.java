@@ -28,8 +28,4 @@ public class Professor {
     public List<Long> getSubjectIds() {
         return subjectIds;
     }
-
-    public void setSubjectIds(List<Long> subjectIds) {
-        this.subjectIds = subjectIds;
-    }
 }
