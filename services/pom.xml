@@ -16,6 +16,14 @@
       <artifactId>spring-context</artifactId>
     </dependency>
     <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.mockito</groupId>
+      <artifactId>mockito-core</artifactId>
+    </dependency>
+    <dependency>
       <groupId>ar.edu.itba.paw</groupId>
       <artifactId>services-interfaces</artifactId>
       <version>${project.parent.version}</version>

@@ -1,0 +1,17 @@
+version: '3.9'
+services:
+  paw-db:
+    image: postgres
+    container_name: paw-db
+    ports:
+      - "5432:5432"
+    volumes:
+      - paw-db-data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_PASSWORD: root
+      POSTGRES_USER: root
+      POSTGRES_DB: paw
+      PGDATA: /var/lib/postgresql/data/pgdata
+
+volumes:
+    paw-db-data:

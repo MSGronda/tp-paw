@@ -3,24 +3,25 @@ package ar.edu.itba.paw.services;
 import ar.edu.itba.paw.models.User;
 import ar.edu.itba.paw.persistence.UserDao;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
+import java.sql.SQLException;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class UserServiceImpl implements UserService {
     private final UserDao userDao;
 
     @Autowired
-    public UserServiceImpl(@Qualifier("userDaoMock") UserDao userDao) {
+    public UserServiceImpl(UserDao userDao) {
         this.userDao = userDao;
     }
 
 
     @Override
-    public User get(String email) {
-        return userDao.get(email);
+    public Optional<User> findById(Long id) {
+        return userDao.findById(id);
     }
 
     @Override
@@ -29,17 +30,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void insert(User user) {
-        userDao.insert(user);
-    }
-
-    @Override
-    public void delete(String email) {
-        userDao.delete(email);
-    }
-
-    @Override
-    public void update(User user) {
-        userDao.update(user);
+    public User create(String email, String password, String username) throws SQLException {
+        return userDao.create(email, password, username);
     }
 }

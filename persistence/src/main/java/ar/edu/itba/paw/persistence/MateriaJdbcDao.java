@@ -4,12 +4,13 @@ import ar.edu.itba.paw.models.Materia;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
-public class MateriaDaoImpl implements MateriaDao {
+public class MateriaJdbcDao implements MateriaDao {
     @Override
-    public Materia get(Integer integer) {
-        return null;
+    public Optional<Materia> findById(Integer integer) {
+        return Optional.empty();
     }
 
     @Override

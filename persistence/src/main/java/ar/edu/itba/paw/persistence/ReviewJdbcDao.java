@@ -4,12 +4,13 @@ import ar.edu.itba.paw.models.Review;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
-public class ReviewDaoImpl implements ReviewDao {
+public class ReviewJdbcDao implements ReviewDao {
     @Override
-    public Review get(Integer integer) {
-        return null;
+    public Optional<Review> findById(Integer integer) {
+        return Optional.empty();
     }
 
     @Override

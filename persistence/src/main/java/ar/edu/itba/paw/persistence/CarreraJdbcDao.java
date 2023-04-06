@@ -4,12 +4,13 @@ import ar.edu.itba.paw.models.Carrera;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
-public class CarreraDaoImpl implements CarreraDao {
+public class CarreraJdbcDao implements CarreraDao {
     @Override
-    public Carrera get(Integer integer) {
-        return null;
+    public Optional<Carrera> findById(Integer integer) {
+        return Optional.empty();
     }
 
     @Override

@@ -1,10 +1,10 @@
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ page contentType="text/html;charset=UTF-8" %>
 <html>
 <head>
     <title>Hello</title>
-    <link rel="stylesheet" href="/css/main.css"/>
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/main.css"/>
 </head>
 <body>
-<h2>Hello User ID ${userId}!</h2>
+<h2>Hello ${user.username}!</h2>
 </body>
 </html>

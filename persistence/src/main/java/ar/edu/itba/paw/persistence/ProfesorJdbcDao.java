@@ -4,12 +4,13 @@ import ar.edu.itba.paw.models.Profesor;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
-public class ProfesorDaoImpl implements ProfesorDao {
+public class ProfesorJdbcDao implements ProfesorDao {
     @Override
-    public Profesor get(Integer integer) {
-        return null;
+    public Optional<Profesor> findById(Integer integer) {
+        return Optional.empty();
     }
 
     @Override
