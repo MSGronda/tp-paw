@@ -24,7 +24,7 @@ public class ProfessorServiceImpl implements ProfessorService {
 
     @Override
     public Optional<Professor> findByIdWithoutMaterias(Long id){
-        return professorDao.findByIdWithoutSubjects(id);
+        return professorDao.findByIdRaw(id);
     }
 
     @Override

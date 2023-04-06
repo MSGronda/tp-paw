@@ -7,5 +7,4 @@ import java.util.Optional;
 
 public interface ProfessorDao extends RWDao<Long, Professor> {
     Professor create(String name , List<Long> materias);
-    Optional<Professor> findByIdWithoutSubjects(Long id);
 }

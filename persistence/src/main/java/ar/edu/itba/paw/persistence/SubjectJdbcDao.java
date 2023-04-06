@@ -14,108 +14,96 @@ import java.util.*;
 
 @Repository
 public class SubjectJdbcDao implements SubjectDao {
-
-    private static final RowMapper<Subject> ROW_MAPPER = SubjectJdbcDao::rowMapper;
-    private static Subject rowMapper(ResultSet rs, int rowNum) throws SQLException {
-        return new Subject(
-                rs.getLong("id"),
-                rs.getString("nombre"),
-                rs.getString("depto"),
-//                new ArrayList<>(), //TODO - query para lista de id de correlativas
-//                new ArrayList<>(),  //TODO - query para lista de id de profesores
-//                new ArrayList<>(),   //TODO - query para lista de id de carreras
-                rs.getInt("creditos")
-        );
-    }
-
-    private static final RowMapper<Long> ROW_MAPPER_PROFESORES = SubjectJdbcDao::rowMapperProfesores;
-
-    //select * from professorSubject where idSub=?,id
-    private static Long rowMapperProfesores(ResultSet rs, int rowNum) throws SQLException {
-        return rs.getLong("idProf");
-    }
-
-    private static final RowMapper<Long> ROW_MAPPER_CORRELATIVAS = SubjectJdbcDao::rowMapperCorrelativas;
-    private static Long rowMapperCorrelativas(ResultSet rs, int rowNum) throws SQLException {
-        return rs.getLong("idCor");
-    }
-
-    private static final RowMapper<Long> ROW_MAPPER_CARRERAS = SubjectJdbcDao::rowMapperCarreras;
-    private static Long rowMapperCarreras(ResultSet rs, int rowNum) throws SQLException {
-        return rs.getLong("idCar");
-    }
-
-    private static final String MATERIA = "subject";
-    private static final String PROFESORMATERIA = "professorSubject";
-
-    private static final String MATERIACORRELATIVA = "subjectCorrelative";
-    private static final String MATERIACARRERA = "subjectCareer";
-
+    private static final String TABLE_SUB = "subjects";
+    private static final String TABLE_PROF_SUB = "professorsSubjects";
+    private static final String TABLE_PREREQ = "prereqSubjects";
+    private static final String TABLE_SUB_DEG = "subjectsDegrees";
 
     private final JdbcTemplate jdbcTemplate;
     private final SimpleJdbcInsert jdbcInsert;
+
+    private static final RowMapper<Subject> ROW_MAPPER_SUBJECT = SubjectJdbcDao::rowMapperSubject;
+    private static Subject rowMapperSubject(ResultSet rs, int rowNum) throws SQLException {
+        return new Subject(
+                rs.getLong("id"),
+                rs.getString("subName"),
+                rs.getString("department"),
+                rs.getInt("credits")
+        );
+    }
+
+    private static final RowMapper<Long> ROW_MAPPER_PROFESSOR_ID = SubjectJdbcDao::rowMapperProfessorId;
+
+    //select * from professorSubject where idSub=?,id
+    private static Long rowMapperProfessorId(ResultSet rs, int rowNum) throws SQLException {
+        return rs.getLong("idProf");
+    }
+
+    private static final RowMapper<Long> ROW_MAPPER_PREREQ_ID = SubjectJdbcDao::rowMapperPrereqId;
+    private static Long rowMapperPrereqId(ResultSet rs, int rowNum) throws SQLException {
+        return rs.getLong("idCor");
+    }
+
+    private static final RowMapper<Long> ROW_MAPPER_DEGREE_ID = SubjectJdbcDao::rowMapperDegreeId;
+    private static Long rowMapperDegreeId(ResultSet rs, int rowNum) throws SQLException {
+        return rs.getLong("idPrereq");
+    }
 
     @Autowired
     public SubjectJdbcDao(final DataSource ds) {
         this.jdbcTemplate = new JdbcTemplate(ds);
         this.jdbcInsert = new SimpleJdbcInsert(ds)
-                .withTableName(MATERIA)
+                .withTableName(TABLE_SUB)
                 .usingGeneratedKeyColumns("id");
     }
 
-    private Optional<Subject> findByIdWithoutAll(Long id){
-        return jdbcTemplate.query("SELECT * FROM " + MATERIA + " WHERE id = ?", ROW_MAPPER, id)
+    private Optional<Subject> findByIdRaw(Long id){
+        return jdbcTemplate.query("SELECT * FROM " + TABLE_SUB + " WHERE id = ?", ROW_MAPPER_SUBJECT, id)
                 .stream().findFirst();
     }
 
-    private List<Long> findCorrelativesWithId(Long id){
-        List<Long> list = jdbcTemplate.query("Select * FROM " + MATERIACORRELATIVA + " WHERE idSub = ?", ROW_MAPPER_CORRELATIVAS, id );
-
-        return list;
+    private List<Long> findPrerequisites(Long id){
+        return jdbcTemplate.query("Select * FROM " + TABLE_PREREQ + " WHERE idSub = ?", ROW_MAPPER_PREREQ_ID, id );
     }
 
-    private List<Long> findProfessorsWithId(Long id){
-        List<Long> list = jdbcTemplate.query("Select * FROM " + PROFESORMATERIA + " WHERE idSub = ?", ROW_MAPPER_PROFESORES, id );
-
-        return list;
+    private List<Long> findProfessors(Long id){
+        return jdbcTemplate.query("Select * FROM " + TABLE_PROF_SUB + " WHERE idSub = ?", ROW_MAPPER_PROFESSOR_ID, id );
     }
 
-    private List<Long> findCarrerasWithId(Long id){
-        List<Long> list = jdbcTemplate.query("Select * FROM " + MATERIACARRERA + " WHERE idSub = ?", ROW_MAPPER_CARRERAS, id );
-
-        return list;
+    private List<Long> findDegrees(Long id){
+        return jdbcTemplate.query("Select * FROM " + TABLE_SUB_DEG + " WHERE idSub = ?", ROW_MAPPER_DEGREE_ID, id );
     }
+
     @Override
     public Optional<Subject> findById(Long id) {
-        Optional<Subject> resp = findByIdWithoutAll(id);
+        Optional<Subject> resp = findByIdRaw(id);
         if(!resp.isPresent())
             return Optional.empty();
 
-        List<Long> correlativas = findCorrelativesWithId(id);
+        List<Long> prerequisites = findPrerequisites(id);
+        List<Long> professors = findProfessors(id);
+        List<Long> degrees = findDegrees(id);
 
-        List<Long> profesores = findProfessorsWithId(id);
-
-        List<Long> carreras = findCarrerasWithId(id);
-
-        Subject mat = new Subject(
+        Subject subj = new Subject(
                 resp.get().getId(),
                 resp.get().getName(),
                 resp.get().getDepartment(),
-                correlativas,
-                profesores,
-                carreras,
+                prerequisites,
+                professors,
+                degrees,
                 resp.get().getCredits()
         );
-        return Optional.of(mat);
+        return Optional.of(subj);
     }
     @Override
     public List<Subject> getAll() {
-        return jdbcTemplate.query("SELECT * FROM " + MATERIA, ROW_MAPPER);
+        return jdbcTemplate.query("SELECT * FROM " + TABLE_SUB, ROW_MAPPER_SUBJECT);
 
     }
     @Override
     public List<Subject> getAllByCarrera(Long idCarrera){
         return null;
+        // TODO
         //return jdbcTemplate.query("SELECT * FROM " + CARRERAMATERIA + "," + COURSE + "WHERE idMat=id and idCarr= ?", ROW_MAPPER, idCarrera);
     }
 
@@ -126,13 +114,17 @@ public class SubjectJdbcDao implements SubjectDao {
 
     @Override
     public Subject create(String name, String depto, List<Long> idCorrelativas, List<Long> idProfesores, List<Long> idCarreras, int creditos){
+
         Map<String, Object> data = new HashMap<>();
         data.put("name", name);
-        data.put("depto", depto);
-        data.put("idCorrelativas", idCorrelativas);
-        data.put("idProfesores", idProfesores);
-        data.put("idCarreras", idCarreras);
+        data.put("department", depto);
         data.put("creditos", creditos);
+
+        // TODO: Insert into corresponding tables
+        // data.put("idCorrelativas", idCorrelativas);
+        // data.put("idProfesores", idProfesores);
+        // data.put("idCarreras", idCarreras);
+
 
         Number key = jdbcInsert.executeAndReturnKey(data);
 

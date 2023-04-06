@@ -15,58 +15,58 @@ import java.util.*;
 @Repository
 public class ProfessorJdbcDao implements ProfessorDao {
     private static final RowMapper<Professor> ROW_MAPPER_PROF = ProfessorJdbcDao::rowMapperProf;
-    private static final RowMapper<Long> ROW_MAPPER_MATPROF = ProfessorJdbcDao::rowMapperMatProf;
+    private static final RowMapper<Long> ROW_MAPPER_MATPROF = ProfessorJdbcDao::rowMapperSubId;
+    private static final String TABLE_PROF = "professors";
+    private static final String TABLE_PROF_SUB = "professorsSubjects";
 
     private final JdbcTemplate jdbcTemplate;
     private final SimpleJdbcInsert jdbcInsertProfesor;
     private final SimpleJdbcInsert jdbcInsertMateriaProfesor;
 
-    private final String profTable = "professor";
-    private final String matProfTable = "professorSubjects";
+
 
 
     private static Professor rowMapperProf(ResultSet rs, int rowNum) throws SQLException {
         return new Professor(
-                rs.getLong("Id"),
-                rs.getString("Nombre")
+                rs.getLong("id"),
+                rs.getString("profName")
         );
     }
-    private static Long rowMapperMatProf(ResultSet rs, int rowNum) throws SQLException {
-        return rs.getLong("idMat");
+    private static Long rowMapperSubId(ResultSet rs, int rowNum) throws SQLException {
+        return rs.getLong("idSub");
     }
 
     @Autowired
     public ProfessorJdbcDao(final DataSource ds) {
         this.jdbcTemplate = new JdbcTemplate(ds);
         this.jdbcInsertProfesor = new SimpleJdbcInsert(ds)
-                .withTableName(profTable)
-                .usingGeneratedKeyColumns("Id");
+                .withTableName(TABLE_PROF)
+                .usingGeneratedKeyColumns("id");
 
         this.jdbcInsertMateriaProfesor = new SimpleJdbcInsert(ds)
-                .withTableName(matProfTable)
-                .usingGeneratedKeyColumns("idProf");
+                .withTableName(TABLE_PROF_SUB)
+                .usingGeneratedKeyColumns("idProf", "idSub");
     }
 
     // No incluye las materias que enseña, el atributo es null
-    @Override
-    public Optional<Professor> findByIdWithoutSubjects(Long id) {
-        return jdbcTemplate.query("SELECT * FROM " + profTable + " WHERE id = ?", ROW_MAPPER_PROF, id).stream().findFirst();
+    private Optional<Professor> findByIdRaw(Long id) {
+        return jdbcTemplate.query("SELECT * FROM " + TABLE_PROF + " WHERE id = ?", ROW_MAPPER_PROF, id).stream().findFirst();
     }
 
     // Dado un ID de prof, busco todos los ids de las materias en cual esta ese prof
-    public List<Long> findSubjectsByIdProfesor(Long id) {
-        return jdbcTemplate.query("SELECT * FROM " + matProfTable + " WHERE idProf = ?", ROW_MAPPER_MATPROF, id);
+    private List<Long> findSubjects(Long id) {
+        return jdbcTemplate.query("SELECT * FROM " + TABLE_PROF_SUB + " WHERE idProf = ?", ROW_MAPPER_MATPROF, id);
     }
 
     // Incluye una lista de todas las materias que esta enseñando el profesor.
     @Override
     public Optional<Professor> findById(Long id) {
-        Optional<Professor> optProf = findByIdWithoutSubjects(id);
+        Optional<Professor> optProf = findByIdRaw(id);
         if(!optProf.isPresent()) return Optional.empty();
 
         Professor prof = optProf.get();
 
-        List<Long> subjects = findSubjectsByIdProfesor(id);
+        List<Long> subjects = findSubjects(id);
 
         Professor inflatedProf = new Professor(
             prof.getId(),
@@ -82,22 +82,22 @@ public class ProfessorJdbcDao implements ProfessorDao {
     }
 
     @Override
-    public Professor create(String name , List<Long> materias) {
+    public Professor create(String name , List<Long> subjects) {
         Map<String, Object> data = new HashMap<>();
-        data.put("Nombre", name);
+        data.put("subName", name);
 
         Number key = jdbcInsertProfesor.executeAndReturnKey(data);
 
         // Inserto en la tabla de Mat_Prof las materias que hace un profesor
-        for(Long materia : materias){
+        for(Long subject : subjects){
             Map<String, Object> matProf = new HashMap<>();
             data.put("idProf", key);
-            data.put("idMat", materia);
+            data.put("idSub", subject);
 
             jdbcInsertMateriaProfesor.executeAndReturnKey(matProf);
         }
 
-        return new Professor(key.longValue(), name, materias);
+        return new Professor(key.longValue(), name, subjects);
     }
 
 
