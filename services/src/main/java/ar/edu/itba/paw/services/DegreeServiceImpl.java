@@ -18,8 +18,9 @@ public class DegreeServiceImpl implements DegreeService {
     }
 
     @Override
-    public Optional<Degree> findById(Integer id) {
+    public Optional<Degree> findById(Long id) {
         return degreeDao.findById(id);
+
     }
 
     @Override
