@@ -8,7 +8,7 @@
 <div class="nav-bar">
     <div class="nav-bar-area">
 
-        <img src="${pageContext.request.contextPath}/img/uni.jpg" alt="UNI"/>
+        <img height="50px" src="${pageContext.request.contextPath}/img/uni.jpg" alt="UNI"/>
 
 
         <sl-input class="search-bar" placeholder="Search">
