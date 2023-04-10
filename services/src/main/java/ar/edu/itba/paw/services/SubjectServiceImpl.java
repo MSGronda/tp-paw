@@ -28,8 +28,8 @@ public class SubjectServiceImpl implements SubjectService {
     }
 
     @Override
-    public List<Subject> getAllByCarrera(Long idCarrera){
-        return subjectDao.getAllByCarrera(idCarrera);
+    public List<Subject> getAllByDegree(Long idDegree){
+        return subjectDao.getAllByDegree(idDegree);
     }
 
     @Override

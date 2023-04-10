@@ -9,10 +9,7 @@ import org.springframework.stereotype.Repository;
 import javax.sql.DataSource;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 @Repository
 public class SubjectJdbcDao implements SubjectDao {
@@ -59,10 +56,8 @@ public class SubjectJdbcDao implements SubjectDao {
 
     }
     @Override
-    public List<Subject> getAllByCarrera(Long idCarrera){
-        return null;
-        // TODO
-        //return jdbcTemplate.query("SELECT * FROM " + CARRERAMATERIA + "," + COURSE + "WHERE idMat=id and idCarr= ?", ROW_MAPPER, idCarrera);
+    public List<Subject> getAllByDegree(Long idDegree) {
+        return jdbcTemplate.query("SELECT * FROM " + TABLE_SUB_DEG + " JOIN subjects s on idsub=s.id WHERE idDeg= ?", SubjectJdbcDao::rowMapperSubject, idDegree);
     }
 
     @Override
@@ -119,6 +114,10 @@ public class SubjectJdbcDao implements SubjectDao {
 
     private static Long rowMapperDegreeId(ResultSet rs, int rowNum) throws SQLException {
         return rs.getLong("idPrereq");
+    }
+
+    private static Long rowMapperSubDegSubId(ResultSet rs, int rowNum) throws SQLException {
+        return rs.getLong("idSub");
     }
 
     private Optional<Subject> findByIdRaw(Long id){
