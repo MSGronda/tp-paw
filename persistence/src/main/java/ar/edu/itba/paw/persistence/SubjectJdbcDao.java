@@ -7,6 +7,7 @@ import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Repository;
 
 import javax.sql.DataSource;
+import java.security.cert.TrustAnchor;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.*;
@@ -52,12 +53,38 @@ public class SubjectJdbcDao implements SubjectDao {
     }
     @Override
     public List<Subject> getAll() {
-        return jdbcTemplate.query("SELECT * FROM " + TABLE_SUB, SubjectJdbcDao::rowMapperSubject);
-
+        List<Subject> resp = jdbcTemplate.query("SELECT * FROM " + TABLE_SUB, SubjectJdbcDao::rowMapperSubject);
+        return fillSubjects(resp);
     }
     @Override
     public List<Subject> getAllByDegree(Long idDegree) {
-        return jdbcTemplate.query("SELECT * FROM " + TABLE_SUB_DEG + " JOIN subjects s on idsub=s.id WHERE idDeg= ?", SubjectJdbcDao::rowMapperSubject, idDegree);
+        List<Subject> resp = jdbcTemplate.query("SELECT * FROM " + TABLE_SUB_DEG + "," + TABLE_SUB + " WHERE idSub = id and idDeg = ?", SubjectJdbcDao::rowMapperSubject, idDegree);
+        return fillSubjects(resp);
+    }
+
+    private List<Subject> fillSubjects(List<Subject> subjects){
+        List<Subject> toRet = new ArrayList<>();
+
+        subjects.forEach(subject -> {
+            long id = subject.getId();
+
+            List<Long> prerequisites = findPrerequisites(id);
+            List<Long> professors = findProfessors(id);
+            List<Long> degrees = findDegrees(id);
+
+            Subject subj = new Subject(
+                    id,
+                    subject.getName(),
+                    subject.getDepartment(),
+                    prerequisites,
+                    professors,
+                    degrees,
+                    subject.getCredits()
+            );
+            toRet.add(subj);
+
+        });
+        return toRet;
     }
 
     @Override
