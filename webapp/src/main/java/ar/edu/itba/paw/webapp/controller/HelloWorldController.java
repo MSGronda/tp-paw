@@ -54,4 +54,9 @@ public class HelloWorldController {
     public ModelAndView registerForm() {
         return new ModelAndView("helloworld/register");
     }
+
+    @RequestMapping(value = "/review", method = RequestMethod.GET)
+    public ModelAndView reviewForm() {
+        return new ModelAndView("helloworld/review");
+    }
 }
