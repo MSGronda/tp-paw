@@ -20,7 +20,7 @@ public class DegreeJdbcDao implements DegreeDao {
     private final JdbcTemplate jdbcTemplate;
     private final SimpleJdbcInsert jdbcInsert;
 
-    private final static String degree_table_name = "degree";
+    private final static String degree_table_name = "degrees";
     private static final RowMapper<Degree> ROW_MAPPER = DegreeJdbcDao::rowMapper;
 
 
@@ -35,13 +35,13 @@ public class DegreeJdbcDao implements DegreeDao {
 
     @Override
     public Optional<Degree> findById(Long id) {
-        return jdbcTemplate.query("SELECT * FROM degree WHERE id = ?", ROW_MAPPER, id)
+        return jdbcTemplate.query("SELECT * FROM " + degree_table_name + " WHERE id = ?", ROW_MAPPER, id)
                 .stream().findFirst();
     }
 
     @Override
     public List<Degree> getAll() {
-        return jdbcTemplate.query("SELECT * FROM degree",ROW_MAPPER);
+        return jdbcTemplate.query("SELECT * FROM " + degree_table_name, ROW_MAPPER);
     }
 
     @Override
@@ -57,7 +57,7 @@ public class DegreeJdbcDao implements DegreeDao {
     private static Degree rowMapper(ResultSet rs, int rowNum) throws SQLException {
         return new Degree (
                 rs.getLong("id"),
-                rs.getString("name"),
+                rs.getString("degname"),
                 new ArrayList<>()
         );
     }
