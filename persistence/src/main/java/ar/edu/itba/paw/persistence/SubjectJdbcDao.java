@@ -136,11 +136,11 @@ public class SubjectJdbcDao implements SubjectDao {
     }
 
     private static Long rowMapperPrereqId(ResultSet rs, int rowNum) throws SQLException {
-        return rs.getLong("idCor");
+        return rs.getLong("idPrereq");
     }
 
     private static Long rowMapperDegreeId(ResultSet rs, int rowNum) throws SQLException {
-        return rs.getLong("idPrereq");
+        return rs.getLong("idDeg");
     }
 
     private static Long rowMapperSubDegSubId(ResultSet rs, int rowNum) throws SQLException {
