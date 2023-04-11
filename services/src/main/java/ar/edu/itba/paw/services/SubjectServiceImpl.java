@@ -23,6 +23,10 @@ public class SubjectServiceImpl implements SubjectService {
     }
 
     @Override
+    public List<Subject> getByName(String name) {
+        return subjectDao.getByName(name);
+    }
+    @Override
     public List<Subject> getAll() {
         return subjectDao.getAll();
     }

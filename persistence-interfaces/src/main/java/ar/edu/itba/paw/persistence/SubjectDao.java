@@ -6,6 +6,8 @@ import java.util.List;
 
 public interface SubjectDao extends RWDao<String, Subject> {
 
+    List<Subject> getByName(String name);
+
     List<Subject> getAllByDegree(Long idCarrera);
 
     List<Subject> getAll();

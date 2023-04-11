@@ -30,6 +30,8 @@ public class SubjectJdbcDao implements SubjectDao {
                 .usingGeneratedKeyColumns("id");
     }
 
+
+
     @Override
     public Optional<Subject> findById(String id) {
         Optional<Subject> resp = findByIdRaw(id);
@@ -56,6 +58,15 @@ public class SubjectJdbcDao implements SubjectDao {
         List<Subject> resp = jdbcTemplate.query("SELECT * FROM " + TABLE_SUB, SubjectJdbcDao::rowMapperSubject);
         return fillSubjects(resp);
     }
+
+    @Override
+    public List<Subject> getByName(String name) {
+        List<Subject> resp = jdbcTemplate.query("SELECT * FROM " + TABLE_SUB + " WHERE subname ILIKE ?",
+                SubjectJdbcDao::rowMapperSubject, ("%" + name + "%"));
+
+        return fillSubjects(resp);
+    }
+
     @Override
     public List<Subject> getAllByDegree(Long idDegree) {
         List<Subject> resp = jdbcTemplate.query("SELECT * FROM " + TABLE_SUB_DEG + "," + TABLE_SUB + " WHERE idSub = id and idDeg = ?", SubjectJdbcDao::rowMapperSubject, idDegree);

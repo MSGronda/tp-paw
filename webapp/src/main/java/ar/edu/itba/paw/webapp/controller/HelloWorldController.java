@@ -1,7 +1,9 @@
 package ar.edu.itba.paw.webapp.controller;
 
 import ar.edu.itba.paw.models.Review;
+import ar.edu.itba.paw.models.Subject;
 import ar.edu.itba.paw.models.User;
+import ar.edu.itba.paw.services.SubjectService;
 import ar.edu.itba.paw.services.UserService;
 import ar.edu.itba.paw.webapp.exceptions.UserNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,10 +19,12 @@ import java.util.Optional;
 @Controller
 public class HelloWorldController {
     private final UserService userService;
+    private final SubjectService subjectService;
 
     @Autowired
-    public HelloWorldController(UserService userService) {
+    public HelloWorldController(UserService userService, SubjectService subjectService) {
         this.userService = userService;
+        this.subjectService = subjectService;
     }
 
     @RequestMapping("/")
@@ -43,6 +47,17 @@ public class HelloWorldController {
         reviews.add(rev3);
 
         mav.addObject("reviews", reviews);
+        return mav;
+    }
+
+    @RequestMapping("/search/{name}")
+    public ModelAndView search(@PathVariable String name) {
+        final List<Subject> subjects = subjectService.getByName(name);
+
+        ModelAndView mav = new ModelAndView("helloworld/search");
+        mav.addObject("subjects", subjects);
+        mav.addObject("query", name);
+
         return mav;
     }
 

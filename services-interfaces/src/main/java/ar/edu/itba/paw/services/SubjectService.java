@@ -6,6 +6,7 @@ import java.util.List;
 
 public interface SubjectService extends BaseService<String, Subject> {
     List<Subject> getAllByDegree(Long idDegree);
+    List<Subject> getByName(String name);
 
     Subject create(String id, String name, String depto, List<String> idCorrelativas, List<Long> idProfesores, List<Long> idCarreras, Integer creditos);
 }
