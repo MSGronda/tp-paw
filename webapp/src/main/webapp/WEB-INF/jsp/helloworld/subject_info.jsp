@@ -1,5 +1,6 @@
-
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jstl/core_rt"%>
+
 <html>
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
@@ -19,6 +20,35 @@
 
     <style>
         .general-area {background-color: #efefef}
+
+        .probando{
+            display: flex;
+            flex-direction: column;
+            justify-content: space-around;
+            align-items: center;
+            width: 100%;
+
+        }
+
+        .card-header {
+            width: 45%;
+            margin: 15px;
+            /*max-width: 2000px;*/
+        }
+
+        .card-header [slot='header'] {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .card-header h3 {
+            margin: 0;
+        }
+
+        .break-text {
+            overflow-wrap: break-word;
+        }
     </style>
 </head>
 <body>
@@ -47,13 +77,30 @@
     <div>
         <sl-button href="" variant="primary" size="large" pill class="review_bt">Review Subject</sl-button>
     </div>
-    <hr></hr>
+    <br/>
+    <hr/>
     <div class="filter">
         <sl-tooltip content="Open viewing sorts" placement="bottom">
             <sl-button variant="text" size="large"><sl-icon slot="suffix" name="sort-down"></sl-icon> Sort</sl-button>
         </sl-tooltip>
     </div>
+
+    <div class="probando">
+        <c:forEach var="review" items="${reviews}">
+            <sl-card class="card-header">
+                <div slot="header">
+                    <c:out value="${review.title}"/>
+                </div>
+
+                <div class="break-text">
+                    <c:out value="${review.text}"/>
+                </div>
+            </sl-card>
+        </c:forEach>
+    </div>
 </div>
+
+
 
 <%-- SCRIPT FOR SHOELACE --%>
 <script type="module" src="https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.3.0/dist/shoelace-autoloader.js"></script>
