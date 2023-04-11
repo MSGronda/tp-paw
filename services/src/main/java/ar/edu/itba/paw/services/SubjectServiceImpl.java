@@ -18,7 +18,7 @@ public class SubjectServiceImpl implements SubjectService {
     }
 
     @Override
-    public Optional<Subject> findById(Long id) {
+    public Optional<Subject> findById(String id) {
         return subjectDao.findById(id);
     }
 
@@ -33,7 +33,7 @@ public class SubjectServiceImpl implements SubjectService {
     }
 
     @Override
-    public Subject create(String name, String depto, List<Long> idCorrelativas, List<Long> idProfesores, List<Long> idCarreras, Integer creditos){
-        return subjectDao.create(name, depto, idCorrelativas, idProfesores, idCarreras, creditos);
+    public Subject create(String id, String name, String depto, List<String> idCorrelativas, List<Long> idProfesores, List<Long> idCarreras, Integer creditos){
+        return subjectDao.create(id, name, depto, idCorrelativas, idProfesores, idCarreras, creditos);
     }
 }

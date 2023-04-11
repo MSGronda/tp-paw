@@ -3,15 +3,15 @@ package ar.edu.itba.paw.models;
 import java.util.List;
 
 public class Subject {
-    private final long id;
+    private final String id;
     private final String name;
     private final String department;
     private final Integer credits;
-    private List<Long> prerequisites;
+    private List<String> prerequisites;
     private List<Long> professorIds;
     private List<Long> degreeIds;
 
-    public Subject(long id, String name, String department, List<Long> prerequisites, List<Long> professorIds, List<Long> degreeIds, int credits) {
+    public Subject(String id, String name, String department, List<String> prerequisites, List<Long> professorIds, List<Long> degreeIds, int credits) {
         this.id = id;
         this.name = name;
         this.department = department;
@@ -21,14 +21,14 @@ public class Subject {
         this.credits = credits;
     }
 
-    public Subject(long id, String name, String department, int credits) {
+    public Subject(String id, String name, String department, int credits) {
         this.id = id;
         this.name = name;
         this.department = department;
         this.credits = credits;
     }
 
-    public long getId() {
+    public String getId() {
         return id;
     }
 
@@ -40,7 +40,7 @@ public class Subject {
         return department;
     }
 
-    public List<Long> getPrerequisites() {
+    public List<String> getPrerequisites() {
         return prerequisites;
     }
 
