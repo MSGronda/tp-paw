@@ -18,8 +18,20 @@
             <br />
             <sl-textarea label="Write your review"></sl-textarea>
             <br />
-            <sl-tag size="medium" variant="danger" removable>Hard</sl-tag>
-            <sl-tag size="medium" variant="primary" removable>Light</sl-tag>
+<%--            <sl-tag size="medium" variant="danger" removable>Hard</sl-tag>--%>
+<%--            <sl-tag size="medium" variant="success" removable>Easy</sl-tag>--%>
+<%--            <sl-tag size="medium" variant="warning" removable>Heavy</sl-tag>--%>
+<%--            <sl-tag size="medium" variant="primary" removable>Light</sl-tag>--%>
+            <form class="custom-validity">
+                <sl-radio-group label="Select an option" name="a" value="1">
+                    <sl-radio-button value="1">Hard</sl-radio-button>
+                    <sl-radio-button value="2">Easy</sl-radio-button>
+                    <sl-radio-button value="3">Heavy</sl-radio-button>
+                    <sl-radio-button value="3">Light</sl-radio-button>
+                </sl-radio-group>
+                <br />
+                <sl-button type="submit" variant="primary">Submit</sl-button>
+            </form>
         </div>
     </form>
 </div>
@@ -32,8 +44,31 @@
 
     div.addEventListener('sl-remove', event => {
         const tag = event.target;
-        tag.style.opacity = '0';
-        setTimeout(() => (tag.style.opacity = '1'), 2000);
+        if(tag.style.opacity === '1'){
+            tag.style.opacity = '0.3';
+        } else {
+            tag.style.opacity = '1';
+        }
+    });
+    const form = document.querySelector('.custom-validity');
+    const radioGroup = form.querySelector('sl-radio-group');
+    const errorMessage = 'You must choose the last option';
+
+    // Set initial validity as soon as the element is defined
+    customElements.whenDefined('sl-radio').then(() => {
+        radioGroup.setCustomValidity(errorMessage);
+    });
+
+    // Update validity when a selection is made
+    form.addEventListener('sl-change', () => {
+        const isValid = radioGroup.value === '3';
+        radioGroup.setCustomValidity(isValid ? '' : errorMessage);
+    });
+
+    // Handle form submit
+    form.addEventListener('submit', event => {
+        event.preventDefault();
+        alert('All fields are valid!');
     });
 </script>
 <style>
