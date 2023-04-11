@@ -25,6 +25,11 @@ public class HelloWorldController {
         return new ModelAndView("helloworld/index");
     }
 
+    @RequestMapping("/subject")
+    public ModelAndView subject_info() {
+        return new ModelAndView("helloworld/subject_info");
+    }
+
     @RequestMapping("/profile/{id:\\d+}")
     public ModelAndView profile(@PathVariable long id) {
         final Optional<User> maybeUser = userService.findById(id);
