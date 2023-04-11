@@ -14,7 +14,7 @@ CREATE TABLE IF NOT EXISTS professors
 
 CREATE TABLE IF NOT EXISTS subjects
 (
-    id          SERIAL PRIMARY KEY,
+    id          VARCHAR(100) PRIMARY KEY,
     subName     VARCHAR(100) NOT NULL,
     department  VARCHAR(100) NOT NULL,
     credits     INTEGER NOT NULL
@@ -30,7 +30,7 @@ CREATE TABLE IF NOT EXISTS reviews
 (
     id          SERIAL PRIMARY KEY,
     idUser      INTEGER NOT NULL REFERENCES users,
-    idSub       INTEGER NOT NULL REFERENCES subjects,
+    idSub       VARCHAR(100) NOT NULL REFERENCES subjects,
     score       INTEGER NOT NULL,
     revText     TEXT NOT NULL
 );
@@ -38,14 +38,15 @@ CREATE TABLE IF NOT EXISTS reviews
 CREATE TABLE IF NOT EXISTS professorsSubjects
 (
     idProf  INTEGER NOT NULL REFERENCES professors,
-    idSub   INTEGER NOT NULL REFERENCES subjects,
+    idSub   VARCHAR(100) NOT NULL REFERENCES subjects,
 
     PRIMARY KEY (idProf, idSub)
 );
 
 CREATE TABLE IF NOT EXISTS subjectsDegrees
 (
-    idSub   INTEGER NOT NULL REFERENCES subjects,
+    idSub   VARCHAR(100) NOT NULL REFERENCES subjects,
+    semester INTEGER, -- puede ser null por las correlativas
     idDeg   INTEGER NOT NULL REFERENCES degrees,
 
     PRIMARY KEY (idSub, idDeg)
@@ -53,8 +54,8 @@ CREATE TABLE IF NOT EXISTS subjectsDegrees
 
 CREATE TABLE IF NOT EXISTS prereqSubjects
 (
-    idSub       INTEGER NOT NULL REFERENCES subjects,
-    idPrereq    INTEGER NOT NULL REFERENCES subjects,
+    idSub       VARCHAR(100) NOT NULL REFERENCES subjects,
+    idPrereq    VARCHAR(100) NOT NULL REFERENCES subjects,
 
     PRIMARY KEY (idSub, idPrereq)
 );
