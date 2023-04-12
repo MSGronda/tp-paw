@@ -67,6 +67,18 @@ public class SubjectJdbcDao implements SubjectDao {
         return fillSubjects(resp);
     }
 
+
+    // Toda las verificaciones de ob estan en la capa de servicio
+    @Override
+    public List<Subject> getByNameOrderedBy(String name, String ob) {
+        List<Subject> resp = jdbcTemplate.query("SELECT * FROM " + TABLE_SUB + " WHERE subname ILIKE ? ORDER BY " + ob,
+                SubjectJdbcDao::rowMapperSubject, ("%" + name + "%"));
+        // TODO unificar las queries que se repiten
+
+        return fillSubjects(resp);
+    }
+
+
     @Override
     public List<Subject> getAllByDegree(Long idDegree) {
         List<Subject> resp = jdbcTemplate.query("SELECT * FROM " + TABLE_SUB_DEG + "," + TABLE_SUB + " WHERE idSub = id and idDeg = ?", SubjectJdbcDao::rowMapperSubject, idDegree);

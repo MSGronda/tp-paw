@@ -51,8 +51,14 @@ public class HelloWorldController {
     }
 
     @RequestMapping("/search/{name}")
-    public ModelAndView search(@PathVariable String name) {
-        final List<Subject> subjects = subjectService.getByName(name);
+    public ModelAndView search(@PathVariable String name, @RequestParam(required = false) String ob) {
+        final List<Subject> subjects;
+        if(ob != null)
+            subjects = subjectService.getByNameOrderBy(name, ob);
+        else
+            subjects = subjectService.getByName(name);
+
+
 
         ModelAndView mav = new ModelAndView("helloworld/search");
         mav.addObject("subjects", subjects);
