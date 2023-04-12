@@ -23,7 +23,7 @@ public class HelloWorldController {
         this.userService = userService;
     }
 
-    @RequestMapping("/")
+    @RequestMapping("/helloworld")
     public ModelAndView home() {
         return new ModelAndView("helloworld/index");
     }

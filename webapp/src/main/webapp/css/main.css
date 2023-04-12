@@ -1,6 +1,45 @@
+* {
+    box-sizing: border-box;
+}
+
 h2 {
     color: red;
 }
+
+html, body {
+    min-height: 100%;
+    width: 100%;
+    margin: 0;
+    font-family: var(--sl-font-sans);
+}
+
+body {
+    display: flex;
+    flex-direction: column;
+}
+
+main {
+    flex-grow: 1;
+}
+
 .uni_back_color{
     background-color: #3a6dce;
+}
+
+sl-card.subject-card::part(base) {
+    min-height: 100%;
+}
+
+sl-card.subject-card::part(body) {
+    flex: 1 0 auto;
+}
+
+.chip-row {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    align-items: center;
+    align-content: center;
+    gap: 0.25rem;
 }

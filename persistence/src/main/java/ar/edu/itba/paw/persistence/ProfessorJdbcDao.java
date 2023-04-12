@@ -82,6 +82,11 @@ public class ProfessorJdbcDao implements ProfessorDao {
     }
 
     @Override
+    public List<Professor> getAllBySubject(String idSubject) {
+        return jdbcTemplate.query("SELECT * FROM " + TABLE_PROF + " JOIN " + TABLE_PROF_SUB + " ps ON ps.idProf = id WHERE ps.idSub = ?", ProfessorJdbcDao::rowMapperProf, idSubject);
+    }
+
+    @Override
     public void delete(Long id) {
 
     }
