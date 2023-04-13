@@ -1,8 +1,13 @@
 package ar.edu.itba.paw.webapp.controller;
 
-import ar.edu.itba.paw.models.Review;
-import ar.edu.itba.paw.models.User;
+
+import ar.edu.itba.paw.models.*;
+import ar.edu.itba.paw.services.DegreeService;
+import ar.edu.itba.paw.services.ProfessorService;
+import ar.edu.itba.paw.services.SubjectService;
 import ar.edu.itba.paw.services.UserService;
+import ar.edu.itba.paw.webapp.exceptions.DegreeNotFoundException;
+import ar.edu.itba.paw.webapp.exceptions.SubjectNotFoundException;
 import ar.edu.itba.paw.webapp.exceptions.UserNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -17,10 +22,16 @@ import java.util.Optional;
 @Controller
 public class HelloWorldController {
     private final UserService userService;
+    private final ProfessorService professorService;
+    private final SubjectService subjectService;
+    private final DegreeService degreeService;
 
     @Autowired
-    public HelloWorldController(UserService userService) {
+    public HelloWorldController(UserService userService, SubjectService subjectService, DegreeService degreeService, ProfessorService professorService) {
         this.userService = userService;
+        this.subjectService = subjectService;
+        this.degreeService = degreeService;
+        this.professorService = professorService;
     }
 
     @RequestMapping("/helloworld")
@@ -28,10 +39,18 @@ public class HelloWorldController {
         return new ModelAndView("helloworld/index");
     }
 
-    @RequestMapping("/subject")
-    public ModelAndView subject_info() {
-        ModelAndView mav = new ModelAndView("helloworld/subject_info");
-
+    @RequestMapping("/subject/{degree_id:\\d+}/{id:\\d+\\.\\d+}")
+    public ModelAndView subject_info(@PathVariable Long degree_id,@PathVariable String id) {
+        final Optional<Subject> maybeSubject = subjectService.findById(id);
+        if(!maybeSubject.isPresent()) {
+            throw new SubjectNotFoundException("No subject with given id");
+        }
+        final Subject subject = maybeSubject.get();
+        final Optional<Degree> maybeDegree = degreeService.findById(degree_id);
+        if(!maybeDegree.isPresent()) {
+            throw new DegreeNotFoundException("No degree with given id");
+        }
+        final Degree degree = maybeDegree.get();
         List<Review> reviews = new ArrayList<>();
 
         Review rev1 = new Review(1, 1, 1, "Algebra Review", "This subject is crap");
@@ -42,7 +61,14 @@ public class HelloWorldController {
         reviews.add(rev2);
         reviews.add(rev3);
 
+        final List<Professor> professors = professorService.getAllBySubject(id);
+
+
+        ModelAndView mav = new ModelAndView("helloworld/subject_info");
+        mav.addObject("degree", degree);
         mav.addObject("reviews", reviews);
+        mav.addObject("professors", professors);
+        mav.addObject("subject", subject);
         return mav;
     }
 
