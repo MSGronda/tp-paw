@@ -10,7 +10,7 @@
 <jsp:include page="../components/navbar.jsp"/>
 <div class="container">
     <div>
-        <h4>Make a review about ...</h4>
+        <h4>Make a review about ...</h4><%-->TODO que aparezca nombre de la materia<--%>
     </div>
     <form class="col s12">
         <div class="tags-removable">
@@ -18,19 +18,18 @@
             <br />
             <sl-textarea label="Write your review"></sl-textarea>
             <br />
-<%--            <sl-tag size="medium" variant="danger" removable>Hard</sl-tag>--%>
-<%--            <sl-tag size="medium" variant="success" removable>Easy</sl-tag>--%>
-<%--            <sl-tag size="medium" variant="warning" removable>Heavy</sl-tag>--%>
-<%--            <sl-tag size="medium" variant="primary" removable>Light</sl-tag>--%>
             <form class="custom-validity">
-                <sl-radio-group label="Select an option" name="a" value="1">
+                <sl-radio-group label="Select an option" name="a" value="1" help-text="Were the topics in the subject complex to understand?">
                     <sl-radio-button value="1">Hard</sl-radio-button>
                     <sl-radio-button value="2">Easy</sl-radio-button>
-                    <sl-radio-button value="3">Heavy</sl-radio-button>
-                    <sl-radio-button value="3">Light</sl-radio-button>
                 </sl-radio-group>
                 <br />
-                <sl-button type="submit" variant="primary">Submit</sl-button>
+                <sl-radio-group name="a" value="1" help-text="Were you required to put a lot of time every week to keep up with the topics?">
+                    <sl-radio-button value="1">Time demanding</sl-radio-button>
+                    <sl-radio-button value="2">Not very time demanding</sl-radio-button>
+                </sl-radio-group>
+                <br />
+                <sl-button type="submit" variant="success">Submit</sl-button>
             </form>
         </div>
     </form>
@@ -40,16 +39,6 @@
 <script type="module" src="https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.3.0/dist/shoelace-autoloader.js"></script>
 
 <script>
-    const div = document.querySelector('.tags-removable');
-
-    div.addEventListener('sl-remove', event => {
-        const tag = event.target;
-        if(tag.style.opacity === '1'){
-            tag.style.opacity = '0.3';
-        } else {
-            tag.style.opacity = '1';
-        }
-    });
     const form = document.querySelector('.custom-validity');
     const radioGroup = form.querySelector('sl-radio-group');
     const errorMessage = 'You must choose the last option';
@@ -61,14 +50,14 @@
 
     // Update validity when a selection is made
     form.addEventListener('sl-change', () => {
-        const isValid = radioGroup.value === '3';
+        const isValid = radioGroup.value === '3';//Con esto puedo tomar el value seleccionado
         radioGroup.setCustomValidity(isValid ? '' : errorMessage);
     });
 
     // Handle form submit
     form.addEventListener('submit', event => {
         event.preventDefault();
-        alert('All fields are valid!');
+        alert('All fields are valid!');//TODO ver a quien tengo que llamar para pasar la data
     });
 </script>
 <style>
