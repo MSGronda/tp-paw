@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Service
@@ -39,6 +40,11 @@ public class SubjectServiceImpl implements SubjectService {
             case "id": return subjectDao.getByNameOrderedBy(name, orderById);
             case "name":default: return subjectDao.getByNameOrderedBy(name, orderByName);
         }
+    }
+
+    @Override
+    public List<Subject> getByNameFiltered(String name, Map<String,String> filters, String ob) {
+        return subjectDao.getByNameFiltered(name, filters, ob);
     }
 
     @Override

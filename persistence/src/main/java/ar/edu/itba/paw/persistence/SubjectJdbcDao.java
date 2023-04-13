@@ -2,15 +2,17 @@ package ar.edu.itba.paw.persistence;
 
 import ar.edu.itba.paw.models.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.PreparedStatementCallback;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Repository;
 
 import javax.sql.DataSource;
 import java.security.cert.TrustAnchor;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Repository
 public class SubjectJdbcDao implements SubjectDao {
@@ -18,6 +20,10 @@ public class SubjectJdbcDao implements SubjectDao {
     private static final String TABLE_PROF_SUB = "professorsSubjects";
     private static final String TABLE_PREREQ = "prereqSubjects";
     private static final String TABLE_SUB_DEG = "subjectsDegrees";
+
+    private static final List<String> validFilters = Arrays.asList( "department", "credits");
+    private static final List<String> validOrderBy = Arrays.asList("id", "credits", "subname");
+
 
     private final JdbcTemplate jdbcTemplate;
     private final SimpleJdbcInsert jdbcInsert;
@@ -59,21 +65,45 @@ public class SubjectJdbcDao implements SubjectDao {
         return fillSubjects(resp);
     }
 
+
+    // TODO unificar las queries que se repiten
     @Override
     public List<Subject> getByName(String name) {
         List<Subject> resp = jdbcTemplate.query("SELECT * FROM " + TABLE_SUB + " WHERE subname ILIKE ?",
                 SubjectJdbcDao::rowMapperSubject, ("%" + name + "%"));
-
         return fillSubjects(resp);
     }
 
-
-    // Toda las verificaciones de ob estan en la capa de servicio
+    // TODO unificar las queries que se repiten
     @Override
     public List<Subject> getByNameOrderedBy(String name, String ob) {
-        List<Subject> resp = jdbcTemplate.query("SELECT * FROM " + TABLE_SUB + " WHERE subname ILIKE ? ORDER BY " + ob,
-                SubjectJdbcDao::rowMapperSubject, ("%" + name + "%"));
-        // TODO unificar las queries que se repiten
+        List<Subject> resp = jdbcTemplate.query("SELECT * FROM " + TABLE_SUB + " WHERE subname ILIKE ? ORDER BY ?",
+                SubjectJdbcDao::rowMapperSubject, ("%" + name + "%"), ob);
+        return fillSubjects(resp);
+    }
+
+    @Override
+    public List<Subject> getByNameFiltered(String name, Map<String, String> filters, String ob) {
+        StringBuilder sb = new StringBuilder("SELECT * FROM ").append(TABLE_SUB).append(" WHERE subname ILIKE ?");
+
+        // Me fijo que el filtro que me estan pasando sea valido
+        List<Map.Entry<String,String>> validArgValuePair = filters.entrySet().stream()
+                .filter(entry -> validFilters.contains(entry.getKey())).collect(Collectors.toList());
+
+        List<String> validArg = new LinkedList<>();
+        for(Map.Entry<String,String> filter: validArgValuePair){
+            // TODO: this is unsafe, change!
+            sb.append(" AND ").append(filter.getKey()).append(" = ").append("'").append(filter.getValue()).append("'");
+        }
+
+        sb.append(" ORDER BY ?");
+        List<Subject> resp;
+
+        // Me fijo que el order by sea valido
+        if(!validOrderBy.contains(ob))
+            ob = "subname";      // Default
+
+        resp = jdbcTemplate.query(sb.toString(), SubjectJdbcDao::rowMapperSubject, "%" + name + "%",  ob);
 
         return fillSubjects(resp);
     }

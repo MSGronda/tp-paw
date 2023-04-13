@@ -44,8 +44,13 @@
             <section class="filter-section" id="filter-section">
                 <div class="filter-option">
                     <h5>Department</h5>
+                </div>
 
-
+                <div class="filter-option">
+                    <h5>Credits</h5>
+                    <sl-button size="small" variant="text" id="credit-filter-1">1 - 3 credits</sl-button>
+                    <sl-button size="small" variant="text" id="credit-filter-2">4 - 6 credits</sl-button>
+                    <sl-button size="small" variant="text" id="credit-filter-3">More than 6 credits</sl-button>
                 </div>
                 <div class="filter-option">
                     <h5>Sort By</h5>

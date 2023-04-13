@@ -12,9 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Controller
 public class HelloWorldController {
@@ -51,12 +49,17 @@ public class HelloWorldController {
     }
 
     @RequestMapping("/search/{name}")
-    public ModelAndView search(@PathVariable String name, @RequestParam(required = false) String ob) {
+    public ModelAndView search(@PathVariable String name, @RequestParam Map<String, String> params) {
+
         final List<Subject> subjects;
-        if(ob != null)
-            subjects = subjectService.getByNameOrderBy(name, ob);
+
+        if(params.containsKey("ob")) {
+            String ob = params.get("ob");
+            params.remove("ob");
+            subjects = subjectService.getByNameFiltered(name, params, ob);
+        }
         else
-            subjects = subjectService.getByName(name);
+            subjects = subjectService.getByNameFiltered(name, params, "subname");
 
 
 
