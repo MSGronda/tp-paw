@@ -43,8 +43,11 @@
                 </c:forEach>
             <br>
             Professors:
-                <c:forEach var="proffesor" items="${professors}">
-                    <c:out value="${proffesor}" />
+                <c:forEach var="proffesor" items="${professors}" varStatus="status">
+                    <c:out value="${proffesor.name}" />
+                    <c:if test="${not status.last}">
+                        ,
+                    </c:if>
                 </c:forEach>
         </sl-card>
     </div>
@@ -83,11 +86,13 @@
 
 <style>
     .card-basic {
-        max-width: 70%;
+        width: 100%;
     }
     .info {
         margin-left: 10%;
         margin-bottom: 2%;
+        width: 80%;
+
     }
     .review_bt {
         width: 20%;
