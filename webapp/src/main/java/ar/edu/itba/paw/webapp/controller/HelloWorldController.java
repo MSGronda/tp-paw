@@ -4,11 +4,16 @@ import ar.edu.itba.paw.models.Review;
 import ar.edu.itba.paw.models.User;
 import ar.edu.itba.paw.services.UserService;
 import ar.edu.itba.paw.webapp.exceptions.UserNotFoundException;
+import ar.edu.itba.paw.webapp.form.ReviewForm;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
+import javax.naming.Binding;
+import javax.validation.Valid;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
@@ -76,8 +81,18 @@ public class HelloWorldController {
         return new ModelAndView("helloworld/register");
     }
 
-    @RequestMapping(value = "/review", method = RequestMethod.GET)
-    public ModelAndView reviewForm() {
+    @RequestMapping(value = "/review/{subjectId}", method = RequestMethod.POST)
+    public ModelAndView review(@PathVariable final String subjectId, @Valid @ModelAttribute("reviewForm") final ReviewForm reviewForm,
+                               final BindingResult errors) {
+        if(errors.hasErrors()){
+            return reviewForm(subjectId, reviewForm);
+        }
+        return new ModelAndView("redirect:/");
+    }
+    @RequestMapping(value = "/review/{subjectId}", method = RequestMethod.GET)
+    public ModelAndView reviewForm(@PathVariable final String subjectId, @ModelAttribute("reviewForm") final ReviewForm reviewForm) {
         return new ModelAndView("helloworld/review");
     }
+
+
 }
