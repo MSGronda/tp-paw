@@ -31,12 +31,12 @@ public class SubjectJdbcDao implements SubjectDao {
     }
 
     @Override
-    public Optional<Subject> findById(Long id) {
+    public Optional<Subject> findById(String id) {
         Optional<Subject> resp = findByIdRaw(id);
         if(!resp.isPresent())
             return Optional.empty();
 
-        List<Long> prerequisites = findPrerequisites(id);
+        List<String> prerequisites = findPrerequisites(id);
         List<Long> professors = findProfessors(id);
         List<Long> degrees = findDegrees(id);
 
@@ -66,9 +66,9 @@ public class SubjectJdbcDao implements SubjectDao {
         List<Subject> toRet = new ArrayList<>();
 
         subjects.forEach(subject -> {
-            long id = subject.getId();
+            String id = subject.getId();
 
-            List<Long> prerequisites = findPrerequisites(id);
+            List<String> prerequisites = findPrerequisites(id);
             List<Long> professors = findProfessors(id);
             List<Long> degrees = findDegrees(id);
 
@@ -89,11 +89,11 @@ public class SubjectJdbcDao implements SubjectDao {
 
     @Override
     public void insert(Subject subject) {
-        create(subject.getName(), subject.getDepartment(), subject.getPrerequisites(), subject.getProfessorIds(), subject.getDegreeIds(), subject.getCredits());
+        create(subject.getId(),subject.getName(), subject.getDepartment(), subject.getPrerequisites(), subject.getProfessorIds(), subject.getDegreeIds(), subject.getCredits());
     }
 
     @Override
-    public Subject create(String name, String depto, List<Long> idCorrelativas, List<Long> idProfesores, List<Long> idCarreras, int creditos){
+    public Subject create(String id, String name, String depto, List<String> idCorrelativas, List<Long> idProfesores, List<Long> idCarreras, int creditos){
 
         Map<String, Object> data = new HashMap<>();
         data.put("name", name);
@@ -106,13 +106,13 @@ public class SubjectJdbcDao implements SubjectDao {
         // data.put("idCarreras", idCarreras);
 
 
-        Number key = jdbcInsert.executeAndReturnKey(data);
+       jdbcInsert.execute(data);
 
-        return new Subject(key.longValue(), name, depto, idCorrelativas, idProfesores, idCarreras, creditos);
+        return new Subject(id, name, depto, idCorrelativas, idProfesores, idCarreras, creditos);
     }
 
     @Override
-    public void delete(Long aLong) {
+    public void delete(String id) {
 
     }
 
@@ -123,7 +123,7 @@ public class SubjectJdbcDao implements SubjectDao {
 
     private static Subject rowMapperSubject(ResultSet rs, int rowNum) throws SQLException {
         return new Subject(
-            rs.getLong("id"),
+            rs.getString("id"),
             rs.getString("subName"),
             rs.getString("department"),
             rs.getInt("credits")
@@ -135,32 +135,32 @@ public class SubjectJdbcDao implements SubjectDao {
         return rs.getLong("idProf");
     }
 
-    private static Long rowMapperPrereqId(ResultSet rs, int rowNum) throws SQLException {
-        return rs.getLong("idCor");
+    private static String rowMapperPrereqId(ResultSet rs, int rowNum) throws SQLException {
+        return rs.getString("idPrereq");
     }
 
     private static Long rowMapperDegreeId(ResultSet rs, int rowNum) throws SQLException {
-        return rs.getLong("idPrereq");
+        return rs.getLong("idDeg");
     }
 
     private static Long rowMapperSubDegSubId(ResultSet rs, int rowNum) throws SQLException {
         return rs.getLong("idSub");
     }
 
-    private Optional<Subject> findByIdRaw(Long id){
+    private Optional<Subject> findByIdRaw(String id){
         return jdbcTemplate.query("SELECT * FROM " + TABLE_SUB + " WHERE id = ?", SubjectJdbcDao::rowMapperSubject, id)
             .stream().findFirst();
     }
 
-    private List<Long> findPrerequisites(Long id){
+    private List<String> findPrerequisites(String id){
         return jdbcTemplate.query("Select * FROM " + TABLE_PREREQ + " WHERE idSub = ?", SubjectJdbcDao::rowMapperPrereqId, id );
     }
 
-    private List<Long> findProfessors(Long id){
+    private List<Long> findProfessors(String id){
         return jdbcTemplate.query("Select * FROM " + TABLE_PROF_SUB + " WHERE idSub = ?", SubjectJdbcDao::rowMapperProfessorId, id );
     }
 
-    private List<Long> findDegrees(Long id){
+    private List<Long> findDegrees(String id){
         return jdbcTemplate.query("Select * FROM " + TABLE_SUB_DEG + " WHERE idSub = ?", SubjectJdbcDao::rowMapperDegreeId, id );
     }
 }

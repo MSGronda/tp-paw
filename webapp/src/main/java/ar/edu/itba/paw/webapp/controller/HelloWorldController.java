@@ -1,5 +1,6 @@
 package ar.edu.itba.paw.webapp.controller;
 
+import ar.edu.itba.paw.models.Review;
 import ar.edu.itba.paw.models.User;
 import ar.edu.itba.paw.services.UserService;
 import ar.edu.itba.paw.webapp.exceptions.UserNotFoundException;
@@ -9,6 +10,8 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 @Controller
@@ -20,9 +23,27 @@ public class HelloWorldController {
         this.userService = userService;
     }
 
-    @RequestMapping("/")
+    @RequestMapping("/helloworld")
     public ModelAndView home() {
         return new ModelAndView("helloworld/index");
+    }
+
+    @RequestMapping("/subject")
+    public ModelAndView subject_info() {
+        ModelAndView mav = new ModelAndView("helloworld/subject_info");
+
+        List<Review> reviews = new ArrayList<>();
+
+        Review rev1 = new Review(1, 1, 1, "Algebra Review", "This subject is crap");
+        Review rev2 = new Review(2, 2, 1, "Algebra asdf", "This subject is okay");
+        Review rev3 = new Review(3, 2, 1, "NOOOOOOOOOONIIIIIIIIIIIII", "NIIIIIIIIIINOOOOOOOOOOOOOaaaaaaaaaaaaaaaaaaaa aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
+
+        reviews.add(rev1);
+        reviews.add(rev2);
+        reviews.add(rev3);
+
+        mav.addObject("reviews", reviews);
+        return mav;
     }
 
     @RequestMapping("/profile/{id:\\d+}")

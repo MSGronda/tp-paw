@@ -26,4 +26,9 @@ public class ProfessorServiceImpl implements ProfessorService {
     public List<Professor> getAll() {
         return professorDao.getAll();
     }
+
+    @Override
+    public List<Professor> getAllBySubject(String idSubject) {
+        return professorDao.getAllBySubject(idSubject);
+    }
 }
