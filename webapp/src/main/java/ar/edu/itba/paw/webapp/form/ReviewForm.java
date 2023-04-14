@@ -1,17 +1,21 @@
 package ar.edu.itba.paw.webapp.form;
 
 import javax.validation.constraints.Email;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 public class ReviewForm {
 
     @Email
+    @Size(min = 1)
     private String email;
     @Size(min = 1)
     private String text;
 
+    @NotNull
     private Boolean easy;
 
+    @NotNull
     private Boolean timeDemanding;
 
     public String getEmail() {
@@ -45,4 +49,5 @@ public class ReviewForm {
     public void setTimeDemanding(Boolean timeDemanding) {
         this.timeDemanding = timeDemanding;
     }
+
 }

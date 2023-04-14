@@ -100,10 +100,9 @@ public class HelloWorldController {
     @RequestMapping(value = "/review/{subjectId:\\d+\\.\\d+}", method = RequestMethod.POST)
     public ModelAndView review(@PathVariable final String subjectId, @Valid @ModelAttribute("ReviewForm") final ReviewForm reviewForm,
                                final BindingResult errors) throws SQLException {
-        if(errors.hasErrors() || reviewForm.getEmail().equals("")){
+        if(errors.hasErrors()){
             return reviewForm(subjectId, reviewForm);
         }
-
 
         Optional<User> maybeUser = userService.getUserWithEmail(reviewForm.getEmail());
         if(!maybeUser.isPresent() ){

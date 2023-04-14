@@ -64,13 +64,13 @@
                             <sl-badge size="medium" variant="primary" >easy</sl-badge>
                         </c:when>
                         <c:otherwise>
-                            <sl-badge size="medium" variant="primary">hard</sl-badge>
+                            <sl-badge size="medium" variant="danger">hard</sl-badge>
                         </c:otherwise>
                     </c:choose>
 
                     <c:choose>
                         <c:when test="${review.timeDemanding}">
-                            <sl-badge size="medium" variant="primary">time demanding</sl-badge>
+                            <sl-badge size="medium" variant="warning">time demanding</sl-badge>
                         </c:when>
                         <c:otherwise>
                             <sl-badge size="medium" ariant="primary">not time demanding</sl-badge>
