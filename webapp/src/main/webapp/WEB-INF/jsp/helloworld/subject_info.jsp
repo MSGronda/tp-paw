@@ -49,10 +49,13 @@
     </div>
 
     <div class="review-column">
+        <c:if test="${empty reviews}">
+            <h3>No Reviews Yet!</h3>
+        </c:if>
         <c:forEach var="review" items="${reviews}">
             <sl-card class="card-header">
                 <div slot="header">
-                    <c:out value="${review.userId}"/>
+                    <c:out value="${review.userEmail}"/>
                 </div>
 
                 <div class="break-text">

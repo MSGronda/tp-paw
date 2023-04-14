@@ -13,5 +13,5 @@ public interface ReviewService extends BaseService<Long, Review> {
 
     List<Review> getAllBySubject(String idsub);
 
-    Review create(Boolean easy, Boolean timeDemanding, String text,String subjectId,long userId) throws SQLException;
+    Review create(Boolean easy, Boolean timeDemanding, String text,String subjectId,long userId, String userEmail) throws SQLException;
 }

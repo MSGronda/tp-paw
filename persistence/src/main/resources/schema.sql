@@ -32,7 +32,8 @@ CREATE TABLE IF NOT EXISTS degrees
 CREATE TABLE IF NOT EXISTS reviews
 (
     id          SERIAL PRIMARY KEY,
-    idUser      INTEGER NOT NULL REFERENCES users,
+    idUser      INTEGER NOT NULL REFERENCES users(id),
+    userEmail   VARCHAR(100) NOT NULL references users(email),
     idSub       VARCHAR(100) NOT NULL REFERENCES subjects,
     score INTEGER,
 --     score       INTEGER NOT NULL,

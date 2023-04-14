@@ -50,21 +50,22 @@ public class ReviewJdbcDao implements ReviewDao {
 
     @Override
     public void insert(Review review) {
-        create(review.getEasy(), review.getTimeDemanding(), review.getText(), review.getSubjectId(),review.getUserId());
+        create(review.getEasy(), review.getTimeDemanding(), review.getText(), review.getSubjectId(),review.getUserId(), review.getUserEmail());
     }
 
     @Override
-    public Review create(Boolean easy, Boolean timeDemanding, String text,String subjectId,long userId) {
+    public Review create(Boolean easy, Boolean timeDemanding, String text,String subjectId,long userId, String userEmail) {
         Map<String, Object> data = new HashMap<>();
         data.put("easy", easy);
         data.put("timeDemanding", timeDemanding);
         data.put("revText", text);
         data.put("idSub", subjectId);
         data.put("idUser", userId);
+        data.put("userEmail", userEmail);
 
         Number key = jdbcInsert.executeAndReturnKey(data);
 
-        return new Review(key.longValue(), userId, subjectId, easy, timeDemanding, text);
+        return new Review(key.longValue(), userId, userEmail, subjectId, easy, timeDemanding, text);
     }
 
     @Override
@@ -81,6 +82,7 @@ public class ReviewJdbcDao implements ReviewDao {
         return new Review(
                 rs.getLong("id"),
                 rs.getLong("idUser"),
+                rs.getString("userEmail"),
                 rs.getString("idSub"),
                 rs.getBoolean("easy"),
                 rs.getBoolean("timeDemanding"),

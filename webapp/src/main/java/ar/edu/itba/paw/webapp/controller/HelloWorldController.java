@@ -107,13 +107,11 @@ public class HelloWorldController {
         Optional<User> maybeUser = userService.getUserWithEmail(reviewForm.getEmail());
         if(!maybeUser.isPresent() ){
             final User user = userService.create(reviewForm.getEmail(), null, null);
-            final Review review = reviewService.create(reviewForm.getEasy(), reviewForm.getTimeDemanding(), reviewForm.getText(), subjectId, user.getId() );
+            final Review review = reviewService.create(reviewForm.getEasy(), reviewForm.getTimeDemanding(), reviewForm.getText(), subjectId, user.getId(), reviewForm.getEmail());
         }
         else{
-            final Review review = reviewService.create(reviewForm.getEasy(), reviewForm.getTimeDemanding(), reviewForm.getText(), subjectId, maybeUser.get().getId());
+            final Review review = reviewService.create(reviewForm.getEasy(), reviewForm.getTimeDemanding(), reviewForm.getText(), subjectId, maybeUser.get().getId(), reviewForm.getEmail());
         }
-
-
 
         return new ModelAndView("redirect:/subject/" + subjectId);
     }
