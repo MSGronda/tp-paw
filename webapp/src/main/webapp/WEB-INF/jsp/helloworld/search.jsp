@@ -60,7 +60,7 @@
                     <sl-button-group>
                         <sl-button class="filter-button" size="small" variant="default" id="sistemas-credit-filter" pill>Sistemas Digitales y Datos</sl-button>
                         <section id="remove-sistemas-param-section">
-                            <sl-button class="filter-button" id="remove-min-credits-filter" variant="default" size="small" pill>
+                            <sl-button class="filter-button" id="remove-sistemas-filter" variant="default" size="small" pill>
                                 <sl-icon class="remove-filter" name="x-lg" label="Remove"></sl-icon>
                             </sl-button>
                         </section>

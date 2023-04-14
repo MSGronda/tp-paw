@@ -1,46 +1,3 @@
-// Se corre cada vez que se abre la pagina
-
-let params = new URLSearchParams(window.location.search);
-
-const filterSection = document.getElementById('filter-section');
-
-if(params.keys().next().done) // no tiene parametros
-    filterSection.style.display = "none"
-else
-    filterSection.style.display = "flex"
-
-const sectionMinCredits = document.getElementById('remove-min-credits-param-section');
-const sectionMedCredits = document.getElementById('remove-med-credits-param-section');
-const sectionMaxCredits = document.getElementById('remove-max-credits-param-section');
-
-
-const sectionDpt = document.getElementById('remove-sistemas-param-section')
-
-let credits = params.get("credits")
-
-sectionMinCredits.style.display = "none";
-sectionMedCredits.style.display = "none";
-sectionMaxCredits.style.display = "none";
-
-switch (credits){
-    case null: break;
-    case "3":
-        sectionMinCredits.style.display = "block";
-        break;
-    case "6": sectionMedCredits.style.display = "block"; break;
-    case "9": sectionMaxCredits.style.display = "block"; break;
-}
-
-let dpt = params.get("department")
-
-sectionDpt.style.display = "none";
-
-switch (dpt){
-    case null: break;
-    case "Sistemas Digitales y Datos": sectionDpt.style.display = "block";
-}
-
-
 function addOrUpdateParam(url, param, value) {
     var regex = new RegExp("([?&])" + param + "=.*?(&|$)", "i");
     var separator = url.indexOf('?') !== -1 ? "&" : "?";
@@ -71,6 +28,70 @@ function removeURLParam(url, param) {
 
 }
 
+
+// Se corre cada vez que se abre la pagina
+
+let params = new URLSearchParams(window.location.search);
+
+const filterSection = document.getElementById('filter-section');
+
+if(params.keys().next().done) // no tiene parametros
+    filterSection.style.display = "none"
+else
+    filterSection.style.display = "flex"
+
+
+// Department filters
+let dpt = params.get("department")
+
+const dptFilterBtns = [
+    ['sistemas-credit-filter', 'Sistemas Digitales y Datos', 'remove-sistemas-filter', 'remove-sistemas-param-section'],
+]
+
+for(let elem in dptFilterBtns){
+
+    // Comportamiento de boton de aplicar filtro
+    document.getElementById(dptFilterBtns[elem][0]).addEventListener('click',
+        function() { window.location.href = addOrUpdateParam(window.location.href,"department",dptFilterBtns[elem][1])});
+
+    // Comportamiento de boton de eliminar filtro
+    document.getElementById(dptFilterBtns[elem][2]).addEventListener('click',
+        function() { window.location.href = removeURLParam(window.location.href,"department")});
+
+    // Visibiliad de boton de eliminar filtro
+    const section = document.getElementById(dptFilterBtns[elem][3])
+    console.log(dptFilterBtns[elem][3])
+    if(dpt === dptFilterBtns[elem][1])
+        section.style.display = "block";
+    else
+        section.style.display = "none"
+}
+
+
+
+// Credit filters
+let credits = params.get("credits")
+
+const creditFilterBtns = [
+    ['min-credit-filter', "3", 'remove-min-credits-filter', 'remove-min-credits-param-section'],
+    ['med-credit-filter', "6", 'remove-med-credits-filter', 'remove-med-credits-param-section'],
+    ['max-credit-filter', "9", 'remove-max-credits-filter', 'remove-max-credits-param-section']
+]
+for(let elem in creditFilterBtns)
+{
+    document.getElementById(creditFilterBtns[elem][0]).addEventListener('click',
+        function() { window.location.href = addOrUpdateParam(window.location.href,"credits",creditFilterBtns[elem][1]);});
+    document.getElementById(creditFilterBtns[elem][2]).addEventListener('click',
+        function() { window.location.href = removeURLParam(window.location.href,"credits")});
+    const section = document.getElementById(creditFilterBtns[elem][3])
+    if(credits === creditFilterBtns[elem][1])
+        section.style.display = "block";
+    else
+        section.style.display = "none"
+}
+
+
+
 // Filter section
 const toggleBtn = document.getElementById('toggle-filters');
 
@@ -81,76 +102,15 @@ toggleBtn.addEventListener('click', function() {
         filterSection.style.display = 'none';
 });
 
-const orderByNameBtn = document.getElementById('order-by-name');
-const orderByCreditsBtn = document.getElementById('order-by-credits');
-const orderByIdBtn = document.getElementById('order-by-id');
 
+// Order by btns
+const addOrderByBtns = [['order-by-name', "subname"], ['order-by-credits', "credits"], ['order-by-id', "id"]]
+for(let elem in addOrderByBtns)
+{
+    document.getElementById(addOrderByBtns[elem][0]).addEventListener('click',
+        function() { window.location.href = addOrUpdateParam(window.location.href,"ob",addOrderByBtns[elem][1]);});
+}
 
-// Order by section
-//TODO unificar todas las function() en una
-
-orderByNameBtn.addEventListener('click', function() {
-    window.location.href = addOrUpdateParam(window.location.href,"ob","subname");
-});
-
-orderByCreditsBtn.addEventListener('click', function() {
-    window.location.href = addOrUpdateParam(window.location.href,"ob","credits");
-});
-
-
-orderByIdBtn.addEventListener('click', function() {
-    window.location.href = addOrUpdateParam(window.location.href,"ob","id");
-});
-
-
-// Credit filters
-
-const minCreditFilterBtn = document.getElementById('min-credit-filter');
-const medCreditFilterBtn = document.getElementById('med-credit-filter');
-const maxCreditFilterBtn = document.getElementById('max-credit-filter');
-
-minCreditFilterBtn.addEventListener('click', function() {
-    window.location.href = addOrUpdateParam(window.location.href,"credits","3");
-});
-
-medCreditFilterBtn.addEventListener('click', function() {
-    window.location.href = addOrUpdateParam(window.location.href,"credits","6");
-});
-
-maxCreditFilterBtn.addEventListener('click', function() {
-    window.location.href = addOrUpdateParam(window.location.href,"credits","9");
-});
-
-
-const removeMinCreditFilterBtn = document.getElementById('remove-min-credits-filter');
-const removeMedCreditFilterBtn = document.getElementById('remove-med-credits-filter');
-const removeMaxCreditFilterBtn = document.getElementById('remove-max-credits-filter');
-
-
-removeMinCreditFilterBtn.addEventListener('click', function() {
-    window.location.href = removeURLParam(window.location.href,"credits");
-});
-
-removeMedCreditFilterBtn.addEventListener('click', function() {
-    window.location.href = removeURLParam(window.location.href,"credits");
-});
-
-removeMaxCreditFilterBtn.addEventListener('click', function() {
-    window.location.href = removeURLParam(window.location.href,"credits");
-});
-
-
-// Department filters
-
-const sistemasFilterBtn = document.getElementById('sistemas-credit-filter');
-sistemasFilterBtn.addEventListener('click', function() {
-    window.location.href = addOrUpdateParam(window.location.href,"department","Sistemas Digitales y Datos");
-});
-
-const removeSistemasFilter = document.getElementById('remove-sistemas-param-section');
-removeSistemasFilter.addEventListener('click', function() {
-    window.location.href = removeURLParam(window.location.href,"department");
-});
 
 
 
