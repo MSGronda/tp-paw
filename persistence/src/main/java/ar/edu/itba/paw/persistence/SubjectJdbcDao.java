@@ -90,20 +90,18 @@ public class SubjectJdbcDao implements SubjectDao {
         List<Map.Entry<String,String>> validArgValuePair = filters.entrySet().stream()
                 .filter(entry -> validFilters.contains(entry.getKey())).collect(Collectors.toList());
 
-        List<String> validArg = new LinkedList<>();
+        // Agrego los filtros validos
         for(Map.Entry<String,String> filter: validArgValuePair){
             // TODO: this is unsafe, change!
             sb.append(" AND ").append(filter.getKey()).append(" = ").append("'").append(filter.getValue()).append("'");
         }
 
-        sb.append(" ORDER BY ?");
-        List<Subject> resp;
-
         // Me fijo que el order by sea valido
         if(!validOrderBy.contains(ob))
             ob = "subname";      // Default
+        sb.append(" ORDER BY ").append(ob);
 
-        resp = jdbcTemplate.query(sb.toString(), SubjectJdbcDao::rowMapperSubject, "%" + name + "%",  ob);
+        List<Subject> resp = jdbcTemplate.query(sb.toString(), SubjectJdbcDao::rowMapperSubject, "%" + name + "%");
 
         return fillSubjects(resp);
     }

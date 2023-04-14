@@ -48,9 +48,9 @@
 
                 <div class="filter-option">
                     <h5>Credits</h5>
-                    <sl-button size="small" variant="text" id="credit-filter-1">1 - 3 credits</sl-button>
-                    <sl-button size="small" variant="text" id="credit-filter-2">4 - 6 credits</sl-button>
-                    <sl-button size="small" variant="text" id="credit-filter-3">More than 6 credits</sl-button>
+                    <sl-button size="small" variant="text" id="min-credit-filter">1 - 3 credits</sl-button>
+                    <sl-button size="small" variant="text" id="med-credit-filter">4 - 6 credits</sl-button>
+                    <sl-button size="small" variant="text" id="max-credit-filter">More than 6 credits</sl-button>
                 </div>
                 <div class="filter-option">
                     <h5>Sort By</h5>
