@@ -4,11 +4,7 @@
 <html>
 <head>
     <title>Title</title>
-
     <jsp:include page="../components/head_shared.jsp"/>
-    <style>
-        .general-area {background-color: #efefef}
-    </style>
 </head>
 <body>
 
@@ -38,15 +34,18 @@
             Credits: <c:out value="${subject.credits}" />
             <br>
             Prerequisites:
-                <c:forEach var="prerec" items="${subject.prerequisites}">
+                <c:forEach var="prerec" items="${subject.prerequisites}" varStatus="status">
                     <c:out value="${prerec}" />
+                    <c:if test="${not status.last}">
+                        ,
+                    </c:if>
                 </c:forEach>
             <br>
             Professors:
                 <c:forEach var="proffesor" items="${professors}" varStatus="status">
                     <c:out value="${proffesor.name}" />
                     <c:if test="${not status.last}">
-                        ,
+                        ;
                     </c:if>
                 </c:forEach>
         </sl-card>
@@ -76,9 +75,6 @@
         </c:forEach>
     </div>
 </div>
-
-
-
 <%-- SCRIPT FOR SHOELACE --%>
 <script type="module" src="https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.3.0/dist/shoelace-autoloader.js"></script>
 </body>
@@ -92,7 +88,6 @@
         margin-left: 10%;
         margin-bottom: 2%;
         width: 80%;
-
     }
     .review_bt {
         width: 20%;
@@ -112,7 +107,7 @@
         margin-right: 20%;
     }
     h1 {
-        font-size: 34px;
+        font-size: 44px;
         font-weight: bold;
     }
 
