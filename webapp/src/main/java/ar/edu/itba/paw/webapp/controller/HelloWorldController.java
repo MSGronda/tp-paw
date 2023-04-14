@@ -96,8 +96,15 @@ public class HelloWorldController {
             return reviewForm(subjectId, reviewForm);
         }
         //TODO - chequear si existe el usuario
-        final User user = userService.create(reviewForm.getEmail(), null, null);
-        final Review review = reviewService.create(reviewForm.getEasy(), reviewForm.getTimeDemanding(), reviewForm.getText(), subjectId, user.getId() );
+        Optional<User> maybeUser = userService.getUserWithEmail(reviewForm.getEmail());
+        if(!maybeUser.isPresent()){
+            final User user = userService.create(reviewForm.getEmail(), null, null);
+            final Review review = reviewService.create(reviewForm.getEasy(), reviewForm.getTimeDemanding(), reviewForm.getText(), subjectId, user.getId() );
+        }
+        else{
+            final Review review = reviewService.create(reviewForm.getEasy(), reviewForm.getTimeDemanding(), reviewForm.getText(), subjectId, maybeUser.get().getId());
+        }
+
         return new ModelAndView("redirect:/");
     }
     @RequestMapping(value = "/review/{subjectId:\\d+\\.\\d+}", method = RequestMethod.GET)
