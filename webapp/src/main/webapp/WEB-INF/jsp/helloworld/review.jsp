@@ -1,6 +1,8 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
+<%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
+
 <html>
 <head>
     <title>Subject Review</title>
@@ -26,15 +28,14 @@
 <jsp:include page="../components/navbar.jsp"/>
 <div class="container">
     <div class="row">
-        <h1>Review&nbsp;</h1>
-        <h1><c:out value="${subject.name}" /></h1>
+        <h1><spring:message code="review.header" arguments="${subject.name}"/></h1>
     </div>
     <c:url var="CreateReview" value="/review/${subject.id}"/>
     <form:form modelAttribute="ReviewForm" class="col s12" method="post" action="${CreateReview}">
         <div class="tags-removable">
             <form:errors path="email" cssClass="error" element="p"/>
 <%--            <form:label path="email">--%>
-                <form:input cssClass="sl-input" path="email" placeHolder="Email"/>
+            <form:input path="email" placeholder='<spring:message code="reviewForm.email.placeholder"/>'/>
 <%--                <sl-input name="email" placeholder="Email" value="${ReviewForm.email}"/>--%>
 <%--            </form:label>--%>
             <br />
@@ -44,6 +45,7 @@
 <%--                <sl-textarea path="text" label="Write your review"/>--%>
 <%--            </form:label>--%>
             <form:input path="text"/>
+            <br/>
             <br />
 <%--            <form class="custom-validity">--%>
                 <sl-radio-group label="Select an option" name="a" value="1" help-text="Were the topics in the subject complex to understand?">
