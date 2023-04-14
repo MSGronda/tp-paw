@@ -3,18 +3,20 @@ package ar.edu.itba.paw.models;
 public class Review {
     private final long id;
     private final long userId;
-    private final long matId;
-    private final String title;
+    private final String subjectId;
+    private final Boolean easy;
+    private final Boolean timeDemanding;
     private final String text;
 
     // Etc.
 
 
-    public Review(long id, long userId, long matId,String title, String text) {
+    public Review(long id, long userId, String subjectId, Boolean easy, Boolean timeDemanding, String text) {
         this.id = id;
         this.userId = userId;
-        this.matId = matId;
-        this.title = title;
+        this.subjectId = subjectId;
+        this.easy = easy;
+        this.timeDemanding = timeDemanding;
         this.text = text;
     }
 
@@ -26,15 +28,21 @@ public class Review {
         return userId;
     }
 
-    public long getMatId() {
-        return matId;
+    public String getSubjectId() {
+        return subjectId;
     }
 
     public String getText() {
         return text;
     }
 
-    public String getTitle() {
-        return title;
+    public Boolean getEasy(){
+    return easy;
+    }
+
+    public Boolean getTimeDemanding(){
+        return timeDemanding;
     }
 }
+
+

@@ -1,7 +1,10 @@
 package ar.edu.itba.paw.webapp.controller;
 
 import ar.edu.itba.paw.models.Review;
+import ar.edu.itba.paw.models.Subject;
 import ar.edu.itba.paw.models.User;
+import ar.edu.itba.paw.services.ReviewService;
+import ar.edu.itba.paw.services.SubjectService;
 import ar.edu.itba.paw.services.UserService;
 import ar.edu.itba.paw.webapp.exceptions.UserNotFoundException;
 import ar.edu.itba.paw.webapp.form.ReviewForm;
@@ -22,10 +25,15 @@ import java.util.Optional;
 @Controller
 public class HelloWorldController {
     private final UserService userService;
+    private final SubjectService subjectService;
+
+    private final ReviewService reviewService;
 
     @Autowired
-    public HelloWorldController(UserService userService) {
+    public HelloWorldController(UserService userService, SubjectService subjectService, ReviewService reviewService) {
         this.userService = userService;
+        this.subjectService = subjectService;
+        this.reviewService = reviewService;
     }
 
     @RequestMapping("/helloworld")
@@ -39,9 +47,9 @@ public class HelloWorldController {
 
         List<Review> reviews = new ArrayList<>();
 
-        Review rev1 = new Review(1, 1, 1, "Algebra Review", "This subject is crap");
-        Review rev2 = new Review(2, 2, 1, "Algebra asdf", "This subject is okay");
-        Review rev3 = new Review(3, 2, 1, "NOOOOOOOOOONIIIIIIIIIIIII", "NIIIIIIIIIINOOOOOOOOOOOOOaaaaaaaaaaaaaaaaaaaa aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
+        Review rev1 = new Review(1, 1, "1", true, true, "This subject is crap");
+        Review rev2 = new Review(2, 2, "1", true, false,"This subject is okay");
+        Review rev3 = new Review(3, 2, "1", false, true, "NIIIIIIIIIINOOOOOOOOOOOOOaaaaaaaaaaaaaaaaaaaa aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
 
         reviews.add(rev1);
         reviews.add(rev2);
@@ -81,17 +89,29 @@ public class HelloWorldController {
         return new ModelAndView("helloworld/register");
     }
 
-    @RequestMapping(value = "/review/{subjectId}", method = RequestMethod.POST)
-    public ModelAndView review(@PathVariable final String subjectId, @Valid @ModelAttribute("reviewForm") final ReviewForm reviewForm,
-                               final BindingResult errors) {
+    @RequestMapping(value = "/review/{subjectId:\\d+\\.\\d+}", method = RequestMethod.POST)
+    public ModelAndView review(@PathVariable final String subjectId, @Valid @ModelAttribute("ReviewForm") final ReviewForm reviewForm,
+                               final BindingResult errors) throws SQLException {
         if(errors.hasErrors()){
             return reviewForm(subjectId, reviewForm);
         }
+        //TODO - chequear si existe el usuario
+        final User user = userService.create(reviewForm.getEmail(), null, null);
+        final Review review = reviewService.create(reviewForm.getEasy(), reviewForm.getTimeDemanding(), reviewForm.getText(), subjectId, user.getId() );
         return new ModelAndView("redirect:/");
     }
-    @RequestMapping(value = "/review/{subjectId}", method = RequestMethod.GET)
-    public ModelAndView reviewForm(@PathVariable final String subjectId, @ModelAttribute("reviewForm") final ReviewForm reviewForm) {
-        return new ModelAndView("helloworld/review");
+    @RequestMapping(value = "/review/{subjectId:\\d+\\.\\d+}", method = RequestMethod.GET)
+    public ModelAndView reviewForm(@PathVariable final String subjectId, @ModelAttribute("ReviewForm") final ReviewForm reviewForm) {
+        ModelAndView mav =  new ModelAndView("helloworld/review");
+
+        Optional<Subject> maybeSubject = subjectService.findById(subjectId);
+
+        if( maybeSubject.isPresent()){
+            Subject subject = maybeSubject.get();
+            mav.addObject("subject", subject );
+            return mav;
+        }
+        throw new RuntimeException();
     }
 
 

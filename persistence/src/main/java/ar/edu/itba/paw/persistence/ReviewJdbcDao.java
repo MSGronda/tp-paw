@@ -45,20 +45,21 @@ public class ReviewJdbcDao implements ReviewDao {
 
     @Override
     public void insert(Review review) {
-        create(review.getTitle(), review.getText(), review.getMatId(),review.getUserId());
+        create(review.getEasy(), review.getTimeDemanding(), review.getText(), review.getSubjectId(),review.getUserId());
     }
 
     @Override
-    public Review create(String title,String text,long matId,long userId) {
+    public Review create(Boolean easy, Boolean timeDemanding, String text,String subjectId,long userId) {
         Map<String, Object> data = new HashMap<>();
-        data.put("title", title);
-        data.put("text", text);
-        data.put("matId", matId);
-        data.put("userId", userId);
+        data.put("easy", easy);
+        data.put("timeDemanding", timeDemanding);
+        data.put("revText", text);
+        data.put("idSub", subjectId);
+        data.put("idUser", userId);
 
         Number key = jdbcInsert.executeAndReturnKey(data);
 
-        return new Review(key.longValue(), userId, matId, title, text);
+        return new Review(key.longValue(), userId, subjectId, easy, timeDemanding, text);
     }
 
     @Override
@@ -74,10 +75,11 @@ public class ReviewJdbcDao implements ReviewDao {
     private static Review rowMapper(ResultSet rs, int rowNum) throws SQLException {
         return new Review(
                 rs.getLong("id"),
-                rs.getLong("userId"),
-                rs.getLong("matId"),
-                rs.getString("title"),
-                rs.getString("text")
+                rs.getLong("idUser"),
+                rs.getString("idSub"),
+                rs.getBoolean("easy"),
+                rs.getBoolean("timeDemanding"),
+                rs.getString("revText")
         );
     }
 }

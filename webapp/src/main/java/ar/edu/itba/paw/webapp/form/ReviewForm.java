@@ -7,7 +7,7 @@ public class ReviewForm {
 
     @Email
     private String email;
-
+    @Size(min = 1)
     private String text;
 
     private Boolean easy;
