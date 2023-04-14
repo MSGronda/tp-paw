@@ -29,6 +29,11 @@ public class ReviewServiceImpl implements ReviewService {
     }
 
     @Override
+    public List<Review> getAllBySubject(String idsub){
+        return reviewDao.getAllBySubject(idsub);
+    }
+
+    @Override
     public Review create(Boolean easy, Boolean timeDemanding, String text,String subjectId,long userId) throws SQLException {
         return reviewDao.create(easy, timeDemanding, text, subjectId, userId);
     }

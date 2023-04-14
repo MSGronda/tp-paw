@@ -32,15 +32,13 @@ public class HelloWorldController {
     private final UserService userService;
     private final SubjectService subjectService;
     private final ProfessorService professorService;
-    private final DegreeService degreeService;
     private final ReviewService reviewService;
 
     @Autowired
-    public HelloWorldController(UserService userService, SubjectService subjectService, ReviewService reviewService,DegreeService degreeService, ProfessorService professorService) {
+    public HelloWorldController(UserService userService, SubjectService subjectService, ReviewService reviewService, ProfessorService professorService) {
         this.userService = userService;
         this.subjectService = subjectService;
         this.reviewService = reviewService;
-        this.degreeService = degreeService;
         this.professorService = professorService;
     }
 
@@ -49,33 +47,20 @@ public class HelloWorldController {
         return new ModelAndView("helloworld/index");
     }
 
-    @RequestMapping("/subject/{degree_id:\\d+}/{id:\\d+\\.\\d+}")
-    public ModelAndView subject_info(@PathVariable Long degree_id,@PathVariable String id) {
+    @RequestMapping("/subject/{id:\\d+\\.\\d+}")
+    public ModelAndView subject_info(@PathVariable String id) {
         final Optional<Subject> maybeSubject = subjectService.findById(id);
         if(!maybeSubject.isPresent()) {
             throw new SubjectNotFoundException("No subject with given id");
         }
         final Subject subject = maybeSubject.get();
-        final Optional<Degree> maybeDegree = degreeService.findById(degree_id);
-        if(!maybeDegree.isPresent()) {
-            throw new DegreeNotFoundException("No degree with given id");
-        }
-        final Degree degree = maybeDegree.get();
-        List<Review> reviews = new ArrayList<>();
-
-        Review rev1 = new Review(1, 1, "1", true, true, "This subject is crap");
-        Review rev2 = new Review(2, 2, "1", true, false,"This subject is okay");
-        Review rev3 = new Review(3, 2, "1", false, true, "NIIIIIIIIIINOOOOOOOOOOOOOaaaaaaaaaaaaaaaaaaaa aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
-
-        reviews.add(rev1);
-        reviews.add(rev2);
-        reviews.add(rev3);
 
         final List<Professor> professors = professorService.getAllBySubject(id);
 
+        final List<Review> reviews = reviewService.getAllBySubject(id);
+
 
         ModelAndView mav = new ModelAndView("helloworld/subject_info");
-        mav.addObject("degree", degree);
         mav.addObject("reviews", reviews);
         mav.addObject("professors", professors);
         mav.addObject("subject", subject);
@@ -115,12 +100,13 @@ public class HelloWorldController {
     @RequestMapping(value = "/review/{subjectId:\\d+\\.\\d+}", method = RequestMethod.POST)
     public ModelAndView review(@PathVariable final String subjectId, @Valid @ModelAttribute("ReviewForm") final ReviewForm reviewForm,
                                final BindingResult errors) throws SQLException {
-        if(errors.hasErrors()){
+        if(errors.hasErrors() || reviewForm.getEmail().equals("")){
             return reviewForm(subjectId, reviewForm);
         }
-        //TODO - chequear si existe el usuario
+
+
         Optional<User> maybeUser = userService.getUserWithEmail(reviewForm.getEmail());
-        if(!maybeUser.isPresent()){
+        if(!maybeUser.isPresent() ){
             final User user = userService.create(reviewForm.getEmail(), null, null);
             final Review review = reviewService.create(reviewForm.getEasy(), reviewForm.getTimeDemanding(), reviewForm.getText(), subjectId, user.getId() );
         }
@@ -128,7 +114,9 @@ public class HelloWorldController {
             final Review review = reviewService.create(reviewForm.getEasy(), reviewForm.getTimeDemanding(), reviewForm.getText(), subjectId, maybeUser.get().getId());
         }
 
-        return new ModelAndView("redirect:/");
+
+
+        return new ModelAndView("redirect:/subject/" + subjectId);
     }
     @RequestMapping(value = "/review/{subjectId:\\d+\\.\\d+}", method = RequestMethod.GET)
     public ModelAndView reviewForm(@PathVariable final String subjectId, @ModelAttribute("ReviewForm") final ReviewForm reviewForm) {

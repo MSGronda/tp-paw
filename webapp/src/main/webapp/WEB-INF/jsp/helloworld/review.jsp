@@ -4,11 +4,15 @@
 <html>
 <head>
     <title>Subject Review</title>
+    <jsp:include page="../components/head_shared.jsp"/>
     <!-- CSS  -->
-    <link href="${pageContext.request.contextPath}/css/style.css" type="text/css" rel="stylesheet" media="screen,projection"/>
+<%--    <link href="${pageContext.request.contextPath}/css/style.css" type="text/css" rel="stylesheet" media="screen,projection"/>--%>
     <style>
         .general-area {
             background-color: #efefef
+        }
+        .container{
+            margin-left: 15%;
         }
         .row{
             display: flex;
@@ -22,8 +26,8 @@
 <jsp:include page="../components/navbar.jsp"/>
 <div class="container">
     <div class="row">
-        <h4 class="inline">Review&nbsp;</h4>
-        <h4><c:out value="${subject.name}" /></h4>
+        <h1>Review&nbsp;</h1>
+        <h1><c:out value="${subject.name}" /></h1>
     </div>
     <c:url var="CreateReview" value="/review/${subject.id}"/>
     <form:form modelAttribute="ReviewForm" class="col s12" method="post" action="${CreateReview}">
