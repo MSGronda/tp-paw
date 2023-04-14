@@ -15,6 +15,7 @@
         }
         .container{
             margin-left: 15%;
+            margin-right: 15%;
         }
         .row{
             display: flex;
@@ -34,20 +35,15 @@
     <form:form modelAttribute="ReviewForm" class="col s12" method="post" action="${CreateReview}">
         <div class="tags-removable">
             <form:errors path="email" cssClass="error" element="p"/>
-<%--            <form:label path="email">--%>
-            <form:input path="email" placeholder='<spring:message code="reviewForm.email.placeholder"/>'/>
-<%--                <sl-input name="email" placeholder="Email" value="${ReviewForm.email}"/>--%>
-<%--            </form:label>--%>
+<%--        <form:input path="email" placeholder='<spring:message code="reviewForm.email.placeholder"/>'/>--%>
+            <sl-input name="email" placeholder="Email" value="${ReviewForm.email}"></sl-input>
             <br />
 
             <form:errors path="text" cssClass="error" element="p"/>
-<%--            <form:label path="text">--%>
-<%--                <sl-textarea path="text" label="Write your review"/>--%>
-<%--            </form:label>--%>
-            <form:input path="text"/>
+<%--        <sl-textarea path="text" label="Write your review"/>--%>
+            <sl-textarea name="text" label="Write your review" value="${ReviewForm.text}"></sl-textarea>
             <br/>
             <br />
-<%--            <form class="custom-validity">--%>
                 <sl-radio-group label="Select an option" name="a" value="1" help-text="Were the topics in the subject complex to understand?">
                     <sl-radio-button value="1">Hard</sl-radio-button>   <%--TODO - como asignar valor del form? --%>
                     <sl-radio-button value="2">Easy</sl-radio-button>
@@ -59,7 +55,6 @@
                 </sl-radio-group>
                 <br />
                 <sl-button type="submit" variant="success">Submit</sl-button>
-<%--            </form>--%>
         </div>
     </form:form>
 </div>
