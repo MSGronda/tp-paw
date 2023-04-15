@@ -52,8 +52,9 @@
             <spring:message code="form.label" var="ButtonLabel"/>
             <spring:message code="form.easy.help" var="EasyHelp"/>
             <sl-radio-group label="${ButtonLabel}" value="${ReviewForm.easy}" name="easy" help-text="${EasyHelp}">
-                <sl-radio-button value="false"><spring:message code="form.hard"/></sl-radio-button>
-                <sl-radio-button value="true"><spring:message code="form.easy"/></sl-radio-button>
+                <sl-radio-button value="2"><spring:message code="form.hard"/></sl-radio-button>
+                <sl-radio-button value="1"><spring:message code="form.normal"/></sl-radio-button>
+                <sl-radio-button value="0"><spring:message code="form.easy"/></sl-radio-button>
             </sl-radio-group>
             <br />
 

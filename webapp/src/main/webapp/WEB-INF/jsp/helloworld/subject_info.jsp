@@ -63,8 +63,11 @@
                 </div>
                 <div>
                     <c:choose>
-                        <c:when test="${review.easy}">
-                            <sl-badge size="medium" variant="primary" >easy</sl-badge>
+                        <c:when test="${review.easy == 0}">
+                            <sl-badge size="medium" variant="success" >easy</sl-badge>
+                        </c:when>
+                        <c:when test="${review.easy == 1}">
+                            <sl-badge size="medium" variant="primary" >normal</sl-badge>
                         </c:when>
                         <c:otherwise>
                             <sl-badge size="medium" variant="danger">hard</sl-badge>

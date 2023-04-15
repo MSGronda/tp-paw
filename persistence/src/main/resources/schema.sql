@@ -37,7 +37,7 @@ CREATE TABLE IF NOT EXISTS reviews
     idSub       VARCHAR(100) NOT NULL REFERENCES subjects,
     score INTEGER,
 --     score       INTEGER NOT NULL,
-    easy BOOLEAN,
+    easy        INTEGER, -- 0-easy, 1-normal, 2-hard
     timeDemanding BOOLEAN,
     revText     TEXT NOT NULL
 );

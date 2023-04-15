@@ -34,7 +34,7 @@ public class ReviewServiceImpl implements ReviewService {
     }
 
     @Override
-    public Review create(Boolean easy, Boolean timeDemanding, String text,String subjectId,long userId, String userEmail) throws SQLException {
+    public Review create(Integer easy, Boolean timeDemanding, String text,String subjectId,long userId, String userEmail) throws SQLException {
         return reviewDao.create(easy, timeDemanding, text, subjectId, userId, userEmail);
     }
 }

@@ -13,7 +13,7 @@ public class ReviewForm {
     private String text;
 
     @NotNull
-    private Boolean easy;
+    private Integer easy;
 
     @NotNull
     private Boolean timeDemanding;
@@ -34,11 +34,11 @@ public class ReviewForm {
         this.text = text;
     }
 
-    public Boolean getEasy() {
+    public Integer getEasy() {
         return easy;
     }
 
-    public void setEasy(Boolean easy) {
+    public void setEasy(Integer easy) {
         this.easy = easy;
     }
 

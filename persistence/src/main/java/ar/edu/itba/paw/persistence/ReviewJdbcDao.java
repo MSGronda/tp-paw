@@ -54,7 +54,7 @@ public class ReviewJdbcDao implements ReviewDao {
     }
 
     @Override
-    public Review create(Boolean easy, Boolean timeDemanding, String text,String subjectId,long userId, String userEmail) {
+    public Review create(Integer easy, Boolean timeDemanding, String text,String subjectId,long userId, String userEmail) {
         Map<String, Object> data = new HashMap<>();
         data.put("easy", easy);
         data.put("timeDemanding", timeDemanding);
@@ -84,7 +84,7 @@ public class ReviewJdbcDao implements ReviewDao {
                 rs.getLong("idUser"),
                 rs.getString("userEmail"),
                 rs.getString("idSub"),
-                rs.getBoolean("easy"),
+                rs.getInt("easy"),
                 rs.getBoolean("timeDemanding"),
                 rs.getString("revText")
         );
