@@ -7,8 +7,6 @@
 <head>
     <title>${subject.name} - Review</title>
     <jsp:include page="../components/head_shared.jsp"/>
-    <!-- CSS  -->
-<%--    <link href="${pageContext.request.contextPath}/css/style.css" type="text/css" rel="stylesheet" media="screen,projection"/>--%>
     <style>
         .row{
             display: flex;
