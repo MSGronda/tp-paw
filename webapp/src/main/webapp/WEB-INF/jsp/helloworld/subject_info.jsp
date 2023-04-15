@@ -21,8 +21,11 @@
             Credits: <c:out value="${subject.credits}" />
             <br>
             Prerequisites:
+            <c:if test="${empty prereqNames}">
+                None
+            </c:if>
             <c:forEach var="prerec" items="${prereqNames}" varStatus="status">
-                <c:out value="${prerec}" />
+                <a href='<c:url value="/subject/${prerec.key}"/>'><c:out value="${prerec.value}"/></a>
                 <c:if test="${not status.last}">
                     ,
                 </c:if>
@@ -148,5 +151,11 @@
     .break-text {
         overflow-wrap: break-word;
         margin-bottom: 2%;
+    }
+
+    a{
+        color: #0369a1;
+        background-color: transparent;
+        text-decoration: none;
     }
 </style>

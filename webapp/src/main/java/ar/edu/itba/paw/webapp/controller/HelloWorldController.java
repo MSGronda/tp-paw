@@ -53,13 +53,13 @@ public class HelloWorldController {
 
         final List<Review> reviews = reviewService.getAllBySubject(id);
 
-        final List<String> prereqNames = subjectService.findPrerequisitesName(id);
+        final Map<String,String> prereqNames = subjectService.findPrerequisitesName(id);
 
         ModelAndView mav = new ModelAndView("helloworld/subject_info");
         mav.addObject("reviews", reviews);
         mav.addObject("professors", professors);
         mav.addObject("subject", subject);
-        mav.addObject("prereqNames", prereqNames);
+        mav.addObject("prereqNames", prereqNames.entrySet());
         return mav;
     }
 

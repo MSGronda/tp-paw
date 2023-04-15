@@ -34,7 +34,7 @@ public class SubjectServiceImpl implements SubjectService {
     }
 
     @Override
-    public List<String> findPrerequisitesName(String id){
+    public Map<String, String> findPrerequisitesName(String id){
         return subjectDao.findPrerequisitesName(id);
     }
 

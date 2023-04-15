@@ -15,7 +15,7 @@ public interface SubjectDao extends RWDao<String, Subject> {
 
     List<Subject> getAll();
 
-    List<String> findPrerequisitesName(String id);
+    Map<String, String> findPrerequisitesName(String id);
 
 
     Subject create(String id, String name, String depto, List<String> idCorrelativas, List<Long> idProfesores, List<Long> idCarreras, int creditos);
