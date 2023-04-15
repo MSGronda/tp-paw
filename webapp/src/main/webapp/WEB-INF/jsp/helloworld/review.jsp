@@ -44,24 +44,27 @@
             <br/>
 
             <form:errors path="text" cssClass="error" element="p"/>
-<%--        <sl-textarea path="text" label="Write your review"/>--%>
-            <sl-textarea name="text" label="Write your review" value="${ReviewForm.text}"></sl-textarea>
+            <spring:message code="reviewForm.text.label" var="TextLabel"/>
+            <sl-textarea name="text" label="${TextLabel}" value="${ReviewForm.text}"></sl-textarea>
             <br/>
 
             <form:errors path="easy" cssClass="error" element="p"/>
-            <sl-radio-group label="Select an option" value="${ReviewForm.easy}" name="easy" help-text="Were the topics in the subject complex to understand?">
-                <sl-radio-button value="false">Hard</sl-radio-button>
-                <sl-radio-button value="true">Easy</sl-radio-button>
+            <spring:message code="form.label" var="ButtonLabel"/>
+            <spring:message code="form.easy.help" var="EasyHelp"/>
+            <sl-radio-group label="${ButtonLabel}" value="${ReviewForm.easy}" name="easy" help-text="${EasyHelp}">
+                <sl-radio-button value="false"><spring:message code="form.hard"/></sl-radio-button>
+                <sl-radio-button value="true"><spring:message code="form.easy"/></sl-radio-button>
             </sl-radio-group>
             <br />
 
             <form:errors path="timeDemanding" cssClass="error" element="p"/>
-            <sl-radio-group name="timeDemanding" value="${ReviewForm.timeDemanding}" help-text="Were you required to put a lot of time every week to keep up with the topics?">
-                <sl-radio-button value="true">Time demanding</sl-radio-button>
-                <sl-radio-button value="false">Not very time demanding</sl-radio-button>
+            <spring:message code="form.timeDemanding.help" var="TimeDemandingHelp"/>
+            <sl-radio-group name="timeDemanding" value="${ReviewForm.timeDemanding}" help-text="${TimeDemandingHelp}">
+                <sl-radio-button value="true"><spring:message code="form.timeDemanding"/></sl-radio-button>
+                <sl-radio-button value="false"><spring:message code="form.NotTimeDemanding"/></sl-radio-button>
             </sl-radio-group>
             <br />
-            <sl-button type="submit" variant="success">Submit</sl-button>
+            <sl-button type="submit" variant="success"><spring:message code="form.submit"/></sl-button>
         </div>
     </form:form>
 </div>
