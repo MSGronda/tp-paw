@@ -34,6 +34,11 @@ public class SubjectServiceImpl implements SubjectService {
     }
 
     @Override
+    public Map<String, String> findPrerequisitesName(String id){
+        return subjectDao.findPrerequisitesName(id);
+    }
+
+    @Override
     public List<Subject> getByNameOrderBy(String name, String ob) {
         switch (ob){
             case "credits": return subjectDao.getByNameOrderedBy(name, orderByCredits);

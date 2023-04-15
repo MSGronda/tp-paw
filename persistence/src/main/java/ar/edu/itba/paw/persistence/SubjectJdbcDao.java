@@ -37,6 +37,19 @@ public class SubjectJdbcDao implements SubjectDao {
     }
 
 
+    @Override
+    public Map<String, String> findPrerequisitesName(String id){
+        List<String> prerequisites = findPrerequisites(id);
+
+        Map<String,String> prereqNames = new HashMap<>();
+
+        for (String prerequisite: prerequisites) {
+            Optional<Subject> maybeSubject = findById(prerequisite);
+            maybeSubject.ifPresent(subject -> prereqNames.put(subject.getId(), subject.getName()));
+        }
+
+        return prereqNames;
+    }
 
     @Override
     public Optional<Subject> findById(String id) {
