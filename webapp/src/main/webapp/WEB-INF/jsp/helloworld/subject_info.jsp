@@ -68,22 +68,22 @@
                 <div>
                     <c:choose>
                         <c:when test="${review.easy == 0}">
-                            <sl-badge size="medium" variant="success" >easy</sl-badge>
+                            <sl-badge size="medium" variant="success" ><spring:message code="form.easy" /></sl-badge>
                         </c:when>
                         <c:when test="${review.easy == 1}">
-                            <sl-badge size="medium" variant="primary" >normal</sl-badge>
+                            <sl-badge size="medium" variant="primary" ><spring:message code="form.normal" /></sl-badge>
                         </c:when>
                         <c:otherwise>
-                            <sl-badge size="medium" variant="danger">hard</sl-badge>
+                            <sl-badge size="medium" variant="danger"><spring:message code="form.hard" /></sl-badge>
                         </c:otherwise>
                     </c:choose>
 
                     <c:choose>
                         <c:when test="${review.timeDemanding}">
-                            <sl-badge size="medium" variant="warning">time demanding</sl-badge>
+                            <sl-badge size="medium" variant="warning"><spring:message code="form.timeDemanding" /></sl-badge>
                         </c:when>
                         <c:otherwise>
-                            <sl-badge size="medium" ariant="primary">not time demanding</sl-badge>
+                            <sl-badge size="medium" ariant="primary"><spring:message code="form.NotTimeDemanding" /></sl-badge>
                         </c:otherwise>
                     </c:choose>
                 </div>
