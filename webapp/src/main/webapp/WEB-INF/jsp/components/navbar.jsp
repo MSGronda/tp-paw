@@ -1,3 +1,5 @@
+<%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
+
 <style>
     .nav-bar {background-color: white; width: 100%; height: 55px; display: flex; justify-content: center; align-items:center}
     .nav-bar-area {width: 85%;  display: flex; justify-content: space-around; align-items:center}
@@ -12,18 +14,19 @@
         <img height="50px" src="${pageContext.request.contextPath}/img/uni.jpg" alt="UNI"/>
 
         <form id="input-form" class="form-area">
-            <sl-input id="input-text" class="search-bar" placeholder="Search">
+            <spring:message code="navbar.search.placeholder" var="SearchPlaceholder"/>
+            <sl-input id="input-text" class="search-bar" placeholder="${SearchPlaceholder}">
                 <sl-icon name="search" slot="prefix"></sl-icon>
             </sl-input>
         </form>
 
 
         <sl-button-group label="Alignment">
-            <sl-button variant="text">Courses</sl-button>
-            <sl-button variant="text">Subjects</sl-button>
-            <sl-button variant="text">Semester Builder</sl-button>
+            <sl-button variant="text"><spring:message code="navbar.degree" /></sl-button>
+            <sl-button variant="text"><spring:message code="navbar.subject" /></sl-button>
+            <sl-button variant="text"><spring:message code="navbar.builder" /></sl-button>
         </sl-button-group>
-        <sl-button variant="primary">Login</sl-button>
+        <sl-button variant="primary"><spring:message code="navbar.login" /></sl-button>
     </div>
 
 </div>
