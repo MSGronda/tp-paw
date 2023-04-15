@@ -1,7 +1,9 @@
 package ar.edu.itba.paw.webapp.controller;
 
 import ar.edu.itba.paw.models.Review;
+import ar.edu.itba.paw.models.Subject;
 import ar.edu.itba.paw.models.User;
+import ar.edu.itba.paw.services.SubjectService;
 import ar.edu.itba.paw.services.UserService;
 import ar.edu.itba.paw.webapp.exceptions.UserNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,17 +12,17 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Controller
 public class HelloWorldController {
     private final UserService userService;
+    private final SubjectService subjectService;
 
     @Autowired
-    public HelloWorldController(UserService userService) {
+    public HelloWorldController(UserService userService, SubjectService subjectService) {
         this.userService = userService;
+        this.subjectService = subjectService;
     }
 
     @RequestMapping("/helloworld")
@@ -43,6 +45,28 @@ public class HelloWorldController {
         reviews.add(rev3);
 
         mav.addObject("reviews", reviews);
+        return mav;
+    }
+
+    @RequestMapping("/search/{name}")
+    public ModelAndView search(@PathVariable String name, @RequestParam Map<String, String> params) {
+
+        final List<Subject> subjects;
+
+        if(params.containsKey("ob")) {
+            String ob = params.get("ob");
+            params.remove("ob");
+            subjects = subjectService.getByNameFiltered(name, params, ob);
+        }
+        else
+            subjects = subjectService.getByNameFiltered(name, params, "subname");
+
+
+
+        ModelAndView mav = new ModelAndView("helloworld/search");
+        mav.addObject("subjects", subjects);
+        mav.addObject("query", name);
+
         return mav;
     }
 
