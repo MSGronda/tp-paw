@@ -52,18 +52,21 @@
     <c:forEach var="degree" items="${degrees}">
       <sl-tab-panel class="degree-panel" name="degree-${degree.id}">
         <sl-tab-group class="semester-group">
-          <sl-tab slot="nav" panel="semester-1">1° Semester</sl-tab>
-          <sl-tab slot="nav" disabled="true">2° Semester</sl-tab>
-          <sl-tab slot="nav" disabled="true">3° Semester</sl-tab>
-          <sl-tab slot="nav" disabled="true">4° Semester</sl-tab>
+          <c:forEach var="semester" items="${degree.semesters}">
+            <sl-tab slot="nav" panel="semester-${semester}">
+              <c:out value="${semester.number}° Semester"/>
+            </sl-tab>
+          </c:forEach>
 
-          <sl-tab-panel class="semester-panel" name="semester-1">
-            <c:forEach var="subject" items="${subjects[degree]}">
-              <c:set var="subject" value="${subject}" scope="request"/>
-              <c:set var="subProfs" value="${profs[subject]}" scope="request"/>
-              <c:import url="../components/subject_card.jsp"/>
-            </c:forEach>
-          </sl-tab-panel>
+          <c:forEach var="semester" items="${degree.semesters}">
+            <sl-tab-panel class="semester-panel" name="semester-${semester}">
+              <c:forEach var="subjectId" items="${semester.subjectIds}">
+                <c:set var="subject" value="${subsById[subjectId]}" scope="request"/>
+                <c:set var="subProfs" value="${profsBySubId[subjectId]}" scope="request"/>
+                <c:import url="../components/subject_card.jsp"/>
+              </c:forEach>
+            </sl-tab-panel>
+          </c:forEach>
         </sl-tab-group>
       </sl-tab-panel>
     </c:forEach>

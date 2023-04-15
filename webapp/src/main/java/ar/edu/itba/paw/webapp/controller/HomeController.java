@@ -33,22 +33,21 @@ public class HomeController {
     @RequestMapping("/")
     public ModelAndView home() {
         final List<Degree> degrees = ds.getAll();
-        final Map<Degree, List<Subject>> subjects = new HashMap<>();
-        final Map<Subject, List<Professor>> profs = new HashMap<>();
+        final Map<String, Subject> subsById = new HashMap<>();
+        final Map<String, List<Professor>> profsBySubId = new HashMap<>();
 
         for(Degree deg : degrees) {
             final List<Subject> degSubs = ss.getAllByDegree(deg.getId());
-            subjects.put(deg, degSubs);
-
             for(Subject sub : degSubs) {
-                profs.put(sub, ps.getAllBySubject(sub.getId()));
+                profsBySubId.put(sub.getId(), ps.getAllBySubject(sub.getId()));
+                subsById.put(sub.getId(), sub);
             }
         }
 
         ModelAndView mav = new ModelAndView("home/index");
         mav.addObject("degrees", degrees);
-        mav.addObject("subjects", subjects);
-        mav.addObject("profs", profs);
+        mav.addObject("subsById", subsById);
+        mav.addObject("profsBySubId", profsBySubId);
 
         return mav;
     }
