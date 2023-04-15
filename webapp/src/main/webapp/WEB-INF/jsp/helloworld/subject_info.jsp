@@ -38,6 +38,19 @@
                 <c:if test="${not status.last}">;
                 </c:if>
             </c:forEach>
+            <br>
+            <spring:message code="subject.difficulty" />
+            <c:choose>
+                <c:when test="${difficulty == 0}">
+                    <sl-badge size="medium" variant="success" ><spring:message code="form.easy" /></sl-badge>
+                </c:when>
+                <c:when test="${difficulty == 1}">
+                    <sl-badge size="medium" variant="primary" ><spring:message code="form.normal" /></sl-badge>
+                </c:when>
+                <c:otherwise>
+                    <sl-badge size="medium" variant="danger"><spring:message code="form.hard" /></sl-badge>
+                </c:otherwise>
+            </c:choose>
         </sl-card>
     </div>
     <div>

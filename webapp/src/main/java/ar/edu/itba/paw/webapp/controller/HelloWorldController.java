@@ -53,10 +53,17 @@ public class HelloWorldController {
 
         final List<Review> reviews = reviewService.getAllBySubject(id);
 
+        final Optional<Integer> maybeDifficulty = reviewService.getDifficultyBySubject(id);
+        final Integer difficulty;
+        if(!maybeDifficulty.isPresent()){
+            difficulty = -1;
+        } else difficulty = maybeDifficulty.get();
+
         final Map<String,String> prereqNames = subjectService.findPrerequisitesName(id);
 
         ModelAndView mav = new ModelAndView("helloworld/subject_info");
         mav.addObject("reviews", reviews);
+        mav.addObject("difficulty", difficulty);
         mav.addObject("professors", professors);
         mav.addObject("subject", subject);
         mav.addObject("prereqNames", prereqNames.entrySet());
