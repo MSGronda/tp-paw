@@ -10,14 +10,6 @@
     <!-- CSS  -->
 <%--    <link href="${pageContext.request.contextPath}/css/style.css" type="text/css" rel="stylesheet" media="screen,projection"/>--%>
     <style>
-        .general-area {
-            background-color: #efefef
-        }
-        .container{
-            margin-left: 15%;
-            margin-right: 15%;
-            padding-bottom: 3rem;
-        }
         .row{
             display: flex;
         }
@@ -26,9 +18,9 @@
         }
     </style>
 </head>
-<body class="general-area">
+<body>
 <jsp:include page="../components/navbar.jsp"/>
-<div class="container">
+<main class="container-50">
     <div class="row">
         <h1><spring:message code="review.header" arguments="${subject.name}"/></h1>
     </div>
@@ -69,10 +61,8 @@
             <sl-button type="submit" variant="success"><spring:message code="form.submit"/></sl-button>
         </div>
     </form:form>
-</div>
+</main>
 <jsp:include page="../components/footer.jsp"/>
-<%-- INCLUDE FOR SHOELACE --%>
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.3.0/dist/themes/light.css" />
-<script type="module" src="https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.3.0/dist/shoelace-autoloader.js"></script>
+<jsp:include page="../components/body_scripts.jsp"/>
 </body>
 </html>

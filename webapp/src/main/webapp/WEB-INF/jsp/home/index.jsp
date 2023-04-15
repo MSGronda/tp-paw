@@ -28,19 +28,12 @@
           flex-direction: column;
           padding: 0;
       }
-
-      sl-tab-group.degree-group::part(base) {
-          width: min(max(800px, 70%), 100%);
-          align-self: center;
-          justify-self: center;
-          margin: 0 auto;
-      }
   </style>
 </head>
 <body>
 <jsp:include page="../components/navbar.jsp"/>
 <main>
-  <sl-tab-group class="degree-group">
+  <sl-tab-group class="degree-group container-70">
     <c:forEach var="degree" items="${degrees}">
       <sl-tab slot="nav" panel="degree-${degree.id}">
         <c:out value="${degree.name}"/>

@@ -16,14 +16,26 @@ html, body {
 body {
     display: flex;
     flex-direction: column;
+    background-color: #efefef;
 }
 
 main {
+    display: flex;
+    flex-direction: column;
     flex-grow: 1;
+}
+
+a {
+    text-decoration: none;
+    color: inherit;
 }
 
 .uni_back_color{
     background-color: #3a6dce;
+}
+
+sl-card.subject-card {
+    min-width: 100%;
 }
 
 sl-card.subject-card::part(base) {
@@ -42,3 +54,22 @@ sl-card.subject-card::part(body) {
     align-items: center;
     gap: 0.25rem;
 }
+
+.container-70 {
+    width: min(max(800px, 70%), 100%);
+    padding-left: 2rem;
+    padding-right: 2rem;
+    align-self: center;
+    justify-self: center;
+    margin: 0 auto;
+}
+
+.container-50 {
+    width: min(max(800px, 50%), 100%);
+    padding-left: 2rem;
+    padding-right: 2rem;
+    align-self: center;
+    justify-self: center;
+    margin: 0 auto;
+}
+
