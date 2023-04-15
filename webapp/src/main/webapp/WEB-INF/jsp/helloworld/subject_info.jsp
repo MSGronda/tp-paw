@@ -21,7 +21,7 @@
             Credits: <c:out value="${subject.credits}" />
             <br>
             Prerequisites:
-            <c:forEach var="prerec" items="${subject.prerequisites}" varStatus="status">
+            <c:forEach var="prerec" items="${prereqNames}" varStatus="status">
                 <c:out value="${prerec}" />
                 <c:if test="${not status.last}">
                     ,
@@ -38,7 +38,8 @@
         </sl-card>
     </div>
     <div>
-        <sl-button href="/review/${subject.id}" variant="primary" size="large" pill class="review_bt">Review Subject</sl-button>
+
+        <sl-button href='<c:url value="/review/${subject.id}"/>' variant="primary" size="large" pill class="review_bt">Review Subject</sl-button>
     </div>
     <br/>
     <hr/>

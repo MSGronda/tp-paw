@@ -10,6 +10,8 @@ public interface SubjectService extends BaseService<String, Subject> {
 
     Optional<Subject> findById(String id);
 
+    List<String> findPrerequisitesName(String id);
+
     List<Subject> getAll();
     List<Subject> getAllByDegree(Long idDegree);
     List<Subject> getByName(String name);
