@@ -19,10 +19,11 @@
     <org.postgresql.version>42.2.5</org.postgresql.version>
     <servlet-api.version>2.5</servlet-api.version>
     <jstl.version>1.2</jstl.version>
+    <flyway.version>9.8.1</flyway.version>
 
     <junit.version>4.13.2</junit.version>
     <mockito.version>2.25.1</mockito.version>
-    <hsqldb.version>2.3.1</hsqldb.version>
+    <hsqldb.version>2.5.1</hsqldb.version>
 
     <javax.validation-api.version>2.0.1.Final</javax.validation-api.version>
     <org.hibernate.validator>6.2.4.Final</org.hibernate.validator>
@@ -66,6 +67,11 @@
         <groupId>org.postgresql</groupId>
         <artifactId>postgresql</artifactId>
         <version>${org.postgresql.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.flywaydb</groupId>
+        <artifactId>flyway-core</artifactId>
+        <version>${flyway.version}</version>
       </dependency>
       <dependency>
         <groupId>junit</groupId>

@@ -1,9 +1,11 @@
 package ar.edu.itba.paw.persistence.config;
 
+import org.flywaydb.core.Flyway;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.DependsOn;
 import org.springframework.core.io.Resource;
 import org.springframework.jdbc.datasource.SimpleDriverDataSource;
 import org.springframework.jdbc.datasource.init.DataSourceInitializer;
@@ -15,12 +17,8 @@ import javax.sql.DataSource;
 @ComponentScan("ar.edu.itba.paw.persistence")
 @Configuration
 public class TestConfig {
-
     @Value("classpath:hsqldb.sql")
     private Resource hsqldbSql;
-
-    @Value("classpath:schema.sql")
-    private Resource schemaSql;
 
     @Bean
     public DataSource dataSource() {
@@ -31,6 +29,14 @@ public class TestConfig {
         ds.setPassword("");
 
         return ds;
+    }
+
+    @Bean(initMethod = "migrate")
+    @DependsOn("dataSourceInitializer")
+    public Flyway flyway() {
+        return Flyway.configure()
+                .dataSource(dataSource())
+                .load();
     }
 
     @Bean
@@ -45,7 +51,6 @@ public class TestConfig {
     private DatabasePopulator databasePopulator() {
         final ResourceDatabasePopulator populator = new ResourceDatabasePopulator();
         populator.addScript(hsqldbSql);
-        populator.addScript(schemaSql);
 
         return populator;
     }
