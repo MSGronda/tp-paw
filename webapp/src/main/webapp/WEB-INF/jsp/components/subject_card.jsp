@@ -1,11 +1,20 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ page contentType="text/html;charset=UTF-8" %>
 
+<style>
+  .no-decoration{
+    text-decoration: none;
+    color: inherit;
+  }
+</style>
+
 <!-- Params -->
 <c:set var="subject" value="${requestScope.subject}"/>
 <c:set var="subProfs" value="${requestScope.subProfs}"/>
 
-<sl-card class="card-header subject-card">
+
+<a href='<c:out value="/subject/${subject.id}"/>' class="no-decoration">
+<sl-card class="card-header subject-card" >
   <div slot="header">
     <b><c:out value="${subject.name}" /></b>
   </div>
@@ -28,3 +37,4 @@
     </sl-badge>
   </div>
 </sl-card>
+</a>
