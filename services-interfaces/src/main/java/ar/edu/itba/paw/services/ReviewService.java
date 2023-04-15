@@ -13,5 +13,7 @@ public interface ReviewService extends BaseService<Long, Review> {
 
     List<Review> getAllBySubject(String idsub);
 
+    public Optional<Integer> getDifficultyBySubject(String idsub);
+
     Review create(Integer easy, Boolean timeDemanding, String text,String subjectId,long userId, String userEmail) throws SQLException;
 }

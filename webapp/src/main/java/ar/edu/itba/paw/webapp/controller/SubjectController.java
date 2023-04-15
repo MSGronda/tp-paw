@@ -38,6 +38,12 @@ public class SubjectController {
         }
         final Subject subject = maybeSubject.get();
 
+        final Optional<Integer> maybeDifficulty = reviewService.getDifficultyBySubject(id);
+        final Integer difficulty;
+        if(!maybeDifficulty.isPresent()){
+            difficulty = -1;
+        } else difficulty = maybeDifficulty.get();
+
         final List<Professor> professors = professorService.getAllBySubject(id);
 
         final List<Review> reviews = reviewService.getAllBySubject(id);
@@ -49,6 +55,8 @@ public class SubjectController {
         mav.addObject("professors", professors);
         mav.addObject("subject", subject);
         mav.addObject("prereqNames", prereqNames.entrySet());
+        mav.addObject("difficulty", difficulty);
         return mav;
     }
+
 }

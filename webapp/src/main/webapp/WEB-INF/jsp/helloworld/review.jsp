@@ -5,7 +5,7 @@
 
 <html>
 <head>
-    <title>Subject Review</title>
+    <title>${subject.name} - Review</title>
     <jsp:include page="../components/head_shared.jsp"/>
     <!-- CSS  -->
 <%--    <link href="${pageContext.request.contextPath}/css/style.css" type="text/css" rel="stylesheet" media="screen,projection"/>--%>
@@ -16,6 +16,7 @@
         .container{
             margin-left: 15%;
             margin-right: 15%;
+            padding-bottom: 3rem;
         }
         .row{
             display: flex;
@@ -69,6 +70,7 @@
         </div>
     </form:form>
 </div>
+<jsp:include page="../components/footer.jsp"/>
 <%-- INCLUDE FOR SHOELACE --%>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.3.0/dist/themes/light.css" />
 <script type="module" src="https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.3.0/dist/shoelace-autoloader.js"></script>

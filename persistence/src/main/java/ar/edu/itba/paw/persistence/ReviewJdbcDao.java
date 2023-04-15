@@ -34,18 +34,23 @@ public class ReviewJdbcDao implements ReviewDao {
 
     @Override
     public Optional<Review> findById(Long id) {
-        return jdbcTemplate.query("SELECT * FROM " +TABLE_REVIEWS+ " WHERE id = ?",ROW_MAPPER,id)
+        return jdbcTemplate.query("SELECT * FROM " + TABLE_REVIEWS + " WHERE id = ?",ROW_MAPPER,id)
                 .stream().findFirst();
     }
 
     @Override
-    public List<Review> getAllBySubject(String idsub){
+    public List<Review> getAllBySubject(String idsub) {
         return jdbcTemplate.query("SELECT * FROM " + TABLE_REVIEWS + " WHERE idsub = ?", ROW_MAPPER, idsub );
+    }
+    @Override
+    public Optional<Integer> getDifficultyBySubject(String idsub) {
+        return jdbcTemplate.query("SELECT easy FROM " + TABLE_REVIEWS + " WHERE idSub = ? GROUP BY easy ORDER BY COUNT(*) desc", ReviewJdbcDao::difficultyRowMapper, idsub)
+                .stream().findFirst();
     }
 
     @Override
     public List<Review> getAll() {
-        return jdbcTemplate.query("SELECT * FROM "+TABLE_REVIEWS, ROW_MAPPER);
+        return jdbcTemplate.query("SELECT * FROM " + TABLE_REVIEWS, ROW_MAPPER);
     }
 
     @Override
@@ -88,5 +93,8 @@ public class ReviewJdbcDao implements ReviewDao {
                 rs.getBoolean("timeDemanding"),
                 rs.getString("revText")
         );
+    }
+    private static Integer difficultyRowMapper(ResultSet rs, int rowNum) throws SQLException {
+        return rs.getInt("easy");
     }
 }
