@@ -1,5 +1,6 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jstl/core_rt"%>
+<%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
 
 <html>
 <head>
@@ -16,13 +17,13 @@
             <c:out value="${subject.name}"/>
         </h1>
         <sl-card class="card-basic">
-            Department: <c:out value="${subject.department}" />
+            <spring:message code="subject.department" /> <c:out value="${subject.department}" />
             <br>
-            Credits: <c:out value="${subject.credits}" />
+            <spring:message code="subject.credits" /> <c:out value="${subject.credits}" />
             <br>
-            Prerequisites:
+            <spring:message code="subject.prerequisites" />
             <c:if test="${empty prereqNames}">
-                None
+                <spring:message code="subject.prerequisites?" />
             </c:if>
             <c:forEach var="prerec" items="${prereqNames}" varStatus="status">
                 <a href='<c:url value="/subject/${prerec.key}"/>'><c:out value="${prerec.value}"/></a>
@@ -31,30 +32,29 @@
                 </c:if>
             </c:forEach>
             <br>
-            Professors:
+            <spring:message code="subject.professors" />
             <c:forEach var="proffesor" items="${professors}" varStatus="status">
                 <c:out value="${proffesor.name}" />
-                <c:if test="${not status.last}">
-                    ;
+                <c:if test="${not status.last}">;
                 </c:if>
             </c:forEach>
         </sl-card>
     </div>
     <div>
 
-        <sl-button href='<c:url value="/review/${subject.id}"/>' variant="primary" size="large" pill class="review_bt">Review Subject</sl-button>
+        <sl-button href='<c:url value="/review/${subject.id}"/>' variant="primary" size="large" pill class="review_bt"><spring:message code="subject.review" /></sl-button>
     </div>
     <br/>
     <hr/>
     <div class="filter">
         <sl-tooltip content="Open viewing sorts" placement="bottom">
-            <sl-button variant="text" size="large"><sl-icon slot="suffix" name="sort-down"></sl-icon> Sort</sl-button>
+            <sl-button variant="text" size="large"><sl-icon slot="suffix" name="sort-down"></sl-icon><spring:message code="subject.sort" /></sl-button>
         </sl-tooltip>
     </div>
 
     <div class="review-column">
         <c:if test="${empty reviews}">
-            <h3>No Reviews Yet!</h3>
+            <h3><spring:message code="subject.noreviews" /></h3>
         </c:if>
         <c:forEach var="review" items="${reviews}">
             <sl-card class="card-header">
