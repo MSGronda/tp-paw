@@ -39,7 +39,12 @@ public class ReviewServiceImpl implements ReviewService {
     }
 
     @Override
-    public Review create(Integer easy, Boolean timeDemanding, String text,String subjectId,long userId, String userEmail) throws SQLException {
+    public Optional<Integer> getTimeBySubject(String idsub) {
+        return reviewDao.getTimeBySubject(idsub);
+    }
+
+    @Override
+    public Review create(Integer easy, Integer timeDemanding, String text,String subjectId,long userId, String userEmail) throws SQLException {
         return reviewDao.create(easy, timeDemanding, text, subjectId, userId, userEmail);
     }
 }

@@ -6,7 +6,7 @@ public class Review {
     private final String userEmail;
     private final String subjectId;
     private final Integer easy;
-    private final Boolean timeDemanding;
+    private final Integer timeDemanding;
     private final String text;
 
     // Etc.
@@ -14,7 +14,7 @@ public class Review {
 
 
 
-    public Review(long id, long userId, String userEmail, String subjectId, Integer easy, Boolean timeDemanding, String text) {
+    public Review(long id, long userId, String userEmail, String subjectId, Integer easy, Integer timeDemanding, String text) {
         this.id = id;
         this.userId = userId;
         this.userEmail = userEmail;
@@ -47,7 +47,7 @@ public class Review {
     return easy;
     }
 
-    public Boolean getTimeDemanding(){
+    public Integer getTimeDemanding(){
         return timeDemanding;
     }
 }

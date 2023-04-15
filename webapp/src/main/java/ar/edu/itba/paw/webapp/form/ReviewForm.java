@@ -16,7 +16,7 @@ public class ReviewForm {
     private Integer easy;
 
     @NotNull
-    private Boolean timeDemanding;
+    private Integer timeDemanding;
 
     public String getEmail() {
         return email;
@@ -42,11 +42,11 @@ public class ReviewForm {
         this.easy = easy;
     }
 
-    public Boolean getTimeDemanding() {
+    public Integer getTimeDemanding() {
         return timeDemanding;
     }
 
-    public void setTimeDemanding(Boolean timeDemanding) {
+    public void setTimeDemanding(Integer timeDemanding) {
         this.timeDemanding = timeDemanding;
     }
 

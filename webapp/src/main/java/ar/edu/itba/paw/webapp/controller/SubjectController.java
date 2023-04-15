@@ -44,6 +44,12 @@ public class SubjectController {
             difficulty = -1;
         } else difficulty = maybeDifficulty.get();
 
+        final Optional<Integer> maybeTime = reviewService.getTimeBySubject(id);
+        final Integer time;
+        if(!maybeTime.isPresent()) {
+            time = -1;
+        } else time = maybeTime.get();
+
         final List<Professor> professors = professorService.getAllBySubject(id);
 
         final List<Review> reviews = reviewService.getAllBySubject(id);
@@ -53,6 +59,7 @@ public class SubjectController {
         ModelAndView mav = new ModelAndView("helloworld/subject_info");
         mav.addObject("reviews", reviews);
         mav.addObject("professors", professors);
+        mav.addObject("time", time);
         mav.addObject("subject", subject);
         mav.addObject("prereqNames", prereqNames.entrySet());
         mav.addObject("difficulty", difficulty);

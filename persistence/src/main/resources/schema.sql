@@ -38,7 +38,7 @@ CREATE TABLE IF NOT EXISTS reviews
     score INTEGER,
 --     score       INTEGER NOT NULL,
     easy        INTEGER, -- 0-easy, 1-normal, 2-hard
-    timeDemanding BOOLEAN,
+    timeDemanding INTEGER, -- 0-no 1-yes
     revText     TEXT NOT NULL
 );
 

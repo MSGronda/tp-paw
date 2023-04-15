@@ -44,7 +44,12 @@ public class ReviewJdbcDao implements ReviewDao {
     }
     @Override
     public Optional<Integer> getDifficultyBySubject(String idsub) {
-        return jdbcTemplate.query("SELECT easy FROM " + TABLE_REVIEWS + " WHERE idSub = ? GROUP BY easy ORDER BY COUNT(*) desc", ReviewJdbcDao::difficultyRowMapper, idsub)
+        return jdbcTemplate.query("SELECT easy FROM " + TABLE_REVIEWS + " WHERE idSub = ? GROUP BY easy ORDER BY COUNT(*) desc, easy desc", ReviewJdbcDao::difficultyRowMapper, idsub)
+                .stream().findFirst();
+    }
+    @Override
+    public Optional<Integer> getTimeBySubject(String idsub) {
+        return jdbcTemplate.query("SELECT timedemanding FROM " + TABLE_REVIEWS + " WHERE idSub = ? GROUP BY timedemanding ORDER BY COUNT(*) desc, timedemanding desc", ReviewJdbcDao::timeRowMapper, idsub)
                 .stream().findFirst();
     }
 
@@ -59,7 +64,7 @@ public class ReviewJdbcDao implements ReviewDao {
     }
 
     @Override
-    public Review create(Integer easy, Boolean timeDemanding, String text,String subjectId,long userId, String userEmail) {
+    public Review create(Integer easy, Integer timeDemanding, String text,String subjectId,long userId, String userEmail) {
         Map<String, Object> data = new HashMap<>();
         data.put("easy", easy);
         data.put("timeDemanding", timeDemanding);
@@ -90,11 +95,14 @@ public class ReviewJdbcDao implements ReviewDao {
                 rs.getString("userEmail"),
                 rs.getString("idSub"),
                 rs.getInt("easy"),
-                rs.getBoolean("timeDemanding"),
+                rs.getInt("timeDemanding"),
                 rs.getString("revText")
         );
     }
     private static Integer difficultyRowMapper(ResultSet rs, int rowNum) throws SQLException {
         return rs.getInt("easy");
+    }
+    private static Integer timeRowMapper(ResultSet rs, int rowNum) throws SQLException {
+        return rs.getInt("timedemanding");
     }
 }

@@ -21,15 +21,6 @@
           justify-self: center;
       }
 
-      .bread_tag {
-          margin-top: 2%;
-          margin-left: 10%;
-      }
-
-      .title {
-          margin-left: 10%;
-      }
-
       .filter {
           display: flex;
           flex-direction: row-reverse;
@@ -127,6 +118,19 @@
           <sl-badge size="medium" variant="neutral"><spring:message code="form.noDif"/></sl-badge>
         </c:otherwise>
       </c:choose>
+      <sl-divider></sl-divider>
+      <spring:message code="subject.time" />
+      <c:choose>
+        <c:when test="${time == 0}">
+          <sl-badge size="medium" ariant="primary"><spring:message code="form.NotTimeDemanding" /></sl-badge>
+        </c:when>
+        <c:when test="${time == 1}">
+          <sl-badge size="medium" variant="warning"><spring:message code="form.timeDemanding" /></sl-badge>
+        </c:when>
+        <c:otherwise>
+          <sl-badge size="medium" variant="neutral"><spring:message code="form.noDif" /></sl-badge>
+        </c:otherwise>
+      </c:choose>
     </sl-card>
   </div>
   <sl-button href='<c:url value="/review/${subject.id}"/>' variant="primary" size="large" pill class="review_bt">
@@ -168,7 +172,7 @@
           </c:choose>
 
           <c:choose>
-            <c:when test="${review.timeDemanding}">
+            <c:when test="${review.timeDemanding == 1}">
               <sl-badge size="medium" variant="warning"><spring:message code="form.timeDemanding"/></sl-badge>
             </c:when>
             <c:otherwise>

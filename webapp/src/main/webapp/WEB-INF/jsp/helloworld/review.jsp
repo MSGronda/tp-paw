@@ -54,8 +54,8 @@
             <form:errors path="timeDemanding" cssClass="error" element="p"/>
             <spring:message code="form.timeDemanding.help" var="TimeDemandingHelp"/>
             <sl-radio-group name="timeDemanding" value="${ReviewForm.timeDemanding}" help-text="${TimeDemandingHelp}">
-                <sl-radio-button value="true"><spring:message code="form.timeDemanding"/></sl-radio-button>
-                <sl-radio-button value="false"><spring:message code="form.NotTimeDemanding"/></sl-radio-button>
+                <sl-radio-button value="1"><spring:message code="form.timeDemanding"/></sl-radio-button>
+                    <sl-radio-button value="0"><spring:message code="form.NotTimeDemanding"/></sl-radio-button>
             </sl-radio-group>
             <br />
             <sl-button type="submit" variant="success"><spring:message code="form.submit"/></sl-button>
