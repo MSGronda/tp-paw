@@ -12,9 +12,10 @@
           flex: 1 0 auto;
           display: flex;
           flex-direction: column;
+          padding: 8px;
       }
 
-      sl-tab-panel.semester-container::part(base) {
+      sl-tab-panel.semester-panel::part(base) {
           display: grid;
           grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
 
@@ -22,22 +23,24 @@
           gap: 1rem;
       }
 
-      sl-tab-panel.degree-container::part(base) {
+      sl-tab-panel.degree-panel::part(base) {
           display: flex;
           flex-direction: column;
           padding: 0;
       }
 
-      sl-tab-group::part(nav) {
-          background-color: #fcfcfc;
-          border-top: 1px solid #e5e5e5;
+      sl-tab-group.degree-group::part(base) {
+          width: min(max(800px, 70%), 100%);
+          align-self: center;
+          justify-self: center;
+          margin: 0 auto;
       }
   </style>
 </head>
 <body>
 <jsp:include page="../components/navbar.jsp"/>
 <main>
-  <sl-tab-group>
+  <sl-tab-group class="degree-group">
     <c:forEach var="degree" items="${degrees}">
       <sl-tab slot="nav" panel="degree-${degree.id}">
         <c:out value="${degree.name}"/>
@@ -54,14 +57,14 @@
     </sl-tab>
 
     <c:forEach var="degree" items="${degrees}">
-      <sl-tab-panel class="degree-container" name="degree-${degree.id}">
-        <sl-tab-group>
+      <sl-tab-panel class="degree-panel" name="degree-${degree.id}">
+        <sl-tab-group class="semester-group">
           <sl-tab slot="nav" panel="semester-1">1° Semester</sl-tab>
           <sl-tab slot="nav" disabled="true">2° Semester</sl-tab>
           <sl-tab slot="nav" disabled="true">3° Semester</sl-tab>
           <sl-tab slot="nav" disabled="true">4° Semester</sl-tab>
 
-          <sl-tab-panel class="semester-container" name="semester-1">
+          <sl-tab-panel class="semester-panel" name="semester-1">
             <c:forEach var="subject" items="${subjects[degree]}">
               <c:set var="subject" value="${subject}" scope="request"/>
               <c:set var="subProfs" value="${profs[subject]}" scope="request"/>

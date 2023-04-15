@@ -40,6 +40,5 @@ sl-card.subject-card::part(body) {
     flex-wrap: wrap;
     justify-content: flex-start;
     align-items: center;
-    align-content: center;
     gap: 0.25rem;
 }
