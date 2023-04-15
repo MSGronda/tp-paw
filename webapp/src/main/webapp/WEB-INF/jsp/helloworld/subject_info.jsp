@@ -4,8 +4,79 @@
 
 <html>
 <head>
-    <title>Title</title>
+    <title>${subject.name}</title>
     <jsp:include page="../components/head_shared.jsp"/>
+    <style>
+        .general-area{
+            background-color: #f3f3f3;
+        }
+        .card-basic {
+            width: 100%;
+        }
+        .info {
+            margin-left: 10%;
+            margin-bottom: 2%;
+            width: 80%;
+        }
+        .review_bt {
+            width: 20%;
+            margin-left: 40%;
+        }
+        .bread_tag {
+            margin-top:2%;
+            margin-left: 10%;
+        }
+        .title {
+            margin-left: 10%;
+        }
+        .filter {
+            display: flex;
+            flex-direction: row-reverse;
+            margin-right: 20%;
+        }
+        h1 {
+            font-size: 44px;
+            font-weight: bold;
+        }
+
+        .review-column{
+            display: flex;
+            flex-direction: column;
+            justify-content: space-around;
+            align-items: center;
+            width: 100%;
+            padding-bottom: 3rem;
+
+        }
+
+        .card-header {
+            width: 45%;
+            margin: 15px;
+            /*max-width: 2000px;*/
+        }
+
+        .card-header [slot='header'] {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .card-header h3 {
+            margin: 0;
+        }
+
+        .break-text {
+            overflow-wrap: break-word;
+            margin-bottom: 2%;
+        }
+
+        a{
+            color: #0369a1;
+            background-color: transparent;
+            text-decoration: none;
+        }
+    </style>
+
 </head>
 <body>
 
@@ -38,7 +109,7 @@
                 <c:if test="${not status.last}">;
                 </c:if>
             </c:forEach>
-            <br>
+            <sl-divider></sl-divider>
             <spring:message code="subject.difficulty" />
             <c:choose>
                 <c:when test="${difficulty == 0}">
@@ -47,8 +118,11 @@
                 <c:when test="${difficulty == 1}">
                     <sl-badge size="medium" variant="primary" ><spring:message code="form.normal" /></sl-badge>
                 </c:when>
-                <c:otherwise>
+                <c:when test="${difficulty == 2}">
                     <sl-badge size="medium" variant="danger"><spring:message code="form.hard" /></sl-badge>
+                </c:when>
+                <c:otherwise>
+                    <sl-badge size="medium" variant="neutral"><spring:message code="form.noDif" /></sl-badge>
                 </c:otherwise>
             </c:choose>
         </sl-card>
@@ -105,77 +179,9 @@
     </div>
 
 </div>
+<jsp:include page="../components/footer.jsp"/>
 <%-- SCRIPT FOR SHOELACE --%>
 <script type="module" src="https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.3.0/dist/shoelace-autoloader.js"></script>
 </body>
 </html>
 
-<style>
-    .general-area{
-        background-color: #f3f3f3;
-    }
-    .card-basic {
-        width: 100%;
-    }
-    .info {
-        margin-left: 10%;
-        margin-bottom: 2%;
-        width: 80%;
-    }
-    .review_bt {
-        width: 20%;
-        margin-left: 40%;
-    }
-    .bread_tag {
-        margin-top:2%;
-        margin-left: 10%;
-    }
-    .title {
-        margin-left: 10%;
-    }
-    .filter {
-        display: flex;
-        flex-direction: row-reverse;
-        margin-right: 20%;
-    }
-    h1 {
-        font-size: 44px;
-        font-weight: bold;
-    }
-
-    .review-column{
-        display: flex;
-        flex-direction: column;
-        justify-content: space-around;
-        align-items: center;
-        width: 100%;
-
-    }
-
-    .card-header {
-        width: 45%;
-        margin: 15px;
-        /*max-width: 2000px;*/
-    }
-
-    .card-header [slot='header'] {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-    }
-
-    .card-header h3 {
-        margin: 0;
-    }
-
-    .break-text {
-        overflow-wrap: break-word;
-        margin-bottom: 2%;
-    }
-
-    a{
-        color: #0369a1;
-        background-color: transparent;
-        text-decoration: none;
-    }
-</style>
