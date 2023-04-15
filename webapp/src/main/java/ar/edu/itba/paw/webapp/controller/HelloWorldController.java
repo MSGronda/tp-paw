@@ -76,11 +76,17 @@ public class HelloWorldController {
         else
             subjects = subjectService.getByNameFiltered(name, params, "subname");
 
+        final Map<Subject, List<Professor>> profs = new HashMap<>();
+
+        for(Subject sub : subjects) {
+            profs.put(sub, professorService.getAllBySubject(sub.getId()));
+        }
 
 
         ModelAndView mav = new ModelAndView("helloworld/search");
         mav.addObject("subjects", subjects);
         mav.addObject("query", name);
+        mav.addObject("profs", profs);
 
         return mav;
     }

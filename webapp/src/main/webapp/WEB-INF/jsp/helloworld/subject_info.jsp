@@ -11,16 +11,16 @@
 
 <jsp:include page="../components/navbar.jsp"/>
 
-<div>
+<div class="general-area">
     <div class="info">
         <h1>
             <c:out value="${subject.name}"/>
         </h1>
         <sl-card class="card-basic">
             <spring:message code="subject.department" /> <c:out value="${subject.department}" />
-            <br>
+            <sl-divider></sl-divider>
             <spring:message code="subject.credits" /> <c:out value="${subject.credits}" />
-            <br>
+            <sl-divider></sl-divider>
             <spring:message code="subject.prerequisites" />
             <c:if test="${empty prereqNames}">
                 <spring:message code="subject.prerequisites?" />
@@ -31,7 +31,7 @@
                     ,
                 </c:if>
             </c:forEach>
-            <br>
+            <sl-divider></sl-divider>
             <spring:message code="subject.professors" />
             <c:forEach var="proffesor" items="${professors}" varStatus="status">
                 <c:out value="${proffesor.name}" />
@@ -90,6 +90,7 @@
             </sl-card>
         </c:forEach>
     </div>
+
 </div>
 <%-- SCRIPT FOR SHOELACE --%>
 <script type="module" src="https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.3.0/dist/shoelace-autoloader.js"></script>
@@ -97,6 +98,9 @@
 </html>
 
 <style>
+    .general-area{
+        background-color: #f3f3f3;
+    }
     .card-basic {
         width: 100%;
     }

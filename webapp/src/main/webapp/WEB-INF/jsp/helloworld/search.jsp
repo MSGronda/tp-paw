@@ -7,9 +7,12 @@
     <jsp:include page="../components/head_shared.jsp"/>
     <style>
         .search-area {
-            min-height: 70%; width: 100%;
-            display: grid;   grid-template-columns: auto auto auto; column-gap: 20px; row-gap: 20px;
-            background-color: #f3f3f3; padding-top: 1rem;padding-bottom: 3rem;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+
+            padding: 1.25rem;
+            gap: 1rem;
+            background-color: #f3f3f3;
         }
         .filter-area {
             width: 100%;
@@ -17,15 +20,16 @@
             background-color: white; padding-top: 1rem;
         }
         .filter {
-            width: 75%;
+            width: 70%;
         }
         .filter-section {
-            display: flex;     /* TODO CHANGE ME!! */
-            justify-content: space-around;
+            display: none;
+            justify-content: center;
         }
         .filter-option {
             display: flex; flex-direction: column; align-items: center;
             width: 20%;
+            padding-left: 1rem; padding-right: 1rem;
         }
         .remove-filter {
             padding-top: .5rem;
@@ -36,9 +40,8 @@
         sl-button.filter-button::part(base):hover {
             background-color: white;
         }
-
-        .test-card {
-            max-width: 25rem;
+        .vert-divider {
+            height: 9.5rem;
         }
     </style>
 </head>
@@ -67,6 +70,7 @@
                     </sl-button-group>
                 </div>
 
+                <sl-divider class="vert-divider" vertical></sl-divider>
 
                 <div class="filter-option">
                     <h5>Credits</h5>
@@ -88,6 +92,7 @@
                         </section>
                     </sl-button-group>
 
+
                     <sl-button-group>
                         <sl-button class="filter-button" size="small" variant="default" id="max-credit-filter" pill>More than 6 credits</sl-button>
                         <section id="remove-max-credits-param-section">
@@ -97,6 +102,9 @@
                         </section>
                     </sl-button-group>
                 </div>
+
+                <sl-divider class="vert-divider" vertical></sl-divider>
+
                 <div class="filter-option">
                     <h5>Sort By</h5>
                     <sl-button class="filter-button" size="small" variant="default" id="order-by-name">A-Z</sl-button>
@@ -114,13 +122,9 @@
     <div class="search-area">
 
         <c:forEach var="subject" items="${subjects}">
-            <sl-card class="card-basic test-card">
-                <div slot="header">
-                        ${subject.name}
-                </div>
-                <p>Department<sl-divider vertical></sl-divider> ${subject.department}</p>
-                <p>Credits <sl-divider vertical></sl-divider> ${subject.credits}</p>
-            </sl-card>
+            <c:set var="subject" value="${subject}" scope="request"/>
+            <c:set var="subProfs" value="${profs[subject]}" scope="request"/>
+            <c:import url="../components/subject_card.jsp"/>
         </c:forEach>
     </div>
 
