@@ -2,8 +2,11 @@ CREATE TABLE IF NOT EXISTS users
 (
     id          SERIAL PRIMARY KEY,
     email       VARCHAR(100) NOT NULL UNIQUE,
-    pass        VARCHAR(100) NOT NULL,
-    username    VARCHAR(100) NOT NULL
+    pass        VARCHAR(100),
+--     pass        VARCHAR(100) NOT NULL,
+
+    username    VARCHAR(100)
+--         username    VARCHAR(100) NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS professors
@@ -29,9 +32,13 @@ CREATE TABLE IF NOT EXISTS degrees
 CREATE TABLE IF NOT EXISTS reviews
 (
     id          SERIAL PRIMARY KEY,
-    idUser      INTEGER NOT NULL REFERENCES users,
+    idUser      INTEGER NOT NULL REFERENCES users(id),
+    userEmail   VARCHAR(100) NOT NULL references users(email),
     idSub       VARCHAR(100) NOT NULL REFERENCES subjects,
-    score       INTEGER NOT NULL,
+    score INTEGER,
+--     score       INTEGER NOT NULL,
+    easy BOOLEAN,
+    timeDemanding BOOLEAN,
     revText     TEXT NOT NULL
 );
 

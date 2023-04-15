@@ -3,79 +3,42 @@
 
 <html>
 <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0"/>
-
     <title>Title</title>
-    <link rel="icon" type="image/x-icon" href="${pageContext.request.contextPath}/img/favicon.ico">
-
-    <!-- CSS  -->
-    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-    <link href="${pageContext.request.contextPath}/css/materialize.min.css" type="text/css" rel="stylesheet" media="screen,projection"/>
-    <link href="${pageContext.request.contextPath}/css/style.css" type="text/css" rel="stylesheet" media="screen,projection"/>
-    <link href="${pageContext.request.contextPath}/css/main.css" type="text/css" rel="stylesheet" media="screen,projection"/>
-
-<%-- INCLUDE FOR SHOELACE --%>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.3.0/dist/themes/light.css" />
-
-    <style>
-        .general-area {background-color: #efefef}
-
-        .probando{
-            display: flex;
-            flex-direction: column;
-            justify-content: space-around;
-            align-items: center;
-            width: 100%;
-
-        }
-
-        .card-header {
-            width: 45%;
-            margin: 15px;
-            /*max-width: 2000px;*/
-        }
-
-        .card-header [slot='header'] {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-        }
-
-        .card-header h3 {
-            margin: 0;
-        }
-
-        .break-text {
-            overflow-wrap: break-word;
-        }
-    </style>
+    <jsp:include page="../components/head_shared.jsp"/>
 </head>
 <body>
 
 <jsp:include page="../components/navbar.jsp"/>
 
 <div>
-    <div class="bread_tag">
-        <sl-breadcrumb>
-            <sl-breadcrumb-item>
-                <sl-icon slot="prefix" name="house"></sl-icon>
-                Home
-            </sl-breadcrumb-item>
-            <sl-breadcrumb-item>Clothing</sl-breadcrumb-item>
-            <sl-breadcrumb-item>Shirts</sl-breadcrumb-item>
-        </sl-breadcrumb>
-    </div>
-    <div class="title"  >
-        <h1>Algebra 72.33</h1>
-    </div>
     <div class="info">
+        <h1>
+            <c:out value="${subject.name}"/>
+        </h1>
         <sl-card class="card-basic">
-            This is just a basic card. No image, no header, and no footer. Just your content.
+            Department: <c:out value="${subject.department}" />
+            <br>
+            Credits: <c:out value="${subject.credits}" />
+            <br>
+            Prerequisites:
+            <c:forEach var="prerec" items="${subject.prerequisites}" varStatus="status">
+                <c:out value="${prerec}" />
+                <c:if test="${not status.last}">
+                    ,
+                </c:if>
+            </c:forEach>
+            <br>
+            Professors:
+            <c:forEach var="proffesor" items="${professors}" varStatus="status">
+                <c:out value="${proffesor.name}" />
+                <c:if test="${not status.last}">
+                    ;
+                </c:if>
+            </c:forEach>
         </sl-card>
     </div>
     <div>
-        <sl-button href="" variant="primary" size="large" pill class="review_bt">Review Subject</sl-button>
+        <sl-button href="/review/${subject.id}" variant="primary" size="large" pill class="review_bt">Review Subject</sl-button>
     </div>
     <br/>
     <hr/>
@@ -85,23 +48,42 @@
         </sl-tooltip>
     </div>
 
-    <div class="probando">
+    <div class="review-column">
+        <c:if test="${empty reviews}">
+            <h3>No Reviews Yet!</h3>
+        </c:if>
         <c:forEach var="review" items="${reviews}">
             <sl-card class="card-header">
                 <div slot="header">
-                    <c:out value="${review.title}"/>
+                    <c:out value="${review.userEmail}"/>
                 </div>
 
                 <div class="break-text">
                     <c:out value="${review.text}"/>
                 </div>
+                <div>
+                    <c:choose>
+                        <c:when test="${review.easy}">
+                            <sl-badge size="medium" variant="primary" >easy</sl-badge>
+                        </c:when>
+                        <c:otherwise>
+                            <sl-badge size="medium" variant="danger">hard</sl-badge>
+                        </c:otherwise>
+                    </c:choose>
+
+                    <c:choose>
+                        <c:when test="${review.timeDemanding}">
+                            <sl-badge size="medium" variant="warning">time demanding</sl-badge>
+                        </c:when>
+                        <c:otherwise>
+                            <sl-badge size="medium" ariant="primary">not time demanding</sl-badge>
+                        </c:otherwise>
+                    </c:choose>
+                </div>
             </sl-card>
         </c:forEach>
     </div>
 </div>
-
-
-
 <%-- SCRIPT FOR SHOELACE --%>
 <script type="module" src="https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.3.0/dist/shoelace-autoloader.js"></script>
 </body>
@@ -109,11 +91,12 @@
 
 <style>
     .card-basic {
-        max-width: 70%;
+        width: 100%;
     }
     .info {
         margin-left: 10%;
         margin-bottom: 2%;
+        width: 80%;
     }
     .review_bt {
         width: 20%;
@@ -125,7 +108,6 @@
     }
     .title {
         margin-left: 10%;
-        margin-top: -2%;
     }
     .filter {
         display: flex;
@@ -133,7 +115,37 @@
         margin-right: 20%;
     }
     h1 {
-        font-size: 34px;
+        font-size: 44px;
         font-weight: bold;
+    }
+
+    .review-column{
+        display: flex;
+        flex-direction: column;
+        justify-content: space-around;
+        align-items: center;
+        width: 100%;
+
+    }
+
+    .card-header {
+        width: 45%;
+        margin: 15px;
+        /*max-width: 2000px;*/
+    }
+
+    .card-header [slot='header'] {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+
+    .card-header h3 {
+        margin: 0;
+    }
+
+    .break-text {
+        overflow-wrap: break-word;
+        margin-bottom: 2%;
     }
 </style>

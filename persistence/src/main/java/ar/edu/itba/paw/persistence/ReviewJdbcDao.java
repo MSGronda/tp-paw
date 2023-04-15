@@ -22,7 +22,7 @@ public class ReviewJdbcDao implements ReviewDao {
     private final JdbcTemplate jdbcTemplate;
     private final SimpleJdbcInsert jdbcInsert;
 
-    private final String review_table_name = "reviews";
+    private final String TABLE_REVIEWS = "reviews";
 
     @Autowired
     public ReviewJdbcDao(final DataSource ds) {
@@ -34,31 +34,38 @@ public class ReviewJdbcDao implements ReviewDao {
 
     @Override
     public Optional<Review> findById(Long id) {
-        return jdbcTemplate.query("SELECT * FROM " +review_table_name+ " WHERE id = ?",ROW_MAPPER,id)
+        return jdbcTemplate.query("SELECT * FROM " +TABLE_REVIEWS+ " WHERE id = ?",ROW_MAPPER,id)
                 .stream().findFirst();
     }
 
     @Override
+    public List<Review> getAllBySubject(String idsub){
+        return jdbcTemplate.query("SELECT * FROM " + TABLE_REVIEWS + " WHERE idsub = ?", ROW_MAPPER, idsub );
+    }
+
+    @Override
     public List<Review> getAll() {
-        return jdbcTemplate.query("SELECT * FROM "+review_table_name, ROW_MAPPER);
+        return jdbcTemplate.query("SELECT * FROM "+TABLE_REVIEWS, ROW_MAPPER);
     }
 
     @Override
     public void insert(Review review) {
-        create(review.getTitle(), review.getText(), review.getMatId(),review.getUserId());
+        create(review.getEasy(), review.getTimeDemanding(), review.getText(), review.getSubjectId(),review.getUserId(), review.getUserEmail());
     }
 
     @Override
-    public Review create(String title,String text,long matId,long userId) {
+    public Review create(Boolean easy, Boolean timeDemanding, String text,String subjectId,long userId, String userEmail) {
         Map<String, Object> data = new HashMap<>();
-        data.put("title", title);
-        data.put("text", text);
-        data.put("matId", matId);
-        data.put("userId", userId);
+        data.put("easy", easy);
+        data.put("timeDemanding", timeDemanding);
+        data.put("revText", text);
+        data.put("idSub", subjectId);
+        data.put("idUser", userId);
+        data.put("userEmail", userEmail);
 
         Number key = jdbcInsert.executeAndReturnKey(data);
 
-        return new Review(key.longValue(), userId, matId, title, text);
+        return new Review(key.longValue(), userId, userEmail, subjectId, easy, timeDemanding, text);
     }
 
     @Override
@@ -74,10 +81,12 @@ public class ReviewJdbcDao implements ReviewDao {
     private static Review rowMapper(ResultSet rs, int rowNum) throws SQLException {
         return new Review(
                 rs.getLong("id"),
-                rs.getLong("userId"),
-                rs.getLong("matId"),
-                rs.getString("title"),
-                rs.getString("text")
+                rs.getLong("idUser"),
+                rs.getString("userEmail"),
+                rs.getString("idSub"),
+                rs.getBoolean("easy"),
+                rs.getBoolean("timeDemanding"),
+                rs.getString("revText")
         );
     }
 }

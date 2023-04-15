@@ -33,4 +33,11 @@ public class UserServiceImpl implements UserService {
     public User create(String email, String password, String username) throws SQLException {
         return userDao.create(email, password, username);
     }
+
+    @Override
+    public Optional<User> getUserWithEmail(String email) {
+        return userDao.getUserWithEmail(email);
+    }
+
+
 }

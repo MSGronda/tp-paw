@@ -19,6 +19,8 @@ public class UserJdbcDao implements UserDao {
     private final JdbcTemplate jdbcTemplate;
     private final SimpleJdbcInsert jdbcInsert;
 
+    private final String USERS_TABLE = "users";
+
     @Autowired
     public UserJdbcDao(final DataSource ds) {
         this.jdbcTemplate = new JdbcTemplate(ds);
@@ -28,13 +30,13 @@ public class UserJdbcDao implements UserDao {
     }
 
     public Optional<User> findById(Long id) {
-        return jdbcTemplate.query("SELECT * FROM users WHERE id = ?", UserJdbcDao::rowMapper, id)
+        return jdbcTemplate.query("SELECT * FROM " + USERS_TABLE + " WHERE id = ?", UserJdbcDao::rowMapper, id)
             .stream().findFirst();
     }
 
     @Override
     public List<User> getAll() {
-        return jdbcTemplate.query("SELECT * FROM users", UserJdbcDao::rowMapper);
+        return jdbcTemplate.query("SELECT * FROM " + USERS_TABLE, UserJdbcDao::rowMapper);
     }
 
     @Override
@@ -62,6 +64,11 @@ public class UserJdbcDao implements UserDao {
     @Override
     public void update(User user) {
 
+    }
+
+    @Override
+    public Optional<User> getUserWithEmail(String email){
+        return jdbcTemplate.query("SELECT * FROM " + USERS_TABLE + " WHERE email = ?", UserJdbcDao::rowMapper, email).stream().findFirst();
     }
 
     private static User rowMapper(ResultSet rs, int rowNum) throws SQLException {

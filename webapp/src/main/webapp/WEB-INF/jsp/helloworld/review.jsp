@@ -1,72 +1,75 @@
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
+<%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
+
 <html>
 <head>
     <title>Subject Review</title>
+    <jsp:include page="../components/head_shared.jsp"/>
     <!-- CSS  -->
-    <link href="${pageContext.request.contextPath}/css/materialize.min.css" type="text/css" rel="stylesheet" media="screen,projection"/>
-    <link href="${pageContext.request.contextPath}/css/style.css" type="text/css" rel="stylesheet" media="screen,projection"/>
+<%--    <link href="${pageContext.request.contextPath}/css/style.css" type="text/css" rel="stylesheet" media="screen,projection"/>--%>
+    <style>
+        .general-area {
+            background-color: #efefef
+        }
+        .container{
+            margin-left: 15%;
+            margin-right: 15%;
+        }
+        .row{
+            display: flex;
+        }
+        .error{
+            color: red;
+        }
+    </style>
 </head>
 <body class="general-area">
 <jsp:include page="../components/navbar.jsp"/>
 <div class="container">
-    <div>
-        <h4>Make a review about ...</h4><%-->TODO que aparezca nombre de la materia<--%>
+    <div class="row">
+        <h1><spring:message code="review.header" arguments="${subject.name}"/></h1>
     </div>
-    <form class="col s12">
+    <c:url var="CreateReview" value="/review/${subject.id}"/>
+    <form:form modelAttribute="ReviewForm" class="col s12" method="post" action="${CreateReview}">
         <div class="tags-removable">
-            <sl-input type="email" placeholder="Email"></sl-input>
+            <div>
+                <form:errors path="email" cssClass="error" element="p"/>
+<%--            <form:input path="email" placeholder='<spring:message code="reviewForm.email.placeholder"/>'/>--%>
+                <spring:message code="reviewForm.email.placeholder" var="EmailPlaceholder"/>
+                <sl-input name="email" path="email" placeholder="${EmailPlaceholder}" value="${ReviewForm.email}"></sl-input>
+            </div>
+
+            <br/>
+
+            <form:errors path="text" cssClass="error" element="p"/>
+            <spring:message code="reviewForm.text.label" var="TextLabel"/>
+            <sl-textarea name="text" label="${TextLabel}" value="${ReviewForm.text}"></sl-textarea>
+            <br/>
+
+            <form:errors path="easy" cssClass="error" element="p"/>
+            <spring:message code="form.label" var="ButtonLabel"/>
+            <spring:message code="form.easy.help" var="EasyHelp"/>
+            <sl-radio-group label="${ButtonLabel}" value="${ReviewForm.easy}" name="easy" help-text="${EasyHelp}">
+                <sl-radio-button value="false"><spring:message code="form.hard"/></sl-radio-button>
+                <sl-radio-button value="true"><spring:message code="form.easy"/></sl-radio-button>
+            </sl-radio-group>
             <br />
-            <sl-textarea label="Write your review"></sl-textarea>
+
+            <form:errors path="timeDemanding" cssClass="error" element="p"/>
+            <spring:message code="form.timeDemanding.help" var="TimeDemandingHelp"/>
+            <sl-radio-group name="timeDemanding" value="${ReviewForm.timeDemanding}" help-text="${TimeDemandingHelp}">
+                <sl-radio-button value="true"><spring:message code="form.timeDemanding"/></sl-radio-button>
+                <sl-radio-button value="false"><spring:message code="form.NotTimeDemanding"/></sl-radio-button>
+            </sl-radio-group>
             <br />
-            <form class="custom-validity">
-                <sl-radio-group label="Select an option" name="a" value="1" help-text="Were the topics in the subject complex to understand?">
-                    <sl-radio-button value="1">Hard</sl-radio-button>
-                    <sl-radio-button value="2">Easy</sl-radio-button>
-                </sl-radio-group>
-                <br />
-                <sl-radio-group name="a" value="1" help-text="Were you required to put a lot of time every week to keep up with the topics?">
-                    <sl-radio-button value="1">Time demanding</sl-radio-button>
-                    <sl-radio-button value="2">Not very time demanding</sl-radio-button>
-                </sl-radio-group>
-                <br />
-                <sl-button type="submit" variant="success">Submit</sl-button>
-            </form>
+            <sl-button type="submit" variant="success"><spring:message code="form.submit"/></sl-button>
         </div>
-    </form>
+    </form:form>
 </div>
 <%-- INCLUDE FOR SHOELACE --%>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.3.0/dist/themes/light.css" />
 <script type="module" src="https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.3.0/dist/shoelace-autoloader.js"></script>
-
-<script>
-    const form = document.querySelector('.custom-validity');
-    const radioGroup = form.querySelector('sl-radio-group');
-    const errorMessage = 'You must choose the last option';
-
-    // Set initial validity as soon as the element is defined
-    customElements.whenDefined('sl-radio').then(() => {
-        radioGroup.setCustomValidity(errorMessage);
-    });
-
-    // Update validity when a selection is made
-    form.addEventListener('sl-change', () => {
-        const isValid = radioGroup.value === '3';//Con esto puedo tomar el value seleccionado
-        radioGroup.setCustomValidity(isValid ? '' : errorMessage);
-    });
-
-    // Handle form submit
-    form.addEventListener('submit', event => {
-        event.preventDefault();
-        alert('All fields are valid!');//TODO ver a quien tengo que llamar para pasar la data
-    });
-</script>
-<style>
-    .tags-removable sl-tag {
-        transition: var(--sl-transition-medium) opacity;
-    }
-    .general-area {
-        background-color: #efefef
-    }
-</style>
 </body>
 </html>

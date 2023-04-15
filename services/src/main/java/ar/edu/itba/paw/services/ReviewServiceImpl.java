@@ -5,6 +5,7 @@ import ar.edu.itba.paw.persistence.ReviewDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.sql.SQLException;
 import java.util.List;
 import java.util.Optional;
 
@@ -25,5 +26,15 @@ public class ReviewServiceImpl implements ReviewService {
     @Override
     public List<Review> getAll() {
         return reviewDao.getAll();
+    }
+
+    @Override
+    public List<Review> getAllBySubject(String idsub){
+        return reviewDao.getAllBySubject(idsub);
+    }
+
+    @Override
+    public Review create(Boolean easy, Boolean timeDemanding, String text,String subjectId,long userId, String userEmail) throws SQLException {
+        return reviewDao.create(easy, timeDemanding, text, subjectId, userId, userEmail);
     }
 }
