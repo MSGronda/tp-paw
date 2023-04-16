@@ -53,7 +53,7 @@ public class ReviewController {
     }
     @RequestMapping(value = "/review/{subjectId:\\d+\\.\\d+}", method = RequestMethod.GET)
     public ModelAndView reviewForm(@PathVariable final String subjectId, @ModelAttribute("ReviewForm") final ReviewForm reviewForm) {
-        ModelAndView mav =  new ModelAndView("helloworld/review");
+        ModelAndView mav =  new ModelAndView("review/review");
 
         Optional<Subject> maybeSubject = subjectService.findById(subjectId);
 

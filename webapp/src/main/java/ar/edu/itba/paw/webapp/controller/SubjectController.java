@@ -56,7 +56,7 @@ public class SubjectController {
 
         final Map<String,String> prereqNames = subjectService.findPrerequisitesName(id);
 
-        ModelAndView mav = new ModelAndView("helloworld/subject_info");
+        ModelAndView mav = new ModelAndView("subjects/subject_info");
         mav.addObject("reviews", reviews);
         mav.addObject("professors", professors);
         mav.addObject("time", time);

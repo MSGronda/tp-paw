@@ -29,7 +29,7 @@ public class UserController {
         }
 
         final User user = maybeUser.get();
-        ModelAndView mav = new ModelAndView("helloworld/profile");
+        ModelAndView mav = new ModelAndView("user/profile");
         mav.addObject("user", user);
 
         return mav;
@@ -48,7 +48,7 @@ public class UserController {
 
     @RequestMapping(value = "/register", method = RequestMethod.GET)
     public ModelAndView registerForm() {
-        return new ModelAndView("helloworld/register");
+        return new ModelAndView("user/register");
     }
 
 }

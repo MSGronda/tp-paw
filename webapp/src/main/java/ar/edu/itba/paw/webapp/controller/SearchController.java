@@ -45,7 +45,7 @@ public class SearchController {
             profs.put(sub, professorService.getAllBySubject(sub.getId()));
         }
 
-        ModelAndView mav = new ModelAndView("helloworld/search");
+        ModelAndView mav = new ModelAndView("subjects/search");
         mav.addObject("subjects", subjects);
         mav.addObject("query", name);
         mav.addObject("profs",profs);
