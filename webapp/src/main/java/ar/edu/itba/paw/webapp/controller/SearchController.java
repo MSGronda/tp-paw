@@ -1,6 +1,8 @@
 package ar.edu.itba.paw.webapp.controller;
 
+import ar.edu.itba.paw.models.Professor;
 import ar.edu.itba.paw.models.Subject;
+import ar.edu.itba.paw.services.ProfessorService;
 import ar.edu.itba.paw.services.SubjectService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -9,16 +11,19 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 @Controller
 public class SearchController {
     private final SubjectService subjectService;
+    private final ProfessorService professorService;
 
     @Autowired
-    public SearchController(SubjectService subjectService) {
+    public SearchController(SubjectService subjectService, ProfessorService professorService) {
         this.subjectService = subjectService;
+        this.professorService = professorService;
     }
 
     @RequestMapping("/search/{name}")
@@ -34,9 +39,16 @@ public class SearchController {
         else
             subjects = subjectService.getByNameFiltered(name, params, "subname");
 
+        final Map<Subject, List<Professor>> profs = new HashMap<>();
+
+        for(Subject sub : subjects) {
+            profs.put(sub, professorService.getAllBySubject(sub.getId()));
+        }
+
         ModelAndView mav = new ModelAndView("helloworld/search");
         mav.addObject("subjects", subjects);
         mav.addObject("query", name);
+        mav.addObject("profs",profs);
 
         return mav;
     }

@@ -1,5 +1,6 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
 
 <html>
 <head>
@@ -49,8 +50,12 @@
       }
 
       sl-button.filter-button::part(base):hover {
-          background-color: white;
+          background-color: #efefef;
       }
+      sl-button.filter-button::part(base) {
+         background-color: #efefef;
+       }
+
 
       .vert-divider {
           height: 9.5rem;
@@ -66,16 +71,16 @@
 
       <sl-button size="small" variant="default" id="toggle-filters">
         <sl-icon slot="prefix" name="filter"></sl-icon>
-        Filter
+        <spring:message code="search.filter"/>
       </sl-button>
 
 
       <section class="filter-section" id="filter-section">
         <div class="filter-option">
-          <h5>Department</h5>
+          <h5><spring:message code="search.dpt"/></h5>
           <sl-button-group>
-            <sl-button class="filter-button" size="small" variant="default" id="sistemas-credit-filter" pill>Sistemas
-              Digitales y Datos
+            <sl-button class="filter-button" size="small" variant="default" id="sistemas-credit-filter" pill>
+              <spring:message code="search.dpt.sistemas"/>
             </sl-button>
             <section id="remove-sistemas-param-section">
               <sl-button class="filter-button" id="remove-sistemas-filter" variant="default" size="small" pill>
@@ -88,10 +93,11 @@
         <sl-divider class="vert-divider" vertical></sl-divider>
 
         <div class="filter-option">
-          <h5>Credits</h5>
+          <h5><spring:message code="search.credits"/></h5>
 
           <sl-button-group>
-            <sl-button class="filter-button" size="small" variant="default" id="min-credit-filter" pill>1 - 3 credits
+            <sl-button class="filter-button" size="small" variant="default" id="min-credit-filter" pill>
+              <spring:message code="search.credits.min"/>
             </sl-button>
             <section id="remove-min-credits-param-section">
               <sl-button class="filter-button" id="remove-min-credits-filter" variant="default" size="small" pill>
@@ -100,7 +106,8 @@
             </section>
           </sl-button-group>
           <sl-button-group>
-            <sl-button class="filter-button" size="small" variant="default" id="med-credit-filter" pill>4 - 6 credits
+            <sl-button class="filter-button" size="small" variant="default" id="med-credit-filter" pill>
+                <spring:message code="search.credits.med"/>
             </sl-button>
             <section id="remove-med-credits-param-section">
               <sl-button class="filter-button" id="remove-med-credits-filter" variant="default" size="small" pill>
@@ -111,8 +118,8 @@
 
 
           <sl-button-group>
-            <sl-button class="filter-button" size="small" variant="default" id="max-credit-filter" pill>More than 6
-              credits
+            <sl-button class="filter-button" size="small" variant="default" id="max-credit-filter" pill>
+              <spring:message code="search.credits.max"/>
             </sl-button>
             <section id="remove-max-credits-param-section">
               <sl-button class="filter-button" id="remove-max-credits-filter" variant="default" size="small" pill>
@@ -125,10 +132,16 @@
         <sl-divider class="vert-divider" vertical></sl-divider>
 
         <div class="filter-option">
-          <h5>Sort By</h5>
-          <sl-button class="filter-button" size="small" variant="default" id="order-by-name">A-Z</sl-button>
-          <sl-button class="filter-button" size="small" variant="default" id="order-by-credits">Credits</sl-button>
-          <sl-button class="filter-button" size="small" variant="default" id="order-by-id">ID</sl-button>
+          <h5><spring:message code="search.sort"/></h5>
+          <sl-button class="filter-button" size="small" variant="default" id="order-by-name">
+            <spring:message code="search.sort.alphabetically"/>
+          </sl-button>
+          <sl-button class="filter-button" size="small" variant="default" id="order-by-credits">
+            <spring:message code="search.sort.credits"/>
+          </sl-button>
+          <sl-button class="filter-button" size="small" variant="default" id="order-by-id">
+            <spring:message code="search.sort.id"/>
+          </sl-button>
         </div>
       </section>
 
