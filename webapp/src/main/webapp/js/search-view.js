@@ -45,6 +45,9 @@ else
 let dpt = params.get("department")
 
 const dptFilterBtns = [
+    ['ambiente-credit-filter', 'Ambiente Y Movilidad', 'remove-ambiente-filter', 'remove-ambiente-param-section'],
+    ['ciencias-credit-filter', 'Ciencias Exactas y Naturales', 'remove-ciencias-filter', 'remove-ciencias-param-section'],
+    ['economia-credit-filter', 'Economia y Negocios', 'remove-economia-filter', 'remove-economia-param-section'],
     ['sistemas-credit-filter', 'Sistemas Digitales y Datos', 'remove-sistemas-filter', 'remove-sistemas-param-section'],
 ]
 

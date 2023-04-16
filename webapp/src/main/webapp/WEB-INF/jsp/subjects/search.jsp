@@ -55,10 +55,8 @@
       sl-button.filter-button::part(base) {
          background-color: #efefef;
        }
-
-
       .vert-divider {
-          height: 9.5rem;
+          height: 11.5rem;
       }
   </style>
 </head>
@@ -78,6 +76,40 @@
       <section class="filter-section" id="filter-section">
         <div class="filter-option">
           <h5><spring:message code="search.dpt"/></h5>
+
+          <sl-button-group>
+            <sl-button class="filter-button" size="small" variant="default" id="ambiente-credit-filter" pill>
+              <spring:message code="search.dpt.ambiente"/>
+            </sl-button>
+            <section id="remove-ambiente-param-section">
+              <sl-button class="filter-button" id="remove-ambiente-filter" variant="default" size="small" pill>
+                <sl-icon class="remove-filter" name="x-lg" label="Remove"></sl-icon>
+              </sl-button>
+            </section>
+          </sl-button-group>
+
+          <sl-button-group>
+            <sl-button class="filter-button" size="small" variant="default" id="ciencias-credit-filter" pill>
+              <spring:message code="search.dpt.ciencias"/>
+            </sl-button>
+            <section id="remove-ciencias-param-section">
+              <sl-button class="filter-button" id="remove-ciencias-filter" variant="default" size="small" pill>
+                <sl-icon class="remove-filter" name="x-lg" label="Remove"></sl-icon>
+              </sl-button>
+            </section>
+          </sl-button-group>
+
+          <sl-button-group>
+          <sl-button class="filter-button" size="small" variant="default" id="economia-credit-filter" pill>
+              <spring:message code="search.dpt.economia"/>
+            </sl-button>
+            <section id="remove-economia-param-section">
+              <sl-button class="filter-button" id="remove-economia-filter" variant="default" size="small" pill>
+                <sl-icon class="remove-filter" name="x-lg" label="Remove"></sl-icon>
+              </sl-button>
+            </section>
+          </sl-button-group>
+
           <sl-button-group>
             <sl-button class="filter-button" size="small" variant="default" id="sistemas-credit-filter" pill>
               <spring:message code="search.dpt.sistemas"/>
@@ -88,9 +120,10 @@
               </sl-button>
             </section>
           </sl-button-group>
+
         </div>
 
-        <sl-divider class="vert-divider" vertical></sl-divider>
+        <sl-divider class="vert-divider" style="--color: #cbcbcb;" vertical></sl-divider>
 
         <div class="filter-option">
           <h5><spring:message code="search.credits"/></h5>
@@ -129,7 +162,7 @@
           </sl-button-group>
         </div>
 
-        <sl-divider class="vert-divider" vertical></sl-divider>
+        <sl-divider class="vert-divider" style="--color: #cbcbcb;" vertical></sl-divider>
 
         <div class="filter-option">
           <h5><spring:message code="search.sort"/></h5>
@@ -146,7 +179,7 @@
       </section>
 
 
-      <sl-divider></sl-divider>
+      <sl-divider style="--color: #cbcbcb;"></sl-divider>
     </div>
   </div>
 
