@@ -8,7 +8,7 @@
 <c:set var="subProfs" value="${requestScope.subProfs}"/>
 
 
-<a href='<c:out value="/subject/${subject.id}"/>'>
+<a href='<c:out value="${pageContext.request.contextPath}/subject/${subject.id}"/>'>
 <sl-card class="card-header subject-card" >
   <div slot="header">
     <b><c:out value="${subject.name}" /></b>
