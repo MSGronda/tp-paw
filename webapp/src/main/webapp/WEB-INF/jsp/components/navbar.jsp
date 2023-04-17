@@ -54,4 +54,15 @@
 
 </div>
 
-<script src="${pageContext.request.contextPath}/js/search.js" defer></script>
+<script defer>
+    const form = document.querySelector('#input-form');
+    const input = document.querySelector('#input-text');
+
+    form.addEventListener('submit', function (event){
+        event.preventDefault();
+        const searchQuery = input.value.trim();
+        if (searchQuery.length > 0) {
+            window.location.href = `${pageContext.request.contextPath}/search/\${encodeURIComponent(searchQuery)}`;
+        }
+    });
+</script>
