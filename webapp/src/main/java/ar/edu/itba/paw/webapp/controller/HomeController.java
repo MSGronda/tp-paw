@@ -33,20 +33,12 @@ public class HomeController {
     @RequestMapping("/")
     public ModelAndView home() {
         final List<Degree> degrees = ds.getAll();
-        final Map<String, Subject> subsById = new HashMap<>();
-        final Map<String, List<Professor>> profsBySubId = new HashMap<>();
-
-        for(Degree deg : degrees) {
-            final List<Subject> degSubs = ss.getAllByDegree(deg.getId());
-            for(Subject sub : degSubs) {
-                profsBySubId.put(sub.getId(), ps.getAllBySubject(sub.getId()));
-                subsById.put(sub.getId(), sub);
-            }
-        }
+        final Map<Long, Map<Integer,List<Subject>>> subsByDegSem = ss.getAllGroupedByDegIdAndSemester();
+        final Map<String, List<Professor>> profsBySubId = ps.getAllGroupedBySubjectId();
 
         ModelAndView mav = new ModelAndView("home/index");
         mav.addObject("degrees", degrees);
-        mav.addObject("subsById", subsById);
+        mav.addObject("subsByDegSem", subsByDegSem);
         mav.addObject("profsBySubId", profsBySubId);
 
         return mav;

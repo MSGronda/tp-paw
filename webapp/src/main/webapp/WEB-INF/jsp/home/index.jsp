@@ -64,9 +64,9 @@
 
           <c:forEach var="semester" items="${degree.semesters}">
             <sl-tab-panel class="semester-panel" name="semester-${semester}">
-              <c:forEach var="subjectId" items="${semester.subjectIds}">
-                <c:set var="subject" value="${subsById[subjectId]}" scope="request"/>
-                <c:set var="subProfs" value="${profsBySubId[subjectId]}" scope="request"/>
+              <c:forEach var="subject" items="${subsByDegSem[degree.id][semester.number]}">
+                <c:set var="subject" value="${subject}" scope="request"/>
+                <c:set var="subProfs" value="${profsBySubId[subject.id]}" scope="request"/>
                 <c:import url="../components/subject_card.jsp"/>
               </c:forEach>
             </sl-tab-panel>

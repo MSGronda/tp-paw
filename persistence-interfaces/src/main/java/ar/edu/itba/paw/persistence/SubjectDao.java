@@ -4,6 +4,7 @@ import ar.edu.itba.paw.models.Subject;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 public interface SubjectDao extends RWDao<String, Subject> {
 
@@ -18,5 +19,9 @@ public interface SubjectDao extends RWDao<String, Subject> {
     Map<String, String> findPrerequisitesName(String id);
 
 
-    Subject create(String id, String name, String depto, List<String> idCorrelativas, List<Long> idProfesores, List<Long> idCarreras, int creditos);
+    Subject create(String id, String name, String depto, Set<String> idCorrelativas, Set<Long> idProfesores, Set<Long> idCarreras, int creditos);
+
+    Map<Long, List<Subject>> getAllGroupedByDegreeId();
+
+    Map<Long, Map<Integer, List<Subject>>> getAllGroupedByDegIdAndSemester();
 }

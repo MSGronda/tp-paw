@@ -9,10 +9,7 @@ import org.springframework.stereotype.Repository;
 import javax.sql.DataSource;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 @Repository
 public class ProfessorJdbcDao implements ProfessorDao {
@@ -39,16 +36,16 @@ public class ProfessorJdbcDao implements ProfessorDao {
     @Override
     public Optional<Professor> findById(Long id) {
         Optional<Professor> optProf = findByIdRaw(id);
-        if(!optProf.isPresent()) return Optional.empty();
+        if (!optProf.isPresent()) return Optional.empty();
 
         Professor prof = optProf.get();
 
-        List<Long> subjects = findSubjects(id);
+        List<String> subjects = findSubjects(id);
 
         Professor inflatedProf = new Professor(
-            prof.getId(),
-            prof.getName(),
-            subjects
+                prof.getId(),
+                prof.getName(),
+                subjects
         );
         return Optional.of(inflatedProf);
     }
@@ -59,14 +56,14 @@ public class ProfessorJdbcDao implements ProfessorDao {
     }
 
     @Override
-    public Professor create(String name , List<Long> subjects) {
+    public Professor create(String name, List<String> subjects) {
         Map<String, Object> data = new HashMap<>();
         data.put("profName", name);
 
         Number key = jdbcInsertProfesor.executeAndReturnKey(data);
 
         // Inserto en la tabla de Mat_Prof las materias que hace un profesor
-        for(Long subject : subjects){
+        for (String subject : subjects) {
             Map<String, Object> matProf = new HashMap<>();
             data.put("idProf", key);
             data.put("idSub", subject);
@@ -78,12 +75,12 @@ public class ProfessorJdbcDao implements ProfessorDao {
     }
 
     public List<Professor> getAll() {
-        return null;
+        return joinRowToProfs(jdbcTemplate.query("SELECT * FROM " + TABLE_PROF_SUB + " JOIN " + TABLE_PROF + " p on idProf = p.id", ProfessorJdbcDao::rowMapperJoin));
     }
 
     @Override
     public List<Professor> getAllBySubject(String idSubject) {
-        return jdbcTemplate.query("SELECT * FROM " + TABLE_PROF + " JOIN " + TABLE_PROF_SUB + " ps ON ps.idProf = id WHERE ps.idSub = ?", ProfessorJdbcDao::rowMapperProf, idSubject);
+        return joinRowToProfs(jdbcTemplate.query("SELECT * FROM " + TABLE_PROF + " JOIN " + TABLE_PROF_SUB + " ps ON ps.idProf = id WHERE ps.idSub = ?", ProfessorJdbcDao::rowMapperJoin, idSubject));
     }
 
     @Override
@@ -96,15 +93,55 @@ public class ProfessorJdbcDao implements ProfessorDao {
 
     }
 
+    @Override
+    public Map<String, List<Professor>> getAllGroupedBySubjectId() {
+        return groupProfsBySubjectId(getAll());
+    }
+
     private static Professor rowMapperProf(ResultSet rs, int rowNum) throws SQLException {
         return new Professor(
-            rs.getLong("id"),
-            rs.getString("profName")
+                rs.getLong("id"),
+                rs.getString("profName")
         );
     }
 
-    private static Long rowMapperSubId(ResultSet rs, int rowNum) throws SQLException {
-        return rs.getLong("idSub");
+    private static String rowMapperSubId(ResultSet rs, int rowNum) throws SQLException {
+        return rs.getString("idSub");
+    }
+
+    private static JoinRow rowMapperJoin(ResultSet rs, int rowNum) throws SQLException {
+        return new JoinRow(
+                rs.getLong("idProf"),
+                rs.getString("profName"),
+                rs.getString("idSub")
+        );
+    }
+
+    private List<Professor> joinRowToProfs(List<JoinRow> rows) {
+        Map<Long, Professor> profs = new HashMap<>();
+        for (JoinRow row : rows) {
+            final long idProf = row.getIdProf();
+            final String profName = row.getProfName();
+            final String idSub = row.getIdSub();
+
+            Professor prof = profs.getOrDefault(idProf, new Professor(idProf, profName));
+            prof.getSubjectIds().add(idSub);
+            profs.putIfAbsent(idProf, prof);
+        }
+        return new ArrayList<>(profs.values());
+    }
+
+    private Map<String, List<Professor>> groupProfsBySubjectId(List<Professor> profs) {
+        Map<String, List<Professor>> profsBySubject = new HashMap<>();
+        for (Professor prof : profs) {
+            List<String> subIds = prof.getSubjectIds();
+            for (String subId : subIds) {
+                List<Professor> subProfs = profsBySubject.getOrDefault(subId, new ArrayList<>());
+                subProfs.add(prof);
+                profsBySubject.putIfAbsent(subId, subProfs);
+            }
+        }
+        return profsBySubject;
     }
 
     // No incluye las materias que enseña, el atributo es null
@@ -113,7 +150,32 @@ public class ProfessorJdbcDao implements ProfessorDao {
     }
 
     // Dado un ID de prof, busco todos los ids de las materias en cual esta ese prof
-    private List<Long> findSubjects(Long id) {
+    private List<String> findSubjects(Long id) {
         return jdbcTemplate.query("SELECT * FROM " + TABLE_PROF_SUB + " WHERE idProf = ?", ProfessorJdbcDao::rowMapperSubId, id);
+    }
+
+
+    private static class JoinRow {
+        private final long idProf;
+        private final String profName;
+        private final String idSub;
+
+        public JoinRow(long idProf, String profName, String idSub) {
+            this.idProf = idProf;
+            this.profName = profName;
+            this.idSub = idSub;
+        }
+
+        public long getIdProf() {
+            return idProf;
+        }
+
+        public String getProfName() {
+            return profName;
+        }
+
+        public String getIdSub() {
+            return idSub;
+        }
     }
 }

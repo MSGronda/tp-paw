@@ -1,17 +1,17 @@
 package ar.edu.itba.paw.models;
 
-import java.util.List;
+import java.util.*;
 
 public class Subject {
     private final String id;
     private final String name;
     private final String department;
     private final Integer credits;
-    private List<String> prerequisites;
-    private List<Long> professorIds;
-    private List<Long> degreeIds;
+    private Set<String> prerequisites;
+    private Set<Long> professorIds;
+    private Set<Long> degreeIds;
 
-    public Subject(String id, String name, String department, List<String> prerequisites, List<Long> professorIds, List<Long> degreeIds, int credits) {
+    public Subject(String id, String name, String department, Set<String> prerequisites, Set<Long> professorIds, Set<Long> degreeIds, int credits) {
         this.id = id;
         this.name = name;
         this.department = department;
@@ -26,6 +26,9 @@ public class Subject {
         this.name = name;
         this.department = department;
         this.credits = credits;
+        this.prerequisites = new HashSet<>();
+        this.professorIds = new HashSet<>();
+        this.degreeIds = new HashSet<>();
     }
 
     public String getId() {
@@ -40,17 +43,30 @@ public class Subject {
         return department;
     }
 
-    public List<String> getPrerequisites() {
+    public Set<String> getPrerequisites() {
         return prerequisites;
     }
 
-    public List<Long> getProfessorIds() {
+    public Set<Long> getProfessorIds() {
         return professorIds;
     }
 
-    public List<Long> getDegreeIds() {
+    public Set<Long> getDegreeIds() {
         return degreeIds;
     }
 
     public Integer getCredits(){ return credits; }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Subject subject = (Subject) o;
+        return Objects.equals(id, subject.id) && Objects.equals(name, subject.name) && Objects.equals(department, subject.department) && Objects.equals(credits, subject.credits) && Objects.equals(prerequisites, subject.prerequisites) && Objects.equals(professorIds, subject.professorIds) && Objects.equals(degreeIds, subject.degreeIds);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
+    }
 }

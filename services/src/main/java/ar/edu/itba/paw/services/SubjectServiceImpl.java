@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 
 @Service
 public class SubjectServiceImpl implements SubjectService {
@@ -63,7 +64,16 @@ public class SubjectServiceImpl implements SubjectService {
     }
 
     @Override
-    public Subject create(String id, String name, String depto, List<String> idCorrelativas, List<Long> idProfesores, List<Long> idCarreras, Integer creditos){
+    public Map<Long, List<Subject>> getAllGroupedByDegreeId() {
+        return subjectDao.getAllGroupedByDegreeId();
+    }
+
+    public Map<Long, Map<Integer, List<Subject>>> getAllGroupedByDegIdAndSemester() {
+        return subjectDao.getAllGroupedByDegIdAndSemester();
+    }
+
+    @Override
+    public Subject create(String id, String name, String depto, Set<String> idCorrelativas, Set<Long> idProfesores, Set<Long> idCarreras, Integer creditos){
         return subjectDao.create(id, name, depto, idCorrelativas, idProfesores, idCarreras, creditos);
     }
 }
