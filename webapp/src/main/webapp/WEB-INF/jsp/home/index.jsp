@@ -31,6 +31,10 @@
           flex-direction: column;
           padding: 0;
       }
+
+      sl-tab-group::part(base) {
+          overflow: hidden;
+      }
   </style>
 </head>
 <body>

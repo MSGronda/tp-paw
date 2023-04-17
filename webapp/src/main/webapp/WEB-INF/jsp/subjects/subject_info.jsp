@@ -68,6 +68,10 @@
           background-color: transparent;
           text-decoration: none;
       }
+
+      hr {
+          width: 30rem;
+      }
   </style>
 
 </head>
@@ -76,7 +80,7 @@
 <jsp:include page="../components/navbar.jsp"/>
 
 <main>
-  <div class="info container-70">
+  <div class="info container-50">
     <h1>
       <c:out value="${subject.name}"/>
     </h1>
