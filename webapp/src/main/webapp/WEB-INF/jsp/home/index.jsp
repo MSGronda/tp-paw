@@ -1,5 +1,8 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%--<%@ taglib prefix="spring" uri="http://java.sun.com/jsp/jstl/fmt" %>--%>
 <%@ page contentType="text/html;charset=UTF-8" %>
+<%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
+
 <html lang="en">
 <head>
   <title>Uni</title>
@@ -54,7 +57,8 @@
         <sl-tab-group class="semester-group">
           <c:forEach var="semester" items="${degree.semesters}">
             <sl-tab slot="nav" panel="semester-${semester}">
-              <c:out value="${semester.number}° Semester"/>
+              <spring:message code="home.semester" arguments="${semester.number}"/>
+<%--              <c:out value="${semester.number}° Semester"/>--%>
             </sl-tab>
           </c:forEach>
 

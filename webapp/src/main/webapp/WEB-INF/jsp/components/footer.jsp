@@ -1,5 +1,6 @@
-
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
+
 
 <style>
     .footer {background-color: white; width: 100%; ; display: flex; justify-content: center; align-items:center}
@@ -20,11 +21,11 @@
             <div class="content-column">
                 <h4 class="text-type">UNI</h4>
                 <sl-divider style="--spacing: 0rem;"></sl-divider>
-                <p class="text-type">Our mission is to provide a simple and intuitive way of share your opinions, tips and general knowledge for all of your college courses.</p>
+                <p class="text-type"><spring:message code="footer.mission"/> </p>
             </div>
 
             <div class="content-column">
-                <h4 class="text-type">Explore</h4>
+                <h4 class="text-type"><spring:message code="footer.explore"/></h4>
                 <sl-divider style="--spacing: 0rem;"></sl-divider>
                 <ul>
                     <li><sl-button variant="text" size="medium">Link 1</sl-button></li>
@@ -32,7 +33,7 @@
                 </ul>
             </div>
             <div class="content-column">
-                <h4 class="text-type">Learn</h4>
+                <h4 class="text-type"><spring:message code="footer.Learn"/></h4>
                 <sl-divider style="--spacing: 0rem;"></sl-divider>
                 <ul>
                     <li><sl-button variant="text" size="medium">Link 1</sl-button></li>
@@ -42,7 +43,7 @@
         </div>
         <div class="copyright-area">
             <sl-divider style="--spacing: 0rem;"></sl-divider>
-            <h6 class="text-type"> © 2023 Uni Team, All rights reserved.</h6>
+            <h6 class="text-type"><spring:message code="footer.rights"/></h6>
         </div>
 
     </div>
