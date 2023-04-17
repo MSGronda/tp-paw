@@ -9,8 +9,10 @@ import ar.edu.itba.paw.services.SubjectService;
 import ar.edu.itba.paw.webapp.exceptions.SubjectNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.util.List;
@@ -31,7 +33,7 @@ public class SubjectController {
     }
 
     @RequestMapping("/subject/{id:\\d+\\.\\d+}")
-    public ModelAndView subject_info(@PathVariable String id) {
+    public ModelAndView subjectInfo(@PathVariable String id) {
         final Optional<Subject> maybeSubject = subjectService.findById(id);
         if(!maybeSubject.isPresent()) {
             throw new SubjectNotFoundException("No subject with given id");
@@ -66,4 +68,8 @@ public class SubjectController {
         return mav;
     }
 
+    @RequestMapping("/subject/**")
+    public void unknownSubject() {
+        throw new SubjectNotFoundException();
+    }
 }

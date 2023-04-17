@@ -39,4 +39,9 @@
         <servlet-name>dispatcher</servlet-name>
         <url-pattern>/</url-pattern>
     </servlet-mapping>
+
+    <error-page>
+        <exception-type>404</exception-type>
+        <location>/WEB-INF/jsp/error/page_not_found.jsp</location>
+    </error-page>
 </web-app>
