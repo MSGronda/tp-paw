@@ -35,11 +35,6 @@ public class UserController {
         return mav;
     }
 
-    @RequestMapping("/profile/**")
-    public void unknownProfile() {
-        throw new UserNotFoundException();
-    }
-
     @RequestMapping(value = "/register", method = RequestMethod.POST)
     public ModelAndView register(
         @RequestParam String username,

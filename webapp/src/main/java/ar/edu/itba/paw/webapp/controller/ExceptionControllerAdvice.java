@@ -32,12 +32,14 @@ public class ExceptionControllerAdvice {
     @ResponseStatus(HttpStatus.NOT_FOUND)
     @ExceptionHandler(NoHandlerFoundException.class)
     public String handlePageNotFoundException(NoHandlerFoundException e) {
+        e.printStackTrace();
         return "error/page_not_found";
     }
 
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     @ExceptionHandler(Exception.class)
     public String handleException(Exception e) {
+        e.printStackTrace();
         return "error/internal_error";
     }
 }
