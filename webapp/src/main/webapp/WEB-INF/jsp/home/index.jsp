@@ -60,14 +60,14 @@
       <sl-tab-panel class="degree-panel" name="degree-${degree.id}">
         <sl-tab-group class="semester-group">
           <c:forEach var="semester" items="${degree.semesters}">
-            <sl-tab slot="nav" panel="semester-${semester}">
+            <sl-tab slot="nav" panel="semester-${semester.number}">
               <spring:message code="home.semester" arguments="${semester.number}"/>
 <%--              <c:out value="${semester.number}° Semester"/>--%>
             </sl-tab>
           </c:forEach>
 
           <c:forEach var="semester" items="${degree.semesters}">
-            <sl-tab-panel class="semester-panel" name="semester-${semester}">
+            <sl-tab-panel class="semester-panel" name="semester-${semester.number}">
               <c:forEach var="subject" items="${subsByDegSem[degree.id][semester.number]}">
                 <c:set var="subject" value="${subject}" scope="request"/>
                 <c:set var="subProfs" value="${profsBySubId[subject.id]}" scope="request"/>

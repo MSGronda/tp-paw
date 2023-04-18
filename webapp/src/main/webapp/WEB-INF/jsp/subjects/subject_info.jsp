@@ -37,15 +37,13 @@
           flex-direction: column;
           justify-content: space-around;
           align-items: center;
-          width: 100%;
           padding-bottom: 3rem;
 
       }
 
       .card-header {
-          width: 45%;
+          width: 100%;
           margin: 15px;
-          /*max-width: 2000px;*/
       }
 
       .card-header [slot='header'] {
@@ -149,7 +147,7 @@
     </sl-tooltip>
   </div>
 
-  <div class="review-column">
+  <div class="review-column container-50">
     <c:if test="${empty reviews}">
       <h3><spring:message code="subject.noreviews"/></h3>
     </c:if>
