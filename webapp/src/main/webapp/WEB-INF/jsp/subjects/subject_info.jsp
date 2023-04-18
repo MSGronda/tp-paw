@@ -79,6 +79,10 @@
 
 <main>
   <div class="info container-50">
+    <sl-breadcrumb>
+      <sl-breadcrumb-item><a href='<c:url value="/"/>'><spring:message code="subject.home"/></a></sl-breadcrumb-item>
+      <sl-breadcrumb-item><a href='<c:url value="/"/>'><spring:message code="subject.year" /> <c:out value="${year}"/></a></sl-breadcrumb-item>
+    </sl-breadcrumb>
     <h1>
       <c:out value="${subject.name}"/>
     </h1>
