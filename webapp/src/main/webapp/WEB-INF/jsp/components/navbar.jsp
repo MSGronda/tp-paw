@@ -1,4 +1,6 @@
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ page contentType="text/html;charset=UTF-8" %>
 
 <style>
     .nav-bar {
@@ -26,6 +28,10 @@
         margin: 0;
         width: 40%
     }
+
+    .dropdown::part(listbox){
+      color: #0369a1;
+    }
 </style>
 
 
@@ -45,7 +51,19 @@
 
 
     <sl-button-group label="Alignment">
-      <sl-button variant="text"><spring:message code="navbar.degree"/></sl-button>
+      <sl-select class="dropdown" value="1">
+        <c:forEach var="degree" items="${degrees}">
+          <sl-option value="${degree.id}"><c:out value="${degree.name}"/></sl-option>
+        </c:forEach>
+        <sl-divider></sl-divider>
+        <sl-option disabled>Ingeniería Industrial</sl-option>
+        <sl-option disabled>Ingeniería Mecánica</sl-option>
+        <sl-option disabled>Ingeniería Naval</sl-option>
+        <sl-option disabled>Ingeniería Electrónica</sl-option>
+        <sl-option disabled>Ingeniería Química</sl-option>
+        <sl-option disabled>Ingeniería Petróleo</sl-option>
+        <sl-option disabled>Bioingeniería</sl-option>
+      </sl-select>
       <sl-button variant="text"><spring:message code="navbar.subject"/></sl-button>
       <sl-button variant="text"><spring:message code="navbar.builder"/></sl-button>
     </sl-button-group>
@@ -66,3 +84,6 @@
         }
     });
 </script>
+
+<script type="module" src="https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.4.0/dist/components/select/select.js"></script>
+
