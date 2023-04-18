@@ -44,4 +44,8 @@
         <exception-type>404</exception-type>
         <location>/WEB-INF/jsp/error/page_not_found.jsp</location>
     </error-page>
+    <error-page>
+        <exception-type>403</exception-type>
+        <location>/WEB-INF/jsp/error/page_not_found.jsp</location>
+    </error-page>
 </web-app>

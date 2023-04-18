@@ -67,9 +67,4 @@ public class SubjectController {
         mav.addObject("difficulty", difficulty);
         return mav;
     }
-
-    @RequestMapping("/subject/**")
-    public void unknownSubject() {
-        throw new SubjectNotFoundException();
-    }
 }

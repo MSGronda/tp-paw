@@ -14,8 +14,8 @@
 <body>
 <jsp:include page="../components/navbar.jsp"/>
 <main class="container-50">
-  <h1>Subject Not Found</h1>
-  <p>The subject you are trying to view does not exist.</p>
+  <h1>Internal Error</h1>
+  <p>Please try again.</p>
   <br>
   <sl-button href="${pageContext.request.contextPath}/" variant="primary">Return to Home</sl-button>
 </main>

@@ -11,23 +11,22 @@ import org.springframework.web.servlet.NoHandlerFoundException;
 
 @ControllerAdvice
 public class ExceptionControllerAdvice {
-
     @ResponseStatus(HttpStatus.NOT_FOUND)
     @ExceptionHandler(UserNotFoundException.class)
     public String handleUserNotFoundException(UserNotFoundException e) {
-        return "error/user_not_found";
+        return "error/page_not_found";
     }
 
     @ResponseStatus(HttpStatus.NOT_FOUND)
     @ExceptionHandler(SubjectNotFoundException.class)
     public String handleSubjectNotFoundException(SubjectNotFoundException e) {
-        return "error/subject_not_found";
+        return "error/page_not_found";
     }
 
     @ResponseStatus(HttpStatus.NOT_FOUND)
     @ExceptionHandler(DegreeNotFoundException.class)
     public String handleDegreeNotFoundException(DegreeNotFoundException e) {
-        return "error/degree_not_found";
+        return "error/page_not_found";
     }
 
     @ResponseStatus(HttpStatus.NOT_FOUND)
