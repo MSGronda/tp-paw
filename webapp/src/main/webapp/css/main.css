@@ -17,6 +17,12 @@ body {
     display: flex;
     flex-direction: column;
     background-color: #efefef;
+    opacity: 0;
+}
+
+body.ready {
+    opacity: 1;
+    transition: .25s opacity;
 }
 
 main {
@@ -72,4 +78,3 @@ sl-card.subject-card::part(body) {
     justify-self: center;
     margin: 0 auto;
 }
-
