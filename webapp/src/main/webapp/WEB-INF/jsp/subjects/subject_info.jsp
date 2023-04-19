@@ -7,14 +7,9 @@
   <title>${subject.name}</title>
   <jsp:include page="../components/head_shared.jsp"/>
   <style>
-      .card-basic {
-          width: 100%;
-      }
-
       .info {
           padding-bottom: 2rem;
       }
-
       .review_bt {
           width: 15rem;
           align-self: center;
@@ -28,8 +23,8 @@
       }
 
       h1 {
-          font-size: 44px;
-          font-weight: bold;
+          font-weight: 500;
+          font-size: 25px
       }
 
       .review-column {
@@ -72,6 +67,47 @@
       hr {
           width: 30rem;
       }
+
+      table {
+          border-collapse: collapse;
+          width: 100%;
+          margin-bottom: 1rem;
+          box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.05);
+          background-color: #fff;
+          color: #4b4f56;
+          border-radius: 0.25rem;
+      }
+
+      thead {
+          background-color: #f8f9fa;
+      }
+      thead th {
+          text-align: left;
+          font-weight: 600;
+          padding: 0.6rem;
+          border-bottom: 1px solid #e9ecef;
+      }
+      tbody th{
+          text-align: left;
+          font-weight: 600;
+          padding: 0.6rem;
+          border-bottom: 1px solid #e9ecef;
+      }
+      tbody tr {
+          transition: background-color 0.15s ease-in-out;
+      }
+
+      tbody tr:hover {
+          background-color: #f8f9fa;
+      }
+      tbody td {
+          border-bottom: 1px solid #e9ecef;
+          padding: 0.75rem;
+      }
+      .main-body{
+          width: 100%;
+          height: 100%;
+      }
   </style>
 
 </head>
@@ -84,58 +120,129 @@
     <h1>
       <c:out value="${subject.name}"/>
     </h1>
-    <sl-card class="card-basic">
-      <spring:message code="subject.department"/> <c:out value="${subject.department}"/>
-      <sl-divider></sl-divider>
-      <spring:message code="subject.credits"/> <c:out value="${subject.credits}"/>
-      <sl-divider></sl-divider>
-      <spring:message code="subject.prerequisites"/>
-      <c:if test="${empty prereqNames}">
-        <spring:message code="subject.prerequisites?"/>
-      </c:if>
-      <c:forEach var="prerec" items="${prereqNames}" varStatus="status">
-        <a href='<c:url value="/subject/${prerec.key}"/>'><c:out value="${prerec.value}"/></a>
-        <c:if test="${not status.last}">
-          ,
-        </c:if>
-      </c:forEach>
-      <sl-divider></sl-divider>
-      <spring:message code="subject.professors"/>
-      <c:forEach var="proffesor" items="${professors}" varStatus="status">
-        <c:out value="${proffesor.name}"/>
-        <c:if test="${not status.last}">;
-        </c:if>
-      </c:forEach>
-      <sl-divider></sl-divider>
-      <spring:message code="subject.difficulty"/>
-      <c:choose>
-        <c:when test="${difficulty == 0}">
-          <sl-badge size="medium" variant="success"><spring:message code="form.easy"/></sl-badge>
-        </c:when>
-        <c:when test="${difficulty == 1}">
-          <sl-badge size="medium" variant="primary"><spring:message code="form.normal"/></sl-badge>
-        </c:when>
-        <c:when test="${difficulty == 2}">
-          <sl-badge size="medium" variant="danger"><spring:message code="form.hard"/></sl-badge>
-        </c:when>
-        <c:otherwise>
-          <sl-badge size="medium" variant="neutral"><spring:message code="form.noDif"/></sl-badge>
-        </c:otherwise>
-      </c:choose>
-      <sl-divider></sl-divider>
-      <spring:message code="subject.time" />
-      <c:choose>
-        <c:when test="${time == 0}">
-          <sl-badge size="medium" ariant="primary"><spring:message code="form.NotTimeDemanding" /></sl-badge>
-        </c:when>
-        <c:when test="${time == 1}">
-          <sl-badge size="medium" variant="warning"><spring:message code="form.timeDemanding" /></sl-badge>
-        </c:when>
-        <c:otherwise>
-          <sl-badge size="medium" variant="neutral"><spring:message code="form.noDif" /></sl-badge>
-        </c:otherwise>
-      </c:choose>
+    <sl-card class="main-body">
+      <sl-tab-group>
+        <sl-tab slot="nav" panel="general-panel">General Information</sl-tab>
+        <sl-tab slot="nav" panel="times-panel">Class Times</sl-tab>
+
+
+          <sl-tab-panel name="general-panel">
+              <table>
+                  <tbody>
+                    <tr>
+                        <th><spring:message code="subject.department"/></th>
+                        <td><c:out value="${subject.department}"/></td>
+                    </tr>
+                    <tr>
+                        <th><spring:message code="subject.credits"/> </th>
+                        <td><c:out value="${subject.credits}"/></td>
+                    </tr>
+                  <tr>
+                      <th><spring:message code="subject.prerequisites"/></th>
+                      <td>
+                          <c:if test="${empty prereqNames}">
+                              <spring:message code="subject.prerequisites?"/>
+                          </c:if>
+                          <c:forEach var="prerec" items="${prereqNames}" varStatus="status">
+                              <a href='<c:url value="/subject/${prerec.key}"/>'><c:out value="${prerec.value}"/></a>
+                              <c:if test="${not status.last}">
+                                  ,
+                              </c:if>
+                          </c:forEach>
+                      </td>
+                  </tr>
+                    <tr>
+                        <th><spring:message code="subject.professors"/></th>
+                        <td>
+                            <c:forEach var="proffesor" items="${professors}" varStatus="status">
+                                <sl-badge variant="primary">
+                                    <c:out value="${proffesor.name}"/>
+                                </sl-badge>
+
+                            </c:forEach>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th><spring:message code="subject.difficulty"/></th>
+                        <td>
+                            <c:choose>
+                                <c:when test="${difficulty == 0}">
+                                    <sl-badge size="medium" variant="success"><spring:message code="form.easy"/></sl-badge>
+                                </c:when>
+                                <c:when test="${difficulty == 1}">
+                                    <sl-badge size="medium" variant="primary"><spring:message code="form.normal"/></sl-badge>
+                                </c:when>
+                                <c:when test="${difficulty == 2}">
+                                    <sl-badge size="medium" variant="danger"><spring:message code="form.hard"/></sl-badge>
+                                </c:when>
+                                <c:otherwise>
+                                    <sl-badge size="medium" variant="neutral"><spring:message code="form.noDif"/></sl-badge>
+                                </c:otherwise>
+                            </c:choose>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th><spring:message code="subject.time" /></th>
+                        <td>
+                            <c:choose>
+                                <c:when test="${time == 0}">
+                                    <sl-badge size="medium" ariant="primary"><spring:message code="form.NotTimeDemanding" /></sl-badge>
+                                </c:when>
+                                <c:when test="${time == 1}">
+                                    <sl-badge size="medium" variant="warning"><spring:message code="form.timeDemanding" /></sl-badge>
+                                </c:when>
+                                <c:otherwise>
+                                    <sl-badge size="medium" variant="neutral"><spring:message code="form.noDif" /></sl-badge>
+                                </c:otherwise>
+                            </c:choose>
+                        </td>
+                    </tr>
+                  </tbody>
+              </table>
+
+          </sl-tab-panel>
+
+        <sl-tab-panel name="times-panel">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Class Code</th>
+                        <th>Day</th>
+                        <th>Class Mode</th>
+                        <th>Class Building</th>
+                        <th>Class Number</th>
+                        <th>Class Times</th>
+                    </tr>
+                </thead>
+                <tbody>
+                <c:forEach var="clase" items="${classes}">
+                    <c:forEach var="horario" items="${clase.classTimes}"  varStatus="status">
+                        <tr>
+                            <td>
+                                <c:if test="${status.first}">
+                                    <c:out value="${clase.idClass}"/>
+                                </c:if>
+                            </td>
+                            <td><c:out value="${horario.day}"/></td>
+                            <td><c:out value="${horario.mode}"/></td>
+                            <td><c:out value="${horario.building}"/></td>
+                            <td><c:out value="${horario.classLoc}"/></td>
+                            <td><c:out value="${horario.startTime}"/> - <c:out value="${horario.endTime}"/></td>
+                        </tr>
+                    </c:forEach>
+                </c:forEach>
+                </tbody>
+
+        </table>
+
+    </sl-tab-panel>
+    </sl-tab-group>
     </sl-card>
+
+
+
+
+
   </div>
   <sl-button href='<c:url value="/review/${subject.id}"/>' variant="primary" size="large" pill class="review_bt">
     <spring:message code="subject.review"/></sl-button>
@@ -190,5 +297,6 @@
 </main>
 <jsp:include page="../components/footer.jsp"/>
 <jsp:include page="../components/body_scripts.jsp"/>
+
 </body>
 </html>
