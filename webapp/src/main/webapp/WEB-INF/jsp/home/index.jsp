@@ -18,16 +18,9 @@
           padding: 8px;
       }
 
-
-      .year-panel{
-
-          width: 100%;
-      }
-
-
       sl-tab-panel.year-panel::part(base) {
           display: grid;
-          grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+          grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
 
           padding: 1.25rem;
           gap: 1rem;
@@ -36,25 +29,12 @@
       sl-tab-group::part(base) {
           overflow: hidden;
       }
-
-      .center{
-        display: flex;
-        justify-content: center;
-      }
-
-      .year-group{
-        display: flex;
-        justify-content: center;
-        width: 100%;
-      }
-
   </style>
 </head>
 <body>
 <jsp:include page="../components/navbar.jsp"/>
 <main>
-  <div class="center">
-    <sl-tab-group class="year-group">
+    <sl-tab-group class="year-group container-70">
       <c:forEach var="year" items="${years}">
           <%--          <sl-tab slot="nav" panel="semester-${semester.number}">--%>
           <sl-tab slot="nav" panel="year-${year}">
@@ -83,7 +63,6 @@
 <%--            TODO - pasar lista de materias electivas--%>
         </sl-tab-panel>
     </sl-tab-group>
-  </div>
 </main>
 <jsp:include page="../components/footer.jsp"/>
 <jsp:include page="../components/body_scripts.jsp"/>
