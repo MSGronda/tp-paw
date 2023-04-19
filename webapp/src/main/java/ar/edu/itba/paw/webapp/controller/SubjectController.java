@@ -17,9 +17,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.web.servlet.ModelAndView;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Controller
 public class SubjectController {
@@ -64,6 +63,16 @@ public class SubjectController {
         final Map<String,String> prereqNames = subjectService.findPrerequisitesName(id);
 
         final List<SubjectClass> classes = subjectClassService.getBySubId(id);
+        final Map<String,List<Professor>> classProfs = new HashMap<>();
+
+
+        // TODO, redo this
+        for(SubjectClass subjectClass: classes){
+            classProfs.put(subjectClass.getIdClass(), professors.stream().filter(
+                    professor -> subjectClass.getProfessorIds().contains(professor.getId())
+            ).collect(Collectors.toList()));
+        }
+
 
         ModelAndView mav = new ModelAndView("subjects/subject_info");
         mav.addObject("reviews", reviews);
@@ -73,6 +82,7 @@ public class SubjectController {
         mav.addObject("prereqNames", prereqNames.entrySet());
         mav.addObject("difficulty", difficulty);
         mav.addObject("classes", classes);
+        mav.addObject("classProfs", classProfs);
         return mav;
     }
 

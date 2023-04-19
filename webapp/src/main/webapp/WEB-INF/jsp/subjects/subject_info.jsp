@@ -124,7 +124,7 @@
       <sl-tab-group>
         <sl-tab slot="nav" panel="general-panel">General Information</sl-tab>
         <sl-tab slot="nav" panel="times-panel">Class Times</sl-tab>
-
+        <sl-tab slot="nav" panel="professors-panel">Class Professors</sl-tab>
 
           <sl-tab-panel name="general-panel">
               <table>
@@ -232,10 +232,36 @@
                     </c:forEach>
                 </c:forEach>
                 </tbody>
-
         </table>
-
     </sl-tab-panel>
+
+          <sl-tab-panel name="professors-panel">
+              <table>
+                  <thead>
+                  <tr>
+                      <th>Class Code</th>
+                      <th>Professors</th>
+                  </tr>
+                  </thead>
+                  <tbody>
+                  <c:forEach var="clase" items="${classes}">
+                      <tr>
+                      <td>
+                          <c:out value="${clase.idClass}"/>
+                      </td>
+                      <td>
+                          <c:forEach var="prof" items="${classProfs[clase.idClass]}">
+                              <sl-badge variant="primary">
+                                  <c:out value="${prof.name}"/>
+                              </sl-badge>
+                          </c:forEach>
+                      </td>
+
+                      </tr>
+                  </c:forEach>
+                  </tbody>
+              </table>
+          </sl-tab-panel>
     </sl-tab-group>
     </sl-card>
 
