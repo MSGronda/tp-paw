@@ -59,23 +59,45 @@ public class HomeController {
         Set<Integer> years = infSubsByYear.keySet();
 
         Map<String, Integer> reviewCount = new HashMap<>();
-        Map<String, List<String>> prereqs = new HashMap<>();
+        Map<String, String> prereqs = new HashMap<>();
+        Map<String, Integer> subjectDifficulty = new HashMap<>();
+        Map<String, Integer> subjectTime = new HashMap<>();
 
         for( int year : years ){
             for( Subject subject : infSubsByYear.get(year)){
+
                 reviewCount.put(subject.getId(), rs.getAllBySubject(subject.getId()).size());
+
+                Optional<Integer> maybeDifficulty =  rs.getDifficultyBySubject(subject.getId());
+                int difficulty;
+                difficulty = maybeDifficulty.orElse(-1);
+                subjectDifficulty.put(subject.getId(), difficulty );
+
+                Optional<Integer> maybeTime = rs.getTimeBySubject(subject.getId());
+                int time = maybeTime.orElse(-1);
+                subjectTime.put(subject.getId(), time);
+
+//                StringBuilder sb = new StringBuilder();
                 for( String id : subject.getPrerequisites()){
-                    prereqs.putIfAbsent(subject.getId(), new ArrayList<>());
-                    if(!ss.findById(id).isPresent()){
+                    Optional<Subject> maybeSubject = ss.findById(id);
+                    if(!maybeSubject.isPresent()){
                         throw new SubjectNotFoundException();
                     }
-                    prereqs.get(subject.getId()).add(ss.findById(id).get().getName());
+//                    sb.append(maybeSubject.get().getName()).append(", ");
+
+                    if( !prereqs.containsKey(subject.getId())){
+                        prereqs.put(subject.getId(), maybeSubject.get().getName());
+                    }else{
+//                        prereqs.get(subject.getId()).concat(", ");
+                        prereqs.get(subject.getId()).concat(ss.findById(id).get().getName());
+                    }
                 }
+//                prereqs.put(String.valueOf(subject.getId()), sb.toString());
             }
         }
-        System.out.println(reviewCount);
         System.out.println(prereqs);
         System.out.println(prereqs.get("93.59"));
+
 
         ModelAndView mav = new ModelAndView("home/index");
         mav.addObject("degrees", degrees);
@@ -83,6 +105,8 @@ public class HomeController {
         mav.addObject("infSubsByYear", infSubsByYear);
         mav.addObject("subjectReviewCount", reviewCount);
         mav.addObject("prereqNames", prereqs);
+        mav.addObject("subjectDifficulty", subjectDifficulty);
+        mav.addObject("subjectTime", subjectTime);
         mav.addObject("profsBySubId", profsBySubId);
 
         return mav;

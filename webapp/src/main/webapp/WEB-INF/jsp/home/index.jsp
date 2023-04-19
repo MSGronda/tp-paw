@@ -55,7 +55,9 @@
                     <c:set var="subject" value="${subject}" scope="request"/>
                     <c:set var="subProfs" value="${profsBySubId[subject.id]}" scope="request"/>
                     <c:set var="reviewCount" value="${subjectReviewCount[subject.id]}" scope="request"/>
-                    <c:set var="prereqNames" value="${prereqNames.get(subject.id)}" scope="request"/>
+                    <c:set var="prereqNames" value="${prereqNames[subject.id]}" scope="request"/>
+                    <c:set var="difficulty" value="${subjectDifficulty[subject.id]}" scope="request"/>
+                    <c:set var="time" value="${subjectTime[subject.id]}" scope="request"/>
                     <c:import url="../components/subject_card.jsp"/>
                 </c:forEach>
 
