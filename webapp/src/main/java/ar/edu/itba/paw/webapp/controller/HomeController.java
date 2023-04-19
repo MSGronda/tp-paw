@@ -5,17 +5,16 @@ import ar.edu.itba.paw.models.Professor;
 import ar.edu.itba.paw.models.Subject;
 import ar.edu.itba.paw.services.DegreeService;
 import ar.edu.itba.paw.services.ProfessorService;
+import ar.edu.itba.paw.services.ReviewService;
 import ar.edu.itba.paw.services.SubjectService;
 import ar.edu.itba.paw.webapp.exceptions.DegreeNotFoundException;
+import ar.edu.itba.paw.webapp.exceptions.SubjectNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 @Controller
 public class HomeController {
@@ -24,11 +23,14 @@ public class HomeController {
 
     private final ProfessorService ps;
 
+    private final ReviewService rs;
+
     @Autowired
-    public HomeController(DegreeService ds, SubjectService ss, ProfessorService ps) {
+    public HomeController(DegreeService ds, SubjectService ss, ProfessorService ps, ReviewService rs) {
         this.ds = ds;
         this.ss = ss;
         this.ps = ps;
+        this.rs = rs;
     }
 
     @RequestMapping("/")
@@ -56,11 +58,31 @@ public class HomeController {
 
         Set<Integer> years = infSubsByYear.keySet();
 
+        Map<String, Integer> reviewCount = new HashMap<>();
+        Map<String, List<String>> prereqs = new HashMap<>();
 
+        for( int year : years ){
+            for( Subject subject : infSubsByYear.get(year)){
+                reviewCount.put(subject.getId(), rs.getAllBySubject(subject.getId()).size());
+                for( String id : subject.getPrerequisites()){
+                    prereqs.putIfAbsent(subject.getId(), new ArrayList<>());
+                    if(!ss.findById(id).isPresent()){
+                        throw new SubjectNotFoundException();
+                    }
+                    prereqs.get(subject.getId()).add(ss.findById(id).get().getName());
+                }
+            }
+        }
+        System.out.println(reviewCount);
+        System.out.println(prereqs);
+        System.out.println(prereqs.get("93.59"));
 
         ModelAndView mav = new ModelAndView("home/index");
+        mav.addObject("degrees", degrees);
         mav.addObject("years", years);
         mav.addObject("infSubsByYear", infSubsByYear);
+        mav.addObject("subjectReviewCount", reviewCount);
+        mav.addObject("prereqNames", prereqs);
         mav.addObject("profsBySubId", profsBySubId);
 
         return mav;
