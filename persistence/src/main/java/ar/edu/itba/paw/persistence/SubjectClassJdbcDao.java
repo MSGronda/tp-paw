@@ -75,14 +75,14 @@ public class SubjectClassJdbcDao implements SubjectClassDao{
     }
 
     private List<SubjectClass.ClassTime> getClassTimes(String idSub, String idClass){
-        return jdbcTemplate.query( "SELECT * FROM " + TABLE_CLASS_LOC_TIME + " WHERE idSub = ? AND idClass = ?",
+        return jdbcTemplate.query( "SELECT * FROM " + TABLE_CLASS_LOC_TIME + " WHERE idSub = ? AND idClass = ? ORDER BY day, startTime",
                 SubjectClassJdbcDao::rowMapperClassLocTime, idSub, idClass);
     }
 
 
     private static SubjectClass.ClassTime rowMapperClassLocTime(ResultSet rs, int rowNum) throws SQLException {
         return new SubjectClass.ClassTime(
-                rs.getString("day"),
+                rs.getInt("day"),
                 rs.getTime("startTime"),
                 rs.getTime("endTime"),
                 rs.getString("class"),

@@ -1,10 +1,7 @@
 package ar.edu.itba.paw.models;
 
 import java.sql.Time;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 
 public class SubjectClass {
     private final String idSub;
@@ -15,8 +12,8 @@ public class SubjectClass {
     public SubjectClass(String idSub, String idClass) {
         this.idSub = idSub;
         this.idClass = idClass;
-        this.professorIds = new HashSet<>();
-        this.classTimes = new HashSet<>();
+        this.professorIds = new LinkedHashSet<>();
+        this.classTimes = new LinkedHashSet<>();
     }
     public SubjectClass(String idSub, String idClass, Set<Long> professorIds, Set<ClassTime> classTimes) {
         this.idSub = idSub;
@@ -48,14 +45,14 @@ public class SubjectClass {
     }
 
     public static class ClassTime{
-        private final String day;
+        private final Integer day;
         private final Time startTime;
         private final Time endTime;
         private final String classLoc;
         private final String building;
         private final String mode;
 
-        public ClassTime(String day, Time startTime, Time endTime, String classLoc, String building, String mode) {
+        public ClassTime(Integer day, Time startTime, Time endTime, String classLoc, String building, String mode) {
             this.day = day;
             this.startTime = startTime;
             this.endTime = endTime;
@@ -72,7 +69,7 @@ public class SubjectClass {
             return classLoc;
         }
 
-        public String getDay() {
+        public Integer getDay() {
             return day;
         }
 

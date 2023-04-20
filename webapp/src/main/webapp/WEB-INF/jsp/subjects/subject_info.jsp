@@ -118,7 +118,7 @@
 <main>
   <div class="info container-50">
     <h1>
-      <c:out value="${subject.name}"/>
+      <c:out value="${subject.name}"/> - <c:out value="${subject.id}"/>
     </h1>
     <sl-card class="main-body">
       <sl-tab-group>
@@ -208,10 +208,10 @@
                     <tr>
                         <th><spring:message code="subject.classCode"/></th>
                         <th><spring:message code="subject.classDay"/></th>
+                        <th><spring:message code="subject.classTimes"/></th>
                         <th><spring:message code="subject.classMode"/></th>
                         <th><spring:message code="subject.classBuilding"/></th>
                         <th><spring:message code="subject.classNumber"/></th>
-                        <th><spring:message code="subject.classTimes"/></th>
                     </tr>
                 </thead>
                 <tbody>
@@ -223,11 +223,14 @@
                                     <c:out value="${clase.idClass}"/>
                                 </c:if>
                             </td>
-                            <td><c:out value="${horario.day}"/></td>
+                            <td><spring:message code="subject.classDay${horario.day}"/></td>
+
+                            <td><c:out value="${horario.startTime.hours}:${horario.startTime.minutes}"/><c:if test="${horario.startTime.minutes  == 0}">0</c:if>
+                                - <c:out value="${horario.endTime.hours}:${horario.endTime.minutes}"/><c:if test="${horario.endTime.minutes == 0}">0</c:if>
+                            </td>
                             <td><c:out value="${horario.mode}"/></td>
                             <td><c:out value="${horario.building}"/></td>
                             <td><c:out value="${horario.classLoc}"/></td>
-                            <td><c:out value="${horario.startTime}"/> - <c:out value="${horario.endTime}"/></td>
                         </tr>
                     </c:forEach>
                 </c:forEach>
