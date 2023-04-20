@@ -94,6 +94,7 @@ public class SubjectJdbcDao implements SubjectDao {
             sb.append(" AND ").append(filter.getKey()).append(" = ").append("'").append(filter.getValue()).append("'");
         }
 
+
         // Me fijo que el order by sea valido
         if (!validOrderBy.contains(ob))
             ob = "subname";      // Default
@@ -222,7 +223,7 @@ public class SubjectJdbcDao implements SubjectDao {
     }
 
     private static List<Subject> joinRowsToSubjects(List<JoinRow> rows) {
-        final Map<String, Subject> subs = new HashMap<>();
+        final Map<String, Subject> subs = new LinkedHashMap<>();
         for (JoinRow row : rows) {
             Subject sub = subs.getOrDefault(row.idSub,
                     new Subject(row.idSub, row.subName, row.department, row.credits)
