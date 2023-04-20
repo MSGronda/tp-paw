@@ -122,9 +122,9 @@
     </h1>
     <sl-card class="main-body">
       <sl-tab-group>
-        <sl-tab slot="nav" panel="general-panel">General Information</sl-tab>
-        <sl-tab slot="nav" panel="times-panel">Class Times</sl-tab>
-        <sl-tab slot="nav" panel="professors-panel">Class Professors</sl-tab>
+        <sl-tab slot="nav" panel="general-panel"><spring:message code="subject.general"/></sl-tab>
+        <sl-tab slot="nav" panel="times-panel"><spring:message code="subject.times"/></sl-tab>
+        <sl-tab slot="nav" panel="professors-panel"><spring:message code="subject.classProf"/></sl-tab>
 
           <sl-tab-panel name="general-panel">
               <table>
@@ -206,12 +206,12 @@
             <table>
                 <thead>
                     <tr>
-                        <th>Class Code</th>
-                        <th>Day</th>
-                        <th>Class Mode</th>
-                        <th>Class Building</th>
-                        <th>Class Number</th>
-                        <th>Class Times</th>
+                        <th><spring:message code="subject.classCode"/></th>
+                        <th><spring:message code="subject.classDay"/></th>
+                        <th><spring:message code="subject.classMode"/></th>
+                        <th><spring:message code="subject.classBuilding"/></th>
+                        <th><spring:message code="subject.classNumber"/></th>
+                        <th><spring:message code="subject.classTimes"/></th>
                     </tr>
                 </thead>
                 <tbody>
@@ -239,8 +239,8 @@
               <table>
                   <thead>
                   <tr>
-                      <th>Class Code</th>
-                      <th>Professors</th>
+                      <th><spring:message code="subject.classCode"/></th>
+                      <th><spring:message code="subject.classProf"/></th>
                   </tr>
                   </thead>
                   <tbody>
