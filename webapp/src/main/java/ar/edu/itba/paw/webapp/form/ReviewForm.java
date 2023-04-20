@@ -10,7 +10,7 @@ public class ReviewForm {
     @Size(min = 1)
     private String email;
 
-    @Size(min = 1)
+    @Size(max = 2000)
     private String text;
 
     @NotNull
