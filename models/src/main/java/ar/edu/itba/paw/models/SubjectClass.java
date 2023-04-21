@@ -6,19 +6,19 @@ import java.util.*;
 public class SubjectClass {
     private final String idSub;
     private final String idClass;
-    private final Set<Long> professorIds;
+    private final Set<Professor> professors;
     private final Set<ClassTime> classTimes;
 
     public SubjectClass(String idSub, String idClass) {
         this.idSub = idSub;
         this.idClass = idClass;
-        this.professorIds = new LinkedHashSet<>();
+        this.professors = new LinkedHashSet<>();
         this.classTimes = new LinkedHashSet<>();
     }
-    public SubjectClass(String idSub, String idClass, Set<Long> professorIds, Set<ClassTime> classTimes) {
+    public SubjectClass(String idSub, String idClass, Set<Professor> professors, Set<ClassTime> classTimes) {
         this.idSub = idSub;
         this.idClass = idClass;
-        this.professorIds = professorIds;
+        this.professors = professors;
         this.classTimes = classTimes;
     }
 
@@ -26,8 +26,8 @@ public class SubjectClass {
         return classTimes;
     }
 
-    public Set<Long> getProfessorIds() {
-        return professorIds;
+    public Set<Professor> getProfessors() {
+        return professors;
     }
 
     public String getIdClass() {
@@ -37,8 +37,8 @@ public class SubjectClass {
     public String getIdSub() {
         return idSub;
     }
-    public void setprofIds(Collection<Long> professorIds){
-        this.professorIds.addAll(professorIds);
+    public void setprofIds(Collection<Professor> professorIds){
+        this.professors.addAll(professorIds);
     }
     public void setClassTimes(Collection<ClassTime> classTimes){
         this.classTimes.addAll(classTimes);
@@ -83,6 +83,19 @@ public class SubjectClass {
 
         public Time getStartTime() {
             return startTime;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+            ClassTime classTime = (ClassTime) o;
+            return Objects.equals(day, classTime.day) && Objects.equals(startTime, classTime.startTime) && Objects.equals(endTime, classTime.endTime) && Objects.equals(classLoc, classTime.classLoc) && Objects.equals(building, classTime.building) && Objects.equals(mode, classTime.mode);
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(day, startTime, endTime, classLoc, building, mode);
         }
     }
 

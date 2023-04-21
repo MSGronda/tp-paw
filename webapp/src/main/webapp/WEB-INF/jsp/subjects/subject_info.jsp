@@ -253,7 +253,7 @@
                           <c:out value="${clase.idClass}"/>
                       </td>
                       <td>
-                          <c:forEach var="prof" items="${classProfs[clase.idClass]}">
+                          <c:forEach var="prof" items="${clase.professors}">
                               <sl-badge variant="primary">
                                   <c:out value="${prof.name}"/>
                               </sl-badge>

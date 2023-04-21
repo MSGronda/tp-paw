@@ -11,10 +11,8 @@ import ar.edu.itba.paw.services.SubjectService;
 import ar.edu.itba.paw.webapp.exceptions.SubjectNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.util.*;
@@ -61,18 +59,9 @@ public class SubjectController {
         final List<Review> reviews = reviewService.getAllBySubject(id);
 
         final Map<String,String> prereqNames = subjectService.findPrerequisitesName(id);
-
+        System.out.println("llegamos");
         final List<SubjectClass> classes = subjectClassService.getBySubId(id);
-        final Map<String,List<Professor>> classProfs = new HashMap<>();
-
-
-        // TODO, redo this
-        for(SubjectClass subjectClass: classes){
-            classProfs.put(subjectClass.getIdClass(), professors.stream().filter(
-                    professor -> subjectClass.getProfessorIds().contains(professor.getId())
-            ).collect(Collectors.toList()));
-        }
-
+        System.out.println("salimos");
 
         ModelAndView mav = new ModelAndView("subjects/subject_info");
         mav.addObject("reviews", reviews);
@@ -82,7 +71,6 @@ public class SubjectController {
         mav.addObject("prereqNames", prereqNames.entrySet());
         mav.addObject("difficulty", difficulty);
         mav.addObject("classes", classes);
-        mav.addObject("classProfs", classProfs);
         return mav;
     }
 
