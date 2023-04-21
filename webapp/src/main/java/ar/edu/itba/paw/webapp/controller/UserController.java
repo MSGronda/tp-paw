@@ -3,11 +3,13 @@ package ar.edu.itba.paw.webapp.controller;
 import ar.edu.itba.paw.models.*;
 import ar.edu.itba.paw.services.UserService;
 import ar.edu.itba.paw.webapp.exceptions.UserNotFoundException;
+import ar.edu.itba.paw.webapp.form.UserForm;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
+import javax.jws.WebParam;
 import java.sql.SQLException;
 import java.util.*;
 
@@ -35,20 +37,20 @@ public class UserController {
         return mav;
     }
 
-    @RequestMapping(value = "/register", method = RequestMethod.POST)
-    public ModelAndView register(
-        @RequestParam String username,
-        @RequestParam String email,
-        @RequestParam String password
-    ) throws SQLException {
-        final User newUser = userService.create(email, password, username);
+    @RequestMapping(value = "/register", method = { RequestMethod.POST })
+    public ModelAndView register(@ModelAttribute ("UserForm") final UserForm userForm) throws SQLException {
+        final User newUser = userService.create(userForm.getEmail(), userForm.getPassword(), userForm.getName());
 
         return new ModelAndView("redirect:/profile/" + newUser.getId());
     }
 
-    @RequestMapping(value = "/register", method = RequestMethod.GET)
-    public ModelAndView registerForm() {
+    @RequestMapping(value = "/register", method = { RequestMethod.GET })
+    public ModelAndView registerForm(@ModelAttribute ("UserForm") final UserForm userForm) {
         return new ModelAndView("user/register");
     }
 
+    @RequestMapping(value = "/login", method = { RequestMethod.GET })
+    public ModelAndView login() {
+        return new ModelAndView("/login/login");
+    }
 }

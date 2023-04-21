@@ -16,6 +16,7 @@
     <maven.compiler.target>1.8</maven.compiler.target>
 
     <spring.version>4.2.5.RELEASE</spring.version>
+    <spring-security.version>4.0.4.RELEASE</spring-security.version>
     <org.postgresql.version>42.2.5</org.postgresql.version>
     <servlet-api.version>2.5</servlet-api.version>
     <jstl.version>1.2</jstl.version>
@@ -51,6 +52,21 @@
         <artifactId>spring-test</artifactId>
         <version>${spring.version}</version>
         <scope>test</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.springframework.security</groupId>
+        <artifactId>spring-security-core</artifactId>
+        <version>${spring-security.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.springframework.security</groupId>
+        <artifactId>spring-security-web</artifactId>
+        <version>${spring-security.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.springframework.security</groupId>
+        <artifactId>spring-security-config</artifactId>
+        <version>${spring-security.version}</version>
       </dependency>
       <dependency>
         <groupId>javax.servlet</groupId>
