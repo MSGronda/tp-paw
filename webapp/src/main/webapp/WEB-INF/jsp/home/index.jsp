@@ -38,11 +38,7 @@
         <c:forEach var="year" items="${years}">
             <%--          <sl-tab slot="nav" panel="semester-${semester.number}">--%>
             <sl-tab slot="nav" panel="year-${year}">
-
-                    <%--            <spring:message code="home.semester" arguments="${semester.number}"/>--%>
                 <spring:message code="home.year" arguments="${year}"/>
-                    <%--            <c:out value="${year}° Year"/>--%>
-                    <%--            <c:out value="${semester.number / 2}° Year"/>--%>
             </sl-tab>
         </c:forEach>
         <sl-tab slot="nav" panel="electivas">
@@ -53,9 +49,9 @@
             <sl-tab-panel class="year-panel" name="year-${year}">
                 <c:forEach var="subject" items="${infSubsByYear[year]}">
                     <c:set var="subject" value="${subject}" scope="request"/>
-                    <c:set var="subProfs" value="${profsBySubId[subject.id]}" scope="request"/>
+<%--                    <c:set var="subProfs" value="${profsBySubId[subject.id]}" scope="request"/>--%>
                     <c:set var="reviewCount" value="${subjectReviewCount[subject.id]}" scope="request"/>
-                    <c:set var="prereqNames" value="${prereqNames[subject.id]}" scope="request"/>
+<%--                    <c:set var="prereqNames" value="${prereqNames[subject.id]}" scope="request"/>--%>
                     <c:set var="difficulty" value="${subjectDifficulty[subject.id]}" scope="request"/>
                     <c:set var="time" value="${subjectTime[subject.id]}" scope="request"/>
                     <c:import url="../components/subject_card.jsp"/>
@@ -64,7 +60,13 @@
             </sl-tab-panel>
         </c:forEach>
         <sl-tab-panel class="year-panel" name="electivas">
-            <%--            TODO - pasar lista de materias electivas--%>
+            <c:forEach var="elective" items="${electives}">
+                <c:set var="subject" value="${elective}" scope="request"/>
+                <c:set var="reviewCount" value="${electiveReviewCount[subject.id]}" scope="request"/>
+                <c:set var="difficulty" value="${electiveDifficulty[subject.id]}" scope="request"/>
+                <c:set var="time" value="${electiveTime[subject.id]}" scope="request"/>
+                <c:import url="../components/subject_card.jsp"/>
+            </c:forEach>
         </sl-tab-panel>
     </sl-tab-group>
 </main>

@@ -14,6 +14,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
 
+import javax.swing.text.html.Option;
 import java.util.*;
 
 @Controller
@@ -36,78 +37,33 @@ public class HomeController {
     @RequestMapping("/")
     public ModelAndView home() {
         final List<Degree> degrees = ds.getAll();
-        final Map<Long, Map<Integer,List<Subject>>> subsByDegSem = ss.getAllGroupedByDegIdAndSemester();
-        final Map<String, List<Professor>> profsBySubId = ps.getAllGroupedBySubjectId();
+        Optional<Degree> maybeDegree = degrees.stream().findFirst();
 
-        if( !degrees.stream().findFirst().isPresent() ){
+        if( !maybeDegree.isPresent() ){
             //TODO - error
             throw new DegreeNotFoundException();
         }
-        final Map<Integer, List<Subject>> infSubsBySem = subsByDegSem.get(degrees.stream().findFirst().get().getId());
 
-        Map<Integer, List<Subject>> infSubsByYear = new HashMap<>();
-
-
-        for( int semester : infSubsBySem.keySet()){
-            if(semester % 2 == 0){
-                List<Subject> aux = infSubsBySem.get(semester-1);
-                aux.addAll(infSubsBySem.get(semester));
-                infSubsByYear.put( semester/2, aux);
-            }
-        }
+        final Map<Integer, List<Subject>> infSubsByYear = ss.getInfSubsByYear(maybeDegree.get().getId());
+        final List<Subject> infElectives = ss.getInfElectives(maybeDegree.get().getId());
 
         Set<Integer> years = infSubsByYear.keySet();
 
-        Map<String, Integer> reviewCount = new HashMap<>();
-        Map<String, String> prereqs = new HashMap<>();
-        Map<String, Integer> subjectDifficulty = new HashMap<>();
-        Map<String, Integer> subjectTime = new HashMap<>();
-
-        for( int year : years ){
-            for( Subject subject : infSubsByYear.get(year)){
-
-                reviewCount.put(subject.getId(), rs.getAllBySubject(subject.getId()).size());
-
-                Optional<Integer> maybeDifficulty =  rs.getDifficultyBySubject(subject.getId());
-                int difficulty;
-                difficulty = maybeDifficulty.orElse(-1);
-                subjectDifficulty.put(subject.getId(), difficulty );
-
-                Optional<Integer> maybeTime = rs.getTimeBySubject(subject.getId());
-                int time = maybeTime.orElse(-1);
-                subjectTime.put(subject.getId(), time);
-
-//                StringBuilder sb = new StringBuilder();
-                for( String id : subject.getPrerequisites()){
-                    Optional<Subject> maybeSubject = ss.findById(id);
-                    if(!maybeSubject.isPresent()){
-                        throw new SubjectNotFoundException();
-                    }
-//                    sb.append(maybeSubject.get().getName()).append(", ");
-
-                    if( !prereqs.containsKey(subject.getId())){
-                        prereqs.put(subject.getId(), maybeSubject.get().getName());
-                    }else{
-//                        prereqs.get(subject.getId()).concat(", ");
-                        prereqs.get(subject.getId()).concat(ss.findById(id).get().getName());
-                    }
-                }
-//                prereqs.put(String.valueOf(subject.getId()), sb.toString());
-            }
-        }
-        System.out.println(prereqs);
-        System.out.println(prereqs.get("93.59"));
+        List<Map<String, Integer>> cardData = ss.getCardData(years, infSubsByYear, rs);
+        List<Map<String, Integer>> electiveCardData = ss.getElectiveCardData(infElectives, rs);
 
 
         ModelAndView mav = new ModelAndView("home/index");
         mav.addObject("degrees", degrees);
         mav.addObject("years", years);
         mav.addObject("infSubsByYear", infSubsByYear);
-        mav.addObject("subjectReviewCount", reviewCount);
-        mav.addObject("prereqNames", prereqs);
-        mav.addObject("subjectDifficulty", subjectDifficulty);
-        mav.addObject("subjectTime", subjectTime);
-        mav.addObject("profsBySubId", profsBySubId);
+        mav.addObject("electives", infElectives);
+        mav.addObject("subjectReviewCount", cardData.get(0));
+        mav.addObject("subjectDifficulty", cardData.get(1));
+        mav.addObject("subjectTime", cardData.get(2));
+        mav.addObject("electiveReviewCount", electiveCardData.get(0));
+        mav.addObject("electiveDifficulty", electiveCardData.get(1));
+        mav.addObject("electiveTime", electiveCardData.get(2));
 
         return mav;
     }

@@ -118,6 +118,16 @@ public class SubjectJdbcDao implements SubjectDao {
         return groupByDegIdAndSemester(jdbcTemplate.query(QUERY_JOIN, SubjectJdbcDao::rowMapperJoinRow));
     }
 
+    @Override
+    public Map<Long, Map<Integer, List<Subject>>> getAllGroupedByDegIdAndYear(){
+        return groupByDegIdAndYear(jdbcTemplate.query(QUERY_JOIN, SubjectJdbcDao::rowMapperJoinRow));
+    }
+
+    @Override
+    public Map<Long, List<Subject>> getAllElectivesGroupedByDegId(){
+        return electivesGroupedByDegId(jdbcTemplate.query(QUERY_JOIN, SubjectJdbcDao::rowMapperJoinRow));
+    }
+
     private Map<Long, List<Subject>> groupByDegreeId(List<Subject> subs) {
         Map<Long, List<Subject>> map = new HashMap<>();
         for (Subject sub : subs) {
@@ -158,6 +168,99 @@ public class SubjectJdbcDao implements SubjectDao {
                 newSemesterMap.put(semesterMap.getKey(), new ArrayList<>(semesterMap.getValue().values()));
             }
             result.put(degMap.getKey(), newSemesterMap);
+        }
+
+        return result;
+    }
+
+    private Map<Long, Map<Integer, List<Subject>>> groupByDegIdAndYear(List<JoinRow> rows){
+        Map<Long, Map<Integer, Map<String,Subject>>> auxMap = new LinkedHashMap<>();
+
+        for (JoinRow row : rows) {
+            if (!row.idDeg.isPresent() || !row.semester.isPresent() || row.semester.get() == -1) continue;
+            long idDeg = row.idDeg.get();
+            int semester = row.semester.get();
+
+            Map<Integer, Map<String, Subject>> yearMap = auxMap.getOrDefault(idDeg, new HashMap<>());
+
+            if (semester % 2 == 1) {
+                Map<String, Subject> subs = yearMap.getOrDefault((semester + 1) / 2, new HashMap<>());
+
+                Subject sub = subs.getOrDefault(row.idSub, new Subject(row.idSub, row.subName, row.department, row.credits));
+
+                row.idProf.ifPresent(id -> sub.getProfessorIds().add(id));
+                row.idPrereq.ifPresent(id -> sub.getPrerequisites().add(id));
+                row.idDeg.ifPresent(id -> sub.getDegreeIds().add(id));
+
+                subs.putIfAbsent(row.idSub, sub);
+                if (yearMap.containsKey((semester + 1) / 2)) {
+                    yearMap.get((semester + 1) / 2).putAll(subs);
+                } else {
+                    yearMap.putIfAbsent((semester + 1) / 2, subs);
+                }
+
+                auxMap.putIfAbsent(idDeg, yearMap);
+
+            } else {
+                Map<String, Subject> subs = yearMap.getOrDefault(semester / 2, new HashMap<>());
+
+                Subject sub = subs.getOrDefault(row.idSub, new Subject(row.idSub, row.subName, row.department, row.credits));
+
+                row.idProf.ifPresent(id -> sub.getProfessorIds().add(id));
+                row.idPrereq.ifPresent(id -> sub.getPrerequisites().add(id));
+                row.idDeg.ifPresent(id -> sub.getDegreeIds().add(id));
+
+                subs.putIfAbsent(row.idSub, sub);
+                if (yearMap.containsKey(semester / 2)) {
+                    yearMap.get(semester / 2).putAll(subs);
+                } else {
+                    yearMap.putIfAbsent(semester / 2, subs);
+                }
+                auxMap.putIfAbsent(idDeg, yearMap);
+            }
+        }
+
+        Map<Long, Map<Integer, List<Subject>>> result = new LinkedHashMap<>();
+        for(Map.Entry<Long,Map<Integer,Map<String,Subject>>> degMap : auxMap.entrySet()) {
+            Map<Integer,List<Subject>> newYearMap = new HashMap<>();
+            for(Map.Entry<Integer,Map<String,Subject>> yearMap : degMap.getValue().entrySet()) {
+                newYearMap.put(yearMap.getKey(), new ArrayList<>(yearMap.getValue().values()));
+            }
+            result.put(degMap.getKey(), newYearMap);
+        }
+
+        return result;
+    }
+
+    private Map<Long, List<Subject>> electivesGroupedByDegId(List<JoinRow> rows){
+        Map<Long, Map<String,Subject>> auxMap = new LinkedHashMap<>();
+
+        for (JoinRow row : rows) {
+            if (!row.idDeg.isPresent() || !row.semester.isPresent() || row.semester.get() != -1) continue;
+            long idDeg = row.idDeg.get();
+            int semester = row.semester.get();
+
+            Map<String, Subject> subs = auxMap.getOrDefault(idDeg, new HashMap<>());
+
+            Subject sub = subs.getOrDefault(row.idSub, new Subject(row.idSub, row.subName, row.department, row.credits));
+
+            row.idProf.ifPresent(id -> sub.getProfessorIds().add(id));
+            row.idPrereq.ifPresent(id -> sub.getPrerequisites().add(id));
+            row.idDeg.ifPresent(id -> sub.getDegreeIds().add(id));
+
+            subs.putIfAbsent(row.idSub, sub);
+
+            auxMap.putIfAbsent(idDeg, subs);
+
+        }
+
+        Map<Long, List<Subject>> result = new LinkedHashMap<>();
+        for(Map.Entry<Long,Map<String,Subject>> degMap : auxMap.entrySet()) {
+            List<Subject> newElectiveList = new ArrayList<>();
+            for(Map.Entry<String, Subject> electiveMap : degMap.getValue().entrySet()) {
+                newElectiveList.add(electiveMap.getValue());
+            }
+            result.put(degMap.getKey(), newElectiveList);
         }
 
         return result;

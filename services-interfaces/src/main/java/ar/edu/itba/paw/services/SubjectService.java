@@ -17,6 +17,17 @@ public interface SubjectService extends BaseService<String, Subject> {
     List<Subject> getAllByDegree(Long idDegree);
     Map<Long, List<Subject>> getAllGroupedByDegreeId();
     Map<Long, Map<Integer, List<Subject>>> getAllGroupedByDegIdAndSemester();
+    Map<Long, Map<Integer, List<Subject>>> getAllGroupedByDegIdAndYear();
+
+    Map<Integer, List<Subject>> getInfSubsByYear(Long degreeId);
+
+    Map<Long, List<Subject>> getAllElectivesGroupedByDegId();
+
+    List<Subject> getInfElectives(Long degreeId);
+
+    List<Map<String, Integer>> getCardData(Set<Integer> years, Map<Integer, List<Subject>> infSubsByYear, ReviewService rs);
+
+    List<Map<String, Integer>> getElectiveCardData(List<Subject> infElectives, ReviewService rs);
     List<Subject> getByName(String name);
     List<Subject> getByNameOrderBy(String name, String ob);
 

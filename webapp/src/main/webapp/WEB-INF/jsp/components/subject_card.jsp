@@ -86,28 +86,17 @@
       </sl-badge>
     </c:if>
     <c:if test="${!subject.prerequisites.isEmpty()}">
-<%--      <c:forEach items="${prereqNames}" var="prereqName">--%>
-<%--        <p>${prereqName}</p>--%>
-<%--        <p> hola</p>--%>
-<%--      </c:forEach>--%>
-      <sl-tooltip content="${prereqNamesString}">
-        <sl-badge variant="warning" pill>
-          <c:choose>
-            <c:when test="${subject.prerequisites.size() != 1}">
-              <spring:message code="card.prerequisites" arguments="${subject.prerequisites.size()}"/>
-            </c:when>
-            <c:otherwise>
-              <spring:message code="card.onePrerequisite" arguments="${subject.prerequisites.size()}"/>
-            </c:otherwise>
-          </c:choose>
-        </sl-badge>
-      </sl-tooltip>
+      <sl-badge variant="warning" pill>
+        <c:choose>
+          <c:when test="${subject.prerequisites.size() != 1}">
+            <spring:message code="card.prerequisites" arguments="${subject.prerequisites.size()}"/>
+          </c:when>
+          <c:otherwise>
+            <spring:message code="card.onePrerequisite" arguments="${subject.prerequisites.size()}"/>
+          </c:otherwise>
+        </c:choose>
+      </sl-badge>
     </c:if>
-<%--    <c:if test="${!empty subject.department}">--%>
-<%--      <sl-badge variant="success" pill>--%>
-<%--        <c:out value="${subject.department}" />--%>
-<%--      </sl-badge>--%>
-<%--    </c:if>--%>
   </div>
 </sl-card>
 </a>
