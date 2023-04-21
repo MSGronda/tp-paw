@@ -1,12 +1,7 @@
 package ar.edu.itba.paw.webapp.controller;
 
-import ar.edu.itba.paw.models.Professor;
-import ar.edu.itba.paw.models.Review;
-import ar.edu.itba.paw.models.Subject;
-import ar.edu.itba.paw.services.ProfessorService;
-import ar.edu.itba.paw.services.ReviewService;
-import ar.edu.itba.paw.services.SubjectClassService;
-import ar.edu.itba.paw.services.SubjectService;
+import ar.edu.itba.paw.models.*;
+import ar.edu.itba.paw.services.*;
 import ar.edu.itba.paw.webapp.exceptions.DegreeNotFoundException;
 import ar.edu.itba.paw.webapp.exceptions.SubjectNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -77,9 +72,8 @@ public class SubjectController {
         final List<Review> reviews = reviewService.getAllBySubject(id);
 
         final Map<String,String> prereqNames = subjectService.findPrerequisitesName(id);
-        System.out.println("llegamos");
+
         final List<SubjectClass> classes = subjectClassService.getBySubId(id);
-        System.out.println("salimos");
 
         ModelAndView mav = new ModelAndView("subjects/subject_info");
         mav.addObject("reviews", reviews);
