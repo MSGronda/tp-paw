@@ -141,15 +141,15 @@ public class SubjectJdbcDao implements SubjectDao {
     }
 
     private Map<Long, Map<Integer,List<Subject>>> groupByDegIdAndSemester(List<JoinRow> rows) {
-        Map<Long, Map<Integer, Map<String,Subject>>> auxMap = new HashMap<>();
+        Map<Long, Map<Integer, Map<String,Subject>>> auxMap = new LinkedHashMap<>();
 
         for (JoinRow row : rows) {
             if(!row.idDeg.isPresent() || !row.semester.isPresent()) continue;
             long idDeg = row.idDeg.get();
             int semester = row.semester.get();
 
-            Map<Integer, Map<String, Subject>> semesterMap = auxMap.getOrDefault(idDeg, new HashMap<>());
-            Map<String,Subject> subs = semesterMap.getOrDefault(semester, new HashMap<>());
+            Map<Integer, Map<String, Subject>> semesterMap = auxMap.getOrDefault(idDeg, new LinkedHashMap<>());
+            Map<String,Subject> subs = semesterMap.getOrDefault(semester, new LinkedHashMap<>());
             Subject sub = subs.getOrDefault(row.idSub, new Subject(row.idSub, row.subName, row.department, row.credits));
 
             row.idProf.ifPresent(id -> sub.getProfessorIds().add(id));
@@ -161,9 +161,9 @@ public class SubjectJdbcDao implements SubjectDao {
             auxMap.putIfAbsent(idDeg, semesterMap);
         }
 
-        Map<Long, Map<Integer, List<Subject>>> result = new HashMap<>();
+        Map<Long, Map<Integer, List<Subject>>> result = new LinkedHashMap<>();
         for(Map.Entry<Long,Map<Integer,Map<String,Subject>>> degMap : auxMap.entrySet()) {
-            Map<Integer,List<Subject>> newSemesterMap = new HashMap<>();
+            Map<Integer,List<Subject>> newSemesterMap = new LinkedHashMap<>();
             for(Map.Entry<Integer,Map<String,Subject>> semesterMap : degMap.getValue().entrySet()) {
                 newSemesterMap.put(semesterMap.getKey(), new ArrayList<>(semesterMap.getValue().values()));
             }
@@ -181,10 +181,10 @@ public class SubjectJdbcDao implements SubjectDao {
             long idDeg = row.idDeg.get();
             int semester = row.semester.get();
 
-            Map<Integer, Map<String, Subject>> yearMap = auxMap.getOrDefault(idDeg, new HashMap<>());
+            Map<Integer, Map<String, Subject>> yearMap = auxMap.getOrDefault(idDeg, new LinkedHashMap<>());
 
             if (semester % 2 == 1) {
-                Map<String, Subject> subs = yearMap.getOrDefault((semester + 1) / 2, new HashMap<>());
+                Map<String, Subject> subs = yearMap.getOrDefault((semester + 1) / 2, new LinkedHashMap<>());
 
                 Subject sub = subs.getOrDefault(row.idSub, new Subject(row.idSub, row.subName, row.department, row.credits));
 
@@ -202,7 +202,7 @@ public class SubjectJdbcDao implements SubjectDao {
                 auxMap.putIfAbsent(idDeg, yearMap);
 
             } else {
-                Map<String, Subject> subs = yearMap.getOrDefault(semester / 2, new HashMap<>());
+                Map<String, Subject> subs = yearMap.getOrDefault(semester / 2, new LinkedHashMap<>());
 
                 Subject sub = subs.getOrDefault(row.idSub, new Subject(row.idSub, row.subName, row.department, row.credits));
 
@@ -222,7 +222,7 @@ public class SubjectJdbcDao implements SubjectDao {
 
         Map<Long, Map<Integer, List<Subject>>> result = new LinkedHashMap<>();
         for(Map.Entry<Long,Map<Integer,Map<String,Subject>>> degMap : auxMap.entrySet()) {
-            Map<Integer,List<Subject>> newYearMap = new HashMap<>();
+            Map<Integer,List<Subject>> newYearMap = new LinkedHashMap<>();
             for(Map.Entry<Integer,Map<String,Subject>> yearMap : degMap.getValue().entrySet()) {
                 newYearMap.put(yearMap.getKey(), new ArrayList<>(yearMap.getValue().values()));
             }
@@ -240,7 +240,7 @@ public class SubjectJdbcDao implements SubjectDao {
             long idDeg = row.idDeg.get();
             int semester = row.semester.get();
 
-            Map<String, Subject> subs = auxMap.getOrDefault(idDeg, new HashMap<>());
+            Map<String, Subject> subs = auxMap.getOrDefault(idDeg, new LinkedHashMap<>());
 
             Subject sub = subs.getOrDefault(row.idSub, new Subject(row.idSub, row.subName, row.department, row.credits));
 
