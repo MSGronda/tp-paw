@@ -1,23 +1,22 @@
 package ar.edu.itba.paw.webapp.controller;
 
-import ar.edu.itba.paw.models.*;
-import ar.edu.itba.paw.services.DegreeService;
+import ar.edu.itba.paw.models.Professor;
+import ar.edu.itba.paw.models.Review;
+import ar.edu.itba.paw.models.Subject;
 import ar.edu.itba.paw.services.ProfessorService;
 import ar.edu.itba.paw.services.ReviewService;
+import ar.edu.itba.paw.services.SubjectClassService;
 import ar.edu.itba.paw.services.SubjectService;
 import ar.edu.itba.paw.webapp.exceptions.DegreeNotFoundException;
 import ar.edu.itba.paw.webapp.exceptions.SubjectNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.web.servlet.ModelAndView;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
 
 import static java.lang.Long.parseLong;
 
@@ -27,9 +26,12 @@ public class SubjectController {
     private final ProfessorService professorService;
     private final ReviewService reviewService;
     private final DegreeService degreeService;
+    private final SubjectClassService subjectClassService;
 
     @Autowired
-    public SubjectController(SubjectService subjectService, ReviewService reviewService, ProfessorService professorService, DegreeService degreeService) {
+    public SubjectController(SubjectService subjectService, ReviewService reviewService,
+                             ProfessorService professorService, SubjectClassService subjectClassService, DegreeService degreeService ) {
+        this.subjectClassService = subjectClassService;
         this.subjectService = subjectService;
         this.reviewService = reviewService;
         this.professorService = professorService;
@@ -75,6 +77,9 @@ public class SubjectController {
         final List<Review> reviews = reviewService.getAllBySubject(id);
 
         final Map<String,String> prereqNames = subjectService.findPrerequisitesName(id);
+        System.out.println("llegamos");
+        final List<SubjectClass> classes = subjectClassService.getBySubId(id);
+        System.out.println("salimos");
 
         ModelAndView mav = new ModelAndView("subjects/subject_info");
         mav.addObject("reviews", reviews);
@@ -84,6 +89,7 @@ public class SubjectController {
         mav.addObject("year",year);
         mav.addObject("prereqNames", prereqNames.entrySet());
         mav.addObject("difficulty", difficulty);
+        mav.addObject("classes", classes);
         return mav;
     }
 }

@@ -14,13 +14,24 @@
           padding: 0 1rem 2rem 1rem;
           gap: 1rem;
       }
+      .not-found-area{
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+        width: 100%;
+        padding-top: 5rem;
+      }
 
       .filter-area {
           width: 100%;
           display: flex;
           flex-direction: column;
           align-items: center;
-          padding-top: 1.5rem;
+          padding-top: 1rem;
+      }
+      h3{
+        font-weight: 500;
+        font-size: 25px;
       }
 
       .filter {
@@ -183,15 +194,29 @@
     </div>
   </div>
 
+  <c:choose>
+  <c:when test="${subjects.isEmpty()}">
+    <div class="not-found-area">
+      <h3>
+        <spring:message code="search.not-found" arguments="aaaa"/>
+      </h3>
 
-  <div class="search-area">
-
+    </div>
+  </c:when>
+  <c:otherwise>
+    <div class="search-area">
     <c:forEach var="subject" items="${subjects}">
       <c:set var="subject" value="${subject}" scope="request"/>
       <c:set var="subProfs" value="${profs[subject]}" scope="request"/>
       <c:import url="../components/subject_card.jsp"/>
     </c:forEach>
-  </div>
+    </div>
+  </c:otherwise>
+  </c:choose>
+
+
+
+
 </main>
 
 <jsp:include page="../components/footer.jsp"/>
