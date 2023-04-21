@@ -117,7 +117,14 @@
   <div class="info container-50">
     <sl-breadcrumb>
       <sl-breadcrumb-item><a href='<c:url value="/"/>'><spring:message code="subject.home"/></a></sl-breadcrumb-item>
-      <sl-breadcrumb-item><a href='<c:url value="/"/>'><spring:message code="subject.year" /> <c:out value="${year}"/></a></sl-breadcrumb-item>
+      <c:choose>
+        <c:when test="${year == 0}">
+          <sl-breadcrumb-item><a href='<c:url value="/"/>'><spring:message code="home.electives"/></a></sl-breadcrumb-item>
+        </c:when>
+        <c:otherwise>
+          <sl-breadcrumb-item><a href='<c:url value="/"/>'><spring:message code="subject.year" arguments="${year}"/></a></sl-breadcrumb-item>
+        </c:otherwise>
+      </c:choose>
     </sl-breadcrumb>
     <h1>
       <c:out value="${subject.name}"/> - <c:out value="${subject.id}"/>

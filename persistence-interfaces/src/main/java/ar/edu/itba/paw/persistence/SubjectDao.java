@@ -24,4 +24,8 @@ public interface SubjectDao extends RWDao<String, Subject> {
     Map<Long, List<Subject>> getAllGroupedByDegreeId();
 
     Map<Long, Map<Integer, List<Subject>>> getAllGroupedByDegIdAndSemester();
+
+    Map<Long, Map<Integer, List<Subject>>> getAllGroupedByDegIdAndYear();
+
+    Map<Long, List<Subject>> getAllElectivesGroupedByDegId();
 }
