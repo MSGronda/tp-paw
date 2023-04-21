@@ -58,30 +58,19 @@ public class SubjectClassJdbcDao implements SubjectClassDao{
         return jdbcTemplate.query( QUERY_JOIN + " WHERE idSub = ?", SubjectClassJdbcDao::subjectListExtractor, idSub);
     }
 
-//    private List<SubjectClass> fillSubjectClass(List<SubjectClass> classes){
-//        for(SubjectClass subjectClass : classes){
-//            subjectClass.setClassTimes(getClassTimes(subjectClass.getIdSub(),subjectClass.getIdClass()));
-//
-//            subjectClass.setprofIds(jdbcTemplate.query("SELECT * FROM " +TABLE_CLASS_PROF + " WHERE idSub = ? AND idClass = ?",
-//                    SubjectClassJdbcDao::rowMapperClassProf, subjectClass.getIdSub(),subjectClass.getIdClass()));
-//        }
-//        return classes;
-//    }
+
 
     @Override
     public Optional<SubjectClass> findById(String s) {
-        return Optional.empty();
+        return Optional.empty();        // INVALID METHOD
     }
 
     @Override
     public List<SubjectClass> getAll() {
-        return null;
+        return jdbcTemplate.query(QUERY_JOIN, SubjectClassJdbcDao::subjectListExtractor);
     }
 
-//    private List<SubjectClass.ClassTime> getClassTimes(String idSub, String idClass){
-//        return jdbcTemplate.query( "SELECT * FROM " + TABLE_CLASS_LOC_TIME + " WHERE idSub = ? AND idClass = ? ORDER BY day, startTime",
-//                SubjectClassJdbcDao::rowMapperClassLocTime, idSub, idClass);
-//    }
+
 
     private static List<SubjectClass> subjectListExtractor(ResultSet rs) throws SQLException {
         final Map<String, SubjectClass> subClasses = new HashMap<>();
@@ -107,16 +96,7 @@ public class SubjectClassJdbcDao implements SubjectClassDao{
         return new ArrayList<>(subClasses.values());
     }
 
-//    private static SubjectClass.ClassTime rowMapperClassLocTime(ResultSet rs, int rowNum) throws SQLException {
-//        return new SubjectClass.ClassTime(
-//                rs.getInt("day"),
-//                rs.getTime("startTime"),
-//                rs.getTime("endTime"),
-//                rs.getString("class"),
-//                rs.getString("building"),
-//                rs.getString("mode")
-//        );
-//    }
+
 
     private static SubjectClass rowMapperClass(ResultSet rs, int rowNum) throws SQLException {
         return new SubjectClass(
@@ -124,14 +104,11 @@ public class SubjectClassJdbcDao implements SubjectClassDao{
                 rs.getString("idClass")
         );
     }
-    private static Long rowMapperClassProf(ResultSet rs, int rowNum) throws SQLException {
-        return rs.getLong("idProf");
-    }
 
     /* =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- */
 
     @Override
-    public void insert(SubjectClass subjectClassDao) {
+    public void insert(SubjectClass subjectClass) {
 
     }
 
@@ -141,7 +118,7 @@ public class SubjectClassJdbcDao implements SubjectClassDao{
     }
 
     @Override
-    public void update(SubjectClass subjectClassDao) {
+    public void update(SubjectClass subjectClass) {
 
     }
 }
