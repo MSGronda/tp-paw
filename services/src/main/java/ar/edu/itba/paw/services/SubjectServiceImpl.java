@@ -15,8 +15,6 @@ public class SubjectServiceImpl implements SubjectService {
     private static final String orderByCredits = "credits";
     private static final String orderById = "id";
 
-
-
     @Autowired
     public SubjectServiceImpl(SubjectDao subjectDao) {
         this.subjectDao = subjectDao;
@@ -92,53 +90,8 @@ public class SubjectServiceImpl implements SubjectService {
         return all.get(degreeId);
     }
 
-    @Override
-    public List<Map<String, Integer>> getCardData(Set<Integer> years, Map<Integer, List<Subject>> infSubsByYear, ReviewService rs){
-        Map<String, Integer> reviewCount = new HashMap<>();
-        Map<String, Integer> subjectDifficulty = new HashMap<>();
-        Map<String, Integer> subjectTime = new HashMap<>();
 
-        for( int year : years ){
-            for( Subject subject : infSubsByYear.get(year)){
-                populateMaps(rs, reviewCount, subjectDifficulty, subjectTime, subject);
-            }
-        }
-        List<Map<String, Integer>> toRet = new ArrayList<>();
-        toRet.add(reviewCount);
-        toRet.add(subjectDifficulty);
-        toRet.add(subjectTime);
-        return toRet;
-    }
 
-    @Override
-    public List<Map<String, Integer>> getElectiveCardData(List<Subject> infElectives, ReviewService rs){
-        Map<String, Integer> reviewCount = new HashMap<>();
-        Map<String, Integer> subjectDifficulty = new HashMap<>();
-        Map<String, Integer> subjectTime = new HashMap<>();
-
-        for( Subject subject : infElectives){
-            populateMaps(rs, reviewCount, subjectDifficulty, subjectTime, subject);
-        }
-
-        List<Map<String, Integer>> toRet = new ArrayList<>();
-        toRet.add(reviewCount);
-        toRet.add(subjectDifficulty);
-        toRet.add(subjectTime);
-        return toRet;
-    }
-
-    private void populateMaps(ReviewService rs, Map<String, Integer> reviewCount, Map<String, Integer> subjectDifficulty, Map<String, Integer> subjectTime, Subject subject) {
-        reviewCount.put(subject.getId(), rs.getAllBySubject(subject.getId()).size());
-
-        Optional<Integer> maybeDifficulty =  rs.getDifficultyBySubject(subject.getId());
-        int difficulty;
-        difficulty = maybeDifficulty.orElse(-1);
-        subjectDifficulty.put(subject.getId(), difficulty );
-
-        Optional<Integer> maybeTime = rs.getTimeBySubject(subject.getId());
-        int time = maybeTime.orElse(-1);
-        subjectTime.put(subject.getId(), time);
-    }
 
     @Override
     public Subject create(String id, String name, String depto, Set<String> idCorrelativas, Set<Long> idProfesores, Set<Long> idCarreras, Integer creditos){

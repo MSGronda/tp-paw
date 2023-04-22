@@ -1,8 +1,11 @@
 package ar.edu.itba.paw.persistence;
 
 import ar.edu.itba.paw.models.Review;
+import ar.edu.itba.paw.models.ReviewStatistic;
+
 import java.sql.SQLException;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 public interface ReviewDao extends RWDao<Long,Review> {
@@ -10,6 +13,9 @@ public interface ReviewDao extends RWDao<Long,Review> {
 
     List<Review> getAllBySubject(String id);
 
-    Optional<Integer> getDifficultyBySubject(String idsub);
-    Optional<Integer> getTimeBySubject(String idsub);
+
+    Optional<ReviewStatistic> getReviewStatBySubject(String idSub);
+    List<ReviewStatistic> getReviewStatBySubjectList(List<String> idSubs);
+    Map<String, ReviewStatistic> getReviewStatMapBySubjectList(List<String> idSubs);
+
 }

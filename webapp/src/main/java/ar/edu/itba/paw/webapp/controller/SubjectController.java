@@ -41,17 +41,7 @@ public class SubjectController {
         }
         final Subject subject = maybeSubject.get();
 
-        final Optional<Integer> maybeDifficulty = reviewService.getDifficultyBySubject(id);
-        final Integer difficulty;
-        if(!maybeDifficulty.isPresent()){
-            difficulty = -1;
-        } else difficulty = maybeDifficulty.get();
-
-        final Optional<Integer> maybeTime = reviewService.getTimeBySubject(id);
-        final Integer time;
-        if(!maybeTime.isPresent()) {
-            time = -1;
-        } else time = maybeTime.get();
+        final ReviewStatistic stats = reviewService.getReviewStatBySubject(id).orElseGet(() -> new ReviewStatistic(id));
 
         final Optional<Degree> maybealgo = degreeService.findById(1L);
         if(!maybealgo.isPresent()) {
@@ -78,11 +68,11 @@ public class SubjectController {
         ModelAndView mav = new ModelAndView("subjects/subject_info");
         mav.addObject("reviews", reviews);
         mav.addObject("professors", professors);
-        mav.addObject("time", time);
+        mav.addObject("time", stats.getTimeDifficulty());
         mav.addObject("subject", subject);
         mav.addObject("year",year);
         mav.addObject("prereqNames", prereqNames.entrySet());
-        mav.addObject("difficulty", difficulty);
+        mav.addObject("difficulty", stats.getDifficulty());
         mav.addObject("classes", classes);
         return mav;
     }
