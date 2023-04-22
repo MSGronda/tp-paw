@@ -50,7 +50,8 @@ public class UserController {
         Optional<User> maybeUser = userService.getUserWithEmail(userForm.getEmail());
         if(maybeUser.isPresent()){
             //user already exists
-            //TODO - como avisar que existe ese usuario?
+            //TODO - aplicar internacionalizacion            
+            errors.rejectValue("email", "UserForm.email.alreadyExists", "An account with this email already exists");
             return registerForm(userForm);
         }
         final User newUser = userService.create(userForm.getEmail(), userForm.getPassword(), userForm.getName());

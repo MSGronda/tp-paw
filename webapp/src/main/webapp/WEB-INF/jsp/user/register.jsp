@@ -42,13 +42,13 @@
 
         <form:errors path="password" cssClass="error" element="p"/>
         <spring:message code="userform.password" var="PasswordPlaceholder"/>
-        <sl-input name="password" path="password" placeholder="${PasswordPlaceholder}" value="${UserForm.password}"></sl-input>
+        <sl-input name="password" type="password" path="password" placeholder="${PasswordPlaceholder}" value="${UserForm.password}" password-toggle></sl-input>
 
         <br/>
 
         <form:errors path="passwordConfirmation" cssClass="error" element="p"/>
         <spring:message code="userform.passwordConfirmation" var="PasswordConfirmationPlaceholder"/>
-        <sl-input name="passwordConfirmation" path="passwordConfirmation" placeholder="${PasswordConfirmationPlaceholder}" value="${UserForm.passwordConfirmation}"></sl-input>
+        <sl-input name="passwordConfirmation" type="password" path="passwordConfirmation" placeholder="${PasswordConfirmationPlaceholder}" value="${UserForm.passwordConfirmation}" password-toggle></sl-input>
 
         <br/>
 
