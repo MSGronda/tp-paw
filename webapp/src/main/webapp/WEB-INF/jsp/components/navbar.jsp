@@ -67,7 +67,7 @@
       <sl-button variant="text"><spring:message code="navbar.subject"/></sl-button>
       <sl-button variant="text"><spring:message code="navbar.builder"/></sl-button>
     </sl-button-group>
-    <sl-button variant="primary"><spring:message code="navbar.login"/></sl-button>
+    <sl-button variant="primary" href="<c:url value="/login"/>"><spring:message code="navbar.login"/></sl-button>
   </div>
 
 </div>

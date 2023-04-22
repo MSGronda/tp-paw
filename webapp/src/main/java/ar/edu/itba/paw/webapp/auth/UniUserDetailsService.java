@@ -15,7 +15,7 @@ import java.util.HashSet;
 
 @Component
 public class UniUserDetailsService implements UserDetailsService {
-
+    @Autowired
     private final UserService us;
 
     @Autowired

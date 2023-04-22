@@ -30,7 +30,7 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(final HttpSecurity http) throws Exception {
         http.sessionManagement()
-                .invalidSessionUrl("/")
+                .invalidSessionUrl("/login")
             .and().authorizeRequests()
                 .antMatchers("/login","/register", "/subject/{id:\\d+\\.\\d+}", "/", "/profile/{id:\\d+}").anonymous()
                 .antMatchers("/subject/{id:\\d+\\.\\d+}/edit", "/edit").hasRole("EDITOR")
@@ -40,17 +40,17 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
                 .usernameParameter("email")
                 .passwordParameter("password")
                 .defaultSuccessUrl("/", false)
+                .failureUrl("/login?error=true")
             .and().rememberMe()
-                .rememberMeParameter("rememberme")
+                .rememberMeParameter("rememberMe")
                 .userDetailsService(userDetailsService)
                 .tokenValiditySeconds((int) TimeUnit.DAYS.toSeconds(30))
             .and().logout()
                 .logoutUrl("/logout")
-                .logoutSuccessUrl("/login")
+                .logoutSuccessUrl("/")
             .and().exceptionHandling()
                 .accessDeniedPage("/403")
             .and().csrf().disable();
-
     }
 
     @Override

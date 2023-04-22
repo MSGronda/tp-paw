@@ -22,12 +22,13 @@
 <jsp:include page="../components/navbar.jsp"/>
 <main>
   <h2>Login</h2>
+  <h2><c:out value="${loggedUser.username}" /> Estoy loggeado</h2>
   <c:url value="/login" var="postPath" />
   <form action="${postPath}" method="post">
     <div>
       <label><spring:message code="reviewForm.email.placeholder" />
         <spring:message code="reviewForm.email.placeholder" var="EmailPlaceholder"/>
-        <sl-input name="email" name="email" placeholder="${EmailPlaceholder}"></sl-input>
+        <sl-input name="email" id="email" placeholder="${EmailPlaceholder}"></sl-input>
       </label>
     </div>
     <div>
@@ -35,6 +36,9 @@
         <spring:message code="userform.password" var="PasswordPlaceholder"/>
         <sl-input type="password" name="password" placeholder="${PasswordPlaceholder}" ></sl-input>
       </label>
+    </div>
+    <div>
+      <label><input name="rememberMe" id="rememberMe" type="checkbox" />Remember Me</label>
     </div>
     <div>
       <sl-button type="submit" variant="success" ><spring:message code="form.submit" /></sl-button>

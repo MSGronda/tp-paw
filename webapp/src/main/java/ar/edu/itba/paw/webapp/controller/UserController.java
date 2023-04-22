@@ -10,8 +10,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
-import javax.jws.WebParam;
-import javax.swing.text.html.Option;
+import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 import java.sql.SQLException;
 import java.util.*;
@@ -67,5 +66,13 @@ public class UserController {
     @RequestMapping(value = "/login", method = { RequestMethod.GET })
     public ModelAndView login() {
         return new ModelAndView("/login/login");
+    }
+
+    @ModelAttribute("loggedUser")
+    public User loggedUser(final HttpSession session) {
+        Long userId = (Long) session.getAttribute("userId2");
+        if(userId== null)
+            return null;
+        return userService.findById(userId.longValue()).orElseGet(() -> null);
     }
 }
