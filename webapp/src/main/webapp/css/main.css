@@ -51,6 +51,9 @@ sl-card.subject-card::part(base) {
 sl-card.subject-card::part(body) {
     flex: 1 0 auto;
 }
+sl-card.subject-card::part(footer) {
+    --border-width: 0px;
+}
 
 .chip-row {
     display: flex;
@@ -59,6 +62,7 @@ sl-card.subject-card::part(body) {
     justify-content: flex-start;
     align-items: center;
     gap: 0.25rem;
+
 }
 
 .container-70 {
