@@ -34,6 +34,9 @@ public class ReviewServiceImpl implements ReviewService {
         return reviewDao.getAllBySubject(idsub);
     }
 
+    public void recalculateStatistics(){
+        reviewDao.recalculateStatistics();
+    }
 
     @Override
     public Optional<ReviewStatistic> getReviewStatBySubject(String idSub) {

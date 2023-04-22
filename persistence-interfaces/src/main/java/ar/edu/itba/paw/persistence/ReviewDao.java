@@ -13,9 +13,11 @@ public interface ReviewDao extends RWDao<Long,Review> {
 
     List<Review> getAllBySubject(String id);
 
-
     Optional<ReviewStatistic> getReviewStatBySubject(String idSub);
     List<ReviewStatistic> getReviewStatBySubjectList(List<String> idSubs);
     Map<String, ReviewStatistic> getReviewStatMapBySubjectList(List<String> idSubs);
 
+    // This method is slow and costly. It is only meant to be used for table migration
+    // and not during normal execution.
+    void recalculateStatistics();
 }

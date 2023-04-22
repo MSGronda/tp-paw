@@ -64,7 +64,6 @@ public class ReviewStatistic {
         return HARD;
     }
     public int getTimeDifficulty(){
-        System.out.println("not: " + notTimeDemandingCount + " is: " + timeDemandingCount);
         // -1 no data, 0 not, 1 yes
         if(notTimeDemandingCount == 0 && timeDemandingCount == 0){
             return NO_DATA;

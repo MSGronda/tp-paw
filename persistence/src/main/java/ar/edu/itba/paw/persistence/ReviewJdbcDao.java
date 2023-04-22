@@ -134,6 +134,18 @@ public class ReviewJdbcDao implements ReviewDao {
         }
     }
 
+
+    // This method is slow and costly. It is only meant to be used for table migration
+    // and not during normal execution.
+    public void recalculateStatistics(){
+        jdbcTemplateReviewStatistic.execute("DELETE FROM " + TABLE_REVIEW_STAT);
+
+        List<Review> reviews = getAll();
+        for(Review review : reviews){
+            updateStatistics(review);
+        }
+    }
+
     @Override
     public Optional<ReviewStatistic> getReviewStatBySubject(String idSub){
         return jdbcTemplate.query("SELECT * FROM " + TABLE_REVIEW_STAT + " WHERE idSub = ?", ReviewJdbcDao::rowMapperReviewStatistic, idSub)
@@ -164,7 +176,7 @@ public class ReviewJdbcDao implements ReviewDao {
         return jdbcTemplate.query(sql, ReviewJdbcDao::rowMapperReviewStatistic);
     }
 
-
+    @Override
     public Map<String, ReviewStatistic> getReviewStatMapBySubjectList(List<String> idSubs){
         if(idSubs.isEmpty()){
             return new HashMap<>();
@@ -206,8 +218,6 @@ public class ReviewJdbcDao implements ReviewDao {
     }
 
 
-    // - - - - - - - - - - - - - - - - - - - -
-
     private static Review rowMapperReview(ResultSet rs, int rowNum) throws SQLException {
         return new Review(
                 rs.getLong("id"),
@@ -218,12 +228,5 @@ public class ReviewJdbcDao implements ReviewDao {
                 rs.getInt("timeDemanding"),
                 rs.getString("revText")
         );
-    }
-
-    private static Integer difficultyRowMapper(ResultSet rs, int rowNum) throws SQLException {
-        return rs.getInt("easy");
-    }
-    private static Integer timeRowMapper(ResultSet rs, int rowNum) throws SQLException {
-        return rs.getInt("timedemanding");
     }
 }
