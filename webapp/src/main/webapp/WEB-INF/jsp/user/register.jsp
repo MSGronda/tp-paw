@@ -16,24 +16,43 @@
             flex-direction: column;
             padding: 8px;
         }
+        .error{
+            color: red;
+        }
     </style>
 </head>
 <body>
 <jsp:include page="../components/navbar.jsp"/>
-<main>
-    <h2>Register</h2>
+<main class="container-50">
+    <h1>Register</h1>
     <c:url var="registerUrl" value="/register"/>
     <form:form modelAttribute="UserForm" action="${registerUrl}" method="post" >
-        <label:label for="email">Email: </label:label>
-        <input type="text" name="email" id="email"/>
+
+        <form:errors path="email" cssClass="error" element="p"/>
+        <spring:message code="reviewForm.email.placeholder" var="EmailPlaceHolder"/>
+        <sl-input name="email" path="email" placeholder="${EmailPlaceHolder}" value="${UserForm.email}"></sl-input>
+
         <br/>
-        <label for="username">Username: </label>
-        <input type="text" name="username" id="username"/>
+
+        <form:errors path="name" cssClass="error" element="p"/>
+        <spring:message code="userform.name" var="NamePlaceholder"/>
+        <sl-input name="name" path="name" placeholder="${NamePlaceholder}" value="${UserForm.name}"></sl-input>
+
         <br/>
-        <label for="password">Password: </label>
-        <input type="password" name="password" id="password">
+
+        <form:errors path="password" cssClass="error" element="p"/>
+        <spring:message code="userform.password" var="PasswordPlaceholder"/>
+        <sl-input name="password" path="password" placeholder="${PasswordPlaceholder}" value="${UserForm.password}"></sl-input>
+
         <br/>
-        <button type="submit">Let's go!</button>
+
+        <form:errors path="passwordConfirmation" cssClass="error" element="p"/>
+        <spring:message code="userform.passwordConfirmation" var="PasswordConfirmationPlaceholder"/>
+        <sl-input name="passwordConfirmation" path="passwordConfirmation" placeholder="${PasswordConfirmationPlaceholder}" value="${UserForm.passwordConfirmation}"></sl-input>
+
+        <br/>
+
+        <sl-button type="submit" variant="success"><spring:message code="userform.submit"/></sl-button>
     </form:form>
 </main>
 </body>
