@@ -1,13 +1,14 @@
 package ar.edu.itba.paw.services;
 
 import ar.edu.itba.paw.models.Review;
+import ar.edu.itba.paw.models.ReviewStatistic;
+import ar.edu.itba.paw.models.Subject;
 import ar.edu.itba.paw.persistence.ReviewDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.sql.SQLException;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 public class ReviewServiceImpl implements ReviewService {
@@ -33,14 +34,39 @@ public class ReviewServiceImpl implements ReviewService {
         return reviewDao.getAllBySubject(idsub);
     }
 
-    @Override
-    public Optional<Integer> getDifficultyBySubject(String idsub) {
-        return reviewDao.getDifficultyBySubject(idsub);
+    public void recalculateStatistics(){
+        reviewDao.recalculateStatistics();
     }
 
     @Override
-    public Optional<Integer> getTimeBySubject(String idsub) {
-        return reviewDao.getTimeBySubject(idsub);
+    public Optional<ReviewStatistic> getReviewStatBySubject(String idSub) {
+        return reviewDao.getReviewStatBySubject(idSub);
+    }
+
+    public Map<String, ReviewStatistic> getReviewStatMapBySubjectList(List<Subject> subjects){
+        List<String> idSubs = new ArrayList<>();
+        for(Subject sub : subjects){
+            idSubs.add(sub.getId());
+        }
+
+        Map<String, ReviewStatistic> incomplete = reviewDao.getReviewStatMapBySubjectList(idSubs);
+
+        for(String idSub : idSubs){
+            incomplete.putIfAbsent(idSub, new ReviewStatistic(idSub));
+        }
+
+
+        return incomplete;
+    }
+
+    @Override
+    public Map<String, ReviewStatistic> getReviewStatMapBySubjectIdList(List<String> idSubs){
+        return reviewDao.getReviewStatMapBySubjectList(idSubs);
+    }
+
+    @Override
+    public List<ReviewStatistic> getReviewStatBySubjectIdList(List<String> idSubs){
+        return reviewDao.getReviewStatBySubjectList(idSubs);
     }
 
     @Override

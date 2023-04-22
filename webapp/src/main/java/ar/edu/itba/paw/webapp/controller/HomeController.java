@@ -2,6 +2,7 @@ package ar.edu.itba.paw.webapp.controller;
 
 import ar.edu.itba.paw.models.Degree;
 import ar.edu.itba.paw.models.Professor;
+import ar.edu.itba.paw.models.ReviewStatistic;
 import ar.edu.itba.paw.models.Subject;
 import ar.edu.itba.paw.services.DegreeService;
 import ar.edu.itba.paw.services.ProfessorService;
@@ -49,8 +50,13 @@ public class HomeController {
 
         Set<Integer> years = infSubsByYear.keySet();
 
-        List<Map<String, Integer>> cardData = ss.getCardData(years, infSubsByYear, rs);
-        List<Map<String, Integer>> electiveCardData = ss.getElectiveCardData(infElectives, rs);
+        List<Subject> subjects = new ArrayList<>();
+        for(List<Subject> yearSubjects: infSubsByYear.values()){
+            subjects.addAll(yearSubjects);
+        }
+
+        Map<String, ReviewStatistic> reviewStatistic = rs.getReviewStatMapBySubjectList(subjects);
+        Map<String, ReviewStatistic> electivesReviewStatistic = rs.getReviewStatMapBySubjectList(infElectives);
 
 
         ModelAndView mav = new ModelAndView("home/index");
@@ -58,13 +64,8 @@ public class HomeController {
         mav.addObject("years", years);
         mav.addObject("infSubsByYear", infSubsByYear);
         mav.addObject("electives", infElectives);
-        mav.addObject("subjectReviewCount", cardData.get(0));
-        mav.addObject("subjectDifficulty", cardData.get(1));
-        mav.addObject("subjectTime", cardData.get(2));
-        mav.addObject("electiveReviewCount", electiveCardData.get(0));
-        mav.addObject("electiveDifficulty", electiveCardData.get(1));
-        mav.addObject("electiveTime", electiveCardData.get(2));
-
+        mav.addObject("reviewStatistics", reviewStatistic);
+        mav.addObject("electivesReviewStatistics", electivesReviewStatistic);
         return mav;
     }
 }

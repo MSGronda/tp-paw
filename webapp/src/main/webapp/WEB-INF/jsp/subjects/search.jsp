@@ -198,7 +198,7 @@
   <c:when test="${subjects.isEmpty()}">
     <div class="not-found-area">
       <h3>
-        <spring:message code="search.not-found" arguments="aaaa"/>
+        <spring:message code="search.not-found" arguments="${query}"/>
       </h3>
 
     </div>
@@ -207,7 +207,9 @@
     <div class="search-area">
     <c:forEach var="subject" items="${subjects}">
       <c:set var="subject" value="${subject}" scope="request"/>
-      <c:set var="subProfs" value="${profs[subject]}" scope="request"/>
+      <c:set var="reviewCount" value="${reviewStats[subject.id].reviewCount}" scope="request"/>
+      <c:set var="difficulty" value="${reviewStats[subject.id].difficulty}" scope="request"/>
+      <c:set var="time" value="${reviewStats[subject.id].timeDifficulty}" scope="request"/>
       <c:import url="../components/subject_card.jsp"/>
     </c:forEach>
     </div>
