@@ -53,9 +53,10 @@ public class UserController {
             errors.rejectValue("email", "UserForm.email.alreadyExists", "An account with this email already exists");
             return registerForm(userForm);
         }
-        final User newUser = userService.create(userForm.getEmail(), userForm.getPassword(), userForm.getName());
+        User.UserBuilder user = new User.UserBuilder(userForm.getEmail(), userForm.getPassword(), userForm.getName());
+        final User newUser = userService.create(user);
 
-        return new ModelAndView("redirect:/profile/" + newUser.getId());
+        return new ModelAndView("redirect:/login");
     }
 
     @RequestMapping(value = "/register", method = { RequestMethod.GET })
@@ -64,8 +65,10 @@ public class UserController {
     }
 
     @RequestMapping(value = "/login", method = { RequestMethod.GET })
-    public ModelAndView login() {
-        return new ModelAndView("/login/login");
+    public ModelAndView login(@RequestParam (value="error", required = false) String error) {
+        ModelAndView mav = new ModelAndView("/login/login");
+        mav.addObject("error", error);
+        return mav;
     }
 
     @ModelAttribute("loggedUser")

@@ -39,21 +39,22 @@ public class UserJdbcDao implements UserDao {
         return jdbcTemplate.query("SELECT * FROM " + USERS_TABLE, UserJdbcDao::rowMapper);
     }
 
+
     @Override
     public void insert(User user) {
-        create(user.getEmail(), user.getPassword(), user.getUsername());
+        //create(user);
     }
 
     @Override
-    public User create(String email, String password, String name) {
+    public User create(User.UserBuilder userBuilder) {
         Map<String, Object> data = new HashMap<>();
-        data.put("email", email);
-        data.put("pass", password);
-        data.put("username", name);
+        data.put("email", userBuilder.getEmail());
+        data.put("pass", userBuilder.getPassword());
+        data.put("username", userBuilder.getUsername());
 
         Number key = jdbcInsert.executeAndReturnKey(data);
 
-        return new User(key.longValue(), email, password, name);
+        return userBuilder.id(key.longValue()).build();
     }
 
     @Override
@@ -73,10 +74,10 @@ public class UserJdbcDao implements UserDao {
 
     private static User rowMapper(ResultSet rs, int rowNum) throws SQLException {
         return new User(
-            rs.getLong("id"),
-            rs.getString("email"),
-            rs.getString("pass"),
-            rs.getString("username")
+                new User.UserBuilder(rs.getString("email"),
+                        rs.getString("pass"),
+                        rs.getString("username"))
+                        .id(rs.getLong("id"))
         );
     }
 }

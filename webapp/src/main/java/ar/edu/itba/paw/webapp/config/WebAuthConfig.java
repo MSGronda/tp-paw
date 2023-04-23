@@ -23,7 +23,7 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-        super.configure(auth);
+
         auth.userDetailsService(userDetailsService);
     }
 
@@ -32,8 +32,9 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
         http.sessionManagement()
                 .invalidSessionUrl("/login")
             .and().authorizeRequests()
-                .antMatchers("/login","/register", "/subject/{id:\\d+\\.\\d+}", "/", "/profile/{id:\\d+}").anonymous()
+                .antMatchers("/login","/register").anonymous()
                 .antMatchers("/subject/{id:\\d+\\.\\d+}/edit", "/edit").hasRole("EDITOR")
+                .antMatchers("/subject/{id:\\d+\\.\\d+}", "/", "/profile/{id:\\d+}", "/search/**").permitAll()
                 .antMatchers("/**").authenticated()
             .and().formLogin()
                 .loginPage("/login")

@@ -30,8 +30,8 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User create(String email, String password, String username) throws SQLException {
-        return userDao.create(email, password, username);
+    public User create(User.UserBuilder userBuilder) throws SQLException {
+        return userDao.create(userBuilder);
     }
 
     @Override
