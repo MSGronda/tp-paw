@@ -18,7 +18,7 @@ public class ReviewForm {
     @NotNull
     private Integer timeDemanding;
 
-    private Boolean anonymous = false;
+    private Boolean anonymous;
 
     public String getEmail() {
         return email;
