@@ -5,7 +5,7 @@
 
 <html>
 <head>
-  <title>Login</title>
+  <title><spring:message code="navbar.login" /></title>
   <jsp:include page="../components/head_shared.jsp"/>
 
   <style>
@@ -24,7 +24,7 @@
 <body>
 <jsp:include page="../components/navbar.jsp"/>
 <main class="container-50">
-  <h1>Login</h1>
+  <h1><spring:message code="navbar.login" /></h1>
   <c:if test="${error == true}">
     <p class="error"><spring:message code="userform.invalidcredentials" /></p>
   </c:if>
@@ -41,11 +41,11 @@
     </div>
     <br />
     <div>
-      <label><sl-checkbox name="rememberMe" id="rememberMe" type="checkbox" />Remember Me</label>
+      <label><sl-checkbox name="rememberMe" id="rememberMe" type="checkbox" /><spring:message code="userform.rememberme" /></label>
     </div>
     <br />
     <div>
-      <sl-button type="submit" variant="success" ><spring:message code="form.submit" /></sl-button>
+      <sl-button type="submit" variant="success" ><spring:message code="userform.login" /></sl-button>
     </div>
   </form>
 </main >

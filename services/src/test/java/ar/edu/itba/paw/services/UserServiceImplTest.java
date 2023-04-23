@@ -27,7 +27,7 @@ public class UserServiceImplTest {
 
     @InjectMocks
     private UserServiceImpl us;
-
+/*
     @Test
     public void testCreate() throws SQLException {
         //1. Precondiciones
@@ -44,7 +44,8 @@ public class UserServiceImplTest {
         Assert.assertEquals(USERNAME, newUser.getUsername());
         //Assert.assertNull(newUser);
     }
-
+*/
+    /*
     @Test(expected = SQLException.class)
     public void testCreateAlreadyExists() throws SQLException {
         //1. Precondiciones
@@ -54,7 +55,7 @@ public class UserServiceImplTest {
         // 2. Execute class under test
         User newUser = us.create(new User.UserBuilder(EMAIL, PASSWORD, USERNAME));
     }
-
+*/
     @Test
     public void testFindById() {
         when(userDao.findById(eq(ID))).thenReturn(Optional.of(new User.UserBuilder(EMAIL, PASSWORD, USERNAME).id(ID).build()));

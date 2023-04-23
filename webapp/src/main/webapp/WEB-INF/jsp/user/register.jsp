@@ -5,7 +5,7 @@
 
 <html>
 <head>
-    <title>Register</title>
+    <title><spring:message code="userform.header" /></title>
     <jsp:include page="../components/head_shared.jsp"/>
 
     <style>
@@ -24,7 +24,7 @@
 <body>
 <jsp:include page="../components/navbar.jsp"/>
 <main class="container-50">
-    <h1>Register</h1>
+    <h1><spring:message code="userform.header" /></h1>
     <c:url var="registerUrl" value="/register"/>
     <form:form modelAttribute="UserForm" action="${registerUrl}" method="post" >
 
