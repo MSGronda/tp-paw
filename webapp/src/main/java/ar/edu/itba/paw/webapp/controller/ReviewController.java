@@ -42,9 +42,7 @@ public class ReviewController {
 
         Optional<User> maybeUser = userService.getUserWithEmail(reviewForm.getEmail());
         if(!maybeUser.isPresent() ){
-            if(!reviewForm.getAnonymous()){
-                final User user = userService.create(reviewForm.getEmail(), null, null);
-            }
+            final User user = userService.create(reviewForm.getEmail(), null, null);
             final Review review = reviewService.create(reviewForm.getAnonymous(),reviewForm.getEasy(), reviewForm.getTimeDemanding(), reviewForm.getText(), subjectId, user.getId(), reviewForm.getEmail());
         }
         else{
