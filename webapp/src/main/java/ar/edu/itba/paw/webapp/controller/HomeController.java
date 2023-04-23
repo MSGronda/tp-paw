@@ -76,21 +76,24 @@ public class HomeController {
         return mav;
     }
 
+//    @ModelAttribute("loggedUser")
+//    public User loggedUser(final HttpSession session){
+//        Long userId = (Long) session.getAttribute("id");
+//        System.out.println(userId);
+//        if(userId == null){
+//            return null;
+//        }
+//
+//        return us.findById(userId.longValue()).orElseGet(() -> null);
+//    }
+
     @ModelAttribute("loggedUser")
-    public User loggedUser(final HttpSession session){
-        Long userId = (Long) session.getAttribute("id");
-        System.out.println(userId);
-        if(userId == null){
+    public User loggedUser(){
+        String maybeUniAuthUser = SecurityContextHolder.getContext().getAuthentication().getPrincipal().toString();
+        if( maybeUniAuthUser.equals("anonymousUser")){
             return null;
         }
-
-        return us.findById(userId.longValue()).orElseGet(() -> null);
+        final UniAuthUser userDetails = (UniAuthUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        return us.getUserWithEmail(userDetails.getUsername()).orElse(null);
     }
-
-//    @ModelAttribute("loggedUser")
-//    public User loggedUser(){
-//        final UniAuthUser userDetails = (UniAuthUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-//        final User loggedUser = us.getUserWithEmail(userDetails.getUsername()).orElse(null);
-//        return loggedUser;
-//    }
 }

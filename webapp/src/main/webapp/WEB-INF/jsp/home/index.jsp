@@ -32,7 +32,6 @@
   </style>
 </head>
 <body>
-<c:set value="${loggedUser}" var="loggedUser" scope="request"/>
 <jsp:include page="../components/navbar.jsp"/>
 <main>
     <sl-tab-group class="year-group container-70">

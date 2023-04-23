@@ -5,10 +5,12 @@ import ar.edu.itba.paw.models.User;
 import ar.edu.itba.paw.services.ReviewService;
 import ar.edu.itba.paw.services.SubjectService;
 import ar.edu.itba.paw.services.UserService;
+import ar.edu.itba.paw.webapp.auth.UniAuthUser;
 import ar.edu.itba.paw.webapp.exceptions.DegreeNotFoundException;
 import ar.edu.itba.paw.webapp.exceptions.SubjectNotFoundException;
 import ar.edu.itba.paw.webapp.form.ReviewForm;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -66,6 +68,16 @@ public class ReviewController {
             return mav;
         }
         throw new SubjectNotFoundException();
+    }
+
+    @ModelAttribute("loggedUser")
+    public User loggedUser(){
+        String maybeUniAuthUser = SecurityContextHolder.getContext().getAuthentication().getPrincipal().toString();
+        if( maybeUniAuthUser.equals("anonymousUser")){
+            return null;
+        }
+        final UniAuthUser userDetails = (UniAuthUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        return userService.getUserWithEmail(userDetails.getUsername()).orElse(null);
     }
 
 }

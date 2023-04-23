@@ -2,10 +2,15 @@ package ar.edu.itba.paw.webapp.controller;
 
 import ar.edu.itba.paw.models.Professor;
 import ar.edu.itba.paw.models.Subject;
+import ar.edu.itba.paw.models.User;
 import ar.edu.itba.paw.services.ProfessorService;
 import ar.edu.itba.paw.services.SubjectService;
+import ar.edu.itba.paw.services.UserService;
+import ar.edu.itba.paw.webapp.auth.UniAuthUser;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -20,10 +25,13 @@ public class SearchController {
     private final SubjectService subjectService;
     private final ProfessorService professorService;
 
+    private final UserService userService;
+
     @Autowired
-    public SearchController(SubjectService subjectService, ProfessorService professorService) {
+    public SearchController(SubjectService subjectService, ProfessorService professorService, UserService userService) {
         this.subjectService = subjectService;
         this.professorService = professorService;
+        this.userService = userService;
     }
 
     @RequestMapping("/search/{name}")
@@ -51,5 +59,15 @@ public class SearchController {
         mav.addObject("profs",profs);
 
         return mav;
+    }
+
+    @ModelAttribute("loggedUser")
+    public User loggedUser(){
+        String maybeUniAuthUser = SecurityContextHolder.getContext().getAuthentication().getPrincipal().toString();
+        if( maybeUniAuthUser.equals("anonymousUser")){
+            return null;
+        }
+        final UniAuthUser userDetails = (UniAuthUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        return userService.getUserWithEmail(userDetails.getUsername()).orElse(null);
     }
 }

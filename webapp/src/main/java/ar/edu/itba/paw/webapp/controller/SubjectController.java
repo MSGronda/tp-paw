@@ -1,15 +1,15 @@
 package ar.edu.itba.paw.webapp.controller;
 
 import ar.edu.itba.paw.models.*;
-import ar.edu.itba.paw.services.DegreeService;
-import ar.edu.itba.paw.services.ProfessorService;
-import ar.edu.itba.paw.services.ReviewService;
-import ar.edu.itba.paw.services.SubjectService;
+import ar.edu.itba.paw.services.*;
+import ar.edu.itba.paw.webapp.auth.UniAuthUser;
 import ar.edu.itba.paw.webapp.exceptions.DegreeNotFoundException;
 import ar.edu.itba.paw.webapp.exceptions.SubjectNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
@@ -28,12 +28,15 @@ public class SubjectController {
     private final ReviewService reviewService;
     private final DegreeService degreeService;
 
+    private final UserService userService;
+
     @Autowired
-    public SubjectController(SubjectService subjectService, ReviewService reviewService, ProfessorService professorService, DegreeService degreeService) {
+    public SubjectController(SubjectService subjectService, ReviewService reviewService, ProfessorService professorService, DegreeService degreeService, UserService userService) {
         this.subjectService = subjectService;
         this.reviewService = reviewService;
         this.professorService = professorService;
         this.degreeService = degreeService;
+        this.userService = userService;
     }
 
     @RequestMapping("/subject/{id:\\d+\\.\\d+}")
@@ -85,5 +88,14 @@ public class SubjectController {
         mav.addObject("prereqNames", prereqNames.entrySet());
         mav.addObject("difficulty", difficulty);
         return mav;
+    }
+    @ModelAttribute("loggedUser")
+    public User loggedUser(){
+        String maybeUniAuthUser = SecurityContextHolder.getContext().getAuthentication().getPrincipal().toString();
+        if( maybeUniAuthUser.equals("anonymousUser")){
+            return null;
+        }
+        final UniAuthUser userDetails = (UniAuthUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        return userService.getUserWithEmail(userDetails.getUsername()).orElse(null);
     }
 }

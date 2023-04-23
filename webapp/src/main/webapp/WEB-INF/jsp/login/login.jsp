@@ -19,6 +19,9 @@
     .error {
       color: red;
     }
+    a{
+      color: #0369a1;
+    }
   </style>
 </head>
 <body>
@@ -46,6 +49,10 @@
     <br />
     <div>
       <sl-button type="submit" variant="success" ><spring:message code="userform.login" /></sl-button>
+    </div>
+    <br/>
+    <div>
+      <span><spring:message code="login.noAccount"/><a href="<c:url value="/register"/>"><spring:message code="login.register"/></a></span>
     </div>
   </form>
 </main >

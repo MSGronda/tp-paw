@@ -2,9 +2,11 @@ package ar.edu.itba.paw.webapp.controller;
 
 import ar.edu.itba.paw.models.*;
 import ar.edu.itba.paw.services.UserService;
+import ar.edu.itba.paw.webapp.auth.UniAuthUser;
 import ar.edu.itba.paw.webapp.exceptions.UserNotFoundException;
 import ar.edu.itba.paw.webapp.form.UserForm;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
@@ -77,5 +79,15 @@ public class UserController {
         if(userId== null)
             return null;
         return userService.findById(userId.longValue()).orElseGet(() -> null);
+    }
+
+    @ModelAttribute("loggedUser")
+    public User loggedUser(){
+        String maybeUniAuthUser = SecurityContextHolder.getContext().getAuthentication().getPrincipal().toString();
+        if( maybeUniAuthUser.equals("anonymousUser")){
+            return null;
+        }
+        final UniAuthUser userDetails = (UniAuthUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        return userService.getUserWithEmail(userDetails.getUsername()).orElse(null);
     }
 }

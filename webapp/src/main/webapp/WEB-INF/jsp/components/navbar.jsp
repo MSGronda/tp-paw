@@ -34,9 +34,6 @@
     }
 </style>
 
-<c:set value="${requestScope.loggedUser}" var="loggedUser"/>
-
-
 <div class="nav-bar">
   <div class="nav-bar-area">
 
@@ -73,7 +70,7 @@
       <sl-button variant="primary" href="<c:url value="/profile/${loggedUser.id}"/>"><spring:message code="navbar.profile"/></sl-button>
     </c:if>
     <c:if test="${loggedUser == null}">
-      <sl-button variant="primary" href="<c:url value="/login"/>"><spring:message code="navbar.login"/></sl-button>
+      <sl-button variant="success" href="<c:url value="/login"/>"><spring:message code="navbar.access"/></sl-button>
     </c:if>
   </div>
 
