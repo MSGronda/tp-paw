@@ -30,8 +30,6 @@
 <%--            <form:input path="email" placeholder='<spring:message code="reviewForm.email.placeholder"/>'/>--%>
                 <spring:message code="reviewForm.email.placeholder" var="EmailPlaceholder"/>
                 <sl-input name="email" path="email" placeholder="${EmailPlaceholder}" value="${ReviewForm.email}"></sl-input>
-                <br/>
-                <sl-checkbox type="checkbox" name="anonymous" path="anonymous" value="${ReviewForm.anonymous}"><spring:message code="form.anonymous"/></sl-checkbox>
             </div>
 
             <br/>
@@ -57,6 +55,11 @@
                 <sl-radio-button value="1"><spring:message code="form.timeDemanding"/></sl-radio-button>
                     <sl-radio-button value="0"><spring:message code="form.NotTimeDemanding"/></sl-radio-button>
             </sl-radio-group>
+            <br />
+            <div>
+                <sl-checkbox type="checkbox" name="anonymous" path="anonymous" value="${ReviewForm.anonymous}"><spring:message code="form.anonymous"/></sl-checkbox>
+
+            </div>
             <br />
             <sl-button type="submit" variant="success"><spring:message code="form.submit"/></sl-button>
         </div>
