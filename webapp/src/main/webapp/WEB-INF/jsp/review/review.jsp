@@ -24,12 +24,14 @@
     </div>
     <c:url var="CreateReview" value="/review/${subject.id}"/>
     <form:form modelAttribute="ReviewForm" class="col s12" method="post" action="${CreateReview}">
-        <div class="tags-removable">
+        <div>
             <div>
                 <form:errors path="email" cssClass="error" element="p"/>
 <%--            <form:input path="email" placeholder='<spring:message code="reviewForm.email.placeholder"/>'/>--%>
                 <spring:message code="reviewForm.email.placeholder" var="EmailPlaceholder"/>
                 <sl-input name="email" path="email" placeholder="${EmailPlaceholder}" value="${ReviewForm.email}"></sl-input>
+                <br/>
+                <sl-checkbox type="checkbox" name="anonymous" path="anonymous" value="${ReviewForm.anonymous}"><spring:message code="form.anonymous"/></sl-checkbox>
             </div>
 
             <br/>

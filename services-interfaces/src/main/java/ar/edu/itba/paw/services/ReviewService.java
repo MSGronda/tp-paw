@@ -16,5 +16,5 @@ public interface ReviewService extends BaseService<Long, Review> {
     Optional<Integer> getDifficultyBySubject(String idsub);
 
     Optional<Integer> getTimeBySubject(String idsub);
-    Review create(Integer easy, Integer timeDemanding, String text,String subjectId,long userId, String userEmail) throws SQLException;
+    Review create(Boolean anonymous,Integer easy, Integer timeDemanding, String text,String subjectId,long userId, String userEmail) throws SQLException;
 }

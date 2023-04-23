@@ -60,19 +60,23 @@ public class ReviewJdbcDao implements ReviewDao {
 
     @Override
     public void insert(Review review) {
-        create(review.getEasy(), review.getTimeDemanding(), review.getText(), review.getSubjectId(),review.getUserId(), review.getUserEmail());
+        create(review.getUserEmail()==null,review.getEasy(), review.getTimeDemanding(), review.getText(), review.getSubjectId(),review.getUserId(), review.getUserEmail());
     }
 
     @Override
-    public Review create(Integer easy, Integer timeDemanding, String text,String subjectId,long userId, String userEmail) {
+    public Review create(Boolean anonymous,Integer easy, Integer timeDemanding, String text,String subjectId,long userId, String userEmail) {
         Map<String, Object> data = new HashMap<>();
         data.put("easy", easy);
         data.put("timeDemanding", timeDemanding);
         data.put("revText", text);
         data.put("idSub", subjectId);
-        data.put("idUser", userId);
-        data.put("userEmail", userEmail);
-
+        if(anonymous){
+            data.put("idUser", null);
+            data.put("userEmail", null);
+        } else {
+            data.put("idUser", userId);
+            data.put("userEmail", userEmail);
+        }
         Number key = jdbcInsert.executeAndReturnKey(data);
 
         return new Review(key.longValue(), userId, userEmail, subjectId, easy, timeDemanding, text);
