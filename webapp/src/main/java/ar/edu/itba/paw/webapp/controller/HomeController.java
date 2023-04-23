@@ -3,15 +3,22 @@ package ar.edu.itba.paw.webapp.controller;
 import ar.edu.itba.paw.models.Degree;
 import ar.edu.itba.paw.models.Professor;
 import ar.edu.itba.paw.models.Subject;
+import ar.edu.itba.paw.models.User;
 import ar.edu.itba.paw.services.DegreeService;
 import ar.edu.itba.paw.services.ProfessorService;
 import ar.edu.itba.paw.services.SubjectService;
+import ar.edu.itba.paw.services.UserService;
+import ar.edu.itba.paw.webapp.auth.UniAuthUser;
 import ar.edu.itba.paw.webapp.exceptions.DegreeNotFoundException;
+import ar.edu.itba.paw.webapp.exceptions.UserNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
 
+import javax.servlet.http.HttpSession;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -24,11 +31,14 @@ public class HomeController {
 
     private final ProfessorService ps;
 
+    private final UserService us;
+
     @Autowired
-    public HomeController(DegreeService ds, SubjectService ss, ProfessorService ps) {
+    public HomeController(DegreeService ds, SubjectService ss, ProfessorService ps, UserService us) {
         this.ds = ds;
         this.ss = ss;
         this.ps = ps;
+        this.us = us;
     }
 
     @RequestMapping("/")
@@ -65,4 +75,22 @@ public class HomeController {
 
         return mav;
     }
+
+    @ModelAttribute("loggedUser")
+    public User loggedUser(final HttpSession session){
+        Long userId = (Long) session.getAttribute("id");
+        System.out.println(userId);
+        if(userId == null){
+            return null;
+        }
+
+        return us.findById(userId.longValue()).orElseGet(() -> null);
+    }
+
+//    @ModelAttribute("loggedUser")
+//    public User loggedUser(){
+//        final UniAuthUser userDetails = (UniAuthUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+//        final User loggedUser = us.getUserWithEmail(userDetails.getUsername()).orElse(null);
+//        return loggedUser;
+//    }
 }

@@ -37,11 +37,11 @@
     <br />
     <div>
       <spring:message code="userform.password" var="PasswordPlaceholder"/>
-      <sl-input type="password" name="password" placeholder="${PasswordPlaceholder}" ></sl-input>
+      <sl-input type="password" name="password" placeholder="${PasswordPlaceholder}" password-toggle></sl-input>
     </div>
     <br />
     <div>
-      <label><input name="rememberMe" id="rememberMe" type="checkbox" />Remember Me</label>
+      <label><sl-checkbox name="rememberMe" id="rememberMe" type="checkbox" />Remember Me</label>
     </div>
     <br />
     <div>

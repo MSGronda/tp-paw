@@ -72,6 +72,11 @@ public class UserJdbcDao implements UserDao {
         return jdbcTemplate.query("SELECT * FROM " + USERS_TABLE + " WHERE email = ?", UserJdbcDao::rowMapper, email).stream().findFirst();
     }
 
+    @Override
+    public void changePassword(String email, String password) {
+        jdbcTemplate.update("UPDATE " + USERS_TABLE + " SET pass = ? WHERE email = ?", password, email);
+    }
+
     private static User rowMapper(ResultSet rs, int rowNum) throws SQLException {
         return new User(
                 new User.UserBuilder(rs.getString("email"),

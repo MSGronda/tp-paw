@@ -10,4 +10,6 @@ public interface UserDao extends RWDao<Long,User> {
     User create(User.UserBuilder userBuilder) throws SQLException;
 
     Optional<User> getUserWithEmail(final String email);
+
+    void changePassword(String email, String password);
 }
