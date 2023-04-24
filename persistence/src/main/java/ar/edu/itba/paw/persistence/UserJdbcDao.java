@@ -29,9 +29,20 @@ public class UserJdbcDao implements UserDao {
             .usingGeneratedKeyColumns("id");
     }
 
+    @Override
+    public Optional<User> findByIdWithImage(Long id){
+        return jdbcTemplate.query("SELECT * FROM " + USERS_TABLE + " WHERE id = ?", UserJdbcDao::rowMapperWithImage, id)
+                .stream().findFirst();
+    }
+
     public Optional<User> findById(Long id) {
         return jdbcTemplate.query("SELECT * FROM " + USERS_TABLE + " WHERE id = ?", UserJdbcDao::rowMapper, id)
             .stream().findFirst();
+    }
+
+    @Override
+    public List<User> getAllWithImage() {
+        return jdbcTemplate.query("SELECT * FROM " + USERS_TABLE, UserJdbcDao::rowMapperWithImage);
     }
 
     @Override
@@ -51,6 +62,7 @@ public class UserJdbcDao implements UserDao {
         data.put("email", userBuilder.getEmail());
         data.put("pass", userBuilder.getPassword());
         data.put("username", userBuilder.getUsername());
+        data.put("image", userBuilder.getImage());
 
         Number key = jdbcInsert.executeAndReturnKey(data);
 
@@ -67,6 +79,11 @@ public class UserJdbcDao implements UserDao {
 
     }
 
+    public byte[] updateProfilePicture(long id, byte[] image) {
+        jdbcTemplate.update("UPDATE "+ USERS_TABLE + " SET image = ? WHERE id = ?", image, id);
+        return image;
+    }
+
     @Override
     public Optional<User> getUserWithEmail(String email){
         return jdbcTemplate.query("SELECT * FROM " + USERS_TABLE + " WHERE email = ?", UserJdbcDao::rowMapper, email).stream().findFirst();
@@ -75,6 +92,15 @@ public class UserJdbcDao implements UserDao {
     @Override
     public void changePassword(String email, String password) {
         jdbcTemplate.update("UPDATE " + USERS_TABLE + " SET pass = ? WHERE email = ?", password, email);
+    }
+
+    private static User rowMapperWithImage(ResultSet rs, int rowNum) throws SQLException {
+        return new User(
+                new User.UserBuilder(rs.getString("email"),
+                        rs.getString("pass"),
+                        rs.getString("username"))
+                        .id(rs.getLong("id")).image(rs.getBytes("image"))
+        );
     }
 
     private static User rowMapper(ResultSet rs, int rowNum) throws SQLException {

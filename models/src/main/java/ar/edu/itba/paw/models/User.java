@@ -1,16 +1,23 @@
 package ar.edu.itba.paw.models;
 
 import java.util.Objects;
+import java.util.Optional;
 
 public class User {
     private final long id;
     private final String email, password, username;
+    private byte[] image;
 
     public User(UserBuilder builder) {
         this.id = builder.id;
         this.email = builder.email;
         this.password = builder.password;
         this.username = builder.username;
+        this.image = builder.image;
+    }
+
+    public byte[] getImage(){
+        return image;
     }
 
     public long getId() {
@@ -40,14 +47,28 @@ public class User {
         private long id;
         private final String email;
         private String password, username;
+        private byte[] image;
 
         public UserBuilder(String email, String password, String username) {
             this.email = email;
             this.password = password;
             this.username = username;
         }
+        public UserBuilder(String email, String password, String username, byte[] image) {
+            this.email = email;
+            this.password = password;
+            this.username = username;
+            this.image = image;
+        }
         public UserBuilder id(long id) {
             this.id = id;
+            return this;
+        }
+        public byte[] getImage(){
+            return this.image;
+        }
+        public UserBuilder image(byte[] image) {
+            this.image = image;
             return this;
         }
         public Long getId() {

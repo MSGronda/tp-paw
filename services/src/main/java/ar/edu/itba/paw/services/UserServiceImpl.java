@@ -48,6 +48,16 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public List<User> getAllWithImage() {
+        return userDao.getAllWithImage();
+    }
+
+    @Override
+    public Optional<User> findByIdWithImage(Long id) {
+        return userDao.findByIdWithImage(id);
+    }
+
+    @Override
     public void changePassword(String email, String password) {
         userDao.changePassword(email, passwordEncoder.encode(password));
     }
