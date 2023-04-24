@@ -11,6 +11,7 @@ public interface ReviewService extends BaseService<Long, Review> {
 
     List<Review> getAll();
 
+    List<Review> getAllUserReviewsWithSubjectName(Long userId);
     List<Review> getAllBySubject(String idsub);
 
     Optional<Integer> getDifficultyBySubject(String idsub);

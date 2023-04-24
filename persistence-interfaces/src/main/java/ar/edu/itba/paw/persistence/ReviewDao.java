@@ -10,6 +10,7 @@ public interface ReviewDao extends RWDao<Long,Review> {
 
     List<Review> getAllBySubject(String id);
 
+    List<Review> getAllUserReviewsWithSubjectName(Long userId);
     Optional<Integer> getDifficultyBySubject(String idsub);
     Optional<Integer> getTimeBySubject(String idsub);
 }

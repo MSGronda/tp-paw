@@ -29,6 +29,11 @@ public class ReviewServiceImpl implements ReviewService {
     }
 
     @Override
+    public List<Review> getAllUserReviewsWithSubjectName(Long userId) {
+        return reviewDao.getAllUserReviewsWithSubjectName(userId);
+    }
+
+    @Override
     public List<Review> getAllBySubject(String idsub){
         return reviewDao.getAllBySubject(idsub);
     }

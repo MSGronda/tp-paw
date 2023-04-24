@@ -1,6 +1,9 @@
 package ar.edu.itba.paw.webapp.controller;
 
 import ar.edu.itba.paw.models.*;
+import ar.edu.itba.paw.services.ImageService;
+import ar.edu.itba.paw.services.ReviewService;
+import ar.edu.itba.paw.services.SubjectService;
 import ar.edu.itba.paw.services.UserService;
 import ar.edu.itba.paw.webapp.auth.UniAuthUser;
 import ar.edu.itba.paw.webapp.exceptions.UserNotFoundException;
@@ -20,11 +23,15 @@ import java.util.*;
 @Controller
 public class UserController {
     private final UserService userService;
+    private final ReviewService reviewService;
+    private final SubjectService subjectService;
 
 
     @Autowired
-    public UserController(UserService userService) {
+    public UserController(UserService userService, ReviewService reviewService, SubjectService subjectService) {
         this.userService = userService;
+        this.reviewService = reviewService;
+        this.subjectService = subjectService;
     }
 
     @RequestMapping("/profile/{id:\\d+}")
@@ -35,8 +42,11 @@ public class UserController {
         }
 
         final User user = maybeUser.get();
+        final List<Review> userReviews = reviewService.getAllUserReviewsWithSubjectName(user.getId());
+
         ModelAndView mav = new ModelAndView("user/profile");
         mav.addObject("user", user);
+        mav.addObject("reviews", userReviews);
 
         return mav;
     }
@@ -73,13 +83,6 @@ public class UserController {
         return mav;
     }
 
-    @ModelAttribute("loggedUser")
-    public User loggedUser(final HttpSession session) {
-        Long userId = (Long) session.getAttribute("userId2");
-        if(userId== null)
-            return null;
-        return userService.findById(userId.longValue()).orElseGet(() -> null);
-    }
 
     @ModelAttribute("loggedUser")
     public User loggedUser(){

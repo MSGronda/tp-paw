@@ -10,19 +10,18 @@ import org.springframework.stereotype.Repository;
 import javax.sql.DataSource;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 @Repository
 public class ReviewJdbcDao implements ReviewDao {
     private static final RowMapper<Review> ROW_MAPPER = ReviewJdbcDao::rowMapper;
-
+    private static final RowMapper<Integer> DIFFICULTY_ROW_MAPPER = ReviewJdbcDao::difficultyRowMapper;
+    private static final RowMapper<Integer> TIME_ROW_MAPPER = ReviewJdbcDao::timeRowMapper;
     private final JdbcTemplate jdbcTemplate;
     private final SimpleJdbcInsert jdbcInsert;
 
     private final String TABLE_REVIEWS = "reviews";
+    private final String TABLE_SUB = "subjects";
 
     @Autowired
     public ReviewJdbcDao(final DataSource ds) {
@@ -44,12 +43,12 @@ public class ReviewJdbcDao implements ReviewDao {
     }
     @Override
     public Optional<Integer> getDifficultyBySubject(String idsub) {
-        return jdbcTemplate.query("SELECT easy FROM " + TABLE_REVIEWS + " WHERE idSub = ? GROUP BY easy ORDER BY COUNT(*) desc, easy desc", ReviewJdbcDao::difficultyRowMapper, idsub)
+        return jdbcTemplate.query("SELECT easy FROM " + TABLE_REVIEWS + " WHERE idSub = ? GROUP BY easy ORDER BY COUNT(*) desc, easy desc", DIFFICULTY_ROW_MAPPER, idsub)
                 .stream().findFirst();
     }
     @Override
     public Optional<Integer> getTimeBySubject(String idsub) {
-        return jdbcTemplate.query("SELECT timedemanding FROM " + TABLE_REVIEWS + " WHERE idSub = ? GROUP BY timedemanding ORDER BY COUNT(*) desc, timedemanding desc", ReviewJdbcDao::timeRowMapper, idsub)
+        return jdbcTemplate.query("SELECT timedemanding FROM " + TABLE_REVIEWS + " WHERE idSub = ? GROUP BY timedemanding ORDER BY COUNT(*) desc, timedemanding desc", TIME_ROW_MAPPER, idsub)
                 .stream().findFirst();
     }
 
@@ -104,5 +103,24 @@ public class ReviewJdbcDao implements ReviewDao {
     }
     private static Integer timeRowMapper(ResultSet rs, int rowNum) throws SQLException {
         return rs.getInt("timedemanding");
+    }
+
+   //-----------------------------------------------------------------
+    @Override
+    public List<Review> getAllUserReviewsWithSubjectName(Long userId) {
+        return jdbcTemplate.query("SELECT * FROM " + TABLE_SUB +" FULL JOIN " + TABLE_REVIEWS + " ON " + TABLE_SUB +".id = " + TABLE_REVIEWS + ".idsub WHERE iduser = ?", ReviewJdbcDao::subjectNameRowMapper, userId);
+    }
+
+    private static Review subjectNameRowMapper(ResultSet rs, int rowNum) throws SQLException {
+        return new Review(
+                rs.getLong("id"),
+                rs.getLong("idUser"),
+                rs.getString("userEmail"),
+                rs.getString("idSub"),
+                rs.getInt("easy"),
+                rs.getInt("timeDemanding"),
+                rs.getString("revText"),
+                rs.getString("subname")
+        );
     }
 }
