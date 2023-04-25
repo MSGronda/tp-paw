@@ -102,7 +102,8 @@ public class ReviewJdbcDao implements ReviewDao {
                 rs.getString("idSub"),
                 rs.getInt("easy"),
                 rs.getInt("timeDemanding"),
-                rs.getString("revText")
+                rs.getString("revText"),
+                rs.getBoolean("useranonymous")
         );
     }
 

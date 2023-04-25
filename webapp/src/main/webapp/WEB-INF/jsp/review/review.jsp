@@ -47,6 +47,11 @@
                     <sl-radio-button value="0"><spring:message code="form.NotTimeDemanding"/></sl-radio-button>
             </sl-radio-group>
             <br />
+            <div>
+                <sl-checkbox type="checkbox" name="anonymous" path="anonymous" value="${ReviewForm.anonymous}"><spring:message code="form.anonymous"/></sl-checkbox>
+
+            </div>
+            <br />
             <sl-button type="submit" variant="success"><spring:message code="form.submit"/></sl-button>
         </div>
     </form:form>

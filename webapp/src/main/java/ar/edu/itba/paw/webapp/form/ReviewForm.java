@@ -40,4 +40,12 @@ public class ReviewForm {
         this.timeDemanding = timeDemanding;
     }
 
+    public Boolean getAnonymous() {
+        return anonymous;
+    }
+
+    public void setAnonymous(Boolean anonymous) {
+        this.anonymous = anonymous;
+    }
+
 }

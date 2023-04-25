@@ -7,6 +7,7 @@ public class Review {
     private final Integer easy;
     private final Integer timeDemanding;
     private final String text;
+    private final Boolean anonymous;
 
     private String subjectName = null;
 
@@ -24,6 +25,7 @@ public class Review {
         this.easy = easy;
         this.timeDemanding = timeDemanding;
         this.text = text;
+        this.anonymous = anonymous;
     }
 
     public Review(long id, long userId,  String subjectId, Integer easy, Integer timeDemanding,
