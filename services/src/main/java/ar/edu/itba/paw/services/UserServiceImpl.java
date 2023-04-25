@@ -19,6 +19,8 @@ public class UserServiceImpl implements UserService {
 
     private final PasswordEncoder passwordEncoder;
 
+    private static final int MAX_IMAGE_SIZE = 1024 * 1024 * 5;
+
     @Autowired
     public UserServiceImpl(UserDao userDao, final PasswordEncoder passwordEncoder) {
         this.userDao = userDao;
@@ -47,6 +49,14 @@ public class UserServiceImpl implements UserService {
         }
 
 //        return userDao.create(new User.UserBuilder(userBuilder.getEmail(), passwordEncoder.encode(userBuilder.getPassword()), userBuilder.getUsername()));
+    }
+
+    @Override
+    public byte[] updateProfilePicture(long id, byte[] image){
+        if(image.length > MAX_IMAGE_SIZE){
+            return null;
+        }
+        return userDao.updateProfilePicture(id,image);
     }
 
     @Override

@@ -22,4 +22,6 @@ public interface UserService extends BaseService<Long, User> {
     void updateSubjectProgress(Long id, String idSub, Integer newProgress);
     void changePassword(Long userId, String password);
     void editProfile(Long userId, String username);
+
+    byte[] updateProfilePicture(long id, byte[] image);
 }

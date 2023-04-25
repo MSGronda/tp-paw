@@ -16,6 +16,8 @@ public interface UserDao extends RWDao<Long,User> {
 
     List<User> getAllWithImage();
 
+    byte[] updateProfilePicture(long id, byte[] image);
+
     Optional<User> getUserWithEmail(final String email);
 
     void updateSubjectProgress(Long id, String idSub, Integer newProgress);
