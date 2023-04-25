@@ -18,15 +18,19 @@ import java.util.Optional;
 public class UserJdbcDao implements UserDao {
     private final JdbcTemplate jdbcTemplate;
     private final SimpleJdbcInsert jdbcInsert;
+    private final SimpleJdbcInsert jdbcUserProgressInsert;
 
     private final String USERS_TABLE = "users";
+    private final String USER_SUB_PRG_TABLE = "userSubjectProgress";
 
     @Autowired
     public UserJdbcDao(final DataSource ds) {
         this.jdbcTemplate = new JdbcTemplate(ds);
         this.jdbcInsert = new SimpleJdbcInsert(ds)
-            .withTableName("users")
+            .withTableName(USERS_TABLE)
             .usingGeneratedKeyColumns("id");
+        this.jdbcUserProgressInsert = new SimpleJdbcInsert(ds)
+                .withTableName(USER_SUB_PRG_TABLE);
     }
 
     @Override
@@ -39,6 +43,36 @@ public class UserJdbcDao implements UserDao {
         return jdbcTemplate.query("SELECT * FROM " + USERS_TABLE + " WHERE id = ?", UserJdbcDao::rowMapper, id)
             .stream().findFirst();
     }
+
+    @Override
+    public Optional<Integer> getUserSubjectProgress(Long id, String idSub) {
+        return jdbcTemplate.query("SELECT * FROM " + USER_SUB_PRG_TABLE + " WHERE idUser = ? AND idSub = ?",
+                UserJdbcDao::rowMapperUserSubjectProgress, id, idSub).stream().findFirst();
+    }
+
+    @Override
+    public Map<String, Integer> getUserAllSubjectProgress(Long id) {
+        return jdbcTemplate.query("SELECT * FROM " + USER_SUB_PRG_TABLE + " WHERE idUser = ?",
+                UserJdbcDao::userAllSubjectsProgressExtractor, id);
+    }
+
+    @Override
+    public void updateSubjectProgress(Long id, String idSub, Integer newProgress){
+        if(getUserSubjectProgress(id,idSub).isPresent()){
+            jdbcTemplate.update("UPDATE " + USER_SUB_PRG_TABLE + " SET subjectState = ? WHERE idSub = ? AND idUser = ?",
+                    newProgress,idSub,id);
+        }
+        else{
+            Map<String, Object> data = new HashMap<>();
+
+            data.put("idUser",id);
+            data.put("idSub",idSub);
+            data.put("subjectState",newProgress);
+
+            jdbcUserProgressInsert.execute(data);
+        }
+    }
+
 
     @Override
     public List<User> getAllWithImage() {
@@ -92,6 +126,21 @@ public class UserJdbcDao implements UserDao {
     @Override
     public void changePassword(String email, String password) {
         jdbcTemplate.update("UPDATE " + USERS_TABLE + " SET pass = ? WHERE email = ?", password, email);
+    }
+
+    private static Map<String,Integer> userAllSubjectsProgressExtractor(ResultSet rs) throws SQLException {
+        final Map<String, Integer> res = new HashMap<>();
+
+        while(rs.next()){
+            String idSub = rs.getString("idSub");
+            Integer state = rs.getInt("subjectState");
+            res.put(idSub,state);
+        }
+        return res;
+    }
+
+    private static Integer rowMapperUserSubjectProgress(ResultSet rs , int rowNum) throws SQLException {
+        return rs.getInt("subjectState");
     }
 
     private static User rowMapperWithImage(ResultSet rs, int rowNum) throws SQLException {

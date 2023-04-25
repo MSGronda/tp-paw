@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import java.sql.SQLException;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Service
@@ -55,6 +56,22 @@ public class UserServiceImpl implements UserService {
     @Override
     public Optional<User> findByIdWithImage(Long id) {
         return userDao.findByIdWithImage(id);
+    }
+
+    @Override
+    public Optional<Integer> getUserSubjectProgress(Long id, String idSub) {
+        return userDao.getUserSubjectProgress(id,idSub);
+    }
+
+
+    @Override
+    public Map<String, Integer> getUserAllSubjectProgress(Long id) {
+        return userDao.getUserAllSubjectProgress(id);
+    }
+
+    @Override
+    public void updateSubjectProgress(Long id, String idSub, Integer newProgress) {
+        userDao.updateSubjectProgress(id,idSub,newProgress);
     }
 
     @Override

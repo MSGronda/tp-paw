@@ -1,5 +1,6 @@
 package ar.edu.itba.paw.models;
 
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -7,6 +8,7 @@ public class User {
     private final long id;
     private final String email, password, username;
     private byte[] image;
+    private Map<String, Integer> subjectProgress;
 
     public User(UserBuilder builder) {
         this.id = builder.id;
@@ -14,6 +16,7 @@ public class User {
         this.password = builder.password;
         this.username = builder.username;
         this.image = builder.image;
+        this.subjectProgress = builder.subjectProgress;
     }
 
     public byte[] getImage(){
@@ -48,20 +51,22 @@ public class User {
         private final String email;
         private String password, username;
         private byte[] image;
+        private Map<String, Integer> subjectProgress;
 
         public UserBuilder(String email, String password, String username) {
             this.email = email;
             this.password = password;
             this.username = username;
         }
-        public UserBuilder(String email, String password, String username, byte[] image) {
-            this.email = email;
-            this.password = password;
-            this.username = username;
-            this.image = image;
-        }
         public UserBuilder id(long id) {
             this.id = id;
+            return this;
+        }
+        public Map<String, Integer> getSubjectProgress(){
+            return this.subjectProgress;
+        }
+        public UserBuilder subjectProgress(Map<String, Integer> subjectProgress){
+            this.subjectProgress = subjectProgress;
             return this;
         }
         public byte[] getImage(){
