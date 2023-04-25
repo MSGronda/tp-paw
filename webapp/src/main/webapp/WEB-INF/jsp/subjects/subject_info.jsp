@@ -144,22 +144,27 @@
   <br/>
   <hr/>
   <div class="filter">
-    <sl-tooltip content="Open viewing sorts" placement="bottom">
-      <sl-button variant="text" size="large">
-        <sl-icon slot="suffix" name="sort-down"></sl-icon>
-        <spring:message code="subject.sort"/></sl-button>
-    </sl-tooltip>
+    <sl-dropdown>
+      <sl-button variant="text" slot="trigger" size="large" caret>
+        <spring:message code="subject.sort"/>
+        <sl-icon slot="prefix" name="sort-down"></sl-icon>
+      </sl-button>
+      <sl-menu>
+        <sl-menu-item value="cut"><spring:message code="subject.order.difficulty"/></sl-menu-item>
+        <sl-menu-item value="copy"><spring:message code="subject.order.time"/></sl-menu-item>
+      </sl-menu>
+    </sl-dropdown>
   </div>
 
   <div class="review-column container-50">
     <c:if test="${empty reviews}">
       <h3><spring:message code="subject.noreviews"/></h3>
     </c:if>
-    <c:forEach var="review" items="${reviews}">
+    <c:forEach  var="review" items="${reviews}">
       <sl-card class="card-header">
         <div slot="header">
           <c:choose>
-            <c:when test="${empty review.userEmail}">
+            <c:when test="${review.anonymous}">
               <spring:message code="subject.anonymous"/>
             </c:when>
             <c:otherwise>

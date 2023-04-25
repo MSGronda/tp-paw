@@ -60,7 +60,7 @@ public class ReviewJdbcDao implements ReviewDao {
 
     @Override
     public void insert(Review review) {
-        create(review.getUserEmail()==null,review.getEasy(), review.getTimeDemanding(), review.getText(), review.getSubjectId(),review.getUserId(), review.getUserEmail());
+        create(review.getAnonymous(),review.getEasy(), review.getTimeDemanding(), review.getText(), review.getSubjectId(),review.getUserId(), review.getUserEmail());
     }
 
     @Override
@@ -70,16 +70,12 @@ public class ReviewJdbcDao implements ReviewDao {
         data.put("timeDemanding", timeDemanding);
         data.put("revText", text);
         data.put("idSub", subjectId);
-        if(anonymous){
-            data.put("idUser", null);
-            data.put("userEmail", null);
-        } else {
-            data.put("idUser", userId);
-            data.put("userEmail", userEmail);
-        }
+        data.put("idUser", userId);
+        data.put("userEmail", userEmail);
+        data.put("useranonymous",anonymous);
         Number key = jdbcInsert.executeAndReturnKey(data);
 
-        return new Review(key.longValue(), userId, userEmail, subjectId, easy, timeDemanding, text);
+        return new Review(key.longValue(), userId, userEmail, subjectId, easy, timeDemanding, text,anonymous);
     }
 
     @Override
@@ -100,7 +96,8 @@ public class ReviewJdbcDao implements ReviewDao {
                 rs.getString("idSub"),
                 rs.getInt("easy"),
                 rs.getInt("timeDemanding"),
-                rs.getString("revText")
+                rs.getString("revText"),
+                rs.getBoolean("useranonymous")
         );
     }
     private static Integer difficultyRowMapper(ResultSet rs, int rowNum) throws SQLException {

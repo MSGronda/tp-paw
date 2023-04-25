@@ -8,13 +8,14 @@ public class Review {
     private final Integer easy;
     private final Integer timeDemanding;
     private final String text;
+    private final Boolean anonymous;
 
     // Etc.
 
 
 
 
-    public Review(long id, long userId, String userEmail, String subjectId, Integer easy, Integer timeDemanding, String text) {
+    public Review(long id, long userId, String userEmail, String subjectId, Integer easy, Integer timeDemanding, String text,Boolean anonymous) {
         this.id = id;
         this.userId = userId;
         this.userEmail = userEmail;
@@ -22,6 +23,7 @@ public class Review {
         this.easy = easy;
         this.timeDemanding = timeDemanding;
         this.text = text;
+        this.anonymous = anonymous;
     }
 
     public long getId() {
@@ -49,6 +51,10 @@ public class Review {
 
     public Integer getTimeDemanding(){
         return timeDemanding;
+    }
+
+    public Boolean getAnonymous() {
+        return anonymous;
     }
 }
 

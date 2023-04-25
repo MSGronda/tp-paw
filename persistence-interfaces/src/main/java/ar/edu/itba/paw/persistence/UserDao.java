@@ -1,7 +1,6 @@
 package ar.edu.itba.paw.persistence;
 
 import ar.edu.itba.paw.models.User;
-import com.sun.org.apache.xpath.internal.operations.Bool;
 
 import java.sql.SQLException;
 import java.util.Optional;
