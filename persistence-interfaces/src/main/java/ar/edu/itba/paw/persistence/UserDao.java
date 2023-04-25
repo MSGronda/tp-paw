@@ -22,5 +22,4 @@ public interface UserDao extends RWDao<Long,User> {
     Optional<Integer> getUserSubjectProgress(Long id, String idSub);
     Map<String, Integer> getUserAllSubjectProgress(Long id);
 
-    void changePassword(String email, String password);
 }

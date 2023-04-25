@@ -163,6 +163,30 @@ public class UserJdbcDao implements UserDao {
         );
     }
 
+    private static Map<String,Integer> userAllSubjectsProgressExtractor(ResultSet rs) throws SQLException {
+        final Map<String, Integer> res = new HashMap<>();
+
+        while(rs.next()){
+            String idSub = rs.getString("idSub");
+            Integer state = rs.getInt("subjectState");
+            res.put(idSub,state);
+        }
+        return res;
+    }
+
+    private static Integer rowMapperUserSubjectProgress(ResultSet rs , int rowNum) throws SQLException {
+        return rs.getInt("subjectState");
+    }
+
+    private static User rowMapperWithImage(ResultSet rs, int rowNum) throws SQLException {
+        return new User(
+                new User.UserBuilder(rs.getString("email"),
+                        rs.getString("pass"),
+                        rs.getString("username"))
+                        .id(rs.getLong("id")).image(rs.getBytes("image"))
+        );
+    }
+
     private static User rowMapper(ResultSet rs, int rowNum) throws SQLException {
         return new User(
                 new User.UserBuilder(rs.getString("email"),

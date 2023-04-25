@@ -53,8 +53,6 @@ public class UserServiceImpl implements UserService {
     public Optional<User> getUserWithEmail(String email) {
         return userDao.getUserWithEmail(email);
     }
-
-    @Override
     public List<User> getAllWithImage() {
         return userDao.getAllWithImage();
     }
@@ -79,11 +77,5 @@ public class UserServiceImpl implements UserService {
     public void updateSubjectProgress(Long id, String idSub, Integer newProgress) {
         userDao.updateSubjectProgress(id,idSub,newProgress);
     }
-
-    @Override
-    public void changePassword(String email, String password) {
-        userDao.changePassword(email, passwordEncoder.encode(password));
-    }
-
-
+    
 }

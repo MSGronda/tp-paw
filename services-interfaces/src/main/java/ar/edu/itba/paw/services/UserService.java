@@ -21,7 +21,5 @@ public interface UserService extends BaseService<Long, User> {
     Map<String, Integer> getUserAllSubjectProgress(Long id);
     void updateSubjectProgress(Long id, String idSub, Integer newProgress);
 
-    void changePassword(String email, String password);
-
 
 }
