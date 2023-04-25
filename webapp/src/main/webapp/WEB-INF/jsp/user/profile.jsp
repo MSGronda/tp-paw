@@ -37,6 +37,10 @@
             display: flex;
             justify-content: center;
         }
+        .logout-button{
+            display: flex;
+            align-items: center;
+        }
     </style>
 </head>
 <body>
@@ -49,6 +53,10 @@
         <c:if test="${user.id == loggedUser.id}" >
             <h1><spring:message code="profile.loggeduser" /></h1>
         </c:if>
+        <c:url value="/logout" var="logout"/>
+        <div class="logout-button">
+            <sl-button variant="primary" href="${logout}"><spring:message code="profile.logout"/></sl-button>
+        </div>
     </div>
     <sl-card class="card-basic">
         <spring:message code="profile.username" /> <c:out value="${user.username}" />
