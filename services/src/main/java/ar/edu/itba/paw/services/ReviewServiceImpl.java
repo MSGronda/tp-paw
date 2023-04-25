@@ -52,4 +52,25 @@ public class ReviewServiceImpl implements ReviewService {
     public Review create(Integer easy, Integer timeDemanding, String text,String subjectId,long userId, String userEmail) throws SQLException {
         return reviewDao.create(easy, timeDemanding, text, subjectId, userId, userEmail);
     }
+
+    @Override
+    public void voteReview(Long idUser, Long idReview, int vote) {
+
+        // only one vote per user on a certain review
+
+        if(reviewDao.userVotedOnReview(idUser,idReview))
+            reviewDao.updateVoteOnReview(idUser, idReview, vote);
+        else
+            reviewDao.voteReview(idUser,idReview,vote);
+    }
+
+    @Override
+    public List<Review> getCompleteReviewsBySubjectId(String idSub) {
+        return reviewDao.getCompleteReviewsBySubjectId(idSub);
+    }
+
+    @Override
+    public List<Review> getCompleteReviewsByUserId(Long idUser) {
+        return reviewDao.getCompleteReviewsByUserId(idUser);
+    }
 }

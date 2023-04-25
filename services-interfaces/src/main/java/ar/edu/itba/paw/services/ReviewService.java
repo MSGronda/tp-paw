@@ -18,4 +18,11 @@ public interface ReviewService extends BaseService<Long, Review> {
 
     Optional<Integer> getTimeBySubject(String idsub);
     Review create(Integer easy, Integer timeDemanding, String text,String subjectId,long userId, String userEmail) throws SQLException;
+
+
+    void voteReview(Long idUser, Long idReview, int vote);
+
+    List<Review> getCompleteReviewsBySubjectId(String idSub);
+    List<Review> getCompleteReviewsByUserId(Long idUser);
+
 }

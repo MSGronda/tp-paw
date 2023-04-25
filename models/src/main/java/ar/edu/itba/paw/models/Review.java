@@ -11,10 +11,10 @@ public class Review {
 
     private String subjectName = null;
 
+    private Integer upvotes = 0;
+    private Integer downvotes = 0;
+
     // Etc.
-
-
-
 
     public Review(long id, long userId, String userEmail, String subjectId, Integer easy, Integer timeDemanding, String text) {
         this.id = id;
@@ -35,6 +35,26 @@ public class Review {
         this.timeDemanding = timeDemanding;
         this.text = text;
         this.subjectName=subjectName;
+    }
+    public Review(long id, long userId, String userEmail, String subjectId, Integer easy, Integer timeDemanding,
+                  String text, String subjectName, int upvotes, int downvotes) {
+        this.id = id;
+        this.userId = userId;
+        this.userEmail = userEmail;
+        this.subjectId = subjectId;
+        this.easy = easy;
+        this.timeDemanding = timeDemanding;
+        this.text = text;
+        this.subjectName=subjectName;
+        this.upvotes = upvotes;
+        this.downvotes = downvotes;
+    }
+
+    public int getUpvotes(){
+        return upvotes;
+    }
+    public int getDownvotes(){
+        return downvotes;
     }
 
     public long getId() {

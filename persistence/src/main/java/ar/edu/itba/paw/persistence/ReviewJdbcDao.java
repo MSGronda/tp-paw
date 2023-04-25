@@ -17,18 +17,23 @@ public class ReviewJdbcDao implements ReviewDao {
     private static final RowMapper<Review> ROW_MAPPER = ReviewJdbcDao::rowMapper;
     private static final RowMapper<Integer> DIFFICULTY_ROW_MAPPER = ReviewJdbcDao::difficultyRowMapper;
     private static final RowMapper<Integer> TIME_ROW_MAPPER = ReviewJdbcDao::timeRowMapper;
+
     private final JdbcTemplate jdbcTemplate;
     private final SimpleJdbcInsert jdbcInsert;
+    private final SimpleJdbcInsert jdbcReviewVoteInsert;
 
-    private final String TABLE_REVIEWS = "reviews";
-    private final String TABLE_SUB = "subjects";
+    private static final String TABLE_REVIEWS = "reviews";
+    private static final String TABLE_SUB = "subjects";
+    private static final String TABLE_REVIEW_VOTE = "reviewVote";
 
     @Autowired
     public ReviewJdbcDao(final DataSource ds) {
         this.jdbcTemplate = new JdbcTemplate(ds);
         this.jdbcInsert = new SimpleJdbcInsert(ds)
-                .withTableName("reviews")
+                .withTableName(TABLE_REVIEWS)
                 .usingGeneratedKeyColumns("id");
+        this.jdbcReviewVoteInsert = new SimpleJdbcInsert(ds)
+                .withTableName(TABLE_REVIEW_VOTE);
     }
 
     @Override
@@ -41,6 +46,7 @@ public class ReviewJdbcDao implements ReviewDao {
     public List<Review> getAllBySubject(String idsub) {
         return jdbcTemplate.query("SELECT * FROM " + TABLE_REVIEWS + " WHERE idsub = ?", ROW_MAPPER, idsub );
     }
+
     @Override
     public Optional<Integer> getDifficultyBySubject(String idsub) {
         return jdbcTemplate.query("SELECT easy FROM " + TABLE_REVIEWS + " WHERE idSub = ? GROUP BY easy ORDER BY COUNT(*) desc, easy desc", DIFFICULTY_ROW_MAPPER, idsub)
@@ -51,7 +57,6 @@ public class ReviewJdbcDao implements ReviewDao {
         return jdbcTemplate.query("SELECT timedemanding FROM " + TABLE_REVIEWS + " WHERE idSub = ? GROUP BY timedemanding ORDER BY COUNT(*) desc, timedemanding desc", TIME_ROW_MAPPER, idsub)
                 .stream().findFirst();
     }
-
     @Override
     public List<Review> getAll() {
         return jdbcTemplate.query("SELECT * FROM " + TABLE_REVIEWS, ROW_MAPPER);
@@ -61,6 +66,8 @@ public class ReviewJdbcDao implements ReviewDao {
     public void insert(Review review) {
         create(review.getEasy(), review.getTimeDemanding(), review.getText(), review.getSubjectId(),review.getUserId(), review.getUserEmail());
     }
+
+
 
     @Override
     public Review create(Integer easy, Integer timeDemanding, String text,String subjectId,long userId, String userEmail) {
@@ -98,6 +105,7 @@ public class ReviewJdbcDao implements ReviewDao {
                 rs.getString("revText")
         );
     }
+
     private static Integer difficultyRowMapper(ResultSet rs, int rowNum) throws SQLException {
         return rs.getInt("easy");
     }
@@ -105,10 +113,41 @@ public class ReviewJdbcDao implements ReviewDao {
         return rs.getInt("timedemanding");
     }
 
-   //-----------------------------------------------------------------
+
+    // - - - - - - Review upvotes and downvotes - - - - - -
+
+    @Override
+    public boolean userVotedOnReview(Long idUser, Long idReview){
+        return jdbcTemplate.query("SELECT * FROM "+TABLE_REVIEW_VOTE+ " WHERE idUser = ? AND idReview = ?",
+                ReviewJdbcDao::rowMapperReviewVote,idUser,idReview).stream().findFirst().isPresent();
+    }
+    @Override
+    public void voteReview(Long idUser, Long idReview, int vote){
+        Map<String, Object> data = new HashMap<>();
+
+        data.put("idUser", idUser);
+        data.put("idReview", idReview);
+        data.put("vote", vote);
+
+        jdbcReviewVoteInsert.execute(data);
+    }
+    @Override
+    public void updateVoteOnReview(Long idUser, Long idReview, int vote){
+        jdbcTemplate.update("UPDATE " + TABLE_REVIEW_VOTE + " SET vote = ? WHERE idreview = ? AND iduser = ?",
+                vote,idReview,idUser);
+    }
+    private static Integer rowMapperReviewVote(ResultSet rs, int rowNum) throws SQLException{
+        return rs.getInt("vote");
+    }
+
+    // - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+
+   // - - - - - - Review with subject name - - - - - -
     @Override
     public List<Review> getAllUserReviewsWithSubjectName(Long userId) {
-        return jdbcTemplate.query("SELECT * FROM " + TABLE_SUB +" FULL JOIN " + TABLE_REVIEWS + " ON " + TABLE_SUB +".id = " + TABLE_REVIEWS + ".idsub WHERE iduser = ?", ReviewJdbcDao::subjectNameRowMapper, userId);
+        return jdbcTemplate.query("SELECT * FROM " + TABLE_SUB +" FULL JOIN " + TABLE_REVIEWS + " ON "
+            + TABLE_SUB +".id = " + TABLE_REVIEWS + ".idsub WHERE iduser = ?", ReviewJdbcDao::subjectNameRowMapper, userId);
     }
 
     private static Review subjectNameRowMapper(ResultSet rs, int rowNum) throws SQLException {
@@ -123,4 +162,41 @@ public class ReviewJdbcDao implements ReviewDao {
                 rs.getString("subname")
         );
     }
+    // - - - - - - - - - - - - - - - - - - - - - - - -
+
+    // - - - - - - Review with subject name and upvotes, downvotes - - - - - -
+    @Override
+    public List<Review> getCompleteReviewsByUserId(Long idUser) {
+        return jdbcTemplate.query(completeReviewSql("WHERE r.idUser = ? "), ReviewJdbcDao::completeReviewRowMapper, idUser);
+    }
+
+    @Override
+    public List<Review> getCompleteReviewsBySubjectId(String idSub) {
+        return jdbcTemplate.query(completeReviewSql("WHERE r.idSub = ? "), ReviewJdbcDao::completeReviewRowMapper, idSub);
+    }
+
+    private static Review completeReviewRowMapper(ResultSet rs, int rowNum) throws SQLException {
+        return new Review(
+                rs.getLong("id"),
+                rs.getLong("idUser"),
+                rs.getString("userEmail"),
+                rs.getString("idSub"),
+                rs.getInt("easy"),
+                rs.getInt("timeDemanding"),
+                rs.getString("revText"),
+                rs.getString("subname"),
+                rs.getInt("upvotes"),
+                rs.getInt("downvotes")
+        );
+    }
+
+    private String completeReviewSql(String where){
+        return
+                "SELECT r.id, r.idUser, r.idSub, r.score, r.easy, r.timeDemanding, r.revText, r.userEmail, s.subname, " +
+                        "sum(CASE WHEN rv.vote = 1 THEN 1 ELSE 0 END) AS upvotes, sum(CASE WHEN rv.vote = -1 THEN 1 ELSE 0 END) AS downvotes " +
+                        "FROM " +  TABLE_REVIEWS + " AS r FULL JOIN " + TABLE_SUB +" AS s ON r.idSub = s.id FULL JOIN " +  TABLE_REVIEW_VOTE + " AS rv ON r.id = rv.idReview " +
+                        where +
+                        "GROUP BY r.id, s.subname";
+    }
+    // - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  - - -
 }
