@@ -19,7 +19,7 @@ public interface ReviewService extends BaseService<Long, Review> {
 
     Optional<Integer> getTimeBySubject(String idsub);
 
-    Review create(Integer easy, Integer timeDemanding, String text,String subjectId,long userId ) throws SQLException;
+    Review create(Boolean anonymous,Integer easy, Integer timeDemanding, String text,String subjectId,long userId ) throws SQLException;
 
     void voteReview(Long idUser, Long idReview, int vote);
 

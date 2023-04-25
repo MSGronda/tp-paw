@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface ReviewDao extends RWDao<Long,Review> {
-    Review create(final Integer easy, final Integer timeDemanding, final String text, final String subjectId, final long userId ) throws SQLException;
+    Review create(final Boolean anonymous,final Integer easy, final Integer timeDemanding, final String text, final String subjectId, final long userId ) throws SQLException;
 
     void voteReview(Long idUser, Long idReview, int vote);
     void updateVoteOnReview(Long idUser, Long idReview, int vote);

@@ -66,23 +66,24 @@ public class ReviewJdbcDao implements ReviewDao {
 
     @Override
     public void insert(Review review) {
-        create(review.getEasy(), review.getTimeDemanding(), review.getText(), review.getSubjectId(),review.getUserId());
+        create(review.getAnonymous(),review.getEasy(), review.getTimeDemanding(), review.getText(), review.getSubjectId(),review.getUserId());
     }
 
 
 
     @Override
-    public Review create(Integer easy, Integer timeDemanding, String text,String subjectId,long userId ) {
+    public Review create(Boolean anonymous,Integer easy, Integer timeDemanding, String text,String subjectId,long userId ) {
         Map<String, Object> data = new HashMap<>();
         data.put("easy", easy);
         data.put("timeDemanding", timeDemanding);
         data.put("revText", text);
         data.put("idSub", subjectId);
         data.put("idUser", userId);
+        data.put("useranonymous",anonymous);
 
         Number key = jdbcInsert.executeAndReturnKey(data);
 
-        return new Review(key.longValue(), userId, subjectId, easy, timeDemanding, text);
+        return new Review(key.longValue(), userId, subjectId, easy, timeDemanding, text,anonymous);
     }
 
     @Override
@@ -186,7 +187,8 @@ public class ReviewJdbcDao implements ReviewDao {
                 rs.getString("revText"),
                 rs.getString("subname"),
                 rs.getInt("upvotes"),
-                rs.getInt("downvotes")
+                rs.getInt("downvotes"),
+                rs.getBoolean("useranonymous")
         );
     }
     private static Review UsernameRowMapper(ResultSet rs, int rowNum) throws SQLException {
@@ -199,7 +201,8 @@ public class ReviewJdbcDao implements ReviewDao {
                 rs.getInt("timeDemanding"),
                 rs.getString("revText"),
                 rs.getInt("upvotes"),
-                rs.getInt("downvotes")
+                rs.getInt("downvotes"),
+                rs.getBoolean("useranonymous")
         );
     }
     // - - - - - - - - - - - - - - - - - - - - - - - -
@@ -218,7 +221,7 @@ public class ReviewJdbcDao implements ReviewDao {
 
     private String completeReviewSqlSubjectName(String where){
         return
-                "SELECT r.id, r.idUser, r.idSub, r.score, r.easy, r.timeDemanding, r.revText, s.subname, " +
+                "SELECT r.id, r.idUser, r.idSub, r.score, r.easy, r.timeDemanding, r.revText, r.useranonymous, s.subname, " +
                         "sum(CASE WHEN rv.vote = 1 THEN 1 ELSE 0 END) AS upvotes, sum(CASE WHEN rv.vote = -1 THEN 1 ELSE 0 END) AS downvotes " +
                         "FROM " +  TABLE_REVIEWS + " AS r FULL JOIN " + TABLE_SUB +" AS s ON r.idSub = s.id FULL JOIN " +  TABLE_REVIEW_VOTE + " AS rv ON r.id = rv.idReview " +
                         where +
@@ -227,7 +230,7 @@ public class ReviewJdbcDao implements ReviewDao {
 
     private String completeReviewSqlUserName(String where){
         return
-                "SELECT r.id, r.idUser, u.username, r.idSub, r.score, r.easy, r.timeDemanding, r.revText, " +
+                "SELECT r.id, r.idUser, u.username, r.idSub, r.score, r.easy, r.timeDemanding, r.revText, r.useranonymous, " +
                         "sum(CASE WHEN rv.vote = 1 THEN 1 ELSE 0 END) AS upvotes, sum(CASE WHEN rv.vote = -1 THEN 1 ELSE 0 END) AS downvotes " +
                         "FROM " +  TABLE_REVIEWS + " AS r FULL JOIN " + TABLE_USERS +" AS u ON r.idUser = u.id FULL JOIN " +  TABLE_REVIEW_VOTE + " AS rv ON r.id = rv.idReview " +
                         where +

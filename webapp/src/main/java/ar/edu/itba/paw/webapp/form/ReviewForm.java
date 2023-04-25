@@ -6,7 +6,7 @@ import javax.validation.constraints.Size;
 
 public class ReviewForm {
 
-    @Size(min = 1)
+    @Size(max = 2000)
     private String text;
 
     @NotNull
@@ -15,6 +15,7 @@ public class ReviewForm {
     @NotNull
     private Integer timeDemanding;
 
+    private Boolean anonymous;
 
     public String getText() {
         return text;

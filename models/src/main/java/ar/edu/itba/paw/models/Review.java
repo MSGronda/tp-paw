@@ -7,7 +7,6 @@ public class Review {
     private final Integer easy;
     private final Integer timeDemanding;
     private final String text;
-    private final Boolean anonymous;
 
     private String subjectName = null;
 
@@ -15,10 +14,10 @@ public class Review {
     private Integer downvotes = 0;
 
     private String username = null;
+    private final Boolean anonymous;
 
-    // Etc.
 
-    public Review(long id, long userId, String subjectId, Integer easy, Integer timeDemanding, String text) {
+    public Review(long id, long userId, String subjectId, Integer easy, Integer timeDemanding, String text, Boolean anonymous) {
         this.id = id;
         this.userId = userId;
         this.subjectId = subjectId;
@@ -28,8 +27,8 @@ public class Review {
         this.anonymous = anonymous;
     }
 
-    public Review(long id, long userId,  String subjectId, Integer easy, Integer timeDemanding,
-                  String text, String subjectName, int upvotes, int downvotes) {
+    public Review(long id, long userId, String subjectId, Integer easy, Integer timeDemanding,
+                  String text, String subjectName, int upvotes, int downvotes, Boolean anonymous) {
         this.id = id;
         this.userId = userId;
         this.subjectId = subjectId;
@@ -39,9 +38,10 @@ public class Review {
         this.subjectName=subjectName;
         this.upvotes = upvotes;
         this.downvotes = downvotes;
+        this.anonymous = anonymous;
     }
-    public Review(long id, long userId,String username, String subjectId, Integer easy, Integer timeDemanding,
-                  String text, int upvotes, int downvotes) {
+    public Review(long id, long userId, String username, String subjectId, Integer easy, Integer timeDemanding,
+                  String text, int upvotes, int downvotes, Boolean anonymous) {
         this.id = id;
         this.userId = userId;
         this.subjectId = subjectId;
@@ -51,6 +51,7 @@ public class Review {
         this.username=username;
         this.upvotes = upvotes;
         this.downvotes = downvotes;
+        this.anonymous = anonymous;
     }
 
     public int getUpvotes(){
@@ -91,6 +92,11 @@ public class Review {
     public String getUsername(){
         return username;
     }
+
+    public Boolean getAnonymous() {
+        return anonymous;
+    }
+
 }
 
 

@@ -163,7 +163,15 @@
     <c:forEach  var="review" items="${reviews}">
       <sl-card class="card-header">
         <div slot="header">
-          <c:out value="${review.username}"/>
+          <c:choose>
+            <c:when test="${review.anonymous}">
+              <spring:message code="form.anonymous"/>
+            </c:when>
+            <c:when test="${!review.anonymous}">
+              <c:out value="${review.username}"/>
+            </c:when>
+          </c:choose>
+
         </div>
 
         <div class="break-text">
