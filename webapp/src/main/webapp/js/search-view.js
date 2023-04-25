@@ -106,12 +106,41 @@ toggleBtn.addEventListener('click', function() {
 });
 
 
+const ob = params.get("ob")
+const dir = params.get("dir")
+
 // Order by btns
-const addOrderByBtns = [['order-by-name', "subname"], ['order-by-credits', "credits"], ['order-by-id', "id"]]
+const addOrderByBtns = [
+    ['order-by-name', "subname", "direction-subname-up","direction-subname-down"],
+    ['order-by-credits', "credits", "direction-credits-up","direction-credits-down"],
+    ['order-by-id', "id", "direction-id-up", "direction-id-down"]
+]
 for(let elem in addOrderByBtns)
 {
     document.getElementById(addOrderByBtns[elem][0]).addEventListener('click',
-        function() { window.location.href = addOrUpdateParam(window.location.href,"ob",addOrderByBtns[elem][1]);});
+        function() {
+        window.location.href = addOrUpdateParam(addOrUpdateParam(window.location.href,"ob",addOrderByBtns[elem][1]), "dir", "asc");
+    });
+    const sectionUp = document.getElementById(addOrderByBtns[elem][2])
+    const sectionDown = document.getElementById(addOrderByBtns[elem][3])
+
+    sectionUp.addEventListener('click', function() { window.location.href = addOrUpdateParam(window.location.href,"dir", "desc");})
+    sectionDown.addEventListener('click', function() { window.location.href = addOrUpdateParam(window.location.href,"dir", "asc");})
+
+    if(ob === addOrderByBtns[elem][1]){
+        if(dir === "asc"){
+            sectionUp.style.display = 'block';
+            sectionDown.style.display = 'none'
+        }
+        else{
+            sectionUp.style.display = 'none';
+            sectionDown.style.display = 'block';
+        }
+    }
+    else{
+        sectionUp.style.display = 'none';
+        sectionDown.style.display = 'none';
+    }
 }
 
 

@@ -52,7 +52,7 @@
           padding-right: 1rem;
       }
 
-      .remove-filter {
+      .filter-action {
           padding-top: .5rem;
       }
 
@@ -94,7 +94,7 @@
             </sl-button>
             <section id="remove-ambiente-param-section">
               <sl-button class="filter-button" id="remove-ambiente-filter" variant="default" size="small" pill>
-                <sl-icon class="remove-filter" name="x-lg" label="Remove"></sl-icon>
+                <sl-icon class="filter-action" name="x-lg" label="Remove"></sl-icon>
               </sl-button>
             </section>
           </sl-button-group>
@@ -105,7 +105,7 @@
             </sl-button>
             <section id="remove-ciencias-param-section">
               <sl-button class="filter-button" id="remove-ciencias-filter" variant="default" size="small" pill>
-                <sl-icon class="remove-filter" name="x-lg" label="Remove"></sl-icon>
+                <sl-icon class="filter-action" name="x-lg" label="Remove"></sl-icon>
               </sl-button>
             </section>
           </sl-button-group>
@@ -116,7 +116,7 @@
             </sl-button>
             <section id="remove-economia-param-section">
               <sl-button class="filter-button" id="remove-economia-filter" variant="default" size="small" pill>
-                <sl-icon class="remove-filter" name="x-lg" label="Remove"></sl-icon>
+                <sl-icon class="filter-action" name="x-lg" label="Remove"></sl-icon>
               </sl-button>
             </section>
           </sl-button-group>
@@ -127,7 +127,7 @@
             </sl-button>
             <section id="remove-sistemas-param-section">
               <sl-button class="filter-button" id="remove-sistemas-filter" variant="default" size="small" pill>
-                <sl-icon class="remove-filter" name="x-lg" label="Remove"></sl-icon>
+                <sl-icon class="filter-action" name="x-lg" label="Remove"></sl-icon>
               </sl-button>
             </section>
           </sl-button-group>
@@ -145,7 +145,7 @@
             </sl-button>
             <section id="remove-min-credits-param-section">
               <sl-button class="filter-button" id="remove-min-credits-filter" variant="default" size="small" pill>
-                <sl-icon class="remove-filter" name="x-lg" label="Remove"></sl-icon>
+                <sl-icon class="filter-action" name="x-lg" label="Remove"></sl-icon>
               </sl-button>
             </section>
           </sl-button-group>
@@ -155,7 +155,7 @@
             </sl-button>
             <section id="remove-med-credits-param-section">
               <sl-button class="filter-button" id="remove-med-credits-filter" variant="default" size="small" pill>
-                <sl-icon class="remove-filter" name="x-lg" label="Remove"></sl-icon>
+                <sl-icon class="filter-action" name="x-lg" label="Remove"></sl-icon>
               </sl-button>
             </section>
           </sl-button-group>
@@ -167,7 +167,7 @@
             </sl-button>
             <section id="remove-max-credits-param-section">
               <sl-button class="filter-button" id="remove-max-credits-filter" variant="default" size="small" pill>
-                <sl-icon class="remove-filter" name="x-lg" label="Remove"></sl-icon>
+                <sl-icon class="filter-action" name="x-lg" label="Remove"></sl-icon>
               </sl-button>
             </section>
           </sl-button-group>
@@ -177,15 +177,46 @@
 
         <div class="filter-option">
           <h5><spring:message code="search.sort"/></h5>
-          <sl-button class="filter-button" size="small" variant="default" id="order-by-name">
-            <spring:message code="search.sort.alphabetically"/>
-          </sl-button>
-          <sl-button class="filter-button" size="small" variant="default" id="order-by-credits">
-            <spring:message code="search.sort.credits"/>
-          </sl-button>
-          <sl-button class="filter-button" size="small" variant="default" id="order-by-id">
-            <spring:message code="search.sort.id"/>
-          </sl-button>
+          <sl-button-group>
+              <sl-button class="filter-button" size="small" variant="default" id="order-by-name">
+                <spring:message code="search.sort.alphabetically"/>
+              </sl-button>
+
+              <sl-button class="filter-button" id="direction-subname-up" variant="default" size="small" pill>
+                <sl-icon class="filter-action" name="arrow-up" label="Direction"></sl-icon>
+              </sl-button>
+
+            <sl-button class="filter-button" id="direction-subname-down" variant="default" size="small" pill>
+              <sl-icon class="filter-action" name="arrow-down" label="Direction"></sl-icon>
+            </sl-button>
+
+          </sl-button-group>
+
+          <sl-button-group>
+                <sl-button class="filter-button" size="small" variant="default" id="order-by-credits">
+                  <spring:message code="search.sort.credits"/>
+                </sl-button>
+
+                <sl-button class="filter-button" id="direction-credits-up" variant="default" size="small" pill>
+                  <sl-icon class="filter-action" name="arrow-up" label="Direction"></sl-icon>
+                </sl-button>
+            <sl-button class="filter-button" id="direction-credits-down" variant="default" size="small" pill>
+              <sl-icon class="filter-action" name="arrow-down" label="Direction"></sl-icon>
+            </sl-button>
+          </sl-button-group>
+
+          <sl-button-group>
+                <sl-button class="filter-button" size="small" variant="default" id="order-by-id">
+                  <spring:message code="search.sort.id"/>
+                </sl-button>
+
+                <sl-button class="filter-button" id="direction-id-up" variant="default" size="small" pill>
+                  <sl-icon class="filter-action" name="arrow-up" label="Direction"></sl-icon>
+                </sl-button>
+              <sl-button class="filter-button" id="direction-id-down" variant="default" size="small" pill>
+                <sl-icon class="filter-action" name="arrow-down" label="Direction"></sl-icon>
+              </sl-button>
+          </sl-button-group>
         </div>
       </section>
 
