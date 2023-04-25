@@ -6,14 +6,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class SubjectServiceImpl implements SubjectService {
     private final SubjectDao subjectDao;
 
-    private static final String orderByName = "subname";
-    private static final String orderByCredits = "credits";
-    private static final String orderById = "id";
+    private static final List<String> validFilters = Arrays.asList("department", "credits");
+    private static final List<String> validOrderBy = Arrays.asList("id", "credits", "subname");
+    private static final List<String> validDir = Arrays.asList("asc", "desc");
 
     @Autowired
     public SubjectServiceImpl(SubjectDao subjectDao) {
@@ -35,18 +36,21 @@ public class SubjectServiceImpl implements SubjectService {
         return subjectDao.findPrerequisitesName(id);
     }
 
-    @Override
-    public List<Subject> getByNameOrderBy(String name, String ob) {
-        switch (ob){
-            case "credits": return subjectDao.getByNameOrderedBy(name, orderByCredits);
-            case "id": return subjectDao.getByNameOrderedBy(name, orderById);
-            case "name":default: return subjectDao.getByNameOrderedBy(name, orderByName);
-        }
-    }
 
     @Override
-    public List<Subject> getByNameFiltered(String name, Map<String,String> filters, String ob) {
-        return subjectDao.getByNameFiltered(name, filters, ob);
+    public List<Subject> getByNameFiltered(String name, Map<String,String> filters) {
+        Map<String, String> validatedFilters = new HashMap<>();
+
+        // Check if filters, order by and direction are valid
+        for(Map.Entry<String, String> filter : filters.entrySet()){
+            if(validFilters.contains(filter.getKey()) ||
+               (Objects.equals(filter.getKey(), "ob") && validOrderBy.contains(filter.getValue())) ||
+               (Objects.equals(filter.getKey(), "dir") && validDir.contains(filter.getValue()))
+            ){
+                validatedFilters.put(filter.getKey(), filter.getValue());
+            }
+        }
+        return subjectDao.getByNameFiltered(name, validatedFilters);
     }
 
     @Override

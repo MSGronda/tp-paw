@@ -24,8 +24,6 @@ public class SubjectJdbcDao implements SubjectDao {
             "FULL JOIN " + TABLE_PROF_SUB + " prof ON s.id = prof.idsub\n" +
             "FULL JOIN " + TABLE_SUB_DEG + " deg ON s.id = deg.idsub";
 
-    private static final List<String> validFilters = Arrays.asList("department", "credits");
-    private static final List<String> validOrderBy = Arrays.asList("id", "credits", "subname");
 
 
     private final JdbcTemplate jdbcTemplate;
@@ -73,32 +71,21 @@ public class SubjectJdbcDao implements SubjectDao {
                 SubjectJdbcDao::rowMapperJoinRow, ("%" + name + "%")));
     }
 
-    // TODO unificar las queries que se repiten
     @Override
-    public List<Subject> getByNameOrderedBy(String name, String ob) {
-        return joinRowsToSubjects(jdbcTemplate.query(QUERY_JOIN + " WHERE subname ILIKE ? ORDER BY " + ob,
-                SubjectJdbcDao::rowMapperJoinRow, ("%" + name + "%")));
-    }
+    public List<Subject> getByNameFiltered(String name, Map<String, String> filters) {
+        // All filters in map must be valid. Checks are made in service.
 
-    @Override
-    public List<Subject> getByNameFiltered(String name, Map<String, String> filters, String ob) {
         StringBuilder sb = new StringBuilder(QUERY_JOIN).append(" WHERE subname ILIKE ?");
 
-        // Me fijo que el filtro que me estan pasando sea valido
-        List<Map.Entry<String, String>> validArgValuePair = filters.entrySet().stream()
-                .filter(entry -> validFilters.contains(entry.getKey())).collect(Collectors.toList());
-
-        // Agrego los filtros validos
-        for (Map.Entry<String, String> filter : validArgValuePair) {
+        for (Map.Entry<String, String> filter : filters.entrySet()) {
             // TODO: this is unsafe, change!
-            sb.append(" AND ").append(filter.getKey()).append(" = ").append("'").append(filter.getValue()).append("'");
+            if(!Objects.equals(filter.getKey(), "ob") && !Objects.equals(filter.getKey(), "dir")){
+                sb.append(" AND ").append(filter.getKey()).append(" = ").append("'").append(filter.getValue()).append("'");
+            }
         }
 
-
-        // Me fijo que el order by sea valido
-        if (!validOrderBy.contains(ob))
-            ob = "subname";      // Default
-        sb.append(" ORDER BY ").append(ob);
+        sb.append(" ORDER BY ").append(filters.getOrDefault("ob","subname")).append(" ");
+        sb.append(filters.getOrDefault("dir","ASC"));
 
         return joinRowsToSubjects(jdbcTemplate.query(sb.toString(), SubjectJdbcDao::rowMapperJoinRow, "%" + name + "%"));
     }

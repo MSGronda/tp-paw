@@ -9,8 +9,8 @@ import java.util.Set;
 public interface SubjectDao extends RWDao<String, Subject> {
 
     List<Subject> getByName(String name);
-    List<Subject> getByNameOrderedBy(String name, String ob);
-    List<Subject> getByNameFiltered(String name, Map<String, String> filters, String ob);
+
+    List<Subject> getByNameFiltered(String name, Map<String, String> filters);
 
     List<Subject> getAllByDegree(Long idCarrera);
 

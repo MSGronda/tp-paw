@@ -33,15 +33,7 @@ public class SearchController {
     @RequestMapping("/search/{name}")
     public ModelAndView search(@PathVariable String name, @RequestParam Map<String, String> params) {
 
-        final List<Subject> subjects;
-
-        if(params.containsKey("ob")) {
-            String ob = params.get("ob");
-            params.remove("ob");
-            subjects = subjectService.getByNameFiltered(name, params, ob);
-        }
-        else
-            subjects = subjectService.getByNameFiltered(name, params, "subname");
+        final List<Subject> subjects = subjectService.getByNameFiltered(name, params);
 
         Map<String, ReviewStatistic> reviewStats = reviewService.getReviewStatMapBySubjectList(subjects);
 
@@ -49,7 +41,6 @@ public class SearchController {
         mav.addObject("subjects", subjects);
         mav.addObject("query", name);
         mav.addObject("reviewStats", reviewStats);
-
 
         return mav;
     }
