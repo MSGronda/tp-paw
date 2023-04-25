@@ -24,32 +24,49 @@
             font-size: 36px;
             font-weight: bold;
         }
-        .info {
-            padding-bottom: 2rem;
-        }
-        .review-column {
+        .title {
             display: flex;
-            flex-direction: column;
+            flex-direction: row;
+            justify-content: space-between;
+        }
+        .editButton {
+            display: flex;
             justify-content: space-around;
-            align-items: center;
-            padding-bottom: 3rem;
+        }
+        h4{
+            display: flex;
+            justify-content: center;
         }
     </style>
 </head>
 <body>
 <jsp:include page="../components/navbar.jsp" />
 <main class="container-50">
-    <h1><spring:message code="profile.header" /></h1>
+    <div class="title">
+        <c:if test="${user.id != loggedUser.id}">
+            <h1><spring:message code="profile.header" /></h1>
+        </c:if>
+        <c:if test="${user.id == loggedUser.id}" >
+            <h1><spring:message code="profile.loggeduser" /></h1>
+        </c:if>
+    </div>
     <sl-card class="card-basic">
         <spring:message code="profile.username" /> <c:out value="${user.username}" />
         <sl-divider></sl-divider>
         <spring:message code="profile.email" /> <c:out value="${user.email}" />
+        <sl-divider></sl-divider>
+        <c:if test="${user.id == loggedUser.id}">
+            <div class="editButton">
+                <sl-button variant="primary" outline href="<c:url value="/profile/editdata"/>"><spring:message code="profile.update.username"/></sl-button>
+                <sl-button variant="primary" outline href="<c:url value="/profile/editpassword"/>"><spring:message code="profile.update.password"/></sl-button>
+            </div>
+        </c:if>
     </sl-card>
     <br/>
     <hr />
     <h3><spring:message code="profile.reviews"/></h3>
     <c:if test="${empty reviews}">
-        <h3><spring:message code="subject.noreviews"/></h3>
+        <h4><spring:message code="subject.noreviews"/></h4>
     </c:if>
     <c:forEach var="review" items="${reviews}">
         <sl-card class="card-header">

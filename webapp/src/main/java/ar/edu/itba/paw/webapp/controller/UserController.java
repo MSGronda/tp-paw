@@ -2,11 +2,12 @@ package ar.edu.itba.paw.webapp.controller;
 
 import ar.edu.itba.paw.models.*;
 import ar.edu.itba.paw.services.ReviewService;
-import ar.edu.itba.paw.services.SubjectService;
 import ar.edu.itba.paw.services.UserService;
 import ar.edu.itba.paw.services.exceptions.UserEmailAlreadyTakenException;
 import ar.edu.itba.paw.webapp.auth.UniAuthUser;
 import ar.edu.itba.paw.webapp.exceptions.UserNotFoundException;
+import ar.edu.itba.paw.webapp.form.EditUserDataForm;
+import ar.edu.itba.paw.webapp.form.EditUserPasswordForm;
 import ar.edu.itba.paw.webapp.form.UserForm;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -23,14 +24,12 @@ import java.util.*;
 public class UserController {
     private final UserService userService;
     private final ReviewService reviewService;
-    private final SubjectService subjectService;
 
 
     @Autowired
-    public UserController(UserService userService, ReviewService reviewService, SubjectService subjectService) {
+    public UserController(UserService userService, ReviewService reviewService) {
         this.userService = userService;
         this.reviewService = reviewService;
-        this.subjectService = subjectService;
     }
 
     @RequestMapping("/profile/{id:\\d+}")
@@ -83,6 +82,39 @@ public class UserController {
         return mav;
     }
 
+    @RequestMapping(value = "/profile/editdata", method = { RequestMethod.POST })
+    public ModelAndView editProfile(@Valid @ModelAttribute ("EditUserDataForm") final EditUserDataForm editUserDataForm,
+                                    final BindingResult errors) throws SQLException {
+        if(errors.hasErrors()){
+            return editProfileForm(editUserDataForm);
+        }
+
+        User user = loggedUser();
+        userService.editProfile(user.getId(), editUserDataForm.getUserName());
+        return new ModelAndView("redirect:/profile/" + user.getId());
+    }
+    @RequestMapping(value = "/profile/editdata", method = { RequestMethod.GET })
+    public ModelAndView editProfileForm(@ModelAttribute ("EditUserDataForm") final EditUserDataForm editUserDataForm) {
+        return new ModelAndView("user/editUserData");
+    }
+    @RequestMapping(value = "/profile/editpassword", method = { RequestMethod.POST })
+    public ModelAndView editPassword(@Valid @ModelAttribute ("EditUserPasswordForm") final EditUserPasswordForm editUserPasswordForm,
+                                    final BindingResult errors) throws SQLException {
+        if(errors.hasErrors()){
+            System.out.println("puto");
+            System.out.println(editUserPasswordForm.getEditPassword());
+            System.out.println(editUserPasswordForm.getPasswordEditConfirmation());
+            return editPasswordForm(editUserPasswordForm);
+        }
+
+        User user = loggedUser();
+        userService.changePassword(user.getId(), editUserPasswordForm.getEditPassword());
+        return new ModelAndView("redirect:/profile/" + user.getId());
+    }
+    @RequestMapping(value = "/profile/editpassword", method = { RequestMethod.GET })
+    public ModelAndView editPasswordForm(@ModelAttribute ("EditUserPasswordForm") final EditUserPasswordForm editUserPasswordForm) {
+        return new ModelAndView("user/editUserPassword");
+    }
 
     @ModelAttribute("loggedUser")
     public User loggedUser(){

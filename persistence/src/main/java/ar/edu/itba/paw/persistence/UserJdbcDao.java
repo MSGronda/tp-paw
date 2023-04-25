@@ -134,57 +134,39 @@ public class UserJdbcDao implements UserDao {
         return jdbcTemplate.query("SELECT * FROM " + USERS_TABLE + " WHERE email = ?", UserJdbcDao::rowMapper, email).stream().findFirst();
     }
 
+    private static Map<String,Integer> userAllSubjectsProgressExtractor(ResultSet rs) throws SQLException {
+        final Map<String, Integer> res = new HashMap<>();
+
+        while(rs.next()){
+            String idSub = rs.getString("idSub");
+            Integer state = rs.getInt("subjectState");
+            res.put(idSub,state);
+        }
+        return res;
+    }
+
+    private static Integer rowMapperUserSubjectProgress(ResultSet rs , int rowNum) throws SQLException {
+        return rs.getInt("subjectState");
+    }
+
+    private static User rowMapperWithImage(ResultSet rs, int rowNum) throws SQLException {
+        return new User(
+                new User.UserBuilder(rs.getString("email"),
+                        rs.getString("pass"),
+                        rs.getString("username"))
+                        .id(rs.getLong("id")).image(rs.getBytes("image"))
+        );
+    }
+
+
     @Override
-    public void changePassword(String email, String password) {
-        jdbcTemplate.update("UPDATE " + USERS_TABLE + " SET pass = ? WHERE email = ?", password, email);
+    public void changePassword(Long userId, String password) {
+        jdbcTemplate.update("UPDATE " + USERS_TABLE + " SET pass = ? WHERE id = ?", password, userId);
     }
 
-    private static Map<String,Integer> userAllSubjectsProgressExtractor(ResultSet rs) throws SQLException {
-        final Map<String, Integer> res = new HashMap<>();
-
-        while(rs.next()){
-            String idSub = rs.getString("idSub");
-            Integer state = rs.getInt("subjectState");
-            res.put(idSub,state);
-        }
-        return res;
-    }
-
-    private static Integer rowMapperUserSubjectProgress(ResultSet rs , int rowNum) throws SQLException {
-        return rs.getInt("subjectState");
-    }
-
-    private static User rowMapperWithImage(ResultSet rs, int rowNum) throws SQLException {
-        return new User(
-                new User.UserBuilder(rs.getString("email"),
-                        rs.getString("pass"),
-                        rs.getString("username"))
-                        .id(rs.getLong("id")).image(rs.getBytes("image"))
-        );
-    }
-
-    private static Map<String,Integer> userAllSubjectsProgressExtractor(ResultSet rs) throws SQLException {
-        final Map<String, Integer> res = new HashMap<>();
-
-        while(rs.next()){
-            String idSub = rs.getString("idSub");
-            Integer state = rs.getInt("subjectState");
-            res.put(idSub,state);
-        }
-        return res;
-    }
-
-    private static Integer rowMapperUserSubjectProgress(ResultSet rs , int rowNum) throws SQLException {
-        return rs.getInt("subjectState");
-    }
-
-    private static User rowMapperWithImage(ResultSet rs, int rowNum) throws SQLException {
-        return new User(
-                new User.UserBuilder(rs.getString("email"),
-                        rs.getString("pass"),
-                        rs.getString("username"))
-                        .id(rs.getLong("id")).image(rs.getBytes("image"))
-        );
+    @Override
+    public void editProfile(Long userId, String username) {
+        jdbcTemplate.update("UPDATE " + USERS_TABLE + " SET username = ? WHERE id = ?", username, userId);
     }
 
     private static User rowMapper(ResultSet rs, int rowNum) throws SQLException {
