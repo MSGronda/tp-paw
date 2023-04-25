@@ -2,6 +2,8 @@ package ar.edu.itba.paw.services;
 
 import ar.edu.itba.paw.models.User;
 import ar.edu.itba.paw.persistence.UserDao;
+import ar.edu.itba.paw.persistence.exceptions.UserEmailAlreadyTakenPersistenceException;
+import ar.edu.itba.paw.services.exceptions.UserEmailAlreadyTakenException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -35,10 +37,14 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User create(User.UserBuilder userBuilder) throws SQLException {
+    public User create(User.UserBuilder userBuilder) throws UserEmailAlreadyTakenException {
 
         userBuilder.password(passwordEncoder.encode(userBuilder.getPassword()));
-        return userDao.create(userBuilder);
+        try {
+            return userDao.create(userBuilder);
+        } catch (final UserEmailAlreadyTakenPersistenceException e) {
+            throw new UserEmailAlreadyTakenException();
+        }
 
 //        return userDao.create(new User.UserBuilder(userBuilder.getEmail(), passwordEncoder.encode(userBuilder.getPassword()), userBuilder.getUsername()));
     }

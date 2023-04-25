@@ -2,11 +2,13 @@ package ar.edu.itba.paw.persistence;
 
 import ar.edu.itba.paw.models.User;
 import ar.edu.itba.paw.persistence.config.TestConfig;
+import ar.edu.itba.paw.persistence.exceptions.UserEmailAlreadyTakenPersistenceException;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -56,7 +58,12 @@ public class UserJdbcDaoTest {
 
     @Test
     public void testCreate() {
-        User user = userDao.create(new User.UserBuilder(EMAIL, PASSWORD, USERNAME));
+        User user;
+        try{
+            user = userDao.create(new User.UserBuilder(EMAIL, PASSWORD, USERNAME));
+        }catch (UserEmailAlreadyTakenPersistenceException e){
+            throw new RuntimeException();
+        }
 
         Assert.assertNotNull(user);
         Assert.assertEquals(EMAIL, user.getEmail());

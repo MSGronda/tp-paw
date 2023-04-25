@@ -1,14 +1,18 @@
 package ar.edu.itba.paw.persistence;
 
 import ar.edu.itba.paw.models.User;
+import ar.edu.itba.paw.persistence.exceptions.UserEmailAlreadyTakenPersistenceException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
+import org.springframework.jdbc.support.SQLErrorCodeSQLExceptionTranslator;
 import org.springframework.stereotype.Repository;
 
 import javax.sql.DataSource;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -91,14 +95,21 @@ public class UserJdbcDao implements UserDao {
     }
 
     @Override
-    public User create(User.UserBuilder userBuilder) {
+    public User create(User.UserBuilder userBuilder) throws UserEmailAlreadyTakenPersistenceException {
+
         Map<String, Object> data = new HashMap<>();
         data.put("email", userBuilder.getEmail());
         data.put("pass", userBuilder.getPassword());
         data.put("username", userBuilder.getUsername());
         data.put("image", userBuilder.getImage());
 
-        Number key = jdbcInsert.executeAndReturnKey(data);
+        Number key;
+
+        try{
+            key = jdbcInsert.executeAndReturnKey(data);
+        }catch (DuplicateKeyException e){
+            throw new UserEmailAlreadyTakenPersistenceException();
+        }
 
         return userBuilder.id(key.longValue()).build();
     }

@@ -4,6 +4,7 @@ import ar.edu.itba.paw.models.*;
 import ar.edu.itba.paw.services.ReviewService;
 import ar.edu.itba.paw.services.SubjectService;
 import ar.edu.itba.paw.services.UserService;
+import ar.edu.itba.paw.services.exceptions.UserEmailAlreadyTakenException;
 import ar.edu.itba.paw.webapp.auth.UniAuthUser;
 import ar.edu.itba.paw.webapp.exceptions.UserNotFoundException;
 import ar.edu.itba.paw.webapp.form.UserForm;
@@ -51,20 +52,21 @@ public class UserController {
 
     @RequestMapping(value = "/register", method = { RequestMethod.POST })
     public ModelAndView register(@Valid @ModelAttribute ("UserForm") final UserForm userForm,
-                                 final BindingResult errors) throws SQLException {
+                                 final BindingResult errors) {
         if(errors.hasErrors()){
             return registerForm(userForm);
         }
-        //TODO - check if email is already in use
-        Optional<User> maybeUser = userService.getUserWithEmail(userForm.getEmail());
-        if(maybeUser.isPresent()){
-            //user already exists
-            //TODO - aplicar internacionalizacion            
-            errors.rejectValue("email", "UserForm.email.alreadyExists", "An account with this email already exists");
-            return registerForm(userForm);
-        }
+
         User.UserBuilder user = new User.UserBuilder(userForm.getEmail(), userForm.getPassword(), userForm.getName());
-        final User newUser = userService.create(user);
+        try {
+            final User newUser = userService.create(user);
+        }catch (UserEmailAlreadyTakenException e){
+
+//            errors.rejectValue("email", "UserForm.email.alreadyExists", "An account with this email already exists");
+            ModelAndView mav = registerForm(userForm);
+            mav.addObject("EmailAlreadyUsed", true);
+            return mav;
+        }
 
         return new ModelAndView("redirect:/login");
     }
@@ -84,11 +86,11 @@ public class UserController {
 
     @ModelAttribute("loggedUser")
     public User loggedUser(){
-        String maybeUniAuthUser = SecurityContextHolder.getContext().getAuthentication().getPrincipal().toString();
-        if( maybeUniAuthUser.equals("anonymousUser")){
+        Object maybeUniAuthUser = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        if( maybeUniAuthUser.toString().equals("anonymousUser")){
             return null;
         }
-        final UniAuthUser userDetails = (UniAuthUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        final UniAuthUser userDetails = (UniAuthUser) maybeUniAuthUser ;
         return userService.getUserWithEmail(userDetails.getUsername()).orElse(null);
     }
 }

@@ -1,6 +1,7 @@
 package ar.edu.itba.paw.persistence;
 
 import ar.edu.itba.paw.models.User;
+import ar.edu.itba.paw.persistence.exceptions.UserEmailAlreadyTakenPersistenceException;
 import com.sun.org.apache.xpath.internal.operations.Bool;
 
 import java.sql.SQLException;
@@ -9,7 +10,7 @@ import java.util.Map;
 import java.util.Optional;
 
 public interface UserDao extends RWDao<Long,User> {
-    User create(User.UserBuilder userBuilder) throws SQLException;
+    User create(User.UserBuilder userBuilder) throws UserEmailAlreadyTakenPersistenceException;
 
     Optional<User> findByIdWithImage(Long id);
 

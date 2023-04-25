@@ -1,6 +1,7 @@
 package ar.edu.itba.paw.services;
 
 import ar.edu.itba.paw.models.User;
+import ar.edu.itba.paw.services.exceptions.UserEmailAlreadyTakenException;
 
 import java.sql.SQLException;
 import java.util.List;
@@ -8,7 +9,7 @@ import java.util.Map;
 import java.util.Optional;
 
 public interface UserService extends BaseService<Long, User> {
-    User create(User.UserBuilder userBuilder) throws SQLException;
+    User create(User.UserBuilder userBuilder) throws UserEmailAlreadyTakenException;
 
     Optional<User> getUserWithEmail(String email);
 

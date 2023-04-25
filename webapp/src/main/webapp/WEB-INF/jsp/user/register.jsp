@@ -1,4 +1,4 @@
-<%@ taglib prefix="c" uri="http://www.springframework.org/tags" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ page contentType="text/html;charset=UTF-8" %>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
@@ -29,6 +29,9 @@
     <form:form modelAttribute="UserForm" action="${registerUrl}" method="post" >
 
         <form:errors path="email" cssClass="error" element="p"/>
+        <c:if test="${EmailAlreadyUsed == true}">
+            <p class="error"><spring:message code="register.emailAlreadyUsed"/></p>
+        </c:if>
         <spring:message code="reviewForm.email.placeholder" var="EmailPlaceHolder"/>
         <sl-input name="email" path="email" placeholder="${EmailPlaceHolder}" value="${UserForm.email}"></sl-input>
 

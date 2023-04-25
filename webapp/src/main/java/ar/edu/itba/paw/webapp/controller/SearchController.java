@@ -63,11 +63,11 @@ public class SearchController {
 
     @ModelAttribute("loggedUser")
     public User loggedUser(){
-        String maybeUniAuthUser = SecurityContextHolder.getContext().getAuthentication().getPrincipal().toString();
-        if( maybeUniAuthUser.equals("anonymousUser")){
+        Object maybeUniAuthUser = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        if( maybeUniAuthUser.toString().equals("anonymousUser")){
             return null;
         }
-        final UniAuthUser userDetails = (UniAuthUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        final UniAuthUser userDetails = (UniAuthUser) maybeUniAuthUser ;
         return userService.getUserWithEmail(userDetails.getUsername()).orElse(null);
     }
 }

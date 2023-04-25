@@ -44,15 +44,15 @@ public class ReviewController {
             return reviewForm(subjectId, reviewForm);
         }
 
-        Optional<User> maybeUser = userService.getUserWithEmail(reviewForm.getEmail());
-        if(!maybeUser.isPresent() ){
-            User.UserBuilder userBuilder = new User.UserBuilder(reviewForm.getEmail(), null,null);
-            final User user = userService.create(userBuilder);
-            final Review review = reviewService.create(reviewForm.getEasy(), reviewForm.getTimeDemanding(), reviewForm.getText(), subjectId, user.getId(), reviewForm.getEmail());
-        }
-        else{
-            final Review review = reviewService.create(reviewForm.getEasy(), reviewForm.getTimeDemanding(), reviewForm.getText(), subjectId, maybeUser.get().getId(), reviewForm.getEmail());
-        }
+//        Optional<User> maybeUser = userService.getUserWithEmail(reviewForm.getEmail());
+//        if(!maybeUser.isPresent() ){
+//            User.UserBuilder userBuilder = new User.UserBuilder(reviewForm.getEmail(), null,null);
+//            final User user = userService.create(userBuilder);
+//            final Review review = reviewService.create(reviewForm.getEasy(), reviewForm.getTimeDemanding(), reviewForm.getText(), subjectId, user.getId(), reviewForm.getEmail());
+//        }
+//        else{
+//            final Review review = reviewService.create(reviewForm.getEasy(), reviewForm.getTimeDemanding(), reviewForm.getText(), subjectId, maybeUser.get().getId(), reviewForm.getEmail());
+//        }
 
         return new ModelAndView("redirect:/subject/" + subjectId);
     }
@@ -72,11 +72,11 @@ public class ReviewController {
 
     @ModelAttribute("loggedUser")
     public User loggedUser(){
-        String maybeUniAuthUser = SecurityContextHolder.getContext().getAuthentication().getPrincipal().toString();
-        if( maybeUniAuthUser.equals("anonymousUser")){
+        Object maybeUniAuthUser = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        if( maybeUniAuthUser.toString().equals("anonymousUser")){
             return null;
         }
-        final UniAuthUser userDetails = (UniAuthUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        final UniAuthUser userDetails = (UniAuthUser) maybeUniAuthUser ;
         return userService.getUserWithEmail(userDetails.getUsername()).orElse(null);
     }
 
