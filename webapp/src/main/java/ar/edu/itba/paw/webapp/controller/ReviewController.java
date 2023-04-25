@@ -54,6 +54,8 @@ public class ReviewController {
 //            final Review review = reviewService.create(reviewForm.getEasy(), reviewForm.getTimeDemanding(), reviewForm.getText(), subjectId, maybeUser.get().getId(), reviewForm.getEmail());
 //        }
 
+        Review review = reviewService.create(reviewForm.getEasy(), reviewForm.getTimeDemanding(), reviewForm.getText(), subjectId, loggedUser().getId());
+
         return new ModelAndView("redirect:/subject/" + subjectId);
     }
     @RequestMapping(value = "/review/{subjectId:\\d+\\.\\d+}", method = RequestMethod.GET)

@@ -12,17 +12,18 @@ public interface ReviewService extends BaseService<Long, Review> {
     List<Review> getAll();
 
     List<Review> getAllUserReviewsWithSubjectName(Long userId);
+    List<Review> getAllSubjectReviewsWithUsername(String subjectId );
     List<Review> getAllBySubject(String idsub);
 
     Optional<Integer> getDifficultyBySubject(String idsub);
 
     Optional<Integer> getTimeBySubject(String idsub);
-    Review create(Integer easy, Integer timeDemanding, String text,String subjectId,long userId, String userEmail) throws SQLException;
 
+    Review create(Integer easy, Integer timeDemanding, String text,String subjectId,long userId ) throws SQLException;
 
     void voteReview(Long idUser, Long idReview, int vote);
 
-    List<Review> getCompleteReviewsBySubjectId(String idSub);
-    List<Review> getCompleteReviewsByUserId(Long idUser);
+//    List<Review> getCompleteReviewsBySubjectId(String idSub);
+//    List<Review> getCompleteReviewsByUserId(Long idUser);
 
 }

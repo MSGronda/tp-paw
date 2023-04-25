@@ -158,7 +158,7 @@
     <c:forEach var="review" items="${reviews}">
       <sl-card class="card-header">
         <div slot="header">
-          <c:out value="${review.userEmail}"/>
+          <c:out value="${review.username}"/>
         </div>
 
         <div class="break-text">

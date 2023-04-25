@@ -6,10 +6,6 @@ import javax.validation.constraints.Size;
 
 public class ReviewForm {
 
-    @Email
-    @Size(min = 1)
-    private String email;
-
     @Size(min = 1)
     private String text;
 
@@ -19,13 +15,6 @@ public class ReviewForm {
     @NotNull
     private Integer timeDemanding;
 
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
 
     public String getText() {
         return text;

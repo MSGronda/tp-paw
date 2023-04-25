@@ -75,7 +75,7 @@ public class SubjectController {
         int year = (int) maxYear;
         final List<Professor> professors = professorService.getAllBySubject(id);
 
-        final List<Review> reviews = reviewService.getAllBySubject(id);
+        final List<Review> reviews = reviewService.getAllSubjectReviewsWithUsername(id);
 
         final Map<String,String> prereqNames = subjectService.findPrerequisitesName(id);
 

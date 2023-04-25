@@ -77,7 +77,7 @@ public class UserController {
 
     @RequestMapping(value = "/login", method = { RequestMethod.GET })
     public ModelAndView login(@RequestParam (value="error", required = false) String error) {
-        ModelAndView mav = new ModelAndView("/login/login");
+        ModelAndView mav = new ModelAndView("user/login");
         mav.addObject("error", error);
         return mav;
     }
