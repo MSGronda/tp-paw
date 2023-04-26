@@ -59,11 +59,11 @@ public class SubjectController {
             time = -1;
         } else time = maybeTime.get();
 
-        final Optional<Degree> maybealgo = degreeService.findById(1L);
-        if(!maybealgo.isPresent()) {
+        final Optional<Degree> maybeDegree = degreeService.findById(1L);
+        if(!maybeDegree.isPresent()) {
             throw new DegreeNotFoundException();
         }
-        Degree degree = maybealgo.get();
+        Degree degree = maybeDegree.get();
         double maxYear = 0;
         for(Semester semester : degree.getSemesters()) {
             List<String> subjects = semester.getSubjectIds();
