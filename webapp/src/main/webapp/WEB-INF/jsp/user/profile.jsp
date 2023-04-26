@@ -77,7 +77,7 @@
         <h4><spring:message code="subject.noreviews"/></h4>
     </c:if>
     <c:forEach var="review" items="${reviews}">
-        <c:if test="${!review.anonymous}">
+        <c:if test="${!review.anonymous || loggedUser.id == review.userId}">
             <sl-card class="card-header">
                 <div slot="header">
                     <c:out value="${review.subjectId}" /> - <c:out value="${review.subjectName}"/>
