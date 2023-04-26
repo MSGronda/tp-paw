@@ -61,7 +61,16 @@
           background-color: transparent;
           text-decoration: none;
       }
+      .username-redirect{
+          color: black;
+          text-decoration: underline;
+          text-underline-color: black;
+          text-decoration-thickness: 0.05rem;
 
+      }
+      .username-redirect:hover{
+          color: #0369a1;
+      }
       hr {
           width: 30rem;
       }
@@ -317,7 +326,7 @@
               <spring:message code="form.anonymous"/>
             </c:when>
             <c:when test="${!review.anonymous}">
-              <c:out value="${review.username}"/>
+              <a class="username-redirect" href="<c:url value="/profile/${review.userId}"/>"><c:out value="${review.username}"/></a>
             </c:when>
           </c:choose>
 

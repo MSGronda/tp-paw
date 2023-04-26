@@ -48,28 +48,30 @@
 <main class="container-50">
     <div class="title">
         <c:if test="${user.id != loggedUser.id}">
-            <h1><spring:message code="profile.header" /></h1>
+            <h1><spring:message code="profile.header" arguments="${user.username}" /></h1>
         </c:if>
         <c:if test="${user.id == loggedUser.id}" >
             <h1><spring:message code="profile.loggeduser" /></h1>
-        </c:if>
-        <c:url value="/logout" var="logout"/>
-        <div class="logout-button">
-            <sl-button variant="primary" href="${logout}"><spring:message code="profile.logout"/></sl-button>
-        </div>
-    </div>
-    <sl-card class="card-basic">
-        <spring:message code="profile.username" /> <c:out value="${user.username}" />
-        <sl-divider></sl-divider>
-        <spring:message code="profile.email" /> <c:out value="${user.email}" />
-        <sl-divider></sl-divider>
-        <c:if test="${user.id == loggedUser.id}">
-            <div class="editButton">
-                <sl-button variant="primary" outline href="<c:url value="/profile/editdata"/>"><spring:message code="profile.update.username"/></sl-button>
-                <sl-button variant="primary" outline href="<c:url value="/profile/editpassword"/>"><spring:message code="profile.update.password"/></sl-button>
+            <c:url value="/logout" var="logout"/>
+            <div class="logout-button">
+                <sl-button variant="primary" href="${logout}"><spring:message code="profile.logout"/></sl-button>
             </div>
         </c:if>
-    </sl-card>
+    </div>
+    <c:if test="${user.id == loggedUser.id}">
+        <sl-card class="card-basic">
+            <spring:message code="profile.username" /> <c:out value="${user.username}" />
+            <sl-divider></sl-divider>
+            <spring:message code="profile.email" /> <c:out value="${user.email}" />
+            <sl-divider></sl-divider>
+
+                <div class="editButton">
+                    <sl-button variant="primary" outline href="<c:url value="/profile/editdata"/>"><spring:message code="profile.update.username"/></sl-button>
+                    <sl-button variant="primary" outline href="<c:url value="/profile/editpassword"/>"><spring:message code="profile.update.password"/></sl-button>
+                </div>
+        </sl-card>
+    </c:if>
+
     <br/>
     <hr />
     <h3><spring:message code="profile.reviews"/></h3>
