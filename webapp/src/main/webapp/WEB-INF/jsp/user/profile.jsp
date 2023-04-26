@@ -77,38 +77,40 @@
         <h4><spring:message code="subject.noreviews"/></h4>
     </c:if>
     <c:forEach var="review" items="${reviews}">
-        <sl-card class="card-header">
-            <div slot="header">
-                <c:out value="${review.subjectId}" /> - <c:out value="${review.subjectName}"/>
-            </div>
+        <c:if test="${!review.anonymous}">
+            <sl-card class="card-header">
+                <div slot="header">
+                    <c:out value="${review.subjectId}" /> - <c:out value="${review.subjectName}"/>
+                </div>
 
-            <div class="break-text">
-                <c:out value="${review.text}"/>
-            </div>
-            <div>
-                <c:choose>
-                    <c:when test="${review.easy == 0}">
-                        <sl-badge size="medium" variant="success"><spring:message code="form.easy"/></sl-badge>
-                    </c:when>
-                    <c:when test="${review.easy == 1}">
-                        <sl-badge size="medium" variant="primary"><spring:message code="form.normal"/></sl-badge>
-                    </c:when>
-                    <c:otherwise>
-                        <sl-badge size="medium" variant="danger"><spring:message code="form.hard"/></sl-badge>
-                    </c:otherwise>
-                </c:choose>
+                <div class="break-text">
+                    <c:out value="${review.text}"/>
+                </div>
+                <div>
+                    <c:choose>
+                        <c:when test="${review.easy == 0}">
+                            <sl-badge size="medium" variant="success"><spring:message code="form.easy"/></sl-badge>
+                        </c:when>
+                        <c:when test="${review.easy == 1}">
+                            <sl-badge size="medium" variant="primary"><spring:message code="form.normal"/></sl-badge>
+                        </c:when>
+                        <c:otherwise>
+                            <sl-badge size="medium" variant="danger"><spring:message code="form.hard"/></sl-badge>
+                        </c:otherwise>
+                    </c:choose>
 
-                <c:choose>
-                    <c:when test="${review.timeDemanding == 1}">
-                        <sl-badge size="medium" variant="warning"><spring:message code="form.timeDemanding"/></sl-badge>
-                    </c:when>
-                    <c:otherwise>
-                        <sl-badge size="medium" ariant="primary"><spring:message code="form.NotTimeDemanding"/></sl-badge>
-                    </c:otherwise>
-                </c:choose>
-            </div>
-        </sl-card>
-        <br />
+                    <c:choose>
+                        <c:when test="${review.timeDemanding == 1}">
+                            <sl-badge size="medium" variant="warning"><spring:message code="form.timeDemanding"/></sl-badge>
+                        </c:when>
+                        <c:otherwise>
+                            <sl-badge size="medium" ariant="primary"><spring:message code="form.NotTimeDemanding"/></sl-badge>
+                        </c:otherwise>
+                    </c:choose>
+                </div>
+            </sl-card>
+            <br />
+        </c:if>
     </c:forEach>
 </main>
 <jsp:include page="../components/footer.jsp"/>
