@@ -34,7 +34,6 @@
     }
 </style>
 
-
 <div class="nav-bar">
   <div class="nav-bar-area">
 
@@ -67,7 +66,12 @@
       <sl-button variant="text"><spring:message code="navbar.subject"/></sl-button>
       <sl-button variant="text"><spring:message code="navbar.builder"/></sl-button>
     </sl-button-group>
-    <sl-button variant="primary"><spring:message code="navbar.login"/></sl-button>
+    <c:if test="${loggedUser != null}">
+      <sl-button variant="primary" href="<c:url value="/profile/${loggedUser.id}"/>"><spring:message code="navbar.profile"/></sl-button>
+    </c:if>
+    <c:if test="${loggedUser == null}">
+      <sl-button variant="success" href="<c:url value="/login"/>"><spring:message code="navbar.access"/></sl-button>
+    </c:if>
   </div>
 
 </div>

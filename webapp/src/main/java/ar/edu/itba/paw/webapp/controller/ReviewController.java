@@ -5,8 +5,12 @@ import ar.edu.itba.paw.models.User;
 import ar.edu.itba.paw.services.ReviewService;
 import ar.edu.itba.paw.services.SubjectService;
 import ar.edu.itba.paw.services.UserService;
+import ar.edu.itba.paw.webapp.auth.UniAuthUser;
+import ar.edu.itba.paw.webapp.exceptions.DegreeNotFoundException;
+import ar.edu.itba.paw.webapp.exceptions.SubjectNotFoundException;
 import ar.edu.itba.paw.webapp.form.ReviewForm;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -40,14 +44,17 @@ public class ReviewController {
             return reviewForm(subjectId, reviewForm);
         }
 
-        Optional<User> maybeUser = userService.getUserWithEmail(reviewForm.getEmail());
-        if(!maybeUser.isPresent() ){
-            final User user = userService.create(reviewForm.getEmail(), null, null);
-            final Review review = reviewService.create(reviewForm.getEasy(), reviewForm.getTimeDemanding(), reviewForm.getText(), subjectId, user.getId(), reviewForm.getEmail());
-        }
-        else{
-            final Review review = reviewService.create(reviewForm.getEasy(), reviewForm.getTimeDemanding(), reviewForm.getText(), subjectId, maybeUser.get().getId(), reviewForm.getEmail());
-        }
+//        Optional<User> maybeUser = userService.getUserWithEmail(reviewForm.getEmail());
+//        if(!maybeUser.isPresent() ){
+//            User.UserBuilder userBuilder = new User.UserBuilder(reviewForm.getEmail(), null,null);
+//            final User user = userService.create(userBuilder);
+//            final Review review = reviewService.create(reviewForm.getEasy(), reviewForm.getTimeDemanding(), reviewForm.getText(), subjectId, user.getId(), reviewForm.getEmail());
+//        }
+//        else{
+//            final Review review = reviewService.create(reviewForm.getEasy(), reviewForm.getTimeDemanding(), reviewForm.getText(), subjectId, maybeUser.get().getId(), reviewForm.getEmail());
+//        }
+
+        Review review = reviewService.create(reviewForm.getAnonymous(),reviewForm.getEasy(), reviewForm.getTimeDemanding(), reviewForm.getText(), subjectId, loggedUser().getId());
 
         return new ModelAndView("redirect:/subject/" + subjectId);
     }
@@ -62,7 +69,17 @@ public class ReviewController {
             mav.addObject("subject", subject );
             return mav;
         }
-        throw new RuntimeException();
+        throw new SubjectNotFoundException();
+    }
+
+    @ModelAttribute("loggedUser")
+    public User loggedUser(){
+        Object maybeUniAuthUser = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        if( maybeUniAuthUser.toString().equals("anonymousUser")){
+            return null;
+        }
+        final UniAuthUser userDetails = (UniAuthUser) maybeUniAuthUser ;
+        return userService.getUserWithEmail(userDetails.getUsername()).orElse(null);
     }
 
 }

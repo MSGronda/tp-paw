@@ -9,15 +9,21 @@ import java.util.Map;
 import java.util.Optional;
 
 public interface ReviewDao extends RWDao<Long,Review> {
-    Review create(final Integer easy, final Integer timeDemanding, final String text, final String subjectId, final long userId, final String userEmail) throws SQLException;
+    Review create(final Boolean anonymous,final Integer easy, final Integer timeDemanding, final String text, final String subjectId, final long userId ) throws SQLException;
+
+    void voteReview(Long idUser, Long idReview, int vote);
+    void updateVoteOnReview(Long idUser, Long idReview, int vote);
+    boolean userVotedOnReview(Long idUser, Long idReview);
 
     List<Review> getAllBySubject(String id);
 
+    // and not during normal execution.
+    // This method is slow and costly. It is only meant to be used for table migration
+    void recalculateStatistics();
+
+    Map<String, ReviewStatistic> getReviewStatMapBySubjectList(List<String> idSubs);
     Optional<ReviewStatistic> getReviewStatBySubject(String idSub);
     List<ReviewStatistic> getReviewStatBySubjectList(List<String> idSubs);
-    Map<String, ReviewStatistic> getReviewStatMapBySubjectList(List<String> idSubs);
-
-    // This method is slow and costly. It is only meant to be used for table migration
-    // and not during normal execution.
-    void recalculateStatistics();
+    List<Review> getAllUserReviewsWithSubjectName(Long userId);
+    List<Review> getAllSubjectReviewsWithUsername(String subjectId);
 }

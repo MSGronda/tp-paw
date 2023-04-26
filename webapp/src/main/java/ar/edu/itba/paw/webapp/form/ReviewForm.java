@@ -6,11 +6,7 @@ import javax.validation.constraints.Size;
 
 public class ReviewForm {
 
-    @Email
-    @Size(min = 1)
-    private String email;
-
-    @Size(min = 1)
+    @Size(max = 2000)
     private String text;
 
     @NotNull
@@ -19,13 +15,7 @@ public class ReviewForm {
     @NotNull
     private Integer timeDemanding;
 
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
+    private Boolean anonymous;
 
     public String getText() {
         return text;
@@ -49,6 +39,14 @@ public class ReviewForm {
 
     public void setTimeDemanding(Integer timeDemanding) {
         this.timeDemanding = timeDemanding;
+    }
+
+    public Boolean getAnonymous() {
+        return anonymous;
+    }
+
+    public void setAnonymous(Boolean anonymous) {
+        this.anonymous = anonymous;
     }
 
 }

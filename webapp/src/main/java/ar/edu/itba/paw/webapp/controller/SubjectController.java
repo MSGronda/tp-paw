@@ -2,10 +2,14 @@ package ar.edu.itba.paw.webapp.controller;
 
 import ar.edu.itba.paw.models.*;
 import ar.edu.itba.paw.services.*;
+import ar.edu.itba.paw.webapp.auth.UniAuthUser;
 import ar.edu.itba.paw.webapp.exceptions.DegreeNotFoundException;
 import ar.edu.itba.paw.webapp.exceptions.SubjectNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
@@ -23,14 +27,18 @@ public class SubjectController {
     private final DegreeService degreeService;
     private final SubjectClassService subjectClassService;
 
+    private final UserService userService;
+
     @Autowired
     public SubjectController(SubjectService subjectService, ReviewService reviewService,
-                             ProfessorService professorService, SubjectClassService subjectClassService, DegreeService degreeService ) {
+                             ProfessorService professorService, SubjectClassService subjectClassService,
+                             DegreeService degreeService, UserService userService ) {
         this.subjectClassService = subjectClassService;
         this.subjectService = subjectService;
         this.reviewService = reviewService;
         this.professorService = professorService;
         this.degreeService = degreeService;
+        this.userService = userService;
     }
 
     @RequestMapping("/subject/{id:\\d+\\.\\d+}")
@@ -43,11 +51,11 @@ public class SubjectController {
 
         final ReviewStatistic stats = reviewService.getReviewStatBySubject(id).orElseGet(() -> new ReviewStatistic(id));
 
-        final Optional<Degree> maybealgo = degreeService.findById(1L);
-        if(!maybealgo.isPresent()) {
+        final Optional<Degree> maybeDegree = degreeService.findById(1L);
+        if(!maybeDegree.isPresent()) {
             throw new DegreeNotFoundException();
         }
-        Degree degree = maybealgo.get();
+        Degree degree = maybeDegree.get();
         double maxYear = 0;
         for(Semester semester : degree.getSemesters()) {
             List<String> subjects = semester.getSubjectIds();
@@ -59,7 +67,7 @@ public class SubjectController {
         int year = (int) maxYear;
         final List<Professor> professors = professorService.getAllBySubject(id);
 
-        final List<Review> reviews = reviewService.getAllBySubject(id);
+        final List<Review> reviews = reviewService.getAllSubjectReviewsWithUsername(id);
 
         final Map<String,String> prereqNames = subjectService.findPrerequisitesName(id);
 
@@ -75,5 +83,14 @@ public class SubjectController {
         mav.addObject("difficulty", stats.getDifficulty());
         mav.addObject("classes", classes);
         return mav;
+    }
+    @ModelAttribute("loggedUser")
+    public User loggedUser(){
+        Object maybeUniAuthUser = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        if( maybeUniAuthUser.toString().equals("anonymousUser")){
+            return null;
+        }
+        final UniAuthUser userDetails = (UniAuthUser) maybeUniAuthUser ;
+        return userService.getUserWithEmail(userDetails.getUsername()).orElse(null);
     }
 }

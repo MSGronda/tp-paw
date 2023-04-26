@@ -30,6 +30,16 @@ public class ReviewServiceImpl implements ReviewService {
     }
 
     @Override
+    public List<Review> getAllUserReviewsWithSubjectName(Long userId) {
+        return reviewDao.getAllUserReviewsWithSubjectName(userId);
+    }
+
+    @Override
+    public List<Review> getAllSubjectReviewsWithUsername(String subjectId){
+        return reviewDao.getAllSubjectReviewsWithUsername(subjectId);
+    }
+
+    @Override
     public List<Review> getAllBySubject(String idsub){
         return reviewDao.getAllBySubject(idsub);
     }
@@ -70,7 +80,28 @@ public class ReviewServiceImpl implements ReviewService {
     }
 
     @Override
-    public Review create(Integer easy, Integer timeDemanding, String text,String subjectId,long userId, String userEmail) throws SQLException {
-        return reviewDao.create(easy, timeDemanding, text, subjectId, userId, userEmail);
+    public Review create(Boolean anonymous,Integer easy, Integer timeDemanding, String text,String subjectId,long userId) throws SQLException {
+        return reviewDao.create(anonymous,easy, timeDemanding, text, subjectId, userId);
     }
+
+    @Override
+    public void voteReview(Long idUser, Long idReview, int vote) {
+
+        // only one vote per user on a certain review
+
+        if(reviewDao.userVotedOnReview(idUser,idReview))
+            reviewDao.updateVoteOnReview(idUser, idReview, vote);
+        else
+            reviewDao.voteReview(idUser,idReview,vote);
+    }
+
+//    @Override
+//    public List<Review> getCompleteReviewsBySubjectId(String idSub) {
+//        return reviewDao.getCompleteReviewsBySubjectId(idSub);
+//    }
+//
+//    @Override
+//    public List<Review> getCompleteReviewsByUserId(Long idUser) {
+//        return reviewDao.getCompleteReviewsByUserId(idUser);
+//    }
 }

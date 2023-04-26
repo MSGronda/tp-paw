@@ -14,13 +14,15 @@ public interface ReviewService extends BaseService<Long, Review> {
 
     List<Review> getAll();
     void recalculateStatistics();
+    List<Review> getAllUserReviewsWithSubjectName(Long userId);
+    List<Review> getAllSubjectReviewsWithUsername(String subjectId );
     List<Review> getAllBySubject(String idsub);
 
     Optional<ReviewStatistic> getReviewStatBySubject(String idSub);
 
-    List<ReviewStatistic> getReviewStatBySubjectIdList(List<String> idSubs);
-    Map<String, ReviewStatistic> getReviewStatMapBySubjectIdList(List<String> idSubs);
     Map<String, ReviewStatistic> getReviewStatMapBySubjectList(List<Subject> subjects);
-
-    Review create(Integer easy, Integer timeDemanding, String text,String subjectId,long userId, String userEmail) throws SQLException;
+    Map<String, ReviewStatistic> getReviewStatMapBySubjectIdList(List<String> idSubs);
+    List<ReviewStatistic> getReviewStatBySubjectIdList(List<String> idSubs);
+    void voteReview(Long idUser, Long idReview, int vote);
+    Review create(Boolean anonymous,Integer easy, Integer timeDemanding, String text,String subjectId,long userId ) throws SQLException;
 }

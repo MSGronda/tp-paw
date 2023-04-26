@@ -25,15 +25,6 @@
     <c:url var="CreateReview" value="/review/${subject.id}"/>
     <form:form modelAttribute="ReviewForm" class="col s12" method="post" action="${CreateReview}">
         <div class="tags-removable">
-            <div>
-                <form:errors path="email" cssClass="error" element="p"/>
-<%--            <form:input path="email" placeholder='<spring:message code="reviewForm.email.placeholder"/>'/>--%>
-                <spring:message code="reviewForm.email.placeholder" var="EmailPlaceholder"/>
-                <sl-input name="email" path="email" placeholder="${EmailPlaceholder}" value="${ReviewForm.email}"></sl-input>
-            </div>
-
-            <br/>
-
             <form:errors path="text" cssClass="error" element="p"/>
             <spring:message code="reviewForm.text.label" var="TextLabel"/>
             <sl-textarea name="text" label="${TextLabel}" value="${ReviewForm.text}"></sl-textarea>
@@ -55,6 +46,10 @@
                 <sl-radio-button value="1"><spring:message code="form.timeDemanding"/></sl-radio-button>
                     <sl-radio-button value="0"><spring:message code="form.NotTimeDemanding"/></sl-radio-button>
             </sl-radio-group>
+            <br />
+            <div>
+                <sl-checkbox type="checkbox" name="anonymous" path="anonymous" value="${ReviewForm.anonymous}"><spring:message code="form.anonymous"/></sl-checkbox>
+            </div>
             <br />
             <sl-button type="submit" variant="success"><spring:message code="form.submit"/></sl-button>
         </div>

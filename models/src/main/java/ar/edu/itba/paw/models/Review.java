@@ -3,25 +3,62 @@ package ar.edu.itba.paw.models;
 public class Review {
     private final long id;
     private final long userId;
-    private final String userEmail;
     private final String subjectId;
     private final Integer easy;
     private final Integer timeDemanding;
     private final String text;
 
-    // Etc.
+    private String subjectName = null;
+
+    private Integer upvotes = 0;
+    private Integer downvotes = 0;
+
+    private String username = null;
+    private final Boolean anonymous;
 
 
-
-
-    public Review(long id, long userId, String userEmail, String subjectId, Integer easy, Integer timeDemanding, String text) {
+    public Review(long id, long userId, String subjectId, Integer easy, Integer timeDemanding, String text, Boolean anonymous) {
         this.id = id;
         this.userId = userId;
-        this.userEmail = userEmail;
         this.subjectId = subjectId;
         this.easy = easy;
         this.timeDemanding = timeDemanding;
         this.text = text;
+        this.anonymous = anonymous;
+    }
+
+    public Review(long id, long userId, String subjectId, Integer easy, Integer timeDemanding,
+                  String text, String subjectName, int upvotes, int downvotes, Boolean anonymous) {
+        this.id = id;
+        this.userId = userId;
+        this.subjectId = subjectId;
+        this.easy = easy;
+        this.timeDemanding = timeDemanding;
+        this.text = text;
+        this.subjectName=subjectName;
+        this.upvotes = upvotes;
+        this.downvotes = downvotes;
+        this.anonymous = anonymous;
+    }
+    public Review(long id, long userId, String username, String subjectId, Integer easy, Integer timeDemanding,
+                  String text, int upvotes, int downvotes, Boolean anonymous) {
+        this.id = id;
+        this.userId = userId;
+        this.subjectId = subjectId;
+        this.easy = easy;
+        this.timeDemanding = timeDemanding;
+        this.text = text;
+        this.username=username;
+        this.upvotes = upvotes;
+        this.downvotes = downvotes;
+        this.anonymous = anonymous;
+    }
+
+    public int getUpvotes(){
+        return upvotes;
+    }
+    public int getDownvotes(){
+        return downvotes;
     }
 
     public long getId() {
@@ -30,9 +67,6 @@ public class Review {
 
     public long getUserId() {
         return userId;
-    }
-    public String getUserEmail() {
-        return userEmail;
     }
 
     public String getSubjectId() {
@@ -50,6 +84,19 @@ public class Review {
     public Integer getTimeDemanding(){
         return timeDemanding;
     }
+
+    public String getSubjectName() {
+        return subjectName;
+    }
+
+    public String getUsername(){
+        return username;
+    }
+
+    public Boolean getAnonymous() {
+        return anonymous;
+    }
+
 }
 
 

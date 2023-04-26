@@ -62,7 +62,7 @@ public class Subject {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Subject subject = (Subject) o;
-        return Objects.equals(id, subject.id) && Objects.equals(name, subject.name) && Objects.equals(department, subject.department) && Objects.equals(credits, subject.credits) && Objects.equals(prerequisites, subject.prerequisites) && Objects.equals(professorIds, subject.professorIds) && Objects.equals(degreeIds, subject.degreeIds);
+        return Objects.equals(id, subject.getId()) && Objects.equals(name, subject.getName()) && Objects.equals(department, subject.getDepartment()) && Objects.equals(credits, subject.getCredits()) && Objects.equals(prerequisites, subject.getPrerequisites()) && Objects.equals(professorIds, subject.getProfessorIds()) && Objects.equals(degreeIds, subject.getDegreeIds());
     }
 
     @Override
