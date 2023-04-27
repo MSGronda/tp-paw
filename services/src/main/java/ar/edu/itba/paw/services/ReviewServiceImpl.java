@@ -14,6 +14,10 @@ import java.util.*;
 public class ReviewServiceImpl implements ReviewService {
     private final ReviewDao reviewDao;
 
+    private static final List<String> validOrders = Arrays.asList("easy", "timedemanding");
+
+    private static final List<String> validDir = Arrays.asList("asc", "desc");
+
     @Autowired
     public ReviewServiceImpl(ReviewDao reviewDao) {
         this.reviewDao = reviewDao;
@@ -35,8 +39,18 @@ public class ReviewServiceImpl implements ReviewService {
     }
 
     @Override
-    public List<Review> getAllSubjectReviewsWithUsername(String subjectId){
-        return reviewDao.getAllSubjectReviewsWithUsername(subjectId);
+    public List<Review> getAllSubjectReviewsWithUsername(String subjectId,Map<String,String> param){
+        Map<String, String> validatedParams = new HashMap<>();
+
+        for(Map.Entry<String, String> filter : param.entrySet()){
+            if((Objects.equals(filter.getKey(), "order") && validOrders.contains(filter.getValue())) ||
+                    (Objects.equals(filter.getKey(), "dir") && validDir.contains(filter.getValue()))
+            ){
+                validatedParams.put(filter.getKey(), filter.getValue());
+            }
+        }
+
+        return reviewDao.getAllSubjectReviewsWithUsername(subjectId,validatedParams);
     }
 
     @Override

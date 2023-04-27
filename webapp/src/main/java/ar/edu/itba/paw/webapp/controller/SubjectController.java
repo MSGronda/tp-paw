@@ -8,10 +8,7 @@ import ar.edu.itba.paw.webapp.exceptions.SubjectNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.util.*;
@@ -42,7 +39,7 @@ public class SubjectController {
     }
 
     @RequestMapping("/subject/{id:\\d+\\.\\d+}")
-    public ModelAndView subjectInfo(@PathVariable String id) {
+    public ModelAndView subjectInfo(@PathVariable String id,@RequestParam Map<String, String> param) {
         final Optional<Subject> maybeSubject = subjectService.findById(id);
         if(!maybeSubject.isPresent()) {
             throw new SubjectNotFoundException("No subject with given id");
@@ -67,7 +64,7 @@ public class SubjectController {
         int year = (int) maxYear;
         final List<Professor> professors = professorService.getAllBySubject(id);
 
-        final List<Review> reviews = reviewService.getAllSubjectReviewsWithUsername(id);
+        final List<Review> reviews = reviewService.getAllSubjectReviewsWithUsername(id,param);
 
         final Map<String,String> prereqNames = subjectService.findPrerequisitesName(id);
 

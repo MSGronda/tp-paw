@@ -393,20 +393,22 @@
 <script>
     const showMore = document.querySelector('.showMore');
 
-    showMore.addEventListener('click',() => {
-        const dots = document.getElementById("dots");
-        const moreText = document.getElementById("more");
+    if(showMore !== null){
+        showMore.addEventListener('click',() => {
+            const dots = document.getElementById("dots");
+            const moreText = document.getElementById("more");
 
-        if (dots.style.display === "none") {
-            dots.style.display = "inline";
-            showMore.innerHTML = "<spring:message code="subject.showMore" /><sl-icon name=\"chevron-down\"></sl-icon>";
-            moreText.style.display = "none";
-        } else {
-            dots.style.display = "none";
-            showMore.innerHTML = "<spring:message code="subject.showLess" /><sl-icon name=\"chevron-up\"></sl-icon>";
-            moreText.style.display = "inline";
-        }
-    });
+            if (dots.style.display === "none") {
+                dots.style.display = "inline";
+                showMore.innerHTML = "<spring:message code="subject.showMore" /><sl-icon name=\"chevron-down\"></sl-icon>";
+                moreText.style.display = "none";
+            } else {
+                dots.style.display = "none";
+                showMore.innerHTML = "<spring:message code="subject.showLess" /><sl-icon name=\"chevron-up\"></sl-icon>";
+                moreText.style.display = "inline";
+            }
+        });
+    }
 
 </script>
 <script src="${pageContext.request.contextPath}/js/subject-view.js" defer></script>

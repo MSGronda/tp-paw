@@ -25,5 +25,5 @@ public interface ReviewDao extends RWDao<Long,Review> {
     Optional<ReviewStatistic> getReviewStatBySubject(String idSub);
     List<ReviewStatistic> getReviewStatBySubjectList(List<String> idSubs);
     List<Review> getAllUserReviewsWithSubjectName(Long userId);
-    List<Review> getAllSubjectReviewsWithUsername(String subjectId);
+    List<Review> getAllSubjectReviewsWithUsername(String subjectId,Map<String,String> params);
 }

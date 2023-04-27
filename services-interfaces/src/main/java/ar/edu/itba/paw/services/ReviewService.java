@@ -15,7 +15,7 @@ public interface ReviewService extends BaseService<Long, Review> {
     List<Review> getAll();
     void recalculateStatistics();
     List<Review> getAllUserReviewsWithSubjectName(Long userId);
-    List<Review> getAllSubjectReviewsWithUsername(String subjectId );
+    List<Review> getAllSubjectReviewsWithUsername(String subjectId, Map<String,String> param);
     List<Review> getAllBySubject(String idsub);
 
     Optional<ReviewStatistic> getReviewStatBySubject(String idSub);
