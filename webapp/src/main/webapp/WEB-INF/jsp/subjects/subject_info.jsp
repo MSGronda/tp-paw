@@ -137,6 +137,10 @@
       .breadcrumb-area{
           padding-top: 1rem;
       }
+      .text-center{
+          display: flex;
+          justify-content: center;
+      }
   </style>
 
 </head>
@@ -316,8 +320,17 @@
 
 
   </div>
-  <sl-button href='<c:url value="/review/${subject.id}"/>' variant="primary" size="large" pill class="review_bt">
-    <spring:message code="subject.review"/></sl-button>
+    <c:if test="${didReview}">
+        <sl-button variant="primary" size="large" pill class="review_bt" disabled><spring:message code="subject.review"/></sl-button>
+        <br/>
+        <div class="text-center">
+            <spring:message code="subject.alreadyReviewed"/>
+        </div>
+    </c:if>
+    <c:if test="${!didReview}">
+        <sl-button href='<c:url value="/review/${subject.id}"/>' variant="primary" size="large" pill class="review_bt">
+            <spring:message code="subject.review"/></sl-button>
+    </c:if>
   <br/>
   <hr/>
   <div class="filter">

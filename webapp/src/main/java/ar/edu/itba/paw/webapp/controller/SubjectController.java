@@ -69,6 +69,8 @@ public class SubjectController {
 
         final List<Review> reviews = reviewService.getAllSubjectReviewsWithUsername(id);
 
+        final Boolean didReview = reviewService.didUserReview(reviews, loggedUser().getId());
+
         final Map<String,String> prereqNames = subjectService.findPrerequisitesName(id);
 
         final List<SubjectClass> classes = subjectClassService.getBySubId(id);
@@ -82,6 +84,7 @@ public class SubjectController {
         mav.addObject("prereqNames", prereqNames.entrySet());
         mav.addObject("difficulty", stats.getDifficulty());
         mav.addObject("classes", classes);
+        mav.addObject("didReview", didReview);
         return mav;
     }
     @ModelAttribute("loggedUser")

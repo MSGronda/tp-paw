@@ -95,6 +95,20 @@ public class ReviewServiceImpl implements ReviewService {
             reviewDao.voteReview(idUser,idReview,vote);
     }
 
+    @Override
+    public Boolean didUserReview(List<Review> reviews, Long userId){
+        for( Review review : reviews){
+            if( userId.equals(review.getUserId()))
+                return true;
+        }
+        return false;
+    }
+
+    @Override
+    public Boolean didUserReviewDB(String subjectId, Long userId){
+        return reviewDao.didUserReviewDB(subjectId, userId);
+    }
+
 //    @Override
 //    public List<Review> getCompleteReviewsBySubjectId(String idSub) {
 //        return reviewDao.getCompleteReviewsBySubjectId(idSub);
