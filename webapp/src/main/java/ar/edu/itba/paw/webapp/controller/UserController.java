@@ -9,6 +9,10 @@ import ar.edu.itba.paw.services.exceptions.UserEmailAlreadyTakenException;
 import ar.edu.itba.paw.webapp.auth.UniAuthUser;
 import ar.edu.itba.paw.webapp.exceptions.UserNotFoundException;
 import ar.edu.itba.paw.webapp.form.*;
+import ar.edu.itba.paw.webapp.form.EditUserDataForm;
+import ar.edu.itba.paw.webapp.form.EditUserPasswordForm;
+import ar.edu.itba.paw.webapp.form.RecoverPasswordForm;
+import ar.edu.itba.paw.webapp.form.UserForm;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -133,6 +137,20 @@ public class UserController {
     @RequestMapping(value = "/profile/editpassword", method = { RequestMethod.GET })
     public ModelAndView editPasswordForm(@ModelAttribute ("EditUserPasswordForm") final EditUserPasswordForm editUserPasswordForm) {
         return new ModelAndView("user/editUserPassword");
+    }
+
+    @RequestMapping(value = "/recover", method = { RequestMethod.POST })
+    public ModelAndView sendEmail(@Valid @ModelAttribute ("RecoverPasswordForm") final RecoverPasswordForm recoverPasswordForm,
+                                  final BindingResult errors){
+        if( errors.hasErrors()){
+            return recoverPassword(recoverPasswordForm);
+        }
+        return new ModelAndView("redirect:/login");
+    }
+
+    @RequestMapping(value = "/recover", method = { RequestMethod.GET })
+    public ModelAndView recoverPassword(@ModelAttribute ("RecoverPasswordForm") final RecoverPasswordForm recoverPasswordForm){
+        return new ModelAndView("/user/recoverPassword");
     }
 
     @ModelAttribute("loggedUser")

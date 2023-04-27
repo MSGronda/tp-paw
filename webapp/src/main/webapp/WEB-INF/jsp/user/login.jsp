@@ -54,6 +54,12 @@
     <div>
       <span><spring:message code="login.noAccount"/><a href="<c:url value="/register"/>"><spring:message code="login.register"/></a></span>
     </div>
+    <br/>
+    <br/>
+    <div>
+      <span><spring:message code="login.forgotPassword"/></span>
+      <span><a href="/recover"><spring:message code="login.recover"/></a></span>
+    </div>
   </form>
 </main >
 <jsp:include page="../components/footer.jsp"/>
