@@ -7,9 +7,28 @@
   <title>${subject.name}</title>
   <jsp:include page="../components/head_shared.jsp"/>
   <style>
+      #more {
+          display: none;
+      }
+
+      .showMore{
+          display: flex;
+      }
+      .showMore::part(base) {
+          border: 0;
+      }
+      .showMore::part(base):hover{
+          background: 0;
+      }
+      .showMore::part(base):active {
+          background: rgba(255, 99, 71, 0);
+      }
+
+
       .info {
           padding-bottom: 2rem;
       }
+
       .review_bt {
           width: 15rem;
           align-self: center;
@@ -324,7 +343,15 @@
         </div>
 
         <div class="break-text">
-          <c:out value="${review.text}"/>
+            <c:if test="${review.requiresShowMore}">
+                <c:out value="${review.previewText}"/><span id="dots">...</span><span id="more"><c:out value="${review.showMoreText}"/></span>
+
+                <br />
+                <sl-button size="small" class="showMore"><spring:message code="subject.showMore" />  <sl-icon name="chevron-down"></sl-icon></sl-button>
+            </c:if>
+            <c:if test="${!review.requiresShowMore}">
+                <c:out value="${review.text}"/>
+            </c:if>
         </div>
         <div>
           <c:choose>
@@ -354,6 +381,25 @@
 </main>
 <jsp:include page="../components/footer.jsp"/>
 <jsp:include page="../components/body_scripts.jsp"/>
+<script>
+    const showMore = document.querySelector('.showMore');
 
+    showMore.addEventListener('sl-focus',() => {
+        const dots = document.getElementById("dots");
+        const moreText = document.getElementById("more");
+
+        if (dots.style.display === "none") {
+            dots.style.display = "inline";
+            showMore.innerHTML = "<spring:message code="subject.showMore" /><sl-icon name=\"chevron-down\"></sl-icon>";
+            moreText.style.display = "none";
+        } else {
+            dots.style.display = "none";
+            showMore.innerHTML = "<spring:message code="subject.showLess" /><sl-icon name=\"chevron-up\"></sl-icon>";
+            moreText.style.display = "inline";
+        }
+        showMore.blur()
+    });
+
+</script>
 </body>
 </html>

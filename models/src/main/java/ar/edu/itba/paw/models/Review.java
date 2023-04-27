@@ -16,6 +16,14 @@ public class Review {
     private String username = null;
     private final Boolean anonymous;
 
+    private final String previewText;
+
+    private final String showMoreText;
+
+    private final Boolean requiresShowMore;
+
+    private final int PREVIEW_SIZE=500;
+
 
     public Review(long id, long userId, String subjectId, Integer easy, Integer timeDemanding, String text, Boolean anonymous) {
         this.id = id;
@@ -25,6 +33,15 @@ public class Review {
         this.timeDemanding = timeDemanding;
         this.text = text;
         this.anonymous = anonymous;
+        if(text.length() > PREVIEW_SIZE){
+            this.requiresShowMore = true;
+            this.previewText = this.text.substring(0,PREVIEW_SIZE);
+            this.showMoreText = this.text.substring(PREVIEW_SIZE);
+        } else {
+            this.requiresShowMore = false;
+            this.previewText = "";
+            this.showMoreText = "";
+        }
     }
 
     public Review(long id, long userId, String subjectId, Integer easy, Integer timeDemanding,
@@ -39,6 +56,15 @@ public class Review {
         this.upvotes = upvotes;
         this.downvotes = downvotes;
         this.anonymous = anonymous;
+        if(text.length() > PREVIEW_SIZE){
+            this.requiresShowMore = true;
+            this.previewText = this.text.substring(0,PREVIEW_SIZE);
+            this.showMoreText = this.text.substring(PREVIEW_SIZE);
+        } else {
+            this.requiresShowMore = false;
+            this.previewText = "";
+            this.showMoreText = "";
+        }
     }
     public Review(long id, long userId, String username, String subjectId, Integer easy, Integer timeDemanding,
                   String text, int upvotes, int downvotes, Boolean anonymous) {
@@ -52,6 +78,15 @@ public class Review {
         this.upvotes = upvotes;
         this.downvotes = downvotes;
         this.anonymous = anonymous;
+        if(text.length() > PREVIEW_SIZE){
+            this.requiresShowMore = true;
+            this.previewText = this.text.substring(0,PREVIEW_SIZE);
+            this.showMoreText = this.text.substring(PREVIEW_SIZE);
+        } else {
+            this.requiresShowMore = false;
+            this.previewText = "";
+            this.showMoreText = "";
+        }
     }
 
     public int getUpvotes(){
@@ -97,6 +132,17 @@ public class Review {
         return anonymous;
     }
 
+    public String getPreviewText() {
+        return previewText;
+    }
+
+    public Boolean getRequiresShowMore() {
+        return requiresShowMore;
+    }
+
+    public String getShowMoreText() {
+        return showMoreText;
+    }
 }
 
 
