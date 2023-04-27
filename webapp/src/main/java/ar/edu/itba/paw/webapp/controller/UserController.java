@@ -101,7 +101,6 @@ public class UserController {
     public ModelAndView editPassword(@Valid @ModelAttribute ("EditUserPasswordForm") final EditUserPasswordForm editUserPasswordForm,
                                     final BindingResult errors) throws SQLException {
         if(errors.hasErrors()){
-            System.out.println("puto");
             System.out.println(editUserPasswordForm.getEditPassword());
             System.out.println(editUserPasswordForm.getPasswordEditConfirmation());
             return editPasswordForm(editUserPasswordForm);

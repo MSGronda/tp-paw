@@ -9,6 +9,7 @@ import ar.edu.itba.paw.webapp.auth.UniAuthUser;
 import ar.edu.itba.paw.webapp.exceptions.DegreeNotFoundException;
 import ar.edu.itba.paw.webapp.exceptions.SubjectNotFoundException;
 import ar.edu.itba.paw.webapp.form.ReviewForm;
+import ar.edu.itba.paw.webapp.form.ReviewVoteForm;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
@@ -71,6 +72,17 @@ public class ReviewController {
         }
         throw new SubjectNotFoundException();
     }
+
+    @RequestMapping(value = "/voteReview/{reviewId:\\d+}", method = RequestMethod.POST)
+    public String voteReview(@PathVariable final Long reviewId,@Valid @ModelAttribute("ReviewVoteForm") final ReviewVoteForm vote,
+                                   final BindingResult errors) {
+        if(errors.hasErrors() || loggedUser() == null){
+            return "invalid";
+        }
+        reviewService.voteReview(loggedUser().getId(),reviewId,vote.getVote());
+        return "voted";
+    }
+
 
     @ModelAttribute("loggedUser")
     public User loggedUser(){

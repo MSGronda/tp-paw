@@ -1,6 +1,7 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jstl/core_rt" %>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
+<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 
 <html>
 <head>
@@ -117,6 +118,13 @@
       }
       .breadcrumb-area{
           padding-top: 1rem;
+      }
+      .vote-button{
+
+      }
+      .vote-button-icon{
+          font-size: 30px;
+          padding-top: 0.3rem;
       }
   </style>
 
@@ -357,6 +365,23 @@
             </c:otherwise>
           </c:choose>
         </div>
+
+          <div slot="footer">
+              <form:form method="POST" action="/voteReview/${review.id}" >
+
+<%--                  <form:hidden path="vote"/>--%>
+
+                  <sl-button class="vote-button" variant="default" size="medium" circle
+                             type="submit" value="1">
+                      <sl-icon class="vote-button-icon" name="hand-thumbs-up" label="Upvote"></sl-icon>
+                  </sl-button>
+
+                  <sl-button class="vote-button" variant="default" size="medium" circle
+                             type="submit" value="-1">
+                      <sl-icon class="vote-button-icon" name="hand-thumbs-down" label="Downvote"></sl-icon>
+                  </sl-button>
+              </form:form>
+          </div>
       </sl-card>
     </c:forEach>
   </div>
