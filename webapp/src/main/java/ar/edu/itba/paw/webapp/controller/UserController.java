@@ -3,6 +3,7 @@ package ar.edu.itba.paw.webapp.controller;
 import ar.edu.itba.paw.models.*;
 import ar.edu.itba.paw.services.ReviewService;
 import ar.edu.itba.paw.services.UserService;
+import ar.edu.itba.paw.services.exceptions.OldPasswordDoesNotMatchException;
 import ar.edu.itba.paw.services.exceptions.UserEmailAlreadyTakenException;
 import ar.edu.itba.paw.webapp.auth.UniAuthUser;
 import ar.edu.itba.paw.webapp.exceptions.UserNotFoundException;
@@ -101,14 +102,17 @@ public class UserController {
     public ModelAndView editPassword(@Valid @ModelAttribute ("EditUserPasswordForm") final EditUserPasswordForm editUserPasswordForm,
                                     final BindingResult errors) throws SQLException {
         if(errors.hasErrors()){
-            System.out.println("puto");
-            System.out.println(editUserPasswordForm.getEditPassword());
-            System.out.println(editUserPasswordForm.getPasswordEditConfirmation());
             return editPasswordForm(editUserPasswordForm);
         }
 
         User user = loggedUser();
-        userService.changePassword(user.getId(), editUserPasswordForm.getEditPassword());
+        try{
+            userService.changePassword(user.getId(), editUserPasswordForm.getEditPassword(), editUserPasswordForm.getOldPassword(), user.getPassword());
+        }catch (OldPasswordDoesNotMatchException e){
+            ModelAndView mav = editPasswordForm(editUserPasswordForm);
+            mav.addObject("oldPasswordDoesNotMatch", true);
+            return mav;
+        }
         return new ModelAndView("redirect:/profile/" + user.getId());
     }
     @RequestMapping(value = "/profile/editpassword", method = { RequestMethod.GET })

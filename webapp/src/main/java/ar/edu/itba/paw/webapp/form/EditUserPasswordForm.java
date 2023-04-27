@@ -5,11 +5,12 @@ import javax.validation.constraints.Size;
 
 public class EditUserPasswordForm {
 
+    private String oldPassword;
+
     @NotNull
     @Size(min = 8, max = 25)
     private String editPassword;
     @NotNull
-    @Size(min = 8, max = 25)
     private String passwordEditConfirmation;
 
     public void setEditPassword(String editPassword) {
@@ -30,5 +31,13 @@ public class EditUserPasswordForm {
         if(!this.editPassword.equals(passwordEditConfirmation)){
             this.passwordEditConfirmation = null;
         }
+    }
+
+    public String getOldPassword() {
+        return oldPassword;
+    }
+
+    public void setOldPassword(String oldPassword) {
+        this.oldPassword = oldPassword;
     }
 }

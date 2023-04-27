@@ -3,6 +3,7 @@ package ar.edu.itba.paw.services;
 import ar.edu.itba.paw.models.User;
 import ar.edu.itba.paw.persistence.UserDao;
 import ar.edu.itba.paw.persistence.exceptions.UserEmailAlreadyTakenPersistenceException;
+import ar.edu.itba.paw.services.exceptions.OldPasswordDoesNotMatchException;
 import ar.edu.itba.paw.services.exceptions.UserEmailAlreadyTakenException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -90,7 +91,11 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void changePassword(Long userId, String password) {
+    public void changePassword(Long userId, String password, String oldPassword, String userOldPassword) throws OldPasswordDoesNotMatchException {
+
+        if(!passwordEncoder.matches(oldPassword, userOldPassword)){
+            throw new OldPasswordDoesNotMatchException();
+        }
         userDao.changePassword(userId, passwordEncoder.encode(password));
     }
 

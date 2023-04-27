@@ -1,6 +1,7 @@
 package ar.edu.itba.paw.services;
 
 import ar.edu.itba.paw.models.User;
+import ar.edu.itba.paw.services.exceptions.OldPasswordDoesNotMatchException;
 import ar.edu.itba.paw.services.exceptions.UserEmailAlreadyTakenException;
 
 import java.sql.SQLException;
@@ -20,7 +21,7 @@ public interface UserService extends BaseService<Long, User> {
     Optional<Integer> getUserSubjectProgress(Long id, String idSub);
     Map<String, Integer> getUserAllSubjectProgress(Long id);
     void updateSubjectProgress(Long id, String idSub, Integer newProgress);
-    void changePassword(Long userId, String password);
+    void changePassword(Long userId, String password, String oldPassword, String userOldPassword) throws OldPasswordDoesNotMatchException;
     void editProfile(Long userId, String username);
 
     byte[] updateProfilePicture(long id, byte[] image);
