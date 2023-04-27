@@ -6,7 +6,7 @@
 
 <html>
 <head>
-    <title>Hello</title>
+    <title><spring:message code="profile.profile"/></title>
     <jsp:include page="../components/head_shared.jsp"/>
 
     <style>

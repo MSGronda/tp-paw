@@ -2,6 +2,7 @@
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="string" uri="http://java.sun.com/jsp/jstl/fmt" %>
 
 <html>
 <head>
@@ -33,6 +34,9 @@
     .card-basic {
       width: 100%;
     }
+    .error{
+      color: red;
+    }
   </style>
 </head>
 <jsp:include page="../components/navbar.jsp" />
@@ -52,6 +56,14 @@
     <c:url var="editPassword" value="/profile/editpassword" />
     <form:form modelAttribute="EditUserPasswordForm" action="${editPassword}" method="post">
       <sl-card class="card-basic">
+
+        <c:if test="${oldPasswordDoesNotMatch}">
+          <p class="error"><spring:message code="profile.editing.oldPasswordError"/></p>
+        </c:if>
+        <spring:message code="profile.oldpassword.placeholder" var="OldPasswordPlaceholder"/>
+        <sl-input name="oldPassword" path="oldPassword" type="password" value="${EditUserPasswordForm.oldPassword}" placeholder="${OldPasswordPlaceholder}" password-toggle></sl-input>
+        <br/>
+
         <form:errors path="editPassword" cssClass="error" element="p"/>
         <spring:message code="profile.newpassword.placeholder" var="PasswordPlaceholder"/>
         <sl-input name="editPassword" type="password" path="password" value="${EditUserPasswordForm.editPassword}" placeholder="${PasswordPlaceholder}" password-toggle></sl-input>
@@ -63,7 +75,7 @@
         <sl-input name="passwordEditConfirmation" type="password" path="passwordEditConfirmation" value="${EditUserPasswordForm.passwordEditConfirmation}" placeholder="${PasswordConfirmationPlaceholder}" password-toggle></sl-input>
 
         <br/>
-        <sl-button type="submit" variant="success"><spring:message code="profile.update.password"/></sl-button>
+        <sl-button type="submit" variant="primary" outline><spring:message code="profile.update.password"/></sl-button>
       </sl-card>
     </form:form>
   </div>
