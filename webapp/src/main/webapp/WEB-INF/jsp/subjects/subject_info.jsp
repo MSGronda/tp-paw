@@ -326,9 +326,9 @@
         <spring:message code="subject.sort"/>
         <sl-icon slot="prefix" name="sort-down"></sl-icon>
       </sl-button>
-      <sl-menu>
-        <sl-menu-item value="cut"><spring:message code="subject.order.difficulty"/></sl-menu-item>
-        <sl-menu-item value="copy"><spring:message code="subject.order.time"/></sl-menu-item>
+      <sl-menu class="order-menu">
+        <sl-menu-item id="difficulty-order"><spring:message code="subject.order.difficulty"/></sl-menu-item>
+        <sl-menu-item id="timedemand-order"><spring:message code="subject.order.time"/></sl-menu-item>
       </sl-menu>
     </sl-dropdown>
   </div>
@@ -393,7 +393,7 @@
 <script>
     const showMore = document.querySelector('.showMore');
 
-    showMore.addEventListener('sl-focus',() => {
+    showMore.addEventListener('click',() => {
         const dots = document.getElementById("dots");
         const moreText = document.getElementById("more");
 
@@ -406,9 +406,9 @@
             showMore.innerHTML = "<spring:message code="subject.showLess" /><sl-icon name=\"chevron-up\"></sl-icon>";
             moreText.style.display = "inline";
         }
-        showMore.blur()
     });
 
 </script>
+<script src="${pageContext.request.contextPath}/js/subject-view.js" defer></script>
 </body>
 </html>

@@ -145,7 +145,7 @@
 <script>
     const showMore = document.querySelector('.showMore');
 
-    showMore.addEventListener('sl-focus',() => {
+    showMore.addEventListener('click',() => {
         const dots = document.getElementById("dots");
         const moreText = document.getElementById("more");
 
@@ -158,7 +158,6 @@
             showMore.innerHTML = "<spring:message code="subject.showLess" /><sl-icon name=\"chevron-up\"></sl-icon>";
             moreText.style.display = "inline";
         }
-        showMore.blur()
     });
 
 </script>
