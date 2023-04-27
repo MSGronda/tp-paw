@@ -235,6 +235,13 @@ public class ReviewJdbcDao implements ReviewDao {
         );
     }
 
+    @Override
+    public Boolean didUserReviewDB(String subjectId, Long userId){
+        Optional<Review> review = jdbcTemplate.query("SELECT * FROM " + TABLE_REVIEWS + " WHERE idsub = ? AND iduser = ?", ReviewJdbcDao::rowMapperReview, subjectId, userId).stream().findFirst();
+
+        return review.isPresent();
+    }
+
     private static Integer difficultyRowMapper(ResultSet rs, int rowNum) throws SQLException {
         return rs.getInt("easy");
     }

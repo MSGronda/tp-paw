@@ -60,12 +60,16 @@ public class ReviewController {
     }
     @RequestMapping(value = "/review/{subjectId:\\d+\\.\\d+}", method = RequestMethod.GET)
     public ModelAndView reviewForm(@PathVariable final String subjectId, @ModelAttribute("ReviewForm") final ReviewForm reviewForm) {
+
         ModelAndView mav =  new ModelAndView("review/review");
 
         Optional<Subject> maybeSubject = subjectService.findById(subjectId);
 
         if( maybeSubject.isPresent()){
             Subject subject = maybeSubject.get();
+            if(reviewService.didUserReviewDB(subjectId, loggedUser().getId())){
+                return new ModelAndView("redirect:/subject/" + subjectId);
+            }
             mav.addObject("subject", subject );
             return mav;
         }
