@@ -10,35 +10,54 @@ function addOrUpdateParam(url, param, value) {
         return url + separator + param + "=" + value;
 }
 
-function removeURLParam(url, param) {
-    var urlsections = url.split('?');
-
-    if (urlsections.length >= 2) {
-        var prefix = encodeURIComponent(param) + '=';
-        var params = urlsections[1].split(/[&;]/g);
-
-        for (var i = params.length - 1; i >= 0; i--) {
-            if (decodeURIComponent(params[i]).lastIndexOf(prefix, 0) !== -1) {
-                params.splice(i, 1);
-            }
-        }
-        url = urlsections[0] + (params.length > 0 ? '?' + params.join('&') : '');
-        return url;
-    }
-    else
-        return url;
-
+function appendParam(url,param,value) {
+    const separator = url.indexOf('?') !== -1 ? "&" : "?";
+    return url + separator + param + '=' + value
 }
 
 let params = new URLSearchParams(window.location.search);
-let order = params.get("order");
+let dir = params.get("dir");
 
 const orderBtns = [
-    ['difficulty-order','easy'],
-    ['timedemand-order','timedemanding'],
-    ['oldest-order','oldest']
+    ['difficulty-order','easy','diffuclty-down','diffuclty-up'],
+    ['timedemand-order','timedemanding','timedemand-down','timedemand-up'],
 ]
+const asc='asc'
+const desc = 'desc'
 for(let elem in orderBtns) {
-    document.getElementById(orderBtns[elem][0]).addEventListener('click',
-        function() { window.location.href = addOrUpdateParam(window.location.href,"order",orderBtns[elem][1]);})
+    const btnElem = document.getElementById(orderBtns[elem][0])
+    if(typeof btnElem !== null && elem !== 'undefined' ){
+        btnElem.addEventListener('click',
+            function() {
+                url = window.location.href;
+                url = addOrUpdateParam(url,"order",orderBtns[elem][1]);
+                if(dir !== null && dir === asc){
+                    url = addOrUpdateParam(url,"dir",desc);
+                } else {
+                    url = addOrUpdateParam(url,"dir",asc);
+                }
+                window.location.href = url;
+            });
+        if(orderBtns[elem][0] === 'difficulty-order' && dir === desc){
+            const section1 = document.getElementById(orderBtns[elem][2])
+            const section2 = document.getElementById(orderBtns[elem][3])
+            section1.style.display = "block";
+            section2.style.display = "none";
+        } else if(orderBtns[elem][0] === 'timedemand-order' && dir === desc) {
+            const section1 = document.getElementById(orderBtns[elem][2])
+            const section2 = document.getElementById(orderBtns[elem][3])
+            section1.style.display = "block";
+            section2.style.display = "none";
+        }else if(orderBtns[elem][0] === 'difficulty-order' && dir === asc){
+            const section1 = document.getElementById(orderBtns[elem][2])
+            const section2 = document.getElementById(orderBtns[elem][3])
+            section1.style.display = "none";
+            section2.style.display = "block";
+        } else {
+            const section1 = document.getElementById(orderBtns[elem][2])
+            const section2 = document.getElementById(orderBtns[elem][3])
+            section1.style.display = "none";
+            section2.style.display = "block";
+        }
+    }
 }

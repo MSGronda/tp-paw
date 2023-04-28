@@ -24,6 +24,11 @@
           background: rgba(255, 99, 71, 0);
       }
 
+      .order-menu{
+          display: flex;
+          flex-direction: row;
+          justify-items:center;
+      }
 
       .info {
           padding-bottom: 2rem;
@@ -339,9 +344,29 @@
         <spring:message code="subject.sort"/>
         <sl-icon slot="prefix" name="sort-down"></sl-icon>
       </sl-button>
-      <sl-menu class="order-menu">
-        <sl-menu-item id="difficulty-order"><spring:message code="subject.order.difficulty"/></sl-menu-item>
-        <sl-menu-item id="timedemand-order"><spring:message code="subject.order.time"/></sl-menu-item>
+      <sl-menu>
+        <sl-menu-item id="difficulty-order">
+            <div class="order-menu">
+                <spring:message code="subject.order.difficulty"/>
+                <section id="diffuclty-down">
+                    <sl-icon slot="suffix" name="arrow-down" ></sl-icon>
+                </section>
+                <section id="diffuclty-up">
+                    <sl-icon slot="suffix" name="arrow-up" ></sl-icon>
+                </section>
+            </div>
+        </sl-menu-item>
+        <sl-menu-item id="timedemand-order">
+            <div class="order-menu">
+                <spring:message code="subject.order.time"/>
+                <section id="timedemand-down">
+                    <sl-icon slot="suffix" name="arrow-down" ></sl-icon>
+                </section>
+                <section id="timedemand-up">
+                    <sl-icon slot="suffix" name="arrow-up"></sl-icon>
+                </section>
+            </div>
+        </sl-menu-item>
       </sl-menu>
     </sl-dropdown>
   </div>
@@ -403,6 +428,7 @@
 </main>
 <jsp:include page="../components/footer.jsp"/>
 <jsp:include page="../components/body_scripts.jsp"/>
+<script src="${pageContext.request.contextPath}/js/subject-view.js" defer></script>
 <script>
     const showMore = document.querySelector('.showMore');
 
@@ -424,6 +450,5 @@
     }
 
 </script>
-<script src="${pageContext.request.contextPath}/js/subject-view.js" defer></script>
 </body>
 </html>
