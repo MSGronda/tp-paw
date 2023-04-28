@@ -10,20 +10,6 @@
       #more {
           display: none;
       }
-
-      .showMore{
-          display: flex;
-      }
-      .showMore::part(base) {
-          border: 0;
-      }
-      .showMore::part(base):hover{
-          background: 0;
-      }
-      .showMore::part(base):active {
-          background: rgba(255, 99, 71, 0);
-      }
-
       .order-menu{
           display: flex;
           flex-direction: row;
@@ -60,11 +46,6 @@
 
       }
 
-      .card-header {
-          width: 100%;
-          margin: 15px;
-      }
-
       .card-header [slot='header'] {
           display: flex;
           align-items: center;
@@ -75,25 +56,10 @@
           margin: 0;
       }
 
-      .break-text {
-          overflow-wrap: break-word;
-          margin-bottom: 2%;
-      }
-
       a {
           color: #0369a1;
           background-color: transparent;
           text-decoration: none;
-      }
-      .username-redirect{
-          color: black;
-          text-decoration: underline;
-          text-underline-color: black;
-          text-decoration-thickness: 0.05rem;
-
-      }
-      .username-redirect:hover{
-          color: #0369a1;
       }
       hr {
           width: 30rem;
@@ -109,12 +75,9 @@
           display: flex;
           justify-content: center;
       }
+
       <jsp:include page="../components/table_style.jsp"/>
-      .header{
-          display: flex;
-          justify-content: space-around;
-          font-size: 1.2rem;
-      }
+
   </style>
 
 </head>
@@ -345,56 +308,9 @@
       <h3><spring:message code="subject.noreviews"/></h3>
     </c:if>
     <c:forEach  var="review" items="${reviews}">
-      <sl-card class="card-header">
-        <div slot="header" class="header">
-          <c:choose>
-            <c:when test="${review.anonymous}">
-              <spring:message code="form.anonymous"/>
-            </c:when>
-            <c:when test="${!review.anonymous}">
-              <a class="username-redirect" href="<c:url value="/profile/${review.userId}"/>"><c:out value="${review.username}"/></a>
-            </c:when>
-          </c:choose>
-
-            <c:if test="${review.userId == loggedUser.id}">
-                <sl-icon-button name="pencil-square" label="edit" href="<c:url value="/review/${subject.id}/edit/${review.id}"/>"></sl-icon-button>
-            </c:if>
-        </div>
-
-        <div class="break-text">
-            <c:if test="${review.requiresShowMore}">
-                <c:out value="${review.previewText}"/><span id="dots">...</span><span id="more"><c:out value="${review.showMoreText}"/></span>
-
-                <br />
-                <sl-button size="small" class="showMore"><spring:message code="subject.showMore" />  <sl-icon name="chevron-down"></sl-icon></sl-button>
-            </c:if>
-            <c:if test="${!review.requiresShowMore}">
-                <c:out value="${review.text}"/>
-            </c:if>
-        </div>
-        <div>
-          <c:choose>
-            <c:when test="${review.easy == 0}">
-              <sl-badge size="medium" variant="success"><spring:message code="form.easy"/></sl-badge>
-            </c:when>
-            <c:when test="${review.easy == 1}">
-              <sl-badge size="medium" variant="primary"><spring:message code="form.normal"/></sl-badge>
-            </c:when>
-            <c:otherwise>
-              <sl-badge size="medium" variant="danger"><spring:message code="form.hard"/></sl-badge>
-            </c:otherwise>
-          </c:choose>
-
-          <c:choose>
-            <c:when test="${review.timeDemanding == 1}">
-              <sl-badge size="medium" variant="warning"><spring:message code="form.timeDemanding"/></sl-badge>
-            </c:when>
-            <c:otherwise>
-              <sl-badge size="medium" ariant="primary"><spring:message code="form.NotTimeDemanding"/></sl-badge>
-            </c:otherwise>
-          </c:choose>
-        </div>
-      </sl-card>
+      <c:set var="review" value="${review}" scope="request"/>
+      <c:set var="fromProfile" value="${false}" scope="request"/>
+      <c:import url="../components/review_card.jsp"/>
     </c:forEach>
   </div>
 </main>

@@ -166,50 +166,9 @@
     </c:if>
     <c:forEach var="review" items="${reviews}">
         <c:if test="${!review.anonymous || loggedUser.id == review.userId}">
-            <sl-card class="card-header">
-                <div slot="header" class="header-review-card">
-                    <c:out value="${review.subjectId}" /> - <c:out value="${review.subjectName}"/>
-
-                    <c:if test="${review.userId == loggedUser.id}">
-                        <sl-icon-button name="pencil-square" label="edit" href="<c:url value="/review/${review.subjectId}/edit/${review.id}"/>"></sl-icon-button>
-                    </c:if>
-                </div>
-
-                <div class="break-text">
-                    <c:if test="${review.requiresShowMore}">
-                        <c:out value="${review.previewText}"/><span id="dots">...</span><span id="more"><c:out value="${review.showMoreText}"/></span>
-
-                        <br />
-                        <sl-button size="small" class="show-more"><spring:message code="subject.showMore" />  <sl-icon name="chevron-down"></sl-icon></sl-button>
-                    </c:if>
-                    <c:if test="${!review.requiresShowMore}">
-                        <c:out value="${review.text}"/>
-                    </c:if>
-                </div>
-                <div>
-                    <c:choose>
-                        <c:when test="${review.easy == 0}">
-                            <sl-badge size="medium" variant="success"><spring:message code="form.easy"/></sl-badge>
-                        </c:when>
-                        <c:when test="${review.easy == 1}">
-                            <sl-badge size="medium" variant="primary"><spring:message code="form.normal"/></sl-badge>
-                        </c:when>
-                        <c:otherwise>
-                            <sl-badge size="medium" variant="danger"><spring:message code="form.hard"/></sl-badge>
-                        </c:otherwise>
-                    </c:choose>
-
-                    <c:choose>
-                        <c:when test="${review.timeDemanding == 1}">
-                            <sl-badge size="medium" variant="warning"><spring:message code="form.timeDemanding"/></sl-badge>
-                        </c:when>
-                        <c:otherwise>
-                            <sl-badge size="medium" ariant="primary"><spring:message code="form.NotTimeDemanding"/></sl-badge>
-                        </c:otherwise>
-                    </c:choose>
-                </div>
-            </sl-card>
-            <br />
+            <c:set var="review" value="${review}" scope="request"/>
+            <c:set var="fromProfile" value="${true}" scope="request"/>
+            <c:import url="../components/review_card.jsp"/>
         </c:if>
     </c:forEach>
 </main>

@@ -124,9 +124,9 @@ public class ReviewJdbcDao implements ReviewDao {
         if(stat.isPresent()){
             ReviewStatistic reviewStat= stat.get();
             jdbcTemplateReviewStatistic.update("UPDATE " + TABLE_REVIEW_STAT +
-                            " SET reviewCount = ?, easyCount = ?, mediumCount = ?, hardCount = ?, " +
+                            " SET easyCount = ?, mediumCount = ?, hardCount = ?, " +
                             "notTimeDemandingCount = ?, timeDemandingCount = ? WHERE idSub = ?",
-                    reviewStat.getReviewCount() +  1,
+
                     reviewStat.getEasyCount() + easy,
                     reviewStat.getMediumCount() + medium,
                     reviewStat.getHardCount() + hard,
