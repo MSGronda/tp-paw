@@ -18,7 +18,7 @@
             padding: 8px;
         }
         hr {
-            width: 30rem;
+            width: 40rem;
         }
         h1 {
             font-size: 36px;
@@ -28,8 +28,10 @@
             display: flex;
             flex-direction: row;
             justify-content: space-between;
+            margin-left: 2rem;
+            width: 100%;
         }
-        .editButton {
+        .edit-button {
             display: flex;
             justify-content: space-around;
         }
@@ -46,43 +48,55 @@
             display: none;
         }
 
-        .showMore{
+        .show-more{
             display: flex;
         }
-        .showMore::part(base) {
+        .show-more::part(base) {
             border: 0;
         }
-        .showMore::part(base):hover{
+        .show-more::part(base):hover{
             background: 0;
         }
-        .showMore::part(base):active {
+        .show-more::part(base):active {
             background: rgba(255, 99, 71, 0);
+        }
+        .profile-image {
+            height:5rem ;
+            width:5rem;
+        }
+        .header {
+            display: flex;
+            flex-direction: row;
         }
     </style>
 </head>
 <body>
 <jsp:include page="../components/navbar.jsp" />
 <main class="container-50">
-    <div class="title">
-        <c:if test="${user.id != loggedUser.id}">
-            <h1><spring:message code="profile.header" arguments="${user.username}" /></h1>
-        </c:if>
-        <c:if test="${user.id == loggedUser.id}" >
-            <h1><spring:message code="profile.loggeduser" /></h1>
-            <c:url value="/logout" var="logout"/>
-            <div class="logout-button">
-                <sl-button variant="primary" href="${logout}"><spring:message code="profile.logout"/></sl-button>
-            </div>
-        </c:if>
-    </div>
+    <div class="header">
+        <img class="profile-image" src="<c:url value="/profile/${user.id}"/>" alt="${pic}" >
+        <div class="title">
+            <c:if test="${user.id != loggedUser.id}">
+                <h1><spring:message code="profile.header" arguments="${user.username}" /></h1>
+            </c:if>
+            <c:if test="${user.id == loggedUser.id}" >
+                <h1><spring:message code="profile.loggeduser" /></h1>
+                <c:url value="/logout" var="logout"/>
+                <div class="logout-button">
+                    <sl-button variant="primary" href="${logout}"><spring:message code="profile.logout"/></sl-button>
+                </div>
+            </c:if>
+            <spring:message code="profile.picture.alt" var="pic" arguments="${user.username}"/>
+        </div>
+        </div>
     <c:if test="${user.id == loggedUser.id}">
         <sl-card class="card-basic">
             <spring:message code="profile.username" /> <c:out value="${user.username}" />
             <sl-divider></sl-divider>
             <spring:message code="profile.email" /> <c:out value="${user.email}" />
             <sl-divider></sl-divider>
-
-                <div class="editButton">
+                <div class="edit-button">
+                    <sl-button variant="primary" outline href=""><spring:message code="profile.update.picture"/></sl-button>
                     <sl-button variant="primary" outline href="<c:url value="/profile/editdata"/>"><spring:message code="profile.update.username"/></sl-button>
                     <sl-button variant="primary" outline href="<c:url value="/profile/editpassword"/>"><spring:message code="profile.update.password"/></sl-button>
                 </div>
@@ -107,7 +121,7 @@
                         <c:out value="${review.previewText}"/><span id="dots">...</span><span id="more"><c:out value="${review.showMoreText}"/></span>
 
                         <br />
-                        <sl-button size="small" class="showMore"><spring:message code="subject.showMore" />  <sl-icon name="chevron-down"></sl-icon></sl-button>
+                        <sl-button size="small" class="show-more"><spring:message code="subject.showMore" />  <sl-icon name="chevron-down"></sl-icon></sl-button>
                     </c:if>
                     <c:if test="${!review.requiresShowMore}">
                         <c:out value="${review.text}"/>

@@ -12,13 +12,18 @@ import ar.edu.itba.paw.webapp.form.EditUserDataForm;
 import ar.edu.itba.paw.webapp.form.EditUserPasswordForm;
 import ar.edu.itba.paw.webapp.form.UserForm;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
+import org.springframework.util.ResourceUtils;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
+
 import javax.validation.Valid;
+import java.io.*;
+import java.nio.file.Files;
 import java.sql.SQLException;
 import java.util.*;
 
@@ -56,12 +61,15 @@ public class UserController {
 
     @RequestMapping(value = "/register", method = { RequestMethod.POST })
     public ModelAndView register(@Valid @ModelAttribute ("UserForm") final UserForm userForm,
-                                 final BindingResult errors) {
+                                 final BindingResult errors) throws IOException {
         if(errors.hasErrors()){
             return registerForm(userForm);
         }
 
         User.UserBuilder user = new User.UserBuilder(userForm.getEmail(), userForm.getPassword(), userForm.getName());
+        File file = ResourceUtils.getFile("classpath:images/default_user.png");
+        byte[] imgData = Files.readAllBytes(file.toPath());
+        user.image(imgData).build();
         try {
             final User newUser = userService.create(user);
         }catch (UserEmailAlreadyTakenException e){
@@ -137,5 +145,12 @@ public class UserController {
     @ModelAttribute("degrees")
     public List<Degree> degrees(){
         return degreeService.getAll();
+    }
+
+    @RequestMapping(value = "/profile/{id:\\d+}", method = { RequestMethod.GET },
+        produces = {MediaType.IMAGE_JPEG_VALUE, MediaType.IMAGE_PNG_VALUE})
+    @ResponseBody
+    public byte[] profilePicture(@PathVariable long id)throws IOException {
+        return userService.findByIdWithImage(id).get().getImage();
     }
 }
