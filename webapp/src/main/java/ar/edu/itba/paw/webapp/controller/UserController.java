@@ -1,6 +1,7 @@
 package ar.edu.itba.paw.webapp.controller;
 
 import ar.edu.itba.paw.models.*;
+import ar.edu.itba.paw.services.DegreeService;
 import ar.edu.itba.paw.services.ReviewService;
 import ar.edu.itba.paw.services.UserService;
 import ar.edu.itba.paw.services.exceptions.OldPasswordDoesNotMatchException;
@@ -26,11 +27,14 @@ public class UserController {
     private final UserService userService;
     private final ReviewService reviewService;
 
+    private final DegreeService degreeService;
+
 
     @Autowired
-    public UserController(UserService userService, ReviewService reviewService) {
+    public UserController(UserService userService, ReviewService reviewService, DegreeService degreeService) {
         this.userService = userService;
         this.reviewService = reviewService;
+        this.degreeService = degreeService;
     }
 
     @RequestMapping("/profile/{id:\\d+}")
@@ -128,5 +132,10 @@ public class UserController {
         }
         final UniAuthUser userDetails = (UniAuthUser) maybeUniAuthUser ;
         return userService.getUserWithEmail(userDetails.getUsername()).orElse(null);
+    }
+
+    @ModelAttribute("degrees")
+    public List<Degree> degrees(){
+        return degreeService.getAll();
     }
 }

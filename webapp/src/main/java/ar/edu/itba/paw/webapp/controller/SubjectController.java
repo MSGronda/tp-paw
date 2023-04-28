@@ -93,4 +93,9 @@ public class SubjectController {
         final UniAuthUser userDetails = (UniAuthUser) maybeUniAuthUser ;
         return userService.getUserWithEmail(userDetails.getUsername()).orElse(null);
     }
+
+    @ModelAttribute("degrees")
+    public List<Degree> degrees(){
+        return degreeService.getAll();
+    }
 }
