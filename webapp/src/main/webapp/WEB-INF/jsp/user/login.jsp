@@ -26,7 +26,7 @@
 </head>
 <body>
 <jsp:include page="../components/navbar.jsp"/>
-<main class="container-50">
+<main class="container-50 pusher">
   <h1><spring:message code="navbar.login" /></h1>
   <c:if test="${error == true}">
     <p class="error"><spring:message code="userform.invalidcredentials" /></p>

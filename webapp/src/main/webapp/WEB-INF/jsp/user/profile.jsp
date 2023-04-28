@@ -6,7 +6,7 @@
 
 <html>
 <head>
-    <title><spring:message code="profile.profile"/></title>
+    <title><c:out value="${user.username}"/> - <spring:message code="profile.profile"/></title>
     <jsp:include page="../components/head_shared.jsp"/>
 
     <style>
@@ -68,13 +68,41 @@
             display: flex;
             flex-direction: row;
         }
+        .table-area{
+            width: 100%;
+            padding-bottom: 2rem;
+        }
+        .icon-area{
+            width: 80%;
+            display: flex;
+            justify-content: end;
+        }
+        sl-icon{
+            padding-top: 0.5rem;
+        }
+        .image-container{
+            position: relative;
+            display: inline-block;
+        }
+        .edit-picture{
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            padding-bottom: 0.65rem;
+        }
+        <jsp:include page="../components/table_style.jsp"/>
     </style>
 </head>
 <body>
 <jsp:include page="../components/navbar.jsp" />
-<main class="container-50">
+<main class="container-50 pusher">
     <div class="header">
-        <img class="profile-image" src="<c:url value="/profile/${user.id}"/>" alt="${pic}" >
+        <div class="image-container">
+            <img class="profile-image" src="<c:url value="/profile/${user.id}"/>" alt="${pic}" >
+            <sl-button class="edit-picture" variant="primary" size="small" outline  href="">
+                <sl-icon name="pen" label="Edit"></sl-icon>
+            </sl-button>
+        </div>
         <div class="title">
             <c:if test="${user.id != loggedUser.id}">
                 <h1><spring:message code="profile.header" arguments="${user.username}" /></h1>
@@ -91,19 +119,40 @@
         </div>
     <c:if test="${user.id == loggedUser.id}">
         <sl-card class="card-basic">
-            <spring:message code="profile.username" /> <c:out value="${user.username}" />
-            <sl-divider></sl-divider>
-            <spring:message code="profile.email" /> <c:out value="${user.email}" />
-            <sl-divider></sl-divider>
-                <div class="edit-button">
-                    <sl-button variant="primary" outline href=""><spring:message code="profile.update.picture"/></sl-button>
-                    <sl-button variant="primary" outline href="<c:url value="/profile/editdata"/>"><spring:message code="profile.update.username"/></sl-button>
-                    <sl-button variant="primary" outline href="<c:url value="/profile/editpassword"/>"><spring:message code="profile.update.password"/></sl-button>
-                </div>
+            <div class="table-area">
+                <table width="100% !important">
+                    <tbody>
+                    <tr>
+                        <th><spring:message code="profile.username" /></th>
+                        <td><c:out value="${user.username}" /></td>
+                        <td>
+                            <div class="icon-area">
+                                <sl-button variant="primary" size="small" outline  href="<c:url value="/profile/editdata"/>">
+                                    <sl-icon name="pen" label="Edit"></sl-icon>
+                                </sl-button>
+                            </div>
+
+                        </td>
+                    </tr>
+                    <tr>
+                        <th><spring:message code="profile.email" /></th>
+                        <td><c:out value="${user.email}" /></td>
+                        <td></td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="edit-button">
+<%--                <sl-button variant="primary" outline href=""><spring:message code="profile.update.picture"/></sl-button>--%>
+<%--                <sl-button variant="primary" outline href="<c:url value="/profile/editdata"/>"><spring:message code="profile.update.username"/></sl-button>--%>
+                <sl-button variant="primary" outline href="<c:url value="/profile/editpassword"/>"><spring:message code="profile.update.password"/></sl-button>
+            </div>
         </sl-card>
     </c:if>
 
     <br/>
+    <br>
     <hr />
     <h3><spring:message code="profile.reviews"/></h3>
     <c:if test="${empty reviews}">

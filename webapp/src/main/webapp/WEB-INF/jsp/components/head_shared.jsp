@@ -14,6 +14,10 @@
 
 <style>
     * {font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol'}
+    .pusher {
+        padding-bottom: 6rem;
+        padding-top: 3rem;
+    }
 </style>
 
 <script async type="module" src="https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.4.0/dist/shoelace.js"></script>

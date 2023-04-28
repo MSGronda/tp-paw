@@ -23,7 +23,7 @@
 </head>
 <body>
 <jsp:include page="../components/navbar.jsp"/>
-<main class="container-50">
+<main class="container-50 pusher">
     <h1><spring:message code="userform.header" /></h1>
     <c:url var="registerUrl" value="/register"/>
     <form:form modelAttribute="UserForm" action="${registerUrl}" method="post" >
@@ -58,5 +58,6 @@
         <sl-button type="submit" variant="success"><spring:message code="userform.submit"/></sl-button>
     </form:form>
 </main>
+<jsp:include page="../components/footer.jsp"/>
 </body>
 </html>
