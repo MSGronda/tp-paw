@@ -1,7 +1,9 @@
 package ar.edu.itba.paw.webapp.controller;
+import ar.edu.itba.paw.models.Degree;
 import ar.edu.itba.paw.models.Review;
 import ar.edu.itba.paw.models.Subject;
 import ar.edu.itba.paw.models.User;
+import ar.edu.itba.paw.services.DegreeService;
 import ar.edu.itba.paw.services.ReviewService;
 import ar.edu.itba.paw.services.SubjectService;
 import ar.edu.itba.paw.services.UserService;
@@ -21,6 +23,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import javax.validation.Valid;
 import java.sql.SQLException;
+import java.util.List;
 import java.util.Optional;
 
 @Controller
@@ -30,11 +33,14 @@ public class ReviewController {
     private final SubjectService subjectService;
     private final ReviewService reviewService;
 
+    private final DegreeService degreeService;
+
     @Autowired
-    public ReviewController(UserService userService, SubjectService subjectService, ReviewService reviewService) {
+    public ReviewController(UserService userService, SubjectService subjectService, ReviewService reviewService, DegreeService degreeService) {
         this.userService = userService;
         this.subjectService = subjectService;
         this.reviewService = reviewService;
+        this.degreeService = degreeService;
     }
 
     @RequestMapping(value = "/review/{subjectId:\\d+\\.\\d+}", method = RequestMethod.POST)
@@ -84,6 +90,11 @@ public class ReviewController {
         }
         final UniAuthUser userDetails = (UniAuthUser) maybeUniAuthUser ;
         return userService.getUserWithEmail(userDetails.getUsername()).orElse(null);
+    }
+
+    @ModelAttribute("degrees")
+    public List<Degree> degrees(){
+        return degreeService.getAll();
     }
 
 }

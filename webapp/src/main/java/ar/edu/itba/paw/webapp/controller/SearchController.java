@@ -1,13 +1,7 @@
 package ar.edu.itba.paw.webapp.controller;
 
-import ar.edu.itba.paw.models.Professor;
-import ar.edu.itba.paw.models.ReviewStatistic;
-import ar.edu.itba.paw.models.Subject;
-import ar.edu.itba.paw.models.User;
-import ar.edu.itba.paw.services.ProfessorService;
-import ar.edu.itba.paw.services.ReviewService;
-import ar.edu.itba.paw.services.SubjectService;
-import ar.edu.itba.paw.services.UserService;
+import ar.edu.itba.paw.models.*;
+import ar.edu.itba.paw.services.*;
 import ar.edu.itba.paw.webapp.auth.UniAuthUser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -30,12 +24,15 @@ public class SearchController {
 
     private final UserService userService;
 
+    private final DegreeService degreeService;
+
     @Autowired
-    public SearchController(SubjectService subjectService, ProfessorService professorService, ReviewService reviewService, UserService userService) {
+    public SearchController(SubjectService subjectService, ProfessorService professorService, ReviewService reviewService, UserService userService, DegreeService degreeService) {
         this.subjectService = subjectService;
         this.professorService = professorService;
         this.userService = userService;
         this.reviewService = reviewService;
+        this.degreeService = degreeService;
     }
 
     @RequestMapping("/search/{name}")
@@ -61,5 +58,10 @@ public class SearchController {
         }
         final UniAuthUser userDetails = (UniAuthUser) maybeUniAuthUser ;
         return userService.getUserWithEmail(userDetails.getUsername()).orElse(null);
+    }
+
+    @ModelAttribute("degrees")
+    public List<Degree> degrees(){
+        return degreeService.getAll();
     }
 }
