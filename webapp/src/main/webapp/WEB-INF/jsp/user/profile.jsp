@@ -90,6 +90,12 @@
             right: 0;
             padding-bottom: 0.65rem;
         }
+
+        .header-review-card{
+            display: flex;
+            justify-content: space-between;
+            font-size: 1.2rem;
+        }
         <jsp:include page="../components/table_style.jsp"/>
     </style>
 </head>
@@ -161,8 +167,12 @@
     <c:forEach var="review" items="${reviews}">
         <c:if test="${!review.anonymous || loggedUser.id == review.userId}">
             <sl-card class="card-header">
-                <div slot="header">
+                <div slot="header" class="header-review-card">
                     <c:out value="${review.subjectId}" /> - <c:out value="${review.subjectName}"/>
+
+                    <c:if test="${review.userId == loggedUser.id}">
+                        <sl-icon-button name="pencil-square" label="edit" href="<c:url value="/review/${review.subjectId}/edit/${review.id}"/>"></sl-icon-button>
+                    </c:if>
                 </div>
 
                 <div class="break-text">

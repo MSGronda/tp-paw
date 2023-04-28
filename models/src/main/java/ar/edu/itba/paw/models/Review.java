@@ -4,9 +4,9 @@ public class Review {
     private final long id;
     private final long userId;
     private final String subjectId;
-    private final Integer easy;
-    private final Integer timeDemanding;
-    private final String text;
+    private Integer easy;
+    private Integer timeDemanding;
+    private String text;
 
     private String subjectName = null;
 
@@ -14,7 +14,7 @@ public class Review {
     private Integer downvotes = 0;
 
     private String username = null;
-    private final Boolean anonymous;
+    private Boolean anonymous;
 
     private final String previewText;
 
@@ -142,6 +142,22 @@ public class Review {
 
     public String getShowMoreText() {
         return showMoreText;
+    }
+
+    public void setText(String text){
+        this.text = text;
+    }
+
+    public void setEasy(Integer easy){
+        this.easy = easy;
+    }
+
+    public void setTimeDemanding(Integer timeDemanding){
+        this.timeDemanding = timeDemanding;
+    }
+
+    public void setAnonymous(Boolean anonymous){
+        this.anonymous = anonymous;
     }
 }
 

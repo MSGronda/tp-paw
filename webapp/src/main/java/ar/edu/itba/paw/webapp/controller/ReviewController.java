@@ -9,9 +9,11 @@ import ar.edu.itba.paw.services.SubjectService;
 import ar.edu.itba.paw.services.UserService;
 import ar.edu.itba.paw.webapp.auth.UniAuthUser;
 import ar.edu.itba.paw.webapp.exceptions.DegreeNotFoundException;
+import ar.edu.itba.paw.webapp.exceptions.ReviewNotFoundException;
 import ar.edu.itba.paw.webapp.exceptions.SubjectNotFoundException;
 import ar.edu.itba.paw.webapp.form.ReviewForm;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.method.P;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
@@ -49,17 +51,6 @@ public class ReviewController {
         if(errors.hasErrors()){
             return reviewForm(subjectId, reviewForm);
         }
-
-//        Optional<User> maybeUser = userService.getUserWithEmail(reviewForm.getEmail());
-//        if(!maybeUser.isPresent() ){
-//            User.UserBuilder userBuilder = new User.UserBuilder(reviewForm.getEmail(), null,null);
-//            final User user = userService.create(userBuilder);
-//            final Review review = reviewService.create(reviewForm.getEasy(), reviewForm.getTimeDemanding(), reviewForm.getText(), subjectId, user.getId(), reviewForm.getEmail());
-//        }
-//        else{
-//            final Review review = reviewService.create(reviewForm.getEasy(), reviewForm.getTimeDemanding(), reviewForm.getText(), subjectId, maybeUser.get().getId(), reviewForm.getEmail());
-//        }
-
         Review review = reviewService.create(reviewForm.getAnonymous(),reviewForm.getEasy(), reviewForm.getTimeDemanding(), reviewForm.getText(), subjectId, loggedUser().getId());
 
         return new ModelAndView("redirect:/subject/" + subjectId);
@@ -80,6 +71,57 @@ public class ReviewController {
             return mav;
         }
         throw new SubjectNotFoundException();
+    }
+
+    @RequestMapping(value = "/review/{subjectId:\\d+\\.\\d+}/edit/{reviewId:\\d+}", method = RequestMethod.POST)
+    public ModelAndView editReviewPost(@PathVariable final String subjectId, @PathVariable final Long reviewId,
+                                       @ModelAttribute("ReviewForm") final ReviewForm reviewForm,
+                                       final BindingResult errors){
+        if(errors.hasErrors()){
+            return editReview(subjectId, reviewId, reviewForm);
+        }
+
+        Optional<Review> maybeReview = reviewService.findById(reviewId);
+
+        if(!maybeReview.isPresent()){
+            throw new ReviewNotFoundException();
+        }
+
+        Review review = maybeReview.get();
+
+        Integer easyBefore = review.getEasy();
+        Integer timeDemandingBefore = review.getTimeDemanding();
+
+        review.setText(reviewForm.getText());
+        review.setEasy(reviewForm.getEasy());
+        review.setTimeDemanding(reviewForm.getTimeDemanding());
+        review.setAnonymous(reviewForm.getAnonymous());
+
+        reviewService.update(review);
+        reviewService.updateReviewStatistics(easyBefore, timeDemandingBefore, review);
+
+        return new ModelAndView("redirect:/subject/" + subjectId);
+    }
+
+    @RequestMapping(value = "/review/{subjectId:\\d+\\.\\d+}/edit/{reviewId:\\d+}", method = RequestMethod.GET)
+    public ModelAndView editReview(@PathVariable final String subjectId, @PathVariable final Long reviewId,
+                                   @ModelAttribute("ReviewForm") final ReviewForm reviewForm){
+        ModelAndView mav = new ModelAndView("review/edit");
+
+        Optional<Subject> subject = subjectService.findById(subjectId);
+        if(!subject.isPresent()){
+            throw new SubjectNotFoundException();
+        }
+
+        Optional<Review> review = reviewService.findById(reviewId);
+
+        if(!review.isPresent() || loggedUser().getId() != review.get().getUserId()){
+            return new ModelAndView("redirect:/subject/" + subjectId);
+        }
+
+        mav.addObject("subject", subject.get());
+        mav.addObject("review", review.get());
+        return mav;
     }
 
     @ModelAttribute("loggedUser")

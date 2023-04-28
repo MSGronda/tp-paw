@@ -48,7 +48,7 @@ public class ReviewJdbcDao implements ReviewDao {
 
     @Override
     public Optional<Review> findById(Long id) {
-        return jdbcTemplate.query("SELECT * FROM " + TABLE_REVIEWS + " WHERE id = ?",ROW_MAPPER,id)
+        return jdbcTemplate.query("SELECT * FROM " + TABLE_REVIEWS + " WHERE id = ?",ROW_MAPPER, id)
                 .stream().findFirst();
     }
 
@@ -93,6 +93,49 @@ public class ReviewJdbcDao implements ReviewDao {
 
     @Override
     public void update(Review review) {
+        jdbcTemplate.update("UPDATE " + TABLE_REVIEWS + " SET revtext = ?, " +
+                "easy = ?, timedemanding = ?, useranonymous = ? WHERE id = ?",
+                review.getText(), review.getEasy(), review.getTimeDemanding(), review.getAnonymous(), review.getId());
+    }
+
+    @Override
+    public void updateReviewStatistics( Integer easyBefore, Integer timeDemandingBefore, Review review){
+        Optional<ReviewStatistic> stat = getReviewStatBySubject(review.getSubjectId());
+        int easy = 0, medium = 0, hard = 0, timeDemanding =0 , notTimeDemanding = 0;
+        switch (easyBefore){
+            case 0: easy--;break;
+            case 1: medium--;break;
+            case 2: hard--;break;
+        }
+        switch (review.getEasy()){
+            case 0: easy++;break;
+            case 1: medium++;break;
+            case 2: hard++;break;
+        }
+        switch (timeDemandingBefore){
+            case 0: notTimeDemanding--;break;
+            case 1: timeDemanding--;break;
+        }
+        switch (review.getTimeDemanding()){
+            case 0: notTimeDemanding++;break;
+            case 1: timeDemanding++;break;
+        }
+
+        if(stat.isPresent()){
+            ReviewStatistic reviewStat= stat.get();
+            jdbcTemplateReviewStatistic.update("UPDATE " + TABLE_REVIEW_STAT +
+                            " SET reviewCount = ?, easyCount = ?, mediumCount = ?, hardCount = ?, " +
+                            "notTimeDemandingCount = ?, timeDemandingCount = ? WHERE idSub = ?",
+                    reviewStat.getReviewCount() +  1,
+                    reviewStat.getEasyCount() + easy,
+                    reviewStat.getMediumCount() + medium,
+                    reviewStat.getHardCount() + hard,
+                    reviewStat.getNotTimeDemandingCount() + notTimeDemanding,
+                    reviewStat.getTimeDemandingCount() + timeDemanding,
+                    reviewStat.getIdSub()
+            );
+
+        }
 
     }
 

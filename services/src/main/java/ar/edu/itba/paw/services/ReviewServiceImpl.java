@@ -123,6 +123,16 @@ public class ReviewServiceImpl implements ReviewService {
         return reviewDao.didUserReviewDB(subjectId, userId);
     }
 
+    @Override
+    public void update(Review review){
+        reviewDao.update(review);
+    }
+
+    @Override
+    public void updateReviewStatistics( Integer easyBefore, Integer timeDemandingBefore, Review review){
+        reviewDao.updateReviewStatistics(easyBefore, timeDemandingBefore, review);
+    }
+
 //    @Override
 //    public List<Review> getCompleteReviewsBySubjectId(String idSub) {
 //        return reviewDao.getCompleteReviewsBySubjectId(idSub);

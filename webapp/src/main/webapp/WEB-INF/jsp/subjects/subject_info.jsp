@@ -110,6 +110,11 @@
           justify-content: center;
       }
       <jsp:include page="../components/table_style.jsp"/>
+      .header{
+          display: flex;
+          justify-content: space-around;
+          font-size: 1.2rem;
+      }
   </style>
 
 </head>
@@ -341,7 +346,7 @@
     </c:if>
     <c:forEach  var="review" items="${reviews}">
       <sl-card class="card-header">
-        <div slot="header">
+        <div slot="header" class="header">
           <c:choose>
             <c:when test="${review.anonymous}">
               <spring:message code="form.anonymous"/>
@@ -351,6 +356,9 @@
             </c:when>
           </c:choose>
 
+            <c:if test="${review.userId == loggedUser.id}">
+                <sl-icon-button name="pencil-square" label="edit" href="<c:url value="/review/${subject.id}/edit/${review.id}"/>"></sl-icon-button>
+            </c:if>
         </div>
 
         <div class="break-text">

@@ -30,4 +30,8 @@ public interface ReviewService extends BaseService<Long, Review> {
     Boolean didUserReview(List<Review> reviews, Long userId);
 
     Boolean didUserReviewDB(String subjectId, Long userId);
+
+    void update(Review review);
+
+    void updateReviewStatistics( Integer easyBefore, Integer timeDemandingBefore, Review review);
 }
