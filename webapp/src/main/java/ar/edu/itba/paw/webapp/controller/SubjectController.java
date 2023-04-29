@@ -66,7 +66,7 @@ public class SubjectController {
 
         final List<Review> reviews = reviewService.getAllSubjectReviewsWithUsername(id,param);
 
-        final Boolean didReview = reviewService.didUserReview(reviews, loggedUser().getId());
+        final Boolean didReview = reviewService.didUserReview(reviews, loggedUser());
 
         final Map<String,String> prereqNames = subjectService.findPrerequisitesName(id);
 

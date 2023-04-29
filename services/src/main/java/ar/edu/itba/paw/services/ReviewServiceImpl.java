@@ -3,6 +3,7 @@ package ar.edu.itba.paw.services;
 import ar.edu.itba.paw.models.Review;
 import ar.edu.itba.paw.models.ReviewStatistic;
 import ar.edu.itba.paw.models.Subject;
+import ar.edu.itba.paw.models.User;
 import ar.edu.itba.paw.persistence.ReviewDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -110,7 +111,10 @@ public class ReviewServiceImpl implements ReviewService {
     }
 
     @Override
-    public Boolean didUserReview(List<Review> reviews, Long userId){
+    public Boolean didUserReview(List<Review> reviews, User user){
+        if( user == null)
+            return false;
+        Long userId = user.getId();
         for( Review review : reviews){
             if( userId.equals(review.getUserId()))
                 return true;

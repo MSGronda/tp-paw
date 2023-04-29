@@ -3,6 +3,7 @@ package ar.edu.itba.paw.services;
 import ar.edu.itba.paw.models.Review;
 import ar.edu.itba.paw.models.ReviewStatistic;
 import ar.edu.itba.paw.models.Subject;
+import ar.edu.itba.paw.models.User;
 import com.sun.org.apache.xpath.internal.operations.Bool;
 
 import java.sql.SQLException;
@@ -27,7 +28,7 @@ public interface ReviewService extends BaseService<Long, Review> {
     void voteReview(Long idUser, Long idReview, int vote);
     Review create(Boolean anonymous,Integer easy, Integer timeDemanding, String text,String subjectId,long userId ) throws SQLException;
 
-    Boolean didUserReview(List<Review> reviews, Long userId);
+    Boolean didUserReview(List<Review> reviews, User user);
 
     Boolean didUserReviewDB(String subjectId, Long userId);
 

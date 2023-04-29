@@ -48,18 +48,6 @@
             display: none;
         }
 
-        .show-more{
-            display: flex;
-        }
-        .show-more::part(base) {
-            border: 0;
-        }
-        .show-more::part(base):hover{
-            background: 0;
-        }
-        .show-more::part(base):active {
-            background: rgba(255, 99, 71, 0);
-        }
         .profile-image {
             height:5rem ;
             width:5rem;
@@ -90,12 +78,6 @@
             right: 0;
             padding-bottom: 0.65rem;
         }
-
-        .header-review-card{
-            display: flex;
-            justify-content: space-between;
-            font-size: 1.2rem;
-        }
         <jsp:include page="../components/table_style.jsp"/>
     </style>
 </head>
@@ -104,8 +86,9 @@
 <main class="container-50 pusher">
     <div class="header">
         <div class="image-container">
+            <spring:message code="profile.picture.alt" var="pic" arguments="${user.username}"/>
             <img class="profile-image" src="<c:url value="/profile/${user.id}"/>" alt="${pic}" >
-            <sl-button class="edit-picture" variant="primary" size="small" outline  href="">
+            <sl-button class="edit-picture" variant="primary" size="small" outline  href="<c:out value="/profile/editprofilepicture"/>">
                 <sl-icon name="pen" label="Edit"></sl-icon>
             </sl-button>
         </div>
