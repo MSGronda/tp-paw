@@ -47,7 +47,6 @@
           align-items: center;
           justify-content: space-between;
       }
-
       .card-header h3 {
           margin: 0;
       }
@@ -56,6 +55,7 @@
           overflow-wrap: break-word;
           margin-bottom: 2%;
       }
+
 
       a {
           color: #0369a1;
@@ -119,15 +119,19 @@
       .breadcrumb-area{
           padding-top: 1rem;
       }
-      .vote-button{
 
+      .vote-button{
+          padding: 0;
       }
       sl-button.vote-button::part(base){
           border-color: white;
       }
       .vote-button-icon{
-          font-size: 30px;
+          font-size: 20px;
           padding-top: 0.3rem;
+      }
+      .voting-row{
+          padding-top: 1rem;
       }
   </style>
 
@@ -330,7 +334,7 @@
       <h3><spring:message code="subject.noreviews"/></h3>
     </c:if>
     <c:forEach  var="review" items="${reviews}">
-      <sl-card class="card-header">
+      <sl-card class=" review-card card-header">
         <div slot="header">
           <c:choose>
             <c:when test="${review.anonymous}">
@@ -369,27 +373,46 @@
           </c:choose>
         </div>
 
-          <div slot="footer">
-
-
-              <form id="form-${review.id}">
+          <div slot="footer" >
+              <form style="margin: 0" id="form-${review.id}">
                   <input type="hidden" name="reviewId" id="reviewId" value="${review.id}">
 
-                  <input type="hidden" name="vote" id="vote" value="">
+                  <input type="hidden" name="vote" id="vote" value="${userVotes.getOrDefault(review.id, 0)}">
 
-                  <sl-button class="vote-button" variant="default" size="medium" circle
+                  <sl-button class="vote-button" variant="default" size="small" circle
                             data-form-id="form-${review.id}" data-form-value="1">
-                      <sl-icon id="like-icon-form-${review.id}" class="vote-button-icon" name="hand-thumbs-up" label="Upvote"></sl-icon>
+                      <sl-icon id="like-icon-form-${review.id}" class="vote-button-icon" name="hand-thumbs-up" label="Upvote"
+                              <c:choose>
+                                  <c:when test="${ userVotes[review.id] == 1}">
+                                      style="color: #f5a623;"
+                                  </c:when>
+                                  <c:otherwise>
+                                      style="color: #4a90e2;"
+                                  </c:otherwise>
+                              </c:choose>
+                      ></sl-icon>
                   </sl-button>
 
-                  <sl-button class="vote-button" variant="default" size="medium" circle
+                  <span id="like-number-form-${review.id}"><c:out value="${review.upvotes}"/></span>
+
+                  <sl-button class="vote-button" variant="default" size="small" circle
                              data-form-id="form-${review.id}" data-form-value="-1">
-                      <sl-icon id="dislike-icon-form-${review.id}" class="vote-button-icon" name="hand-thumbs-down" label="Downvote"></sl-icon>
+                      <sl-icon id="dislike-icon-form-${review.id}" class="vote-button-icon" name="hand-thumbs-down" label="Downvote"
+                              <c:choose>
+                                  <c:when test="${ userVotes[review.id] == -1}">
+                                      style="color: #f5a623;"
+                                  </c:when>
+                                  <c:otherwise>
+                                      style="color: #4a90e2;"
+                                  </c:otherwise>
+                              </c:choose>
+                      ></sl-icon>
                   </sl-button>
+
+                  <span id="dislike-number-form-${review.id}"><c:out value="${review.downvotes}"/></span>
               </form>
 
           </div>
-
       </sl-card>
     </c:forEach>
   </div>
@@ -399,36 +422,55 @@
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
 <script>
-    function submitForm(formId) {
+    function updateCounters(formId, changeLikes, changeDislikes){
+        const likehtml = $('#like-number-'+formId)
+        const like_string = likehtml.text()
+        likehtml.text(parseInt(like_string) + changeLikes)
+
+        const dislikehtml = $('#dislike-number-'+formId)
+        const dislike_string = dislikehtml.text()
+        dislikehtml.text(parseInt(dislike_string) + changeDislikes)
+    }
+
+    function submitForm(formId, prevVote ,newVote) {
+
+        $('#' + formId + ' input[name=vote]').val(newVote)
+
         $.ajax({
             url: '${pageContext.request.contextPath}/voteReview',
             type: 'POST',
             data: $('#'+formId).serialize(),
             success: function(response) {
-                const vote = $('#' + formId + ' input[name=vote]').val();
-                console.log(vote)
-                if(vote === '1'){
+
+                const newVoteChange = 1, counterVoteChange = prevVote === 0 ? 0 : -1
+
+                if(newVote === 1){
                     $('#like-icon-'+formId).css("color","#f5a623")
                     $('#dislike-icon-'+formId).css("color","#4a90e2")
+                    updateCounters(formId,newVoteChange,counterVoteChange)
                 }
                 else{
                     $('#like-icon-'+formId).css("color","#4a90e2")
                     $('#dislike-icon-'+formId).css("color","#f5a623")
+
+                    updateCounters(formId,counterVoteChange,newVoteChange)
                 }
             },
             error: function(xhr, status, error) {
-                // handle error response here
+
             }
         });
     }
     $(document).ready(function() {
         $('.vote-button').click(function() {
             const formId = $(this).data('form-id');
-            const vote = $(this).data('form-value');
+            const newVote = $(this).data('form-value');
 
-            console.log("id: "+formId+" vote: "+vote)
-            $('#' + formId + ' input[name=vote]').val(vote);
-            submitForm(formId);
+            const prevVote = parseInt($('#' + formId + ' input[name=vote]').val())
+
+            if(newVote !== prevVote){
+                submitForm(formId, prevVote ,newVote);
+            }
         })
     });
 </script>

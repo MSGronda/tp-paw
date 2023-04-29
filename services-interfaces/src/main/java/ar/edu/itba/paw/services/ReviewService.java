@@ -27,4 +27,7 @@ public interface ReviewService extends BaseService<Long, Review> {
 
 
     Integer voteReview(Long idUser, Long idReview, int vote);
+    Map<Long,Integer> userReviewVoteByIdUser(Long idUser);
+    Map<Long,Integer> userReviewVoteByIdSubAndIdUser(String idSub, Long idUser);
+
 }

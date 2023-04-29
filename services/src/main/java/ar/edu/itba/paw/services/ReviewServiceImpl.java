@@ -14,6 +14,9 @@ import java.util.*;
 public class ReviewServiceImpl implements ReviewService {
     private final ReviewDao reviewDao;
 
+    private static final Integer VoteUpdate = 1;
+    private static final Integer VoteCreated = 2;
+
     @Autowired
     public ReviewServiceImpl(ReviewDao reviewDao) {
         this.reviewDao = reviewDao;
@@ -84,15 +87,28 @@ public class ReviewServiceImpl implements ReviewService {
         return reviewDao.create(anonymous,easy, timeDemanding, text, subjectId, userId);
     }
 
+
+    // vote created: 1, -1 vote updated:
     @Override
     public Integer voteReview(Long idUser, Long idReview, int vote) {
 
         // only one vote per user on a certain review
 
-        if(reviewDao.userVotedOnReview(idUser,idReview))
-            return reviewDao.updateVoteOnReview(idUser, idReview, vote);
+        if(reviewDao.userVotedOnReview(idUser,idReview)){
+            reviewDao.updateVoteOnReview(idUser, idReview, vote);
+            return VoteUpdate;
+        }
 
-        return reviewDao.voteReview(idUser,idReview,vote);
+        reviewDao.voteReview(idUser,idReview,vote);
+        return VoteCreated;
+    }
+    @Override
+    public Map<Long,Integer> userReviewVoteByIdUser(Long idUser){
+        return reviewDao.userReviewVoteByIdUser(idUser);
+    }
+    @Override
+    public Map<Long,Integer> userReviewVoteByIdSubAndIdUser(String idSub, Long idUser){
+        return reviewDao.userReviewVoteByIdSubAndIdUser(idSub,idUser);
     }
 
 //    @Override

@@ -73,6 +73,14 @@ public class SubjectController {
 
         final List<SubjectClass> classes = subjectClassService.getBySubId(id);
 
+        long userId;
+        if(loggedUser() == null)
+            userId = -1;
+        else
+            userId = loggedUser().getId();
+
+        final Map<Long, Integer> userVotes = reviewService.userReviewVoteByIdSubAndIdUser(id, userId);
+
         ModelAndView mav = new ModelAndView("subjects/subject_info");
         mav.addObject("reviews", reviews);
         mav.addObject("professors", professors);
@@ -82,6 +90,7 @@ public class SubjectController {
         mav.addObject("prereqNames", prereqNames.entrySet());
         mav.addObject("difficulty", stats.getDifficulty());
         mav.addObject("classes", classes);
+        mav.addObject("userVotes", userVotes);
         return mav;
     }
     @ModelAttribute("loggedUser")
