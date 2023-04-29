@@ -77,7 +77,12 @@ public class ReviewController {
         if( loggedUser() == null){
             return "invalid parameters"; // we do not give any information on the inner workings
         }
-        int resp = reviewService.voteReview(loggedUser().getId(), vote.getReviewId(),vote.getVote());
+        int resp, voteValue = vote.getVote();
+        if(voteValue != 0)
+            resp = reviewService.voteReview(loggedUser().getId(), vote.getReviewId(),voteValue);
+        else
+            resp = reviewService.deleteReviewVote(loggedUser().getId(), vote.getReviewId());
+
         if(resp != 1){
             return "invalid parameters"; // we do not give any information on the inner workings
         }

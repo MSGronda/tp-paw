@@ -422,6 +422,9 @@
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
 <script>
+
+    // perdon
+
     function updateCounters(formId, changeLikes, changeDislikes){
         const likehtml = $('#like-number-'+formId)
         const like_string = likehtml.text()
@@ -442,19 +445,40 @@
             data: $('#'+formId).serialize(),
             success: function(response) {
 
-                const newVoteChange = 1, counterVoteChange = prevVote === 0 ? 0 : -1
+                // const likeChage = 1, dislikeChange = prevVote === 0 ? 0 : -1
+                var likeChange, dislikeChange
 
-                if(newVote === 1){
-                    $('#like-icon-'+formId).css("color","#f5a623")
-                    $('#dislike-icon-'+formId).css("color","#4a90e2")
-                    updateCounters(formId,newVoteChange,counterVoteChange)
-                }
-                else{
-                    $('#like-icon-'+formId).css("color","#4a90e2")
-                    $('#dislike-icon-'+formId).css("color","#f5a623")
 
-                    updateCounters(formId,counterVoteChange,newVoteChange)
+                const like = $('#like-icon-'+formId)
+                const dislike = $('#dislike-icon-'+formId)
+                switch (newVote) {
+                    case 0:
+                        like.css("color","#4a90e2")
+                        dislike.css("color","#4a90e2")
+
+                        if(prevVote === 1)
+                            updateCounters(formId,-1,0);
+                        else
+                            updateCounters(formId,0,-1);
+                        break;
+                    case 1:
+                        like.css("color","#f5a623")
+                        dislike.css("color","#4a90e2")
+                        if(prevVote === 0)
+                            updateCounters(formId,1,0)
+                        else
+                            updateCounters(formId,1,-1)
+                        break;
+                    case -1:
+                        like.css("color","#4a90e2")
+                        dislike.css("color","#f5a623")
+                        if(prevVote === 0)
+                            updateCounters(formId,0,1)
+                        else
+                            updateCounters(formId,-1,1)
+                        break;
                 }
+
             },
             error: function(xhr, status, error) {
 
@@ -468,9 +492,10 @@
 
             const prevVote = parseInt($('#' + formId + ' input[name=vote]').val())
 
-            if(newVote !== prevVote){
+            if(newVote !== prevVote)
                 submitForm(formId, prevVote ,newVote);
-            }
+            else
+                submitForm(formId, prevVote ,0);
         })
     });
 </script>

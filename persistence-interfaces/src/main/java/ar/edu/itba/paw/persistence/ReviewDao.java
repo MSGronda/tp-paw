@@ -11,6 +11,7 @@ import java.util.Optional;
 public interface ReviewDao extends RWDao<Long,Review> {
     Review create(final Boolean anonymous,final Integer easy, final Integer timeDemanding, final String text, final String subjectId, final long userId ) throws SQLException;
 
+    Integer deleteReviewVote(Long idUser, Long idReview);
     Integer voteReview(Long idUser, Long idReview, int vote);
     Integer updateVoteOnReview(Long idUser, Long idReview, int vote);
     boolean userVotedOnReview(Long idUser, Long idReview);

@@ -111,6 +111,11 @@ public class ReviewServiceImpl implements ReviewService {
         return reviewDao.userReviewVoteByIdSubAndIdUser(idSub,idUser);
     }
 
+    @Override
+    public Integer deleteReviewVote(Long idUser, Long idReview){
+        return reviewDao.deleteReviewVote(idUser,idReview);
+    }
+
 //    @Override
 //    public List<Review> getCompleteReviewsBySubjectId(String idSub) {
 //        return reviewDao.getCompleteReviewsBySubjectId(idSub);

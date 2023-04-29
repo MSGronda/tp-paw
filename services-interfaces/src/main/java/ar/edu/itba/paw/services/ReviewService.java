@@ -25,7 +25,7 @@ public interface ReviewService extends BaseService<Long, Review> {
     List<ReviewStatistic> getReviewStatBySubjectIdList(List<String> idSubs);
     Review create(Boolean anonymous,Integer easy, Integer timeDemanding, String text,String subjectId,long userId ) throws SQLException;
 
-
+    Integer deleteReviewVote(Long idUser, Long idReview);
     Integer voteReview(Long idUser, Long idReview, int vote);
     Map<Long,Integer> userReviewVoteByIdUser(Long idUser);
     Map<Long,Integer> userReviewVoteByIdSubAndIdUser(String idSub, Long idUser);
