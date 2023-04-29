@@ -122,6 +122,9 @@
       .vote-button{
 
       }
+      sl-button.vote-button::part(base){
+          border-color: white;
+      }
       .vote-button-icon{
           font-size: 30px;
           padding-top: 0.3rem;
@@ -367,27 +370,68 @@
         </div>
 
           <div slot="footer">
-              <form:form method="POST" action="/voteReview/${review.id}" >
 
-<%--                  <form:hidden path="vote"/>--%>
+
+              <form id="form-${review.id}">
+                  <input type="hidden" name="reviewId" id="reviewId" value="${review.id}">
+
+                  <input type="hidden" name="vote" id="vote" value="">
 
                   <sl-button class="vote-button" variant="default" size="medium" circle
-                             type="submit" value="1">
-                      <sl-icon class="vote-button-icon" name="hand-thumbs-up" label="Upvote"></sl-icon>
+                            data-form-id="form-${review.id}" data-form-value="1">
+                      <sl-icon id="like-icon-form-${review.id}" class="vote-button-icon" name="hand-thumbs-up" label="Upvote"></sl-icon>
                   </sl-button>
 
                   <sl-button class="vote-button" variant="default" size="medium" circle
-                             type="submit" value="-1">
-                      <sl-icon class="vote-button-icon" name="hand-thumbs-down" label="Downvote"></sl-icon>
+                             data-form-id="form-${review.id}" data-form-value="-1">
+                      <sl-icon id="dislike-icon-form-${review.id}" class="vote-button-icon" name="hand-thumbs-down" label="Downvote"></sl-icon>
                   </sl-button>
-              </form:form>
+              </form>
+
           </div>
+
       </sl-card>
     </c:forEach>
   </div>
 </main>
 <jsp:include page="../components/footer.jsp"/>
 <jsp:include page="../components/body_scripts.jsp"/>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+<script>
+    function submitForm(formId) {
+        $.ajax({
+            url: '${pageContext.request.contextPath}/voteReview',
+            type: 'POST',
+            data: $('#'+formId).serialize(),
+            success: function(response) {
+                const vote = $('#' + formId + ' input[name=vote]').val();
+                console.log(vote)
+                if(vote === '1'){
+                    $('#like-icon-'+formId).css("color","#f5a623")
+                    $('#dislike-icon-'+formId).css("color","#4a90e2")
+                }
+                else{
+                    $('#like-icon-'+formId).css("color","#4a90e2")
+                    $('#dislike-icon-'+formId).css("color","#f5a623")
+                }
+            },
+            error: function(xhr, status, error) {
+                // handle error response here
+            }
+        });
+    }
+    $(document).ready(function() {
+        $('.vote-button').click(function() {
+            const formId = $(this).data('form-id');
+            const vote = $(this).data('form-value');
+
+            console.log("id: "+formId+" vote: "+vote)
+            $('#' + formId + ' input[name=vote]').val(vote);
+            submitForm(formId);
+        })
+    });
+</script>
 
 </body>
 </html>

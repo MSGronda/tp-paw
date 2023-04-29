@@ -14,10 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.validation.Valid;
@@ -73,13 +70,17 @@ public class ReviewController {
         throw new SubjectNotFoundException();
     }
 
-    @RequestMapping(value = "/voteReview/{reviewId:\\d+}", method = RequestMethod.POST)
-    public String voteReview(@PathVariable final Long reviewId,@Valid @ModelAttribute("ReviewVoteForm") final ReviewVoteForm vote,
-                                   final BindingResult errors) {
-        if(errors.hasErrors() || loggedUser() == null){
-            return "invalid";
+    @RequestMapping(value = "/voteReview", method = RequestMethod.POST)
+    @ResponseBody
+    public String voteReview(@Valid @ModelAttribute("ReviewVoteForm") final ReviewVoteForm vote
+    ) {
+        if( loggedUser() == null){
+            return "invalid parameters"; // we do not give any information on the inner workings
         }
-        reviewService.voteReview(loggedUser().getId(),reviewId,vote.getVote());
+        int resp = reviewService.voteReview(loggedUser().getId(), vote.getReviewId(),vote.getVote());
+        if(resp != 1){
+            return "invalid parameters"; // we do not give any information on the inner workings
+        }
         return "voted";
     }
 

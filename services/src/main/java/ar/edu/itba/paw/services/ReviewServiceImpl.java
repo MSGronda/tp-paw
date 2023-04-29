@@ -85,14 +85,14 @@ public class ReviewServiceImpl implements ReviewService {
     }
 
     @Override
-    public void voteReview(Long idUser, Long idReview, int vote) {
+    public Integer voteReview(Long idUser, Long idReview, int vote) {
 
         // only one vote per user on a certain review
 
         if(reviewDao.userVotedOnReview(idUser,idReview))
-            reviewDao.updateVoteOnReview(idUser, idReview, vote);
-        else
-            reviewDao.voteReview(idUser,idReview,vote);
+            return reviewDao.updateVoteOnReview(idUser, idReview, vote);
+
+        return reviewDao.voteReview(idUser,idReview,vote);
     }
 
 //    @Override

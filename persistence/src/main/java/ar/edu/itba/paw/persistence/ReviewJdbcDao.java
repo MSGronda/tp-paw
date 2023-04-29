@@ -250,18 +250,19 @@ public class ReviewJdbcDao implements ReviewDao {
                 ReviewJdbcDao::rowMapperReviewVote,idUser,idReview).stream().findFirst().isPresent();
     }
     @Override
-    public void voteReview(Long idUser, Long idReview, int vote){
+    public Integer voteReview(Long idUser, Long idReview, int vote){
         Map<String, Object> data = new HashMap<>();
 
         data.put("idUser", idUser);
         data.put("idReview", idReview);
         data.put("vote", vote);
 
-        jdbcReviewVoteInsert.execute(data);
+        return jdbcReviewVoteInsert.execute(data);
     }
+
     @Override
-    public void updateVoteOnReview(Long idUser, Long idReview, int vote){
-        jdbcTemplate.update("UPDATE " + TABLE_REVIEW_VOTE + " SET vote = ? WHERE idreview = ? AND iduser = ?",
+    public Integer updateVoteOnReview(Long idUser, Long idReview, int vote){
+        return jdbcTemplate.update("UPDATE " + TABLE_REVIEW_VOTE + " SET vote = ? WHERE idreview = ? AND iduser = ?",
                 vote,idReview,idUser);
     }
     private static Integer rowMapperReviewVote(ResultSet rs, int rowNum) throws SQLException{

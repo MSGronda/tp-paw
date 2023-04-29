@@ -23,6 +23,8 @@ public interface ReviewService extends BaseService<Long, Review> {
     Map<String, ReviewStatistic> getReviewStatMapBySubjectList(List<Subject> subjects);
     Map<String, ReviewStatistic> getReviewStatMapBySubjectIdList(List<String> idSubs);
     List<ReviewStatistic> getReviewStatBySubjectIdList(List<String> idSubs);
-    void voteReview(Long idUser, Long idReview, int vote);
     Review create(Boolean anonymous,Integer easy, Integer timeDemanding, String text,String subjectId,long userId ) throws SQLException;
+
+
+    Integer voteReview(Long idUser, Long idReview, int vote);
 }
