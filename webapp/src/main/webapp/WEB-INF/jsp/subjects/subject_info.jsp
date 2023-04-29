@@ -14,6 +14,19 @@
           display: flex;
           flex-direction: row;
           justify-items:center;
+          align-items: center;
+      }
+      #diffuclty-down{
+          font-size: 0.8rem;
+      }
+      #diffuclty-up{
+          font-size: 0.8rem;
+      }
+      #timedemand-down{
+          font-size: 0.8rem;
+      }
+      #timedemand-up{
+          font-size: 0.8rem;
       }
 
       .info {
