@@ -8,6 +8,7 @@ import ar.edu.itba.paw.services.exceptions.OldPasswordDoesNotMatchException;
 import ar.edu.itba.paw.services.exceptions.UserEmailAlreadyTakenException;
 import ar.edu.itba.paw.webapp.auth.UniAuthUser;
 import ar.edu.itba.paw.webapp.exceptions.UserNotFoundException;
+import ar.edu.itba.paw.webapp.form.EditProfilePictureForm;
 import ar.edu.itba.paw.webapp.form.EditUserDataForm;
 import ar.edu.itba.paw.webapp.form.EditUserPasswordForm;
 import ar.edu.itba.paw.webapp.form.UserForm;
@@ -18,7 +19,10 @@ import org.springframework.stereotype.Controller;
 import org.springframework.util.ResourceUtils;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.commons.CommonsMultipartFile;
 import org.springframework.web.servlet.ModelAndView;
+
 
 
 import javax.validation.Valid;
@@ -152,5 +156,22 @@ public class UserController {
     @ResponseBody
     public byte[] profilePicture(@PathVariable long id)throws IOException {
         return userService.findByIdWithImage(id).get().getImage();
+    }
+
+    @RequestMapping(value = "/profile/editprofilepicture", method = { RequestMethod.GET })
+    public ModelAndView editProfilePictureForm(@ModelAttribute ("editProfilePictureForm") final EditProfilePictureForm editProfilePictureForm) {
+        return new ModelAndView("user/editProfilePicture");
+    }
+    @RequestMapping(value="/profile/editprofilepicture", method = {RequestMethod.POST})
+    public ModelAndView editProfilePicture(@ModelAttribute("editProfilePictureForm") final EditProfilePictureForm editProfilePictureForm,
+                                           //CommonsMultipartFile profilePicture,
+                                           final BindingResult errors) throws SQLException, IOException {
+        if(errors.hasErrors()) {
+            return editProfilePictureForm(editProfilePictureForm);
+        }
+        User user = loggedUser();
+
+        userService.updateProfilePicture(user.getId(), editProfilePictureForm.getProfilePicture().getBytes());
+        return new ModelAndView("redirect:/profile/" + user.getId());
     }
 }

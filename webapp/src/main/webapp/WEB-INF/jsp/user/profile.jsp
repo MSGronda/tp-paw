@@ -120,7 +120,6 @@
                     <sl-button variant="primary" href="${logout}"><spring:message code="profile.logout"/></sl-button>
                 </div>
             </c:if>
-            <spring:message code="profile.picture.alt" var="pic" arguments="${user.username}"/>
         </div>
         </div>
     <c:if test="${user.id == loggedUser.id}">
