@@ -4,6 +4,8 @@ import ar.edu.itba.paw.models.Professor;
 import ar.edu.itba.paw.models.Review;
 import ar.edu.itba.paw.models.ReviewStatistic;
 import ar.edu.itba.paw.models.SubjectClass;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.ResultSetExtractor;
@@ -34,6 +36,8 @@ public class ReviewJdbcDao implements ReviewDao {
     private static final String TABLE_USERS = "users";
 
     private static final String TABLE_REVIEW_STAT = "subjectReviewStatistics";
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(ReviewJdbcDao.class);
 
     @Autowired
     public ReviewJdbcDao(final DataSource ds) {
@@ -81,6 +85,9 @@ public class ReviewJdbcDao implements ReviewDao {
 
         Number key = jdbcInsertReview.executeAndReturnKey(data);
         Review review = new Review(key.longValue(), userId,  subjectId, easy, timeDemanding, text, anonymous);
+
+        LOGGER.info("Review created with id {} by user {} with anonymous visibility {}", review.getId(), review.getUserId(), review.getAnonymous());
+
         updateStatistics(review);
         return review;
 
@@ -88,6 +95,8 @@ public class ReviewJdbcDao implements ReviewDao {
 
     @Override
     public void delete(Long id) {
+        LOGGER.info("Review deleted with id {}", id);
+
         jdbcTemplate.update("DELETE FROM " + TABLE_REVIEWS + " WHERE id = ?", id);
     }
 
@@ -106,6 +115,8 @@ public class ReviewJdbcDao implements ReviewDao {
         }
 
         if(stat.isPresent()){
+            LOGGER.info("ReviewStatistics deleted from review with id {} by user {} with anonymous visibility {}", review.getId(), review.getUserId(), review.getAnonymous());
+
             ReviewStatistic reviewStat= stat.get();
             jdbcTemplateReviewStatistic.update("UPDATE " + TABLE_REVIEW_STAT +
                             " SET reviewCount = ?, easyCount = ?, mediumCount = ?, hardCount = ?, " +
@@ -124,6 +135,8 @@ public class ReviewJdbcDao implements ReviewDao {
 
     @Override
     public void update(Review review) {
+        LOGGER.info("Review updated with id {} by user {}", review.getId(), review.getUserId());
+
         jdbcTemplate.update("UPDATE " + TABLE_REVIEWS + " SET revtext = ?, " +
                 "easy = ?, timedemanding = ?, useranonymous = ? WHERE id = ?",
                 review.getText(), review.getEasy(), review.getTimeDemanding(), review.getAnonymous(), review.getId());
@@ -153,6 +166,8 @@ public class ReviewJdbcDao implements ReviewDao {
         }
 
         if(stat.isPresent()){
+            LOGGER.info("ReviewStatistics updated with id {} by user {} with anonymous visibility {}", review.getId(), review.getUserId(), review.getAnonymous());
+
             ReviewStatistic reviewStat= stat.get();
             jdbcTemplateReviewStatistic.update("UPDATE " + TABLE_REVIEW_STAT +
                             " SET easyCount = ?, mediumCount = ?, hardCount = ?, " +

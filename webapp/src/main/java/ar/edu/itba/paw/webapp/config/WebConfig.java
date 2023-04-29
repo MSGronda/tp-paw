@@ -1,6 +1,8 @@
 package ar.edu.itba.paw.webapp.config;
 
 import org.flywaydb.core.Flyway;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
@@ -32,6 +34,7 @@ import java.util.concurrent.TimeUnit;
 public class WebConfig extends WebMvcConfigurerAdapter {
 
     private final static long MAX_SIZE = 1024*1024*50;
+    private final static Logger LOGGER = LoggerFactory.getLogger(WebConfig.class);
     @Bean
     ViewResolver viewResolver() {
         InternalResourceViewResolver vr = new InternalResourceViewResolver();
@@ -46,6 +49,7 @@ public class WebConfig extends WebMvcConfigurerAdapter {
     public DataSource dataSource() {
         final SimpleDriverDataSource ds = new SimpleDriverDataSource();
 
+        LOGGER.info("Setting up the JDBC DataSource...");
         ds.setDriverClass(org.postgresql.Driver.class);
         ds.setUrl("jdbc:postgresql://localhost/paw");
         ds.setUsername("root");
