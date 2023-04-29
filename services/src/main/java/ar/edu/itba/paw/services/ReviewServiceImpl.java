@@ -137,7 +137,17 @@ public class ReviewServiceImpl implements ReviewService {
         reviewDao.updateReviewStatistics(easyBefore, timeDemandingBefore, review);
     }
 
-//    @Override
+    @Override
+    public void delete(Review review){
+        reviewDao.delete(review.getId());
+    }
+
+    @Override
+    public void deleteReviewStatistics(Review review) {
+        reviewDao.deleteReviewStatistics(review);
+    }
+
+    //    @Override
 //    public List<Review> getCompleteReviewsBySubjectId(String idSub) {
 //        return reviewDao.getCompleteReviewsBySubjectId(idSub);
 //    }

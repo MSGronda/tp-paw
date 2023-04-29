@@ -45,6 +45,9 @@
   .showMore::part(base):active {
     background: rgba(255, 99, 71, 0);
   }
+  .delete-button{
+    color: red;
+  }
 </style>
 
 <sl-card class="card-header">
@@ -66,7 +69,10 @@
     </c:choose>
 
     <c:if test="${review.userId == loggedUser.id}">
-      <sl-icon-button name="pencil-square" label="edit" href="<c:url value="/review/${review.subjectId}/edit/${review.id}"/>"></sl-icon-button>
+      <div>
+        <sl-icon-button name="pencil-square" label="edit" href="<c:url value="/review/${review.subjectId}/edit/${review.id}"/>"></sl-icon-button>
+        <sl-icon-button name="trash3" class="delete-button" label="delete" href="<c:url value="/review/${review.subjectId}/delete/${review.id}"/>"></sl-icon-button>
+      </div>
     </c:if>
   </div>
 
@@ -104,5 +110,6 @@
     </c:choose>
   </div>
 </sl-card>
+
 
 

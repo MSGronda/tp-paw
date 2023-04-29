@@ -35,4 +35,8 @@ public interface ReviewService extends BaseService<Long, Review> {
     void update(Review review);
 
     void updateReviewStatistics( Integer easyBefore, Integer timeDemandingBefore, Review review);
+
+    void delete(Review review);
+
+    void deleteReviewStatistics(Review review);
 }

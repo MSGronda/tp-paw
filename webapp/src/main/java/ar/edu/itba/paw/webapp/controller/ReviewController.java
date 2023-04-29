@@ -73,6 +73,26 @@ public class ReviewController {
         throw new SubjectNotFoundException();
     }
 
+    @RequestMapping("review/{subjectId:\\d+\\.\\d+}/delete/{reviewId:\\d+}")
+    public ModelAndView deleteReview(@PathVariable final String subjectId, @PathVariable final Long reviewId){
+
+        Optional<Review> maybeReview = reviewService.findById(reviewId);
+        if(!maybeReview.isPresent()){
+            throw new ReviewNotFoundException();
+        }
+
+        Review review = maybeReview.get();
+
+        if( loggedUser().getId() != review.getUserId() ){
+            return new ModelAndView("redirect:/subject/" + subjectId);
+        }
+
+        reviewService.deleteReviewStatistics(review);
+        reviewService.delete(review);
+
+        return new ModelAndView("redirect:/subject/" + subjectId);
+    }
+
     @RequestMapping(value = "/review/{subjectId:\\d+\\.\\d+}/edit/{reviewId:\\d+}", method = RequestMethod.POST)
     public ModelAndView editReviewPost(@PathVariable final String subjectId, @PathVariable final Long reviewId,
                                        @ModelAttribute("ReviewForm") final ReviewForm reviewForm,

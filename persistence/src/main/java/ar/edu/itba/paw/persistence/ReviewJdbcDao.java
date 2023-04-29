@@ -87,8 +87,39 @@ public class ReviewJdbcDao implements ReviewDao {
     }
 
     @Override
-    public void delete(Long integer) {
+    public void delete(Long id) {
+        jdbcTemplate.update("DELETE FROM " + TABLE_REVIEWS + " WHERE id = ?", id);
+    }
 
+    @Override
+    public void deleteReviewStatistics(Review review){
+        Optional<ReviewStatistic> stat = getReviewStatBySubject(review.getSubjectId());
+        int easy = 0, medium = 0, hard = 0, timeDemanding =0 , notTimeDemanding = 0;
+        switch (review.getEasy()){
+            case 0: easy--;break;
+            case 1: medium--;break;
+            case 2: hard--;break;
+        }
+        switch (review.getTimeDemanding()){
+            case 0: notTimeDemanding--;break;
+            case 1: timeDemanding--;break;
+        }
+
+        if(stat.isPresent()){
+            ReviewStatistic reviewStat= stat.get();
+            jdbcTemplateReviewStatistic.update("UPDATE " + TABLE_REVIEW_STAT +
+                            " SET reviewCount = ?, easyCount = ?, mediumCount = ?, hardCount = ?, " +
+                            "notTimeDemandingCount = ?, timeDemandingCount = ? WHERE idSub = ?",
+                    reviewStat.getReviewCount() - 1,
+                    reviewStat.getEasyCount() + easy,
+                    reviewStat.getMediumCount() + medium,
+                    reviewStat.getHardCount() + hard,
+                    reviewStat.getNotTimeDemandingCount() + notTimeDemanding,
+                    reviewStat.getTimeDemandingCount() + timeDemanding,
+                    reviewStat.getIdSub()
+            );
+
+        }
     }
 
     @Override
