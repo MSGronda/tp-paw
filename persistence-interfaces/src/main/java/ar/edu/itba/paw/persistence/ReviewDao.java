@@ -12,10 +12,13 @@ public interface ReviewDao extends RWDao<Long,Review> {
     Review create(final Boolean anonymous,final Integer easy, final Integer timeDemanding, final String text, final String subjectId, final long userId ) throws SQLException;
 
     void deleteReviewStatistics(Review review);
-
-    void voteReview(Long idUser, Long idReview, int vote);
-    void updateVoteOnReview(Long idUser, Long idReview, int vote);
+    Integer deleteReviewVote(Long idUser, Long idReview);
+    Integer voteReview(Long idUser, Long idReview, int vote);
+    Integer updateVoteOnReview(Long idUser, Long idReview, int vote);
     boolean userVotedOnReview(Long idUser, Long idReview);
+    Map<Long,Integer> userReviewVoteByIdSubAndIdUser(String idSub, Long idUser);
+    Map<Long,Integer> userReviewVoteByIdUser(Long idUser);
+
 
     List<Review> getAllBySubject(String id);
 

@@ -19,6 +19,9 @@ public class ReviewServiceImpl implements ReviewService {
 
     private static final List<String> validDir = Arrays.asList("asc", "desc");
 
+    private static final Integer VoteUpdate = 1;
+    private static final Integer VoteCreated = 2;
+
     @Autowired
     public ReviewServiceImpl(ReviewDao reviewDao) {
         this.reviewDao = reviewDao;
@@ -99,15 +102,28 @@ public class ReviewServiceImpl implements ReviewService {
         return reviewDao.create(anonymous,easy, timeDemanding, text, subjectId, userId);
     }
 
+
+    // vote created: 1, -1 vote updated:
     @Override
-    public void voteReview(Long idUser, Long idReview, int vote) {
+    public Integer voteReview(Long idUser, Long idReview, int vote) {
 
         // only one vote per user on a certain review
 
-        if(reviewDao.userVotedOnReview(idUser,idReview))
+        if(reviewDao.userVotedOnReview(idUser,idReview)){
             reviewDao.updateVoteOnReview(idUser, idReview, vote);
-        else
-            reviewDao.voteReview(idUser,idReview,vote);
+            return VoteUpdate;
+        }
+
+        reviewDao.voteReview(idUser,idReview,vote);
+        return VoteCreated;
+    }
+    @Override
+    public Map<Long,Integer> userReviewVoteByIdUser(Long idUser){
+        return reviewDao.userReviewVoteByIdUser(idUser);
+    }
+    @Override
+    public Map<Long,Integer> userReviewVoteByIdSubAndIdUser(String idSub, Long idUser){
+        return reviewDao.userReviewVoteByIdSubAndIdUser(idSub,idUser);
     }
 
     @Override
@@ -148,6 +164,12 @@ public class ReviewServiceImpl implements ReviewService {
     }
 
     //    @Override
+    @Override
+    public Integer deleteReviewVote(Long idUser, Long idReview){
+        return reviewDao.deleteReviewVote(idUser,idReview);
+    }
+
+//    @Override
 //    public List<Review> getCompleteReviewsBySubjectId(String idSub) {
 //        return reviewDao.getCompleteReviewsBySubjectId(idSub);
 //    }

@@ -48,6 +48,16 @@
   .delete-button{
     color: red;
   }
+  .vote-button{
+    padding: 0;
+  }
+  sl-button.vote-button::part(base){
+    border-color: white;
+  }
+  .vote-button-icon{
+    font-size: 20px;
+    padding-top: 0.3rem;
+  }
 </style>
 
 <sl-card class="card-header">
@@ -108,6 +118,45 @@
         <sl-badge size="medium" ariant="primary"><spring:message code="form.NotTimeDemanding"/></sl-badge>
       </c:otherwise>
     </c:choose>
+  </div>
+  <div slot="footer" >
+    <form style="margin: 0" id="form-${review.id}">
+      <input type="hidden" name="reviewId" id="reviewId" value="${review.id}">
+
+      <input type="hidden" name="vote" id="vote" value="${userVotes.getOrDefault(review.id, 0)}">
+
+      <sl-button class="vote-button" variant="default" size="small" circle
+                 data-form-id="form-${review.id}" data-form-value="1">
+        <sl-icon id="like-icon-form-${review.id}" class="vote-button-icon" name="hand-thumbs-up" label="Upvote"
+                <c:choose>
+                  <c:when test="${ userVotes[review.id] == 1}">
+                    style="color: #f5a623;"
+                  </c:when>
+                  <c:otherwise>
+                    style="color: #4a90e2;"
+                  </c:otherwise>
+                </c:choose>
+        ></sl-icon>
+      </sl-button>
+
+      <span id="like-number-form-${review.id}"><c:out value="${review.upvotes}"/></span>
+
+      <sl-button class="vote-button" variant="default" size="small" circle
+                 data-form-id="form-${review.id}" data-form-value="-1">
+        <sl-icon id="dislike-icon-form-${review.id}" class="vote-button-icon" name="hand-thumbs-down" label="Downvote"
+                <c:choose>
+                  <c:when test="${ userVotes[review.id] == -1}">
+                    style="color: #f5a623;"
+                  </c:when>
+                  <c:otherwise>
+                    style="color: #4a90e2;"
+                  </c:otherwise>
+                </c:choose>
+        ></sl-icon>
+      </sl-button>
+
+      <span id="dislike-number-form-${review.id}"><c:out value="${review.downvotes}"/></span>
+    </form>
   </div>
 </sl-card>
 

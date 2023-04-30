@@ -12,15 +12,13 @@ import ar.edu.itba.paw.webapp.exceptions.DegreeNotFoundException;
 import ar.edu.itba.paw.webapp.exceptions.ReviewNotFoundException;
 import ar.edu.itba.paw.webapp.exceptions.SubjectNotFoundException;
 import ar.edu.itba.paw.webapp.form.ReviewForm;
+import ar.edu.itba.paw.webapp.form.ReviewVoteForm;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.method.P;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.validation.Valid;
@@ -143,6 +141,26 @@ public class ReviewController {
         mav.addObject("review", review.get());
         return mav;
     }
+
+    @RequestMapping(value = "/voteReview", method = RequestMethod.POST)
+    @ResponseBody
+    public String voteReview(@Valid @ModelAttribute("ReviewVoteForm") final ReviewVoteForm vote
+    ) {
+        if( loggedUser() == null){
+            return "invalid parameters"; // we do not give any information on the inner workings
+        }
+        int resp, voteValue = vote.getVote();
+        if(voteValue != 0)
+            resp = reviewService.voteReview(loggedUser().getId(), vote.getReviewId(),voteValue);
+        else
+            resp = reviewService.deleteReviewVote(loggedUser().getId(), vote.getReviewId());
+
+        if(resp != 1){
+            return "invalid parameters"; // we do not give any information on the inner workings
+        }
+        return "voted";
+    }
+
 
     @ModelAttribute("loggedUser")
     public User loggedUser(){

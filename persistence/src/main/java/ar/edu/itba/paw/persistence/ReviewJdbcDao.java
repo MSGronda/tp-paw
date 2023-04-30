@@ -26,19 +26,16 @@ public class ReviewJdbcDao implements ReviewDao {
     private final JdbcTemplate jdbcTemplate;
     private final SimpleJdbcInsert jdbcInsertReview;
     private final SimpleJdbcInsert jdbcReviewVoteInsert;
-
     private final JdbcTemplate jdbcTemplateReviewStatistic;
     private final SimpleJdbcInsert jdbcInsertReviewStatistic;
+
     private static final String TABLE_REVIEWS = "reviews";
     private static final String TABLE_SUB = "subjects";
     private static final String TABLE_REVIEW_VOTE = "reviewVote";
-
     private static final String TABLE_USERS = "users";
-
     private static final String TABLE_REVIEW_STAT = "subjectReviewStatistics";
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ReviewJdbcDao.class);
-
     @Autowired
     public ReviewJdbcDao(final DataSource ds) {
         this.jdbcTemplate = new JdbcTemplate(ds);
@@ -342,28 +339,59 @@ public class ReviewJdbcDao implements ReviewDao {
     // - - - - - - Review upvotes and downvotes - - - - - -
 
     @Override
+    public Integer deleteReviewVote(Long idUser, Long idReview){
+        return jdbcTemplate.update("DELETE FROM " + TABLE_REVIEW_VOTE + " WHERE idUser = ? AND idReview = ?", idUser,idReview);
+    }
+
+    @Override
     public boolean userVotedOnReview(Long idUser, Long idReview){
         return jdbcTemplate.query("SELECT * FROM "+TABLE_REVIEW_VOTE+ " WHERE idUser = ? AND idReview = ?",
                 ReviewJdbcDao::rowMapperReviewVote,idUser,idReview).stream().findFirst().isPresent();
     }
+    private static Integer rowMapperReviewVote(ResultSet rs, int rowNum) throws SQLException{
+        return rs.getInt("vote");
+    }
+
     @Override
-    public void voteReview(Long idUser, Long idReview, int vote){
+    public Integer voteReview(Long idUser, Long idReview, int vote){
         Map<String, Object> data = new HashMap<>();
 
         data.put("idUser", idUser);
         data.put("idReview", idReview);
         data.put("vote", vote);
 
-        jdbcReviewVoteInsert.execute(data);
+        return jdbcReviewVoteInsert.execute(data);
     }
+
     @Override
-    public void updateVoteOnReview(Long idUser, Long idReview, int vote){
-        jdbcTemplate.update("UPDATE " + TABLE_REVIEW_VOTE + " SET vote = ? WHERE idreview = ? AND iduser = ?",
+    public Integer updateVoteOnReview(Long idUser, Long idReview, int vote){
+        return jdbcTemplate.update("UPDATE " + TABLE_REVIEW_VOTE + " SET vote = ? WHERE idreview = ? AND iduser = ?",
                 vote,idReview,idUser);
     }
-    private static Integer rowMapperReviewVote(ResultSet rs, int rowNum) throws SQLException{
-        return rs.getInt("vote");
+
+    // key: idReview - value: vote
+    @Override
+    public Map<Long,Integer> userReviewVoteByIdSubAndIdUser(String idSub, Long idUser){
+        return jdbcTemplate.query("SELECT rv.idReview, rv.vote FROM "+ TABLE_REVIEW_VOTE + " AS rv FULL JOIN "+ TABLE_REVIEWS +
+                " AS r ON rv.idReview = r.id WHERE r.idSub = ? AND rv.idUser = ?", ReviewJdbcDao::userReviewVoteExtractor,idSub,idUser);
     }
+    // key: idReview - value: vote
+    @Override
+    public Map<Long,Integer> userReviewVoteByIdUser(Long idUser){
+        return jdbcTemplate.query("SELECT idReview, vote FROM "+ TABLE_REVIEW_VOTE + " WHERE  idUser = ?", ReviewJdbcDao::userReviewVoteExtractor,idUser);
+    }
+    private static Map<Long, Integer> userReviewVoteExtractor(ResultSet rs) throws SQLException{
+        Map<Long,Integer> res = new HashMap<>();
+        while(rs.next()){
+            Long id = rs.getLong("idReview");
+            Integer vote = rs.getInt("vote");
+
+            res.put(id,vote);
+        }
+
+        return res;
+    }
+
 
     // - - - - - - - - - - - - - - - - - - - - - - - - - -
 

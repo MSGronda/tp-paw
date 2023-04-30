@@ -1,6 +1,7 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jstl/core_rt" %>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
+<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 
 <html>
 <head>
@@ -64,10 +65,15 @@
           align-items: center;
           justify-content: space-between;
       }
-
       .card-header h3 {
           margin: 0;
       }
+
+      .break-text {
+          overflow-wrap: break-word;
+          margin-bottom: 2%;
+      }
+
 
       a {
           color: #0369a1;
@@ -84,6 +90,8 @@
       .breadcrumb-area{
           padding-top: 1rem;
       }
+
+
       .text-center{
           display: flex;
           justify-content: center;
@@ -321,15 +329,19 @@
       <h3><spring:message code="subject.noreviews"/></h3>
     </c:if>
     <c:forEach  var="review" items="${reviews}">
-      <c:set var="review" value="${review}" scope="request"/>
-      <c:set var="fromProfile" value="${false}" scope="request"/>
-      <c:import url="../components/review_card.jsp"/>
+
+        <c:set var="review" value="${review}" scope="request"/>
+        <c:set var="fromProfile" value="${false}" scope="request"/>
+        <c:set var="userVotes" value="${userVotes}" scope="request"/>
+        <c:import url="../components/review_card.jsp"/>
+
     </c:forEach>
   </div>
 </main>
 <jsp:include page="../components/footer.jsp"/>
 <jsp:include page="../components/body_scripts.jsp"/>
 <script src="${pageContext.request.contextPath}/js/subject-view.js" defer></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
 <script>
     const showMore = document.querySelector('.showMore');
 
@@ -350,6 +362,83 @@
         });
     }
 
+    // perdon
+
+    function updateCounters(formId, changeLikes, changeDislikes){
+        const likehtml = $('#like-number-'+formId)
+        const like_string = likehtml.text()
+        likehtml.text(parseInt(like_string) + changeLikes)
+
+        const dislikehtml = $('#dislike-number-'+formId)
+        const dislike_string = dislikehtml.text()
+        dislikehtml.text(parseInt(dislike_string) + changeDislikes)
+    }
+
+    function submitForm(formId, prevVote ,newVote) {
+
+        $('#' + formId + ' input[name=vote]').val(newVote)
+
+        $.ajax({
+            url: '${pageContext.request.contextPath}/voteReview',
+            type: 'POST',
+            data: $('#'+formId).serialize(),
+            success: function(response) {
+
+                // const likeChage = 1, dislikeChange = prevVote === 0 ? 0 : -1
+                var likeChange, dislikeChange
+
+
+                const like = $('#like-icon-'+formId)
+                const dislike = $('#dislike-icon-'+formId)
+                switch (newVote) {
+                    case 0:
+                        like.css("color","#4a90e2")
+                        dislike.css("color","#4a90e2")
+
+                        if(prevVote === 1)
+                            updateCounters(formId,-1,0);
+                        else
+                            updateCounters(formId,0,-1);
+                        break;
+                    case 1:
+                        like.css("color","#f5a623")
+                        dislike.css("color","#4a90e2")
+                        if(prevVote === 0)
+                            updateCounters(formId,1,0)
+                        else
+                            updateCounters(formId,1,-1)
+                        break;
+                    case -1:
+                        like.css("color","#4a90e2")
+                        dislike.css("color","#f5a623")
+                        if(prevVote === 0)
+                            updateCounters(formId,0,1)
+                        else
+                            updateCounters(formId,-1,1)
+                        break;
+                }
+
+            },
+            error: function(xhr, status, error) {
+
+            }
+        });
+    }
+    $(document).ready(function() {
+        $('.vote-button').click(function() {
+            const formId = $(this).data('form-id');
+            const newVote = $(this).data('form-value');
+
+            const prevVote = parseInt($('#' + formId + ' input[name=vote]').val())
+
+            if(newVote !== prevVote)
+                submitForm(formId, prevVote ,newVote);
+            else
+                submitForm(formId, prevVote ,0);
+        })
+    });
+
 </script>
+
 </body>
 </html>
