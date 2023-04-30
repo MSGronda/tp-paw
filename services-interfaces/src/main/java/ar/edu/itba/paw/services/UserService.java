@@ -18,9 +18,10 @@ public interface UserService extends BaseService<Long, User> {
 
     Optional<User> findByIdWithImage(Long id);
 
-    Optional<Integer> getUserSubjectProgress(Long id, String idSub);
+   Integer getUserSubjectProgress(Long id, String idSub);
     Map<String, Integer> getUserAllSubjectProgress(Long id);
-    void updateSubjectProgress(Long id, String idSub, Integer newProgress);
+    Integer deleteUserProgressForSubject(Long id, String idSub);
+    Integer updateSubjectProgress(Long id, String idSub, Integer newProgress);
     void changePassword(Long userId, String password, String oldPassword, String userOldPassword) throws OldPasswordDoesNotMatchException;
     void editProfile(Long userId, String username);
 

@@ -36,9 +36,14 @@
 
       .review_bt {
           width: 15rem;
-          align-self: center;
-          justify-self: center;
+          /*align-self: center;*/
+          /*justify-self: center;*/
       }
+      .progress-bt{
+          width: 7rem;
+          padding-left: 1rem;
+      }
+
 
       .filter {
           display: flex;
@@ -94,6 +99,11 @@
 
       .text-center{
           display: flex;
+          justify-content: center;
+      }
+      .review-and-progress{
+          display: flex;
+          align-items: center;
           justify-content: center;
       }
 
@@ -272,23 +282,45 @@
           </sl-tab-panel>
     </sl-tab-group>
     </sl-card>
-
-
-
-
-
   </div>
-    <c:if test="${didReview}">
-        <sl-button variant="primary" size="large" pill class="review_bt" disabled><spring:message code="subject.review"/></sl-button>
-        <br/>
-        <div class="text-center">
-            <spring:message code="subject.alreadyReviewed"/>
-        </div>
-    </c:if>
-    <c:if test="${!didReview}">
-        <sl-button href='<c:url value="/review/${subject.id}"/>' variant="primary" size="large" pill class="review_bt">
-            <spring:message code="subject.review"/></sl-button>
-    </c:if>
+    <div class="review-and-progress">
+
+
+
+        <c:if test="${didReview}">
+            <sl-button variant="primary" size="large" pill class="review_bt" disabled><spring:message code="subject.review"/></sl-button>
+            <br/>
+            <div class="text-center">
+                <spring:message code="subject.alreadyReviewed"/>
+            </div>
+        </c:if>
+        <c:if test="${!didReview}">
+            <sl-button href='<c:url value="/review/${subject.id}"/>' variant="primary" size="large" pill class="review_bt">
+                <spring:message code="subject.review"/></sl-button>
+        </c:if>
+
+
+        <form id="sub-progress" style="margin: 0" >
+            <input type="hidden" name="idSub" id="idSub" value="${subject.id}">
+            <input type="hidden" name="progress" id="progress" value="${subjectProgress}">
+            <sl-tooltip content="<spring:message code="subject.progress.tooltip"/>">
+            <c:choose>
+                <c:when test="${subjectProgress == 1}">
+                    <sl-button class="progress-bt" variant="primary" size="large" pill data-form-id="sub-progress" data-form-value="1">
+                        <spring:message code="subject.progress.done"/>
+                    </sl-button>
+                </c:when>
+                <c:otherwise>
+                    <sl-button class="progress-bt" variant="primary" size="large" outline pill data-form-id="sub-progress" data-form-value="1">
+                        <spring:message code="subject.progress.pending"/>
+                    </sl-button>
+                </c:otherwise>
+            </c:choose>
+            </sl-tooltip>
+
+        </form>
+
+    </div>
   <br/>
   <hr/>
   <div class="filter">
@@ -340,6 +372,7 @@
 </main>
 <jsp:include page="../components/footer.jsp"/>
 <jsp:include page="../components/body_scripts.jsp"/>
+<script src="${pageContext.request.contextPath}/js/subject_progress.js"></script>
 <script src="${pageContext.request.contextPath}/js/subject-view.js"></script>
 <script src="${pageContext.request.contextPath}/js/review_card.js"></script>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
@@ -362,6 +395,8 @@
             }
         });
     }
+
+
     $(document).ready(function() {
         $('.vote-button').click(function() {
             const formId = $(this).data('form-id');
@@ -370,10 +405,22 @@
             const prevVote = parseInt($('#' + formId + ' input[name=vote]').val())
 
             if(newVote !== prevVote)
-                submitForm('${pageContext.request.contextPath}/voteReview',formId, prevVote ,newVote);
+                submitReviewVoteForm('${pageContext.request.contextPath}/voteReview',formId, prevVote ,newVote);
             else
-                submitForm('${pageContext.request.contextPath}/voteReview',formId, prevVote ,0);
+                submitReviewVoteForm('${pageContext.request.contextPath}/voteReview',formId, prevVote ,0);
         })
+
+        $('.progress-bt').click(function() {
+            const formId = $(this).data('form-id');
+            const prevProgress = parseInt($('#' + formId + ' input[name=progress]').val())
+
+            if( 1- prevProgress === 0)
+                submitSubjectProgressForm('${pageContext.request.contextPath}/subjectProgress', formId, 1 - prevProgress, "<spring:message code="subject.progress.pending"/>");
+            else
+                submitSubjectProgressForm('${pageContext.request.contextPath}/subjectProgress', formId, 1 - prevProgress, "<spring:message code="subject.progress.done"/>");
+        })
+
+
     });
 
 </script>
