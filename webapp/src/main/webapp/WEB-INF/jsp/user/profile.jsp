@@ -150,12 +150,15 @@
         <c:if test="${!review.anonymous || loggedUser.id == review.userId}">
             <c:set var="review" value="${review}" scope="request"/>
             <c:set var="fromProfile" value="${true}" scope="request"/>
+            <c:set var="userVotes" value="${userVotes}" scope="request"/>
             <c:import url="../components/review_card.jsp"/>
         </c:if>
     </c:forEach>
 </main>
 <jsp:include page="../components/footer.jsp"/>
 <jsp:include page="../components/body_scripts.jsp"/>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+<script src="${pageContext.request.contextPath}/js/review_card.js"></script>
 <script>
     const showMore = document.querySelector('.showMore');
 
@@ -175,6 +178,19 @@
             }
         });
     }
+    $(document).ready(function() {
+        $('.vote-button').click(function() {
+            const formId = $(this).data('form-id');
+            const newVote = $(this).data('form-value');
+
+            const prevVote = parseInt($('#' + formId + ' input[name=vote]').val())
+
+            if(newVote !== prevVote)
+                submitForm('${pageContext.request.contextPath}/voteReview',formId, prevVote ,newVote);
+            else
+                submitForm('${pageContext.request.contextPath}/voteReview',formId, prevVote ,0);
+        })
+    });
 
 </script>
 </body>

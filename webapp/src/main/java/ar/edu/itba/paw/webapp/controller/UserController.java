@@ -55,10 +55,12 @@ public class UserController {
 
         final User user = maybeUser.get();
         final List<Review> userReviews = reviewService.getAllUserReviewsWithSubjectName(user.getId());
+        final Map<Long, Integer> userVotes = reviewService.userReviewVoteByIdUser(user.getId());
 
         ModelAndView mav = new ModelAndView("user/profile");
         mav.addObject("user", user);
         mav.addObject("reviews", userReviews);
+        mav.addObject("userVotes",userVotes);
 
         return mav;
     }
