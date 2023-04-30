@@ -339,6 +339,11 @@ public class ReviewJdbcDao implements ReviewDao {
     // - - - - - - Review upvotes and downvotes - - - - - -
 
     @Override
+    public Integer deleteReviewVoteByReviewId(Long idReview){
+        return jdbcTemplate.update("DELETE FROM " + TABLE_REVIEW_VOTE + " WHERE idReview = ?", idReview);
+    }
+
+    @Override
     public Integer deleteReviewVote(Long idUser, Long idReview){
         return jdbcTemplate.update("DELETE FROM " + TABLE_REVIEW_VOTE + " WHERE idUser = ? AND idReview = ?", idUser,idReview);
     }

@@ -102,6 +102,11 @@ public class ReviewServiceImpl implements ReviewService {
         return reviewDao.create(anonymous,easy, timeDemanding, text, subjectId, userId);
     }
 
+    @Override
+    public Integer deleteReviewVoteByReviewId(Long idReview) {
+        return reviewDao.deleteReviewVoteByReviewId(idReview);
+    }
+
 
     // vote created: 1, -1 vote updated:
     @Override

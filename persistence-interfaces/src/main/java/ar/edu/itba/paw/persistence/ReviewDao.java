@@ -12,6 +12,8 @@ public interface ReviewDao extends RWDao<Long,Review> {
     Review create(final Boolean anonymous,final Integer easy, final Integer timeDemanding, final String text, final String subjectId, final long userId ) throws SQLException;
 
     void deleteReviewStatistics(Review review);
+
+    Integer deleteReviewVoteByReviewId(Long idReview);
     Integer deleteReviewVote(Long idUser, Long idReview);
     Integer voteReview(Long idUser, Long idReview, int vote);
     Integer updateVoteOnReview(Long idUser, Long idReview, int vote);

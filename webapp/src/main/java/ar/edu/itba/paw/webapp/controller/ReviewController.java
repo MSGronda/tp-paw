@@ -85,6 +85,7 @@ public class ReviewController {
             return new ModelAndView("redirect:/subject/" + subjectId);
         }
 
+        reviewService.deleteReviewVoteByReviewId(reviewId);
         reviewService.deleteReviewStatistics(review);
         reviewService.delete(review);
 
