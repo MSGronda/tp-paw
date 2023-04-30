@@ -106,6 +106,10 @@
           align-items: center;
           justify-content: center;
       }
+      .review-and-progress-area{
+          display: flex;
+          flex-direction: column;
+      }
 
       <jsp:include page="../components/table_style.jsp"/>
 
@@ -283,44 +287,45 @@
     </sl-tab-group>
     </sl-card>
   </div>
-    <div class="review-and-progress">
+    <div class="review-and-progress-area">
+        <div class="review-and-progress">
+            <c:if test="${didReview}">
+                <sl-button variant="primary" size="large" pill class="review_bt" disabled><spring:message code="subject.review"/></sl-button>
+            </c:if>
+            <c:if test="${!didReview}">
+                <sl-button href='<c:url value="/review/${subject.id}"/>' variant="primary" size="large" pill class="review_bt">
+                    <spring:message code="subject.review"/></sl-button>
+            </c:if>
 
 
+            <form id="sub-progress" style="margin: 0" >
+                <input type="hidden" name="idSub" id="idSub" value="${subject.id}">
+                <input type="hidden" name="progress" id="progress" value="${subjectProgress}">
+                <sl-tooltip content="<spring:message code="subject.progress.tooltip"/>">
+                    <c:choose>
+                        <c:when test="${subjectProgress == 1}">
+                            <sl-button class="progress-bt" variant="primary" size="large" pill data-form-id="sub-progress" data-form-value="1">
+                                <spring:message code="subject.progress.done"/>
+                            </sl-button>
+                        </c:when>
+                        <c:otherwise>
+                            <sl-button class="progress-bt" variant="primary" size="large" outline pill data-form-id="sub-progress" data-form-value="1">
+                                <spring:message code="subject.progress.pending"/>
+                            </sl-button>
+                        </c:otherwise>
+                    </c:choose>
+                </sl-tooltip>
+            </form>
+        </div>
+        <br/>
 
         <c:if test="${didReview}">
-            <sl-button variant="primary" size="large" pill class="review_bt" disabled><spring:message code="subject.review"/></sl-button>
-            <br/>
             <div class="text-center">
                 <spring:message code="subject.alreadyReviewed"/>
             </div>
         </c:if>
-        <c:if test="${!didReview}">
-            <sl-button href='<c:url value="/review/${subject.id}"/>' variant="primary" size="large" pill class="review_bt">
-                <spring:message code="subject.review"/></sl-button>
-        </c:if>
-
-
-        <form id="sub-progress" style="margin: 0" >
-            <input type="hidden" name="idSub" id="idSub" value="${subject.id}">
-            <input type="hidden" name="progress" id="progress" value="${subjectProgress}">
-            <sl-tooltip content="<spring:message code="subject.progress.tooltip"/>">
-            <c:choose>
-                <c:when test="${subjectProgress == 1}">
-                    <sl-button class="progress-bt" variant="primary" size="large" pill data-form-id="sub-progress" data-form-value="1">
-                        <spring:message code="subject.progress.done"/>
-                    </sl-button>
-                </c:when>
-                <c:otherwise>
-                    <sl-button class="progress-bt" variant="primary" size="large" outline pill data-form-id="sub-progress" data-form-value="1">
-                        <spring:message code="subject.progress.pending"/>
-                    </sl-button>
-                </c:otherwise>
-            </c:choose>
-            </sl-tooltip>
-
-        </form>
-
     </div>
+
   <br/>
   <hr/>
   <div class="filter">
