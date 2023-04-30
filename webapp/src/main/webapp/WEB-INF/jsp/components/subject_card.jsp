@@ -10,6 +10,7 @@
 <c:set var="prereqNamesString" value="${requestScope.prereqNames}"/>
 <c:set var="difficulty" value="${requestScope.difficulty}"/>
 <c:set var="time" value="${requestScope.time}"/>
+<c:set var="progress" value="${requestScope.progress}"/>
 
 <style>
   .class-info{
@@ -20,6 +21,9 @@
   }
   span{
     font-size: 11px;
+  }
+  .progress-icon{
+    padding-left: 1rem;
   }
 </style>
 
@@ -58,6 +62,22 @@
           </c:choose>
         </sl-badge>
       </c:if>
+
+
+        <c:choose>
+          <c:when test="${progress == 1}">
+            <sl-tooltip class="progress-icon" content="<spring:message code="card.progress.tooltip.passed"/>">
+                  <sl-icon  name="check2-circle"></sl-icon>
+            </sl-tooltip>
+          </c:when>
+          <c:otherwise>
+            <sl-tooltip class="progress-icon" content="<spring:message code="card.progress.tooltip.notpassed"/>">
+                  <sl-icon  name="x-square"></sl-icon>
+            </sl-tooltip>
+          </c:otherwise>
+        </c:choose>
+
+
     </div>
   </div>
     <div slot="footer" class="chip-row ">

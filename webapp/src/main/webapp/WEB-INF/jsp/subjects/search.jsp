@@ -241,6 +241,7 @@
       <c:set var="reviewCount" value="${reviewStats[subject.id].reviewCount}" scope="request"/>
       <c:set var="difficulty" value="${reviewStats[subject.id].difficulty}" scope="request"/>
       <c:set var="time" value="${reviewStats[subject.id].timeDifficulty}" scope="request"/>
+      <c:set var="progress" value="${subjectProgress.getOrDefault(subject.id, 0)}" scope="request"/>
       <c:import url="../components/subject_card.jsp"/>
     </c:forEach>
     </div>

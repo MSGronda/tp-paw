@@ -186,9 +186,9 @@
             const prevVote = parseInt($('#' + formId + ' input[name=vote]').val())
 
             if(newVote !== prevVote)
-                submitForm('${pageContext.request.contextPath}/voteReview',formId, prevVote ,newVote);
+                submitReviewVoteForm('${pageContext.request.contextPath}/voteReview',formId, prevVote ,newVote);
             else
-                submitForm('${pageContext.request.contextPath}/voteReview',formId, prevVote ,0);
+                submitReviewVoteForm('${pageContext.request.contextPath}/voteReview',formId, prevVote ,0);
         })
     });
 

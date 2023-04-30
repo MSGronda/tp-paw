@@ -20,7 +20,8 @@ public interface UserDao extends RWDao<Long,User> {
 
     Optional<User> getUserWithEmail(final String email);
 
-    void updateSubjectProgress(Long id, String idSub, Integer newProgress);
+    Integer deleteUserProgressForSubject(Long id, String idSub);
+    Integer updateSubjectProgress(Long id, String idSub, Integer newProgress);
     Optional<Integer> getUserSubjectProgress(Long id, String idSub);
     Map<String, Integer> getUserAllSubjectProgress(Long id);
 

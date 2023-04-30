@@ -124,9 +124,9 @@ public class UserJdbcDao implements UserDao {
                 UserJdbcDao::userAllSubjectsProgressExtractor, id);
     }
     @Override
-    public void updateSubjectProgress(Long id, String idSub, Integer newProgress){
+    public Integer updateSubjectProgress(Long id, String idSub, Integer newProgress){
         if(getUserSubjectProgress(id,idSub).isPresent()){
-            jdbcTemplate.update("UPDATE " + USER_SUB_PRG_TABLE + " SET subjectState = ? WHERE idSub = ? AND idUser = ?",
+            return jdbcTemplate.update("UPDATE " + USER_SUB_PRG_TABLE + " SET subjectState = ? WHERE idSub = ? AND idUser = ?",
                     newProgress,idSub,id);
         }
         else{
@@ -136,8 +136,13 @@ public class UserJdbcDao implements UserDao {
             data.put("idSub",idSub);
             data.put("subjectState",newProgress);
 
-            jdbcUserProgressInsert.execute(data);
+            return jdbcUserProgressInsert.execute(data);
         }
+    }
+
+    @Override
+    public Integer deleteUserProgressForSubject(Long id, String idSub){
+        return jdbcTemplate.update("DELETE FROM " + USER_SUB_PRG_TABLE + " WHERE idSub = ? AND idUser = ?", idSub,id);
     }
     // - - - - - - - - - - - - - - - - - - - - - - - - - - -
 

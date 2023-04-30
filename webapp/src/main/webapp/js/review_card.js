@@ -12,7 +12,7 @@ function updateCounters(formId, changeLikes, changeDislikes){
     dislikehtml.text(parseInt(dislike_string) + changeDislikes)
 }
 
-function submitForm(url,formId, prevVote ,newVote) {
+function submitReviewVoteForm(url,formId, prevVote ,newVote) {
 
     $('#' + formId + ' input[name=vote]').val(newVote)
 
@@ -21,10 +21,6 @@ function submitForm(url,formId, prevVote ,newVote) {
         type: 'POST',
         data: $('#'+formId).serialize(),
         success: function(response) {
-
-            // const likeChage = 1, dislikeChange = prevVote === 0 ? 0 : -1
-            var likeChange, dislikeChange
-
 
             const like = $('#like-icon-'+formId)
             const dislike = $('#dislike-icon-'+formId)

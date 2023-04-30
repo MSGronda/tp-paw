@@ -42,10 +42,19 @@ public class SearchController {
 
         Map<String, ReviewStatistic> reviewStats = reviewService.getReviewStatMapBySubjectList(subjects);
 
+        long userId;
+        if(loggedUser() == null)
+            userId = -1;
+        else
+            userId = loggedUser().getId();
+
+        Map<String,Integer> subjectProgress = userService.getUserAllSubjectProgress(userId);
+
         ModelAndView mav = new ModelAndView("subjects/search");
         mav.addObject("subjects", subjects);
         mav.addObject("query", name);
         mav.addObject("reviewStats", reviewStats);
+        mav.addObject("subjectProgress", subjectProgress);
 
         return mav;
     }

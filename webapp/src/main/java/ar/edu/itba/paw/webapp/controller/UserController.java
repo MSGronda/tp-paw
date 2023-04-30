@@ -8,10 +8,7 @@ import ar.edu.itba.paw.services.exceptions.OldPasswordDoesNotMatchException;
 import ar.edu.itba.paw.services.exceptions.UserEmailAlreadyTakenException;
 import ar.edu.itba.paw.webapp.auth.UniAuthUser;
 import ar.edu.itba.paw.webapp.exceptions.UserNotFoundException;
-import ar.edu.itba.paw.webapp.form.EditProfilePictureForm;
-import ar.edu.itba.paw.webapp.form.EditUserDataForm;
-import ar.edu.itba.paw.webapp.form.EditUserPasswordForm;
-import ar.edu.itba.paw.webapp.form.UserForm;
+import ar.edu.itba.paw.webapp.form.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -175,5 +172,24 @@ public class UserController {
 
         userService.updateProfilePicture(user.getId(), editProfilePictureForm.getProfilePicture().getBytes());
         return new ModelAndView("redirect:/profile/" + user.getId());
+    }
+
+    @RequestMapping(value = "/subjectProgress", method = RequestMethod.POST)
+    @ResponseBody
+    public String subjectProgress(@Valid @ModelAttribute("SubjectProgressForm") final SubjectProgressForm progressForm
+    ) {
+        if( loggedUser() == null){
+            return "invalid parameters"; // we do not give any information on the inner workings
+        }
+        int resp = 0, progressValue = progressForm.getProgress();
+        if(progressValue != 0)
+            resp = userService.updateSubjectProgress(loggedUser().getId(), progressForm.getIdSub(),progressValue);
+        else
+            resp = userService.deleteUserProgressForSubject(loggedUser().getId(), progressForm.getIdSub());
+
+        if(resp != 1){
+            return "invalid parameters"; // we do not give any information on the inner workings
+        }
+        return "voted";
     }
 }

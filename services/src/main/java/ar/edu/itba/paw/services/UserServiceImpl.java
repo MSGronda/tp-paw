@@ -75,8 +75,8 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Optional<Integer> getUserSubjectProgress(Long id, String idSub) {
-        return userDao.getUserSubjectProgress(id,idSub);
+    public Integer getUserSubjectProgress(Long id, String idSub) {
+        return userDao.getUserSubjectProgress(id,idSub).orElse(0);
     }
 
 
@@ -86,8 +86,13 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void updateSubjectProgress(Long id, String idSub, Integer newProgress) {
-        userDao.updateSubjectProgress(id,idSub,newProgress);
+    public Integer deleteUserProgressForSubject(Long id, String idSub){
+        return userDao.deleteUserProgressForSubject(id,idSub);
+    }
+
+    @Override
+    public Integer updateSubjectProgress(Long id, String idSub, Integer newProgress) {
+        return userDao.updateSubjectProgress(id,idSub,newProgress);
     }
 
     @Override

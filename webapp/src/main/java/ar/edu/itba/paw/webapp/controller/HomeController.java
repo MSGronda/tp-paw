@@ -72,6 +72,13 @@ public class HomeController {
         Map<String, ReviewStatistic> reviewStatistic = rs.getReviewStatMapBySubjectList(subjects);
         Map<String, ReviewStatistic> electivesReviewStatistic = rs.getReviewStatMapBySubjectList(infElectives);
 
+        long userId;
+        if(loggedUser() == null)
+            userId = -1;
+        else
+            userId = loggedUser().getId();
+
+        Map<String, Integer> subjectProgress = us.getUserAllSubjectProgress(userId);
 
         ModelAndView mav = new ModelAndView("home/index");
         mav.addObject("degrees", degrees);
@@ -80,6 +87,7 @@ public class HomeController {
         mav.addObject("electives", infElectives);
         mav.addObject("reviewStatistics", reviewStatistic);
         mav.addObject("electivesReviewStatistics", electivesReviewStatistic);
+        mav.addObject("subjectProgress", subjectProgress);
         return mav;
     }
 

@@ -80,6 +80,8 @@ public class SubjectController {
 
         final Map<Long, Integer> userVotes = reviewService.userReviewVoteByIdSubAndIdUser(id, userId);
 
+        final Integer subjectProgress = userService.getUserSubjectProgress(userId,id);
+
         ModelAndView mav = new ModelAndView("subjects/subject_info");
         mav.addObject("reviews", reviews);
         mav.addObject("professors", professors);
@@ -91,8 +93,10 @@ public class SubjectController {
         mav.addObject("classes", classes);
         mav.addObject("didReview", didReview);
         mav.addObject("userVotes", userVotes);
+        mav.addObject("subjectProgress",subjectProgress);
         return mav;
     }
+
     @ModelAttribute("loggedUser")
     public User loggedUser(){
         Object maybeUniAuthUser = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
