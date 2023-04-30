@@ -49,11 +49,10 @@
             <sl-tab-panel class="year-panel" name="year-${year}">
                 <c:forEach var="subject" items="${infSubsByYear[year]}">
                     <c:set var="subject" value="${subject}" scope="request"/>
-<%--                    <c:set var="subProfs" value="${profsBySubId[subject.id]}" scope="request"/>--%>
                     <c:set var="reviewCount" value="${reviewStatistics[subject.id].reviewCount}" scope="request"/>
-<%--                    <c:set var="prereqNames" value="${prereqNames[subject.id]}" scope="request"/>--%>
                     <c:set var="difficulty" value="${reviewStatistics[subject.id].difficulty}" scope="request"/>
                     <c:set var="time" value="${reviewStatistics[subject.id].timeDifficulty}" scope="request"/>
+                    <c:set var="progress" value="${subjectProgress.getOrDefault(subject.id, 0)}" scope="request"/>
                     <c:import url="../components/subject_card.jsp"/>
                 </c:forEach>
 
@@ -65,6 +64,7 @@
                 <c:set var="reviewCount" value="${electivesReviewStatistics[subject.id].reviewCount}" scope="request"/>
                 <c:set var="difficulty" value="${electivesReviewStatistics[subject.id].difficulty}" scope="request"/>
                 <c:set var="time" value="${electivesReviewStatistics[subject.id].timeDifficulty}" scope="request"/>
+                <c:set var="progress" value="${subjectProgress.getOrDefault(elective.id, 0)}" scope="request"/>
                 <c:import url="../components/subject_card.jsp"/>
             </c:forEach>
         </sl-tab-panel>
