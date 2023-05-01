@@ -49,3 +49,6 @@ Thumbs.db
 *.mov
 *.wmv
 
+# Secrets
+application-*.properties
+rememberMeKey.txt
