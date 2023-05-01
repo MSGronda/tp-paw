@@ -45,7 +45,7 @@ public class UserController {
 
 
     @Autowired
-    public UserController(UserService userService, ReviewService reviewService, MailService mailService) {
+    public UserController(UserService userService, ReviewService reviewService, MailService mailService, DegreeService degreeService) {
         this.userService = userService;
         this.reviewService = reviewService;
         this.mailService = mailService;

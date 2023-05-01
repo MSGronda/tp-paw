@@ -28,12 +28,12 @@
     </appender>
 
     <root level="INFO">
-        <appender-ref ref="root-appender" />
+        <appender-ref ref="dev-appender"/>
     </root>
-    <logger name="ar.edu.itba" level="INFO" additivity="false">
+    <logger name="ar.edu.itba" level="INFO" additivity="true">
         <appender-ref ref="paw-appender"/>
     </logger>
-    <logger name="STDOUT" level="INFO" additivity="false">
+    <logger name="STDOUT" level="DEBUG" additivity="true">
         <appender-ref ref="dev-appender"/>
     </logger>
 </configuration>
