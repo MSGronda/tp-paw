@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration>
-    <property name="defaultPattern" value="%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n" />
+    <property name="defaultPattern" value="[%d{HH:mm:ss.SSS}][%thread][%level][%logger{36}] %msg%n" />
+    <property name="devPattern" value="[%highlight(%level)][%logger{24}] %msg%n" />
+
     <appender name="root-appender" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
             <maxHistory>5</maxHistory>
@@ -19,10 +21,19 @@
             <pattern>${defaultPattern:-}</pattern>
         </encoder>
     </appender>
+    <appender name="dev-appender" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>${devPattern:-}</pattern>
+        </encoder>
+    </appender>
+
     <root level="INFO">
         <appender-ref ref="root-appender" />
     </root>
     <logger name="ar.edu.itba" level="INFO" additivity="false">
         <appender-ref ref="paw-appender"/>
+    </logger>
+    <logger name="STDOUT" level="INFO" additivity="false">
+        <appender-ref ref="dev-appender"/>
     </logger>
 </configuration>
