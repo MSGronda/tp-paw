@@ -29,8 +29,8 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
     @Autowired
     private UserDetailsService userDetailsService;
 
-//    @Autowired
-//    private Environment environment;
+    @Autowired
+    private Environment environment;
 
     @Bean
     public PasswordEncoder passwordEncoder(){
@@ -61,8 +61,7 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
             .and().rememberMe()
                 .rememberMeParameter("rememberMe")
                 .userDetailsService(userDetailsService)
-//                .key("no hagan esto")
-//                .key(environment.getRequiredProperty("auth.rememberMe.key"))
+            .key(environment.getRequiredProperty("auth.rememberMe.key"))
                 .key("classpath:rememberMeKey.txt")
 
                 .tokenValiditySeconds((int) TimeUnit.DAYS.toSeconds(30))

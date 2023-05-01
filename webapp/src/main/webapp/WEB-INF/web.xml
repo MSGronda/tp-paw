@@ -17,6 +17,7 @@
         <param-value>
             ar.edu.itba.paw.webapp.config.WebConfig,
             ar.edu.itba.paw.webapp.config.WebAuthConfig,
+            ar.edu.itba.paw.webapp.config.MailConfig,
         </param-value>
     </context-param>
 

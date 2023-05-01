@@ -23,10 +23,10 @@ public class MailConfig {
     public JavaMailSender javaMailSender() {
         JavaMailSenderImpl mailSender = new JavaMailSenderImpl();
 
-        mailSender.setHost(environment.getProperty("mail.host"));
-        mailSender.setPort(Integer.parseInt(environment.getProperty("mail.port")));
-        mailSender.setUsername(environment.getProperty("mail.username"));
-        mailSender.setPassword(environment.getProperty("mail.password"));
+        mailSender.setHost(environment.getRequiredProperty("mail.host"));
+        mailSender.setPort(Integer.parseInt(environment.getRequiredProperty("mail.port")));
+        mailSender.setUsername(environment.getRequiredProperty("mail.username"));
+        mailSender.setPassword(environment.getRequiredProperty("mail.password"));
 
         Properties props = mailSender.getJavaMailProperties();
         props.put("mail.transport.protocol", "smtp");

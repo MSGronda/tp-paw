@@ -4,13 +4,11 @@ import org.flywaydb.core.Flyway;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.*;
 import org.springframework.context.support.ReloadableResourceBundleMessageSource;
-import org.springframework.context.annotation.DependsOn;
-import org.springframework.core.io.Resource;
+import org.springframework.core.env.Environment;
 import org.springframework.jdbc.datasource.SimpleDriverDataSource;
 import org.springframework.jdbc.datasource.init.DataSourceInitializer;
 import org.springframework.jdbc.datasource.init.DatabasePopulator;
@@ -29,12 +27,20 @@ import java.nio.charset.StandardCharsets;
 import java.util.concurrent.TimeUnit;
 
 @EnableWebMvc
-@ComponentScan({"ar.edu.itba.paw.webapp.controller", "ar.edu.itba.paw.services", "ar.edu.itba.paw.persistence", "ar.edu.itba.paw.webapp.config"})
+@ComponentScan({"ar.edu.itba.paw.webapp.controller", "ar.edu.itba.paw.services", "ar.edu.itba.paw.persistence"})
+@PropertySources({
+        @PropertySource("classpath:application.properties"),
+        @PropertySource("classpath:application-${spring.profiles.active}.properties")
+})
 @Configuration
 public class WebConfig extends WebMvcConfigurerAdapter {
 
     private final static long MAX_SIZE = 1024*1024*50;
     private final static Logger LOGGER = LoggerFactory.getLogger(WebConfig.class);
+
+    @Autowired
+    Environment environment;
+
     @Bean
     ViewResolver viewResolver() {
         InternalResourceViewResolver vr = new InternalResourceViewResolver();
@@ -51,9 +57,9 @@ public class WebConfig extends WebMvcConfigurerAdapter {
 
         LOGGER.info("Setting up the JDBC DataSource...");
         ds.setDriverClass(org.postgresql.Driver.class);
-        ds.setUrl("jdbc:postgresql://localhost/paw");
-        ds.setUsername("root");
-        ds.setPassword("root");
+        ds.setUrl(environment.getRequiredProperty("db.url"));
+        ds.setUsername(environment.getRequiredProperty("db.username"));
+        ds.setPassword(environment.getRequiredProperty("db.password"));
 
         return ds;
     }
