@@ -4,7 +4,7 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <html>
 <head>
-    <title>Title</title>
+    <title><spring:message code="profile.editing" /></title>
     <jsp:include page="../components/head_shared.jsp"/>
     <style>
         main {

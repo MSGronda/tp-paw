@@ -51,6 +51,7 @@
         </sl-badge>
       </c:if>
       <c:if test="${!subject.prerequisites.isEmpty()}">
+      <sl-tooltip content="<c:out value="${subject.prerequisites.toString()}" />">
         <sl-badge variant="warning" pill>
           <c:choose>
             <c:when test="${subject.prerequisites.size() != 1}">
@@ -61,6 +62,7 @@
             </c:otherwise>
           </c:choose>
         </sl-badge>
+      </sl-tooltip>
       </c:if>
 
 

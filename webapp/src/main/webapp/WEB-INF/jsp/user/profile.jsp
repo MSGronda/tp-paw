@@ -88,9 +88,11 @@
         <div class="image-container">
             <spring:message code="profile.picture.alt" var="pic" arguments="${user.username}"/>
             <img class="profile-image" src="<c:url value="/profile/${user.id}"/>" alt="${pic}" >
-            <sl-button class="edit-picture" variant="primary" size="small" outline  href="<c:out value="/profile/editprofilepicture"/>">
-                <sl-icon name="pen" label="Edit"></sl-icon>
-            </sl-button>
+            <c:if test="${user.id == loggedUser.id}">
+                <sl-button class="edit-picture" variant="primary" size="small" outline  href="<c:out value="/profile/editprofilepicture"/>">
+                    <sl-icon name="pen" label="Edit"></sl-icon>
+                </sl-button>
+            </c:if>
         </div>
         <div class="title">
             <c:if test="${user.id != loggedUser.id}">
