@@ -1,8 +1,11 @@
 package ar.edu.itba.paw.webapp.config;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.context.support.ResourceBundleMessageSource;
+import org.springframework.core.env.Environment;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.thymeleaf.spring4.SpringTemplateEngine;
@@ -13,20 +16,23 @@ import java.util.Properties;
 
 @Configuration
 public class MailConfig {
+    @Autowired
+    private Environment environment;
+
     @Bean
     public JavaMailSender javaMailSender() {
         JavaMailSenderImpl mailSender = new JavaMailSenderImpl();
-        mailSender.setHost("smtp.ethereal.email");
-        mailSender.setPort(587);
 
-        mailSender.setUsername("alexander.dicki1@ethereal.email");
-        mailSender.setPassword("8u3QUP9k7XE3ZArM5H");
+        mailSender.setHost(environment.getProperty("mail.host"));
+        mailSender.setPort(Integer.parseInt(environment.getProperty("mail.port")));
+        mailSender.setUsername(environment.getProperty("mail.username"));
+        mailSender.setPassword(environment.getProperty("mail.password"));
 
         Properties props = mailSender.getJavaMailProperties();
         props.put("mail.transport.protocol", "smtp");
         props.put("mail.smtp.auth", true);
         props.put("mail.smtp.starttls.enable", true);
-        props.put("mail.debug", true);
+        props.put("mail.smtp.ssl.protocols", "TLSv1.2");
 
         return mailSender;
     }

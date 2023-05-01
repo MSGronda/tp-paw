@@ -7,7 +7,7 @@
 <html>
 <head>
     <title>Recover Password</title>
-    <jsp:include page="../components/head_shared.jsp"/>
+    <jsp:include page="../../components/head_shared.jsp"/>
 
     <style>
         .card-basic {
@@ -23,16 +23,20 @@
     </style>
 </head>
 <body>
-<jsp:include page="../components/navbar.jsp" />
+<jsp:include page="../../components/navbar.jsp" />
 
 <main class="container-50">
     <div>
         <h1><spring:message code="recover.title"/></h1>
     </div>
     <div>
-        <c:url var="sendEmail" value="/recover"/>
+        <c:url value="/recover" var="sendEmail"/>
         <form:form modelAttribute="RecoverPasswordForm" action="${sendEmail}" method="post">
             <sl-card class="card-basic">
+                <c:if test="${invalidToken}">
+                    <p class="error"><spring:message code="recover.invalidToken"/></p>
+                </c:if>
+
                 <form:errors path="email" cssClass="error" element="p"/>
                 <spring:message code="reviewForm.email.placeholder" var="emailPlaceholder"/>
                 <sl-input name="email" path="email" value="${RecoverPasswordForm.email}" placeholder="${emailPlaceholder}"></sl-input>
@@ -40,14 +44,14 @@
                 <br/>
                 <br/>
                 <div class="submit-button">
-                    <sl-button type="submit" variant="primary" outline><spring:message code="recover.sendEmail"/></sl-button>
+                    <sl-button type="submit" variant="success" outline><spring:message code="recover.sendEmail"/></sl-button>
                 </div>
             </sl-card>
         </form:form>
     </div>
 </main>
 
-<jsp:include page="../components/footer.jsp"/>
-<jsp:include page="../components/body_scripts.jsp"/>
+<jsp:include page="../../components/footer.jsp"/>
+<jsp:include page="../../components/body_scripts.jsp"/>
 </body>
 </html>

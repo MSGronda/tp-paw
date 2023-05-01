@@ -2,10 +2,13 @@ package ar.edu.itba.paw.webapp.controller;
 
 import ar.edu.itba.paw.models.*;
 import ar.edu.itba.paw.services.DegreeService;
+import ar.edu.itba.paw.services.MailService;
 import ar.edu.itba.paw.services.ReviewService;
 import ar.edu.itba.paw.services.UserService;
+import ar.edu.itba.paw.services.exceptions.InvalidTokenException;
 import ar.edu.itba.paw.services.exceptions.OldPasswordDoesNotMatchException;
 import ar.edu.itba.paw.services.exceptions.UserEmailAlreadyTakenException;
+import ar.edu.itba.paw.services.exceptions.UserEmailNotFoundException;
 import ar.edu.itba.paw.webapp.auth.UniAuthUser;
 import ar.edu.itba.paw.webapp.exceptions.UserNotFoundException;
 import ar.edu.itba.paw.webapp.form.*;
@@ -23,9 +26,9 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.commons.CommonsMultipartFile;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-
-
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.io.*;
 import java.nio.file.Files;
@@ -36,14 +39,16 @@ import java.util.*;
 public class UserController {
     private final UserService userService;
     private final ReviewService reviewService;
+    private final MailService mailService;
 
     private final DegreeService degreeService;
 
 
     @Autowired
-    public UserController(UserService userService, ReviewService reviewService, DegreeService degreeService) {
+    public UserController(UserService userService, ReviewService reviewService, MailService mailService) {
         this.userService = userService;
         this.reviewService = reviewService;
+        this.mailService = mailService;
         this.degreeService = degreeService;
     }
 
@@ -141,16 +146,65 @@ public class UserController {
 
     @RequestMapping(value = "/recover", method = { RequestMethod.POST })
     public ModelAndView sendEmail(@Valid @ModelAttribute ("RecoverPasswordForm") final RecoverPasswordForm recoverPasswordForm,
-                                  final BindingResult errors){
+                                  final BindingResult errors,
+                                  HttpServletRequest request){
         if( errors.hasErrors()){
             return recoverPassword(recoverPasswordForm);
         }
-        return new ModelAndView("redirect:/login");
+
+        final String token;
+        try {
+            token = userService.generateRecoveryToken(recoverPasswordForm.getEmail());
+        } catch (UserEmailNotFoundException e) {
+            ModelAndView mav = recoverPassword(recoverPasswordForm);
+            mav.addObject("emailNotFound", true);
+            return mav;
+        }
+
+        final String baseUrl =
+                ServletUriComponentsBuilder.fromCurrentContextPath().build().toUriString();
+
+        Map<String,Object> mailModel = new HashMap<>();
+        mailModel.put("url", baseUrl + "/recover/" + token);
+        mailService.sendMail(recoverPasswordForm.getEmail(), "Uni: Recover password", "recovery", mailModel);
+
+        return new ModelAndView("user/recover/emailSent");
     }
 
     @RequestMapping(value = "/recover", method = { RequestMethod.GET })
     public ModelAndView recoverPassword(@ModelAttribute ("RecoverPasswordForm") final RecoverPasswordForm recoverPasswordForm){
-        return new ModelAndView("/user/recoverPassword");
+        return new ModelAndView("user/recover/index");
+    }
+
+    @RequestMapping(value = "/recover/{token}", method = { RequestMethod.POST })
+    public ModelAndView recoverPasswordEdit(@PathVariable String token, @Valid @ModelAttribute("RecoverPasswordEditForm") final RecoverPasswordEditForm recoverPasswordEditForm,
+                                            final BindingResult errors){
+        if(errors.hasErrors()) {
+            return recoverPasswordEditForm(token, recoverPasswordEditForm);
+        }
+
+        try {
+            userService.recoverPassword(token, recoverPasswordEditForm.getPassword());
+        } catch (InvalidTokenException e) {
+            ModelAndView mav = new ModelAndView("user/recover/index");
+            mav.addObject("invalidToken", true);
+            return mav;
+        }
+
+        return new ModelAndView("user/recover/success");
+    }
+
+    @RequestMapping(value = "/recover/{token}", method = { RequestMethod.GET })
+    public ModelAndView recoverPasswordEditForm(@PathVariable String token, @ModelAttribute("RecoverPasswordEditForm") final RecoverPasswordEditForm form){
+        if(!userService.isValidToken(token)){
+            ModelAndView mav = new ModelAndView("user/recover/index");
+            mav.addObject("invalidToken", true);
+            return mav;
+        }
+
+        ModelAndView mav = new ModelAndView("user/recover/editPassword");
+        mav.addObject("token", token);
+        return mav;
     }
 
     @ModelAttribute("loggedUser")

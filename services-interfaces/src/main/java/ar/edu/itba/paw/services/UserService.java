@@ -1,10 +1,11 @@
 package ar.edu.itba.paw.services;
 
 import ar.edu.itba.paw.models.User;
+import ar.edu.itba.paw.services.exceptions.InvalidTokenException;
 import ar.edu.itba.paw.services.exceptions.OldPasswordDoesNotMatchException;
 import ar.edu.itba.paw.services.exceptions.UserEmailAlreadyTakenException;
+import ar.edu.itba.paw.services.exceptions.UserEmailNotFoundException;
 
-import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -26,4 +27,12 @@ public interface UserService extends BaseService<Long, User> {
     void editProfile(Long userId, String username);
 
     byte[] updateProfilePicture(long id, byte[] image);
+
+    String generateRecoveryToken(String email) throws UserEmailNotFoundException;
+    String generateRecoveryToken(User user);
+    String generateRecoveryToken(long userId);
+
+    boolean isValidToken(String token);
+
+    void recoverPassword(String token, String newPassword) throws InvalidTokenException;
 }

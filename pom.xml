@@ -95,6 +95,11 @@
         <version>${jstl.version}</version>
       </dependency>
       <dependency>
+        <groupId>javax.mail</groupId>
+        <artifactId>mail</artifactId>
+        <version>1.4.7</version>
+      </dependency>
+      <dependency>
         <groupId>org.postgresql</groupId>
         <artifactId>postgresql</artifactId>
         <version>${org.postgresql.version}</version>

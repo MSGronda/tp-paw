@@ -24,7 +24,6 @@ import java.util.concurrent.TimeUnit;
 @EnableWebSecurity
 @ComponentScan({ "ar.edu.itba.paw.webapp.auth" })
 @Configuration
-//@PropertySource(value = {"classpath:application.properties"})
 public class WebAuthConfig extends WebSecurityConfigurerAdapter {
 
     @Autowired
@@ -47,9 +46,9 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(final HttpSecurity http) throws Exception {
         http.sessionManagement()
-                .invalidSessionUrl("/login")
+                .sessionAuthenticationErrorUrl("/login")
             .and().authorizeRequests()
-                .antMatchers("/login","/register", "/recover").anonymous()
+                .antMatchers("/login","/register", "/recover/**").anonymous()
                 .antMatchers("/subject/{id:\\d+\\.\\d+}/edit", "/edit").hasRole("EDITOR")
                 .antMatchers("/subject/{id:\\d+\\.\\d+}", "/", "/profile/{id:\\d+}", "/search/**").permitAll()
                 .antMatchers("/**").authenticated()
@@ -64,7 +63,7 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
                 .userDetailsService(userDetailsService)
 //                .key("no hagan esto")
 //                .key(environment.getRequiredProperty("auth.rememberMe.key"))
-                .key("classpath:application.properties")
+                .key("classpath:rememberMeKey.txt")
 
                 .tokenValiditySeconds((int) TimeUnit.DAYS.toSeconds(30))
             .and().logout()
