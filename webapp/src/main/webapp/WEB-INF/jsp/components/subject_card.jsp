@@ -30,7 +30,7 @@
 
 <a href='<c:out value="${pageContext.request.contextPath}/subject/${subject.id}"/>'>
 <sl-card class="card-header subject-card" >
-  <div slot="header">
+  <div>
     <b class="class-info"><c:out value="${subject.name}" /> - <c:out value="${subject.id}"/></b>
     <div class="chip-row class-info">
       <sl-badge variant="primary" pill>
@@ -76,8 +76,6 @@
             </sl-tooltip>
           </c:otherwise>
         </c:choose>
-
-
     </div>
   </div>
     <div slot="footer" class="chip-row ">
