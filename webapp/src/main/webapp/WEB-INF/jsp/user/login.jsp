@@ -58,7 +58,8 @@
     <br/>
     <div>
       <span><spring:message code="login.forgotPassword"/></span>
-      <span><a href="/recover"><spring:message code="login.recover"/></a></span>
+      <c:url var="registerUrl" value="/recover"/>
+      <span><a href="${registerUrl}"><spring:message code="login.recover"/></a></span>
     </div>
   </form>
 </main >
