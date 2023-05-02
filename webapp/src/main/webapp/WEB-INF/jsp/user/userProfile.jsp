@@ -90,7 +90,7 @@
       <img class="profile-image" src="<c:url value="/user/${user.id}"/>" alt="${pic}" >
     </div>
     <div class="title">
-      <h1><spring:message code="profile.header" arguments="${user.username}" /></h1>
+      <h1><c:out value="${user.username}"/></h1>
     </div>
   </div>
 
