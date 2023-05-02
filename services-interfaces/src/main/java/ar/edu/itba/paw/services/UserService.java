@@ -28,7 +28,7 @@ public interface UserService extends BaseService<Long, User> {
 
     byte[] updateProfilePicture(long id, byte[] image);
 
-    String generateRecoveryToken(String email) throws UserEmailNotFoundException;
+    String generateRecoveryToken(String email);
     String generateRecoveryToken(User user);
     String generateRecoveryToken(long userId);
 

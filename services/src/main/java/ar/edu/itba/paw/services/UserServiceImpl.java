@@ -116,7 +116,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public String generateRecoveryToken(String email) throws UserEmailNotFoundException {
+    public String generateRecoveryToken(String email){
         Optional<User> user = getUserWithEmail(email);
         if(!user.isPresent()){
             throw new UserEmailNotFoundException();

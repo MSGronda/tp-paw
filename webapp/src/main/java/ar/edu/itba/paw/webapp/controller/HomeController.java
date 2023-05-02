@@ -5,11 +5,7 @@ import ar.edu.itba.paw.models.Professor;
 import ar.edu.itba.paw.models.ReviewStatistic;
 import ar.edu.itba.paw.models.Subject;
 import ar.edu.itba.paw.models.User;
-import ar.edu.itba.paw.services.DegreeService;
-import ar.edu.itba.paw.services.ProfessorService;
-import ar.edu.itba.paw.services.ReviewService;
-import ar.edu.itba.paw.services.SubjectService;
-import ar.edu.itba.paw.services.UserService;
+import ar.edu.itba.paw.services.*;
 import ar.edu.itba.paw.webapp.auth.UniAuthUser;
 import ar.edu.itba.paw.webapp.exceptions.DegreeNotFoundException;
 import ar.edu.itba.paw.webapp.exceptions.UserNotFoundException;
@@ -40,13 +36,16 @@ public class HomeController {
 
     private final UserService us;
 
+    private final AuthUserService aus;
+
     @Autowired
-    public HomeController(DegreeService ds, SubjectService ss, ProfessorService ps, ReviewService rs, UserService us) {
+    public HomeController(DegreeService ds, SubjectService ss, ProfessorService ps, ReviewService rs, UserService us, AuthUserService aus) {
         this.ds = ds;
         this.ss = ss;
         this.ps = ps;
         this.us = us;
         this.rs = rs;
+        this.aus = aus;
     }
 
     @RequestMapping("/")
@@ -73,10 +72,10 @@ public class HomeController {
         Map<String, ReviewStatistic> electivesReviewStatistic = rs.getReviewStatMapBySubjectList(infElectives);
 
         long userId;
-        if(loggedUser() == null)
+        if(!aus.isAuthenticated())
             userId = -1;
         else
-            userId = loggedUser().getId();
+            userId = aus.getCurrentUser().getId();
 
         Map<String, Integer> subjectProgress = us.getUserAllSubjectProgress(userId);
 
@@ -91,24 +90,4 @@ public class HomeController {
         return mav;
     }
 
-//    @ModelAttribute("loggedUser")
-//    public User loggedUser(final HttpSession session){
-//        Long userId = (Long) session.getAttribute("id");
-//        System.out.println(userId);
-//        if(userId == null){
-//            return null;
-//        }
-//
-//        return us.findById(userId.longValue()).orElseGet(() -> null);
-//    }
-
-    @ModelAttribute("loggedUser")
-    public User loggedUser(){
-        Object maybeUniAuthUser = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        if( maybeUniAuthUser.toString().equals("anonymousUser")){
-            return null;
-        }
-        final UniAuthUser userDetails = (UniAuthUser) maybeUniAuthUser ;
-        return us.getUserWithEmail(userDetails.getUsername()).orElse(null);
-    }
 }

@@ -61,7 +61,7 @@
         <h1><spring:message code="profile.editing"/></h1>
         <div class="editButton">
             <sl-tooltip content="<spring:message code="profile.cancel" />">
-                <sl-icon-button name="x-lg" label="Return" href="<c:url value="/profile/${loggedUser.id}" />"></sl-icon-button>
+                <sl-icon-button name="x-lg" label="Return" href="<c:url value="/profile" />"></sl-icon-button>
             </sl-tooltip>
         </div>
     </div>
@@ -71,8 +71,8 @@
                 <spring:message code="profile.editing.picture" />
                 <br/>
                 <br/>
-                <spring:message code="profile.picture.alt" var="pic" arguments="${loggedUser.username}"/>
-                <img class="profile-image" src="<c:url value="/profile/${loggedUser.id}"/>" alt="${pic}" >
+                <spring:message code="profile.picture.alt" var="pic" arguments="${user.username}"/>
+                <img class="profile-image" src="<c:url value="/profile"/>" alt="${pic}" >
             </div>
 
             <br />

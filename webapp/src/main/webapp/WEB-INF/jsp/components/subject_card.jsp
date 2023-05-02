@@ -1,6 +1,7 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ page contentType="text/html;charset=UTF-8" %>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
+<%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 
 
 <!-- Params -->
@@ -65,7 +66,7 @@
       </sl-tooltip>
       </c:if>
 
-
+      <sec:authorize access="isAuthenticated()">
         <c:choose>
           <c:when test="${progress == 1}">
             <sl-tooltip class="progress-icon" content="<spring:message code="card.progress.tooltip.passed"/>">
@@ -78,6 +79,7 @@
             </sl-tooltip>
           </c:otherwise>
         </c:choose>
+      </sec:authorize>
     </div>
   </div>
     <div slot="footer" class="chip-row ">

@@ -26,16 +26,19 @@ public class SubjectController {
 
     private final UserService userService;
 
+    private final AuthUserService authUserService;
+
     @Autowired
     public SubjectController(SubjectService subjectService, ReviewService reviewService,
                              ProfessorService professorService, SubjectClassService subjectClassService,
-                             DegreeService degreeService, UserService userService ) {
+                             DegreeService degreeService, UserService userService, AuthUserService authUserService ) {
         this.subjectClassService = subjectClassService;
         this.subjectService = subjectService;
         this.reviewService = reviewService;
         this.professorService = professorService;
         this.degreeService = degreeService;
         this.userService = userService;
+        this.authUserService = authUserService;
     }
 
     @RequestMapping("/subject/{id:\\d+\\.\\d+}")
@@ -62,24 +65,23 @@ public class SubjectController {
             }
         }
         int year = (int) maxYear;
-        final List<Professor> professors = professorService.getAllBySubject(id);
-
-        final List<Review> reviews = reviewService.getAllSubjectReviewsWithUsername(id,param);
-
-        final Boolean didReview = reviewService.didUserReview(reviews, loggedUser());
-
-        final Map<String,String> prereqNames = subjectService.findPrerequisitesName(id);
-
-        final List<SubjectClass> classes = subjectClassService.getBySubId(id);
 
         long userId;
-        if(loggedUser() == null)
+        User user;
+        if( authUserService.isAuthenticated()){
+            user = authUserService.getCurrentUser();
+            userId = user.getId();
+        }else{
+            user = null;
             userId = -1;
-        else
-            userId = loggedUser().getId();
+        }
 
+        final List<Professor> professors = professorService.getAllBySubject(id);
+        final List<Review> reviews = reviewService.getAllSubjectReviewsWithUsername(id,param);
+        final Boolean didReview = reviewService.didUserReview(reviews, user);
+        final Map<String,String> prereqNames = subjectService.findPrerequisitesName(id);
+        final List<SubjectClass> classes = subjectClassService.getBySubId(id);
         final Map<Long, Integer> userVotes = reviewService.userReviewVoteByIdSubAndIdUser(id, userId);
-
         final Integer subjectProgress = userService.getUserSubjectProgress(userId,id);
 
         ModelAndView mav = new ModelAndView("subjects/subject_info");
@@ -94,17 +96,8 @@ public class SubjectController {
         mav.addObject("didReview", didReview);
         mav.addObject("userVotes", userVotes);
         mav.addObject("subjectProgress",subjectProgress);
+        mav.addObject("user", user);
         return mav;
-    }
-
-    @ModelAttribute("loggedUser")
-    public User loggedUser(){
-        Object maybeUniAuthUser = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        if( maybeUniAuthUser.toString().equals("anonymousUser")){
-            return null;
-        }
-        final UniAuthUser userDetails = (UniAuthUser) maybeUniAuthUser ;
-        return userService.getUserWithEmail(userDetails.getUsername()).orElse(null);
     }
 
     @ModelAttribute("degrees")
