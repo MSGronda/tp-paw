@@ -40,7 +40,7 @@
             <h1><spring:message code="profile.editing"/></h1>
             <div class="editButton">
                 <sl-tooltip content="<spring:message code="profile.cancel" />">
-                    <sl-icon-button name="x-lg" label="Return" href="<c:url value="/profile/${loggedUser.id}" />"></sl-icon-button>
+                    <sl-icon-button name="x-lg" label="Return" href="<c:url value="/profile" />"></sl-icon-button>
                 </sl-tooltip>
             </div>
         </div>

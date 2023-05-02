@@ -1,10 +1,7 @@
 package ar.edu.itba.paw.webapp.controller;
 
 import ar.edu.itba.paw.models.*;
-import ar.edu.itba.paw.services.DegreeService;
-import ar.edu.itba.paw.services.MailService;
-import ar.edu.itba.paw.services.ReviewService;
-import ar.edu.itba.paw.services.UserService;
+import ar.edu.itba.paw.services.*;
 import ar.edu.itba.paw.services.exceptions.InvalidTokenException;
 import ar.edu.itba.paw.services.exceptions.OldPasswordDoesNotMatchException;
 import ar.edu.itba.paw.services.exceptions.UserEmailAlreadyTakenException;
@@ -43,27 +40,46 @@ public class UserController {
 
     private final DegreeService degreeService;
 
+    private final AuthUserService authUserService;
+
 
     @Autowired
-    public UserController(UserService userService, ReviewService reviewService, MailService mailService, DegreeService degreeService) {
+    public UserController(UserService userService, ReviewService reviewService, MailService mailService, DegreeService degreeService, AuthUserService authUserService) {
         this.userService = userService;
         this.reviewService = reviewService;
         this.mailService = mailService;
         this.degreeService = degreeService;
+        this.authUserService = authUserService;
     }
 
-    @RequestMapping("/profile/{id:\\d+}")
-    public ModelAndView profile(@PathVariable long id) {
+    @RequestMapping("/user/{id:\\d+}")
+    public ModelAndView user(@PathVariable long id) {
         final Optional<User> maybeUser = userService.findById(id);
         if(!maybeUser.isPresent()) {
             throw new UserNotFoundException();
         }
 
+        if( authUserService.getCurrentUser().getId() == id){
+            return new ModelAndView("redirect:/profile");
+        }
+
         final User user = maybeUser.get();
+        ModelAndView mav = new ModelAndView("user/userProfile");
+
+        return setProfileData(user, mav);
+    }
+
+    @RequestMapping("/profile")
+    public ModelAndView profile() {
+        ModelAndView mav = new ModelAndView("/user/profile");
+        User user = authUserService.getCurrentUser();
+        return setProfileData(user, mav);
+    }
+
+    private ModelAndView setProfileData(User user, ModelAndView mav){
         final List<Review> userReviews = reviewService.getAllUserReviewsWithSubjectName(user.getId());
         final Map<Long, Integer> userVotes = reviewService.userReviewVoteByIdUser(user.getId());
 
-        ModelAndView mav = new ModelAndView("user/profile");
         mav.addObject("user", user);
         mav.addObject("reviews", userReviews);
         mav.addObject("userVotes",userVotes);
@@ -116,7 +132,7 @@ public class UserController {
 
         User user = loggedUser();
         userService.editProfile(user.getId(), editUserDataForm.getUserName());
-        return new ModelAndView("redirect:/profile/" + user.getId());
+        return new ModelAndView("redirect:/profile");
     }
     @RequestMapping(value = "/profile/editdata", method = { RequestMethod.GET })
     public ModelAndView editProfileForm(@ModelAttribute ("EditUserDataForm") final EditUserDataForm editUserDataForm) {
@@ -137,7 +153,7 @@ public class UserController {
             mav.addObject("oldPasswordDoesNotMatch", true);
             return mav;
         }
-        return new ModelAndView("redirect:/profile/" + user.getId());
+        return new ModelAndView("redirect:/profile");
     }
     @RequestMapping(value = "/profile/editpassword", method = { RequestMethod.GET })
     public ModelAndView editPasswordForm(@ModelAttribute ("EditUserPasswordForm") final EditUserPasswordForm editUserPasswordForm) {
@@ -222,10 +238,17 @@ public class UserController {
         return degreeService.getAll();
     }
 
-    @RequestMapping(value = "/profile/{id:\\d+}", method = { RequestMethod.GET },
+    @RequestMapping(value = "/profile", method = { RequestMethod.GET },
         produces = {MediaType.IMAGE_JPEG_VALUE, MediaType.IMAGE_PNG_VALUE})
     @ResponseBody
-    public byte[] profilePicture(@PathVariable long id)throws IOException {
+    public byte[] profilePicture()throws IOException {
+        return userService.findByIdWithImage(authUserService.getCurrentUser().getId()).get().getImage();
+    }
+
+    @RequestMapping(value = "/user/{id:\\d+}", method = { RequestMethod.GET },
+            produces = {MediaType.IMAGE_JPEG_VALUE, MediaType.IMAGE_PNG_VALUE})
+    @ResponseBody
+    public byte[] userPicture(@PathVariable long id)throws IOException {
         return userService.findByIdWithImage(id).get().getImage();
     }
 
@@ -243,7 +266,7 @@ public class UserController {
         User user = loggedUser();
 
         userService.updateProfilePicture(user.getId(), editProfilePictureForm.getProfilePicture().getBytes());
-        return new ModelAndView("redirect:/profile/" + user.getId());
+        return new ModelAndView("redirect:/profile");
     }
 
     @RequestMapping(value = "/subjectProgress", method = RequestMethod.POST)

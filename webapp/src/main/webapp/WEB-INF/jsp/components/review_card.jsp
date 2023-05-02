@@ -72,7 +72,7 @@
             <spring:message code="form.anonymous"/>
           </c:when>
           <c:when test="${!review.anonymous}">
-                <a class="username-redirect" href="<c:url value="/profile/${review.userId}"/>"><c:out value="${review.username}"/></a>
+                <a class="username-redirect" href="<c:url value="/user/${review.userId}"/>"><c:out value="${review.username}"/></a>
           </c:when>
         </c:choose>
       </c:otherwise>
