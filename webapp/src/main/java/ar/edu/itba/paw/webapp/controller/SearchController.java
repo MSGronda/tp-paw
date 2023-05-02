@@ -26,13 +26,16 @@ public class SearchController {
 
     private final DegreeService degreeService;
 
+    private final AuthUserService authUserService;
+
     @Autowired
-    public SearchController(SubjectService subjectService, ProfessorService professorService, ReviewService reviewService, UserService userService, DegreeService degreeService) {
+    public SearchController(SubjectService subjectService, ProfessorService professorService, ReviewService reviewService, UserService userService, DegreeService degreeService, AuthUserService authUserService) {
         this.subjectService = subjectService;
         this.professorService = professorService;
         this.userService = userService;
         this.reviewService = reviewService;
         this.degreeService = degreeService;
+        this.authUserService = authUserService;
     }
 
     @RequestMapping("/search/{name}")
@@ -43,10 +46,10 @@ public class SearchController {
         Map<String, ReviewStatistic> reviewStats = reviewService.getReviewStatMapBySubjectList(subjects);
 
         long userId;
-        if(loggedUser() == null)
+        if(!authUserService.isAuthenticated())
             userId = -1;
         else
-            userId = loggedUser().getId();
+            userId = authUserService.getCurrentUser().getId();
 
         Map<String,Integer> subjectProgress = userService.getUserAllSubjectProgress(userId);
 
@@ -57,16 +60,6 @@ public class SearchController {
         mav.addObject("subjectProgress", subjectProgress);
 
         return mav;
-    }
-
-    @ModelAttribute("loggedUser")
-    public User loggedUser(){
-        Object maybeUniAuthUser = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        if( maybeUniAuthUser.toString().equals("anonymousUser")){
-            return null;
-        }
-        final UniAuthUser userDetails = (UniAuthUser) maybeUniAuthUser ;
-        return userService.getUserWithEmail(userDetails.getUsername()).orElse(null);
     }
 
     @ModelAttribute("degrees")

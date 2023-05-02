@@ -2,6 +2,7 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jstl/core_rt" %>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
+<%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 
 <html>
 <head>
@@ -301,20 +302,22 @@
             <form id="sub-progress" style="margin: 0" >
                 <input type="hidden" name="idSub" id="idSub" value="${subject.id}">
                 <input type="hidden" name="progress" id="progress" value="${subjectProgress}">
-                <sl-tooltip content="<spring:message code="subject.progress.tooltip"/>">
-                    <c:choose>
-                        <c:when test="${subjectProgress == 1}">
-                            <sl-button class="progress-bt" variant="primary" size="large" pill data-form-id="sub-progress" data-form-value="1">
-                                <spring:message code="subject.progress.done"/>
-                            </sl-button>
-                        </c:when>
-                        <c:otherwise>
-                            <sl-button class="progress-bt" variant="primary" size="large" outline pill data-form-id="sub-progress" data-form-value="1">
-                                <spring:message code="subject.progress.pending"/>
-                            </sl-button>
-                        </c:otherwise>
-                    </c:choose>
-                </sl-tooltip>
+                <sec:authorize access="isAuthenticated()">
+                    <sl-tooltip content="<spring:message code="subject.progress.tooltip"/>">
+                        <c:choose>
+                            <c:when test="${subjectProgress == 1}">
+                                <sl-button class="progress-bt" variant="primary" size="large" pill data-form-id="sub-progress" data-form-value="1">
+                                    <spring:message code="subject.progress.done"/>
+                                </sl-button>
+                            </c:when>
+                            <c:otherwise>
+                                <sl-button class="progress-bt" variant="primary" size="large" outline pill data-form-id="sub-progress" data-form-value="1">
+                                    <spring:message code="subject.progress.pending"/>
+                                </sl-button>
+                            </c:otherwise>
+                        </c:choose>
+                    </sl-tooltip>
+                </sec:authorize>
             </form>
         </div>
         <br/>
@@ -366,10 +369,10 @@
       <h3><spring:message code="subject.noreviews"/></h3>
     </c:if>
     <c:forEach  var="review" items="${reviews}">
-
         <c:set var="review" value="${review}" scope="request"/>
         <c:set var="fromProfile" value="${false}" scope="request"/>
         <c:set var="userVotes" value="${userVotes}" scope="request"/>
+        <c:set var="user" value="${user}" scope="request"/>
         <c:import url="../components/review_card.jsp"/>
 
     </c:forEach>

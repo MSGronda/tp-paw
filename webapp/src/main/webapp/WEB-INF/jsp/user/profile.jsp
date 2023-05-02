@@ -140,6 +140,7 @@
         <c:set var="review" value="${review}" scope="request"/>
         <c:set var="fromProfile" value="${true}" scope="request"/>
         <c:set var="userVotes" value="${userVotes}" scope="request"/>
+        <c:set var="user" value="${user}" scope="request"/>
         <c:import url="../components/review_card.jsp"/>
     </c:forEach>
 </main>

@@ -106,6 +106,7 @@
       <c:set var="review" value="${review}" scope="request"/>
       <c:set var="fromProfile" value="${true}" scope="request"/>
       <c:set var="userVotes" value="${userVotes}" scope="request"/>
+      <c:set var="user" value="${null}" scope="request"/>
       <c:import url="../components/review_card.jsp"/>
     </c:if>
   </c:forEach>

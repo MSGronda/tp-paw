@@ -5,6 +5,7 @@
 <%--Params--%>
 <c:set var="review" value="${requestScope.review}"/>
 <c:set var="fromProfile" value="${requestScope.fromProfile}"/>
+<c:set var="user" value="${requestScope.user}"/>
 
 <style>
   .card-header {
@@ -18,9 +19,6 @@
   }
   .username-redirect{
     color: black;
-    text-decoration: underline;
-    text-underline-color: black;
-    text-decoration-thickness: 0.05rem;
   }
   .username-redirect:hover{
     color: #0369a1;
@@ -64,7 +62,8 @@
   <div slot="header" class="header">
     <c:choose>
       <c:when test="${fromProfile}">
-        <c:out value="${review.subjectId}" /> - <c:out value="${review.subjectName}"/>
+
+        <a class="username-redirect" href="/subject/${review.subjectId}"><c:out value="${review.subjectId}" /> - <c:out value="${review.subjectName}"/></a>
       </c:when>
       <c:otherwise>
         <c:choose>
@@ -78,7 +77,7 @@
       </c:otherwise>
     </c:choose>
 
-    <c:if test="${review.userId == loggedUser.id}">
+    <c:if test="${review.userId == user.id}">
       <div>
         <sl-icon-button name="pencil-square" label="edit" href="<c:url value="/review/${review.subjectId}/edit/${review.id}"/>"></sl-icon-button>
         <sl-icon-button name="trash3" class="delete-button" label="delete" href="<c:url value="/review/${review.subjectId}/delete/${review.id}"/>"></sl-icon-button>

@@ -71,7 +71,7 @@
                 <spring:message code="profile.editing.picture" />
                 <br/>
                 <br/>
-                <spring:message code="profile.picture.alt" var="pic" arguments="${loggedUser.username}"/>
+                <spring:message code="profile.picture.alt" var="pic" arguments="${user.username}"/>
                 <img class="profile-image" src="<c:url value="/profile"/>" alt="${pic}" >
             </div>
 
