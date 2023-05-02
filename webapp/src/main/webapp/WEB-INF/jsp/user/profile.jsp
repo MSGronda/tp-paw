@@ -87,27 +87,19 @@
     <div class="header">
         <div class="image-container">
             <spring:message code="profile.picture.alt" var="pic" arguments="${user.username}"/>
-            <img class="profile-image" src="<c:url value="/profile/${user.id}"/>" alt="${pic}" >
-            <c:if test="${user.id == loggedUser.id}">
-                <sl-button class="edit-picture" variant="primary" size="small" outline  href="<c:out value="/profile/editprofilepicture"/>">
-                    <sl-icon name="pen" label="Edit"></sl-icon>
-                </sl-button>
-            </c:if>
+            <img class="profile-image" src="<c:url value="/profile"/>" alt="${pic}" >
+            <sl-button class="edit-picture" variant="primary" size="small" outline  href="<c:out value="/profile/editprofilepicture"/>">
+                <sl-icon name="pen" label="Edit"></sl-icon>
+            </sl-button>
         </div>
         <div class="title">
-            <c:if test="${user.id != loggedUser.id}">
-                <h1><spring:message code="profile.header" arguments="${user.username}" /></h1>
-            </c:if>
-            <c:if test="${user.id == loggedUser.id}" >
-                <h1><spring:message code="profile.loggeduser" /></h1>
-                <c:url value="/logout" var="logout"/>
-                <div class="logout-button">
-                    <sl-button variant="primary" href="${logout}"><spring:message code="profile.logout"/></sl-button>
-                </div>
-            </c:if>
+            <h1><spring:message code="profile.loggeduser" /></h1>
+            <c:url value="/logout" var="logout"/>
+            <div class="logout-button">
+                <sl-button variant="primary" href="${logout}"><spring:message code="profile.logout"/></sl-button>
+            </div>
         </div>
         </div>
-    <c:if test="${user.id == loggedUser.id}">
         <sl-card class="card-basic">
             <div class="table-area">
                 <table width="100% !important">
@@ -134,13 +126,9 @@
             </div>
 
             <div class="edit-button">
-<%--                <sl-button variant="primary" outline href=""><spring:message code="profile.update.picture"/></sl-button>--%>
-<%--                <sl-button variant="primary" outline href="<c:url value="/profile/editdata"/>"><spring:message code="profile.update.username"/></sl-button>--%>
                 <sl-button variant="primary" outline href="<c:url value="/profile/editpassword"/>"><spring:message code="profile.update.password"/></sl-button>
             </div>
         </sl-card>
-    </c:if>
-
     <br/>
     <br>
     <hr />
@@ -149,12 +137,11 @@
         <h4><spring:message code="subject.noreviews"/></h4>
     </c:if>
     <c:forEach var="review" items="${reviews}">
-        <c:if test="${!review.anonymous || loggedUser.id == review.userId}">
-            <c:set var="review" value="${review}" scope="request"/>
-            <c:set var="fromProfile" value="${true}" scope="request"/>
-            <c:set var="userVotes" value="${userVotes}" scope="request"/>
-            <c:import url="../components/review_card.jsp"/>
-        </c:if>
+        <c:set var="review" value="${review}" scope="request"/>
+        <c:set var="fromProfile" value="${true}" scope="request"/>
+        <c:set var="userVotes" value="${userVotes}" scope="request"/>
+        <c:set var="user" value="${user}" scope="request"/>
+        <c:import url="../components/review_card.jsp"/>
     </c:forEach>
 </main>
 <jsp:include page="../components/footer.jsp"/>

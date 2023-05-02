@@ -1,10 +1,7 @@
 package ar.edu.itba.paw.webapp.controller;
 
 import ar.edu.itba.paw.models.*;
-import ar.edu.itba.paw.services.DegreeService;
-import ar.edu.itba.paw.services.MailService;
-import ar.edu.itba.paw.services.ReviewService;
-import ar.edu.itba.paw.services.UserService;
+import ar.edu.itba.paw.services.*;
 import ar.edu.itba.paw.services.exceptions.InvalidTokenException;
 import ar.edu.itba.paw.services.exceptions.OldPasswordDoesNotMatchException;
 import ar.edu.itba.paw.services.exceptions.UserEmailAlreadyTakenException;
@@ -16,6 +13,7 @@ import ar.edu.itba.paw.webapp.form.EditUserDataForm;
 import ar.edu.itba.paw.webapp.form.EditUserPasswordForm;
 import ar.edu.itba.paw.webapp.form.RecoverPasswordForm;
 import ar.edu.itba.paw.webapp.form.UserForm;
+import com.sun.org.apache.xpath.internal.operations.Mod;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -43,27 +41,46 @@ public class UserController {
 
     private final DegreeService degreeService;
 
+    private final AuthUserService authUserService;
+
 
     @Autowired
-    public UserController(UserService userService, ReviewService reviewService, MailService mailService, DegreeService degreeService) {
+    public UserController(UserService userService, ReviewService reviewService, MailService mailService, DegreeService degreeService, AuthUserService authUserService) {
         this.userService = userService;
         this.reviewService = reviewService;
         this.mailService = mailService;
         this.degreeService = degreeService;
+        this.authUserService = authUserService;
     }
 
-    @RequestMapping("/profile/{id:\\d+}")
-    public ModelAndView profile(@PathVariable long id) {
+    @RequestMapping("/user/{id:\\d+}")
+    public ModelAndView user(@PathVariable long id) {
         final Optional<User> maybeUser = userService.findById(id);
         if(!maybeUser.isPresent()) {
             throw new UserNotFoundException();
         }
 
+        if( authUserService.isAuthenticated() && authUserService.getCurrentUser().getId() == id){
+            return new ModelAndView("redirect:/profile");
+        }
+
         final User user = maybeUser.get();
+        ModelAndView mav = new ModelAndView("user/userProfile");
+
+        return setProfileData(user, mav);
+    }
+
+    @RequestMapping("/profile")
+    public ModelAndView profile() {
+        ModelAndView mav = new ModelAndView("/user/profile");
+        User user = authUserService.getCurrentUser();
+        return setProfileData(user, mav);
+    }
+
+    private ModelAndView setProfileData(User user, ModelAndView mav){
         final List<Review> userReviews = reviewService.getAllUserReviewsWithSubjectName(user.getId());
         final Map<Long, Integer> userVotes = reviewService.userReviewVoteByIdUser(user.getId());
 
-        ModelAndView mav = new ModelAndView("user/profile");
         mav.addObject("user", user);
         mav.addObject("reviews", userReviews);
         mav.addObject("userVotes",userVotes);
@@ -114,13 +131,16 @@ public class UserController {
             return editProfileForm(editUserDataForm);
         }
 
-        User user = loggedUser();
+        User user = authUserService.getCurrentUser();
         userService.editProfile(user.getId(), editUserDataForm.getUserName());
-        return new ModelAndView("redirect:/profile/" + user.getId());
+        return new ModelAndView("redirect:/profile");
     }
     @RequestMapping(value = "/profile/editdata", method = { RequestMethod.GET })
     public ModelAndView editProfileForm(@ModelAttribute ("EditUserDataForm") final EditUserDataForm editUserDataForm) {
-        return new ModelAndView("user/editUserData");
+        ModelAndView mav = new ModelAndView("user/editUserData");
+        User user = authUserService.getCurrentUser();
+        mav.addObject("user", user);
+        return mav;
     }
     @RequestMapping(value = "/profile/editpassword", method = { RequestMethod.POST })
     public ModelAndView editPassword(@Valid @ModelAttribute ("EditUserPasswordForm") final EditUserPasswordForm editUserPasswordForm,
@@ -129,7 +149,7 @@ public class UserController {
             return editPasswordForm(editUserPasswordForm);
         }
 
-        User user = loggedUser();
+        User user = authUserService.getCurrentUser();
         try{
             userService.changePassword(user.getId(), editUserPasswordForm.getEditPassword(), editUserPasswordForm.getOldPassword(), user.getPassword());
         }catch (OldPasswordDoesNotMatchException e){
@@ -137,7 +157,7 @@ public class UserController {
             mav.addObject("oldPasswordDoesNotMatch", true);
             return mav;
         }
-        return new ModelAndView("redirect:/profile/" + user.getId());
+        return new ModelAndView("redirect:/profile");
     }
     @RequestMapping(value = "/profile/editpassword", method = { RequestMethod.GET })
     public ModelAndView editPasswordForm(@ModelAttribute ("EditUserPasswordForm") final EditUserPasswordForm editUserPasswordForm) {
@@ -207,31 +227,31 @@ public class UserController {
         return mav;
     }
 
-    @ModelAttribute("loggedUser")
-    public User loggedUser(){
-        Object maybeUniAuthUser = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        if( maybeUniAuthUser.toString().equals("anonymousUser")){
-            return null;
-        }
-        final UniAuthUser userDetails = (UniAuthUser) maybeUniAuthUser ;
-        return userService.getUserWithEmail(userDetails.getUsername()).orElse(null);
-    }
-
     @ModelAttribute("degrees")
     public List<Degree> degrees(){
         return degreeService.getAll();
     }
 
-    @RequestMapping(value = "/profile/{id:\\d+}", method = { RequestMethod.GET },
+    @RequestMapping(value = "/profile", method = { RequestMethod.GET },
         produces = {MediaType.IMAGE_JPEG_VALUE, MediaType.IMAGE_PNG_VALUE})
     @ResponseBody
-    public byte[] profilePicture(@PathVariable long id)throws IOException {
+    public byte[] profilePicture()throws IOException {
+        return userService.findByIdWithImage(authUserService.getCurrentUser().getId()).get().getImage();
+    }
+
+    @RequestMapping(value = "/user/{id:\\d+}", method = { RequestMethod.GET },
+            produces = {MediaType.IMAGE_JPEG_VALUE, MediaType.IMAGE_PNG_VALUE})
+    @ResponseBody
+    public byte[] userPicture(@PathVariable long id)throws IOException {
         return userService.findByIdWithImage(id).get().getImage();
     }
 
     @RequestMapping(value = "/profile/editprofilepicture", method = { RequestMethod.GET })
     public ModelAndView editProfilePictureForm(@ModelAttribute ("editProfilePictureForm") final EditProfilePictureForm editProfilePictureForm) {
-        return new ModelAndView("user/editProfilePicture");
+        ModelAndView mav = new ModelAndView("user/editProfilePicture");
+        User user = authUserService.getCurrentUser();
+        mav.addObject("user", user);
+        return mav;
     }
     @RequestMapping(value="/profile/editprofilepicture", method = {RequestMethod.POST})
     public ModelAndView editProfilePicture(@ModelAttribute("editProfilePictureForm") final EditProfilePictureForm editProfilePictureForm,
@@ -240,24 +260,25 @@ public class UserController {
         if(errors.hasErrors()) {
             return editProfilePictureForm(editProfilePictureForm);
         }
-        User user = loggedUser();
+        User user = authUserService.getCurrentUser();
 
         userService.updateProfilePicture(user.getId(), editProfilePictureForm.getProfilePicture().getBytes());
-        return new ModelAndView("redirect:/profile/" + user.getId());
+        return new ModelAndView("redirect:/profile");
     }
 
     @RequestMapping(value = "/subjectProgress", method = RequestMethod.POST)
     @ResponseBody
     public String subjectProgress(@Valid @ModelAttribute("SubjectProgressForm") final SubjectProgressForm progressForm
     ) {
-        if( loggedUser() == null){
+        if( !authUserService.isAuthenticated()){
             return "invalid parameters"; // we do not give any information on the inner workings
         }
         int resp = 0, progressValue = progressForm.getProgress();
+        User user = authUserService.getCurrentUser();
         if(progressValue != 0)
-            resp = userService.updateSubjectProgress(loggedUser().getId(), progressForm.getIdSub(),progressValue);
+            resp = userService.updateSubjectProgress(user.getId(), progressForm.getIdSub(),progressValue);
         else
-            resp = userService.deleteUserProgressForSubject(loggedUser().getId(), progressForm.getIdSub());
+            resp = userService.deleteUserProgressForSubject(user.getId(), progressForm.getIdSub());
 
         if(resp != 1){
             return "invalid parameters"; // we do not give any information on the inner workings

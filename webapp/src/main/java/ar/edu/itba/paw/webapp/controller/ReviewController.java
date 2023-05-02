@@ -3,10 +3,7 @@ import ar.edu.itba.paw.models.Degree;
 import ar.edu.itba.paw.models.Review;
 import ar.edu.itba.paw.models.Subject;
 import ar.edu.itba.paw.models.User;
-import ar.edu.itba.paw.services.DegreeService;
-import ar.edu.itba.paw.services.ReviewService;
-import ar.edu.itba.paw.services.SubjectService;
-import ar.edu.itba.paw.services.UserService;
+import ar.edu.itba.paw.services.*;
 import ar.edu.itba.paw.webapp.auth.UniAuthUser;
 import ar.edu.itba.paw.webapp.exceptions.DegreeNotFoundException;
 import ar.edu.itba.paw.webapp.exceptions.ReviewNotFoundException;
@@ -35,12 +32,15 @@ public class ReviewController {
 
     private final DegreeService degreeService;
 
+    private final AuthUserService authUserService;
+
     @Autowired
-    public ReviewController(UserService userService, SubjectService subjectService, ReviewService reviewService, DegreeService degreeService) {
+    public ReviewController(UserService userService, SubjectService subjectService, ReviewService reviewService, DegreeService degreeService, AuthUserService authUserService) {
         this.userService = userService;
         this.subjectService = subjectService;
         this.reviewService = reviewService;
         this.degreeService = degreeService;
+        this.authUserService = authUserService;
     }
 
     @RequestMapping(value = "/review/{subjectId:\\d+\\.\\d+}", method = RequestMethod.POST)
@@ -49,7 +49,7 @@ public class ReviewController {
         if(errors.hasErrors()){
             return reviewForm(subjectId, reviewForm);
         }
-        Review review = reviewService.create(reviewForm.getAnonymous(),reviewForm.getEasy(), reviewForm.getTimeDemanding(), reviewForm.getText(), subjectId, loggedUser().getId());
+        Review review = reviewService.create(reviewForm.getAnonymous(),reviewForm.getEasy(), reviewForm.getTimeDemanding(), reviewForm.getText(), subjectId, authUserService.getCurrentUser().getId());
 
         return new ModelAndView("redirect:/subject/" + subjectId);
     }
@@ -62,7 +62,7 @@ public class ReviewController {
 
         if( maybeSubject.isPresent()){
             Subject subject = maybeSubject.get();
-            if(reviewService.didUserReviewDB(subjectId, loggedUser().getId())){
+            if(reviewService.didUserReviewDB(subjectId, authUserService.getCurrentUser().getId())){
                 return new ModelAndView("redirect:/subject/" + subjectId);
             }
             mav.addObject("subject", subject );
@@ -81,7 +81,7 @@ public class ReviewController {
 
         Review review = maybeReview.get();
 
-        if( loggedUser().getId() != review.getUserId() ){
+        if( authUserService.getCurrentUser().getId() != review.getUserId() ){
             return new ModelAndView("redirect:/subject/" + subjectId);
         }
 
@@ -134,7 +134,7 @@ public class ReviewController {
 
         Optional<Review> review = reviewService.findById(reviewId);
 
-        if(!review.isPresent() || loggedUser().getId() != review.get().getUserId()){
+        if(!review.isPresent() || authUserService.getCurrentUser().getId() != review.get().getUserId()){
             return new ModelAndView("redirect:/subject/" + subjectId);
         }
 
@@ -147,30 +147,20 @@ public class ReviewController {
     @ResponseBody
     public String voteReview(@Valid @ModelAttribute("ReviewVoteForm") final ReviewVoteForm vote
     ) {
-        if( loggedUser() == null){
+        if( !authUserService.isAuthenticated()){
             return "invalid parameters"; // we do not give any information on the inner workings
         }
         int resp, voteValue = vote.getVote();
+        User user = authUserService.getCurrentUser();
         if(voteValue != 0)
-            resp = reviewService.voteReview(loggedUser().getId(), vote.getReviewId(),voteValue);
+            resp = reviewService.voteReview(user.getId(), vote.getReviewId(),voteValue);
         else
-            resp = reviewService.deleteReviewVote(loggedUser().getId(), vote.getReviewId());
+            resp = reviewService.deleteReviewVote(user.getId(), vote.getReviewId());
 
         if(resp != 1){
             return "invalid parameters"; // we do not give any information on the inner workings
         }
         return "voted";
-    }
-
-
-    @ModelAttribute("loggedUser")
-    public User loggedUser(){
-        Object maybeUniAuthUser = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        if( maybeUniAuthUser.toString().equals("anonymousUser")){
-            return null;
-        }
-        final UniAuthUser userDetails = (UniAuthUser) maybeUniAuthUser ;
-        return userService.getUserWithEmail(userDetails.getUsername()).orElse(null);
     }
 
     @ModelAttribute("degrees")

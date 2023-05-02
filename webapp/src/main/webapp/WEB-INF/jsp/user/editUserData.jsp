@@ -40,7 +40,7 @@
             <h1><spring:message code="profile.editing"/></h1>
             <div class="editButton">
                 <sl-tooltip content="<spring:message code="profile.cancel" />">
-                    <sl-icon-button name="x-lg" label="Return" href="<c:url value="/profile/${loggedUser.id}" />"></sl-icon-button>
+                    <sl-icon-button name="x-lg" label="Return" href="<c:url value="/profile" />"></sl-icon-button>
                 </sl-tooltip>
             </div>
         </div>
@@ -48,7 +48,7 @@
             <c:url var="editProfile" value="/profile/editdata"/>
             <form:form modelAttribute="EditUserDataForm" action="${editProfile}" method="post" >
                 <sl-card class="card-basic">
-                    <spring:message code="profile.editing.username" /> <c:out value="${loggedUser.username}" />
+                    <spring:message code="profile.editing.username" arguments="${user.username}"/>
                     <br/>
                     <br />
                     <form:errors path="userName" cssClass="error" element="p"/>
