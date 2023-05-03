@@ -6,7 +6,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Service
 public class SubjectServiceImpl implements SubjectService {
@@ -27,15 +26,14 @@ public class SubjectServiceImpl implements SubjectService {
     }
 
     @Override
-    public List<Subject> getByName(String name) {
-        return subjectDao.getByName(name);
+    public List<Subject> findByIds(List<String> ids) {
+        return subjectDao.findByIds(ids);
     }
 
     @Override
-    public Map<String, String> findPrerequisitesName(String id){
-        return subjectDao.findPrerequisitesName(id);
+    public List<Subject> getByName(String name) {
+        return subjectDao.getByName(name);
     }
-
 
     @Override
     public List<Subject> getByNameFiltered(String name, Map<String,String> filters) {

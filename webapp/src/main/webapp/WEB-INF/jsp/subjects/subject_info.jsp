@@ -160,11 +160,11 @@
                   <tr>
                       <th><spring:message code="subject.prerequisites"/></th>
                       <td>
-                          <c:if test="${empty prereqNames}">
+                          <c:if test="${empty prereqs}">
                               <spring:message code="subject.prerequisites?"/>
                           </c:if>
-                          <c:forEach var="prerec" items="${prereqNames}" varStatus="status">
-                              <a href='<c:url value="/subject/${prerec.key}"/>'><c:out value="${prerec.value}"/></a>
+                          <c:forEach var="prereq" items="${prereqs}" varStatus="status">
+                              <a href='<c:url value="/subject/${prereq.id}"/>'><c:out value="${prereq.name}"/></a>
                               <c:if test="${not status.last}">
                                   ,
                               </c:if>

@@ -2,11 +2,9 @@ package ar.edu.itba.paw.webapp.controller;
 
 import ar.edu.itba.paw.models.*;
 import ar.edu.itba.paw.services.*;
-import ar.edu.itba.paw.webapp.auth.UniAuthUser;
 import ar.edu.itba.paw.webapp.exceptions.DegreeNotFoundException;
 import ar.edu.itba.paw.webapp.exceptions.SubjectNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
@@ -79,7 +77,7 @@ public class SubjectController {
         final List<Professor> professors = professorService.getAllBySubject(id);
         final List<Review> reviews = reviewService.getAllSubjectReviewsWithUsername(id,param);
         final Boolean didReview = reviewService.didUserReview(reviews, user);
-        final Map<String,String> prereqNames = subjectService.findPrerequisitesName(id);
+        final List<Subject> prereqs = subjectService.findByIds(new ArrayList<>(subject.getPrerequisites()));
         final List<SubjectClass> classes = subjectClassService.getBySubId(id);
         final Map<Long, Integer> userVotes = reviewService.userReviewVoteByIdSubAndIdUser(id, userId);
         final Integer subjectProgress = userService.getUserSubjectProgress(userId,id);
@@ -90,7 +88,7 @@ public class SubjectController {
         mav.addObject("time", stats.getTimeDifficulty());
         mav.addObject("subject", subject);
         mav.addObject("year",year);
-        mav.addObject("prereqNames", prereqNames.entrySet());
+        mav.addObject("prereqs", prereqs);
         mav.addObject("difficulty", stats.getDifficulty());
         mav.addObject("classes", classes);
         mav.addObject("didReview", didReview);
