@@ -88,7 +88,7 @@
         <div class="image-container">
             <spring:message code="profile.picture.alt" var="pic" arguments="${user.username}"/>
             <img class="profile-image" src="<c:url value="/profile"/>" alt="${pic}" >
-            <sl-button class="edit-picture" variant="primary" size="small" outline  href="<c:out value="/profile/editprofilepicture"/>">
+            <sl-button class="edit-picture" variant="primary" size="small" outline  href="<c:url value="/profile/editprofilepicture"/>">
                 <sl-icon name="pen" label="Edit"></sl-icon>
             </sl-button>
         </div>
