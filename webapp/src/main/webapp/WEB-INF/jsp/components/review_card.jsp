@@ -1,6 +1,7 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ page contentType="text/html;charset=UTF-8" %>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
+<%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 
 <%--Params--%>
 <c:set var="review" value="${requestScope.review}"/>
@@ -124,22 +125,33 @@
 
       <input type="hidden" name="vote" id="vote" value="${userVotes.getOrDefault(review.id, 0)}">
 
-      <sl-button class="vote-button" variant="default" size="small" circle
-                 data-form-id="form-${review.id}" data-form-value="1">
-        <sl-icon id="like-icon-form-${review.id}" class="vote-button-icon" name="hand-thumbs-up" label="Upvote"
-                <c:choose>
-                  <c:when test="${ userVotes[review.id] == 1}">
-                    style="color: #f5a623;"
-                  </c:when>
-                  <c:otherwise>
-                    style="color: #4a90e2;"
-                  </c:otherwise>
-                </c:choose>
-        ></sl-icon>
-      </sl-button>
+      <sec:authorize access="isAuthenticated()">
+        <sl-button class="vote-button" variant="default" size="small" circle
+                   data-form-id="form-${review.id}" data-form-value="1">
+          <sl-icon id="like-icon-form-${review.id}" class="vote-button-icon" name="hand-thumbs-up" label="Upvote"
+                  <c:choose>
+                    <c:when test="${ userVotes[review.id] == 1}">
+                      style="color: #f5a623;"
+                    </c:when>
+                    <c:otherwise>
+                      style="color: #4a90e2;"
+                    </c:otherwise>
+                  </c:choose>
+          ></sl-icon>
+        </sl-button>
+      </sec:authorize>
+      <sec:authorize access="!isAuthenticated()">
+        <sl-button class="vote-button" variant="default" size="small" circle href="${pageContext.request.contextPath}/login">
+          <sl-icon class="vote-button-icon" name="hand-thumbs-up" label="Upvote"
+                      style="color: #4a90e2;"
+          ></sl-icon>
+        </sl-button>
+      </sec:authorize>
+
 
       <span id="like-number-form-${review.id}"><c:out value="${review.upvotes}"/></span>
 
+    <sec:authorize access="isAuthenticated()">
       <sl-button class="vote-button" variant="default" size="small" circle
                  data-form-id="form-${review.id}" data-form-value="-1">
         <sl-icon id="dislike-icon-form-${review.id}" class="vote-button-icon" name="hand-thumbs-down" label="Downvote"
@@ -153,6 +165,22 @@
                 </c:choose>
         ></sl-icon>
       </sl-button>
+    </sec:authorize>
+
+    <sec:authorize access="!isAuthenticated()">
+      <sl-button class="vote-button" variant="default" size="small" circle href="${pageContext.request.contextPath}/login">
+        <sl-icon  class="vote-button-icon" name="hand-thumbs-down" label="Downvote"
+                <c:choose>
+                  <c:when test="${ userVotes[review.id] == -1}">
+                    style="color: #f5a623;"
+                  </c:when>
+                  <c:otherwise>
+                    style="color: #4a90e2;"
+                  </c:otherwise>
+                </c:choose>
+        ></sl-icon>
+      </sl-button>
+    </sec:authorize>
 
       <span id="dislike-number-form-${review.id}"><c:out value="${review.downvotes}"/></span>
     </form>

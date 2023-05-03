@@ -418,17 +418,17 @@
                 submitReviewVoteForm('${pageContext.request.contextPath}/voteReview',formId, prevVote ,0);
         })
 
-        $('.progress-bt').click(function() {
-            const formId = $(this).data('form-id');
-            const prevProgress = parseInt($('#' + formId + ' input[name=progress]').val())
+        <sec:authorize access="isAuthenticated()">
+            $('.progress-bt').click(function() {
+                const formId = $(this).data('form-id');
+                const prevProgress = parseInt($('#' + formId + ' input[name=progress]').val())
 
-            if( 1- prevProgress === 0)
-                submitSubjectProgressForm('${pageContext.request.contextPath}/subjectProgress', formId, 1 - prevProgress, "<spring:message code="subject.progress.pending"/>");
-            else
-                submitSubjectProgressForm('${pageContext.request.contextPath}/subjectProgress', formId, 1 - prevProgress, "<spring:message code="subject.progress.done"/>");
-        })
-
-
+                if( 1- prevProgress === 0)
+                    submitSubjectProgressForm('${pageContext.request.contextPath}/subjectProgress', formId, 1 - prevProgress, "<spring:message code="subject.progress.pending"/>");
+                else
+                    submitSubjectProgressForm('${pageContext.request.contextPath}/subjectProgress', formId, 1 - prevProgress, "<spring:message code="subject.progress.done"/>");
+            })
+        </sec:authorize>
     });
 
 </script>
