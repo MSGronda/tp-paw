@@ -86,7 +86,7 @@
         event.preventDefault();
         const searchQuery = input.value.trim();
         if (searchQuery.length > 0) {
-            window.location.href = `${pageContext.request.contextPath}/search/\${encodeURIComponent(searchQuery)}`;
+            window.location.href = `${pageContext.request.contextPath}/search?q=\${encodeURIComponent(searchQuery)}`;
         }
     });
 </script>

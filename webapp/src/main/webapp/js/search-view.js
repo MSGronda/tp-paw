@@ -34,8 +34,8 @@ function removeURLParam(url, param) {
 let params = new URLSearchParams(window.location.search);
 
 const filterSection = document.getElementById('filter-section');
-
-if(params.keys().next().done) // no tiene parametros
+const keys = params.keys();
+if(!keys.next().done && keys.next().done) // no tiene parametros aparte de q
     filterSection.style.display = "none"
 else
     filterSection.style.display = "flex"

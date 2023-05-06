@@ -38,10 +38,10 @@ public class SearchController {
         this.authUserService = authUserService;
     }
 
-    @RequestMapping("/search/{name}")
-    public ModelAndView search(@PathVariable String name, @RequestParam Map<String, String> params) {
+    @RequestMapping("/search")
+    public ModelAndView search(@RequestParam Map<String, String> params) {
 
-        final List<Subject> subjects = subjectService.getByNameFiltered(name, params);
+        final List<Subject> subjects = subjectService.getByNameFiltered(params.get("q"), params);
 
         Map<String, ReviewStatistic> reviewStats = reviewService.getReviewStatMapBySubjectList(subjects);
 
@@ -55,7 +55,7 @@ public class SearchController {
 
         ModelAndView mav = new ModelAndView("subjects/search");
         mav.addObject("subjects", subjects);
-        mav.addObject("query", name);
+        mav.addObject("query", params.get("q"));
         mav.addObject("reviewStats", reviewStats);
         mav.addObject("subjectProgress", subjectProgress);
 
