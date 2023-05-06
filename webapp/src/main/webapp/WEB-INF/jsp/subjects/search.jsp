@@ -4,7 +4,9 @@
 
 <html>
 <head>
-  <title>${query} - Uni</title>
+  <title>${query}
+    <c:if test="${query.length() > 0}"> - </c:if>
+    Uni</title>
   <jsp:include page="../components/head_shared.jsp"/>
   <style>
       .search-area {
