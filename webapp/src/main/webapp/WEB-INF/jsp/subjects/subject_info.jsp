@@ -48,8 +48,15 @@
 
       .filter {
           display: flex;
-          flex-direction: row-reverse;
-          margin-right: 20%;
+          flex-direction: row;
+          align-items: center;
+          justify-content: space-between;
+      }
+      .actual-filter{
+          margin-left: 27%;
+      }
+      .filter-dropdown{
+          margin-right: 27%;
       }
 
       h1 {
@@ -335,36 +342,59 @@
   <br/>
   <hr/>
   <div class="filter">
-    <sl-dropdown>
-      <sl-button variant="text" slot="trigger" size="large" caret>
-        <spring:message code="subject.sort"/>
-        <sl-icon slot="prefix" name="sort-down"></sl-icon>
-      </sl-button>
-      <sl-menu>
-        <sl-menu-item id="difficulty-order">
-            <div class="order-menu">
-                <spring:message code="subject.order.difficulty"/>
-                <section id="diffuclty-down">
-                    <sl-icon slot="suffix" name="arrow-down" ></sl-icon>
-                </section>
-                <section id="diffuclty-up">
-                    <sl-icon slot="suffix" name="arrow-up" ></sl-icon>
-                </section>
-            </div>
-        </sl-menu-item>
-        <sl-menu-item id="timedemand-order">
-            <div class="order-menu">
-                <spring:message code="subject.order.time"/>
-                <section id="timedemand-down">
-                    <sl-icon slot="suffix" name="arrow-down" ></sl-icon>
-                </section>
-                <section id="timedemand-up">
-                    <sl-icon slot="suffix" name="arrow-up"></sl-icon>
-                </section>
-            </div>
-        </sl-menu-item>
-      </sl-menu>
-    </sl-dropdown>
+      <div class="actual-filter">
+          <spring:message code="subject.actualFilter"/>
+          <c:choose>
+              <c:when test="${order == \"easy\" && dir == \"asc\"}">
+                  <spring:message code="subject.order.difficulty"/>
+                  <spring:message code="subject.directionAsc"/>
+              </c:when>
+              <c:when test="${order == \"easy\" && dir == \"desc\"}">
+                  <spring:message code="subject.order.difficulty"/>
+                  <spring:message code="subject.directionDesc"/>
+              </c:when>
+              <c:when test="${order == \"timedemanding\" && dir == \"asc\"}">
+                  <spring:message code="subject.order.time"/>
+                  <spring:message code="subject.directionAsc"/>
+              </c:when>
+              <c:when test="${order == \"timedemanding\" && dir == \"desc\"}">
+                  <spring:message code="subject.order.time"/>
+                  <spring:message code="subject.directionDesc"/>
+              </c:when>
+          </c:choose>
+      </div>
+      <div class="filter-dropdown">
+          <sl-dropdown>
+              <sl-button variant="text" slot="trigger" size="large" caret>
+                  <spring:message code="subject.sort"/>
+                  <sl-icon slot="prefix" name="sort-down"></sl-icon>
+              </sl-button>
+              <sl-menu>
+                  <sl-menu-item id="difficulty-order">
+                      <div class="order-menu">
+                          <spring:message code="subject.order.difficulty"/>
+                          <section id="diffuclty-down">
+                              <sl-icon slot="suffix" name="arrow-down" ></sl-icon>
+                          </section>
+                          <section id="diffuclty-up">
+                              <sl-icon slot="suffix" name="arrow-up" ></sl-icon>
+                          </section>
+                      </div>
+                  </sl-menu-item>
+                  <sl-menu-item id="timedemand-order">
+                      <div class="order-menu">
+                          <spring:message code="subject.order.time"/>
+                          <section id="timedemand-down">
+                              <sl-icon slot="suffix" name="arrow-down" ></sl-icon>
+                          </section>
+                          <section id="timedemand-up">
+                              <sl-icon slot="suffix" name="arrow-up"></sl-icon>
+                          </section>
+                      </div>
+                  </sl-menu-item>
+              </sl-menu>
+          </sl-dropdown>
+      </div>
   </div>
 
   <div class="review-column container-50">

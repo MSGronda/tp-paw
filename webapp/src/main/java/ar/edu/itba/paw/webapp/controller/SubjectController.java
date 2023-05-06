@@ -95,6 +95,13 @@ public class SubjectController {
         mav.addObject("userVotes", userVotes);
         mav.addObject("subjectProgress",subjectProgress);
         mav.addObject("user", user);
+        if(param.isEmpty()){
+            mav.addObject("order","easy");
+            mav.addObject("dir","asc");
+        } else {
+            mav.addObject("order",param.get("order"));
+            mav.addObject("dir",param.get("dir"));
+        }
         return mav;
     }
 

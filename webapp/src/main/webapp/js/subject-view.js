@@ -1,19 +1,4 @@
-
-// ****IMPORTAR FUNCIONES DE SEARCH-VIEW PARA NO DUPLICAR CODIGO****
-function addOrUpdateParam(url, param, value) {
-    var regex = new RegExp("([?&])" + param + "=.*?(&|$)", "i");
-    var separator = url.indexOf('?') !== -1 ? "&" : "?";
-    if (url.match(regex)) {
-        return url.replace(regex, '$1' + param + "=" + value + '$2');
-    }
-    else
-        return url + separator + param + "=" + value;
-}
-
-function appendParam(url,param,value) {
-    const separator = url.indexOf('?') !== -1 ? "&" : "?";
-    return url + separator + param + '=' + value
-}
+import { addOrUpdateParam } from './search-view';
 
 let params = new URLSearchParams(window.location.search);
 let dir = params.get("dir");
