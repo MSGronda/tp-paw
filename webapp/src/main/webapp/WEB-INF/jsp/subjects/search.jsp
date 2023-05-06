@@ -4,7 +4,9 @@
 
 <html>
 <head>
-  <title>${query} - Uni</title>
+  <title>${query}
+    <c:if test="${query.length() > 0}"> - </c:if>
+    Uni</title>
   <jsp:include page="../components/head_shared.jsp"/>
   <style>
       .search-area {
@@ -88,49 +90,18 @@
         <div class="filter-option">
           <h5><spring:message code="search.dpt"/></h5>
 
-          <sl-button-group>
-            <sl-button class="filter-button" size="small" variant="default" id="ambiente-credit-filter" pill>
-              <spring:message code="search.dpt.ambiente"/>
-            </sl-button>
-            <section id="remove-ambiente-param-section">
-              <sl-button class="filter-button" id="remove-ambiente-filter" variant="default" size="small" pill>
-                <sl-icon class="filter-action" name="x-lg" label="Remove"></sl-icon>
+          <c:forEach var="dptName" items="${relevantFilters.get(\"department\")}">
+            <sl-button-group>
+              <sl-button id="${dptName.hashCode()}" class="filter-button" size="small" variant="default" pill>
+                  <c:out value="${dptName}"/>
               </sl-button>
-            </section>
-          </sl-button-group>
-
-          <sl-button-group>
-            <sl-button class="filter-button" size="small" variant="default" id="ciencias-credit-filter" pill>
-              <spring:message code="search.dpt.ciencias"/>
-            </sl-button>
-            <section id="remove-ciencias-param-section">
-              <sl-button class="filter-button" id="remove-ciencias-filter" variant="default" size="small" pill>
-                <sl-icon class="filter-action" name="x-lg" label="Remove"></sl-icon>
-              </sl-button>
-            </section>
-          </sl-button-group>
-
-          <sl-button-group>
-          <sl-button class="filter-button" size="small" variant="default" id="economia-credit-filter" pill>
-              <spring:message code="search.dpt.economia"/>
-            </sl-button>
-            <section id="remove-economia-param-section">
-              <sl-button class="filter-button" id="remove-economia-filter" variant="default" size="small" pill>
-                <sl-icon class="filter-action" name="x-lg" label="Remove"></sl-icon>
-              </sl-button>
-            </section>
-          </sl-button-group>
-
-          <sl-button-group>
-            <sl-button class="filter-button" size="small" variant="default" id="sistemas-credit-filter" pill>
-              <spring:message code="search.dpt.sistemas"/>
-            </sl-button>
-            <section id="remove-sistemas-param-section">
-              <sl-button class="filter-button" id="remove-sistemas-filter" variant="default" size="small" pill>
-                <sl-icon class="filter-action" name="x-lg" label="Remove"></sl-icon>
-              </sl-button>
-            </section>
-          </sl-button-group>
+              <section id="remove-section-${dptName.hashCode()}">
+                <sl-button id="remove-${dptName.hashCode()}" class="filter-button" variant="default" size="small" pill>
+                  <sl-icon class="filter-action" name="x-lg" label="Remove"></sl-icon>
+                </sl-button>
+              </section>
+            </sl-button-group>
+          </c:forEach>
 
         </div>
 
@@ -139,38 +110,18 @@
         <div class="filter-option">
           <h5><spring:message code="search.credits"/></h5>
 
-          <sl-button-group>
-            <sl-button class="filter-button" size="small" variant="default" id="min-credit-filter" pill>
-              <spring:message code="search.credits.min"/>
-            </sl-button>
-            <section id="remove-min-credits-param-section">
-              <sl-button class="filter-button" id="remove-min-credits-filter" variant="default" size="small" pill>
-                <sl-icon class="filter-action" name="x-lg" label="Remove"></sl-icon>
+          <c:forEach var="creditsName" items="${relevantFilters.get(\"credits\")}">
+            <sl-button-group>
+              <sl-button id="credits-${creditsName}" class="filter-button" size="small" variant="default" pill>
+                <spring:message code="search.credits.number" arguments="${creditsName}"/>
               </sl-button>
-            </section>
-          </sl-button-group>
-          <sl-button-group>
-            <sl-button class="filter-button" size="small" variant="default" id="med-credit-filter" pill>
-                <spring:message code="search.credits.med"/>
-            </sl-button>
-            <section id="remove-med-credits-param-section">
-              <sl-button class="filter-button" id="remove-med-credits-filter" variant="default" size="small" pill>
-                <sl-icon class="filter-action" name="x-lg" label="Remove"></sl-icon>
-              </sl-button>
-            </section>
-          </sl-button-group>
-
-
-          <sl-button-group>
-            <sl-button class="filter-button" size="small" variant="default" id="max-credit-filter" pill>
-              <spring:message code="search.credits.max"/>
-            </sl-button>
-            <section id="remove-max-credits-param-section">
-              <sl-button class="filter-button" id="remove-max-credits-filter" variant="default" size="small" pill>
-                <sl-icon class="filter-action" name="x-lg" label="Remove"></sl-icon>
-              </sl-button>
-            </section>
-          </sl-button-group>
+              <section id="remove-section-${creditsName}">
+                <sl-button id="remove-${creditsName}" class="filter-button" variant="default" size="small" pill>
+                  <sl-icon class="filter-action" name="x-lg" label="Remove"></sl-icon>
+                </sl-button>
+              </section>
+            </sl-button-group>
+          </c:forEach>
         </div>
 
         <sl-divider class="vert-divider" style="--color: #cbcbcb;" vertical></sl-divider>
@@ -255,7 +206,118 @@
 
 <jsp:include page="../components/footer.jsp"/>
 <jsp:include page="../components/body_scripts.jsp"/>
+<script src="${pageContext.request.contextPath}/js/url-param-utils.js"></script>
+<script>
+  let params = new URLSearchParams(window.location.search);
 
-<script src="${pageContext.request.contextPath}/js/search-view.js" defer></script>
+  const filterSection = document.getElementById('filter-section');
+  const keys = params.keys();
+  if(!keys.next().done && keys.next().done) // no tiene parametros aparte de q
+    filterSection.style.display = "none"
+  else
+    filterSection.style.display = "flex"
+
+
+  // Department filters
+  let dpt = params.get("department")
+
+  const dptFilterBtns = [
+    <c:forEach var="dpt" items="${relevantFilters[\"department\"]}">
+    [ "${dpt.hashCode()}",  "${dpt}" , "remove-${dpt.hashCode()}", "remove-section-${dpt.hashCode()}"],
+    </c:forEach>
+  ]
+
+  for(let elem in dptFilterBtns){
+    // Comportamiento de boton de aplicar filtro
+    document.getElementById(dptFilterBtns[elem][0]).addEventListener('click',
+            function() { window.location.href = addOrUpdateParam(window.location.href,"department",dptFilterBtns[elem][1])});
+
+    // Comportamiento de boton de eliminar filtro
+    document.getElementById(dptFilterBtns[elem][2]).addEventListener('click',
+            function() { window.location.href = removeURLParam(window.location.href,"department")});
+
+    // Visibiliad de boton de eliminar filtro
+    const section = document.getElementById(dptFilterBtns[elem][3])
+    console.log(dptFilterBtns[elem][3])
+    if(dpt === dptFilterBtns[elem][1])
+      section.style.display = "block";
+    else
+      section.style.display = "none"
+  }
+
+
+
+  // Credit filters
+  let credits = params.get("credits")
+  console.log(credits)
+
+  const creditFilterBtns = [
+    <c:forEach var="credit" items="${relevantFilters[\"credits\"]}">
+    ["credits-${credit}", "${credit}", "remove-${credit}", "remove-section-${credit}"],
+    </c:forEach>
+  ]
+  for(let elem in creditFilterBtns)
+  {
+    document.getElementById(creditFilterBtns[elem][0]).addEventListener('click',
+            function() { window.location.href = addOrUpdateParam(window.location.href,"credits",creditFilterBtns[elem][1]);});
+    document.getElementById(creditFilterBtns[elem][2]).addEventListener('click',
+            function() { window.location.href = removeURLParam(window.location.href,"credits")});
+    const section = document.getElementById(creditFilterBtns[elem][3])
+    if(credits === creditFilterBtns[elem][1])
+      section.style.display = "block";
+    else
+      section.style.display = "none"
+  }
+
+
+
+  // Filter section
+  const toggleBtn = document.getElementById('toggle-filters');
+
+  toggleBtn.addEventListener('click', function() {
+    if(filterSection.style.display === 'none')
+      filterSection.style.display = 'flex';
+    else
+      filterSection.style.display = 'none';
+  });
+
+
+  const ob = params.get("ob")
+  const dir = params.get("dir")
+
+  // Order by btns
+  const addOrderByBtns = [
+    ['order-by-name', "subname", "direction-subname-up","direction-subname-down"],
+    ['order-by-credits', "credits", "direction-credits-up","direction-credits-down"],
+    ['order-by-id', "id", "direction-id-up", "direction-id-down"]
+  ]
+  for(let elem in addOrderByBtns)
+  {
+    document.getElementById(addOrderByBtns[elem][0]).addEventListener('click',
+            function() {
+              window.location.href = addOrUpdateParam(addOrUpdateParam(window.location.href,"ob",addOrderByBtns[elem][1]), "dir", "asc");
+            });
+    const sectionUp = document.getElementById(addOrderByBtns[elem][2])
+    const sectionDown = document.getElementById(addOrderByBtns[elem][3])
+
+    sectionUp.addEventListener('click', function() { window.location.href = addOrUpdateParam(window.location.href,"dir", "desc");})
+    sectionDown.addEventListener('click', function() { window.location.href = addOrUpdateParam(window.location.href,"dir", "asc");})
+
+    if(ob === addOrderByBtns[elem][1]){
+      if(dir === "asc"){
+        sectionUp.style.display = 'block';
+        sectionDown.style.display = 'none'
+      }
+      else{
+        sectionUp.style.display = 'none';
+        sectionDown.style.display = 'block';
+      }
+    }
+    else{
+      sectionUp.style.display = 'none';
+      sectionDown.style.display = 'none';
+    }
+  }
+</script>
 </body>
 </html>

@@ -65,7 +65,7 @@
         <sl-option disabled>Ingeniería Petróleo</sl-option>
         <sl-option disabled>Bioingeniería</sl-option>
       </sl-select>
-      <sl-button variant="text"><spring:message code="navbar.subject"/></sl-button>
+      <sl-button variant="text" href="${pageContext.request.contextPath}/search"><spring:message code="navbar.subject"/></sl-button>
       <sl-button variant="text"><spring:message code="navbar.builder"/></sl-button>
     </sl-button-group>
     <sec:authorize access="!isAuthenticated()">

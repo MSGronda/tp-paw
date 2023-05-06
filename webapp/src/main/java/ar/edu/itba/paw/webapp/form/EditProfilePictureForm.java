@@ -9,7 +9,6 @@ public class EditProfilePictureForm {
 
     public void setProfilePicture(MultipartFile profilePicture) {
         this.profilePicture = profilePicture;
-        System.out.println();
     }
 
     public MultipartFile getProfilePicture() {

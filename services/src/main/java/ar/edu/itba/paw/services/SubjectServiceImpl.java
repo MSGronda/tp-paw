@@ -20,7 +20,7 @@ public class SubjectServiceImpl implements SubjectService {
     @Autowired
     public SubjectServiceImpl(SubjectDao subjectDao) {
         this.subjectDao = subjectDao;
-        validFilters.putIfAbsent("department", "[a-zA-Z ]+");
+        validFilters.putIfAbsent("department", "[\\p{L} ]+");
         validFilters.putIfAbsent("credits", "\\d+");
     }
 
@@ -55,6 +55,24 @@ public class SubjectServiceImpl implements SubjectService {
             }
         }
         return subjectDao.getByNameFiltered(name, validatedFilters);
+    }
+
+    @Override
+    public Map<String, Set<String>> getRelevantFilters(List<Subject> subjects) {
+        Map<String, Set<String>> relevant = new HashMap<>();
+
+        relevant.put("department", new HashSet<>());
+        relevant.put("credits", new HashSet<>());
+
+        for(Subject sub : subjects){
+            String dpt = sub.getDepartment();
+            int cdts = sub.getCredits();
+            if(dpt != null && !dpt.equals(""))
+                relevant.get("department").add(dpt);
+            if(cdts != 0)
+                relevant.get("credits").add(sub.getCredits().toString());
+        }
+        return relevant;
     }
 
     @Override
