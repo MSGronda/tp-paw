@@ -49,7 +49,11 @@
             </sl-radio-group>
             <br />
             <div>
-                <sl-checkbox type="checkbox" name="anonymous" path="anonymous" value="${ReviewForm.anonymous}"><spring:message code="form.anonymous"/></sl-checkbox>
+                <!--<sl-checkbox type="checkbox" name="anonymous" path="anonymous" value="${ReviewForm.anonymous}"></sl-checkbox>-->
+                <sl-radio-group name="anonymous" value="${ReviewForm.anonymous}">
+                    <sl-radio-button value="true"><spring:message code="form.anonymous"/></sl-radio-button>
+                    <sl-radio-button value="false"><spring:message code="form.notAnonymous"/></sl-radio-button>
+                </sl-radio-group>
             </div>
             <br />
             <sl-button type="submit" variant="success"><spring:message code="form.submit"/></sl-button>
