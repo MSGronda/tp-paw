@@ -6,18 +6,22 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
+import java.util.regex.Pattern;
 
 @Service
 public class SubjectServiceImpl implements SubjectService {
     private final SubjectDao subjectDao;
 
-    private static final List<String> validFilters = Arrays.asList("department", "credits");
+
+    private static final Map<String, String > validFilters = new HashMap<>();
     private static final List<String> validOrderBy = Arrays.asList("id", "credits", "subname");
     private static final List<String> validDir = Arrays.asList("asc", "desc");
 
     @Autowired
     public SubjectServiceImpl(SubjectDao subjectDao) {
         this.subjectDao = subjectDao;
+        validFilters.putIfAbsent("department", "[a-zA-Z ]+");
+        validFilters.putIfAbsent("credits", "\\d+");
     }
 
     @Override
@@ -41,9 +45,11 @@ public class SubjectServiceImpl implements SubjectService {
 
         // Check if filters, order by and direction are valid
         for(Map.Entry<String, String> filter : filters.entrySet()){
-            if(validFilters.contains(filter.getKey()) ||
-               (Objects.equals(filter.getKey(), "ob") && validOrderBy.contains(filter.getValue())) ||
-               (Objects.equals(filter.getKey(), "dir") && validDir.contains(filter.getValue()))
+            if(
+                (Objects.equals(filter.getKey(), "ob") && validOrderBy.contains(filter.getValue())) ||
+               (Objects.equals(filter.getKey(), "dir") && validDir.contains(filter.getValue()) ||
+               (validFilters.containsKey(filter.getKey()) && Pattern.matches( validFilters.get(filter.getKey()) ,filter.getValue()))
+               )
             ){
                 validatedFilters.put(filter.getKey(), filter.getValue());
             }

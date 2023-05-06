@@ -20,6 +20,7 @@ public class SubjectJdbcDao implements SubjectDao {
     private static final String TABLE_PREREQ = "prereqSubjects";
     private static final String TABLE_SUB_DEG = "subjectsDegrees";
 
+    private static final Map<String, String> queryOptionBlanck = new HashMap<>();
 
     private final JdbcTemplate jdbcTemplate;
     private final SimpleJdbcInsert jdbcInsert;
@@ -30,6 +31,9 @@ public class SubjectJdbcDao implements SubjectDao {
         this.jdbcInsert = new SimpleJdbcInsert(ds)
                 .withTableName(TABLE_SUB)
                 .usingGeneratedKeyColumns("id");
+
+        queryOptionBlanck.putIfAbsent("department","?");
+        queryOptionBlanck.putIfAbsent("credits","CAST(? AS INTEGER)");
     }
 
     @Override
@@ -64,18 +68,21 @@ public class SubjectJdbcDao implements SubjectDao {
         // All filters in map must be valid. Checks are made in service.
 
         StringBuilder sb = new StringBuilder("SELECT * FROM ").append(VIEW_JOIN).append(" WHERE subname ILIKE ?");
+        List<String> filterList = new ArrayList<>();
+        filterList.add("%" + name + "%");
 
         for (Map.Entry<String, String> filter : filters.entrySet()) {
-            // TODO: this is unsafe, change!
             if(!Objects.equals(filter.getKey(), "ob") && !Objects.equals(filter.getKey(), "dir")){
-                sb.append(" AND ").append(filter.getKey()).append(" = ").append("'").append(filter.getValue()).append("'");
+                sb.append(" AND ").append(filter.getKey()).append(" = ").append(queryOptionBlanck.get(filter.getKey()));
+                filterList.add(filter.getValue());
             }
         }
 
-        sb.append(" ORDER BY ").append(filters.getOrDefault("ob","subname")).append(" ");
-        sb.append(filters.getOrDefault("dir","ASC"));
+        // Order by cannot use "?" in the SQL query
+        sb.append(" ORDER BY ").append(filters.getOrDefault("ob","subname"));
+        sb.append(" ").append(filters.getOrDefault("dir","ASC"));
 
-        return jdbcTemplate.query(sb.toString(), SubjectJdbcDao::subjectListExtractor, "%" + name + "%");
+        return jdbcTemplate.query(sb.toString(), SubjectJdbcDao::subjectListExtractor,  filterList.toArray());
     }
 
 

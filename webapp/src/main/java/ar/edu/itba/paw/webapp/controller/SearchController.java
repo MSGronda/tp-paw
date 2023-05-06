@@ -41,7 +41,7 @@ public class SearchController {
     @RequestMapping("/search")
     public ModelAndView search(@RequestParam Map<String, String> params) {
 
-        final List<Subject> subjects = subjectService.getByNameFiltered(params.get("q"), params);
+        final List<Subject> subjects = subjectService.getByNameFiltered(params.getOrDefault("q",""), params);
 
         Map<String, ReviewStatistic> reviewStats = reviewService.getReviewStatMapBySubjectList(subjects);
 
@@ -55,7 +55,7 @@ public class SearchController {
 
         ModelAndView mav = new ModelAndView("subjects/search");
         mav.addObject("subjects", subjects);
-        mav.addObject("query", params.get("q"));
+        mav.addObject("query", params.getOrDefault("q",""));
         mav.addObject("reviewStats", reviewStats);
         mav.addObject("subjectProgress", subjectProgress);
 
