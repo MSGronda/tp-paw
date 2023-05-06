@@ -385,6 +385,7 @@
 <jsp:include page="../components/body_scripts.jsp"/>
 <script src="${pageContext.request.contextPath}/js/subject_progress.js"></script>
 <script src="${pageContext.request.contextPath}/js/subject-view.js"></script>
+<script src="${pageContext.request.contextPath}/js/url-param-utils.js"></script>
 <script src="${pageContext.request.contextPath}/js/review_card.js"></script>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
 <script>

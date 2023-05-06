@@ -15,6 +15,7 @@ import org.springframework.web.servlet.ModelAndView;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 @Controller
 public class SearchController {
@@ -42,6 +43,7 @@ public class SearchController {
     public ModelAndView search(@RequestParam Map<String, String> params) {
 
         final List<Subject> subjects = subjectService.getByNameFiltered(params.getOrDefault("q",""), params);
+        final Map<String, Set<String>> relevantFilters = subjectService.getRelevantFilters(subjects);
 
         Map<String, ReviewStatistic> reviewStats = reviewService.getReviewStatMapBySubjectList(subjects);
 
@@ -58,6 +60,7 @@ public class SearchController {
         mav.addObject("query", params.getOrDefault("q",""));
         mav.addObject("reviewStats", reviewStats);
         mav.addObject("subjectProgress", subjectProgress);
+        mav.addObject("relevantFilters", relevantFilters);
 
         return mav;
     }
