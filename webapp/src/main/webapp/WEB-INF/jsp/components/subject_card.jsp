@@ -97,9 +97,12 @@
 
       <c:choose>
         <c:when test="${time == 0}">
-          <sl-badge size="medium" variant="primary" pill><spring:message code="form.NotTimeDemanding" /></sl-badge>
+          <sl-badge size="medium" variant="success" pill><spring:message code="form.NotTimeDemanding" /></sl-badge>
         </c:when>
         <c:when test="${time == 1}">
+          <sl-badge size="medium" variant="primary" pill><spring:message code="form.averageTimeDemand" /></sl-badge>
+        </c:when>
+        <c:when test="${time == 2}">
           <sl-badge size="medium" variant="warning" pill><spring:message code="form.timeDemanding" /></sl-badge>
         </c:when>
       </c:choose>
