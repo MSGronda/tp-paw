@@ -206,9 +206,12 @@
                         <td>
                             <c:choose>
                                 <c:when test="${time == 0}">
-                                    <sl-badge size="medium" ariant="primary"><spring:message code="form.NotTimeDemanding" /></sl-badge>
+                                    <sl-badge size="medium" ariant="success"><spring:message code="form.NotTimeDemanding" /></sl-badge>
                                 </c:when>
                                 <c:when test="${time == 1}">
+                                    <sl-badge size="medium" variant="primary"><spring:message code="form.averageTimeDemand" /></sl-badge>
+                                </c:when>
+                                <c:when test="${time == 2}">
                                     <sl-badge size="medium" variant="warning"><spring:message code="form.timeDemanding" /></sl-badge>
                                 </c:when>
                                 <c:otherwise>
