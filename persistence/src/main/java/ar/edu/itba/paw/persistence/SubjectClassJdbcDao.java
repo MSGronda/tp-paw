@@ -1,6 +1,7 @@
 package ar.edu.itba.paw.persistence;
 
 import ar.edu.itba.paw.models.Professor;
+import ar.edu.itba.paw.models.Subject;
 import ar.edu.itba.paw.models.SubjectClass;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -21,14 +22,72 @@ public class SubjectClassJdbcDao implements SubjectClassDao{
     private static final String TABLE_CLASS_PROF = "classProfessors";
     private static final String TABLE_PROF = "professors";
 
+    private static final String VIEW_JOIN = "joinedsubjects";
+    private static final String VIEW_CLASS_JOIN = "joinedSubjectClass";
+    private static final String USER_SUB_PRG_TABLE = "userSubjectProgress";
+
     private static final String QUERY_JOIN = "SELECT * FROM " + TABLE_CLASS + " NATURAL JOIN " + TABLE_CLASS_LOC_TIME
             + " NATURAL JOIN " + TABLE_CLASS_PROF + " FULL JOIN " + TABLE_PROF + " ON " + TABLE_CLASS_PROF + ".idProf = " +
             TABLE_PROF + ".id";
+
+    private static final String COMPLETE_SUB =
+            "SELECT *\n" +
+            "FROM " + VIEW_CLASS_JOIN + " AS v1\n" +
+            "WHERE v1.id IN (SELECT v.id\n" +
+            "                FROM " + VIEW_JOIN + " AS v\n" +
+            "                WHERE v.id NOT IN (SELECT idSub FROM " + USER_SUB_PRG_TABLE + " WHERE idSub = v.id)\n" +
+            "                GROUP BY v.id\n" +
+            "                HAVING sum(CASE WHEN v.idprereq IS null THEN 1 ELSE 0 END) > 0\n" +
+            "                    OR\n" +
+            "                        COUNT(DISTINCT v.idprereq) =\n" +
+            "                        (\n" +
+            "                            SELECT COUNT(*)\n" +
+            "                            FROM " + USER_SUB_PRG_TABLE  + " AS sp FULL JOIN prereqsubjects AS pr2 ON sp.idSub = pr2.idPreReq\n" +
+            "                            WHERE sp.idUser = ? AND pr2.idSub = v.id\n" +
+            "                            GROUP BY pr2.idSub\n" +
+            "                        )\n" +
+            "    )";
 
     private final JdbcTemplate jdbcTemplate;
     private final SimpleJdbcInsert jdbcInsertSubjectClass;
     private final SimpleJdbcInsert jdbcInsertSubjectClassLocTime;
     private final SimpleJdbcInsert jdbcInsertSubjectClassProfessor;
+
+    @Override
+    public List<Subject> getAllSubsWithClassThatUserCanDo(long userId){
+        return jdbcTemplate.query(COMPLETE_SUB, SubjectClassJdbcDao::multipleCompleteClassExtractor,userId);
+    }
+
+    private static List<Subject> multipleCompleteClassExtractor(ResultSet rs) throws SQLException {
+        Map<String,Subject> classes = new HashMap<>();
+
+        while (rs.next()) {
+
+            String idSub = rs.getString("id");
+            String subName = rs.getString("subname");
+            String department = rs.getString("department");
+            int credits = rs.getInt("credits");
+
+            Subject sub = classes.getOrDefault(idSub, new Subject(idSub,subName,department,credits));
+
+            String idClass = rs.getString("idClass");
+            Integer day = rs.getInt("day");
+            Time start = rs.getTime("startTime");
+            Time end = rs.getTime("endTime");
+            String classNumber = rs.getString("class");
+            String building = rs.getString("building");
+            String mode = rs.getString("mode");
+
+            SubjectClass subjectClass = sub.getSubjectClasses().getOrDefault(idSub+idClass, new SubjectClass(idSub,idClass));
+            subjectClass.getClassTimes().add(new SubjectClass.ClassTime(day,start,end,classNumber,building,mode));
+
+            sub.getSubjectClasses().put(idSub+idClass, subjectClass);
+            classes.put(idSub,sub);
+        }
+
+        return new ArrayList<>(classes.values());
+    }
+
 
     @Autowired
     public SubjectClassJdbcDao(final DataSource ds) {
@@ -46,6 +105,8 @@ public class SubjectClassJdbcDao implements SubjectClassDao{
         jdbcInsertSubjectClassProfessor = new SimpleJdbcInsert(ds)
                 .withTableName(TABLE_CLASS_PROF)
                 .usingGeneratedKeyColumns("idSub","idClass","idProf");
+
+        jdbcTemplate.execute("REFRESH MATERIALIZED VIEW " + VIEW_CLASS_JOIN);
     }
 
     @Override

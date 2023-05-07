@@ -36,9 +36,11 @@ public class SubjectJdbcDao implements SubjectDao {
 
         jdbcTemplate.execute("REFRESH MATERIALIZED VIEW " + VIEW_JOIN);
 
+
         queryOptionBlanck.putIfAbsent("department","?");
         queryOptionBlanck.putIfAbsent("credits","CAST(? AS INTEGER)");
     }
+
 
     @Override
     public Optional<Subject> findById(String id) {
@@ -60,7 +62,6 @@ public class SubjectJdbcDao implements SubjectDao {
     }
 
 
-    // TODO unificar las queries que se repiten
     @Override
     public List<Subject> getByName(String name) {
         return jdbcTemplate.query("SELECT * FROM " + VIEW_JOIN + " WHERE subname ILIKE ?",
