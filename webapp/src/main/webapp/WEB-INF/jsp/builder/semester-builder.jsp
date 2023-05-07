@@ -4,62 +4,72 @@
 <head>
     <title>Title</title>
     <jsp:include page="../components/head_shared.jsp"/>
-    <style>
-        .builder-height{
-            max-height: 90%;
-            height: 90%;
-        }
-        .builder-area{
-            display: flex;
-            flex-direction: row;
-        }
-        .subject-list{
-            display: flex;
-            flex-direction: column;
-            overflow: scroll;
-            max-height: 600px;
-        }
-        .subject-card{
-            width: 19rem;
-            padding: 0.3rem;
-        }
-        .time-table{
-            min-width: 60%;
-        }
-        .icon {
-            padding-top: .5rem;
-            font-size: 1rem;
-        }
-        h4 {
-            margin: 0 !important;
-            padding: 0 !important;
-        }
-        h5 {
-            margin: 0 !important;
-            padding: 0 !important;
-        }
-        .subject-card-choose{
-            display: flex;
-            flex-direction: row;
-            align-items: center;
-            justify-content: space-between;
-        }
-        .choose-class{
-            display: none;
-        }
-        .subject-class-info{
-            display: none;
-            flex-direction: column;
-        }
-    </style>
 </head>
+<jsp:include page="../components/table_style.jsp"/>
+<style>
+    .builder-height{
+        max-height: 90%;
+        height: 90%;
+    }
+    .builder-area{
+        display: flex;
+        flex-direction: row;
+    }
+    .subject-list{
+        display: flex;
+        flex-direction: column;
+        overflow: scroll;
+        max-height: 600px;
+    }
+    .subject-card{
+        width: 19rem;
+        padding: 0.3rem;
+    }
+    .time-table{
+        min-width: 60%;
+    }
+    .icon {
+        padding-top: .5rem;
+        font-size: 1rem;
+    }
+    h4 {
+        margin: 0 !important;
+        padding: 0 !important;
+    }
+    h5 {
+        margin: 0 !important;
+        padding: 0 !important;
+    }
+    .subject-card-choose{
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-between;
+    }
+    .choose-class{
+        display: none;
+    }
+    .subject-class-info{
+        display: none;
+        flex-direction: column;
+    }
+    .table-scroll{
+        overflow: auto;
+        height: 650px;
+        width: 650px;
+    }
+
+
+</style>
+
 <body>
 </body>
 <jsp:include page="../components/navbar.jsp"/>
 <main class="container-80 builder-area builder-height">
     <sl-card class="time-table">
-        <table>
-            <tbody>
+        <div class="table-scroll">
+            <table>
+                <thead>
                 <tr>
                     <th></th>
                     <th>Monday</th>
@@ -69,56 +79,11 @@
                     <th>Friday</th>
                     <th>Saturday</th>
                 </tr>
-                <tr>
-                    <td>8:00</td>
-                </tr>
-                <tr>
-                    <td>8:30</td>
-                </tr>
-                <tr>
-                    <td>9:00</td>
-                </tr>
-                <tr>
-                    <td>10:00</td>
-                </tr>
-                <tr>
-                    <td>11:00</td>
-                </tr>
-                <tr>
-                    <td>12:00</td>
-                </tr>
-                <tr>
-                    <td>13:00</td>
-                </tr>
-                <tr>
-                    <td>14:00</td>
-                </tr>
-                <tr>
-                    <td>15:00</td>
-                </tr>
-                <tr>
-                    <td>16:00</td>
-                </tr>
-                <tr>
-                    <td>17:00</td>
-                </tr>
-                <tr>
-                    <td>18:00</td>
-                </tr>
-                <tr>
-                    <td>19:00</td>
-                </tr>
-                <tr>
-                    <td>20:00</td>
-                </tr>
-                <tr>
-                    <td>21:00</td>
-                </tr>
-                <tr>
-                    <td>22:00</td>
-                </tr>
-            </tbody>
-        </table>
+                </thead>
+                <tbody id="weekly-schedule">
+                </tbody>
+            </table>
+        </div>
     </sl-card>
 
 
@@ -152,7 +117,7 @@
                         <sl-card class="subject-card">
                             <div class="subject-card-choose" slot="header">
                                 <h5>${subClass.getIdClass()}</h5>
-                                <sl-button id="select-class-${subClass.getIdSub()}" variant="default" size="small" circle>
+                                <sl-button id="select-class-${subClass.getIdSub()}-${subClass.getIdClass()}" variant="default" size="small" circle>
                                     <sl-icon class="icon" name="check2" label="Select Subject"></sl-icon>
                                 </sl-button>
                             </div>
@@ -181,6 +146,33 @@
 <jsp:include page="../components/body_scripts.jsp"/>
 
 <script>
+
+    const scheduleHTML = document.getElementById('weekly-schedule')
+    const ROWS = 24
+    const COLS = 7
+    const scheduleArray = Array(ROWS).fill(Array(COLS))
+
+    for(let i=0; i<ROWS; i++ ){
+        let tr = document.createElement("tr");
+
+        let td = document.createElement('th');
+        let hours = (8 + Math.floor(i / 2)) + ""
+        let minutes = i % 2 === 0 ? "00" : "30";
+        td.textContent = hours + ":" + minutes;
+        tr.appendChild(td);
+
+        for(let j=0; j<COLS-1; j++ ){
+            let td = document.createElement('td');
+            td.id='r'+i+'c'+j;
+            scheduleArray[i][j] = "";
+            td.textContent = "";
+            tr.appendChild(td);
+        }
+        scheduleHTML.appendChild(tr);
+    }
+
+    const chosenClasses = []
+
     const subjectClasses = [
         <c:forEach var="sub" items="${availableSubjects}">
         {
@@ -191,6 +183,7 @@
                     'idClass': '${subClass.getIdClass()}', 'classTimes': [
                         <c:forEach var="classTime" items="${subClass.getClassTimes()}">
                         {
+
                             'day': '${classTime.getDay()}', 'start': '${classTime.getStartTime()}', 'end': '${classTime.getEndTime()}',
                             'loc': '${classTime.getClassLoc()}','building': '${classTime.getBuilding()}', 'mode': '${classTime.getMode()}'
                         },
@@ -203,14 +196,40 @@
         </c:forEach>
     ]
 
-    for(let elem in subjectClasses){
-        document.getElementById('select-' + subjectClasses[elem].id).addEventListener('click',
+    for(let subjectNum in subjectClasses){
+        document.getElementById('select-' + subjectClasses[subjectNum].id).addEventListener('click',
             function() {
                 document.getElementById('choose-class').style.display = 'block';
                 document.getElementById('choose-subject').style.display = 'none';
-                document.getElementById('classes-' + subjectClasses[elem].id).style.display = 'flex';
+                document.getElementById('classes-' + subjectClasses[subjectNum].id).style.display = 'flex';
             }
         );
+        for(let subjectClassNum in subjectClasses[subjectNum].classes){
+            document.getElementById(
+                'select-class-' + subjectClasses[subjectNum].id + '-' + subjectClasses[subjectNum].classes[subjectClassNum].idClass
+            ).addEventListener('click',
+                function() {
+                    document.getElementById('choose-class').style.display = 'none';
+                    document.getElementById('choose-subject').style.display = 'flex';
+                    document.getElementById('classes-' + subjectClasses[subjectNum].id).style.display = 'none';
+                    chosenClasses.push(subjectClasses[subjectNum].classes[subjectClassNum].classTimes)
+
+                    for(let classNum in subjectClasses[subjectNum].classes[subjectClassNum].classTimes){
+                        const day = subjectClasses[subjectNum].classes[subjectClassNum].classTimes[classNum].day
+                        const start = subjectClasses[subjectNum].classes[subjectClassNum].classTimes[classNum].start
+                        const end = subjectClasses[subjectNum].classes[subjectClassNum].classTimes[classNum].end
+
+                        const rowStart = parseInt(start.split(":")[0]) + (parseInt(start.split(":")[1]) === 30 ? 1 : 0)
+                        const rowEnd = parseInt(end.split(":")[0]) + (parseInt(end.split(":")[1]) === 30 ? 1 : 0)
+
+                        for(let i=rowStart; i<rowEnd; i++){
+                            document.getElementById('r'+i+'c'+day).style.backgroundColor = '#8d2f2f';
+                        }
+                    }
+
+                }
+            );
+        }
     }
 
 
