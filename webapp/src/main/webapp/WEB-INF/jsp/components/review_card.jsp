@@ -1,6 +1,8 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ page contentType="text/html;charset=UTF-8" %>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
+<%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
+
 
 <%--Params--%>
 <c:set var="review" value="${requestScope.review}"/>
@@ -77,6 +79,11 @@
       </c:otherwise>
     </c:choose>
 
+    <c:if test="${review.userId != user.id}">
+      <sec:authorize access="hasRole('EDITOR')">
+        <sl-icon-button name="trash3" class="delete-button" label="delete" href="<c:url value="/review/${review.subjectId}/delete/${review.id}"/>"></sl-icon-button>
+      </sec:authorize>
+    </c:if>
     <c:if test="${review.userId == user.id}">
       <div>
         <sl-icon-button name="pencil-square" label="edit" href="<c:url value="/review/${review.subjectId}/edit/${review.id}"/>"></sl-icon-button>
