@@ -1,5 +1,6 @@
 package ar.edu.itba.paw.persistence;
 
+import ar.edu.itba.paw.models.Roles;
 import ar.edu.itba.paw.models.User;
 import ar.edu.itba.paw.persistence.exceptions.UserEmailAlreadyTakenPersistenceException;
 import com.sun.org.apache.xpath.internal.operations.Bool;
@@ -29,4 +30,7 @@ public interface UserDao extends RWDao<Long,User> {
 
     void editProfile(Long userId, String username);
 
+    List<Roles> getUserRoles(Long userId);
+
+    Integer addIdToUserRoles(Long roleId, Long userId);
 }

@@ -5,19 +5,19 @@ import java.util.Objects;
 public class Roles {
     private final Long id;
 
-    private final String role;
+    private final String name;
 
-    public Roles(Long id, String role) {
+    public Roles(Long id, String name) {
         this.id = id;
-        this.role = role;
+        this.name = name;
     }
 
     public Long getId() {
         return id;
     }
 
-    public String getRole() {
-        return role;
+    public String getName() {
+        return name;
     }
 
     @Override
@@ -25,11 +25,11 @@ public class Roles {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Roles roles = (Roles) o;
-        return Objects.equals(id, roles.id) && Objects.equals(role, roles.role);
+        return Objects.equals(id, roles.id) && Objects.equals(name, roles.name);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, role);
+        return Objects.hash(id, name);
     }
 }

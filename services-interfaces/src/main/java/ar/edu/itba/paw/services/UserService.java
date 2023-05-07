@@ -1,5 +1,6 @@
 package ar.edu.itba.paw.services;
 
+import ar.edu.itba.paw.models.Roles;
 import ar.edu.itba.paw.models.User;
 import ar.edu.itba.paw.services.exceptions.InvalidTokenException;
 import ar.edu.itba.paw.services.exceptions.OldPasswordDoesNotMatchException;
@@ -32,7 +33,11 @@ public interface UserService extends BaseService<Long, User> {
     String generateRecoveryToken(User user);
     String generateRecoveryToken(long userId);
 
+    List<Roles> getUserRoles(Long userId);
+
     boolean isValidToken(String token);
 
     void recoverPassword(String token, String newPassword) throws InvalidTokenException;
+
+    Integer addIdToUserRoles(Long roleId, Long userId);
 }

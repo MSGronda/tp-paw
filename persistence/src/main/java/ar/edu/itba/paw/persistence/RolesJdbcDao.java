@@ -44,5 +44,8 @@ public class RolesJdbcDao implements RolesDao{
         return jdbcTemplate.query("SELECT * FROM " + ROLES_TABLE, ROW_MAPPER);
     }
 
-
+    @Override
+    public Optional<Roles> findByName(String name) {
+        return jdbcTemplate.query("SELECT * FROM " + ROLES_TABLE + " WHERE name = ?", ROW_MAPPER, name).stream().findFirst();
+    }
 }

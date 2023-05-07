@@ -1,5 +1,6 @@
 package ar.edu.itba.paw.services;
 
+import ar.edu.itba.paw.models.Roles;
 import ar.edu.itba.paw.models.User;
 import ar.edu.itba.paw.persistence.RecoveryDao;
 import ar.edu.itba.paw.persistence.UserDao;
@@ -157,5 +158,16 @@ public class UserServiceImpl implements UserService {
 
         userDao.changePassword(userId, passwordEncoder.encode(newPassword));
         recDao.delete(token);
+    }
+
+    //-------------------------------- USER ROLES -----------------------------
+    @Override
+    public List<Roles> getUserRoles(Long userId) {
+        return userDao.getUserRoles(userId);
+    }
+
+    @Override
+    public Integer addIdToUserRoles(Long roleId, Long userId) {
+        return userDao.addIdToUserRoles(roleId, userId);
     }
 }

@@ -7,6 +7,7 @@ import ar.edu.itba.paw.services.exceptions.OldPasswordDoesNotMatchException;
 import ar.edu.itba.paw.services.exceptions.UserEmailAlreadyTakenException;
 import ar.edu.itba.paw.services.exceptions.UserEmailNotFoundException;
 import ar.edu.itba.paw.webapp.auth.UniAuthUser;
+import ar.edu.itba.paw.webapp.exceptions.RoleNotFoundException;
 import ar.edu.itba.paw.webapp.exceptions.UserNotFoundException;
 import ar.edu.itba.paw.webapp.form.*;
 import ar.edu.itba.paw.webapp.form.EditUserDataForm;
@@ -43,14 +44,17 @@ public class UserController {
 
     private final AuthUserService authUserService;
 
+    private final RolesService rolesService;
+
 
     @Autowired
-    public UserController(UserService userService, ReviewService reviewService, MailService mailService, DegreeService degreeService, AuthUserService authUserService) {
+    public UserController(UserService userService, ReviewService reviewService, MailService mailService, DegreeService degreeService, AuthUserService authUserService, RolesService rolesService) {
         this.userService = userService;
         this.reviewService = reviewService;
         this.mailService = mailService;
         this.degreeService = degreeService;
         this.authUserService = authUserService;
+        this.rolesService = rolesService;
     }
 
     @RequestMapping("/user/{id:\\d+}")
@@ -108,7 +112,12 @@ public class UserController {
             mav.addObject("EmailAlreadyUsed", true);
             return mav;
         }
-
+        Optional<Roles> maybeRole = rolesService.findByName("USER");
+        if(!maybeRole.isPresent()){
+            throw new RoleNotFoundException();
+        }
+        Roles role = maybeRole.get();
+        userService.addIdToUserRoles(role.getId(), user.getId());
         return new ModelAndView("redirect:/login");
     }
 
