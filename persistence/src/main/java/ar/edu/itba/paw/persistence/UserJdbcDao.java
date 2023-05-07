@@ -205,6 +205,10 @@ public class UserJdbcDao implements UserDao {
         );
     }
 
+    public Integer updateUserRoles(Long roleId, Long userId) {
+        return jdbcTemplate.update("UPDATE " + USER_ROLES_TABLE + " SET roleid = ? WHERE userid = ?", roleId, userId);
+    }
+
     //---------------------------------------------------------------------------------------
 
     private static User rowMapper(ResultSet rs, int rowNum) throws SQLException {

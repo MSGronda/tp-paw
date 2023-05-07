@@ -33,4 +33,6 @@ public interface UserDao extends RWDao<Long,User> {
     List<Roles> getUserRoles(Long userId);
 
     Integer addIdToUserRoles(Long roleId, Long userId);
+
+    Integer updateUserRoles(Long roleId, Long userId);
 }

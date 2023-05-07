@@ -170,4 +170,8 @@ public class UserServiceImpl implements UserService {
     public Integer addIdToUserRoles(Long roleId, Long userId) {
         return userDao.addIdToUserRoles(roleId, userId);
     }
+
+    public Integer updateUserRoles(Long roleId, Long userId) {
+        return userDao.updateUserRoles(roleId, userId);
+    }
 }

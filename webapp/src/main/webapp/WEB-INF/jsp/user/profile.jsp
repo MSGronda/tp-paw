@@ -31,15 +31,20 @@
             margin-left: 2rem;
             width: 100%;
         }
+        .editor-text {
+            margin-left: 1rem;
+            color: #4e90e2;
+            font-weight: normal;
+        }
         .edit-button {
             display: flex;
             justify-content: space-around;
         }
-        h4{
+        h4 {
             display: flex;
             justify-content: center;
         }
-        .logout-button{
+        .logout-button {
             display: flex;
             align-items: center;
         }
@@ -56,7 +61,7 @@
             display: flex;
             flex-direction: row;
         }
-        .table-area{
+        .table-area {
             width: 100%;
             padding-bottom: 2rem;
         }
@@ -65,18 +70,22 @@
             display: flex;
             justify-content: end;
         }
-        sl-icon{
+        sl-icon {
             padding-top: 0.5rem;
         }
-        .image-container{
+        .image-container {
             position: relative;
             display: inline-block;
         }
-        .edit-picture{
+        .edit-picture {
             position: absolute;
             bottom: 0;
             right: 0;
             padding-bottom: 0.65rem;
+        }
+        .moderator-tag {
+            display: flex;
+            flex-direction: row;
         }
         <jsp:include page="../components/table_style.jsp"/>
     </style>
@@ -93,7 +102,12 @@
             </sl-button>
         </div>
         <div class="title">
-            <h1><spring:message code="profile.loggeduser" /></h1>
+            <div class="moderator-tag">
+                <h1><spring:message code="profile.loggeduser" /></h1>
+                <c:if test="${editor}">
+                    <h1 class="editor-text"> <spring:message code="profile.editor" /> </h1>
+                </c:if>
+            </div>
             <c:url value="/logout" var="logout"/>
             <div class="logout-button">
                 <sl-button variant="primary" href="${logout}"><spring:message code="profile.logout"/></sl-button>

@@ -40,4 +40,6 @@ public interface UserService extends BaseService<Long, User> {
     void recoverPassword(String token, String newPassword) throws InvalidTokenException;
 
     Integer addIdToUserRoles(Long roleId, Long userId);
+
+    Integer updateUserRoles(Long roleId, Long userId);
 }
