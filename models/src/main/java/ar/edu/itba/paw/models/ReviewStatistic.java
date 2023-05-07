@@ -11,22 +11,24 @@ public class ReviewStatistic {
     private final int mediumCount;
     private final int hardCount;
     private final int notTimeDemandingCount;
+    private final int averageTimeDemandingCount;
     private final int timeDemandingCount;
 
     private final int dificulty;
     private final int timeDemaning;
 
     private static final int NO_DATA=-1, EASY = 0, MEDIUM = 1, HARD = 2;
-    private static final int NOT_TIME_DEMANDING = 0, TIME_DEMANDING = 1;
+    private static final int NOT_TIME_DEMANDING = 0, AVERAGE_TIME_DEMANDING = 1 ,TIME_DEMANDING = 2;
 
     public ReviewStatistic(String idSub, int reviewCount, int easyCount, int mediumCount, int hardCount,
-                           int notTimeDemandingCount, int timeDemandingCount) {
+                           int notTimeDemandingCount,int averageTimeDemandingCount ,int timeDemandingCount) {
         this.idSub = idSub;
         this.reviewCount = reviewCount;
         this.easyCount = easyCount;
         this.mediumCount = mediumCount;
         this.hardCount = hardCount;
         this.notTimeDemandingCount = notTimeDemandingCount;
+        this.averageTimeDemandingCount = averageTimeDemandingCount;
         this.timeDemandingCount = timeDemandingCount;
 
         this.dificulty = getDifficulty();
@@ -40,6 +42,7 @@ public class ReviewStatistic {
         this.mediumCount = 0;
         this.hardCount = 0;
         this.notTimeDemandingCount = 0;
+        this.averageTimeDemandingCount = 0;
         this.timeDemandingCount = 0;
 
         this.dificulty = getDifficulty();
@@ -64,12 +67,17 @@ public class ReviewStatistic {
         return HARD;
     }
     public int getTimeDifficulty(){
-        // -1 no data, 0 not, 1 yes
-        if(notTimeDemandingCount == 0 && timeDemandingCount == 0){
+        // -1 no data, 0 not time demanding, 1 is average time demanding, 2 is very time demanding
+        if(notTimeDemandingCount == 0 && timeDemandingCount == 0 && averageTimeDemandingCount == 0){
             return NO_DATA;
         }
-        if(notTimeDemandingCount > timeDemandingCount)
-            return NOT_TIME_DEMANDING;
+        if(notTimeDemandingCount > averageTimeDemandingCount) {
+            if (notTimeDemandingCount > timeDemandingCount)
+                return NOT_TIME_DEMANDING;
+        } else {
+            if(averageTimeDemandingCount > timeDemandingCount)
+                return AVERAGE_TIME_DEMANDING;
+        }
         return TIME_DEMANDING;
     }
 
@@ -95,6 +103,10 @@ public class ReviewStatistic {
 
     public int getReviewCount() {
         return reviewCount;
+    }
+
+    public int getAverageTimeDemandingCount(){
+        return averageTimeDemandingCount;
     }
 
     public int getTimeDemandingCount() {

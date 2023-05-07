@@ -186,7 +186,7 @@ public class ReviewJdbcDao implements ReviewDao {
 
     private void updateStatistics(Review review){
         Optional<ReviewStatistic> stat = getReviewStatBySubject(review.getSubjectId());
-        int easy = 0, medium = 0, hard = 0, timeDemanding =0 , notTimeDemanding = 0;
+        int easy = 0, medium = 0, hard = 0, timeDemanding =0, averageTimeDemanding = 0, notTimeDemanding = 0;
         switch (review.getEasy()){
             case 0: easy++;break;
             case 1: medium++;break;
@@ -194,7 +194,8 @@ public class ReviewJdbcDao implements ReviewDao {
         }
         switch (review.getTimeDemanding()){
             case 0: notTimeDemanding++;break;
-            case 1: timeDemanding++;break;
+            case 1: averageTimeDemanding++;break;
+            case 2: timeDemanding++;break;
         }
 
         if(stat.isPresent()){
@@ -207,6 +208,7 @@ public class ReviewJdbcDao implements ReviewDao {
                     reviewStat.getMediumCount() + medium,
                     reviewStat.getHardCount() + hard,
                     reviewStat.getNotTimeDemandingCount() + notTimeDemanding,
+                    reviewStat.getAverageTimeDemandingCount() + averageTimeDemanding,
                     reviewStat.getTimeDemandingCount() + timeDemanding,
                     reviewStat.getIdSub()
             );
@@ -220,6 +222,7 @@ public class ReviewJdbcDao implements ReviewDao {
             data.put("mediumCount", medium);
             data.put("hardCount", hard);
             data.put("notTimeDemandingCount", notTimeDemanding);
+            data.put("averageTimeDemandingCount",averageTimeDemanding);
             data.put("timeDemandingCount", timeDemanding);
             jdbcInsertReviewStatistic.execute(data);
         }
@@ -286,10 +289,11 @@ public class ReviewJdbcDao implements ReviewDao {
             int mediumCount = rs.getInt("mediumCount");
             int hardCount = rs.getInt("hardCount");
             int notTimeDemandingCount = rs.getInt("notTimeDemandingCount");
+            int averageTimeDemandingCount = rs.getInt("averageTimeDemandingCount");
             int timeDemandingCount = rs.getInt("timeDemandingCount");
 
             final ReviewStatistic subClass = reviewStats.getOrDefault(idSub,
-                    new ReviewStatistic(idSub,reviewCount,easyCount,mediumCount,hardCount,notTimeDemandingCount,timeDemandingCount));
+                    new ReviewStatistic(idSub,reviewCount,easyCount,mediumCount,hardCount,notTimeDemandingCount,averageTimeDemandingCount,timeDemandingCount));
 
             reviewStats.put(idSub, subClass);
         }
@@ -304,6 +308,7 @@ public class ReviewJdbcDao implements ReviewDao {
                 rs.getInt("mediumCount"),
                 rs.getInt("hardCount"),
                 rs.getInt("notTimeDemandingCount"),
+                rs.getInt("averageTimeDemandingCount"),
                 rs.getInt("timeDemandingCount")
         );
     }

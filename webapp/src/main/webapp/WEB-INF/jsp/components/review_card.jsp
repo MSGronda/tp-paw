@@ -118,7 +118,7 @@
         <sl-badge size="medium" variant="primary"><spring:message code="form.averageTimeDemand"/></sl-badge>
       </c:when>
       <c:otherwise>
-        <sl-badge size="medium" ariant="warning"><spring:message code="form.timeDemanding"/></sl-badge>
+        <sl-badge size="medium" variant="warning"><spring:message code="form.timeDemanding"/></sl-badge>
       </c:otherwise>
     </c:choose>
   </div>
