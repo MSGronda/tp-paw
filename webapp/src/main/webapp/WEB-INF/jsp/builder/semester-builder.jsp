@@ -1,5 +1,8 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
+<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
+<%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 <html>
 <head>
     <title>Title</title>
@@ -7,10 +10,6 @@
 </head>
 <jsp:include page="../components/table_style.jsp"/>
 <style>
-    .builder-height{
-        max-height: 90%;
-        height: 90%;
-    }
     .builder-area{
         display: flex;
         flex-direction: row;
@@ -18,8 +17,8 @@
     .subject-list{
         display: flex;
         flex-direction: column;
-        overflow: scroll;
-        max-height: 600px;
+        overflow: auto;
+        max-height: 35rem;
     }
     .subject-card{
         width: 19rem;
@@ -41,7 +40,7 @@
         margin: 0 !important;
         padding: 0 !important;
     }
-    .subject-card-choose{
+    .chooser{
         display: flex;
         flex-direction: row;
         align-items: center;
@@ -60,7 +59,7 @@
     }
     .table-scroll{
         overflow: auto;
-        height: 650px;
+        height: 34rem;
         width: 100%;
     }
     tbody td {
@@ -73,27 +72,35 @@
         padding-top: 0.25rem !important;
         padding-bottom: 0.25rem !important;
     }
-
+    .class-selection{
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-between;
+        margin: 1rem;
+    }
 </style>
 
 <body>
 </body>
 <jsp:include page="../components/navbar.jsp"/>
-<main class="container-80 builder-area builder-height">
+<main class="container-80 builder-area">
     <sl-card class="time-table">
+        <table>
+            <thead>
+            <tr>
+                <th></th>
+                <th>Monday</th>
+                <th>Tuesday</th>
+                <th>Wednesday</th>
+                <th>Thursday</th>
+                <th>Friday</th>
+                <th>Saturday</th>
+            </tr>
+            </thead>
+        </table>
         <div class="table-scroll">
             <table>
-                <thead>
-                    <tr>
-                        <th></th>
-                        <th>Monday</th>
-                        <th>Tuesday</th>
-                        <th>Wednesday</th>
-                        <th>Thursday</th>
-                        <th>Friday</th>
-                        <th>Saturday</th>
-                    </tr>
-                </thead>
                 <tbody id="weekly-schedule">
                 </tbody>
             </table>
@@ -108,7 +115,7 @@
             <c:forEach var="subject" items="${availableSubjects}">
                 <sl-card id="subject-card-${subject.id}" class="subject-card">
                     <div slot="header"><h5><c:out value="${subject.name}"/></h5> </div>
-                    <div class="subject-card-choose">
+                    <div class="chooser">
                         <c:out value="Credits: ${subject.credits}"/>
                         <sl-button id="select-${subject.id}" variant="default" size="small" circle>
                             <sl-icon class="icon" name="check2" label="Select Subject"></sl-icon>
@@ -125,11 +132,17 @@
 
             <c:forEach var="subject" items="${availableSubjects}">
                 <div class="subject-class-info column" id="classes-${subject.id}">
-                    <h4>${subject.name}</h4>
+                    <div class="class-selection">
+                        <h4>Select a class</h4>
+                        <sl-button id="exit-class-selector-${subject.id}"  variant="default" size="small" circle>
+                            <sl-icon class="icon" name="x-lg" label="Exit"></sl-icon>
+                        </sl-button>
+                    </div>
+
 
                     <c:forEach var="subClass" items="${subject.subjectClasses.values()}">
                         <sl-card id="class-card-${subClass.getIdSub()}-${subClass.getIdClass()}" class="subject-card">
-                            <div class="subject-card-choose" slot="header">
+                            <div class="chooser" slot="header">
                                 <h5>${subClass.getIdClass()}</h5>
                                 <sl-button id="select-class-${subClass.getIdSub()}-${subClass.getIdClass()}" variant="default" size="small" circle>
                                     <sl-icon class="icon" name="check2" label="Select Subject"></sl-icon>
@@ -138,14 +151,20 @@
 
                             <div class="column">
                                 <c:forEach varStatus="status" var="classTime" items="${subClass.getClassTimes()}">
-                                    <span>Day: ${classTime.getDay()}</span>
-                                    <span>Time: ${classTime.getStartTime()} - ${classTime.getEndTime()}</span>
-                                    <span>Class: ${classTime.getClassLoc()}</span>
-                                    <span>Building: ${classTime.getBuilding()}</span>
-                                    <span>Mode: ${classTime.getMode()}</span>
-                                    <c:if test="${status.last != true}">
-                                        <sl-divider></sl-divider>
-                                    </c:if>
+                                    <table>
+                                        <tbody>
+                                        <c:choose>
+                                            <c:when test="${classTime.getDay() != 0}">
+                                                <tr><th>Day</th><td><spring:message code="subject.classDay${classTime.getDay()}"/></td></tr>
+                                            </c:when>
+                                            <c:otherwise><tr><th>Day</th><td>No day</td></tr></c:otherwise>
+                                        </c:choose>
+                                        <tr><th>Time</th><td>${classTime.getStartTime()} - ${classTime.getEndTime()}</td></tr>
+                                        <tr><th>Class</th><td>${classTime.getClassLoc()}</td></tr>
+                                        <tr><th>Building</th><td>${classTime.getBuilding()}</td></tr>
+                                        <tr><th>Mode</th><td>${classTime.getMode()}</td></tr>
+                                        </tbody>
+                                    </table>
                                 </c:forEach>
                             </div>
 
@@ -239,6 +258,12 @@
             function() {
                 // go to class selection
                 switchSelector('flex','none',subjectClasses[subjectNum].id,'flex')
+            }
+        );
+        document.getElementById('exit-class-selector-' + subjectClasses[subjectNum].id).addEventListener('click',
+            function() {
+                // go to class selection
+                switchSelector('none','flex',subjectClasses[subjectNum].id,'none')
             }
         );
         for(let subjectClassNum in subjectClasses[subjectNum].classes){
