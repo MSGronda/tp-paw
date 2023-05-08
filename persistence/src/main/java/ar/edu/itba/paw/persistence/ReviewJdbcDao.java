@@ -100,7 +100,7 @@ public class ReviewJdbcDao implements ReviewDao {
     @Override
     public void deleteReviewStatistics(Review review){
         Optional<ReviewStatistic> stat = getReviewStatBySubject(review.getSubjectId());
-        int easy = 0, medium = 0, hard = 0, timeDemanding =0 , notTimeDemanding = 0;
+        int easy = 0, medium = 0, hard = 0, timeDemanding =0 ,averageTimeDemanding = 0, notTimeDemanding = 0;
         switch (review.getEasy()){
             case 0: easy--;break;
             case 1: medium--;break;
@@ -108,7 +108,8 @@ public class ReviewJdbcDao implements ReviewDao {
         }
         switch (review.getTimeDemanding()){
             case 0: notTimeDemanding--;break;
-            case 1: timeDemanding--;break;
+            case 1: averageTimeDemanding--;break;
+            case 2: timeDemanding--;break;
         }
 
         if(stat.isPresent()){
@@ -117,12 +118,13 @@ public class ReviewJdbcDao implements ReviewDao {
             ReviewStatistic reviewStat= stat.get();
             jdbcTemplateReviewStatistic.update("UPDATE " + TABLE_REVIEW_STAT +
                             " SET reviewCount = ?, easyCount = ?, mediumCount = ?, hardCount = ?, " +
-                            "notTimeDemandingCount = ?, timeDemandingCount = ? WHERE idSub = ?",
+                            "notTimeDemandingCount = ?, averageTimeDemandingCount = ?,timeDemandingCount = ? WHERE idSub = ?",
                     reviewStat.getReviewCount() - 1,
                     reviewStat.getEasyCount() + easy,
                     reviewStat.getMediumCount() + medium,
                     reviewStat.getHardCount() + hard,
                     reviewStat.getNotTimeDemandingCount() + notTimeDemanding,
+                    reviewStat.getAverageTimeDemandingCount() + averageTimeDemanding,
                     reviewStat.getTimeDemandingCount() + timeDemanding,
                     reviewStat.getIdSub()
             );
