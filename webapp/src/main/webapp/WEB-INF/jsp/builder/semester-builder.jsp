@@ -26,7 +26,8 @@
         padding: 0.3rem;
     }
     .time-table{
-        min-width: 60%;
+        min-width: 70%;
+        padding: 0.5rem;
     }
     .icon {
         padding-top: .5rem;
@@ -48,6 +49,10 @@
     }
     .choose-class{
         display: none;
+        padding: 0.5rem;
+    }
+    .choose-subject{
+        padding: 0.5rem;
     }
     .subject-class-info{
         display: none;
@@ -56,9 +61,16 @@
     .table-scroll{
         overflow: auto;
         height: 650px;
-        width: 650px;
+        width: 100%;
     }
-
+    tbody td {
+        padding-top: 0.25rem !important;
+        padding-bottom: 0.25rem !important;
+    }
+    tbody th {
+        padding-top: 0.25rem !important;
+        padding-bottom: 0.25rem !important;
+    }
 
 </style>
 
@@ -70,15 +82,15 @@
         <div class="table-scroll">
             <table>
                 <thead>
-                <tr>
-                    <th></th>
-                    <th>Monday</th>
-                    <th>Tuesday</th>
-                    <th>Wednesday</th>
-                    <th>Thursday</th>
-                    <th>Friday</th>
-                    <th>Saturday</th>
-                </tr>
+                    <tr>
+                        <th></th>
+                        <th>Monday</th>
+                        <th>Tuesday</th>
+                        <th>Wednesday</th>
+                        <th>Thursday</th>
+                        <th>Friday</th>
+                        <th>Saturday</th>
+                    </tr>
                 </thead>
                 <tbody id="weekly-schedule">
                 </tbody>
@@ -89,27 +101,23 @@
 
     <sl-card id="choose-subject" class="choose-subject">
         <div slot="header"><h4>Available Subjects</h4></div>
-        <div class="subject-list">
+        <div id="subject-list" class="subject-list">
             <c:forEach var="subject" items="${availableSubjects}">
                 <sl-card id="card-${subject.id}" class="subject-card">
                     <div slot="header"><h5><c:out value="${subject.name}"/></h5> </div>
-
                     <div class="subject-card-choose">
                         <c:out value="Credits: ${subject.credits}"/>
-
                         <sl-button id="select-${subject.id}" variant="default" size="small" circle>
                             <sl-icon class="icon" name="check2" label="Select Subject"></sl-icon>
                         </sl-button>
                     </div>
-
                 </sl-card>
             </c:forEach>
         </div>
     </sl-card>
 
     <sl-card id="choose-class" class="choose-class">
-
-        <div class="subject-list">
+        <div id="class-list" class="subject-list">
             <c:forEach var="subject" items="${availableSubjects}">
                 <div class="subject-class-info column" id="classes-${subject.id}">
                     <h4>${subject.name}</h4>
@@ -140,38 +148,13 @@
         </div>
     </sl-card>
 
-
 </main>
 <jsp:include page="../components/footer.jsp"/>
 <jsp:include page="../components/body_scripts.jsp"/>
 
+<script src="${pageContext.request.contextPath}/js/schedule.js"></script>
 <script>
-
-    const scheduleHTML = document.getElementById('weekly-schedule')
-    const ROWS = 24
-    const COLS = 7
-    const scheduleArray = Array(ROWS).fill(Array(COLS))
-
-    for(let i=0; i<ROWS; i++ ){
-        let tr = document.createElement("tr");
-
-        let td = document.createElement('th');
-        let hours = (8 + Math.floor(i / 2)) + ""
-        let minutes = i % 2 === 0 ? "00" : "30";
-        td.textContent = hours + ":" + minutes;
-        tr.appendChild(td);
-
-        for(let j=0; j<COLS-1; j++ ){
-            let td = document.createElement('td');
-            td.id='r'+i+'c'+j;
-            scheduleArray[i][j] = "";
-            td.textContent = "";
-            tr.appendChild(td);
-        }
-        scheduleHTML.appendChild(tr);
-    }
-
-    const chosenClasses = []
+    const schedule = new Schedule('weekly-schedule',29,7);
 
     const subjectClasses = [
         <c:forEach var="sub" items="${availableSubjects}">
@@ -196,12 +179,24 @@
         </c:forEach>
     ]
 
+    function switchChooser(chooseClassVisibility, chooseSubjectVisibility, classNumber, classVisibility){
+        document.getElementById('choose-class').style.display = chooseClassVisibility;
+        document.getElementById('choose-subject').style.display = chooseSubjectVisibility;
+        document.getElementById('classes-' + classNumber).style.display = classVisibility;
+    }
+
+    function disableCard(subjectId){
+        const card = document.getElementById('card-'+subjectId);
+        card.style.color = '#858585'
+        const select = document.getElementById('select-'+subjectId);
+        select.disabled = true;
+    }
+
+
     for(let subjectNum in subjectClasses){
         document.getElementById('select-' + subjectClasses[subjectNum].id).addEventListener('click',
             function() {
-                document.getElementById('choose-class').style.display = 'block';
-                document.getElementById('choose-subject').style.display = 'none';
-                document.getElementById('classes-' + subjectClasses[subjectNum].id).style.display = 'flex';
+                switchChooser('flex','none',subjectClasses[subjectNum].id,'flex')
             }
         );
         for(let subjectClassNum in subjectClasses[subjectNum].classes){
@@ -209,29 +204,17 @@
                 'select-class-' + subjectClasses[subjectNum].id + '-' + subjectClasses[subjectNum].classes[subjectClassNum].idClass
             ).addEventListener('click',
                 function() {
-                    document.getElementById('choose-class').style.display = 'none';
-                    document.getElementById('choose-subject').style.display = 'flex';
-                    document.getElementById('classes-' + subjectClasses[subjectNum].id).style.display = 'none';
-                    chosenClasses.push(subjectClasses[subjectNum].classes[subjectClassNum].classTimes)
+                    switchChooser('none','flex',subjectClasses[subjectNum].id,'none')
+                    
+                    const resp = schedule.addClass(subjectClasses[subjectNum].classes[subjectClassNum].idClass, subjectClasses[subjectNum].classes[subjectClassNum].classTimes)
 
-                    for(let classNum in subjectClasses[subjectNum].classes[subjectClassNum].classTimes){
-                        const day = subjectClasses[subjectNum].classes[subjectClassNum].classTimes[classNum].day
-                        const start = subjectClasses[subjectNum].classes[subjectClassNum].classTimes[classNum].start
-                        const end = subjectClasses[subjectNum].classes[subjectClassNum].classTimes[classNum].end
-
-                        const rowStart = parseInt(start.split(":")[0]) + (parseInt(start.split(":")[1]) === 30 ? 1 : 0)
-                        const rowEnd = parseInt(end.split(":")[0]) + (parseInt(end.split(":")[1]) === 30 ? 1 : 0)
-
-                        for(let i=rowStart; i<rowEnd; i++){
-                            document.getElementById('r'+i+'c'+day).style.backgroundColor = '#8d2f2f';
-                        }
+                    if(resp === true){
+                        disableCard(subjectClasses[subjectNum].id)
                     }
-
                 }
             );
         }
     }
-
 
 </script>
 
