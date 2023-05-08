@@ -6,6 +6,16 @@
 <head>
     <title><spring:message code="profile.editing" /></title>
     <jsp:include page="../components/head_shared.jsp"/>
+    <script>
+        function previewImage(event) {
+            var reader = new FileReader();
+            reader.onload = function () {
+                var output = document.getElementById('imagePreview');
+                output.src = reader.result;
+            }
+            reader.readAsDataURL(event.target.files[0]);
+        }
+    </script>
     <style>
         main {
             background-color: #efefef;
@@ -51,7 +61,12 @@
             flex-direction: row;
             width: 100%;
         }
-
+        .images {
+            display: flex;
+            flex-direction: row;
+            width: 100%;
+            justify-content: space-around;
+        }
     </style>
 </head>
 <body>
@@ -67,12 +82,20 @@
     </div>
     <div class="container-50" >
         <sl-card class="card-basic">
-            <div class="tower-picture">
-                <spring:message code="profile.editing.picture" />
-                <br/>
-                <br/>
-                <spring:message code="profile.picture.alt" var="pic" arguments="${user.username}"/>
-                <img class="profile-image" src="<c:url value="/profile"/>" alt="${pic}" >
+            <div class="images">
+                <div class="tower-picture">
+                    <spring:message code="profile.editing.picture" />
+                    <br/>
+                    <br/>
+                    <spring:message code="profile.picture.alt" var="pic" arguments="${user.username}"/>
+                    <img class="profile-image" src="<c:url value="/profile"/>" alt="${pic}" >
+                </div>
+                <div class="tower-picture">
+                    <spring:message code="profile.new_image" />
+                    <br/>
+                    <br/>
+                    <img id="imagePreview" src="#" alt="<spring:message code="profile.no_image"/>" class="profile-image">
+                </div>
             </div>
 
             <br />
@@ -81,7 +104,7 @@
                 <form:errors path="profilePicture" cssClass="error" element="p"/>
                 <spring:message code="profile.upload.placeholder" var="uploadPlaceholder"/>
                 <span class="upload-button">
-                    <input type="file" name="profilePicture" placeholder="${uploadPlaceholder}" accept="image/gif, image/png, image/jpeg"/>
+                    <input type="file" name="profilePicture" placeholder="${uploadPlaceholder}" accept="image/gif, image/png, image/jpeg" onchange="previewImage(event)"/>
                 </span>
                 <br />
                 <span class="submit-button">
