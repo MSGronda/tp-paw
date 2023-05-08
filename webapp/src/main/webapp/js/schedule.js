@@ -1,6 +1,6 @@
 class Schedule {
-    constructor(start_elem, rows, cols) {
-        this.scheduleHTML = document.getElementById(start_elem);
+    constructor(rows, cols) {
+        this.scheduleHTML = document.getElementById('weekly-schedule');
         this.rows = rows;
         this.cols = cols;
         this.scheduleArray = [];
@@ -39,9 +39,9 @@ class Schedule {
     }
 
 
-    canAddClass(classId, classTimes){
+    canAddClass(subjectId, classTimes){
         // disallow user that has already signed up for that class
-        if(this.chosenSubjectMap.hasOwnProperty(classId)){
+        if(this.chosenSubjectMap.hasOwnProperty(subjectId)){
             return false;
         }
 
@@ -66,11 +66,11 @@ class Schedule {
         document.getElementById('r'+row+'c'+column).style.backgroundColor = '#8d2f2f';
     }
 
-    addClass(classId,classTimes){
-        if(!this.canAddClass(classId,classTimes)) {
+    addClass(subjectId,classTimes){
+        if(!this.canAddClass(subjectId,classTimes)) {
             return false;
         }
-        this.chosenSubjectMap[classId] = classTimes;
+        this.chosenSubjectMap[subjectId] = classTimes;
 
         for(let eventNum in classTimes){
             const day = parseInt(classTimes[eventNum].day)
@@ -82,7 +82,7 @@ class Schedule {
 
             for(let i=rowStart; i<rowEnd; i++){
                 this.updateCalendarHtml(i,day)
-                this.scheduleArray[i][day] = classId;
+                this.scheduleArray[i][day] = subjectId;
             }
         }
 

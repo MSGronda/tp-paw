@@ -154,7 +154,7 @@
 
 <script src="${pageContext.request.contextPath}/js/schedule.js"></script>
 <script>
-    const schedule = new Schedule('weekly-schedule',29,7);
+    const schedule = new Schedule(29,7);
 
     const subjectClasses = [
         <c:forEach var="sub" items="${availableSubjects}">
@@ -179,24 +179,35 @@
         </c:forEach>
     ]
 
-    function switchChooser(chooseClassVisibility, chooseSubjectVisibility, classNumber, classVisibility){
+    function switchSelector(chooseClassVisibility, chooseSubjectVisibility, classNumber, classVisibility){
         document.getElementById('choose-class').style.display = chooseClassVisibility;
         document.getElementById('choose-subject').style.display = chooseSubjectVisibility;
         document.getElementById('classes-' + classNumber).style.display = classVisibility;
     }
 
-    function disableCard(subjectId){
+    function disbleSubjectCard(subjectId){
         const card = document.getElementById('card-'+subjectId);
         card.style.color = '#858585'
         const select = document.getElementById('select-'+subjectId);
         select.disabled = true;
     }
 
+    function disableIncompatibleSubjects(){
+        for(let subNum in subjectClasses){
+            for(let clNum in subjectClasses[subNum].classes){
+                if(!schedule.canAddClass(subjectClasses[subNum].id,subjectClasses[subNum].classes[clNum].classTimes)){
+                    disbleSubjectCard(subjectClasses[subNum].id)
+                }
+            }
+        }
+    }
 
+    // set actions for select subject and select class buttons
     for(let subjectNum in subjectClasses){
         document.getElementById('select-' + subjectClasses[subjectNum].id).addEventListener('click',
             function() {
-                switchChooser('flex','none',subjectClasses[subjectNum].id,'flex')
+                // go to class selection
+                switchSelector('flex','none',subjectClasses[subjectNum].id,'flex')
             }
         );
         for(let subjectClassNum in subjectClasses[subjectNum].classes){
@@ -204,13 +215,14 @@
                 'select-class-' + subjectClasses[subjectNum].id + '-' + subjectClasses[subjectNum].classes[subjectClassNum].idClass
             ).addEventListener('click',
                 function() {
-                    switchChooser('none','flex',subjectClasses[subjectNum].id,'none')
-                    
-                    const resp = schedule.addClass(subjectClasses[subjectNum].classes[subjectClassNum].idClass, subjectClasses[subjectNum].classes[subjectClassNum].classTimes)
+                    // go back to subject selection
+                    switchSelector('none','flex',subjectClasses[subjectNum].id,'none')
 
-                    if(resp === true){
-                        disableCard(subjectClasses[subjectNum].id)
-                    }
+                    // modify schedule table
+                    schedule.addClass(subjectClasses[subjectNum].id, subjectClasses[subjectNum].classes[subjectClassNum].classTimes)
+
+                    // disable all incompatible classes (already signed up to that subject or it doesn't fit in your schedule)
+                    disableIncompatibleSubjects();
                 }
             );
         }
