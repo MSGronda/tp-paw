@@ -15,7 +15,6 @@ class Schedule {
         }
         this.setupSchedule();
     }
-
     setupSchedule(){
         for(let i=0; i<this.rows; i++ ){
             let tr = document.createElement("tr");
@@ -38,13 +37,12 @@ class Schedule {
         }
     }
 
-
-    canAddClass(subjectId, classTimes){
+    canAddSubject(subjectId){
         // disallow user that has already signed up for that class
-        if(this.chosenSubjectMap.hasOwnProperty(subjectId)){
-            return false;
-        }
+        return !this.chosenSubjectMap.hasOwnProperty(subjectId);
+    }
 
+    canAddClass(classTimes){
         // disallow user that has time slot taken
         for(let eventNum in classTimes){
             const day = parseInt(classTimes[eventNum].day)
@@ -62,12 +60,15 @@ class Schedule {
         }
         return true;
     }
+
+
+
     updateCalendarHtml(row, column){
         document.getElementById('r'+row+'c'+column).style.backgroundColor = '#8d2f2f';
     }
 
     addClass(subjectId,classTimes){
-        if(!this.canAddClass(subjectId,classTimes)) {
+        if(!this.canAddSubject(subjectId) ||  !this.canAddClass(classTimes)) {
             return false;
         }
         this.chosenSubjectMap[subjectId] = classTimes;

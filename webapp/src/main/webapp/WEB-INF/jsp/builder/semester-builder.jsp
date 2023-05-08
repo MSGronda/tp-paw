@@ -64,10 +64,12 @@
         width: 100%;
     }
     tbody td {
+        font-size: 0.9rem;
         padding-top: 0.25rem !important;
         padding-bottom: 0.25rem !important;
     }
     tbody th {
+        font-size: 0.9rem;
         padding-top: 0.25rem !important;
         padding-bottom: 0.25rem !important;
     }
@@ -102,8 +104,9 @@
     <sl-card id="choose-subject" class="choose-subject">
         <div slot="header"><h4>Available Subjects</h4></div>
         <div id="subject-list" class="subject-list">
+
             <c:forEach var="subject" items="${availableSubjects}">
-                <sl-card id="card-${subject.id}" class="subject-card">
+                <sl-card id="subject-card-${subject.id}" class="subject-card">
                     <div slot="header"><h5><c:out value="${subject.name}"/></h5> </div>
                     <div class="subject-card-choose">
                         <c:out value="Credits: ${subject.credits}"/>
@@ -114,21 +117,25 @@
                 </sl-card>
             </c:forEach>
         </div>
+
     </sl-card>
 
     <sl-card id="choose-class" class="choose-class">
         <div id="class-list" class="subject-list">
+
             <c:forEach var="subject" items="${availableSubjects}">
                 <div class="subject-class-info column" id="classes-${subject.id}">
                     <h4>${subject.name}</h4>
+
                     <c:forEach var="subClass" items="${subject.subjectClasses.values()}">
-                        <sl-card class="subject-card">
+                        <sl-card id="class-card-${subClass.getIdSub()}-${subClass.getIdClass()}" class="subject-card">
                             <div class="subject-card-choose" slot="header">
                                 <h5>${subClass.getIdClass()}</h5>
                                 <sl-button id="select-class-${subClass.getIdSub()}-${subClass.getIdClass()}" variant="default" size="small" circle>
                                     <sl-icon class="icon" name="check2" label="Select Subject"></sl-icon>
                                 </sl-button>
                             </div>
+
                             <div class="column">
                                 <c:forEach varStatus="status" var="classTime" items="${subClass.getClassTimes()}">
                                     <span>Day: ${classTime.getDay()}</span>
@@ -141,8 +148,10 @@
                                     </c:if>
                                 </c:forEach>
                             </div>
+
                         </sl-card>
                     </c:forEach>
+
                 </div>
             </c:forEach>
         </div>
@@ -186,18 +195,40 @@
     }
 
     function disbleSubjectCard(subjectId){
-        const card = document.getElementById('card-'+subjectId);
-        card.style.color = '#858585'
+        const card = document.getElementById('subject-card-'+subjectId);
+        card.style.color = '#d2d2d2'
         const select = document.getElementById('select-'+subjectId);
+        select.disabled = true;
+    }
+    function disableClassCard(subjectId, classId){
+        const card = document.getElementById('class-card-'+subjectId+'-'+classId);
+        card.style.color = '#d2d2d2'
+        const select = document.getElementById('select-class-'+subjectId+'-'+classId);
         select.disabled = true;
     }
 
     function disableIncompatibleSubjects(){
         for(let subNum in subjectClasses){
+            // already signed up for that class
+            if(!schedule.canAddSubject(subjectClasses[subNum].id)){
+                disbleSubjectCard(subjectClasses[subNum].id);
+                continue;
+            }
+
+            let anyClassCompatible = false;
             for(let clNum in subjectClasses[subNum].classes){
-                if(!schedule.canAddClass(subjectClasses[subNum].id,subjectClasses[subNum].classes[clNum].classTimes)){
-                    disbleSubjectCard(subjectClasses[subNum].id)
+                const classCompatibility = schedule.canAddClass(subjectClasses[subNum].classes[clNum].classTimes);
+
+                if(classCompatibility === false){
+                    // class isn't compatible with timetable
+                    disableClassCard( subjectClasses[subNum].id,subjectClasses[subNum].classes[clNum].idClass)
                 }
+                anyClassCompatible = anyClassCompatible || classCompatibility;
+            }
+
+            // none of the classes are compatible with timetable => disable subject as well
+            if(!anyClassCompatible){
+                disbleSubjectCard(subjectClasses[subNum].id);
             }
         }
     }
