@@ -48,7 +48,8 @@ public class ReviewServiceImpl implements ReviewService {
 
         for(Map.Entry<String, String> filter : param.entrySet()){
             if((Objects.equals(filter.getKey(), "order") && validOrders.contains(filter.getValue())) ||
-                    (Objects.equals(filter.getKey(), "dir") && validDir.contains(filter.getValue()))
+                    (Objects.equals(filter.getKey(), "dir") && validDir.contains(filter.getValue())) ||
+                    (Objects.equals(filter.getKey(), "pageNum") && filter.getValue().matches("[0-9]+"))
             ){
                 validatedParams.put(filter.getKey(), filter.getValue());
             }

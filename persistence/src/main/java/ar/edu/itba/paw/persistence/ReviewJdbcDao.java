@@ -34,6 +34,7 @@ public class ReviewJdbcDao implements ReviewDao {
     private static final String TABLE_REVIEW_VOTE = "reviewVote";
     private static final String TABLE_USERS = "users";
     private static final String TABLE_REVIEW_STAT = "subjectReviewStatistics";
+    private static final String PAGE_SIZE = "10";
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ReviewJdbcDao.class);
     @Autowired
@@ -436,8 +437,9 @@ public class ReviewJdbcDao implements ReviewDao {
 
         String orderBY =" ORDER BY " + params.getOrDefault("order", "easy") + " " +
                 params.getOrDefault("dir", "ASC");
-
-        return jdbcTemplate.query(completeReviewSqlUserName("WHERE r.idSub = ? ", orderBY), ReviewJdbcDao::UsernameRowMapper, subjectId);
+        int offset = Integer.parseInt(params.getOrDefault("pageNum","0")) * Integer.parseInt(PAGE_SIZE);
+        String pageNum = " LIMIT " + PAGE_SIZE + " OFFSET " + offset;
+        return jdbcTemplate.query(completeReviewSqlUserName("WHERE r.idSub = ? ", orderBY,pageNum), ReviewJdbcDao::UsernameRowMapper, subjectId);
     }
 
 //    @Override
@@ -497,13 +499,15 @@ public class ReviewJdbcDao implements ReviewDao {
                         " GROUP BY r.id, s.subname";
     }
 
-    private String completeReviewSqlUserName(String where,String orderBy){
+    private String completeReviewSqlUserName(String where,String orderBy,String page){
         return
                 "SELECT r.id, r.idUser, u.username, r.idSub, r.score, r.easy, r.timeDemanding, r.revText, r.useranonymous, " +
                         "sum(CASE WHEN rv.vote = 1 THEN 1 ELSE 0 END) AS upvotes, sum(CASE WHEN rv.vote = -1 THEN 1 ELSE 0 END) AS downvotes " +
                         "FROM " +  TABLE_REVIEWS + " AS r FULL JOIN " + TABLE_USERS +" AS u ON r.idUser = u.id FULL JOIN " +  TABLE_REVIEW_VOTE + " AS rv ON r.id = rv.idReview " +
                         where +
-                        " GROUP BY r.id, r.idUser, u.username" + orderBy;
+                        " GROUP BY r.id, r.idUser, u.username" +
+                        orderBy +
+                        page;
     }
     // - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  - - -
 }

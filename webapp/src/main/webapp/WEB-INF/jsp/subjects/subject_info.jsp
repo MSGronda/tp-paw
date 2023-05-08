@@ -213,7 +213,7 @@
                         <td>
                             <c:choose>
                                 <c:when test="${time == 0}">
-                                    <sl-badge size="medium" ariant="success"><spring:message code="form.NotTimeDemanding" /></sl-badge>
+                                    <sl-badge size="medium" variant="success"><spring:message code="form.NotTimeDemanding" /></sl-badge>
                                 </c:when>
                                 <c:when test="${time == 1}">
                                     <sl-badge size="medium" variant="primary"><spring:message code="form.averageTimeDemand" /></sl-badge>
@@ -414,7 +414,7 @@
 <jsp:include page="../components/footer.jsp"/>
 <jsp:include page="../components/body_scripts.jsp"/>
 <script src="${pageContext.request.contextPath}/js/subject_progress.js"></script>
-<script src="${pageContext.request.contextPath}/js/subject-view.js"></script>
+<!--<script src="${pageContext.request.contextPath}/js/subject-view.js" type="module"></script>-->
 <script src="${pageContext.request.contextPath}/js/url-param-utils.js"></script>
 <script src="${pageContext.request.contextPath}/js/review_card.js"></script>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
@@ -466,6 +466,55 @@
     });
 
 </script>
+<script>
+    let params = new URLSearchParams(window.location.search);
+    let dir = params.get("dir");
 
+    const orderBtns = [
+        ['difficulty-order','easy','diffuclty-down','diffuclty-up'],
+        ['timedemand-order','timedemanding','timedemand-down','timedemand-up'],
+    ]
+    const asc='asc'
+    const desc = 'desc'
+    for(let elem in orderBtns) {
+        const btnElem = document.getElementById(orderBtns[elem][0])
+        if(typeof btnElem !== null && elem !== 'undefined' ){
+            btnElem.addEventListener('click',
+                function(event) {
+                    event.preventDefault();
+                    console.log("hola");
+                    let url = window.location.href;
+                    url = addOrUpdateParam(url,"order",orderBtns[elem][1]);
+                    if(dir !== null && dir === asc){
+                        url = addOrUpdateParam(url,"dir",desc);
+                    } else {
+                        url = addOrUpdateParam(url,"dir",asc);
+                    }
+                    window.location.href = url;
+                });
+            if(orderBtns[elem][0] === 'difficulty-order' && dir === desc){
+                const section1 = document.getElementById(orderBtns[elem][2])
+                const section2 = document.getElementById(orderBtns[elem][3])
+                section1.style.display = "block";
+                section2.style.display = "none";
+            } else if(orderBtns[elem][0] === 'timedemand-order' && dir === desc) {
+                const section1 = document.getElementById(orderBtns[elem][2])
+                const section2 = document.getElementById(orderBtns[elem][3])
+                section1.style.display = "block";
+                section2.style.display = "none";
+            }else if(orderBtns[elem][0] === 'difficulty-order' && dir === asc){
+                const section1 = document.getElementById(orderBtns[elem][2])
+                const section2 = document.getElementById(orderBtns[elem][3])
+                section1.style.display = "none";
+                section2.style.display = "block";
+            } else {
+                const section1 = document.getElementById(orderBtns[elem][2])
+                const section2 = document.getElementById(orderBtns[elem][3])
+                section1.style.display = "none";
+                section2.style.display = "block";
+            }
+        }
+    }
+</script>
 </body>
 </html>
