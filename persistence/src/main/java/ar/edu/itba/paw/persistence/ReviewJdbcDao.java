@@ -144,7 +144,7 @@ public class ReviewJdbcDao implements ReviewDao {
     @Override
     public void updateReviewStatistics( Integer easyBefore, Integer timeDemandingBefore, Review review){
         Optional<ReviewStatistic> stat = getReviewStatBySubject(review.getSubjectId());
-        int easy = 0, medium = 0, hard = 0, timeDemanding =0 , notTimeDemanding = 0;
+        int easy = 0, medium = 0, hard = 0, timeDemanding =0, averageTimeDemanding = 0, notTimeDemanding = 0;
         switch (easyBefore){
             case 0: easy--;break;
             case 1: medium--;break;
@@ -157,11 +157,13 @@ public class ReviewJdbcDao implements ReviewDao {
         }
         switch (timeDemandingBefore){
             case 0: notTimeDemanding--;break;
-            case 1: timeDemanding--;break;
+            case 1: averageTimeDemanding--;break;
+            case 2: timeDemanding--;break;
         }
         switch (review.getTimeDemanding()){
             case 0: notTimeDemanding++;break;
-            case 1: timeDemanding++;break;
+            case 1: averageTimeDemanding++;break;
+            case 2: timeDemanding++;break;
         }
 
         if(stat.isPresent()){
@@ -170,12 +172,13 @@ public class ReviewJdbcDao implements ReviewDao {
             ReviewStatistic reviewStat= stat.get();
             jdbcTemplateReviewStatistic.update("UPDATE " + TABLE_REVIEW_STAT +
                             " SET easyCount = ?, mediumCount = ?, hardCount = ?, " +
-                            "notTimeDemandingCount = ?, timeDemandingCount = ? WHERE idSub = ?",
+                            "notTimeDemandingCount = ?, averageTimeDemandingCount = ? ,timeDemandingCount = ? WHERE idSub = ?",
 
                     reviewStat.getEasyCount() + easy,
                     reviewStat.getMediumCount() + medium,
                     reviewStat.getHardCount() + hard,
                     reviewStat.getNotTimeDemandingCount() + notTimeDemanding,
+                    reviewStat.getAverageTimeDemandingCount() + averageTimeDemanding,
                     reviewStat.getTimeDemandingCount() + timeDemanding,
                     reviewStat.getIdSub()
             );
