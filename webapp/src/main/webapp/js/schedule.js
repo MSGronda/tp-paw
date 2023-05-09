@@ -64,13 +64,34 @@ class Schedule {
         }
         return true;
     }
+    generateEventInfo(subjectId,subjectName, classTime){
+        const div = document.createElement('div');
+        div.classList.add('column-center')
 
-    addToCalendarHtml(rowStart, rowEnd, column){
+        const id = document.createElement('div');
+        id.textContent = subjectName
+        id.style.maxWidth = '6rem';
+        id.style.textAlign = 'center';
+        id.style.alignSelf = 'center';
+        id.style.fontWeight = 'bold';
+
+        const loc = document.createElement('div');
+        loc.textContent = classTime.loc
+
+        const mode = document.createElement('div');
+        mode.textContent = classTime.mode
+
+        div.append(id,loc,mode)
+
+        return div;
+    }
+
+    addToCalendarHtml(rowStart, rowEnd, column, subjectId,subjectName, classTime){
         const elem = document.getElementById('r'+rowStart+'c'+column)
-        elem.style.backgroundColor = '#dadada'
+        elem.style.backgroundColor = '#eeeeee'
         elem.rowSpan = rowEnd - rowStart
 
-        elem.textContent = 'id'
+        elem.append(this.generateEventInfo(subjectId,subjectName,classTime))
 
         for(let i=rowStart+1; i<rowEnd; i++){
             document.getElementById('r'+i+'c'+column).style.display = 'none';
@@ -81,7 +102,7 @@ class Schedule {
             this.scheduleArray[i][column] = subjectId;
         }
     }
-    addClass(subjectId,classTimes){
+    addClass(subjectId, subjectName, classTimes){
         if(!this.canAddSubject(subjectId) ||  !this.canAddClass(classTimes)) {
             return false;
         }
@@ -90,7 +111,8 @@ class Schedule {
         for(let eventNum in classTimes){
             const arrayPos = this.getArrayPos(classTimes[eventNum])
 
-            this.addToCalendarHtml(arrayPos.rowStart, arrayPos.rowEnd, arrayPos.column)
+
+            this.addToCalendarHtml(arrayPos.rowStart, arrayPos.rowEnd, arrayPos.column, subjectId, subjectName, classTimes[eventNum])
             this.addToCalendarArray(arrayPos.rowStart, arrayPos.rowEnd, arrayPos.column, subjectId)
         }
 
@@ -100,12 +122,13 @@ class Schedule {
 
     removeFromCalendarHtml(rowStart, rowEnd, column){
         const elem = document.getElementById('r'+rowStart+'c'+column)
-        elem.style.backgroundColor = '#ffffff'
-        elem.rowSpan = 0
-        elem.textContent = ''
+        elem.style.backgroundColor = '#ffffff';
+        elem.removeAttribute('rowSpan')
+        elem.textContent = '';
 
         for(let i=rowStart+1; i<rowEnd; i++){
-            document.getElementById('r'+i+'c'+column).style.display = 'block';
+            // careful with this
+            document.getElementById('r'+i+'c'+column).removeAttribute('style')
         }
     }
     removeFromCalendarArray(rowStart, rowEnd, column){
@@ -116,9 +139,10 @@ class Schedule {
     removeClass(subjectId){
         for(let elem in this.chosenSubjectMap[subjectId]){
             const arrayPos = this.getArrayPos(this.chosenSubjectMap[subjectId][elem])
-
             this.removeFromCalendarHtml(arrayPos.rowStart,arrayPos.rowEnd,arrayPos.column)
+
             this.removeFromCalendarArray(arrayPos.rowStart,arrayPos.rowEnd,arrayPos.column)
         }
+        delete this.chosenSubjectMap[subjectId]
     }
 }

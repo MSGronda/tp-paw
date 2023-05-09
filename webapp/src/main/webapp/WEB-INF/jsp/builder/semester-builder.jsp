@@ -21,11 +21,11 @@
         max-height: 35rem;
     }
     .subject-card{
-        width: 19rem;
+        width: 16rem;
         padding: 0.3rem;
     }
     .time-table{
-        min-width: 70%;
+        min-width: 75%;
         padding: 0.5rem;
     }
     .icon {
@@ -64,8 +64,7 @@
     }
     tbody td {
         font-size: 0.9rem;
-        padding-top: 0.25rem !important;
-        padding-bottom: 0.25rem !important;
+        padding: 0.25rem !important;
         border-left: 1px solid #e9ecef;
     }
     thead th{
@@ -114,13 +113,15 @@
 
             <c:forEach var="subject" items="${availableSubjects}">
                 <sl-card id="subject-card-${subject.id}" class="subject-card">
-                    <div slot="header"><h5><c:out value="${subject.name}"/></h5> </div>
                     <div class="chooser">
-                        <c:out value="Credits: ${subject.credits}"/>
+                        <div class="column">
+                            <h5><c:out value="${subject.name}"/></h5>
+                            <c:out value="Credits: ${subject.credits}"/>
+                        </div>
                         <sl-button id="select-${subject.id}" variant="default" size="small" circle>
                             <sl-icon class="icon" name="check2" label="Select Subject"></sl-icon>
                         </sl-button>
-                        <sl-button style="display: none" id="deselect-subject-${subject.id}" variant="default" size="small" circle>
+                        <sl-button id="deselect-subject-${subject.id}" style="display: none" variant="default" size="small" circle>
                             <sl-icon class="icon" name="x-lg" label="Remove subject"></sl-icon>
                         </sl-button>
                     </div>
@@ -257,7 +258,7 @@
 
     function enableCompatibleSubjects(){
         for(let subNum in subjectClasses){
-            // already signed up for that class
+            // enable card if now is compatible
             if(schedule.canAddSubject(subjectClasses[subNum].id)){
                 alterSubjectCard(subjectClasses[subNum].id,'#4f4f4f',false );
                 continue;
@@ -274,7 +275,7 @@
                 anyClassCompatible = anyClassCompatible || classCompatibility;
             }
 
-            // none of the classes are compatible with timetable => disable subject as well
+            // at least one of the classes is compatible with timetable => enable subject as well
             if(anyClassCompatible){
                 alterSubjectCard(subjectClasses[subNum].id,'#4f4f4f',false );
             }
@@ -306,7 +307,7 @@
                     switchSelector('none','flex',subjectClasses[subjectNum].id,'none')
 
                     // modify schedule table
-                    schedule.addClass(subjectClasses[subjectNum].id, subjectClasses[subjectNum].classes[subjectClassNum].classTimes)
+                    schedule.addClass(subjectClasses[subjectNum].id, subjectClasses[subjectNum].name, subjectClasses[subjectNum].classes[subjectClassNum].classTimes)
 
                     // disable all incompatible classes (already signed up to that subject or it doesn't fit in your schedule)
                     disableIncompatibleSubjects();
