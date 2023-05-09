@@ -37,6 +37,16 @@ class Schedule {
         }
     }
 
+    getArrayPos(classTime){
+        const day = parseInt(classTime.day)
+        const start = classTime.start
+        const end = classTime.end
+
+        const rowStart = (parseInt(start.split(":")[0])-8)*2 + (parseInt(start.split(":")[1]) === 30 ? 1 : 0)
+        const rowEnd = (parseInt(end.split(":")[0])-8)*2 + (parseInt(end.split(":")[1]) === 30 ? 1 : 0)
+        return {'rowStart': rowStart, 'rowEnd': rowEnd, 'column':day};
+    }
+
     canAddSubject(subjectId){
         // disallow user that has already signed up for that class
         return !this.chosenSubjectMap.hasOwnProperty(subjectId);
@@ -45,15 +55,9 @@ class Schedule {
     canAddClass(classTimes){
         // disallow user that has time slot taken
         for(let eventNum in classTimes){
-            const day = parseInt(classTimes[eventNum].day)
-            const start = classTimes[eventNum].start
-            const end = classTimes[eventNum].end
-
-            const rowStart = (parseInt(start.split(":")[0])-8)*2 + (parseInt(start.split(":")[1]) === 30 ? 1 : 0)
-            const rowEnd = (parseInt(end.split(":")[0])-8)*2 + (parseInt(end.split(":")[1]) === 30 ? 1 : 0)
-
-            for(let i=rowStart; i<rowEnd; i++){
-                if(this.scheduleArray[i][day]!==0){
+            const arrayPos = this.getArrayPos(classTimes[eventNum])
+            for(let i=arrayPos.rowStart; i<arrayPos.rowEnd; i++){
+                if(this.scheduleArray[i][arrayPos.column]!==0){
                     return false;
                 }
             }
@@ -61,12 +65,22 @@ class Schedule {
         return true;
     }
 
+    addToCalendarHtml(rowStart, rowEnd, column){
+        const elem = document.getElementById('r'+rowStart+'c'+column)
+        elem.style.backgroundColor = '#dadada'
+        elem.rowSpan = rowEnd - rowStart
 
+        elem.textContent = 'id'
 
-    updateCalendarHtml(row, column){
-        document.getElementById('r'+row+'c'+column).style.backgroundColor = '#8d2f2f';
+        for(let i=rowStart+1; i<rowEnd; i++){
+            document.getElementById('r'+i+'c'+column).style.display = 'none';
+        }
     }
-
+    addToCalendarArray(rowStart, rowEnd, column, subjectId){
+        for(let i=rowStart; i<rowEnd; i++){
+            this.scheduleArray[i][column] = subjectId;
+        }
+    }
     addClass(subjectId,classTimes){
         if(!this.canAddSubject(subjectId) ||  !this.canAddClass(classTimes)) {
             return false;
@@ -74,19 +88,37 @@ class Schedule {
         this.chosenSubjectMap[subjectId] = classTimes;
 
         for(let eventNum in classTimes){
-            const day = parseInt(classTimes[eventNum].day)
-            const start = classTimes[eventNum].start
-            const end = classTimes[eventNum].end
+            const arrayPos = this.getArrayPos(classTimes[eventNum])
 
-            const rowStart = (parseInt(start.split(":")[0])-8)*2 + (parseInt(start.split(":")[1]) === 30 ? 1 : 0)
-            const rowEnd = (parseInt(end.split(":")[0])-8)*2  + (parseInt(end.split(":")[1]) === 30 ? 1 : 0)
-
-            for(let i=rowStart; i<rowEnd; i++){
-                this.updateCalendarHtml(i,day)
-                this.scheduleArray[i][day] = subjectId;
-            }
+            this.addToCalendarHtml(arrayPos.rowStart, arrayPos.rowEnd, arrayPos.column)
+            this.addToCalendarArray(arrayPos.rowStart, arrayPos.rowEnd, arrayPos.column, subjectId)
         }
 
         return true;
+    }
+
+
+    removeFromCalendarHtml(rowStart, rowEnd, column){
+        const elem = document.getElementById('r'+rowStart+'c'+column)
+        elem.style.backgroundColor = '#ffffff'
+        elem.rowSpan = 0
+        elem.textContent = ''
+
+        for(let i=rowStart+1; i<rowEnd; i++){
+            document.getElementById('r'+i+'c'+column).style.display = 'block';
+        }
+    }
+    removeFromCalendarArray(rowStart, rowEnd, column){
+        for(let i=rowStart; i<rowEnd; i++){
+            this.scheduleArray[i][column] = 0;
+        }
+    }
+    removeClass(subjectId){
+        for(let elem in this.chosenSubjectMap[subjectId]){
+            const arrayPos = this.getArrayPos(this.chosenSubjectMap[subjectId][elem])
+
+            this.removeFromCalendarHtml(arrayPos.rowStart,arrayPos.rowEnd,arrayPos.column)
+            this.removeFromCalendarArray(arrayPos.rowStart,arrayPos.rowEnd,arrayPos.column)
+        }
     }
 }

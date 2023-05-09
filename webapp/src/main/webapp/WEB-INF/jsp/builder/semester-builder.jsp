@@ -59,19 +59,21 @@
     }
     .table-scroll{
         overflow: auto;
-        height: 34rem;
+        height: 37.5rem;
         width: 100%;
     }
     tbody td {
         font-size: 0.9rem;
         padding-top: 0.25rem !important;
         padding-bottom: 0.25rem !important;
+        border-left: 1px solid #e9ecef;
     }
-    tbody th {
-        font-size: 0.9rem;
-        padding-top: 0.25rem !important;
-        padding-bottom: 0.25rem !important;
+    thead th{
+        background-color: #f8f9fa;
+        position: sticky;
+        top: 0
     }
+
     .class-selection{
         display: flex;
         flex-direction: row;
@@ -86,21 +88,19 @@
 <jsp:include page="../components/navbar.jsp"/>
 <main class="container-80 builder-area">
     <sl-card class="time-table">
-        <table>
-            <thead>
-            <tr>
-                <th></th>
-                <th>Monday</th>
-                <th>Tuesday</th>
-                <th>Wednesday</th>
-                <th>Thursday</th>
-                <th>Friday</th>
-                <th>Saturday</th>
-            </tr>
-            </thead>
-        </table>
         <div class="table-scroll">
             <table>
+                <thead>
+                <tr>
+                    <th></th>
+                    <th>Monday</th>
+                    <th>Tuesday</th>
+                    <th>Wednesday</th>
+                    <th>Thursday</th>
+                    <th>Friday</th>
+                    <th>Saturday</th>
+                </tr>
+                </thead>
                 <tbody id="weekly-schedule">
                 </tbody>
             </table>
@@ -119,6 +119,9 @@
                         <c:out value="Credits: ${subject.credits}"/>
                         <sl-button id="select-${subject.id}" variant="default" size="small" circle>
                             <sl-icon class="icon" name="check2" label="Select Subject"></sl-icon>
+                        </sl-button>
+                        <sl-button style="display: none" id="deselect-subject-${subject.id}" variant="default" size="small" circle>
+                            <sl-icon class="icon" name="x-lg" label="Remove subject"></sl-icon>
                         </sl-button>
                     </div>
                 </sl-card>
@@ -213,24 +216,24 @@
         document.getElementById('classes-' + classNumber).style.display = classVisibility;
     }
 
-    function disbleSubjectCard(subjectId){
+    function alterSubjectCard(subjectId,color,disabled){
         const card = document.getElementById('subject-card-'+subjectId);
-        card.style.color = '#d2d2d2'
+        card.style.color = color
         const select = document.getElementById('select-'+subjectId);
-        select.disabled = true;
+        select.disabled = disabled;
     }
-    function disableClassCard(subjectId, classId){
+    function alterClassCard(subjectId, classId, color,disabled){
         const card = document.getElementById('class-card-'+subjectId+'-'+classId);
-        card.style.color = '#d2d2d2'
+        card.style.color = color
         const select = document.getElementById('select-class-'+subjectId+'-'+classId);
-        select.disabled = true;
+        select.disabled = disabled;
     }
 
     function disableIncompatibleSubjects(){
         for(let subNum in subjectClasses){
             // already signed up for that class
             if(!schedule.canAddSubject(subjectClasses[subNum].id)){
-                disbleSubjectCard(subjectClasses[subNum].id);
+                alterSubjectCard(subjectClasses[subNum].id,'#d2d2d2',true);
                 continue;
             }
 
@@ -240,17 +243,45 @@
 
                 if(classCompatibility === false){
                     // class isn't compatible with timetable
-                    disableClassCard( subjectClasses[subNum].id,subjectClasses[subNum].classes[clNum].idClass)
+                    alterClassCard( subjectClasses[subNum].id,subjectClasses[subNum].classes[clNum].idClass, '#d2d2d2',true)
                 }
                 anyClassCompatible = anyClassCompatible || classCompatibility;
             }
 
             // none of the classes are compatible with timetable => disable subject as well
             if(!anyClassCompatible){
-                disbleSubjectCard(subjectClasses[subNum].id);
+                alterSubjectCard(subjectClasses[subNum].id,'#d2d2d2',true);
             }
         }
     }
+
+    function enableCompatibleSubjects(){
+        for(let subNum in subjectClasses){
+            // already signed up for that class
+            if(schedule.canAddSubject(subjectClasses[subNum].id)){
+                alterSubjectCard(subjectClasses[subNum].id,'#4f4f4f',false );
+                continue;
+            }
+
+            let anyClassCompatible = false;
+            for(let clNum in subjectClasses[subNum].classes){
+                const classCompatibility = schedule.canAddClass(subjectClasses[subNum].classes[clNum].classTimes);
+
+                if(classCompatibility === true){
+                    // class is now compatible with timetable
+                    alterClassCard( subjectClasses[subNum].id,subjectClasses[subNum].classes[clNum].idClass,'#4f4f4f',false )
+                }
+                anyClassCompatible = anyClassCompatible || classCompatibility;
+            }
+
+            // none of the classes are compatible with timetable => disable subject as well
+            if(anyClassCompatible){
+                alterSubjectCard(subjectClasses[subNum].id,'#4f4f4f',false );
+            }
+        }
+    }
+
+
 
     // set actions for select subject and select class buttons
     for(let subjectNum in subjectClasses){
@@ -279,8 +310,28 @@
 
                     // disable all incompatible classes (already signed up to that subject or it doesn't fit in your schedule)
                     disableIncompatibleSubjects();
+
+                    // enable deselect button
+                    document.getElementById('deselect-subject-'+ subjectClasses[subjectNum].id).style.display = 'block'
+                    document.getElementById('select-'+ subjectClasses[subjectNum].id).style.display = 'none'
                 }
             );
+            document.getElementById(
+                'deselect-subject-' + subjectClasses[subjectNum].id
+            ).addEventListener('click',
+                function() {
+                    // modify schedule table
+                    schedule.removeClass(subjectClasses[subjectNum].id)
+
+                    // enable subjects that can are now compatible after removing this subject
+                    enableCompatibleSubjects()
+
+                    // disable deselect button
+                    document.getElementById('select-'+ subjectClasses[subjectNum].id).style.display = 'block'
+                    document.getElementById('deselect-subject-'+ subjectClasses[subjectNum].id).style.display = 'none'
+                }
+            );
+
         }
     }
 
