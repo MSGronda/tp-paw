@@ -7,7 +7,7 @@ import java.util.Optional;
 public class User {
     private final long id;
     private final String email, password, username;
-    private byte[] image;
+    private final Long imageId;
     private Map<String, Integer> subjectProgress;
 
     public User(UserBuilder builder) {
@@ -15,12 +15,12 @@ public class User {
         this.email = builder.email;
         this.password = builder.password;
         this.username = builder.username;
-        this.image = builder.image;
+        this.imageId = builder.imageId;
         this.subjectProgress = builder.subjectProgress;
     }
 
-    public byte[] getImage(){
-        return image;
+    public long getImageId(){
+        return imageId;
     }
 
     public long getId() {
@@ -50,7 +50,7 @@ public class User {
         private long id;
         private final String email;
         private String password, username;
-        private byte[] image;
+        private long imageId;
         private Map<String, Integer> subjectProgress;
 
         public UserBuilder(String email, String password, String username) {
@@ -69,11 +69,11 @@ public class User {
             this.subjectProgress = subjectProgress;
             return this;
         }
-        public byte[] getImage(){
-            return this.image;
+        public Long getImageId(){
+            return this.imageId;
         }
-        public UserBuilder image(byte[] image) {
-            this.image = image;
+        public UserBuilder imageId(long imageId) {
+            this.imageId = imageId;
             return this;
         }
         public Long getId() {

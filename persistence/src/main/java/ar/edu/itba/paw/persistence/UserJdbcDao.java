@@ -1,5 +1,6 @@
 package ar.edu.itba.paw.persistence;
 
+import ar.edu.itba.paw.models.Image;
 import ar.edu.itba.paw.models.User;
 import ar.edu.itba.paw.persistence.exceptions.UserEmailAlreadyTakenPersistenceException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,12 +24,14 @@ public class UserJdbcDao implements UserDao {
     private final JdbcTemplate jdbcTemplate;
     private final SimpleJdbcInsert jdbcInsert;
     private final SimpleJdbcInsert jdbcUserProgressInsert;
+    private final ImageDao imageDao;
 
     private final String USERS_TABLE = "users";
     private final String USER_SUB_PRG_TABLE = "userSubjectProgress";
 
     @Autowired
-    public UserJdbcDao(final DataSource ds) {
+    public UserJdbcDao(final DataSource ds, final ImageDao imageDao) {
+        this.imageDao = imageDao;
         this.jdbcTemplate = new JdbcTemplate(ds);
         this.jdbcInsert = new SimpleJdbcInsert(ds)
             .withTableName(USERS_TABLE)
@@ -57,12 +60,11 @@ public class UserJdbcDao implements UserDao {
 
     @Override
     public User create(User.UserBuilder userBuilder) throws UserEmailAlreadyTakenPersistenceException {
-
         Map<String, Object> data = new HashMap<>();
         data.put("email", userBuilder.getEmail());
         data.put("pass", userBuilder.getPassword());
         data.put("username", userBuilder.getUsername());
-        data.put("image", userBuilder.getImage());
+        data.put("image_id", userBuilder.getImageId());
 
         Number key;
 
@@ -83,30 +85,6 @@ public class UserJdbcDao implements UserDao {
     @Override
     public void update(User user) {
 
-    }
-
-    // - - - - - - - - - User With Image - - - - - - - - -
-    @Override
-    public byte[] updateProfilePicture(long id, byte[] image) {
-        jdbcTemplate.update("UPDATE "+ USERS_TABLE + " SET image = ? WHERE id = ?", image, id);
-        return image;
-    }
-    @Override
-    public Optional<User> findByIdWithImage(Long id){
-        return jdbcTemplate.query("SELECT * FROM " + USERS_TABLE + " WHERE id = ?", UserJdbcDao::rowMapperWithImage, id)
-                .stream().findFirst();
-    }
-    @Override
-    public List<User> getAllWithImage() {
-        return jdbcTemplate.query("SELECT * FROM " + USERS_TABLE, UserJdbcDao::rowMapperWithImage);
-    }
-    private static User rowMapperWithImage(ResultSet rs, int rowNum) throws SQLException {
-        return new User(
-                new User.UserBuilder(rs.getString("email"),
-                        rs.getString("pass"),
-                        rs.getString("username"))
-                        .id(rs.getLong("id")).image(rs.getBytes("image"))
-        );
     }
 
     // - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -162,10 +140,6 @@ public class UserJdbcDao implements UserDao {
         return res;
     }
 
-    private static Integer rowMapperUserSubjectProgress(ResultSet rs , int rowNum) throws SQLException {
-        return rs.getInt("subjectState");
-    }
-
     @Override
     public void changePassword(Long userId, String password) {
         jdbcTemplate.update("UPDATE " + USERS_TABLE + " SET pass = ? WHERE id = ?", password, userId);
@@ -180,8 +154,14 @@ public class UserJdbcDao implements UserDao {
         return new User(
                 new User.UserBuilder(rs.getString("email"),
                         rs.getString("pass"),
-                        rs.getString("username"))
-                        .id(rs.getLong("id"))
+                        rs.getString("username")
+                )
+                    .id(rs.getLong("id"))
+                    .imageId(rs.getLong("image_id"))
         );
+    }
+
+    private static Integer rowMapperUserSubjectProgress(ResultSet rs , int rowNum) throws SQLException {
+        return rs.getInt("subjectState");
     }
 }

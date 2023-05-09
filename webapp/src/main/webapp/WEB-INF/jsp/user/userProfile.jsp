@@ -87,7 +87,7 @@
   <div class="header">
     <div class="image-container">
       <spring:message code="profile.picture.alt" var="pic" arguments="${user.username}"/>
-      <img class="profile-image" src="<c:url value="/user/${user.id}"/>" alt="${pic}" >
+      <img class="profile-image" src="<c:url value="/image/${user.imageId}"/>" alt="${pic}" >
     </div>
     <div class="title">
       <h1><c:out value="${user.username}"/></h1>

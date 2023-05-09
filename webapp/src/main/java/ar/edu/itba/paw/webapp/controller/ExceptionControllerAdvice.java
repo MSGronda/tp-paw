@@ -1,6 +1,7 @@
 package ar.edu.itba.paw.webapp.controller;
 
 import ar.edu.itba.paw.webapp.exceptions.DegreeNotFoundException;
+import ar.edu.itba.paw.webapp.exceptions.ImageNotFoundException;
 import ar.edu.itba.paw.webapp.exceptions.SubjectNotFoundException;
 import ar.edu.itba.paw.webapp.exceptions.UserNotFoundException;
 import org.springframework.http.HttpStatus;
@@ -28,6 +29,13 @@ public class ExceptionControllerAdvice {
     public String handleDegreeNotFoundException(DegreeNotFoundException e) {
         return "error/page_not_found";
     }
+
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    @ExceptionHandler(ImageNotFoundException.class)
+    public String handleImageNotFoundException(ImageNotFoundException e) {
+        return "error/page_not_found";
+    }
+
 
     @ResponseStatus(HttpStatus.NOT_FOUND)
     @ExceptionHandler(NoHandlerFoundException.class)

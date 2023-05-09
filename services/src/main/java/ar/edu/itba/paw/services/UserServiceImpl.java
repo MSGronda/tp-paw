@@ -1,6 +1,8 @@
 package ar.edu.itba.paw.services;
 
+import ar.edu.itba.paw.models.Image;
 import ar.edu.itba.paw.models.User;
+import ar.edu.itba.paw.persistence.ImageDao;
 import ar.edu.itba.paw.persistence.RecoveryDao;
 import ar.edu.itba.paw.persistence.UserDao;
 import ar.edu.itba.paw.persistence.exceptions.UserEmailAlreadyTakenPersistenceException;
@@ -11,7 +13,11 @@ import ar.edu.itba.paw.services.exceptions.UserEmailNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.util.ResourceUtils;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
 import java.security.SecureRandom;
 import java.util.Base64;
 import java.util.List;
@@ -22,16 +28,18 @@ import java.util.Optional;
 public class UserServiceImpl implements UserService {
     private final UserDao userDao;
     private final RecoveryDao recDao;
+    private final ImageDao imageDao;
 
     private final PasswordEncoder passwordEncoder;
 
     private static final int MAX_IMAGE_SIZE = 1024 * 1024 * 5;
 
     @Autowired
-    public UserServiceImpl(UserDao userDao, RecoveryDao recDao, final PasswordEncoder passwordEncoder) {
+    public UserServiceImpl(UserDao userDao, RecoveryDao recDao, ImageDao imageDao, final PasswordEncoder passwordEncoder) {
         this.userDao = userDao;
         this.passwordEncoder = passwordEncoder;
         this.recDao = recDao;
+        this.imageDao = imageDao;
     }
 
 
@@ -46,7 +54,9 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User create(User.UserBuilder userBuilder) throws UserEmailAlreadyTakenException {
+    public User create(User.UserBuilder userBuilder, byte[] profilePic) throws UserEmailAlreadyTakenException {
+        long imageId = imageDao.insertAndReturnKey(profilePic);
+        userBuilder.imageId(imageId);
 
         userBuilder.password(passwordEncoder.encode(userBuilder.getPassword()));
         try {
@@ -59,25 +69,26 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public byte[] updateProfilePicture(long id, byte[] image){
+    public User create(User.UserBuilder userBuilder) throws UserEmailAlreadyTakenException, IOException {
+        File file = ResourceUtils.getFile("classpath:images/default_user.png");
+        byte[] defaultImg = Files.readAllBytes(file.toPath());
+
+        return create(userBuilder, defaultImg);
+    }
+
+    @Override
+    public void updateProfilePicture(User user, byte[] image){
         if(image.length > MAX_IMAGE_SIZE){
-            return null;
+            return;
         }
-        return userDao.updateProfilePicture(id,image);
+
+        Image newImage = new Image(user.getImageId(), image);
+        imageDao.update(newImage);
     }
 
     @Override
     public Optional<User> getUserWithEmail(String email) {
         return userDao.getUserWithEmail(email);
-    }
-    @Override
-    public List<User> getAllWithImage() {
-        return userDao.getAllWithImage();
-    }
-
-    @Override
-    public Optional<User> findByIdWithImage(Long id) {
-        return userDao.findByIdWithImage(id);
     }
 
     @Override

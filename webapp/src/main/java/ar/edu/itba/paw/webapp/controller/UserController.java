@@ -96,9 +96,7 @@ public class UserController {
         }
 
         User.UserBuilder user = new User.UserBuilder(userForm.getEmail(), userForm.getPassword(), userForm.getName());
-        File file = ResourceUtils.getFile("classpath:images/default_user.png");
-        byte[] imgData = Files.readAllBytes(file.toPath());
-        user.image(imgData).build();
+
         try {
             final User newUser = userService.create(user);
         }catch (UserEmailAlreadyTakenException e){
@@ -232,20 +230,6 @@ public class UserController {
         return degreeService.getAll();
     }
 
-    @RequestMapping(value = "/profile", method = { RequestMethod.GET },
-        produces = {MediaType.IMAGE_JPEG_VALUE, MediaType.IMAGE_PNG_VALUE})
-    @ResponseBody
-    public byte[] profilePicture()throws IOException {
-        return userService.findByIdWithImage(authUserService.getCurrentUser().getId()).get().getImage();
-    }
-
-    @RequestMapping(value = "/user/{id:\\d+}", method = { RequestMethod.GET },
-            produces = {MediaType.IMAGE_JPEG_VALUE, MediaType.IMAGE_PNG_VALUE})
-    @ResponseBody
-    public byte[] userPicture(@PathVariable long id)throws IOException {
-        return userService.findByIdWithImage(id).get().getImage();
-    }
-
     @RequestMapping(value = "/profile/editprofilepicture", method = { RequestMethod.GET })
     public ModelAndView editProfilePictureForm(@ModelAttribute ("editProfilePictureForm") final EditProfilePictureForm editProfilePictureForm) {
         ModelAndView mav = new ModelAndView("user/editProfilePicture");
@@ -262,7 +246,7 @@ public class UserController {
         }
         User user = authUserService.getCurrentUser();
 
-        userService.updateProfilePicture(user.getId(), editProfilePictureForm.getProfilePicture().getBytes());
+        userService.updateProfilePicture(user, editProfilePictureForm.getProfilePicture().getBytes());
         return new ModelAndView("redirect:/profile");
     }
 

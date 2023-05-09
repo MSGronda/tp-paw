@@ -1,5 +1,6 @@
 package ar.edu.itba.paw.persistence;
 
+import ar.edu.itba.paw.models.Image;
 import ar.edu.itba.paw.models.User;
 import ar.edu.itba.paw.persistence.config.TestConfig;
 import ar.edu.itba.paw.persistence.exceptions.UserEmailAlreadyTakenPersistenceException;
@@ -60,7 +61,7 @@ public class UserJdbcDaoTest {
     public void testCreate() {
         User user;
         try{
-            user = userDao.create(new User.UserBuilder(EMAIL, PASSWORD, USERNAME));
+            user = userDao.create(new User.UserBuilder(EMAIL, PASSWORD, USERNAME), new byte[]{});
         }catch (UserEmailAlreadyTakenPersistenceException e){
             throw new RuntimeException();
         }

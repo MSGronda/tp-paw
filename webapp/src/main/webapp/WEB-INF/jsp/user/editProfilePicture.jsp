@@ -88,7 +88,7 @@
                     <br/>
                     <br/>
                     <spring:message code="profile.picture.alt" var="pic" arguments="${user.username}"/>
-                    <img class="profile-image" src="<c:url value="/profile"/>" alt="${pic}" >
+                    <img class="profile-image" src="<c:url value="/image/${user.imageId}"/>" alt="${pic}" >
                 </div>
                 <div class="tower-picture">
                     <spring:message code="profile.new_image" />
