@@ -2,19 +2,18 @@ package ar.edu.itba.paw.persistence;
 
 import ar.edu.itba.paw.models.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.DependsOn;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Repository;
 
 import javax.sql.DataSource;
-import java.sql.*;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.*;
 
 import static ar.edu.itba.paw.persistence.Helpers.*;
 
 @Repository
-@DependsOn("flyway")
 public class SubjectJdbcDao implements SubjectDao {
     private static final String VIEW_JOIN = "joinedsubjects";
     private static final String TABLE_SUB = "subjects";
@@ -33,8 +32,6 @@ public class SubjectJdbcDao implements SubjectDao {
         this.jdbcInsert = new SimpleJdbcInsert(ds)
                 .withTableName(TABLE_SUB)
                 .usingGeneratedKeyColumns("id");
-
-        jdbcTemplate.execute("REFRESH MATERIALIZED VIEW " + VIEW_JOIN);
 
         queryOptionBlanck.putIfAbsent("department","?");
         queryOptionBlanck.putIfAbsent("credits","CAST(? AS INTEGER)");

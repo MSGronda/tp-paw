@@ -64,11 +64,16 @@ public class WebConfig extends WebMvcConfigurerAdapter {
         return ds;
     }
 
-    @Bean(initMethod = "migrate")
+    @Bean
     public Flyway flyway() {
-        return Flyway.configure()
-                .dataSource(dataSource())
-                .load();
+        Flyway f = Flyway.configure()
+            .dataSource(dataSource())
+            .load();
+
+        f.repair();
+        f.migrate();
+
+        return f;
     }
 
     @Override
