@@ -28,8 +28,7 @@ function alterClassCard(subjectId, classId, color,colorBorder, disabled){
 
 function disableIncompatibleSubjects(){
     for(let subNum in subjectClasses){
-        // already signed up for that class
-        if(!schedule.canAddSubject(subjectClasses[subNum].id)){
+        if(schedule.signedUpToClass(subjectClasses[subNum].id)){
             alterSubjectCard(subjectClasses[subNum].id,selectedColor, selectedColor,true);
             continue;
         }
@@ -54,6 +53,9 @@ function disableIncompatibleSubjects(){
 
 function enableCompatibleSubjects(){
     for(let subNum in subjectClasses){
+        if(schedule.signedUpToClass(subjectClasses[subNum].id))
+            continue;
+
         let anyClassCompatible = false;
         for(let clNum in subjectClasses[subNum].classes){
             const classCompatibility = schedule.canAddClass(subjectClasses[subNum].classes[clNum].classTimes);

@@ -5,7 +5,7 @@
 <%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 <html>
 <head>
-    <title>Semester Builder</title>
+    <title>Title</title>
     <jsp:include page="../components/head_shared.jsp"/>
 </head>
 <jsp:include page="../components/table_style.jsp"/>
@@ -21,6 +21,12 @@
         flex-direction: column;
         overflow: auto;
         max-height: 31rem;
+    }
+    .class-list{
+        display: flex;
+        flex-direction: column;
+        overflow: auto;
+        max-height: 35.5rem;
     }
     .subject-card{
         width: 16rem;
@@ -145,7 +151,7 @@
         </sl-card>
 
         <sl-card id="choose-class" class="choose-class">
-            <div id="class-list" class="subject-list">
+            <div id="class-list" class="class-list">
                 <%-- insert with js  clases list into here--%>
             </div>
         </sl-card>
@@ -162,8 +168,8 @@
 
     const selectedColor = '#aad1ff'
     const incompatibleColor = '#d2d2d2'
-    const normalColor = '#000000'
-    const normalBorderColor = '#e3e3e3'
+    const normalColor = '#4f4f4f'
+    const normalBorderColor = '#cccccc'
 
     const daysOfWeek = [
         '<spring:message code="subject.classDay1"/>','<spring:message code="subject.classDay2"/>','<spring:message code="subject.classDay3"/>',

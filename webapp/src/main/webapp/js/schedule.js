@@ -72,6 +72,9 @@ class Schedule {
         }
         return true;
     }
+    signedUpToClass(subjectId){
+        return this.chosenSubjectMap.hasOwnProperty(subjectId)
+    }
     generateEventInfo(subjectId,subjectName, classTime){
         const div = document.createElement('div');
         div.classList.add('column-center')
