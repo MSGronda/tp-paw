@@ -21,13 +21,9 @@
         flex-direction: column;
         overflow: auto;
         max-height: 31rem;
+        min-height: 31rem;
     }
-    .class-list{
-        display: flex;
-        flex-direction: column;
-        overflow: auto;
-        max-height: 35.5rem;
-    }
+
     .subject-card{
         width: 16rem;
         padding: 0.3rem;
@@ -151,7 +147,15 @@
         </sl-card>
 
         <sl-card id="choose-class" class="choose-class">
-            <div id="class-list" class="class-list">
+            <div slot="header">
+                <div class="row" style="justify-content: space-between">
+                    <h4>Select a class</h4>
+                    <sl-button style="padding-top: 0.64rem; padding-bottom: 0.64rem" id="exit-class-selector" variant="default" size="small" circle>
+                        <sl-icon name="x-lg" label="Exit" class="icon"></sl-icon>
+                    </sl-button>
+                </div>
+            </div>
+            <div id="class-list" class="subject-list">
                 <%-- insert with js  clases list into here--%>
             </div>
         </sl-card>
@@ -168,8 +172,8 @@
 
     const selectedColor = '#aad1ff'
     const incompatibleColor = '#d2d2d2'
-    const normalColor = '#4f4f4f'
-    const normalBorderColor = '#cccccc'
+    const normalColor = '#000000'
+    const normalBorderColor = '#e0e0e0'
 
     const daysOfWeek = [
         '<spring:message code="subject.classDay1"/>','<spring:message code="subject.classDay2"/>','<spring:message code="subject.classDay3"/>',
@@ -219,12 +223,18 @@
         while(subjectList.firstChild){
             subjectList.removeChild(subjectList.lastChild)
         }
-        // readd all subjects
+        // read all subjects
         for(let subjectNum in subjectClasses) {
             const card = createSubjectCard(subjectList, subjectClasses[subjectNum]);
             subjectList.appendChild(card)
         }
     }
+
+    document.getElementById('exit-class-selector').addEventListener('click', function() {
+        // go to class selection
+        switchSelector('none','flex')
+        hideAllClasses();
+    });
 
     // set order by behaviour
     const creditOb = document.getElementById('credit-orderby');

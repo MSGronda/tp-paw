@@ -5,10 +5,15 @@ function sortByCreditsAsc(a,b){
     return  a.credits-b.credits
 }
 
-function switchSelector(chooseClassVisibility, chooseSubjectVisibility, classNumber, classVisibility){
+function switchSelector(chooseClassVisibility, chooseSubjectVisibility){
     document.getElementById('choose-class').style.display = chooseClassVisibility;
     document.getElementById('choose-subject').style.display = chooseSubjectVisibility;
-    document.getElementById('classes-' + classNumber).style.display = classVisibility;
+
+}
+function hideAllClasses(){
+    for(let subNum in subjectClasses){
+        document.getElementById('classes-' + subjectClasses[subNum].id).style.display = 'none';
+    }
 }
 
 function alterSubjectCard(subjectId,color,colorBorder, disabled){
@@ -106,7 +111,8 @@ function createSubjectCard(subjectList, subject){
     selectButton.addEventListener('click',
         function() {
             // go to class selection
-            switchSelector('flex','none',subject.id,'flex')
+            switchSelector('flex','none')
+            document.getElementById('classes-' + subject.id).style.display = 'flex';
         }
     );
 
@@ -189,7 +195,9 @@ function createClassInfoTable(classTime) {
     const timeHeader = document.createElement("th");
     timeHeader.innerHTML = "Time";
     const timeData = document.createElement("td");
-    timeData.innerHTML = classTime.start + " - " + classTime.end;
+    const start = classTime.start.split(":")[0] + ":" + classTime.start.split(":")[1]
+    const end = classTime.end.split(":")[0] + ":" + classTime.end.split(":")[1]
+    timeData.innerHTML = start + " - " + end;
 
     timeRow.appendChild(timeHeader);
     timeRow.appendChild(timeData);
@@ -257,7 +265,9 @@ function createClassCard(subId, subName, subClass) {
     selectButton.addEventListener('click',
         function() {
             // go back to subject selection
-            switchSelector('none','flex',subId,'none')
+            switchSelector('none','flex')
+            document.getElementById('classes-' + subId).style.display = 'none';
+
 
             // modify schedule table
             schedule.addClass(subId, subName, subClass.classTimes)
@@ -305,35 +315,6 @@ function createSubjectClassInfo(subject) {
     container.classList.add("subject-class-info", "column");
     container.id = "classes-" + subject.id;
 
-    // create class selection header
-    const selectionHeader = document.createElement("div");
-    selectionHeader.classList.add("class-selection");
-
-    const title = document.createElement("h4");
-    title.innerHTML = "Select a class";
-
-    const exitButton = document.createElement("sl-button");
-    exitButton.setAttribute('id', 'exit-class-selector-' + subject.id);
-    exitButton.setAttribute('variant', "default");
-    exitButton.setAttribute('size', 'small');
-    exitButton.setAttribute('circle', '');
-
-    exitButton.addEventListener('click',
-        function() {
-            // go to class selection
-            switchSelector('none','flex',subject.id,'none')
-        });
-
-    const icon = document.createElement("sl-icon");
-    icon.classList.add("icon");
-    icon.name = "x-lg";
-    icon.label = "Exit";
-
-    exitButton.appendChild(icon);
-
-    selectionHeader.appendChild(title);
-    selectionHeader.appendChild(exitButton);
-
     // create column for class info
     const classInfoColumn = document.createElement("div");
     classInfoColumn.classList.add("column");
@@ -343,9 +324,7 @@ function createSubjectClassInfo(subject) {
         classInfoColumn.append(classCard)
     }
 
-
     // append selection header and class info column to container
-    container.appendChild(selectionHeader);
     container.appendChild(classInfoColumn);
 
     return container;
