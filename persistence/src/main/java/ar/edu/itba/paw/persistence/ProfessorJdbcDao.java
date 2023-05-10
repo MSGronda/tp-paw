@@ -1,6 +1,8 @@
 package ar.edu.itba.paw.persistence;
 
 import ar.edu.itba.paw.models.Professor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
@@ -19,6 +21,8 @@ public class ProfessorJdbcDao implements ProfessorDao {
     private final JdbcTemplate jdbcTemplate;
     private final SimpleJdbcInsert jdbcInsertProfesor;
     private final SimpleJdbcInsert jdbcInsertMateriaProfesor;
+    private static final Logger LOGGER = LoggerFactory.getLogger(ProfessorJdbcDao.class);
+
 
     @Autowired
     public ProfessorJdbcDao(final DataSource ds) {
@@ -70,8 +74,9 @@ public class ProfessorJdbcDao implements ProfessorDao {
 
             jdbcInsertMateriaProfesor.executeAndReturnKey(matProf);
         }
-
-        return new Professor(key.longValue(), name, subjects);
+        Professor professor = new Professor(key.longValue(), name, subjects);
+        LOGGER.info("Professor created with name {} in subjects", name);
+        return professor;
     }
 
     public List<Professor> getAll() {
@@ -128,6 +133,7 @@ public class ProfessorJdbcDao implements ProfessorDao {
             prof.getSubjectIds().add(idSub);
             profs.putIfAbsent(idProf, prof);
         }
+        LOGGER.debug("Joined rows to professors");
         return new ArrayList<>(profs.values());
     }
 
@@ -141,6 +147,7 @@ public class ProfessorJdbcDao implements ProfessorDao {
                 profsBySubject.putIfAbsent(subId, subProfs);
             }
         }
+        LOGGER.info("Grouped professors by subject id");
         return profsBySubject;
     }
 

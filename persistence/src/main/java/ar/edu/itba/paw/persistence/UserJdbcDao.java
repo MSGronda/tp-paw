@@ -3,6 +3,8 @@ package ar.edu.itba.paw.persistence;
 import ar.edu.itba.paw.models.Image;
 import ar.edu.itba.paw.models.User;
 import ar.edu.itba.paw.persistence.exceptions.UserEmailAlreadyTakenPersistenceException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -28,6 +30,7 @@ public class UserJdbcDao implements UserDao {
 
     private final String USERS_TABLE = "users";
     private final String USER_SUB_PRG_TABLE = "userSubjectProgress";
+    private static final Logger LOGGER = LoggerFactory.getLogger(UserJdbcDao.class);
 
     @Autowired
     public UserJdbcDao(final DataSource ds, final ImageDao imageDao) {
@@ -71,10 +74,13 @@ public class UserJdbcDao implements UserDao {
         try{
             key = jdbcInsert.executeAndReturnKey(data);
         }catch (DuplicateKeyException e){
+            LOGGER.warn("Duplicate key for user email {}",userBuilder.getEmail());
             throw new UserEmailAlreadyTakenPersistenceException();
         }
 
-        return userBuilder.id(key.longValue()).build();
+        User toReturn = userBuilder.id(key.longValue()).build();
+        LOGGER.info("User created with id {} and email {}", toReturn.getId(), toReturn.getEmail());
+        return toReturn;
     }
 
     @Override
@@ -86,8 +92,6 @@ public class UserJdbcDao implements UserDao {
     public void update(User user) {
 
     }
-
-    // - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 
     // - - - - - - - - - Subject Progress - - - - - - - - -
@@ -103,9 +107,15 @@ public class UserJdbcDao implements UserDao {
     }
     @Override
     public Integer updateSubjectProgress(Long id, String idSub, Integer newProgress){
+        int toReturn;
         if(getUserSubjectProgress(id,idSub).isPresent()){
-            return jdbcTemplate.update("UPDATE " + USER_SUB_PRG_TABLE + " SET subjectState = ? WHERE idSub = ? AND idUser = ?",
+            toReturn = jdbcTemplate.update("UPDATE " + USER_SUB_PRG_TABLE + " SET subjectState = ? WHERE idSub = ? AND idUser = ?",
                     newProgress,idSub,id);
+            if(toReturn != 0) {
+                LOGGER.info("Updating subject {} progress for user {}", idSub, id);
+            } else {
+               LOGGER.warn("Failed to update subject {} progress for user {}", idSub, id);
+            }
         }
         else{
             Map<String, Object> data = new HashMap<>();
@@ -113,14 +123,25 @@ public class UserJdbcDao implements UserDao {
             data.put("idUser",id);
             data.put("idSub",idSub);
             data.put("subjectState",newProgress);
-
-            return jdbcUserProgressInsert.execute(data);
+            toReturn = jdbcUserProgressInsert.execute(data);
+            if(toReturn != 0) {
+                LOGGER.info("Generated subject progress in {} for user {}", idSub, id);
+            } else {
+                LOGGER.warn("Failed to generate subject progress in {} for user {}", idSub, id);
+            }
         }
+        return toReturn;
     }
 
     @Override
     public Integer deleteUserProgressForSubject(Long id, String idSub){
-        return jdbcTemplate.update("DELETE FROM " + USER_SUB_PRG_TABLE + " WHERE idSub = ? AND idUser = ?", idSub,id);
+        int toReturn = jdbcTemplate.update("DELETE FROM " + USER_SUB_PRG_TABLE + " WHERE idSub = ? AND idUser = ?", idSub,id);
+        if(toReturn !=0 ) {
+            LOGGER.info("Deleted subject progress in {} for user {}", idSub, id);
+        } else {
+            LOGGER.warn("Progress delete in subject {} for user {} failed", idSub, id);
+        }
+        return toReturn;
     }
     // - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
@@ -142,12 +163,21 @@ public class UserJdbcDao implements UserDao {
 
     @Override
     public void changePassword(Long userId, String password) {
-        jdbcTemplate.update("UPDATE " + USERS_TABLE + " SET pass = ? WHERE id = ?", password, userId);
+        int success = jdbcTemplate.update("UPDATE " + USERS_TABLE + " SET pass = ? WHERE id = ?", password, userId);
+        if(success != 0) {
+            LOGGER.info("Changed password for user {}", userId);
+        } else {
+            LOGGER.warn("Password change for user {} failed", userId);
+        }
     }
 
     @Override
     public void editProfile(Long userId, String username) {
-        jdbcTemplate.update("UPDATE " + USERS_TABLE + " SET username = ? WHERE id = ?", username, userId);
+        int success = jdbcTemplate.update("UPDATE " + USERS_TABLE + " SET username = ? WHERE id = ?", username, userId);
+        if(success != 0)
+            LOGGER.info("Edited username for user {}", username);
+        else
+            LOGGER.warn("Username edition for user {} failed", userId);
     }
 
     private static User rowMapper(ResultSet rs, int rowNum) throws SQLException {

@@ -10,6 +10,8 @@ import ar.edu.itba.paw.webapp.auth.UniAuthUser;
 import ar.edu.itba.paw.webapp.exceptions.DegreeNotFoundException;
 import ar.edu.itba.paw.webapp.exceptions.UserNotFoundException;
 import ar.edu.itba.paw.webapp.exceptions.SubjectNotFoundException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
@@ -37,6 +39,8 @@ public class HomeController {
     private final UserService us;
 
     private final AuthUserService aus;
+    private static final Logger LOGGER = LoggerFactory.getLogger(HomeController.class);
+
 
     @Autowired
     public HomeController(DegreeService ds, SubjectService ss, ProfessorService ps, ReviewService rs, UserService us, AuthUserService aus) {
@@ -55,6 +59,7 @@ public class HomeController {
 
         if( !maybeDegree.isPresent() ){
             //TODO - error
+            LOGGER.warn("Degree is not present");
             throw new DegreeNotFoundException();
         }
 
@@ -72,11 +77,12 @@ public class HomeController {
         Map<String, ReviewStatistic> electivesReviewStatistic = rs.getReviewStatMapBySubjectList(infElectives);
 
         long userId;
-        if(!aus.isAuthenticated())
+        if(!aus.isAuthenticated()) {
             userId = -1;
-        else
+            LOGGER.warn("User is not authenticated");
+        } else {
             userId = aus.getCurrentUser().getId();
-
+        }
         Map<String, Integer> subjectProgress = us.getUserAllSubjectProgress(userId);
 
         ModelAndView mav = new ModelAndView("home/index");

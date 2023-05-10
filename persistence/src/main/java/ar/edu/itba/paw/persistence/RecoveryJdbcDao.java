@@ -1,5 +1,7 @@
 package ar.edu.itba.paw.persistence;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -25,6 +27,8 @@ public class RecoveryJdbcDao implements RecoveryDao {
     private final JdbcTemplate jdbcTemplate;
     private final SimpleJdbcInsert jdbcInsert;
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(RecoveryJdbcDao.class);
+
     @Autowired
     public RecoveryJdbcDao(final DataSource ds) {
         this.jdbcTemplate = new JdbcTemplate(ds);
@@ -43,6 +47,7 @@ public class RecoveryJdbcDao implements RecoveryDao {
                         "ON CONFLICT(userid) DO UPDATE SET token = excluded.token",
                 token, userId
         );
+        LOGGER.info("Created recovery password token {} for user {}",token, userId);
     }
 
     @Override
@@ -55,11 +60,13 @@ public class RecoveryJdbcDao implements RecoveryDao {
     @Override
     public void delete(String token) {
         jdbcTemplate.update("DELETE FROM " + TABLE + " WHERE token = ?", token);
+        LOGGER.info("Deleted token {} from recovery token table", token);
     }
 
     @Override
     public void delete(long userId) {
         jdbcTemplate.update("DELETE FROM " + TABLE + " WHERE userid = ?", userId);
+        LOGGER.info("Deleted user from recovery token table with id {}", userId);
     }
 
     private static Long userIdRowMapper(ResultSet rs, int rowNum) throws SQLException {

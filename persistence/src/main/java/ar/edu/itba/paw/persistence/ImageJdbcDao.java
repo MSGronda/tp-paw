@@ -1,6 +1,8 @@
 package ar.edu.itba.paw.persistence;
 
 import ar.edu.itba.paw.models.Image;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
@@ -20,6 +22,8 @@ public class ImageJdbcDao implements ImageDao {
 
     private final JdbcTemplate jdbcTemplate;
     private final SimpleJdbcInsert jdbcInsert;
+    private static final Logger LOGGER = LoggerFactory.getLogger(ImageJdbcDao.class);
+
 
     @Autowired
     public ImageJdbcDao(final DataSource ds) {
@@ -55,17 +59,29 @@ public class ImageJdbcDao implements ImageDao {
         Map<String,Object> args = new HashMap<>();
         args.put("image", image);
 
-        return jdbcInsert.executeAndReturnKey(args).longValue();
+        long success = jdbcInsert.executeAndReturnKey(args).longValue();
+        if(success != 0) {
+            LOGGER.info("Image created for current user");
+        } else {
+            LOGGER.warn("Image creation for current user failed");
+        }
+        return success;
     }
 
     @Override
     public void delete(Long aLong) {
         jdbcTemplate.execute("DELETE FROM " + TABLE + " WHERE id = " + aLong);
+        LOGGER.warn("Image with id {} has been deleted", aLong);
     }
 
     @Override
     public void update(Image image) {
-        jdbcTemplate.update("UPDATE " + TABLE + " SET image = ? WHERE id = ?", image.getData(), image.getId());
+        int success = jdbcTemplate.update("UPDATE " + TABLE + " SET image = ? WHERE id = ?", image.getData(), image.getId());
+        if(success != 0) {
+            LOGGER.info("Updated profile picture for current user");
+        } else {
+            LOGGER.warn("Profile picture update for current user failed");
+        }
     }
 
     private static Image rowMapper(ResultSet rs, int rowNum) throws SQLException {

@@ -10,6 +10,8 @@ import ar.edu.itba.paw.webapp.exceptions.ReviewNotFoundException;
 import ar.edu.itba.paw.webapp.exceptions.SubjectNotFoundException;
 import ar.edu.itba.paw.webapp.form.ReviewForm;
 import ar.edu.itba.paw.webapp.form.ReviewVoteForm;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.method.P;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -33,6 +35,8 @@ public class ReviewController {
     private final DegreeService degreeService;
 
     private final AuthUserService authUserService;
+    private static final Logger LOGGER = LoggerFactory.getLogger(ReviewController.class);
+
 
     @Autowired
     public ReviewController(UserService userService, SubjectService subjectService, ReviewService reviewService, DegreeService degreeService, AuthUserService authUserService) {
@@ -47,6 +51,7 @@ public class ReviewController {
     public ModelAndView review(@PathVariable final String subjectId, @Valid @ModelAttribute("ReviewForm") final ReviewForm reviewForm,
                                final BindingResult errors) throws SQLException {
         if(errors.hasErrors()){
+            LOGGER.warn("Review form has errors");
             return reviewForm(subjectId, reviewForm);
         }
         Review review = reviewService.create(reviewForm.getAnonymous(),reviewForm.getEasy(), reviewForm.getTimeDemanding(), reviewForm.getText(), subjectId, authUserService.getCurrentUser().getId());
@@ -68,6 +73,7 @@ public class ReviewController {
             mav.addObject("subject", subject );
             return mav;
         }
+        LOGGER.warn("No subject for id {}",subjectId);
         throw new SubjectNotFoundException();
     }
 
@@ -76,6 +82,7 @@ public class ReviewController {
 
         Optional<Review> maybeReview = reviewService.findById(reviewId);
         if(!maybeReview.isPresent()){
+
             throw new ReviewNotFoundException();
         }
 

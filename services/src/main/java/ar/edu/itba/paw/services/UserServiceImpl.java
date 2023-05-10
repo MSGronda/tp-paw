@@ -10,6 +10,8 @@ import ar.edu.itba.paw.services.exceptions.InvalidTokenException;
 import ar.edu.itba.paw.services.exceptions.OldPasswordDoesNotMatchException;
 import ar.edu.itba.paw.services.exceptions.UserEmailAlreadyTakenException;
 import ar.edu.itba.paw.services.exceptions.UserEmailNotFoundException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -33,6 +35,7 @@ public class UserServiceImpl implements UserService {
     private final PasswordEncoder passwordEncoder;
 
     private static final int MAX_IMAGE_SIZE = 1024 * 1024 * 5;
+    private static final Logger LOGGER = LoggerFactory.getLogger(UserServiceImpl.class);
 
     @Autowired
     public UserServiceImpl(UserDao userDao, RecoveryDao recDao, ImageDao imageDao, final PasswordEncoder passwordEncoder) {
@@ -62,6 +65,7 @@ public class UserServiceImpl implements UserService {
         try {
             return userDao.create(userBuilder);
         } catch (final UserEmailAlreadyTakenPersistenceException e) {
+            LOGGER.warn("User {} failed to create", userBuilder.getEmail());
             throw new UserEmailAlreadyTakenException();
         }
 
@@ -116,6 +120,7 @@ public class UserServiceImpl implements UserService {
     public void changePassword(Long userId, String password, String oldPassword, String userOldPassword) throws OldPasswordDoesNotMatchException {
 
         if(!passwordEncoder.matches(oldPassword, userOldPassword)){
+            LOGGER.warn("Old password does not match with input. Update failed");
             throw new OldPasswordDoesNotMatchException();
         }
         userDao.changePassword(userId, passwordEncoder.encode(password));
@@ -130,6 +135,7 @@ public class UserServiceImpl implements UserService {
     public String generateRecoveryToken(String email){
         Optional<User> user = getUserWithEmail(email);
         if(!user.isPresent()){
+            LOGGER.warn("Generation of recovery token failed. User not found");
             throw new UserEmailNotFoundException();
         }
         return generateRecoveryToken(user.get());
@@ -162,6 +168,7 @@ public class UserServiceImpl implements UserService {
     public void recoverPassword(String token, String newPassword) throws InvalidTokenException {
         Optional<Long> optUserId = recDao.findUserIdByToken(token);
         if(!optUserId.isPresent()){
+            LOGGER.warn("Invalid token when trying to recover password");
             throw new InvalidTokenException();
         }
         long userId = optUserId.get();

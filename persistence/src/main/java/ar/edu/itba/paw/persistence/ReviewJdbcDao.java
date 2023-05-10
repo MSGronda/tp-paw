@@ -1,22 +1,17 @@
 package ar.edu.itba.paw.persistence;
 
-import ar.edu.itba.paw.models.Professor;
 import ar.edu.itba.paw.models.Review;
 import ar.edu.itba.paw.models.ReviewStatistic;
-import ar.edu.itba.paw.models.SubjectClass;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Repository;
-
 import javax.sql.DataSource;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Time;
 import java.util.*;
 
 @Repository
@@ -68,8 +63,6 @@ public class ReviewJdbcDao implements ReviewDao {
     public void insert(Review review) {
         create(review.getAnonymous(),review.getEasy(), review.getTimeDemanding(), review.getText(), review.getSubjectId(),review.getUserId());
     }
-
-
 
     @Override
     public Review create(Boolean anonymous,Integer easy, Integer timeDemanding, String text,String subjectId,long userId ) {
@@ -232,6 +225,7 @@ public class ReviewJdbcDao implements ReviewDao {
             data.put("timeDemandingCount", timeDemanding);
             jdbcInsertReviewStatistic.execute(data);
         }
+        LOGGER.info("Updated statistics for review {}", review.getId());
     }
 
 
@@ -351,12 +345,24 @@ public class ReviewJdbcDao implements ReviewDao {
 
     @Override
     public Integer deleteReviewVoteByReviewId(Long idReview){
-        return jdbcTemplate.update("DELETE FROM " + TABLE_REVIEW_VOTE + " WHERE idReview = ?", idReview);
+        int success = jdbcTemplate.update("DELETE FROM " + TABLE_REVIEW_VOTE + " WHERE idReview = ?", idReview);
+        if(success != 0) {
+            LOGGER.info("Deleted votes in review {}", idReview);
+        } else {
+            LOGGER.warn("Votes deletion in review {} failed", idReview);
+        }
+        return success;
     }
 
     @Override
     public Integer deleteReviewVote(Long idUser, Long idReview){
-        return jdbcTemplate.update("DELETE FROM " + TABLE_REVIEW_VOTE + " WHERE idUser = ? AND idReview = ?", idUser,idReview);
+        int success = jdbcTemplate.update("DELETE FROM " + TABLE_REVIEW_VOTE + " WHERE idUser = ? AND idReview = ?", idUser,idReview);
+        if(success != 0) {
+            LOGGER.info("Deleted vote in review {} by user {}", idReview, idUser);
+        } else {
+            LOGGER.warn("Vote deletion in review {} failed by user {}", idReview, idUser);
+        }
+        return success;
     }
 
     @Override
@@ -376,6 +382,7 @@ public class ReviewJdbcDao implements ReviewDao {
         data.put("idReview", idReview);
         data.put("vote", vote);
 
+        LOGGER.info("Review {} voted with value {} by user {} ", idReview, vote,idUser);
         return jdbcReviewVoteInsert.execute(data);
     }
 

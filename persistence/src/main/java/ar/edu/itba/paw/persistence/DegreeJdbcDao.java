@@ -2,6 +2,8 @@ package ar.edu.itba.paw.persistence;
 
 import ar.edu.itba.paw.models.Degree;
 import ar.edu.itba.paw.models.Semester;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
@@ -22,6 +24,9 @@ public class DegreeJdbcDao implements DegreeDao {
 
     private final static String degree_table_name = "degrees";
     private final static String subdegree_table_name = "subjectsDegrees";
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(DegreeJdbcDao.class);
+
 
 
     @Autowired
@@ -75,6 +80,7 @@ public class DegreeJdbcDao implements DegreeDao {
 
         Number key = jdbcInsert.executeAndReturnKey(data);
 
+        LOGGER.info("Degree created with name {}", name);
         return new Degree(key.longValue(), name, new ArrayList<>());
     }
 
@@ -91,7 +97,7 @@ public class DegreeJdbcDao implements DegreeDao {
                     num, degId, getSubjectsBySemester(degId, num)
             ));
         }
-
+        LOGGER.info("Retrieved semesters for degree with id {}", degId);
         return semesters;
     }
 

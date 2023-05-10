@@ -1,6 +1,8 @@
 package ar.edu.itba.paw.persistence;
 
 import ar.edu.itba.paw.models.Subject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
@@ -25,6 +27,7 @@ public class SubjectJdbcDao implements SubjectDao {
 
     private final JdbcTemplate jdbcTemplate;
     private final SimpleJdbcInsert jdbcInsert;
+    private static final Logger LOGGER = LoggerFactory.getLogger(SubjectClassJdbcDao.class);
 
     @Autowired
     public SubjectJdbcDao(final DataSource ds) {
@@ -60,8 +63,10 @@ public class SubjectJdbcDao implements SubjectDao {
     // TODO unificar las queries que se repiten
     @Override
     public List<Subject> getByName(String name) {
-        return jdbcTemplate.query("SELECT * FROM " + VIEW_JOIN + " WHERE subname ILIKE ?",
+        List<Subject> toReturn = jdbcTemplate.query("SELECT * FROM " + VIEW_JOIN + " WHERE subname ILIKE ?",
                 SubjectJdbcDao::subjectListExtractor, ("%" + name + "%"));
+        LOGGER.info("Got subjects with name {}", name);
+        return toReturn;
     }
 
     @Override
@@ -83,7 +88,9 @@ public class SubjectJdbcDao implements SubjectDao {
         sb.append(" ORDER BY ").append(filters.getOrDefault("ob","subname"));
         sb.append(" ").append(filters.getOrDefault("dir","ASC"));
 
-        return jdbcTemplate.query(sb.toString(), SubjectJdbcDao::subjectListExtractor,  filterList.toArray());
+        List<Subject> toReturn = jdbcTemplate.query(sb.toString(), SubjectJdbcDao::subjectListExtractor,  filterList.toArray());
+        LOGGER.info("Got subjects with name {} and filters {}", name, filters.values().stream().toString());
+        return toReturn;
     }
 
 
@@ -168,7 +175,7 @@ public class SubjectJdbcDao implements SubjectDao {
 
 
         jdbcInsert.execute(data);
-
+        LOGGER.info("Created new subject with id {} and name {} from {} department",id, name, depto);
         return new Subject(id, name, depto, idCorrelativas, idProfesores, idCarreras, creditos);
     }
 

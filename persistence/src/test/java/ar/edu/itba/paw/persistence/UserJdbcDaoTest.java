@@ -61,7 +61,7 @@ public class UserJdbcDaoTest {
     public void testCreate() {
         User user;
         try{
-            user = userDao.create(new User.UserBuilder(EMAIL, PASSWORD, USERNAME), new byte[]{});
+            user = userDao.create(new User.UserBuilder(EMAIL, PASSWORD, USERNAME));
         }catch (UserEmailAlreadyTakenPersistenceException e){
             throw new RuntimeException();
         }

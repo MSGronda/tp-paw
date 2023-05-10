@@ -1,5 +1,7 @@
 package ar.edu.itba.paw.services;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.MailException;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -16,6 +18,7 @@ import java.util.Map;
 public class MailServiceImpl implements MailService {
     private final JavaMailSender mailSender;
     private final SpringTemplateEngine templateEngine;
+    private static final Logger LOGGER = LoggerFactory.getLogger(MailServiceImpl.class);
 
     @Autowired
     public MailServiceImpl(JavaMailSender mailSender, SpringTemplateEngine templateEngine) {
@@ -26,6 +29,7 @@ public class MailServiceImpl implements MailService {
     @Override
     public void sendMail(String to, String subject, String body) {
         sendMail(to, subject, body, false);
+        LOGGER.info("Mail sent to {} successfully", to);
     }
 
     @Override
@@ -36,6 +40,7 @@ public class MailServiceImpl implements MailService {
         final String body = templateEngine.process(template, ctx);
 
         sendMail(to, subject, body, true);
+        LOGGER.info("Mail sent to {} successfully", to);
     }
 
     private void sendMail(String to, String subject, String body, boolean html) {
@@ -47,9 +52,11 @@ public class MailServiceImpl implements MailService {
             helper.setSubject(subject);
             helper.setText(body, html);
         } catch (MessagingException e) {
+            LOGGER.warn("Failed to send mail to {}", to);
             throw new IllegalStateException(e);
         }
 
         mailSender.send(mimeMsg);
+        LOGGER.info("Mail sent to {} successfully", to);
     }
 }
