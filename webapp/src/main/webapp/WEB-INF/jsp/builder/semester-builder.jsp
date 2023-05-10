@@ -18,7 +18,7 @@
         display: flex;
         flex-direction: column;
         overflow: auto;
-        max-height: 35rem;
+        max-height: 31rem;
     }
     .subject-card{
         width: 16rem;
@@ -27,6 +27,7 @@
     .time-table{
         min-width: 75%;
         padding: 0.5rem;
+        --padding: 0.1rem;
     }
     .icon {
         padding-top: .5rem;
@@ -59,7 +60,7 @@
     }
     .table-scroll{
         overflow: auto;
-        height: 37.5rem;
+        height: 36rem;
         width: 100%;
     }
     tbody td {
@@ -118,12 +119,16 @@
                             <h5><c:out value="${subject.name}"/></h5>
                             <c:out value="Credits: ${subject.credits}"/>
                         </div>
-                        <sl-button id="select-${subject.id}" variant="default" size="small" circle>
-                            <sl-icon class="icon" name="check2" label="Select Subject"></sl-icon>
-                        </sl-button>
-                        <sl-button id="deselect-subject-${subject.id}" style="display: none" variant="default" size="small" circle>
-                            <sl-icon class="icon" name="x-lg" label="Remove subject"></sl-icon>
-                        </sl-button>
+                        <div class="column">
+                            <sl-button id="select-${subject.id}" variant="default" size="small" circle>
+                                <sl-icon class="icon" name="check2" label="Select Subject"></sl-icon>
+                            </sl-button>
+                            <sl-button id="deselect-subject-${subject.id}" style="display: none; align-self: end" variant="default" size="small" circle>
+                                <sl-icon class="icon" name="x-lg" label="Remove subject"></sl-icon>
+                            </sl-button>
+                            <span id="selected-${subject.id}" style="display: none; color: #7db6f8; padding-top:0.5rem">Selected</span>
+                        </div>
+
                     </div>
                 </sl-card>
             </c:forEach>
@@ -188,6 +193,11 @@
 <script>
     const schedule = new Schedule(29,7);
 
+    const selectedColor = '#aad1ff'
+    const incompatibleColor = '#d2d2d2'
+    const normalColor = '#4f4f4f'
+    const normalBorderColor = '#cccccc'
+
     const subjectClasses = [
         <c:forEach var="sub" items="${availableSubjects}">
         {
@@ -217,9 +227,10 @@
         document.getElementById('classes-' + classNumber).style.display = classVisibility;
     }
 
-    function alterSubjectCard(subjectId,color,disabled){
+    function alterSubjectCard(subjectId,color,colorBorder, disabled){
         const card = document.getElementById('subject-card-'+subjectId);
         card.style.color = color
+        card.style.setProperty('--border-color', colorBorder)
         const select = document.getElementById('select-'+subjectId);
         select.disabled = disabled;
     }
@@ -234,7 +245,7 @@
         for(let subNum in subjectClasses){
             // already signed up for that class
             if(!schedule.canAddSubject(subjectClasses[subNum].id)){
-                alterSubjectCard(subjectClasses[subNum].id,'#d2d2d2',true);
+                alterSubjectCard(subjectClasses[subNum].id,selectedColor, selectedColor,true);
                 continue;
             }
 
@@ -244,14 +255,14 @@
 
                 if(classCompatibility === false){
                     // class isn't compatible with timetable
-                    alterClassCard( subjectClasses[subNum].id,subjectClasses[subNum].classes[clNum].idClass, '#d2d2d2',true)
+                    alterClassCard( subjectClasses[subNum].id,subjectClasses[subNum].classes[clNum].idClass, incompatibleColor,normalBorderColor,true)
                 }
                 anyClassCompatible = anyClassCompatible || classCompatibility;
             }
 
             // none of the classes are compatible with timetable => disable subject as well
             if(!anyClassCompatible){
-                alterSubjectCard(subjectClasses[subNum].id,'#d2d2d2',true);
+                alterSubjectCard(subjectClasses[subNum].id,incompatibleColor,normalBorderColor,true);
             }
         }
     }
@@ -260,7 +271,7 @@
         for(let subNum in subjectClasses){
             // enable card if now is compatible
             if(schedule.canAddSubject(subjectClasses[subNum].id)){
-                alterSubjectCard(subjectClasses[subNum].id,'#4f4f4f',false );
+                alterSubjectCard(subjectClasses[subNum].id,normalColor,normalBorderColor,false );
                 continue;
             }
 
@@ -270,14 +281,14 @@
 
                 if(classCompatibility === true){
                     // class is now compatible with timetable
-                    alterClassCard( subjectClasses[subNum].id,subjectClasses[subNum].classes[clNum].idClass,'#4f4f4f',false )
+                    alterClassCard( subjectClasses[subNum].id,subjectClasses[subNum].classes[clNum].idClass, normalColor,normalBorderColor,false )
                 }
                 anyClassCompatible = anyClassCompatible || classCompatibility;
             }
 
             // at least one of the classes is compatible with timetable => enable subject as well
             if(anyClassCompatible){
-                alterSubjectCard(subjectClasses[subNum].id,'#4f4f4f',false );
+                alterSubjectCard(subjectClasses[subNum].id,normalColor,normalBorderColor,false );
             }
         }
     }
@@ -315,6 +326,7 @@
                     // enable deselect button
                     document.getElementById('deselect-subject-'+ subjectClasses[subjectNum].id).style.display = 'block'
                     document.getElementById('select-'+ subjectClasses[subjectNum].id).style.display = 'none'
+                    document.getElementById('selected-'+ subjectClasses[subjectNum].id).style.display = 'block'
                 }
             );
             document.getElementById(
@@ -330,6 +342,7 @@
                     // disable deselect button
                     document.getElementById('select-'+ subjectClasses[subjectNum].id).style.display = 'block'
                     document.getElementById('deselect-subject-'+ subjectClasses[subjectNum].id).style.display = 'none'
+                    document.getElementById('selected-'+ subjectClasses[subjectNum].id).style.display = 'none'
                 }
             );
 

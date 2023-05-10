@@ -6,6 +6,11 @@ class Schedule {
         this.scheduleArray = [];
         this.chosenSubjectMap = {};
 
+        this.colors = [
+            '#fda4a5', '#fdba74' ,'#fce046','#bff265', '#86eead','#5febd4','#7dd2fd','#a4b5fc'
+        ]
+        this.currentColor = 0
+
         // we must initialize it this way :(
         for(let i=0; i<rows; i++ ){
             this.scheduleArray[i] = []
@@ -35,6 +40,9 @@ class Schedule {
             }
             this.scheduleHTML.appendChild(tr);
         }
+    }
+    nextColor(){
+        this.currentColor = (this.currentColor + 1) % this.colors.length
     }
 
     getArrayPos(classTime){
@@ -88,8 +96,9 @@ class Schedule {
 
     addToCalendarHtml(rowStart, rowEnd, column, subjectId,subjectName, classTime){
         const elem = document.getElementById('r'+rowStart+'c'+column)
-        elem.style.backgroundColor = '#eeeeee'
         elem.rowSpan = rowEnd - rowStart
+        elem.style.backgroundColor = this.colors[this.currentColor]
+
 
         elem.append(this.generateEventInfo(subjectId,subjectName,classTime))
 
@@ -115,6 +124,7 @@ class Schedule {
             this.addToCalendarHtml(arrayPos.rowStart, arrayPos.rowEnd, arrayPos.column, subjectId, subjectName, classTimes[eventNum])
             this.addToCalendarArray(arrayPos.rowStart, arrayPos.rowEnd, arrayPos.column, subjectId)
         }
+        this.nextColor()
 
         return true;
     }
