@@ -409,21 +409,23 @@
         <c:import url="../components/review_card.jsp"/>
 
     </c:forEach>
-      <div>
-          <sl-radio-group name="pagination-radio" value="${actualPage}">
-              <sl-radio-button id="prevPage" value="-1">
-                  <sl-icon slot="prefix" name="chevron-left"></sl-icon>
-                  <spring:message code="subject.previousPage" />
-              </sl-radio-button>
-              <c:forEach var="pageNum" begin="1" end="${totalPages+1}">
-                  <sl-radio-button class="pageNumButton" value="${pageNum}">${pageNum}</sl-radio-button>
-              </c:forEach>
-              <sl-radio-button id="nextPage" value="0">
-                  <sl-icon slot="suffix" name="chevron-right"></sl-icon>
-                  <spring:message code="subject.nextPage" />
-              </sl-radio-button>
-          </sl-radio-group>
-      </div>
+      <c:if test="${not empty reviews}">
+          <div>
+              <sl-radio-group name="pagination-radio" value="${actualPage}">
+                  <sl-radio-button id="prevPage" value="-1">
+                      <sl-icon slot="prefix" name="chevron-left"></sl-icon>
+                      <spring:message code="subject.previousPage" />
+                  </sl-radio-button>
+                  <c:forEach var="pageNum" begin="1" end="${totalPages+1}">
+                      <sl-radio-button class="pageNumButton" value="${pageNum}">${pageNum}</sl-radio-button>
+                  </c:forEach>
+                  <sl-radio-button id="nextPage" value="0">
+                      <sl-icon slot="suffix" name="chevron-right"></sl-icon>
+                      <spring:message code="subject.nextPage" />
+                  </sl-radio-button>
+              </sl-radio-group>
+          </div>
+      </c:if>
   </div>
 </main>
 <jsp:include page="../components/footer.jsp"/>
