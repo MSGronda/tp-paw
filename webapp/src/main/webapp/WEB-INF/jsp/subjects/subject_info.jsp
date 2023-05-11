@@ -345,10 +345,6 @@
       <div class="actual-filter">
           <spring:message code="subject.actualFilter"/>
           <c:choose>
-              <c:when test="${order == \"easy\" && dir == \"asc\"}">
-                  <spring:message code="subject.order.difficulty"/>
-                  <spring:message code="subject.directionAsc"/>
-              </c:when>
               <c:when test="${order == \"easy\" && dir == \"desc\"}">
                   <spring:message code="subject.order.difficulty"/>
                   <spring:message code="subject.directionDesc"/>
@@ -361,6 +357,10 @@
                   <spring:message code="subject.order.time"/>
                   <spring:message code="subject.directionDesc"/>
               </c:when>
+              <c:otherwise>
+                  <spring:message code="subject.order.difficulty"/>
+                  <spring:message code="subject.directionAsc"/>
+              </c:otherwise>
           </c:choose>
       </div>
       <div class="filter-dropdown">
@@ -409,12 +409,26 @@
         <c:import url="../components/review_card.jsp"/>
 
     </c:forEach>
+      <div>
+          <sl-radio-group name="a" value="${actualPage}">
+              <sl-radio-button id="prevPage" value="-1">
+                  <sl-icon slot="prefix" name="chevron-left"></sl-icon>
+                  <spring:message code="subject.previousPage" />
+              </sl-radio-button>
+              <c:forEach var="pageNum" begin="1" end="${totalPages+1}">
+                  <sl-radio-button class="pageNumButton" value="${pageNum}">${pageNum}</sl-radio-button>
+              </c:forEach>
+              <sl-radio-button id="nextPage" value="0">
+                  <sl-icon slot="suffix" name="chevron-right"></sl-icon>
+                  <spring:message code="subject.nextPage" />
+              </sl-radio-button>
+          </sl-radio-group>
+      </div>
   </div>
 </main>
 <jsp:include page="../components/footer.jsp"/>
 <jsp:include page="../components/body_scripts.jsp"/>
 <script src="${pageContext.request.contextPath}/js/subject_progress.js"></script>
-<!--<script src="${pageContext.request.contextPath}/js/subject-view.js" type="module"></script>-->
 <script src="${pageContext.request.contextPath}/js/url-param-utils.js"></script>
 <script src="${pageContext.request.contextPath}/js/review_card.js"></script>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
@@ -467,8 +481,8 @@
 
 </script>
 <script>
-    let params = new URLSearchParams(window.location.search);
-    let dir = params.get("dir");
+    let urlParams = new URLSearchParams(window.location.search);
+    let dir = urlParams.get('dir');
 
     const orderBtns = [
         ['difficulty-order','easy','diffuclty-down','diffuclty-up'],
@@ -482,9 +496,9 @@
             btnElem.addEventListener('click',
                 function(event) {
                     event.preventDefault();
-                    console.log("hola");
                     let url = window.location.href;
                     url = addOrUpdateParam(url,"order",orderBtns[elem][1]);
+                    url = addOrUpdateParam(url,"pageNum","0");
                     if(dir !== null && dir === asc){
                         url = addOrUpdateParam(url,"dir",desc);
                     } else {
@@ -493,27 +507,62 @@
                     window.location.href = url;
                 });
             if(orderBtns[elem][0] === 'difficulty-order' && dir === desc){
-                const section1 = document.getElementById(orderBtns[elem][2])
-                const section2 = document.getElementById(orderBtns[elem][3])
+                const section1 = document.getElementById(orderBtns[elem][2]);
+                const section2 = document.getElementById(orderBtns[elem][3]);
                 section1.style.display = "block";
                 section2.style.display = "none";
             } else if(orderBtns[elem][0] === 'timedemand-order' && dir === desc) {
-                const section1 = document.getElementById(orderBtns[elem][2])
-                const section2 = document.getElementById(orderBtns[elem][3])
+                const section1 = document.getElementById(orderBtns[elem][2]);
+                const section2 = document.getElementById(orderBtns[elem][3]);
                 section1.style.display = "block";
                 section2.style.display = "none";
             }else if(orderBtns[elem][0] === 'difficulty-order' && dir === asc){
-                const section1 = document.getElementById(orderBtns[elem][2])
-                const section2 = document.getElementById(orderBtns[elem][3])
+                const section1 = document.getElementById(orderBtns[elem][2]);
+                const section2 = document.getElementById(orderBtns[elem][3]);
                 section1.style.display = "none";
                 section2.style.display = "block";
             } else {
-                const section1 = document.getElementById(orderBtns[elem][2])
-                const section2 = document.getElementById(orderBtns[elem][3])
+                const section1 = document.getElementById(orderBtns[elem][2]);
+                const section2 = document.getElementById(orderBtns[elem][3]);
                 section1.style.display = "none";
                 section2.style.display = "block";
             }
         }
+    }
+
+    var prevButton = document.getElementById("prevPage");
+    prevButton.addEventListener('click',
+        function(event) {
+            event.preventDefault();
+            let url = window.location.href;
+            let pageNum = Number(urlParams.get('pageNum')) -1;
+            if(pageNum >= 0){
+                url = addOrUpdateParam(url,"pageNum",pageNum.toString());
+            } else {
+                url = addOrUpdateParam(url,"pageNum","0");
+            }
+            window.location.href = url;
+        });
+    var nextButton = document.getElementById("nextPage");
+    nextButton.addEventListener('click',
+        function(event) {
+            event.preventDefault();
+            let url = window.location.href;
+            let pageNum = Number(urlParams.get('pageNum')) +1;
+            url = addOrUpdateParam(url,"pageNum",pageNum.toString());
+            window.location.href = url;
+        });
+
+    var elements = document.getElementsByClassName("pageNumButton");
+    for (let i = 0, len = elements.length; i < len; i++) {
+         elements[i].addEventListener('click',
+             function(event) {
+                 event.preventDefault();
+                 let url = window.location.href;
+                 let pageNum = Number(elements[i].value) -1;
+                 url = addOrUpdateParam(url,"pageNum",pageNum.toString());
+                 window.location.href = url;
+             });
     }
 </script>
 </body>

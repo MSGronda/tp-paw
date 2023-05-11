@@ -438,6 +438,10 @@ public class ReviewJdbcDao implements ReviewDao {
 //            + TABLE_SUB +".id = " + TABLE_REVIEWS + ".idsub WHERE iduser = ?", ReviewJdbcDao::subjectNameRowMapper, userId);
 //
 //    }
+    @Override
+    public int getAllCountSubjectReviews(String subjectId) {
+        return jdbcTemplate.queryForObject("SELECT COUNT(*) FROM " + TABLE_REVIEWS + " WHERE idsub = " + subjectId + "::text",Integer.class);
+    }
 
     @Override
     public List<Review> getAllSubjectReviewsWithUsername(String subjectId, Map<String,String> params) {

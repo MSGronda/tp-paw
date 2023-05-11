@@ -75,6 +75,7 @@ public class SubjectController {
         }
 
         final List<Professor> professors = professorService.getAllBySubject(id);
+        final int totalPages = reviewService.getAllCountSubjectReviews(id);
         final List<Review> reviews = reviewService.getAllSubjectReviewsWithUsername(id,param);
         final Boolean didReview = reviewService.didUserReview(reviews, user);
         final List<Subject> prereqs = subjectService.findByIds(new ArrayList<>(subject.getPrerequisites()));
@@ -83,6 +84,7 @@ public class SubjectController {
         final Integer subjectProgress = userService.getUserSubjectProgress(userId,id);
 
         ModelAndView mav = new ModelAndView("subjects/subject_info");
+        mav.addObject("totalPages",totalPages);
         mav.addObject("reviews", reviews);
         mav.addObject("professors", professors);
         mav.addObject("time", stats.getTimeDifficulty());
@@ -98,9 +100,16 @@ public class SubjectController {
         if(param.isEmpty()){
             mav.addObject("order","easy");
             mav.addObject("dir","asc");
+            mav.addObject("actualPage",1);
         } else {
             mav.addObject("order",param.get("order"));
             mav.addObject("dir",param.get("dir"));
+            if(!param.getOrDefault("pageNum","0").matches("[0-9]+")){
+                mav.addObject("actualPage",1);
+            } else {
+                int actualPage = Integer.parseInt(param.getOrDefault("pageNum","0")) + 1;
+                mav.addObject("actualPage",actualPage);
+            }
         }
         return mav;
     }
