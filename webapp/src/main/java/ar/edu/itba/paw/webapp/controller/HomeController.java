@@ -79,7 +79,7 @@ public class HomeController {
         long userId;
         if(!aus.isAuthenticated()) {
             userId = -1;
-            LOGGER.warn("User is not authenticated");
+            LOGGER.info("User is not authenticated");
         } else {
             userId = aus.getCurrentUser().getId();
         }
