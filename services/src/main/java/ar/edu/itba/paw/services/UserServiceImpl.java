@@ -15,6 +15,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.ResourceUtils;
 
 import java.io.File;
@@ -56,6 +57,7 @@ public class UserServiceImpl implements UserService {
         return userDao.getAll();
     }
 
+    @Transactional
     @Override
     public User create(User.UserBuilder userBuilder, byte[] profilePic) throws UserEmailAlreadyTakenException {
         long imageId = imageDao.insertAndReturnKey(profilePic);
@@ -72,6 +74,7 @@ public class UserServiceImpl implements UserService {
 //        return userDao.create(new User.UserBuilder(userBuilder.getEmail(), passwordEncoder.encode(userBuilder.getPassword()), userBuilder.getUsername()));
     }
 
+    @Transactional
     @Override
     public User create(User.UserBuilder userBuilder) throws UserEmailAlreadyTakenException, IOException {
         File file = ResourceUtils.getFile("classpath:images/default_user.png");
@@ -80,6 +83,7 @@ public class UserServiceImpl implements UserService {
         return create(userBuilder, defaultImg);
     }
 
+    @Transactional
     @Override
     public void updateProfilePicture(User user, byte[] image){
         if(image.length > MAX_IMAGE_SIZE){
@@ -106,16 +110,19 @@ public class UserServiceImpl implements UserService {
         return userDao.getUserAllSubjectProgress(id);
     }
 
+    @Transactional
     @Override
     public Integer deleteUserProgressForSubject(Long id, String idSub){
         return userDao.deleteUserProgressForSubject(id,idSub);
     }
 
+    @Transactional
     @Override
     public Integer updateSubjectProgress(Long id, String idSub, Integer newProgress) {
         return userDao.updateSubjectProgress(id,idSub,newProgress);
     }
 
+    @Transactional
     @Override
     public void changePassword(Long userId, String password, String oldPassword, String userOldPassword) throws OldPasswordDoesNotMatchException {
 
@@ -126,6 +133,7 @@ public class UserServiceImpl implements UserService {
         userDao.changePassword(userId, passwordEncoder.encode(password));
     }
 
+    @Transactional
     @Override
     public void editProfile(Long userId, String username) {
         userDao.editProfile(userId, username);
@@ -164,6 +172,7 @@ public class UserServiceImpl implements UserService {
         return recDao.findUserIdByToken(token).isPresent();
     }
 
+    @Transactional
     @Override
     public void recoverPassword(String token, String newPassword) throws InvalidTokenException {
         Optional<Long> optUserId = recDao.findUserIdByToken(token);

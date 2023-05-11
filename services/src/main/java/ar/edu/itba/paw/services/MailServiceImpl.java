@@ -7,6 +7,7 @@ import org.springframework.core.env.Environment;
 import org.springframework.mail.MailException;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 import org.thymeleaf.context.Context;
 import org.thymeleaf.spring4.SpringTemplateEngine;
@@ -29,12 +30,14 @@ public class MailServiceImpl implements MailService {
         this.env = env;
     }
 
+    @Async
     @Override
     public void sendMail(String to, String subject, String body) {
         sendMail(to, subject, body, false);
         LOGGER.info("Mail sent to {} successfully", to);
     }
 
+    @Async
     @Override
     public void sendMail(String to, String subject, String template, Map<String, Object> model) throws MailException {
         final Context ctx = new Context();

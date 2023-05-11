@@ -4,6 +4,7 @@ import ar.edu.itba.paw.models.Subject;
 import ar.edu.itba.paw.persistence.SubjectDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
 import java.util.regex.Pattern;
@@ -117,8 +118,7 @@ public class SubjectServiceImpl implements SubjectService {
     }
 
 
-
-
+    @Transactional
     @Override
     public Subject create(String id, String name, String depto, Set<String> idCorrelativas, Set<Long> idProfesores, Set<Long> idCarreras, Integer creditos){
         return subjectDao.create(id, name, depto, idCorrelativas, idProfesores, idCarreras, creditos);

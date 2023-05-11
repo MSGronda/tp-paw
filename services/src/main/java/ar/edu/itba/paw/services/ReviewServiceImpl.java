@@ -5,8 +5,11 @@ import ar.edu.itba.paw.models.ReviewStatistic;
 import ar.edu.itba.paw.models.Subject;
 import ar.edu.itba.paw.models.User;
 import ar.edu.itba.paw.persistence.ReviewDao;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.SQLException;
 import java.util.*;
@@ -68,6 +71,7 @@ public class ReviewServiceImpl implements ReviewService {
         return reviewDao.getAllBySubject(idsub);
     }
 
+    @Transactional
     public void recalculateStatistics(){
         reviewDao.recalculateStatistics();
     }
@@ -103,18 +107,20 @@ public class ReviewServiceImpl implements ReviewService {
         return reviewDao.getReviewStatBySubjectList(idSubs);
     }
 
+    @Transactional
     @Override
     public Review create(Boolean anonymous,Integer easy, Integer timeDemanding, String text,String subjectId,long userId) throws SQLException {
         return reviewDao.create(anonymous,easy, timeDemanding, text, subjectId, userId);
     }
-
+    @Transactional
     @Override
     public Integer deleteReviewVoteByReviewId(Long idReview) {
         return reviewDao.deleteReviewVoteByReviewId(idReview);
     }
 
 
-    // vote created: 1, -1 vote updated:
+    // vote created: 1, 2 vote updated:
+    @Transactional
     @Override
     public Integer voteReview(Long idUser, Long idReview, int vote) {
 
@@ -128,6 +134,7 @@ public class ReviewServiceImpl implements ReviewService {
         reviewDao.voteReview(idUser,idReview,vote);
         return VoteCreated;
     }
+
     @Override
     public Map<Long,Integer> userReviewVoteByIdUser(Long idUser){
         return reviewDao.userReviewVoteByIdUser(idUser);
@@ -154,39 +161,34 @@ public class ReviewServiceImpl implements ReviewService {
         return reviewDao.didUserReviewDB(subjectId, userId);
     }
 
+    @Transactional
     @Override
     public void update(Review review){
         reviewDao.update(review);
     }
 
+    @Transactional
     @Override
     public void updateReviewStatistics( Integer easyBefore, Integer timeDemandingBefore, Review review){
         reviewDao.updateReviewStatistics(easyBefore, timeDemandingBefore, review);
     }
 
+    @Transactional
     @Override
     public void delete(Review review){
         reviewDao.delete(review.getId());
     }
 
+    @Transactional
     @Override
     public void deleteReviewStatistics(Review review) {
         reviewDao.deleteReviewStatistics(review);
     }
 
-    //    @Override
+    @Transactional
     @Override
     public Integer deleteReviewVote(Long idUser, Long idReview){
         return reviewDao.deleteReviewVote(idUser,idReview);
     }
 
-//    @Override
-//    public List<Review> getCompleteReviewsBySubjectId(String idSub) {
-//        return reviewDao.getCompleteReviewsBySubjectId(idSub);
-//    }
-//
-//    @Override
-//    public List<Review> getCompleteReviewsByUserId(Long idUser) {
-//        return reviewDao.getCompleteReviewsByUserId(idUser);
-//    }
 }
