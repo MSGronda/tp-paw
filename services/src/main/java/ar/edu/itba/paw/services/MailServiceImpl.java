@@ -3,6 +3,7 @@ package ar.edu.itba.paw.services;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
 import org.springframework.mail.MailException;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
@@ -16,14 +17,16 @@ import java.util.Map;
 
 @Component
 public class MailServiceImpl implements MailService {
+    private final Environment env;
     private final JavaMailSender mailSender;
     private final SpringTemplateEngine templateEngine;
     private static final Logger LOGGER = LoggerFactory.getLogger(MailServiceImpl.class);
 
     @Autowired
-    public MailServiceImpl(JavaMailSender mailSender, SpringTemplateEngine templateEngine) {
+    public MailServiceImpl(JavaMailSender mailSender, SpringTemplateEngine templateEngine, Environment env) {
         this.mailSender = mailSender;
         this.templateEngine = templateEngine;
+        this.env = env;
     }
 
     @Override
@@ -48,6 +51,7 @@ public class MailServiceImpl implements MailService {
         MimeMessageHelper helper = new MimeMessageHelper(mimeMsg, "utf-8");
 
         try {
+            helper.setFrom(env.getRequiredProperty("mail.username"));
             helper.setTo(to);
             helper.setSubject(subject);
             helper.setText(body, html);
