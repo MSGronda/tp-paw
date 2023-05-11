@@ -47,7 +47,7 @@ public class RecoveryJdbcDao implements RecoveryDao {
                         "ON CONFLICT(userid) DO UPDATE SET token = excluded.token",
                 token, userId
         );
-        LOGGER.info("Created recovery password token {} for user {}",token, userId);
+        LOGGER.info("Created recovery password token for user {}", userId);
     }
 
     @Override

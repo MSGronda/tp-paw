@@ -388,6 +388,7 @@ public class ReviewJdbcDao implements ReviewDao {
 
     @Override
     public Integer updateVoteOnReview(Long idUser, Long idReview, int vote){
+        LOGGER.info("Updated vote on review {} with value {} for user {}", idReview, vote, idUser);
         return jdbcTemplate.update("UPDATE " + TABLE_REVIEW_VOTE + " SET vote = ? WHERE idreview = ? AND iduser = ?",
                 vote,idReview,idUser);
     }
@@ -420,24 +421,13 @@ public class ReviewJdbcDao implements ReviewDao {
 
 
    // - - - - - - Review with subject name - - - - - -
-//    @Override
-//    public List<Review> getAllUserReviewsWithSubjectName(Long userId) {
-//        return jdbcTemplate.query("SELECT * FROM " + TABLE_SUB +" FULL JOIN " + TABLE_REVIEWS + " ON "
-//            + TABLE_SUB +".id = " + TABLE_REVIEWS + ".idsub WHERE iduser = ?", ReviewJdbcDao::subjectNameRowMapper, userId);
-//
-//    }
+
    @Override
    public List<Review> getAllUserReviewsWithSubjectName(Long userId) {
        return jdbcTemplate.query(completeReviewSqlSubjectName("WHERE r.iduser = ?"), ReviewJdbcDao::subjectNameRowMapper, userId);
 
    }
 
-//    @Override
-//    public List<Review> getAllSubjectReviewsWithUsername(String subjectId, Long userId) {
-//        return jdbcTemplate.query("SELECT * FROM " + TABLE_SUB +" FULL JOIN " + TABLE_REVIEWS + " ON "
-//            + TABLE_SUB +".id = " + TABLE_REVIEWS + ".idsub WHERE iduser = ?", ReviewJdbcDao::subjectNameRowMapper, userId);
-//
-//    }
     @Override
     public int getAllCountSubjectReviews(String subjectId) {
         return jdbcTemplate.queryForObject("SELECT COUNT(*) FROM " + TABLE_REVIEWS + " WHERE idsub = " + subjectId + "::text",Integer.class);
@@ -453,11 +443,6 @@ public class ReviewJdbcDao implements ReviewDao {
         return jdbcTemplate.query(completeReviewSqlUserName("WHERE r.idSub = ? ", orderBY,pageNum), ReviewJdbcDao::UsernameRowMapper, subjectId);
     }
 
-//    @Override
-//    public List<Review> getAllSubjectReviewsWithUsername(String subjectId ) {
-//        return jdbcTemplate.query(completeReviewSqlUserName("WHERE r.idSub = ? "), ReviewJdbcDao::UsernameRowMapper, subjectId);
-//
-//    }
 
     private static Review subjectNameRowMapper(ResultSet rs, int rowNum) throws SQLException {
         return new Review(
@@ -490,17 +475,6 @@ public class ReviewJdbcDao implements ReviewDao {
     // - - - - - - - - - - - - - - - - - - - - - - - -
 
     // - - - - - - Review with subject name and upvotes, downvotes - - - - - -
-//    @Override
-//    public List<Review> getCompleteReviewsByUserId(Long idUser) {
-//        return jdbcTemplate.query(completeReviewSql("WHERE r.idUser = ? "), ReviewJdbcDao::completeReviewRowMapper, idUser);
-//    }
-//
-//    @Override
-//    public List<Review> getCompleteReviewsBySubjectId(String idSub) {
-//        return jdbcTemplate.query(completeReviewSql("WHERE r.idSub = ? "), ReviewJdbcDao::completeReviewRowMapper, idSub);
-//    }
-
-
     private String completeReviewSqlSubjectName(String where){
         return
                 "SELECT r.id, r.idUser, r.idSub, r.score, r.easy, r.timeDemanding, r.revText, r.useranonymous, s.subname, " +

@@ -97,7 +97,6 @@ public class DegreeJdbcDao implements DegreeDao {
                     num, degId, getSubjectsBySemester(degId, num)
             ));
         }
-        LOGGER.info("Retrieved semesters for degree with id {}", degId);
         return semesters;
     }
 
