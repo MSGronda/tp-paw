@@ -216,13 +216,12 @@
         const subjectClassCards =  createSubjectClassInfo(subjectClasses[subjectNum])
         classList.appendChild(subjectClassCards)
     }
-    
 
+    // set exit class selection action
     document.getElementById('exit-class-selector').addEventListener('click', exitClassSelectionAction);
 
-    // set order by behaviour
-    const creditOb = document.getElementById('credit-orderby');
-    creditOb.addEventListener('click', orderByCreditAction)
+    // set order by action for credits
+    document.getElementById('credit-orderby').addEventListener('click', orderByCreditAction)
 
 </script>
 

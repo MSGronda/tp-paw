@@ -15,15 +15,15 @@ import java.sql.Time;
 import java.util.*;
 
 @Repository
-public class SubjectClassJdbcDao implements SubjectClassDao{
+public class SubjectClassJdbcDao implements SubjectClassDao {
 
     private static final String TABLE_CLASS = "class";
     private static final String TABLE_CLASS_LOC_TIME = "classLocTime";
     private static final String TABLE_CLASS_PROF = "classProfessors";
     private static final String TABLE_PROF = "professors";
+    private static final String TABLE_SUBJECTS = "subjects";
 
     private static final String VIEW_JOIN = "joinedsubjects";
-    private static final String VIEW_CLASS_JOIN = "joinedSubjectClass";
     private static final String USER_SUB_PRG_TABLE = "userSubjectProgress";
 
     private static final String QUERY_JOIN = "SELECT * FROM " + TABLE_CLASS + " NATURAL JOIN " + TABLE_CLASS_LOC_TIME
@@ -32,8 +32,8 @@ public class SubjectClassJdbcDao implements SubjectClassDao{
 
     private static final String COMPLETE_SUB =
             "SELECT *\n" +
-            "FROM " + VIEW_CLASS_JOIN + " AS v1\n" +
-            "WHERE v1.id IN (SELECT v.id\n" +
+            "FROM " + TABLE_SUBJECTS + " AS s LEFT JOIN " + TABLE_CLASS + " AS sc ON s.id = sc.idsub " + " LEFT JOIN " + TABLE_CLASS_LOC_TIME + " AS slt ON s.id = slt.idsub " +
+            "WHERE s.id IN (SELECT v.id\n" +
             "                FROM " + VIEW_JOIN + " AS v\n" +
             "                WHERE v.id NOT IN (SELECT idSub FROM " + USER_SUB_PRG_TABLE + " WHERE idSub = v.id)\n" +
             "                GROUP BY v.id\n" +
@@ -96,7 +96,7 @@ public class SubjectClassJdbcDao implements SubjectClassDao{
         // TODO: check if this is correct
         this.jdbcInsertSubjectClass = new SimpleJdbcInsert(ds)
                 .withTableName(TABLE_CLASS)
-                .usingGeneratedKeyColumns("idSub","idClass");
+                .usingGeneratedKeyColumns("idSub", "idClass");
 
         this.jdbcInsertSubjectClassLocTime = new SimpleJdbcInsert(ds)
                 .withTableName(TABLE_CLASS_LOC_TIME)
@@ -104,9 +104,7 @@ public class SubjectClassJdbcDao implements SubjectClassDao{
 
         jdbcInsertSubjectClassProfessor = new SimpleJdbcInsert(ds)
                 .withTableName(TABLE_CLASS_PROF)
-                .usingGeneratedKeyColumns("idSub","idClass","idProf");
-
-        jdbcTemplate.execute("REFRESH MATERIALIZED VIEW " + VIEW_CLASS_JOIN);
+                .usingGeneratedKeyColumns("idSub", "idClass", "idProf");
     }
 
     @Override
