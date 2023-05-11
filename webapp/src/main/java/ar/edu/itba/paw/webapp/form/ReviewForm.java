@@ -17,6 +17,7 @@ public class ReviewForm {
     @NotNull
     private Integer timeDemanding;
 
+    @NotNull
     private Boolean anonymous;
 
     public String getText() {
