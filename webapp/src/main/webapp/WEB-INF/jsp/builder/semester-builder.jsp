@@ -216,59 +216,13 @@
         const subjectClassCards =  createSubjectClassInfo(subjectClasses[subjectNum])
         classList.appendChild(subjectClassCards)
     }
+    
 
-    function rebuildSubjectCards(){
-        // remove all subjects
-        const subjectList = document.getElementById('subject-list')
-        while(subjectList.firstChild){
-            subjectList.removeChild(subjectList.lastChild)
-        }
-        // re add all subjects
-        for(let subjectNum in subjectClasses) {
-            const card = createSubjectCard(subjectList, subjectClasses[subjectNum]);
-            subjectList.appendChild(card)
-        }
-    }
-
-    document.getElementById('exit-class-selector').addEventListener('click', function() {
-        // go to class selection
-        switchSelector('none','flex')
-        hideAllClasses();
-    });
+    document.getElementById('exit-class-selector').addEventListener('click', exitClassSelectionAction);
 
     // set order by behaviour
     const creditOb = document.getElementById('credit-orderby');
-    creditOb.addEventListener('click', function () {
-        let sorter;
-        if(currentOrder === 'creditsDesc'){
-            sorter = sortByCreditsAsc
-            document.getElementById('credits-down').style.display = 'none'
-            document.getElementById('credits-up').style.display = 'flex'
-            currentOrder = 'creditsAsc'
-        }
-        else{
-            sorter = sortByCreditsDesc
-            document.getElementById('credits-down').style.display = 'flex'
-            document.getElementById('credits-up').style.display = 'none'
-            currentOrder = 'creditsDesc'
-        }
-        subjectClasses.sort(sorter)
-        const subjectList = document.getElementById('subject-list');
-        let elements = document.createDocumentFragment();
-
-        for(let subjectNum in subjectClasses){
-            const subjectClone = document.getElementById('subject-card-' + subjectClasses[subjectNum].id).cloneNode(true);
-
-            subjectClone.children[0].children[1].children[0].addEventListener('click', function(){
-                console.log('aaaaaa')
-            })
-
-            elements.appendChild(subjectClone);
-        }
-
-        subjectList.innerHTML = null;
-        subjectList.appendChild(elements);
-    })
+    creditOb.addEventListener('click', orderByCreditAction)
 
 </script>
 

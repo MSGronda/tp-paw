@@ -4,7 +4,42 @@ function sortByCreditsDesc(a,b){
 function sortByCreditsAsc(a,b){
     return  a.credits-b.credits
 }
+function orderByCreditAction() {
+    let sorter;
+    if(currentOrder === 'creditsDesc'){
+        sorter = sortByCreditsAsc
+        document.getElementById('credits-down').style.display = 'none'
+        document.getElementById('credits-up').style.display = 'flex'
+        currentOrder = 'creditsAsc'
+    }
+    else{
+        sorter = sortByCreditsDesc
+        document.getElementById('credits-down').style.display = 'flex'
+        document.getElementById('credits-up').style.display = 'none'
+        currentOrder = 'creditsDesc'
+    }
+    subjectClasses.sort(sorter)
+    const subjectList = document.getElementById('subject-list');
+    let elements = document.createDocumentFragment();
 
+    for(let subjectNum in subjectClasses){
+        // shallow clone the element
+        const subjectClone = document.getElementById('subject-card-' + subjectClasses[subjectNum].id).cloneNode(true);
+
+        // we must re add event listener functions as they are lost during the cloning
+        subjectClone.children[0].children[1].children[0].addEventListener('click',
+            createSubjectSelectAction(subjectClasses[subjectNum].id)
+        )
+        subjectClone.children[0].children[1].children[1].addEventListener('click',
+            createSubjectDeselectAction(subjectClasses[subjectNum].id)
+        )
+
+        elements.appendChild(subjectClone);
+    }
+
+    subjectList.innerHTML = null;
+    subjectList.appendChild(elements);
+}
 function switchSelector(chooseClassVisibility, chooseSubjectVisibility){
     document.getElementById('choose-class').style.display = chooseClassVisibility;
     document.getElementById('choose-subject').style.display = chooseSubjectVisibility;
@@ -79,6 +114,28 @@ function enableCompatibleSubjects(){
     }
 }
 
+function createSubjectDeselectAction(subId){
+    return function() {
+        // modify schedule table
+        schedule.removeClass(subId)
+
+        // enable subjects that can are now compatible after removing this subject
+        enableCompatibleSubjects()
+
+        // disable deselect button
+        document.getElementById('select-'+ subId).style.display = 'block'
+        document.getElementById('deselect-subject-'+ subId).style.display = 'none'
+        document.getElementById('selected-'+ subId).style.display = 'none'
+    }
+}
+
+function createSubjectSelectAction(subId){
+    return function() {
+        // go to class selection
+        switchSelector('flex','none')
+        document.getElementById('classes-' + subId).style.display = 'flex';
+    }
+}
 
 function createSubjectCard(subjectList, subject){
     const card = document.createElement('sl-card');
@@ -109,11 +166,7 @@ function createSubjectCard(subjectList, subject){
     selectButton.setAttribute('circle', '');
     column2.appendChild(selectButton);
     selectButton.addEventListener('click',
-        function() {
-            // go to class selection
-            switchSelector('flex','none')
-            document.getElementById('classes-' + subject.id).style.display = 'flex';
-        }
+        createSubjectSelectAction(subject.id)
     );
 
     const selectIcon = document.createElement('sl-icon');
@@ -130,21 +183,8 @@ function createSubjectCard(subjectList, subject){
     deselectButton.setAttribute('circle', '');
 
     deselectButton.addEventListener('click',
-        function() {
-            // modify schedule table
-            schedule.removeClass(subject.id)
-
-            // enable subjects that can are now compatible after removing this subject
-            enableCompatibleSubjects()
-
-            // disable deselect button
-            document.getElementById('select-'+ subject.id).style.display = 'block'
-            document.getElementById('deselect-subject-'+ subject.id).style.display = 'none'
-            document.getElementById('selected-'+ subject.id).style.display = 'none'
-        }
+        createSubjectDeselectAction(subject.id)
     );
-
-
 
     column2.appendChild(deselectButton);
 
@@ -328,4 +368,10 @@ function createSubjectClassInfo(subject) {
     container.appendChild(classInfoColumn);
 
     return container;
+}
+
+function exitClassSelectionAction(){
+    // go to class selection
+    switchSelector('none','flex')
+    hideAllClasses();
 }
