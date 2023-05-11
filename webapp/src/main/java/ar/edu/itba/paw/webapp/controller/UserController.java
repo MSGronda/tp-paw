@@ -6,23 +6,23 @@ import ar.edu.itba.paw.services.exceptions.InvalidTokenException;
 import ar.edu.itba.paw.services.exceptions.OldPasswordDoesNotMatchException;
 import ar.edu.itba.paw.services.exceptions.UserEmailAlreadyTakenException;
 import ar.edu.itba.paw.services.exceptions.UserEmailNotFoundException;
-import ar.edu.itba.paw.webapp.auth.UniAuthUser;
+import ar.edu.itba.paw.webapp.auth.UniUserDetailsService;
+import ar.edu.itba.paw.webapp.exceptions.RoleNotFoundException;
 import ar.edu.itba.paw.webapp.exceptions.UserNotFoundException;
 import ar.edu.itba.paw.webapp.form.*;
 import ar.edu.itba.paw.webapp.form.EditUserDataForm;
 import ar.edu.itba.paw.webapp.form.EditUserPasswordForm;
 import ar.edu.itba.paw.webapp.form.RecoverPasswordForm;
 import ar.edu.itba.paw.webapp.form.UserForm;
-import com.sun.org.apache.xpath.internal.operations.Mod;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
-import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.ResourceUtils;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.multipart.commons.CommonsMultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
@@ -43,14 +43,20 @@ public class UserController {
 
     private final AuthUserService authUserService;
 
+    private final RolesService rolesService;
+
+    private final UniUserDetailsService uniUserDetailsService;
+
 
     @Autowired
-    public UserController(UserService userService, ReviewService reviewService, MailService mailService, DegreeService degreeService, AuthUserService authUserService) {
+    public UserController(UserService userService, ReviewService reviewService, MailService mailService, DegreeService degreeService, AuthUserService authUserService, RolesService rolesService, UniUserDetailsService uniUserDetailsService) {
         this.userService = userService;
         this.reviewService = reviewService;
         this.mailService = mailService;
         this.degreeService = degreeService;
         this.authUserService = authUserService;
+        this.rolesService = rolesService;
+        this.uniUserDetailsService = uniUserDetailsService;
     }
 
     @RequestMapping("/user/{id:\\d+}")
@@ -81,6 +87,10 @@ public class UserController {
         final List<Review> userReviews = reviewService.getAllUserReviewsWithSubjectName(user.getId());
         final Map<Long, Integer> userVotes = reviewService.userReviewVoteByIdUser(user.getId());
 
+        UserDetails userDetails = uniUserDetailsService.loadUserByUsername(user.getEmail());
+        Boolean isEditor = userDetails.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_EDITOR"));
+
+        mav.addObject("editor", isEditor);
         mav.addObject("user", user);
         mav.addObject("reviews", userReviews);
         mav.addObject("userVotes",userVotes);
@@ -106,7 +116,12 @@ public class UserController {
             mav.addObject("EmailAlreadyUsed", true);
             return mav;
         }
-
+        Optional<Roles> maybeRole = rolesService.findByName("USER");
+        if(!maybeRole.isPresent()){
+            throw new RoleNotFoundException();
+        }
+        Roles role = maybeRole.get();
+        userService.addIdToUserRoles(role.getId(), user.getId());
         return new ModelAndView("redirect:/login");
     }
 
@@ -160,6 +175,19 @@ public class UserController {
     @RequestMapping(value = "/profile/editpassword", method = { RequestMethod.GET })
     public ModelAndView editPasswordForm(@ModelAttribute ("EditUserPasswordForm") final EditUserPasswordForm editUserPasswordForm) {
         return new ModelAndView("user/editUserPassword");
+    }
+
+    @RequestMapping(value = "user/{id:\\d+}/moderator")
+    public ModelAndView makeModerator(@PathVariable long id) {
+        Optional<Roles> maybeRole = rolesService.findByName("EDITOR");
+        if(!maybeRole.isPresent()){
+            throw new RoleNotFoundException();
+        }
+        Roles role = maybeRole.get();
+
+        if(userService.updateUserRoles(role.getId(), id) == 0)
+            return new ModelAndView("redirect:/error");
+        return new ModelAndView("redirect:/user/" + id);
     }
 
     @RequestMapping(value = "/recover", method = { RequestMethod.POST })

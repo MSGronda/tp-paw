@@ -21,7 +21,7 @@
       width: 40rem;
     }
     h1 {
-      font-size: 36px;
+      font-size: 2rem;
       font-weight: bold;
     }
     .title {
@@ -31,17 +31,10 @@
       margin-left: 2rem;
       width: 100%;
     }
-    .edit-button {
-      display: flex;
-      justify-content: space-around;
-    }
-    h4{
+
+    h4 {
       display: flex;
       justify-content: center;
-    }
-    .logout-button{
-      display: flex;
-      align-items: center;
     }
 
     #more {
@@ -56,27 +49,22 @@
       display: flex;
       flex-direction: row;
     }
-    .table-area{
-      width: 100%;
-      padding-bottom: 2rem;
-    }
-    .icon-area{
-      width: 80%;
-      display: flex;
-      justify-content: end;
-    }
-    sl-icon{
+    sl-icon {
       padding-top: 0.5rem;
     }
-    .image-container{
+    .image-container {
       position: relative;
       display: inline-block;
     }
-    .edit-picture{
-      position: absolute;
-      bottom: 0;
-      right: 0;
-      padding-bottom: 0.65rem;
+    .editor-text {
+      margin-left: 1rem;
+      color: #4e90e2;
+      font-weight: normal;
+    }
+    .moderator-tag {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
     }
     <jsp:include page="../components/table_style.jsp"/>
   </style>
@@ -90,7 +78,19 @@
       <img class="profile-image" src="<c:url value="/image/${user.imageId}"/>" alt="${pic}" >
     </div>
     <div class="title">
-      <h1><c:out value="${user.username}"/></h1>
+      <div class="moderator-tag">
+        <h1><c:out value="${user.username}"/></h1>
+        <c:if test="${editor}">
+          <h1 class="editor-text"> <spring:message code="profile.editor" /> </h1>
+        </c:if>
+      </div>
+      <div class="moderator-tag">
+        <c:if test="${!editor}">
+          <sl-button variant="primary" outline href="<c:out value="/user/${user.id}/moderator"/>"><spring:message code="profile.make_moderator" /> </sl-button>
+        </c:if>
+      </div>
+    </div>
+    <div>
     </div>
   </div>
 

@@ -1,5 +1,6 @@
 package ar.edu.itba.paw.webapp.auth;
 
+import ar.edu.itba.paw.models.Roles;
 import ar.edu.itba.paw.models.User;
 import ar.edu.itba.paw.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,6 +13,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.List;
 import java.util.regex.Pattern;
 
 @Component
@@ -39,8 +41,11 @@ public class UniUserDetailsService implements UserDetailsService {
 //        }
 
         //TODO: implement logic to grant roles required authorities
+
+        final List<Roles> userRoles = us.getUserRoles(user.getId());
+
         final Collection<GrantedAuthority> authorities = new HashSet<>();
-        authorities.add(new SimpleGrantedAuthority("ROLE_EDITOR"));
+        userRoles.forEach(roles -> authorities.add(new SimpleGrantedAuthority(String.format("ROLE_%s", roles.getName()))));
         return new UniAuthUser(email, user.getPassword(), authorities);
     }
 }

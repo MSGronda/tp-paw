@@ -2,13 +2,13 @@ package ar.edu.itba.paw.models;
 
 import java.util.Map;
 import java.util.Objects;
-import java.util.Optional;
 
 public class User {
     private final long id;
     private final String email, password, username;
     private final Long imageId;
     private Map<String, Integer> subjectProgress;
+
 
     public User(UserBuilder builder) {
         this.id = builder.id;
@@ -53,6 +53,7 @@ public class User {
         private long imageId;
         private Map<String, Integer> subjectProgress;
 
+
         public UserBuilder(String email, String password, String username) {
             this.email = email;
             this.password = password;
@@ -82,6 +83,8 @@ public class User {
         public String getEmail(){
             return email;
         }
+
+
         public UserBuilder username(String username) {
             this.username = username;
             return this;
@@ -89,6 +92,8 @@ public class User {
         public String getUsername(){
             return username;
         }
+
+
         public UserBuilder password(String password) {
             this.password = password;
             return this;

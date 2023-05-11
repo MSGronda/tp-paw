@@ -1,11 +1,7 @@
 package ar.edu.itba.paw.webapp.controller;
-import ar.edu.itba.paw.models.Degree;
-import ar.edu.itba.paw.models.Review;
-import ar.edu.itba.paw.models.Subject;
-import ar.edu.itba.paw.models.User;
+import ar.edu.itba.paw.models.*;
 import ar.edu.itba.paw.services.*;
-import ar.edu.itba.paw.webapp.auth.UniAuthUser;
-import ar.edu.itba.paw.webapp.exceptions.DegreeNotFoundException;
+import ar.edu.itba.paw.services.exceptions.NoGrantedPermissionException;
 import ar.edu.itba.paw.webapp.exceptions.ReviewNotFoundException;
 import ar.edu.itba.paw.webapp.exceptions.SubjectNotFoundException;
 import ar.edu.itba.paw.webapp.form.ReviewForm;
@@ -13,8 +9,6 @@ import ar.edu.itba.paw.webapp.form.ReviewVoteForm;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.access.method.P;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
@@ -78,7 +72,7 @@ public class ReviewController {
     }
 
     @RequestMapping("review/{subjectId:\\d+\\.\\d+}/delete/{reviewId:\\d+}")
-    public ModelAndView deleteReview(@PathVariable final String subjectId, @PathVariable final Long reviewId){
+    public ModelAndView deleteReview(@PathVariable final String subjectId, @PathVariable final Long reviewId) throws NoGrantedPermissionException {
 
         Optional<Review> maybeReview = reviewService.findById(reviewId);
         if(!maybeReview.isPresent()){
@@ -88,15 +82,24 @@ public class ReviewController {
 
         Review review = maybeReview.get();
 
-        if( authUserService.getCurrentUser().getId() != review.getUserId() ){
-            return new ModelAndView("redirect:/subject/" + subjectId);
+        User user = authUserService.getCurrentUser();
+        Boolean isEditor = authUserService.isCurrentUserEditor();
+
+        try {
+            reviewService.deleteReview(review, user, isEditor);
+        } catch (NoGrantedPermissionException e) {
+            return new ModelAndView("redirect:/review/" + subjectId + "/deletion/false");
         }
 
-        reviewService.deleteReviewVoteByReviewId(reviewId);
-        reviewService.deleteReviewStatistics(review);
-        reviewService.delete(review);
+//        if( authUserService.getCurrentUser().getId() != review.getUserId() ){
+//            return new ModelAndView("redirect:/subject/" + subjectId);
+//        }
+//
+//        reviewService.deleteReviewVoteByReviewId(reviewId);
+//        reviewService.deleteReviewStatistics(review);
+//        reviewService.delete(review);
 
-        return new ModelAndView("redirect:/subject/" + subjectId);
+        return new ModelAndView("redirect:/review/" + subjectId + "/deletion/true");
     }
 
     @RequestMapping(value = "/review/{subjectId:\\d+\\.\\d+}/edit/{reviewId:\\d+}", method = RequestMethod.POST)
@@ -168,6 +171,16 @@ public class ReviewController {
             return "invalid parameters"; // we do not give any information on the inner workings
         }
         return "voted";
+    }
+
+    @RequestMapping("review/{subjectId:\\d+\\.\\d+}/deletion/{successful:(?:true|false)}")
+    public ModelAndView deletionSuccess(@PathVariable final String subjectId, @PathVariable final String successful){
+        ModelAndView mav = new ModelAndView("review/delete_confirmation");
+
+        mav.addObject("subjectId", subjectId);
+        mav.addObject("successful", successful );
+
+        return mav;
     }
 
     @ModelAttribute("degrees")

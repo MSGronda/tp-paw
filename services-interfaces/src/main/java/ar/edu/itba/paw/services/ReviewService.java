@@ -1,9 +1,7 @@
 package ar.edu.itba.paw.services;
 
-import ar.edu.itba.paw.models.Review;
-import ar.edu.itba.paw.models.ReviewStatistic;
-import ar.edu.itba.paw.models.Subject;
-import ar.edu.itba.paw.models.User;
+import ar.edu.itba.paw.models.*;
+import ar.edu.itba.paw.services.exceptions.NoGrantedPermissionException;
 import com.sun.org.apache.xpath.internal.operations.Bool;
 
 import java.sql.SQLException;
@@ -44,6 +42,8 @@ public interface ReviewService extends BaseService<Long, Review> {
     void updateReviewStatistics( Integer easyBefore, Integer timeDemandingBefore, Review review);
 
     void delete(Review review);
+
+    void deleteReview(Review review, User user, Boolean isEditor) throws NoGrantedPermissionException;
 
     void deleteReviewStatistics(Review review);
 }

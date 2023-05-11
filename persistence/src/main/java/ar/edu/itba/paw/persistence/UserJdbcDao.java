@@ -1,6 +1,7 @@
 package ar.edu.itba.paw.persistence;
 
 import ar.edu.itba.paw.models.Image;
+import ar.edu.itba.paw.models.Roles;
 import ar.edu.itba.paw.models.User;
 import ar.edu.itba.paw.persistence.exceptions.UserEmailAlreadyTakenPersistenceException;
 import org.slf4j.Logger;
@@ -9,13 +10,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
-import org.springframework.jdbc.support.SQLErrorCodeSQLExceptionTranslator;
 import org.springframework.stereotype.Repository;
 
 import javax.sql.DataSource;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -28,9 +27,14 @@ public class UserJdbcDao implements UserDao {
     private final SimpleJdbcInsert jdbcUserProgressInsert;
     private final ImageDao imageDao;
 
+    private final SimpleJdbcInsert jdbcUserRolesInsert;
+
     private final String USERS_TABLE = "users";
     private final String USER_SUB_PRG_TABLE = "userSubjectProgress";
     private static final Logger LOGGER = LoggerFactory.getLogger(UserJdbcDao.class);
+
+    private final String USER_ROLES_TABLE = "userroles";
+    private final String ROLES_TABLE = "roles";
 
     @Autowired
     public UserJdbcDao(final DataSource ds, final ImageDao imageDao) {
@@ -41,6 +45,8 @@ public class UserJdbcDao implements UserDao {
             .usingGeneratedKeyColumns("id");
         this.jdbcUserProgressInsert = new SimpleJdbcInsert(ds)
                 .withTableName(USER_SUB_PRG_TABLE);
+        this.jdbcUserRolesInsert = new SimpleJdbcInsert(ds)
+                .withTableName(USER_ROLES_TABLE);
     }
 
 
@@ -179,6 +185,35 @@ public class UserJdbcDao implements UserDao {
         else
             LOGGER.warn("Username edition for user {} failed", userId);
     }
+
+    //-------------------------------------------------------------------------------------
+
+    //------------------------ User Roles ---------------------------------------------------
+    @Override
+    public List<Roles> getUserRoles(Long userId){
+        return jdbcTemplate.query("SELECT id,name FROM " + ROLES_TABLE + " FULL JOIN " + USER_ROLES_TABLE + " ON id = roleId WHERE userId = ?", UserJdbcDao::rolesRowMapper, userId);
+    }
+
+    @Override
+    public Integer addIdToUserRoles(Long roleId, Long userId){
+        Map<String, Long> data = new HashMap<>();
+        data.put("roleId", roleId);
+        data.put("userId", userId);
+        return jdbcUserRolesInsert.execute(data);
+    }
+
+    private static Roles rolesRowMapper(ResultSet rs, int rowNum) throws SQLException {
+        return new Roles (
+                rs.getLong("id"),
+                rs.getString("name")
+        );
+    }
+
+    public Integer updateUserRoles(Long roleId, Long userId) {
+        return jdbcTemplate.update("UPDATE " + USER_ROLES_TABLE + " SET roleid = ? WHERE userid = ?", roleId, userId);
+    }
+
+    //---------------------------------------------------------------------------------------
 
     private static User rowMapper(ResultSet rs, int rowNum) throws SQLException {
         return new User(

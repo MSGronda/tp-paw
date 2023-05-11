@@ -1,12 +1,10 @@
 package ar.edu.itba.paw.services;
 
-import ar.edu.itba.paw.models.Review;
-import ar.edu.itba.paw.models.ReviewStatistic;
-import ar.edu.itba.paw.models.Subject;
-import ar.edu.itba.paw.models.User;
+import ar.edu.itba.paw.models.*;
 import ar.edu.itba.paw.persistence.ReviewDao;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import ar.edu.itba.paw.services.exceptions.NoGrantedPermissionException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,6 +16,8 @@ import java.util.*;
 public class ReviewServiceImpl implements ReviewService {
     private final ReviewDao reviewDao;
 
+    private final AuthUserService authUserService;
+
     private static final List<String> validOrders = Arrays.asList("easy", "timedemanding");
 
     private static final List<String> validDir = Arrays.asList("asc", "desc");
@@ -26,8 +26,9 @@ public class ReviewServiceImpl implements ReviewService {
     private static final Integer VoteCreated = 2;
 
     @Autowired
-    public ReviewServiceImpl(ReviewDao reviewDao) {
+    public ReviewServiceImpl(ReviewDao reviewDao, AuthUserService authUserService) {
         this.reviewDao = reviewDao;
+        this.authUserService = authUserService;
     }
 
     @Override
@@ -180,6 +181,22 @@ public class ReviewServiceImpl implements ReviewService {
     }
 
     @Transactional
+    @Override
+    public void deleteReview(Review review, User user, Boolean isEditor) throws NoGrantedPermissionException {
+        if( !checkAuth(review.getUserId(), user.getId(), isEditor))
+            throw new NoGrantedPermissionException();
+
+        deleteReviewVoteByReviewId(review.getId());
+        deleteReviewStatistics(review);
+        delete(review);
+    }
+
+    private Boolean checkAuth(Long reviewUserId, Long userId, Boolean isEditor) {
+        if( !reviewUserId.equals(userId) && !isEditor )
+            return false;
+        return true;
+    }
+
     @Override
     public void deleteReviewStatistics(Review review) {
         reviewDao.deleteReviewStatistics(review);
