@@ -410,7 +410,7 @@
 
     </c:forEach>
       <div>
-          <sl-radio-group name="a" value="${actualPage}">
+          <sl-radio-group name="pagination-radio" value="${actualPage}">
               <sl-radio-button id="prevPage" value="-1">
                   <sl-icon slot="prefix" name="chevron-left"></sl-icon>
                   <spring:message code="subject.previousPage" />
@@ -530,7 +530,7 @@
         }
     }
 
-    var prevButton = document.getElementById("prevPage");
+    let prevButton = document.getElementById("prevPage");
     prevButton.addEventListener('click',
         function(event) {
             event.preventDefault();
@@ -543,17 +543,21 @@
             }
             window.location.href = url;
         });
-    var nextButton = document.getElementById("nextPage");
+    let nextButton = document.getElementById("nextPage");
     nextButton.addEventListener('click',
         function(event) {
             event.preventDefault();
             let url = window.location.href;
             let pageNum = Number(urlParams.get('pageNum')) +1;
-            url = addOrUpdateParam(url,"pageNum",pageNum.toString());
+            if(pageNum >= 0){
+                url = addOrUpdateParam(url,"pageNum",pageNum.toString());
+            } else {
+                url = addOrUpdateParam(url,"pageNum","0");
+            }
             window.location.href = url;
         });
 
-    var elements = document.getElementsByClassName("pageNumButton");
+    let elements = document.getElementsByClassName("pageNumButton");
     for (let i = 0, len = elements.length; i < len; i++) {
          elements[i].addEventListener('click',
              function(event) {
