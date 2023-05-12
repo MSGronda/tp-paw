@@ -37,6 +37,9 @@
       .error{
           color: red;
       }
+      h3 {
+        margin-top: 0;
+      }
   </style>
 </head>
 <jsp:include page="../../components/navbar.jsp" />
@@ -45,12 +48,14 @@
 
 <main>
   <div class="title container-small">
-    <h1><spring:message code="recover.edit.title"/></h1>
+    <h1><spring:message code="recover.title"/></h1>
   </div>
   <div class="container-small" >
     <c:url var="formUrl" value="/recover/${token}" />
     <form:form modelAttribute="RecoverPasswordEditForm" action="${formUrl}" method="post">
       <sl-card class="card-basic">
+        <h3><spring:message code="recover.edit.title"/></h3>
+
         <form:errors path="password" cssClass="error" element="p"/>
         <spring:message code="profile.newpassword.placeholder" var="PasswordPlaceholder"/>
         <sl-input name="password" type="password" path="password" value="${RecoverPasswordEditForm.password}" placeholder="${PasswordPlaceholder}" password-toggle></sl-input>

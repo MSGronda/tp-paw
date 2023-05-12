@@ -13,26 +13,35 @@
         .card-basic {
             width: 100%;
         }
-        .error{
+        .error {
             color: red;
         }
-        .submit-button{
+        .submit-button {
             display: flex;
             justify-content: center;
+        }
+        h5 {
+            font-weight: normal;
+            font-size: 1rem;
+        }
+        h3 {
+            margin-top: 0;
         }
     </style>
 </head>
 <body>
 <jsp:include page="../../components/navbar.jsp" />
 
-<main class="container-50">
-    <div>
+<main>
+    <div class="container-small">
         <h1><spring:message code="recover.title"/></h1>
     </div>
-    <div>
+    <div class="container-small">
         <c:url value="/recover" var="sendEmail"/>
         <form:form modelAttribute="RecoverPasswordForm" action="${sendEmail}" method="post">
             <sl-card class="card-basic">
+                <h3><spring:message code="recover.subtitle"/></h3>
+                <h5><spring:message code="recover.description"/></h5>
                 <c:if test="${invalidToken}">
                     <p class="error"><spring:message code="recover.invalidToken"/></p>
                 </c:if>
@@ -44,7 +53,7 @@
                 <br/>
                 <br/>
                 <div class="submit-button">
-                    <sl-button type="submit" variant="success" outline><spring:message code="recover.sendEmail"/></sl-button>
+                    <sl-button type="submit" variant="primary" outline><spring:message code="recover.sendEmail"/></sl-button>
                 </div>
             </sl-card>
         </form:form>
