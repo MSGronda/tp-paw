@@ -46,13 +46,19 @@ class Schedule {
         this.currentColor = (this.currentColor + 1) % this.colors.length
     }
 
+    getTime(time){
+        if(time === '')
+            return -1
+        return (parseInt(time.split(":")[0])-8)*2 + (parseInt(time.split(":")[1]) === 30 ? 1 : 0);
+    }
+
     getArrayPos(classTime){
         const day = parseInt(classTime.day)
         const start = classTime.start
         const end = classTime.end
 
-        const rowStart = (parseInt(start.split(":")[0])-8)*2 + (parseInt(start.split(":")[1]) === 30 ? 1 : 0)
-        const rowEnd = (parseInt(end.split(":")[0])-8)*2 + (parseInt(end.split(":")[1]) === 30 ? 1 : 0)
+        const rowStart = this.getTime(start)
+        const rowEnd = this.getTime(end)
         return {'rowStart': rowStart, 'rowEnd': rowEnd, 'column':day};
     }
 
@@ -65,6 +71,10 @@ class Schedule {
         // disallow user that has time slot taken
         for(let eventNum in classTimes){
             const arrayPos = this.getArrayPos(classTimes[eventNum])
+
+            if(arrayPos.rowStart === -1 || arrayPos.rowEnd === -1)
+                continue;
+
             for(let i=arrayPos.rowStart; i<arrayPos.rowEnd; i++){
                 if(this.scheduleArray[i][arrayPos.column]!==0){
                     return false;
@@ -124,6 +134,8 @@ class Schedule {
         for(let eventNum in classTimes){
             const arrayPos = this.getArrayPos(classTimes[eventNum])
 
+            if(arrayPos.rowStart === -1 || arrayPos.rowEnd === -1)
+                continue;
 
             this.addToCalendarHtml(arrayPos.rowStart, arrayPos.rowEnd, arrayPos.column, subjectId, subjectName, classTimes[eventNum])
             this.addToCalendarArray(arrayPos.rowStart, arrayPos.rowEnd, arrayPos.column, subjectId)
@@ -153,6 +165,10 @@ class Schedule {
     removeClass(subjectId){
         for(let elem in this.chosenSubjectMap[subjectId]){
             const arrayPos = this.getArrayPos(this.chosenSubjectMap[subjectId][elem])
+
+            if(arrayPos.rowStart === -1 || arrayPos.rowEnd === -1)
+                continue;
+
             this.removeFromCalendarHtml(arrayPos.rowStart,arrayPos.rowEnd,arrayPos.column)
 
             this.removeFromCalendarArray(arrayPos.rowStart,arrayPos.rowEnd,arrayPos.column)

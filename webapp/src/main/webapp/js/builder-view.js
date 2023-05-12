@@ -222,7 +222,7 @@ function createClassInfoTable(classTime) {
     const dayData = document.createElement("td");
 
     // check if class has a day
-    if (classTime.day !== 0) {
+    if (classTime.day !== '0') {
         dayData.innerHTML = daysOfWeek[classTime.day-1]
     } else {
         dayData.innerHTML = "No day";
@@ -235,9 +235,16 @@ function createClassInfoTable(classTime) {
     const timeHeader = document.createElement("th");
     timeHeader.innerHTML = "Time";
     const timeData = document.createElement("td");
-    const start = classTime.start.split(":")[0] + ":" + classTime.start.split(":")[1]
-    const end = classTime.end.split(":")[0] + ":" + classTime.end.split(":")[1]
-    timeData.innerHTML = start + " - " + end;
+    if(classTime.start === '' || classTime.end === ''){
+        timeData.innerHTML = ''
+    }
+    else{
+        const start = classTime.start.split(":")[0] + ":" + classTime.start.split(":")[1]
+        const end = classTime.end.split(":")[0] + ":" + classTime.end.split(":")[1]
+        timeData.innerHTML = start + " - " + end;
+    }
+
+
 
     timeRow.appendChild(timeHeader);
     timeRow.appendChild(timeData);
