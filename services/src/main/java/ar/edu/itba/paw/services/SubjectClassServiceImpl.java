@@ -1,5 +1,6 @@
 package ar.edu.itba.paw.services;
 
+import ar.edu.itba.paw.models.Subject;
 import ar.edu.itba.paw.models.SubjectClass;
 import ar.edu.itba.paw.persistence.SubjectClassDao;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +19,10 @@ public class SubjectClassServiceImpl implements SubjectClassService{
         this.subjectClassDao = subjectClassDao;
     }
 
+    @Override
+    public List<Subject> getAllSubsWithClassThatUserCanDo(long userId){
+        return subjectClassDao.getAllSubsWithClassThatUserCanDo(userId);
+    }
 
     @Override
     public Optional<SubjectClass> findById(String s) {

@@ -6,6 +6,24 @@ h2 {
     color: red;
 }
 
+.row{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+.column{
+    display: flex;
+    flex-direction: column;
+}
+.column-center{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+}
+
 html, body {
     min-height: 100%;
     width: 100%;
@@ -60,6 +78,14 @@ sl-card.subject-card::part(body) {
     align-items: center;
     gap: 0.25rem;
 
+}
+.container-80{
+    width: min(max(800px, 80%), 100%);
+    padding-left: 2rem;
+    padding-right: 2rem;
+    align-self: center;
+    justify-self: center;
+    margin: 0 auto;
 }
 
 .container-70 {

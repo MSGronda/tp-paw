@@ -10,6 +10,7 @@ public class Subject {
     private Set<String> prerequisites;
     private Set<Long> professorIds;
     private Set<Long> degreeIds;
+    private Map<String,SubjectClass> subjectClasses;
 
     public Subject(String id, String name, String department, Set<String> prerequisites, Set<Long> professorIds, Set<Long> degreeIds, int credits) {
         this.id = id;
@@ -29,6 +30,11 @@ public class Subject {
         this.prerequisites = new HashSet<>();
         this.professorIds = new HashSet<>();
         this.degreeIds = new HashSet<>();
+        this.subjectClasses = new HashMap<>();
+    }
+
+    public Map<String, SubjectClass> getSubjectClasses() {
+        return subjectClasses;
     }
 
     public String getId() {

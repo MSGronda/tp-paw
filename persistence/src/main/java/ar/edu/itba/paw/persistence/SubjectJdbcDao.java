@@ -40,6 +40,7 @@ public class SubjectJdbcDao implements SubjectDao {
         queryOptionBlanck.putIfAbsent("credits","CAST(? AS INTEGER)");
     }
 
+
     @Override
     public Optional<Subject> findById(String id) {
         return jdbcTemplate.query("SELECT * FROM " + VIEW_JOIN + " WHERE id = ?", SubjectJdbcDao::subjectListExtractor, id)
@@ -60,7 +61,6 @@ public class SubjectJdbcDao implements SubjectDao {
     }
 
 
-    // TODO unificar las queries que se repiten
     @Override
     public List<Subject> getByName(String name) {
         List<Subject> toReturn = jdbcTemplate.query("SELECT * FROM " + VIEW_JOIN + " WHERE subname ILIKE ?",
