@@ -61,9 +61,9 @@ public class ImageJdbcDao implements ImageDao {
 
         long success = jdbcInsert.executeAndReturnKey(args).longValue();
         if(success != 0) {
-            LOGGER.info("Image created for current user");
+            LOGGER.info("Image created for registered user");
         } else {
-            LOGGER.warn("Image creation for current user failed");
+            LOGGER.warn("Image creation for registered user failed");
         }
         return success;
     }

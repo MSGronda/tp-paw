@@ -199,7 +199,13 @@ public class UserJdbcDao implements UserDao {
         Map<String, Long> data = new HashMap<>();
         data.put("roleId", roleId);
         data.put("userId", userId);
-        return jdbcUserRolesInsert.execute(data);
+        int success = jdbcUserRolesInsert.execute(data);
+        if(success != 0) {
+            LOGGER.info("Added role {} to user with id {}", roleId, userId);
+        } else {
+            LOGGER.warn("Failed to add role {} to user with id {}", roleId, userId);
+        }
+        return success;
     }
 
     private static Roles rolesRowMapper(ResultSet rs, int rowNum) throws SQLException {
@@ -210,7 +216,13 @@ public class UserJdbcDao implements UserDao {
     }
 
     public Integer updateUserRoles(Long roleId, Long userId) {
-        return jdbcTemplate.update("UPDATE " + USER_ROLES_TABLE + " SET roleid = ? WHERE userid = ?", roleId, userId);
+        int success = jdbcTemplate.update("UPDATE " + USER_ROLES_TABLE + " SET roleid = ? WHERE userid = ?", roleId, userId);
+        if(success != 0) {
+            LOGGER.warn("Updated user with id {} role to {}", userId, roleId);
+        } else {
+            LOGGER.warn("Failed to update user with id {} role to {}", userId, roleId);
+        }
+        return success;
     }
 
     //---------------------------------------------------------------------------------------
