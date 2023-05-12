@@ -32,7 +32,7 @@ public class SubjectClassJdbcDao implements SubjectClassDao {
 
     private static final String COMPLETE_SUB =
             "SELECT *\n" +
-            "FROM " + TABLE_SUBJECTS + " AS s LEFT JOIN " + TABLE_CLASS + " AS sc ON s.id = sc.idsub " + " LEFT JOIN " + TABLE_CLASS_LOC_TIME + " AS slt ON s.id = slt.idsub " +
+            "FROM " + TABLE_SUBJECTS + " AS s LEFT JOIN " + TABLE_CLASS + " AS sc ON s.id = sc.idsub " + " LEFT JOIN " + TABLE_CLASS_LOC_TIME + " AS slt ON s.id = slt.idsub AND slt.idclass = sc.idclass " +
             "WHERE s.id IN (SELECT v.id\n" +
             "                FROM " + VIEW_JOIN + " AS v\n" +
             "                WHERE v.id NOT IN (SELECT idSub FROM " + USER_SUB_PRG_TABLE + " WHERE idSub = v.id)\n" +

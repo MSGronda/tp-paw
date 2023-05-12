@@ -7,7 +7,8 @@ class Schedule {
         this.chosenSubjectMap = {};
 
         this.colors = [
-            '#fda4a5', '#fdba74' ,'#fce046','#bff265', '#86eead','#5febd4','#7dd2fd','#a4b5fc'
+            '#fda4a5', '#fdba74' ,'#fce046', '#bff265',
+            '#86eead', '#5febd4', '#7dd2fd', '#a4b5fc'
         ]
         this.currentColor = 0
 
@@ -158,4 +159,30 @@ class Schedule {
         }
         delete this.chosenSubjectMap[subjectId]
     }
+
+    generateCsv(){
+        const csvData = [];
+
+        // day of weak beader
+        csvData.push([' ',daysOfWeek[0],daysOfWeek[1],daysOfWeek[2],daysOfWeek[3],daysOfWeek[4],daysOfWeek[5]].join(',') )
+
+        const table = document.getElementById('weekly-schedule')
+
+        for(let row in this.scheduleArray){
+            const rowData = [];
+            // time
+            rowData.push(table.children[row].children[0].innerHTML)
+
+            for(let col in this.scheduleArray[row]){
+                if(this.scheduleArray[row][col] === 0)
+                    rowData.push(' ');
+                else
+                    rowData.push(this.scheduleArray[row][col])
+            }
+            csvData.push(rowData.join(','));
+        }
+        return csvData.join('\n');
+    }
+
+
 }

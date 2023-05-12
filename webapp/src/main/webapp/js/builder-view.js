@@ -375,3 +375,26 @@ function exitClassSelectionAction(){
     switchSelector('none','flex')
     hideAllClasses();
 }
+
+
+function downloadTable(csvName) {
+    const csv_data = schedule.generateCsv();
+
+     const CSVFile = new Blob([csv_data], {
+        type: "text/csv"
+    });
+
+    // Create to temporary link
+    const temp_link = document.createElement('a');
+
+    temp_link.download = csvName;
+    temp_link.href = window.URL.createObjectURL(CSVFile);
+    temp_link.style.display = "none";
+
+    document.body.appendChild(temp_link);
+
+    // download csv
+    temp_link.click();
+
+    document.body.removeChild(temp_link);
+}

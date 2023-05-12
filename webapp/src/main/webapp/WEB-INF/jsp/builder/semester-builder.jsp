@@ -20,8 +20,8 @@
         display: flex;
         flex-direction: column;
         overflow: auto;
-        max-height: 31rem;
-        min-height: 31rem;
+        max-height: 25.1rem;
+        min-height: 25.1rem;
     }
 
     .subject-card{
@@ -72,6 +72,11 @@
         padding: 0.25rem !important;
         border-left: 1px solid #e9ecef;
     }
+    tbody th {
+        background-color: #f8f9fa;
+        margin-right: 0;
+        padding-right: 0;
+    }
     thead th{
         background-color: #f8f9fa;
         position: sticky;
@@ -91,6 +96,11 @@
     }
     sl-dropdown{
         padding: 0;
+    }
+    .button-section {
+        display: flex;
+        align-items: center;
+        justify-content: start;
     }
 </style>
 
@@ -159,6 +169,18 @@
                 <%-- insert with js  clases list into here--%>
             </div>
         </sl-card>
+
+        <sl-card style="padding-left: 0.5rem; max-width: 20.5rem; align-items: center">
+            <div class="button-section">
+                <sl-button id="download-button">
+                    Download
+                    <sl-icon slot="suffix" name="download"></sl-icon>
+                </sl-button>
+                <sl-divider vertical style="height: 3rem"></sl-divider>
+            </div>
+
+        </sl-card>
+
     </div>
 
 </main>
@@ -222,6 +244,8 @@
 
     // set order by action for credits
     document.getElementById('credit-orderby').addEventListener('click', orderByCreditAction)
+
+    document.getElementById('download-button').addEventListener('click', function (){ downloadTable('schedule.csv') })
 
 </script>
 
