@@ -153,7 +153,7 @@ function createSubjectCard(subjectList, subject){
     column1.appendChild(subjectName);
 
     const credits = document.createElement('span');
-    credits.textContent = 'Credits: '+subject.credits;
+    credits.textContent = creditsText +' '+subject.credits;
     column1.appendChild(credits);
 
     const column2 = document.createElement('div');
@@ -172,7 +172,7 @@ function createSubjectCard(subjectList, subject){
     const selectIcon = document.createElement('sl-icon');
     selectIcon.setAttribute('class', 'icon');
     selectIcon.setAttribute('name', 'check2');
-    selectIcon.setAttribute('label', 'Select Subject');
+    // selectIcon.setAttribute('label', 'Select Subject');
     selectButton.appendChild(selectIcon);
 
     const deselectButton = document.createElement('sl-button');
@@ -191,13 +191,13 @@ function createSubjectCard(subjectList, subject){
     const deselectIcon = document.createElement('sl-icon');
     deselectIcon.setAttribute('class', 'icon');
     deselectIcon.setAttribute('name', 'x-lg');
-    deselectIcon.setAttribute('label', 'Remove subject');
+    // deselectIcon.setAttribute('label', 'Remove subject');
     deselectButton.appendChild(deselectIcon);
 
     const selectedSpan = document.createElement('span');
     selectedSpan.setAttribute('id', 'selected-'+subject.id);
     selectedSpan.setAttribute('style', 'display: none; color: #7db6f8; padding-top:0.5rem');
-    selectedSpan.textContent = 'Selected';
+    selectedSpan.textContent = selectedText;
     column2.appendChild(selectedSpan);
 
     chooser.appendChild(column1);
@@ -218,14 +218,14 @@ function createClassInfoTable(classTime) {
     // create table rows and cells
     const dayRow = document.createElement("tr");
     const dayHeader = document.createElement("th");
-    dayHeader.innerHTML = "Day";
+    dayHeader.innerHTML = classTimeTableNames.day;
     const dayData = document.createElement("td");
 
     // check if class has a day
     if (classTime.day !== '0') {
         dayData.innerHTML = daysOfWeek[classTime.day-1]
     } else {
-        dayData.innerHTML = "No day";
+        dayData.innerHTML = '';
     }
 
     dayRow.appendChild(dayHeader);
@@ -233,7 +233,7 @@ function createClassInfoTable(classTime) {
 
     const timeRow = document.createElement("tr");
     const timeHeader = document.createElement("th");
-    timeHeader.innerHTML = "Time";
+    timeHeader.innerHTML = classTimeTableNames.time;
     const timeData = document.createElement("td");
     if(classTime.start === '' || classTime.end === ''){
         timeData.innerHTML = ''
@@ -251,7 +251,7 @@ function createClassInfoTable(classTime) {
 
     const classRow = document.createElement("tr");
     const classHeader = document.createElement("th");
-    classHeader.innerHTML = "Class";
+    classHeader.innerHTML = classTimeTableNames.class;
     const classData = document.createElement("td");
     classData.innerHTML = classTime.loc;
 
@@ -260,7 +260,7 @@ function createClassInfoTable(classTime) {
 
     const buildingRow = document.createElement("tr");
     const buildingHeader = document.createElement("th");
-    buildingHeader.innerHTML = "Building";
+    buildingHeader.innerHTML = classTimeTableNames.building;
     const buildingData = document.createElement("td");
     buildingData.innerHTML = classTime.building;
 
@@ -269,7 +269,7 @@ function createClassInfoTable(classTime) {
 
     const modeRow = document.createElement("tr");
     const modeHeader = document.createElement("th");
-    modeHeader.innerHTML = "Mode";
+    modeHeader.innerHTML = classTimeTableNames.mode;
     const modeData = document.createElement("td");
     modeData.innerHTML = classTime.mode;
 

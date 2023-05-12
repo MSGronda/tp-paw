@@ -5,7 +5,7 @@
 <%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 <html>
 <head>
-    <title>Title</title>
+    <title><spring:message code="builder.title"/></title>
     <jsp:include page="../components/head_shared.jsp"/>
 </head>
 <jsp:include page="../components/table_style.jsp"/>
@@ -114,12 +114,12 @@
                 <thead>
                 <tr>
                     <th></th>
-                    <th>Monday</th>
-                    <th>Tuesday</th>
-                    <th>Wednesday</th>
-                    <th>Thursday</th>
-                    <th>Friday</th>
-                    <th>Saturday</th>
+                    <th><spring:message code="subject.classDay1"/></th>
+                    <th><spring:message code="subject.classDay2"/></th>
+                    <th><spring:message code="subject.classDay3"/></th>
+                    <th><spring:message code="subject.classDay4"/></th>
+                    <th><spring:message code="subject.classDay5"/></th>
+                    <th><spring:message code="subject.classDay6"/></th>
                 </tr>
                 </thead>
                 <tbody id="weekly-schedule">
@@ -132,7 +132,7 @@
         <sl-card id="choose-subject" class="choose-subject">
             <div slot="header">
                 <div class="row ">
-                    <h4>Available Subjects</h4>
+                    <h4><spring:message code="builder.available"/></h4>
                     <sl-dropdown style="padding-left: 1rem">
                         <sl-button variant="text" slot="trigger" size="large" caret>
                             <spring:message code="subject.sort"/>
@@ -141,7 +141,7 @@
                         <sl-menu>
                             <sl-menu-item id="credit-orderby">
                                 <div class="order-menu">
-                                    Credits
+                                    <spring:message code="search.credits"/>
                                     <sl-icon id="credits-down" class="icon" slot="suffix" name="arrow-down"></sl-icon>
                                     <sl-icon style="display: none" id="credits-up" class="icon" slot="suffix" name="arrow-up"></sl-icon>
                                 </div>
@@ -159,7 +159,7 @@
         <sl-card id="choose-class" class="choose-class">
             <div slot="header">
                 <div class="row" style="justify-content: space-between">
-                    <h4>Select a class</h4>
+                    <h4><spring:message code="builder.selectClass"/></h4>
                     <sl-button style="padding-top: 0.64rem; padding-bottom: 0.64rem" id="exit-class-selector" variant="default" size="small" circle>
                         <sl-icon name="x-lg" label="Exit" class="icon"></sl-icon>
                     </sl-button>
@@ -173,7 +173,7 @@
         <sl-card style="padding-left: 0.5rem; max-width: 20.5rem; align-items: center">
             <div class="button-section">
                 <sl-button id="download-button">
-                    Download
+                    <spring:message code="builder.download"/>
                     <sl-icon slot="suffix" name="download"></sl-icon>
                 </sl-button>
                 <sl-divider vertical style="height: 3rem"></sl-divider>
@@ -201,6 +201,13 @@
         '<spring:message code="subject.classDay1"/>','<spring:message code="subject.classDay2"/>','<spring:message code="subject.classDay3"/>',
         '<spring:message code="subject.classDay4"/>','<spring:message code="subject.classDay5"/>','<spring:message code="subject.classDay6"/>'
     ]
+    const creditsText = '<spring:message code="subject.credits"/>'
+    const selectedText = '<spring:message code="builder.selected"/>'
+    const classTimeTableNames = {
+        'day': '<spring:message code="subject.classDay"/>', 'time': '<spring:message code="builder.time"/>',
+        'class': '<spring:message code="builder.class"/>', 'building':'<spring:message code="builder.building"/>',
+        'mode':'<spring:message code="builder.mode"/>'
+    }
 
     const subjectClasses = [
         <c:forEach var="sub" items="${availableSubjects}">
@@ -245,7 +252,7 @@
     // set order by action for credits
     document.getElementById('credit-orderby').addEventListener('click', orderByCreditAction)
 
-    document.getElementById('download-button').addEventListener('click', function (){ downloadTable('schedule.csv') })
+    document.getElementById('download-button').addEventListener('click', function (){ downloadTable('<spring:message code="builder.csvName"/>'  +'.csv') })
 
 </script>
 
