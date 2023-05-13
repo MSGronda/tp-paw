@@ -5,6 +5,7 @@ import ar.edu.itba.paw.models.ReviewStatistic;
 import ar.edu.itba.paw.models.Subject;
 import ar.edu.itba.paw.models.User;
 import ar.edu.itba.paw.persistence.ReviewDao;
+import ar.edu.itba.paw.services.exceptions.NoGrantedPermissionException;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -19,6 +20,7 @@ import static org.mockito.Mockito.when;
 @RunWith(MockitoJUnitRunner.class)
 public class ReviewServiceImplTest {
 
+    private final long ID = 1;
     private final String ID1 = "31.08";
     private final String ID2 = "72.33";
     private final int COUNT = 3;
@@ -90,5 +92,12 @@ public class ReviewServiceImplTest {
         Assert.assertEquals(toRet.get(ID2).getReviewCount(), 0);
 
     }
+    @Test(expected = NoGrantedPermissionException.class)
+    public void testCheckAuthFalse() throws NoGrantedPermissionException {
+        Review review1 = new Review(ID, USERID, "31.08", 1, 1, "Resena", false);
+        User user = new User.UserBuilder(EMAIL, PASSWORD, USERNAME).id(ID+1).build();
+        reviewService.deleteReview(review1, user, false);
+    }
+
 
 }

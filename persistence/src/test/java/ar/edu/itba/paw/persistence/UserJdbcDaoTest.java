@@ -48,7 +48,9 @@ public class UserJdbcDaoTest {
     private static final Integer SUBJECTPROGRESS = 0;
     private static final int NEWSUBJECTPROGRESS = 1;
 
+    private static final Boolean CONFIRMED = true;
 
+    private static final String CONFIRMTOKEN = "asdf";
 
     private JdbcTemplate jdbcTemplate;
 
@@ -87,7 +89,9 @@ public class UserJdbcDaoTest {
 
     @Test
     public void testFindById() {
-        jdbcTemplate.execute("INSERT INTO users(id, email, pass, username) VALUES (" + ID + ", '" + EMAIL + "', '" + PASSWORD + "', '" + USERNAME + "')");
+        jdbcTemplateImage.execute("INSERT INTO images VALUES (" + IMAGEID + ", " + IMAGE + ")");
+
+        jdbcTemplate.execute("INSERT INTO users(id, email, pass, username, image_id, confirmtoken, confirmed ) VALUES (" + ID + ", '" + EMAIL + "', '" + PASSWORD + "', '" + USERNAME + "', " + IMAGEID + ", '" + CONFIRMTOKEN + "', " + CONFIRMED + ")");
 
         Optional<User> maybeUser = userDao.findById(ID);
 
@@ -103,12 +107,25 @@ public class UserJdbcDaoTest {
     }
 
     @Test
+    public void testGetUserWithEmail(){
+        jdbcTemplateImage.execute("INSERT INTO images VALUES (" + IMAGEID + ", " + IMAGE + ")");
+
+        jdbcTemplate.execute("INSERT INTO users(id, email, pass, username, image_id, confirmtoken, confirmed ) VALUES (" + ID + ", '" + EMAIL + "', '" + PASSWORD + "', '" + USERNAME + "', " + IMAGEID + ", '" + CONFIRMTOKEN + "', " + CONFIRMED + ")");
+
+
+        Optional<User> user = userDao.getUserWithEmail(EMAIL);
+
+        Assert.assertTrue(user.isPresent());
+        Assert.assertEquals(ID, user.get().getId());
+    }
+
+    @Test
     public void testCreate() {
         jdbcTemplateImage.execute("INSERT INTO images VALUES (" + IMAGEID + ", " + IMAGE + ")");
 
         User user;
         try{
-            user = userDao.create(new User.UserBuilder(EMAIL, PASSWORD, USERNAME).imageId(IMAGEID));
+            user = userDao.create(new User.UserBuilder(EMAIL, PASSWORD, USERNAME).imageId(IMAGEID).confirmToken(CONFIRMTOKEN));
         }catch (UserEmailAlreadyTakenPersistenceException e){
             throw new RuntimeException();
         }
@@ -122,9 +139,11 @@ public class UserJdbcDaoTest {
 
     @Test(expected = UserEmailAlreadyTakenPersistenceException.class)
     public void testCreateException() throws UserEmailAlreadyTakenPersistenceException {
-        jdbcTemplate.execute("INSERT INTO users(id, email, pass, username) VALUES (" + ID + ", '" + EMAIL + "', '" + PASSWORD + "', '" + USERNAME + "')");
+        jdbcTemplateImage.execute("INSERT INTO images VALUES (" + IMAGEID + ", " + IMAGE + ")");
 
-        userDao.create(new User.UserBuilder(EMAIL, PASSWORD, USERNAME));
+        jdbcTemplate.execute("INSERT INTO users(id, email, pass, username, image_id, confirmtoken, confirmed ) VALUES (" + ID + ", '" + EMAIL + "', '" + PASSWORD + "', '" + USERNAME + "', " + IMAGEID + ", '" + CONFIRMTOKEN + "', " + CONFIRMED + ")");
+
+        userDao.create(new User.UserBuilder(EMAIL, PASSWORD, USERNAME).confirmToken(CONFIRMTOKEN));
 
     }
 

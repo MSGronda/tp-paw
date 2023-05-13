@@ -91,14 +91,6 @@ public class ReviewController {
             return new ModelAndView("redirect:/review/" + subjectId + "/deletion/false");
         }
 
-//        if( authUserService.getCurrentUser().getId() != review.getUserId() ){
-//            return new ModelAndView("redirect:/subject/" + subjectId);
-//        }
-//
-//        reviewService.deleteReviewVoteByReviewId(reviewId);
-//        reviewService.deleteReviewStatistics(review);
-//        reviewService.delete(review);
-
         return new ModelAndView("redirect:/review/" + subjectId + "/deletion/true");
     }
 

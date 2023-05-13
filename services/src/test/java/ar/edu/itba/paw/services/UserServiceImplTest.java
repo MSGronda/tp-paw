@@ -1,9 +1,12 @@
 package ar.edu.itba.paw.services;
 
+import ar.edu.itba.paw.models.Roles;
 import ar.edu.itba.paw.models.User;
 import ar.edu.itba.paw.persistence.ImageDao;
+import ar.edu.itba.paw.persistence.RecoveryDao;
 import ar.edu.itba.paw.persistence.UserDao;
 import ar.edu.itba.paw.persistence.exceptions.UserEmailAlreadyTakenPersistenceException;
+import ar.edu.itba.paw.services.exceptions.OldPasswordDoesNotMatchException;
 import ar.edu.itba.paw.services.exceptions.UserEmailAlreadyTakenException;
 import org.junit.Assert;
 import org.junit.Test;
@@ -11,6 +14,7 @@ import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
+import org.springframework.mail.MailSender;
 import org.springframework.security.access.method.P;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.util.ResourceUtils;
@@ -31,6 +35,11 @@ public class UserServiceImplTest {
     private static final String PASSWORD = "password";
     private static final String PASSWORD_ENCRYPTED = "a;lskdfjas;lkdfjasdf";
 
+    private static final String NEWPASSWORD = "newPassword";
+
+    private static final String NEWPASSWORDENCRYPTED = "fdfkdjadkfa;sd";
+
+
     private static final String USERNAME = "username";
 
     private static final long IMAGEID = 3;
@@ -38,14 +47,14 @@ public class UserServiceImplTest {
     @Mock
     private UserDao userDao;
 
-    @Mock
-    private User.UserBuilder userBuilder;
-
     @InjectMocks
     private UserServiceImpl us;
 
     @Mock
     private PasswordEncoder passwordEncoder;
+
+    @Mock
+    private RolesService rolesService;
 
     @Mock
     private ImageDao imageDao;
@@ -57,6 +66,7 @@ public class UserServiceImplTest {
         when(userDao.create(eq(userBuilder)))
             .thenReturn(new User.UserBuilder(EMAIL, PASSWORD, USERNAME).build());
         when(imageDao.insertAndReturnKey(eq("asdf".getBytes()))).thenReturn(IMAGEID);
+        when(rolesService.findByName(eq("USER"))).thenReturn(Optional.of(new Roles(ID, "USER")));
 
         // 2. Execute class under test
         User newUser = us.create(userBuilder, "asdf".getBytes());
@@ -89,5 +99,23 @@ public class UserServiceImplTest {
         Assert.assertEquals(ID, user.get().getId());
     }
 
+    @Test
+    public void testChangePassword() throws OldPasswordDoesNotMatchException {
+        when(passwordEncoder.matches(eq(PASSWORD), eq(PASSWORD_ENCRYPTED))).thenReturn(true);
+        when(passwordEncoder.encode(eq(NEWPASSWORD))).thenReturn(NEWPASSWORDENCRYPTED);
+
+        us.changePassword(ID, NEWPASSWORD, PASSWORD, PASSWORD_ENCRYPTED);
+
+        //Funciona como esperado si no larga excepcion
+    }
+
+    @Test(expected = OldPasswordDoesNotMatchException.class)
+    public void testChangePasswordOldPasswordDoesNotMatch() throws OldPasswordDoesNotMatchException {
+        when(passwordEncoder.matches(eq(PASSWORD), eq(PASSWORD_ENCRYPTED))).thenReturn(false);
+
+        us.changePassword(ID, NEWPASSWORD, PASSWORD, PASSWORD_ENCRYPTED);
+
+        //Funciona como esperado si larga excepcion
+    }
 
 }
