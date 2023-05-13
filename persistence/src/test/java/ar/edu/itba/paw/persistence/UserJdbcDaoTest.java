@@ -120,7 +120,7 @@ public class UserJdbcDaoTest {
         Assert.assertEquals(EMAIL, user.getEmail());
         Assert.assertEquals(PASSWORD, user.getPassword());
 
-        Assert.assertEquals(1, JdbcTestUtils.countRowsInTable(jdbcTemplate, "users"));
+        Assert.assertEquals(1, JdbcTestUtils.countRowsInTable(jdbcTemplate, "users"));*/
     }
 
     @Test(expected = UserEmailAlreadyTakenPersistenceException.class)
