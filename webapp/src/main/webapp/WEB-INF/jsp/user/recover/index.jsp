@@ -6,7 +6,7 @@
 
 <html>
 <head>
-    <title>Recover Password</title>
+    <title><spring:message code="recover.subtitle"/></title>
     <jsp:include page="../../components/head_shared.jsp"/>
 
     <style>

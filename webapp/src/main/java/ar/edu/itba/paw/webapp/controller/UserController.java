@@ -15,6 +15,8 @@ import ar.edu.itba.paw.webapp.form.EditUserPasswordForm;
 import ar.edu.itba.paw.webapp.form.RecoverPasswordForm;
 import ar.edu.itba.paw.webapp.form.UserForm;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.MessageSource;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -22,7 +24,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
@@ -40,6 +41,7 @@ public class UserController {
 
     private final AuthUserService authUserService;
     private final AuthenticationManager authManager;
+    private final MessageSource mailMessages;
 
     private final RolesService rolesService;
 
@@ -47,7 +49,17 @@ public class UserController {
 
 
     @Autowired
-    public UserController(UserService userService, ReviewService reviewService, MailService mailService, DegreeService degreeService, AuthUserService authUserService, RolesService rolesService, UniUserDetailsService uniUserDetailsService, AuthenticationManager authManager) {
+    public UserController(
+            UserService userService,
+            ReviewService reviewService,
+            MailService mailService,
+            DegreeService degreeService,
+            AuthUserService authUserService,
+            RolesService rolesService,
+            UniUserDetailsService uniUserDetailsService,
+            AuthenticationManager authManager,
+            @Qualifier("emailMessageSource") MessageSource mailMessages
+    ) {
         this.userService = userService;
         this.reviewService = reviewService;
         this.mailService = mailService;
@@ -56,6 +68,7 @@ public class UserController {
         this.rolesService = rolesService;
         this.uniUserDetailsService = uniUserDetailsService;
         this.authManager = authManager;
+        this.mailMessages = mailMessages;
     }
 
     @RequestMapping("/user/{id:\\d+}")
@@ -117,11 +130,12 @@ public class UserController {
         }
 
         final String baseUrl = Helpers.getBaseUrl();
+        final String subject = mailMessages.getMessage("confirmation.subject", null, locale);
 
         Map<String,Object> mailModel = new HashMap<>();
         mailModel.put("logoUrl", baseUrl + "/img/uni.png");
         mailModel.put("url", baseUrl + "/confirm/" + user.getConfirmToken());
-        mailService.sendMail(user.getEmail(), "Email confirmation", "confirmation", mailModel, locale);
+        mailService.sendMail(user.getEmail(), subject, "confirmation", mailModel, locale);
 
         return new ModelAndView("user/confirm/checkEmail");
     }
@@ -231,11 +245,12 @@ public class UserController {
         }
 
         final String baseUrl = Helpers.getBaseUrl();
+        final String subject = mailMessages.getMessage("recovery.subject", null, locale);
 
         Map<String,Object> mailModel = new HashMap<>();
         mailModel.put("logoUrl", baseUrl + "/img/uni.png");
         mailModel.put("url", baseUrl + "/recover/" + token);
-        mailService.sendMail(email, "Uni: Recover password", "recovery", mailModel, locale);
+        mailService.sendMail(email, subject, "recovery", mailModel, locale);
 
         return new ModelAndView("user/recover/emailSent");
     }
