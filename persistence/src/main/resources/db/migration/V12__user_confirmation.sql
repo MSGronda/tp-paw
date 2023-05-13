@@ -1,6 +1,5 @@
-ALTER TABLE users
-    ADD COLUMN confirmtoken VARCHAR(100) UNIQUE,
-    ADD COLUMN confirmed BOOLEAN DEFAULT FALSE;
+ALTER TABLE users ADD COLUMN confirmtoken VARCHAR(100) UNIQUE;
+ALTER TABLE users ADD COLUMN confirmed BOOLEAN DEFAULT FALSE;
 
 UPDATE users SET confirmed=true
 WHERE confirmtoken IS NULL;
