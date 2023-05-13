@@ -48,7 +48,7 @@ public class ReviewServiceImpl implements ReviewService {
 
     @Override
     public int getAllCountSubjectReviews(String subjectId){
-        return reviewDao.getAllCountSubjectReviews(subjectId) / 10;
+        return reviewDao.getAllCountSubjectReviews(subjectId);
     }
 
     @Override

@@ -430,7 +430,7 @@ public class ReviewJdbcDao implements ReviewDao {
 
     @Override
     public int getAllCountSubjectReviews(String subjectId) {
-        return jdbcTemplate.queryForObject("SELECT COUNT(*) FROM " + TABLE_REVIEWS + " WHERE idsub = " + subjectId + "::text",Integer.class);
+        return jdbcTemplate.queryForObject("SELECT COUNT(*) FROM " + TABLE_REVIEWS + " WHERE idsub = " + subjectId + "::text",Integer.class) / Integer.parseInt(PAGE_SIZE);
     }
 
     @Override
