@@ -2,12 +2,14 @@ package ar.edu.itba.paw.models;
 
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 
 public class User {
     private final long id;
     private final String email, password, username;
     private final Long imageId;
-    private Map<String, Integer> subjectProgress;
+    private final Map<String, Integer> subjectProgress;
+    private final Optional<String> confirmToken;
 
 
     public User(UserBuilder builder) {
@@ -17,6 +19,7 @@ public class User {
         this.username = builder.username;
         this.imageId = builder.imageId;
         this.subjectProgress = builder.subjectProgress;
+        this.confirmToken = builder.confirmToken;
     }
 
     public long getImageId(){
@@ -38,6 +41,11 @@ public class User {
     public String getUsername() {
         return username;
     }
+
+    public Optional<String> getConfirmToken() {
+        return confirmToken;
+    }
+
     @Override
     public boolean equals(Object o) {
         if(this == o) return true;
@@ -52,12 +60,14 @@ public class User {
         private String password, username;
         private long imageId;
         private Map<String, Integer> subjectProgress;
+        private Optional<String> confirmToken;
 
 
         public UserBuilder(String email, String password, String username) {
             this.email = email;
             this.password = password;
             this.username = username;
+            this.confirmToken = Optional.empty();
         }
         public UserBuilder id(long id) {
             this.id = id;
@@ -102,6 +112,15 @@ public class User {
             return password;
         }
 
+        public Optional<String> getConfirmToken(){
+            return confirmToken;
+        }
+
+        public UserBuilder confirmToken(String token) {
+            this.confirmToken = Optional.of(token);
+            return this;
+        }
+
         public User build() {
             if(this.username == null) {
                 throw new NullPointerException("Property \"name\" is null");
@@ -114,7 +133,5 @@ public class User {
             }
             return new User(this);
         }
-
-
     }
 }

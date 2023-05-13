@@ -13,8 +13,8 @@ import java.util.Map;
 import java.util.Optional;
 
 public interface UserService extends BaseService<Long, User> {
-    User create(User.UserBuilder userBuilder, String baseUrl, byte[] profilePic) throws UserEmailAlreadyTakenException;
-    User create(User.UserBuilder userBuilder, String baseUrl) throws UserEmailAlreadyTakenException, IOException;
+    User create(User.UserBuilder userBuilder, byte[] profilePic) throws UserEmailAlreadyTakenException;
+    User create(User.UserBuilder userBuilder) throws UserEmailAlreadyTakenException, IOException;
 
     Optional<User> getUserWithEmail(String email);
 
@@ -27,7 +27,7 @@ public interface UserService extends BaseService<Long, User> {
 
     void updateProfilePicture(User user, byte[] image);
 
-    void sendRecoveryMail(String email, String baseUrl);
+    String sendRecoveryMail(String email);
 
     List<Roles> getUserRoles(Long userId);
 

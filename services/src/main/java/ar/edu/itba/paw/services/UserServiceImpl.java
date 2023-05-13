@@ -32,6 +32,7 @@ public class UserServiceImpl implements UserService {
     private final ImageDao imageDao;
 
     private final MailService mailService;
+    private final RolesService rolesService;
 
     private final PasswordEncoder passwordEncoder;
 
@@ -39,12 +40,13 @@ public class UserServiceImpl implements UserService {
     private static final Logger LOGGER = LoggerFactory.getLogger(UserServiceImpl.class);
 
     @Autowired
-    public UserServiceImpl(UserDao userDao, RecoveryDao recDao, ImageDao imageDao, MailService mailService, final PasswordEncoder passwordEncoder) {
+    public UserServiceImpl(UserDao userDao, RecoveryDao recDao, ImageDao imageDao, MailService mailService, RolesService rolesService, final PasswordEncoder passwordEncoder) {
         this.userDao = userDao;
         this.passwordEncoder = passwordEncoder;
         this.recDao = recDao;
         this.imageDao = imageDao;
         this.mailService = mailService;
+        this.rolesService = rolesService;
     }
 
 
@@ -60,39 +62,43 @@ public class UserServiceImpl implements UserService {
 
     @Transactional
     @Override
-    public User create(User.UserBuilder userBuilder, String baseUrl, byte[] profilePic) throws UserEmailAlreadyTakenException {
+    public User create(User.UserBuilder userBuilder, byte[] profilePic) throws UserEmailAlreadyTakenException {
         long imageId = imageDao.insertAndReturnKey(profilePic);
-        userBuilder.imageId(imageId);
-        userBuilder.password(passwordEncoder.encode(userBuilder.getPassword()));
 
         final SecureRandom random = new SecureRandom();
         final byte[] bytes = new byte[20];
         random.nextBytes(bytes);
-
         final String confirmToken = new String(Base64.getUrlEncoder().encode(bytes));
+
+        userBuilder.imageId(imageId)
+            .password(passwordEncoder.encode(userBuilder.getPassword()))
+            .confirmToken(confirmToken);
 
         User user;
         try {
-            user = userDao.create(userBuilder, confirmToken);
+            user = userDao.create(userBuilder);
         } catch (final UserEmailAlreadyTakenPersistenceException e) {
             LOGGER.warn("User {} failed to create", userBuilder.getEmail());
             throw new UserEmailAlreadyTakenException();
         }
 
-        Map<String,Object> mailModel = new HashMap<>();
-        mailModel.put("logoUrl", baseUrl + "/img/uni.png");
-        mailModel.put("url", baseUrl + "/confirm/" + confirmToken);
-        mailService.sendMail(userBuilder.getEmail(), "Email confirmation", "confirmation", mailModel);
+        Optional<Roles> maybeRole = rolesService.findByName("USER");
+        if(!maybeRole.isPresent()){
+            throw new IllegalStateException("USER role not found");
+        }
+        Roles role = maybeRole.get();
+        addIdToUserRoles(role.getId(), user.getId());
+
 
         return user;
     }
 
     @Transactional
     @Override
-    public User create(User.UserBuilder userBuilder, String baseUrl) throws UserEmailAlreadyTakenException, IOException {
+    public User create(User.UserBuilder userBuilder) throws UserEmailAlreadyTakenException, IOException {
         File file = ResourceUtils.getFile("classpath:images/default_user.png");
         byte[] defaultImg = Files.readAllBytes(file.toPath());
-        return create(userBuilder, baseUrl, defaultImg);
+        return create(userBuilder, defaultImg);
     }
 
     @Transactional
@@ -152,7 +158,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void sendRecoveryMail(String email, String baseUrl){
+    public String sendRecoveryMail(String email){
         final Optional<User> optUser = getUserWithEmail(email);
         if(!optUser.isPresent()){
             LOGGER.warn("Generation of recovery token failed. User not found");
@@ -169,10 +175,7 @@ public class UserServiceImpl implements UserService {
 
         recDao.create(token, user.getId());
 
-        Map<String,Object> mailModel = new HashMap<>();
-        mailModel.put("logoUrl", baseUrl + "/img/uni.png");
-        mailModel.put("url", baseUrl + "/recover/" + token);
-        mailService.sendMail(user.getEmail(), "Uni: Recover password", "recovery", mailModel);
+        return token;
     }
 
     @Override

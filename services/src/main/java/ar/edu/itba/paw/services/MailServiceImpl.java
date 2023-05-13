@@ -14,6 +14,7 @@ import org.thymeleaf.spring4.SpringTemplateEngine;
 
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
+import java.util.Locale;
 import java.util.Map;
 
 @Component
@@ -38,8 +39,8 @@ public class MailServiceImpl implements MailService {
 
     @Async
     @Override
-    public void sendMail(String to, String subject, String template, Map<String, Object> model) throws MailException {
-        final Context ctx = new Context();
+    public void sendMail(String to, String subject, String template, Map<String, Object> model, Locale locale) throws MailException {
+        final Context ctx = new Context(locale);
         ctx.setVariables(model);
 
         final String body = templateEngine.process(template, ctx);

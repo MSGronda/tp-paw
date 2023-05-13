@@ -1,8 +1,9 @@
 package ar.edu.itba.paw.services;
 
+import java.util.Locale;
 import java.util.Map;
 
 public interface MailService {
     void sendMail(String to, String subject, String body);
-    void sendMail(String to, String subject, String template, Map<String, Object> model);
+    void sendMail(String to, String subject, String template, Map<String, Object> model, Locale locale);
 }

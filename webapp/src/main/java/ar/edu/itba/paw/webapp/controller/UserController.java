@@ -15,17 +15,9 @@ import ar.edu.itba.paw.webapp.form.EditUserPasswordForm;
 import ar.edu.itba.paw.webapp.form.RecoverPasswordForm;
 import ar.edu.itba.paw.webapp.form.UserForm;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.MediaType;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContext;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.web.authentication.RememberMeServices;
-import org.springframework.security.web.authentication.rememberme.RememberMeAuthenticationFilter;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
@@ -33,7 +25,6 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 import java.io.*;
 import java.sql.SQLException;
@@ -108,17 +99,15 @@ public class UserController {
 
     @RequestMapping(value = "/register", method = { RequestMethod.POST })
     public ModelAndView register(@Valid @ModelAttribute ("UserForm") final UserForm userForm,
-                                 final BindingResult errors) throws IOException {
+                                 final BindingResult errors, final Locale locale) throws IOException {
         if(errors.hasErrors()){
             return registerForm(userForm);
         }
 
         User.UserBuilder user = new User.UserBuilder(userForm.getEmail(), userForm.getPassword(), userForm.getName());
 
-        final String baseUrl = ServletUriComponentsBuilder.fromCurrentContextPath().build().toUriString();
-
         try {
-            final User newUser = userService.create(user, baseUrl);
+            final User newUser = userService.create(user);
         }catch (UserEmailAlreadyTakenException e){
 
 //            errors.rejectValue("email", "UserForm.email.alreadyExists", "An account with this email already exists");
@@ -126,12 +115,13 @@ public class UserController {
             mav.addObject("EmailAlreadyUsed", true);
             return mav;
         }
-        Optional<Roles> maybeRole = rolesService.findByName("USER");
-        if(!maybeRole.isPresent()){
-            throw new RoleNotFoundException();
-        }
-        Roles role = maybeRole.get();
-        userService.addIdToUserRoles(role.getId(), user.getId());
+
+        final String baseUrl = Helpers.getBaseUrl();
+
+        Map<String,Object> mailModel = new HashMap<>();
+        mailModel.put("logoUrl", baseUrl + "/img/uni.png");
+        mailModel.put("url", baseUrl + "/confirm/" + user.getConfirmToken());
+        mailService.sendMail(user.getEmail(), "Email confirmation", "confirmation", mailModel, locale);
 
         return new ModelAndView("user/confirm/checkEmail");
     }
@@ -224,21 +214,28 @@ public class UserController {
     @RequestMapping(value = "/recover", method = { RequestMethod.POST })
     public ModelAndView sendEmail(@Valid @ModelAttribute ("RecoverPasswordForm") final RecoverPasswordForm recoverPasswordForm,
                                   final BindingResult errors,
-                                  HttpServletRequest request){
+                                  final Locale locale){
         if( errors.hasErrors()){
             return recoverPassword(recoverPasswordForm);
         }
 
-        final String baseUrl =
-                ServletUriComponentsBuilder.fromCurrentContextPath().build().toUriString();
+        final String email = recoverPasswordForm.getEmail();
 
+        String token;
         try {
-            userService.sendRecoveryMail(recoverPasswordForm.getEmail(), baseUrl);
+            token = userService.sendRecoveryMail(email);
         } catch (UserEmailNotFoundException e) {
             ModelAndView mav = recoverPassword(recoverPasswordForm);
             mav.addObject("emailNotFound", true);
             return mav;
         }
+
+        final String baseUrl = Helpers.getBaseUrl();
+
+        Map<String,Object> mailModel = new HashMap<>();
+        mailModel.put("logoUrl", baseUrl + "/img/uni.png");
+        mailModel.put("url", baseUrl + "/recover/" + token);
+        mailService.sendMail(email, "Uni: Recover password", "recovery", mailModel, locale);
 
         return new ModelAndView("user/recover/emailSent");
     }

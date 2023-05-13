@@ -68,13 +68,16 @@ public class UserJdbcDao implements UserDao {
     }
 
     @Override
-    public User create(User.UserBuilder userBuilder, String confirmToken) throws UserEmailAlreadyTakenPersistenceException {
+    public User create(User.UserBuilder userBuilder) throws UserEmailAlreadyTakenPersistenceException {
+        if(!userBuilder.getConfirmToken().isPresent())
+            throw new IllegalArgumentException("Confirm token must be present");
+
         Map<String, Object> data = new HashMap<>();
         data.put("email", userBuilder.getEmail());
         data.put("pass", userBuilder.getPassword());
         data.put("username", userBuilder.getUsername());
         data.put("image_id", userBuilder.getImageId());
-        data.put("confirmtoken", confirmToken);
+        data.put("confirmtoken", userBuilder.getConfirmToken());
         data.put("confirmed", false);
 
         Number key;
