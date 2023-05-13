@@ -95,6 +95,7 @@
 
   .builder-right-pane {
       padding-bottom: 0.5rem;
+      width: 20.5rem;
   }
 
   .choose-subject {
@@ -235,7 +236,7 @@
         </div>
       </sl-card>
 
-      <sl-card style="padding-left: 0.5rem; max-width: 20.5rem; align-items: center">
+      <sl-card style="padding-left: 0.5rem;padding-right: 0.5rem; align-items: center">
         <div class="button-section">
           <sl-button id="download-button">
             <spring:message code="builder.download"/>
