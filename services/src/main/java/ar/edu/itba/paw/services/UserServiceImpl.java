@@ -23,10 +23,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.security.SecureRandom;
-import java.util.Base64;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -34,17 +31,20 @@ public class UserServiceImpl implements UserService {
     private final RecoveryDao recDao;
     private final ImageDao imageDao;
 
+    private final MailService mailService;
+
     private final PasswordEncoder passwordEncoder;
 
     private static final int MAX_IMAGE_SIZE = 1024 * 1024 * 5;
     private static final Logger LOGGER = LoggerFactory.getLogger(UserServiceImpl.class);
 
     @Autowired
-    public UserServiceImpl(UserDao userDao, RecoveryDao recDao, ImageDao imageDao, final PasswordEncoder passwordEncoder) {
+    public UserServiceImpl(UserDao userDao, RecoveryDao recDao, ImageDao imageDao, MailService mailService, final PasswordEncoder passwordEncoder) {
         this.userDao = userDao;
         this.passwordEncoder = passwordEncoder;
         this.recDao = recDao;
         this.imageDao = imageDao;
+        this.mailService = mailService;
     }
 
 
@@ -60,28 +60,39 @@ public class UserServiceImpl implements UserService {
 
     @Transactional
     @Override
-    public User create(User.UserBuilder userBuilder, byte[] profilePic) throws UserEmailAlreadyTakenException {
+    public User create(User.UserBuilder userBuilder, String baseUrl, byte[] profilePic) throws UserEmailAlreadyTakenException {
         long imageId = imageDao.insertAndReturnKey(profilePic);
         userBuilder.imageId(imageId);
-
         userBuilder.password(passwordEncoder.encode(userBuilder.getPassword()));
+
+        final SecureRandom random = new SecureRandom();
+        final byte[] bytes = new byte[20];
+        random.nextBytes(bytes);
+
+        final String confirmToken = new String(Base64.getUrlEncoder().encode(bytes));
+
+        User user;
         try {
-            return userDao.create(userBuilder);
+            user = userDao.create(userBuilder, confirmToken);
         } catch (final UserEmailAlreadyTakenPersistenceException e) {
             LOGGER.warn("User {} failed to create", userBuilder.getEmail());
             throw new UserEmailAlreadyTakenException();
         }
 
-//        return userDao.create(new User.UserBuilder(userBuilder.getEmail(), passwordEncoder.encode(userBuilder.getPassword()), userBuilder.getUsername()));
+        Map<String,Object> mailModel = new HashMap<>();
+        mailModel.put("logoUrl", baseUrl + "/img/uni.png");
+        mailModel.put("url", baseUrl + "/confirm/" + confirmToken);
+        mailService.sendMail(userBuilder.getEmail(), "Email confirmation", "confirmation", mailModel);
+
+        return user;
     }
 
     @Transactional
     @Override
-    public User create(User.UserBuilder userBuilder) throws UserEmailAlreadyTakenException, IOException {
+    public User create(User.UserBuilder userBuilder, String baseUrl) throws UserEmailAlreadyTakenException, IOException {
         File file = ResourceUtils.getFile("classpath:images/default_user.png");
         byte[] defaultImg = Files.readAllBytes(file.toPath());
-
-        return create(userBuilder, defaultImg);
+        return create(userBuilder, baseUrl, defaultImg);
     }
 
     @Transactional
@@ -141,35 +152,31 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public String generateRecoveryToken(String email){
-        Optional<User> user = getUserWithEmail(email);
-        if(!user.isPresent()){
+    public void sendRecoveryMail(String email, String baseUrl){
+        final Optional<User> optUser = getUserWithEmail(email);
+        if(!optUser.isPresent()){
             LOGGER.warn("Generation of recovery token failed. User not found");
             throw new UserEmailNotFoundException();
         }
-        return generateRecoveryToken(user.get());
-    }
+        final User user = optUser.get();
 
-    @Override
-    public String generateRecoveryToken(User user) {
-        return generateRecoveryToken(user.getId());
-    }
 
-    @Override
-    public String generateRecoveryToken(long userId) {
-        SecureRandom random = new SecureRandom();
-        byte[] bytes = new byte[20];
+        final SecureRandom random = new SecureRandom();
+        final byte[] bytes = new byte[20];
         random.nextBytes(bytes);
 
         final String token = new String(Base64.getUrlEncoder().encode(bytes));
 
-        recDao.create(token, userId);
+        recDao.create(token, user.getId());
 
-        return token;
+        Map<String,Object> mailModel = new HashMap<>();
+        mailModel.put("logoUrl", baseUrl + "/img/uni.png");
+        mailModel.put("url", baseUrl + "/recover/" + token);
+        mailService.sendMail(user.getEmail(), "Uni: Recover password", "recovery", mailModel);
     }
 
     @Override
-    public boolean isValidToken(String token) {
+    public boolean isValidRecoveryToken(String token) {
         return recDao.findUserIdByToken(token).isPresent();
     }
 
@@ -178,13 +185,27 @@ public class UserServiceImpl implements UserService {
     public void recoverPassword(String token, String newPassword) throws InvalidTokenException {
         Optional<Long> optUserId = recDao.findUserIdByToken(token);
         if(!optUserId.isPresent()){
-            LOGGER.warn("Invalid token when trying to recover password");
+            LOGGER.info("Invalid token when trying to recover password");
             throw new InvalidTokenException();
         }
         long userId = optUserId.get();
 
         userDao.changePassword(userId, passwordEncoder.encode(newPassword));
         recDao.delete(token);
+    }
+
+    @Override
+    public User confirmUser(String token) throws InvalidTokenException {
+        Optional<User> optUser = userDao.findUserByConfirmToken(token);
+        if(!optUser.isPresent()){
+            LOGGER.info("Invalid token when trying to confirm user");
+            throw new InvalidTokenException();
+        }
+        User user = optUser.get();
+
+        userDao.confirmUser(user.getId());
+
+        return user;
     }
 
     //-------------------------------- USER ROLES -----------------------------

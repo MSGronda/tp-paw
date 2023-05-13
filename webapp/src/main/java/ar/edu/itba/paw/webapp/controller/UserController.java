@@ -19,17 +19,23 @@ import org.springframework.http.MediaType;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.web.authentication.RememberMeServices;
+import org.springframework.security.web.authentication.rememberme.RememberMeAuthenticationFilter;
 import org.springframework.stereotype.Controller;
-import org.springframework.util.ResourceUtils;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 import java.io.*;
-import java.nio.file.Files;
 import java.sql.SQLException;
 import java.util.*;
 
@@ -42,6 +48,7 @@ public class UserController {
     private final DegreeService degreeService;
 
     private final AuthUserService authUserService;
+    private final AuthenticationManager authManager;
 
     private final RolesService rolesService;
 
@@ -49,7 +56,7 @@ public class UserController {
 
 
     @Autowired
-    public UserController(UserService userService, ReviewService reviewService, MailService mailService, DegreeService degreeService, AuthUserService authUserService, RolesService rolesService, UniUserDetailsService uniUserDetailsService) {
+    public UserController(UserService userService, ReviewService reviewService, MailService mailService, DegreeService degreeService, AuthUserService authUserService, RolesService rolesService, UniUserDetailsService uniUserDetailsService, AuthenticationManager authManager) {
         this.userService = userService;
         this.reviewService = reviewService;
         this.mailService = mailService;
@@ -57,6 +64,7 @@ public class UserController {
         this.authUserService = authUserService;
         this.rolesService = rolesService;
         this.uniUserDetailsService = uniUserDetailsService;
+        this.authManager = authManager;
     }
 
     @RequestMapping("/user/{id:\\d+}")
@@ -107,8 +115,10 @@ public class UserController {
 
         User.UserBuilder user = new User.UserBuilder(userForm.getEmail(), userForm.getPassword(), userForm.getName());
 
+        final String baseUrl = ServletUriComponentsBuilder.fromCurrentContextPath().build().toUriString();
+
         try {
-            final User newUser = userService.create(user);
+            final User newUser = userService.create(user, baseUrl);
         }catch (UserEmailAlreadyTakenException e){
 
 //            errors.rejectValue("email", "UserForm.email.alreadyExists", "An account with this email already exists");
@@ -122,12 +132,33 @@ public class UserController {
         }
         Roles role = maybeRole.get();
         userService.addIdToUserRoles(role.getId(), user.getId());
-        return new ModelAndView("redirect:/login");
+
+        return new ModelAndView("user/confirm/checkEmail");
     }
 
     @RequestMapping(value = "/register", method = { RequestMethod.GET })
     public ModelAndView registerForm(@ModelAttribute ("UserForm") final UserForm userForm) {
         return new ModelAndView("user/register");
+    }
+
+    @RequestMapping("/confirm/{token}")
+    public String confirm(HttpServletRequest request, @PathVariable String token) {
+        User user;
+        try {
+            user = userService.confirmUser(token);
+        } catch (InvalidTokenException e) {
+            return "user/confirm/invalidToken";
+        }
+
+        // Auto-login
+//        final UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(user.getEmail(), null);
+//        final Authentication auth = authManager.authenticate(authToken);
+//        final SecurityContext ctx = SecurityContextHolder.getContext();
+//        ctx.setAuthentication(auth);
+//        final HttpSession session = request.getSession(true);
+//        session.setAttribute("SPRING_SECURITY_CONTEXT_KEY", ctx);
+
+        return "user/confirm/success";
     }
 
     @RequestMapping(value = "/login", method = { RequestMethod.GET })
@@ -198,21 +229,16 @@ public class UserController {
             return recoverPassword(recoverPasswordForm);
         }
 
-        final String token;
+        final String baseUrl =
+                ServletUriComponentsBuilder.fromCurrentContextPath().build().toUriString();
+
         try {
-            token = userService.generateRecoveryToken(recoverPasswordForm.getEmail());
+            userService.sendRecoveryMail(recoverPasswordForm.getEmail(), baseUrl);
         } catch (UserEmailNotFoundException e) {
             ModelAndView mav = recoverPassword(recoverPasswordForm);
             mav.addObject("emailNotFound", true);
             return mav;
         }
-
-        final String baseUrl =
-                ServletUriComponentsBuilder.fromCurrentContextPath().build().toUriString();
-
-        Map<String,Object> mailModel = new HashMap<>();
-        mailModel.put("url", baseUrl + "/recover/" + token);
-        mailService.sendMail(recoverPasswordForm.getEmail(), "Uni: Recover password", "recovery", mailModel);
 
         return new ModelAndView("user/recover/emailSent");
     }
@@ -242,7 +268,7 @@ public class UserController {
 
     @RequestMapping(value = "/recover/{token}", method = { RequestMethod.GET })
     public ModelAndView recoverPasswordEditForm(@PathVariable String token, @ModelAttribute("RecoverPasswordEditForm") final RecoverPasswordEditForm form){
-        if(!userService.isValidToken(token)){
+        if(!userService.isValidRecoveryToken(token)){
             ModelAndView mav = new ModelAndView("user/recover/index");
             mav.addObject("invalidToken", true);
             return mav;

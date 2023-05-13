@@ -48,7 +48,7 @@
     </div>
     <br />
     <div>
-      <sl-button type="submit" variant="success" ><spring:message code="userform.login" /></sl-button>
+      <sl-button type="submit" variant="success" onclick="this.disabled = true"><spring:message code="userform.login" /></sl-button>
     </div>
     <br/>
     <div>

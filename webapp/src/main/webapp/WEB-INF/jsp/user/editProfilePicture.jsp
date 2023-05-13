@@ -108,7 +108,7 @@
                 </span>
                 <br />
                 <span class="submit-button">
-                    <sl-button type="submit" variant="primary" outline><spring:message code="profile.update.picture"/></sl-button>
+                    <sl-button type="submit" variant="primary" outline onclick="this.disabled = true"><spring:message code="profile.update.picture"/></sl-button>
                 </span>
             </form:form>
         </sl-card>

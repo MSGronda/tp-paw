@@ -4,15 +4,13 @@ import ar.edu.itba.paw.models.Image;
 import ar.edu.itba.paw.models.Roles;
 import ar.edu.itba.paw.models.User;
 import ar.edu.itba.paw.persistence.exceptions.UserEmailAlreadyTakenPersistenceException;
-import com.sun.org.apache.xpath.internal.operations.Bool;
 
-import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
 public interface UserDao extends RWDao<Long,User> {
-    User create(User.UserBuilder userBuilder) throws UserEmailAlreadyTakenPersistenceException;
+    User create(User.UserBuilder userBuilder, String confirmToken) throws UserEmailAlreadyTakenPersistenceException;
 
     Optional<User> getUserWithEmail(final String email);
 
@@ -30,4 +28,8 @@ public interface UserDao extends RWDao<Long,User> {
     Integer addIdToUserRoles(Long roleId, Long userId);
 
     Integer updateUserRoles(Long roleId, Long userId);
+
+    Optional<User> findUserByConfirmToken(String token);
+
+    void confirmUser(long userId);
 }

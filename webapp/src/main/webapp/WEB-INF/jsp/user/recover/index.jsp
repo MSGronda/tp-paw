@@ -53,7 +53,7 @@
                 <br/>
                 <br/>
                 <div class="submit-button">
-                    <sl-button type="submit" variant="primary" outline><spring:message code="recover.sendEmail"/></sl-button>
+                    <sl-button type="submit" variant="primary" outline onclick="this.disabled = true"><spring:message code="recover.sendEmail"/></sl-button>
                 </div>
             </sl-card>
         </form:form>

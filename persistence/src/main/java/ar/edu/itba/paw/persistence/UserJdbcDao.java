@@ -52,13 +52,13 @@ public class UserJdbcDao implements UserDao {
 
 
     public Optional<User> findById(Long id) {
-        return jdbcTemplate.query("SELECT * FROM " + USERS_TABLE + " WHERE id = ?", UserJdbcDao::rowMapper, id)
+        return jdbcTemplate.query("SELECT * FROM " + USERS_TABLE + " WHERE id = ? AND confirmed = true", UserJdbcDao::rowMapper, id)
             .stream().findFirst();
     }
 
     @Override
     public List<User> getAll() {
-        return jdbcTemplate.query("SELECT * FROM " + USERS_TABLE, UserJdbcDao::rowMapper);
+        return jdbcTemplate.query("SELECT * FROM " + USERS_TABLE + " WHERE confirmed = true", UserJdbcDao::rowMapper);
     }
 
 
@@ -68,12 +68,14 @@ public class UserJdbcDao implements UserDao {
     }
 
     @Override
-    public User create(User.UserBuilder userBuilder) throws UserEmailAlreadyTakenPersistenceException {
+    public User create(User.UserBuilder userBuilder, String confirmToken) throws UserEmailAlreadyTakenPersistenceException {
         Map<String, Object> data = new HashMap<>();
         data.put("email", userBuilder.getEmail());
         data.put("pass", userBuilder.getPassword());
         data.put("username", userBuilder.getUsername());
         data.put("image_id", userBuilder.getImageId());
+        data.put("confirmtoken", confirmToken);
+        data.put("confirmed", false);
 
         Number key;
 
@@ -153,7 +155,7 @@ public class UserJdbcDao implements UserDao {
 
     @Override
     public Optional<User> getUserWithEmail(String email){
-        return jdbcTemplate.query("SELECT * FROM " + USERS_TABLE + " WHERE email = ?", UserJdbcDao::rowMapper, email).stream().findFirst();
+        return jdbcTemplate.query("SELECT * FROM " + USERS_TABLE + " WHERE email = ? AND confirmed = true", UserJdbcDao::rowMapper, email).stream().findFirst();
     }
 
     private static Map<String,Integer> userAllSubjectsProgressExtractor(ResultSet rs) throws SQLException {
@@ -226,6 +228,17 @@ public class UserJdbcDao implements UserDao {
     }
 
     //---------------------------------------------------------------------------------------
+
+    @Override
+    public Optional<User> findUserByConfirmToken(String token) {
+        return jdbcTemplate.query("SELECT * FROM " + USERS_TABLE + " WHERE confirmtoken = ?", UserJdbcDao::rowMapper, token)
+                .stream().findFirst();
+    }
+
+    @Override
+    public void confirmUser(long userId) {
+        jdbcTemplate.update("UPDATE " + USERS_TABLE + " SET confirmtoken = NULL, confirmed = true WHERE id = ?", userId);
+    }
 
     private static User rowMapper(ResultSet rs, int rowNum) throws SQLException {
         return new User(

@@ -67,7 +67,7 @@
         <sl-input name="passwordConfirmation" type="password" path="passwordEditConfirmation" value="${RecoverPasswordEditForm.passwordConfirmation}" placeholder="${PasswordConfirmationPlaceholder}" password-toggle></sl-input>
 
         <br/>
-        <sl-button type="submit" variant="primary" outline><spring:message code="profile.update.password"/></sl-button>
+        <sl-button type="submit" variant="primary" outline onclick="this.disabled = true"><spring:message code="profile.update.password"/></sl-button>
       </sl-card>
     </form:form>
   </div>

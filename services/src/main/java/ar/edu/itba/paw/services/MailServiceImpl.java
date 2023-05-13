@@ -34,7 +34,6 @@ public class MailServiceImpl implements MailService {
     @Override
     public void sendMail(String to, String subject, String body) {
         sendMail(to, subject, body, false);
-        LOGGER.info("Mail sent to {} successfully", to);
     }
 
     @Async
@@ -46,7 +45,6 @@ public class MailServiceImpl implements MailService {
         final String body = templateEngine.process(template, ctx);
 
         sendMail(to, subject, body, true);
-        LOGGER.info("Mail sent to {} successfully", to);
     }
 
     private void sendMail(String to, String subject, String body, boolean html) {

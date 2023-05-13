@@ -6,6 +6,8 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.BeanIds;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
@@ -37,6 +39,16 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
         return new BCryptPasswordEncoder();
     }
 
+    @Bean HttpSecurity httpSecurity() throws Exception {
+        return this.getHttp();
+    }
+
+    @Bean(name = BeanIds.AUTHENTICATION_MANAGER)
+    @Override
+    public AuthenticationManager authenticationManagerBean() throws Exception {
+        return super.authenticationManagerBean();
+    }
+
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
         auth.userDetailsService(userDetailsService)
@@ -48,7 +60,7 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
         http.sessionManagement()
                 .sessionAuthenticationErrorUrl("/login")
             .and().authorizeRequests()
-                .antMatchers("/login","/register", "/recover/**").anonymous()
+                .antMatchers("/login","/register", "/recover/**", "/confirm/**").anonymous()
                 .antMatchers("/user/{id:\\d+}/moderator").hasRole("EDITOR")
                 .antMatchers("/subject/{id:\\d+\\.\\d+}", "/", "/user/{id:\\d+}", "/search/**, /image/**").permitAll()
                 .antMatchers("/**").authenticated()

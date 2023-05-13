@@ -54,12 +54,12 @@ public class UserServiceImplTest {
     public void testCreate() throws UserEmailAlreadyTakenPersistenceException, UserEmailAlreadyTakenException, IOException {
         //1. Precondiciones
         User.UserBuilder userBuilder = new User.UserBuilder(EMAIL, PASSWORD, USERNAME);
-        when(userDao.create(eq(userBuilder)))
+        when(userDao.create(eq(userBuilder), ""))
             .thenReturn(new User.UserBuilder(EMAIL, PASSWORD, USERNAME).build());
         when(imageDao.insertAndReturnKey(eq("asdf".getBytes()))).thenReturn(IMAGEID);
 
         // 2. Execute class under test
-        User newUser = us.create(userBuilder, "asdf".getBytes());
+        User newUser = us.create(userBuilder, "/", "asdf".getBytes());
 
         // 3. Meaningful assertions
         Assert.assertNotNull(newUser);
@@ -71,13 +71,13 @@ public class UserServiceImplTest {
     public void testCreateAlreadyExists() throws UserEmailAlreadyTakenPersistenceException, UserEmailAlreadyTakenException, IOException {
         //1. Precondiciones
         User.UserBuilder userBuilder = new User.UserBuilder(EMAIL, PASSWORD, USERNAME);
-        when(userDao.create(eq(userBuilder)))
+        when(userDao.create(eq(userBuilder), ""))
                 .thenThrow(UserEmailAlreadyTakenPersistenceException.class);
         when(imageDao.insertAndReturnKey(eq("asdf".getBytes()))).thenReturn(IMAGEID);
         when(passwordEncoder.encode(eq(PASSWORD))).thenReturn(PASSWORD_ENCRYPTED);
 
         // 2. Execute class under test
-        us.create(userBuilder, "asdf".getBytes());
+        us.create(userBuilder, "/", "asdf".getBytes());
     }
     @Test
     public void testFindById() {

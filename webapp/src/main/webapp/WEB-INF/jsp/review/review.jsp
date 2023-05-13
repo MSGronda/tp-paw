@@ -56,7 +56,7 @@
                 </sl-radio-group>
             </div>
             <br />
-            <sl-button type="submit" variant="success"><spring:message code="form.submit"/></sl-button>
+            <sl-button type="submit" variant="success" onclick="this.disabled = true"><spring:message code="form.submit"/></sl-button>
         </div>
     </form:form>
 </main>

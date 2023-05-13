@@ -55,7 +55,7 @@
                     <spring:message code="profile.newusername.placeholder" var="NamePlaceholder"/>
                     <sl-input name="userName" path="userName" placeholder="${NamePlaceholder}" value="${EditUserDataForm.userName}"></sl-input>
                     <br/>
-                    <sl-button type="submit" variant="primary" outline><spring:message code="profile.update.username"/></sl-button>
+                    <sl-button type="submit" variant="primary" outline onclick="this.disabled = true"><spring:message code="profile.update.username"/></sl-button>
                 </sl-card>
             </form:form>
         </div>

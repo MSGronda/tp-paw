@@ -50,7 +50,7 @@
                 </sl-radio-group>
             </div>
             <br />
-            <sl-button type="submit" variant="success"><spring:message code="review.edit"/></sl-button>
+            <sl-button type="submit" variant="success" onclick="this.disabled = true"><spring:message code="review.edit"/></sl-button>
         </div>
     </form:form>
 </main>

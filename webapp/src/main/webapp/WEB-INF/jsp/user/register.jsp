@@ -55,7 +55,7 @@
 
         <br/>
 
-        <sl-button type="submit" variant="success"><spring:message code="userform.submit"/></sl-button>
+        <sl-button type="submit" variant="success" onclick="this.disabled = true"><spring:message code="userform.submit"/></sl-button>
     </form:form>
 </main>
 <jsp:include page="../components/footer.jsp"/>
