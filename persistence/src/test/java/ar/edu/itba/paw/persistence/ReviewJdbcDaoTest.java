@@ -68,14 +68,6 @@ public class ReviewJdbcDaoTest {
     private static final int VOTE = 1;
 
     private JdbcTemplate jdbcTemplate;
-    private JdbcTemplate jdbcTemplateUsers;
-    private JdbcTemplate jdbcTemplateSubjects;
-
-    private JdbcTemplate jdbcTemplateReviewStat;
-
-    private JdbcTemplate jdbcTemplateImage;
-
-    private JdbcTemplate jdbcTemplateVote;
 
     @Autowired
     private DataSource ds;
@@ -86,25 +78,20 @@ public class ReviewJdbcDaoTest {
     @Before
     public void setup(){
         jdbcTemplate = new JdbcTemplate(ds);
-        jdbcTemplateUsers = new JdbcTemplate(ds);
-        jdbcTemplateSubjects = new JdbcTemplate(ds);
-        jdbcTemplateReviewStat= new JdbcTemplate(ds);
-        jdbcTemplateImage = new JdbcTemplate(ds);
-        jdbcTemplateVote = new JdbcTemplate(ds);
 
-        JdbcTestUtils.deleteFromTables(jdbcTemplateVote, "reviewvote");
+        JdbcTestUtils.deleteFromTables(jdbcTemplate, "reviewvote");
         JdbcTestUtils.deleteFromTables(jdbcTemplate, "reviews");
-        JdbcTestUtils.deleteFromTables(jdbcTemplateUsers, "users");
-        JdbcTestUtils.deleteFromTables(jdbcTemplateSubjects, "subjects");
-        JdbcTestUtils.deleteFromTables(jdbcTemplateImage, "images");
+        JdbcTestUtils.deleteFromTables(jdbcTemplate, "users");
+        JdbcTestUtils.deleteFromTables(jdbcTemplate, "subjects");
+        JdbcTestUtils.deleteFromTables(jdbcTemplate, "images");
     }
 
     @Test
     public void testFindById(){
-        jdbcTemplateImage.execute("INSERT INTO images VALUES (" + IMAGEID + ", " + IMAGE + ")");
+        jdbcTemplate.execute("INSERT INTO images VALUES (" + IMAGEID + ", " + IMAGE + ")");
 
-        jdbcTemplateUsers.execute("INSERT INTO users(id, email, pass, username, image_id) VALUES (" + USERID + ", '" + EMAIL + "', '" + PASSWORD + "', '" + USERNAME + "', " + IMAGEID + ")");
-        jdbcTemplateSubjects.execute("INSERT INTO subjects(id, subname, department, credits) VALUES (" + SUBJECTID + ", '" + NAME + "', '" + DEPARTMENT + "', " + CREDITS + ")");
+        jdbcTemplate.execute("INSERT INTO users(id, email, pass, username, image_id) VALUES (" + USERID + ", '" + EMAIL + "', '" + PASSWORD + "', '" + USERNAME + "', " + IMAGEID + ")");
+        jdbcTemplate.execute("INSERT INTO subjects(id, subname, department, credits) VALUES (" + SUBJECTID + ", '" + NAME + "', '" + DEPARTMENT + "', " + CREDITS + ")");
         jdbcTemplate.execute("INSERT INTO reviews(id, iduser, idsub, score, easy, timedemanding, revtext, useranonymous) " +
                 "VALUES (" + ID + ", " + USERID + ", '" + SUBJECTID + "', " + SCORE + ", " + EASY + ", " + TIMEDEMANDING + ", '" + TEXT + "', " + ANONYMOUS + ")" );
 
@@ -119,10 +106,10 @@ public class ReviewJdbcDaoTest {
 
     @Test
     public void testCreate(){
-        jdbcTemplateImage.execute("INSERT INTO images VALUES (" + IMAGEID + ", " + IMAGE + ")");
+        jdbcTemplate.execute("INSERT INTO images VALUES (" + IMAGEID + ", " + IMAGE + ")");
 
-        jdbcTemplateUsers.execute("INSERT INTO users(id, email, pass, username, image_id) VALUES (" + USERID + ", '" + EMAIL + "', '" + PASSWORD + "', '" + USERNAME + "', " + IMAGEID + ")");
-        jdbcTemplateSubjects.execute("INSERT INTO subjects(id, subname, department, credits) VALUES (" + SUBJECTID + ", '" + NAME + "', '" + DEPARTMENT + "', " + CREDITS + ")");
+        jdbcTemplate.execute("INSERT INTO users(id, email, pass, username, image_id) VALUES (" + USERID + ", '" + EMAIL + "', '" + PASSWORD + "', '" + USERNAME + "', " + IMAGEID + ")");
+        jdbcTemplate.execute("INSERT INTO subjects(id, subname, department, credits) VALUES (" + SUBJECTID + ", '" + NAME + "', '" + DEPARTMENT + "', " + CREDITS + ")");
 
         Review review = reviewDao.create(ANONYMOUS, EASY, TIMEDEMANDING, TEXT, SUBJECTID, USERID);
 
@@ -134,10 +121,10 @@ public class ReviewJdbcDaoTest {
 
     @Test
     public void testDelete(){
-        jdbcTemplateImage.execute("INSERT INTO images VALUES (" + IMAGEID + ", " + IMAGE + ")");
+        jdbcTemplate.execute("INSERT INTO images VALUES (" + IMAGEID + ", " + IMAGE + ")");
 
-        jdbcTemplateUsers.execute("INSERT INTO users(id, email, pass, username, image_id) VALUES (" + USERID + ", '" + EMAIL + "', '" + PASSWORD + "', '" + USERNAME + "', " + IMAGEID + ")");
-        jdbcTemplateSubjects.execute("INSERT INTO subjects(id, subname, department, credits) VALUES (" + SUBJECTID + ", '" + NAME + "', '" + DEPARTMENT + "', " + CREDITS + ")");
+        jdbcTemplate.execute("INSERT INTO users(id, email, pass, username, image_id) VALUES (" + USERID + ", '" + EMAIL + "', '" + PASSWORD + "', '" + USERNAME + "', " + IMAGEID + ")");
+        jdbcTemplate.execute("INSERT INTO subjects(id, subname, department, credits) VALUES (" + SUBJECTID + ", '" + NAME + "', '" + DEPARTMENT + "', " + CREDITS + ")");
         jdbcTemplate.execute("INSERT INTO reviews(id, iduser, idsub, score, easy, timedemanding, revtext, useranonymous) " +
                 "VALUES (" + ID + ", " + USERID + ", '" + SUBJECTID + "', " + SCORE + ", " + EASY + ", " + TIMEDEMANDING + ", '" + TEXT + "', " + ANONYMOUS + ")" );
 
@@ -148,10 +135,10 @@ public class ReviewJdbcDaoTest {
 
     @Test
     public void testUpdate(){
-        jdbcTemplateImage.execute("INSERT INTO images VALUES (" + IMAGEID + ", " + IMAGE + ")");
+        jdbcTemplate.execute("INSERT INTO images VALUES (" + IMAGEID + ", " + IMAGE + ")");
 
-        jdbcTemplateUsers.execute("INSERT INTO users(id, email, pass, username, image_id) VALUES (" + USERID + ", '" + EMAIL + "', '" + PASSWORD + "', '" + USERNAME + "', " + IMAGEID + ")");
-        jdbcTemplateSubjects.execute("INSERT INTO subjects(id, subname, department, credits) VALUES (" + SUBJECTID + ", '" + NAME + "', '" + DEPARTMENT + "', " + CREDITS + ")");
+        jdbcTemplate.execute("INSERT INTO users(id, email, pass, username, image_id) VALUES (" + USERID + ", '" + EMAIL + "', '" + PASSWORD + "', '" + USERNAME + "', " + IMAGEID + ")");
+        jdbcTemplate.execute("INSERT INTO subjects(id, subname, department, credits) VALUES (" + SUBJECTID + ", '" + NAME + "', '" + DEPARTMENT + "', " + CREDITS + ")");
         jdbcTemplate.execute("INSERT INTO reviews(id, iduser, idsub, score, easy, timedemanding, revtext, useranonymous) " +
                 "VALUES (" + ID + ", " + USERID + ", '" + SUBJECTID + "', " + SCORE + ", " + EASY + ", " + TIMEDEMANDING + ", '" + TEXT + "', " + ANONYMOUS + ")" );
 
@@ -167,24 +154,28 @@ public class ReviewJdbcDaoTest {
 
     @Test
     public void testGetReviewStatBySubject(){
-        jdbcTemplateSubjects.execute("INSERT INTO subjects(id, subname, department, credits) VALUES (" + SUBJECTID + ", '" + NAME + "', '" + DEPARTMENT + "', " + CREDITS + ")");
-        jdbcTemplateReviewStat.execute("INSERT INTO subjectreviewstatistics(idsub, reviewcount, easycount, mediumcount, hardcount, nottimedemandingcount, averagetimedemandingcount, timedemandingcount) " +
-                "VALUES ('" + SUBJECTID + "', " + REVIEWCOUNT + ", " + EASYCOUNT + ", " + MEDIUMCOUNT + ", " + HARDCOUNT + ", " + NOTTIMEDEMANDINGCOUNT + ", " + AVERAGETIMEDEMANDING + ", " + TIMEDEMANDINGCOUNT + ")" );
+        jdbcTemplate.execute("INSERT INTO users(id, email, pass, username) VALUES (" + USERID + ", '" + EMAIL + "', '" + PASSWORD + "', '" + USERNAME + "')");
+        jdbcTemplate.execute("INSERT INTO subjects(id, subname, department, credits) VALUES (" + SUBJECTID + ", '" + NAME + "', '" + DEPARTMENT + "', " + CREDITS + ")");
+        jdbcTemplate.execute("INSERT INTO reviews(idsub, iduser, easy, revtext) VALUES" +
+                " ('" + SUBJECTID + "', " + USERID + ", " + EASY + ", '" + TEXT + "')");
 
-        Optional<ReviewStatistic> reviewStatistic = reviewDao.getReviewStatBySubject(SUBJECTID);
-        Optional<ReviewStatistic> reviewStatistic2 = reviewDao.getReviewStatBySubject("12.1");
+        Optional<ReviewStatistic> reviewStats = reviewDao.getReviewStatBySubject(SUBJECTID);
+        Optional<ReviewStatistic> reviewStats2 = reviewDao.getReviewStatBySubject("12.1");
 
-        Assert.assertFalse(reviewStatistic2.isPresent());
-        Assert.assertTrue(reviewStatistic.isPresent());
-        Assert.assertEquals(EASYCOUNT, reviewStatistic.get().getEasyCount());
+        Assert.assertFalse(reviewStats2.isPresent());
+        Assert.assertTrue(reviewStats.isPresent());
+        Assert.assertEquals(1, reviewStats.get().getEasyCount());
+        Assert.assertEquals(0, reviewStats.get().getMediumCount());
+        Assert.assertEquals(0, reviewStats.get().getHardCount());
+        Assert.assertEquals(1, reviewStats.get().getReviewCount());
     }
 
     @Test
     public void testVoteReview(){
-        jdbcTemplateImage.execute("INSERT INTO images VALUES (" + IMAGEID + ", " + IMAGE + ")");
+        jdbcTemplate.execute("INSERT INTO images VALUES (" + IMAGEID + ", " + IMAGE + ")");
 
-        jdbcTemplateUsers.execute("INSERT INTO users(id, email, pass, username, image_id) VALUES (" + USERID + ", '" + EMAIL + "', '" + PASSWORD + "', '" + USERNAME + "', " + IMAGEID + ")");
-        jdbcTemplateSubjects.execute("INSERT INTO subjects(id, subname, department, credits) VALUES (" + SUBJECTID + ", '" + NAME + "', '" + DEPARTMENT + "', " + CREDITS + ")");
+        jdbcTemplate.execute("INSERT INTO users(id, email, pass, username) VALUES (" + USERID + ", '" + EMAIL + "', '" + PASSWORD + "', '" + USERNAME + "')");
+        jdbcTemplate.execute("INSERT INTO subjects(id, subname, department, credits) VALUES (" + SUBJECTID + ", '" + NAME + "', '" + DEPARTMENT + "', " + CREDITS + ")");
         jdbcTemplate.execute("INSERT INTO reviews(id, iduser, idsub, score, easy, timedemanding, revtext, useranonymous) " +
                 "VALUES (" + ID + ", " + USERID + ", '" + SUBJECTID + "', " + SCORE + ", " + EASY + ", " + TIMEDEMANDING + ", '" + TEXT + "', " + ANONYMOUS + ")" );
 
@@ -192,24 +183,24 @@ public class ReviewJdbcDaoTest {
         reviewDao.voteReview(USERID, ID, VOTE);
 
         String query = "iduser = " + USERID + " AND idreview = " + ID + " AND vote = " + VOTE;
-        Assert.assertEquals(1, JdbcTestUtils.countRowsInTableWhere(jdbcTemplateVote, "reviewvote", query) );
+        Assert.assertEquals(1, JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, "reviewvote", query) );
 
     }
 
     @Test
     public void testDeleteReviewVote(){
-        jdbcTemplateImage.execute("INSERT INTO images VALUES (" + IMAGEID + ", " + IMAGE + ")");
+        jdbcTemplate.execute("INSERT INTO images VALUES (" + IMAGEID + ", " + IMAGE + ")");
 
-        jdbcTemplateUsers.execute("INSERT INTO users(id, email, pass, username, image_id) VALUES (" + USERID + ", '" + EMAIL + "', '" + PASSWORD + "', '" + USERNAME + "', " + IMAGEID + ")");
-        jdbcTemplateSubjects.execute("INSERT INTO subjects(id, subname, department, credits) VALUES (" + SUBJECTID + ", '" + NAME + "', '" + DEPARTMENT + "', " + CREDITS + ")");
+        jdbcTemplate.execute("INSERT INTO users(id, email, pass, username, image_id) VALUES (" + USERID + ", '" + EMAIL + "', '" + PASSWORD + "', '" + USERNAME + "', " + IMAGEID + ")");
+        jdbcTemplate.execute("INSERT INTO subjects(id, subname, department, credits) VALUES (" + SUBJECTID + ", '" + NAME + "', '" + DEPARTMENT + "', " + CREDITS + ")");
         jdbcTemplate.execute("INSERT INTO reviews(id, iduser, idsub, score, easy, timedemanding, revtext, useranonymous) " +
                 "VALUES (" + ID + ", " + USERID + ", '" + SUBJECTID + "', " + SCORE + ", " + EASY + ", " + TIMEDEMANDING + ", '" + TEXT + "', " + ANONYMOUS + ")" );
-        jdbcTemplateVote.execute("INSERT INTO reviewvote VALUES (" + USERID + ", " + ID + ", " + VOTE + ")");
+        jdbcTemplate.execute("INSERT INTO reviewvote VALUES (" + USERID + ", " + ID + ", " + VOTE + ")");
 
 
         reviewDao.deleteReviewVote(USERID, ID);
 
         String query = "iduser = " + USERID + " AND idreview = " + ID + " AND vote = " + VOTE;
-        Assert.assertEquals(0, JdbcTestUtils.countRowsInTableWhere(jdbcTemplateVote, "reviewvote", query));
+        Assert.assertEquals(0, JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, "reviewvote", query));
     }
 }

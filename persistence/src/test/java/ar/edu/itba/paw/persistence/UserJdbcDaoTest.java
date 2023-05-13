@@ -54,16 +54,6 @@ public class UserJdbcDaoTest {
 
     private JdbcTemplate jdbcTemplate;
 
-    private JdbcTemplate jdbcTemplateSubjectP;
-
-    private JdbcTemplate jdbcTemplateImage;
-
-    private JdbcTemplate jdbcTemplateUserRoles;
-
-    private JdbcTemplate jdbcTemplateRoles;
-
-    private JdbcTemplate jdbcTemplateSubjects;
-
     @Autowired
     private DataSource ds;
     @Autowired
@@ -72,24 +62,20 @@ public class UserJdbcDaoTest {
     @Before
     public void setup() {
         jdbcTemplate = new JdbcTemplate(ds);
-        jdbcTemplateSubjectP = new JdbcTemplate(ds);
-        jdbcTemplateImage = new JdbcTemplate(ds);
-        jdbcTemplateRoles = new JdbcTemplate(ds);
-        jdbcTemplateUserRoles = new JdbcTemplate(ds);
-        jdbcTemplateSubjects = new JdbcTemplate(ds);
 
-        JdbcTestUtils.deleteFromTables(jdbcTemplateSubjectP, "usersubjectprogress");
-        JdbcTestUtils.deleteFromTables(jdbcTemplateUserRoles, "userroles");
-        JdbcTestUtils.deleteFromTables(jdbcTemplateRoles, "roles");
+        JdbcTestUtils.deleteFromTables(jdbcTemplate, "usersubjectprogress");
+        JdbcTestUtils.deleteFromTables(jdbcTemplate, "userroles");
+        JdbcTestUtils.deleteFromTables(jdbcTemplate, "roles");
         JdbcTestUtils.deleteFromTables(jdbcTemplate, "reviews");
         JdbcTestUtils.deleteFromTables(jdbcTemplate, "users");
-        JdbcTestUtils.deleteFromTables(jdbcTemplateSubjects, "subjects");
-        JdbcTestUtils.deleteFromTables(jdbcTemplateImage, "images");
+        JdbcTestUtils.deleteFromTables(jdbcTemplate, "subjectsdegrees");
+        JdbcTestUtils.deleteFromTables(jdbcTemplate, "subjects");
+        JdbcTestUtils.deleteFromTables(jdbcTemplate, "images");
     }
 
     @Test
     public void testFindById() {
-        jdbcTemplateImage.execute("INSERT INTO images VALUES (" + IMAGEID + ", " + IMAGE + ")");
+        jdbcTemplate.execute("INSERT INTO images VALUES (" + IMAGEID + ", " + IMAGE + ")");
 
         jdbcTemplate.execute("INSERT INTO users(id, email, pass, username, image_id, confirmtoken, confirmed ) VALUES (" + ID + ", '" + EMAIL + "', '" + PASSWORD + "', '" + USERNAME + "', " + IMAGEID + ", '" + CONFIRMTOKEN + "', " + CONFIRMED + ")");
 
@@ -108,7 +94,7 @@ public class UserJdbcDaoTest {
 
     @Test
     public void testGetUserWithEmail(){
-        jdbcTemplateImage.execute("INSERT INTO images VALUES (" + IMAGEID + ", " + IMAGE + ")");
+        jdbcTemplate.execute("INSERT INTO images VALUES (" + IMAGEID + ", " + IMAGE + ")");
 
         jdbcTemplate.execute("INSERT INTO users(id, email, pass, username, image_id, confirmtoken, confirmed ) VALUES (" + ID + ", '" + EMAIL + "', '" + PASSWORD + "', '" + USERNAME + "', " + IMAGEID + ", '" + CONFIRMTOKEN + "', " + CONFIRMED + ")");
 
@@ -121,7 +107,7 @@ public class UserJdbcDaoTest {
 
     @Test
     public void testCreate() {
-        jdbcTemplateImage.execute("INSERT INTO images VALUES (" + IMAGEID + ", " + IMAGE + ")");
+        jdbcTemplate.execute("INSERT INTO images VALUES (" + IMAGEID + ", " + IMAGE + ")");
 
         User user;
         try{
@@ -139,7 +125,7 @@ public class UserJdbcDaoTest {
 
     @Test(expected = UserEmailAlreadyTakenPersistenceException.class)
     public void testCreateException() throws UserEmailAlreadyTakenPersistenceException {
-        jdbcTemplateImage.execute("INSERT INTO images VALUES (" + IMAGEID + ", " + IMAGE + ")");
+        jdbcTemplate.execute("INSERT INTO images VALUES (" + IMAGEID + ", " + IMAGE + ")");
 
         jdbcTemplate.execute("INSERT INTO users(id, email, pass, username, image_id, confirmtoken, confirmed ) VALUES (" + ID + ", '" + EMAIL + "', '" + PASSWORD + "', '" + USERNAME + "', " + IMAGEID + ", '" + CONFIRMTOKEN + "', " + CONFIRMED + ")");
 
@@ -168,8 +154,8 @@ public class UserJdbcDaoTest {
     @Test
     public void testGetUserRoles(){
         jdbcTemplate.execute("INSERT INTO users(id, email, pass, username) VALUES (" + ID + ", '" + EMAIL + "', '" + PASSWORD + "', '" + USERNAME + "')");
-        jdbcTemplateRoles.execute("INSERT INTO roles(id, name) VALUES (" + ROLEID + ", '" + ROLENAME + "')");
-        jdbcTemplateUserRoles.execute("INSERT INTO userroles(roleid, userid) VALUES (" + ROLEID + ", " + ID + ")");
+        jdbcTemplate.execute("INSERT INTO roles(id, name) VALUES (" + ROLEID + ", '" + ROLENAME + "')");
+        jdbcTemplate.execute("INSERT INTO userroles(roleid, userid) VALUES (" + ROLEID + ", " + ID + ")");
 
         List<Roles> roles = userDao.getUserRoles(ID);
 
@@ -180,19 +166,19 @@ public class UserJdbcDaoTest {
     @Test
     public void testAddIdToUserRoles(){
         jdbcTemplate.execute("INSERT INTO users(id, email, pass, username) VALUES (" + ID + ", '" + EMAIL + "', '" + PASSWORD + "', '" + USERNAME + "')");
-        jdbcTemplateRoles.execute("INSERT INTO roles(id, name) VALUES (" + ROLEID + ", '" + ROLENAME + "')");
+        jdbcTemplate.execute("INSERT INTO roles(id, name) VALUES (" + ROLEID + ", '" + ROLENAME + "')");
 
         Integer success = userDao.addIdToUserRoles(ROLEID, ID);
 
         String query = "roleid = " + ROLEID + " AND userid = " + ID;
-        Assert.assertEquals(1, JdbcTestUtils.countRowsInTableWhere(jdbcTemplateUserRoles, "userroles", query));
+        Assert.assertEquals(1, JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, "userroles", query));
     }
 
     @Test
     public void testGetUserSubjectProgress(){
         jdbcTemplate.execute("INSERT INTO users(id, email, pass, username) VALUES (" + ID + ", '" + EMAIL + "', '" + PASSWORD + "', '" + USERNAME + "')");
-        jdbcTemplateSubjects.execute("INSERT INTO subjects(id, subname, department, credits) VALUES ('" + SUBJECTID + "', '" + SUBJECTNAME + "', '" + DEPARTMENT + "', " + CREDITS + ")");
-        jdbcTemplateSubjectP.execute("INSERT INTO usersubjectprogress VALUES (" + ID + ", '" + SUBJECTID + "', " + SUBJECTPROGRESS + ")" );
+        jdbcTemplate.execute("INSERT INTO subjects(id, subname, department, credits) VALUES ('" + SUBJECTID + "', '" + SUBJECTNAME + "', '" + DEPARTMENT + "', " + CREDITS + ")");
+        jdbcTemplate.execute("INSERT INTO usersubjectprogress VALUES (" + ID + ", '" + SUBJECTID + "', " + SUBJECTPROGRESS + ")" );
 
         Optional<Integer> subjectP = userDao.getUserSubjectProgress(ID, SUBJECTID);
 
@@ -204,8 +190,8 @@ public class UserJdbcDaoTest {
     @Test
     public void testUpdateSubjectProgressExisting(){
         jdbcTemplate.execute("INSERT INTO users(id, email, pass, username) VALUES (" + ID + ", '" + EMAIL + "', '" + PASSWORD + "', '" + USERNAME + "')");
-        jdbcTemplateSubjects.execute("INSERT INTO subjects(id, subname, department, credits) VALUES ('" + SUBJECTID + "', '" + SUBJECTNAME + "', '" + DEPARTMENT + "', " + CREDITS + ")");
-        jdbcTemplateSubjectP.execute("INSERT INTO usersubjectprogress VALUES (" + ID + ", '" + SUBJECTID + "', " + SUBJECTPROGRESS + ")" );
+        jdbcTemplate.execute("INSERT INTO subjects(id, subname, department, credits) VALUES ('" + SUBJECTID + "', '" + SUBJECTNAME + "', '" + DEPARTMENT + "', " + CREDITS + ")");
+        jdbcTemplate.execute("INSERT INTO usersubjectprogress VALUES (" + ID + ", '" + SUBJECTID + "', " + SUBJECTPROGRESS + ")" );
 
         int response = userDao.updateSubjectProgress(ID, SUBJECTID, NEWSUBJECTPROGRESS);
 
@@ -213,36 +199,36 @@ public class UserJdbcDaoTest {
 
         String queryShouldNotExist = "iduser = " + ID + " AND idsub = " + SUBJECTID + " AND subjectstate = " + SUBJECTPROGRESS;
         String queryUpdated = "iduser = " + ID + " AND idsub = " + SUBJECTID + " AND subjectstate = " + NEWSUBJECTPROGRESS;
-        Assert.assertEquals(0, JdbcTestUtils.countRowsInTableWhere(jdbcTemplateSubjectP, "usersubjectprogress", queryShouldNotExist));
-        Assert.assertEquals(1, JdbcTestUtils.countRowsInTableWhere(jdbcTemplateSubjectP, "usersubjectprogress", queryUpdated));
+        Assert.assertEquals(0, JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, "usersubjectprogress", queryShouldNotExist));
+        Assert.assertEquals(1, JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, "usersubjectprogress", queryUpdated));
 
     }
 
     @Test
     public void testUpdateSubjectProgressNew(){
         jdbcTemplate.execute("INSERT INTO users(id, email, pass, username) VALUES (" + ID + ", '" + EMAIL + "', '" + PASSWORD + "', '" + USERNAME + "')");
-        jdbcTemplateSubjects.execute("INSERT INTO subjects(id, subname, department, credits) VALUES ('" + SUBJECTID + "', '" + SUBJECTNAME + "', '" + DEPARTMENT + "', " + CREDITS + ")");
+        jdbcTemplate.execute("INSERT INTO subjects(id, subname, department, credits) VALUES ('" + SUBJECTID + "', '" + SUBJECTNAME + "', '" + DEPARTMENT + "', " + CREDITS + ")");
 
         int response = userDao.updateSubjectProgress(ID, SUBJECTID, SUBJECTPROGRESS);
 
         Assert.assertEquals(1, response);
         String queryShouldExist = "iduser = " + ID + " AND idsub = " + SUBJECTID + " AND subjectstate = " + SUBJECTPROGRESS;
 
-        Assert.assertEquals(1, JdbcTestUtils.countRowsInTableWhere(jdbcTemplateSubjectP, "usersubjectprogress", queryShouldExist));
+        Assert.assertEquals(1, JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, "usersubjectprogress", queryShouldExist));
     }
 
 
     @Test
     public void testDeleteUserProgressForSubject(){
         jdbcTemplate.execute("INSERT INTO users(id, email, pass, username) VALUES (" + ID + ", '" + EMAIL + "', '" + PASSWORD + "', '" + USERNAME + "')");
-        jdbcTemplateSubjects.execute("INSERT INTO subjects(id, subname, department, credits) VALUES ('" + SUBJECTID + "', '" + SUBJECTNAME + "', '" + DEPARTMENT + "', " + CREDITS + ")");
-        jdbcTemplateSubjectP.execute("INSERT INTO usersubjectprogress VALUES (" + ID + ", '" + SUBJECTID + "', " + SUBJECTPROGRESS + ")" );
+        jdbcTemplate.execute("INSERT INTO subjects(id, subname, department, credits) VALUES ('" + SUBJECTID + "', '" + SUBJECTNAME + "', '" + DEPARTMENT + "', " + CREDITS + ")");
+        jdbcTemplate.execute("INSERT INTO usersubjectprogress VALUES (" + ID + ", '" + SUBJECTID + "', " + SUBJECTPROGRESS + ")" );
 
         int response = userDao.deleteUserProgressForSubject(ID, SUBJECTID);
 
 
         Assert.assertEquals(1, response);
-        Assert.assertEquals(0, JdbcTestUtils.countRowsInTable(jdbcTemplateSubjectP, "usersubjectprogress"));
+        Assert.assertEquals(0, JdbcTestUtils.countRowsInTable(jdbcTemplate, "usersubjectprogress"));
     }
 
 }
