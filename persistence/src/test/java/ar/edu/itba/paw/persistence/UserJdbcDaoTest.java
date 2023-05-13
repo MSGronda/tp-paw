@@ -79,6 +79,7 @@ public class UserJdbcDaoTest {
         JdbcTestUtils.deleteFromTables(jdbcTemplateSubjectP, "usersubjectprogress");
         JdbcTestUtils.deleteFromTables(jdbcTemplateUserRoles, "userroles");
         JdbcTestUtils.deleteFromTables(jdbcTemplateRoles, "roles");
+        JdbcTestUtils.deleteFromTables(jdbcTemplate, "reviews");
         JdbcTestUtils.deleteFromTables(jdbcTemplate, "users");
         JdbcTestUtils.deleteFromTables(jdbcTemplateSubjects, "subjects");
         JdbcTestUtils.deleteFromTables(jdbcTemplateImage, "images");

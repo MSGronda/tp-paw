@@ -10,7 +10,7 @@ SELECT
     count(case timedemanding when 0 then 1 end)     nottimedemandingcount,
     count(case timedemanding when 2 then 1 end)     timedemandingcount,
     count(case timedemanding when 1 then 1 end)     averagetimedemandingcount
-FROM paw.public.reviews
+FROM reviews
 GROUP BY idsub;
 
 CREATE INDEX idx_reviews_idsub ON reviews(idsub);

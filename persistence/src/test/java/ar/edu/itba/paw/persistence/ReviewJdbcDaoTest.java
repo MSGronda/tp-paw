@@ -92,7 +92,6 @@ public class ReviewJdbcDaoTest {
         jdbcTemplateImage = new JdbcTemplate(ds);
         jdbcTemplateVote = new JdbcTemplate(ds);
 
-        JdbcTestUtils.deleteFromTables(jdbcTemplateReviewStat, "subjectreviewstatistics");
         JdbcTestUtils.deleteFromTables(jdbcTemplateVote, "reviewvote");
         JdbcTestUtils.deleteFromTables(jdbcTemplate, "reviews");
         JdbcTestUtils.deleteFromTables(jdbcTemplateUsers, "users");
@@ -213,6 +212,4 @@ public class ReviewJdbcDaoTest {
         String query = "iduser = " + USERID + " AND idreview = " + ID + " AND vote = " + VOTE;
         Assert.assertEquals(0, JdbcTestUtils.countRowsInTableWhere(jdbcTemplateVote, "reviewvote", query));
     }
-
-
 }
