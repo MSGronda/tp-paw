@@ -28,6 +28,7 @@ public class SubjectJdbcDao implements SubjectDao {
     private final JdbcTemplate jdbcTemplate;
     private final SimpleJdbcInsert jdbcInsert;
     private static final Logger LOGGER = LoggerFactory.getLogger(SubjectClassJdbcDao.class);
+    private final String PAGE_SIZE = "12";
 
     @Autowired
     public SubjectJdbcDao(final DataSource ds) {
@@ -73,12 +74,12 @@ public class SubjectJdbcDao implements SubjectDao {
     public List<Subject> getByNameFiltered(String name, Map<String, String> filters) {
         // All filters in map must be valid. Checks are made in service.
 
-        StringBuilder sb = new StringBuilder("SELECT * FROM ").append(VIEW_JOIN).append(" WHERE subname ILIKE ?");
+        StringBuilder sb = new StringBuilder("SELECT * FROM ").append(TABLE_SUB).append(" WHERE subname ILIKE ?");
         List<String> filterList = new ArrayList<>();
         filterList.add("%" + name + "%");
 
         for (Map.Entry<String, String> filter : filters.entrySet()) {
-            if(!Objects.equals(filter.getKey(), "ob") && !Objects.equals(filter.getKey(), "dir")){
+            if(!Objects.equals(filter.getKey(), "ob") && !Objects.equals(filter.getKey(), "dir") && !Objects.equals(filter.getKey(),"pageNum")){
                 sb.append(" AND ").append(filter.getKey()).append(" = ").append(queryOptionBlanck.get(filter.getKey()));
                 filterList.add(filter.getValue());
             }
@@ -87,10 +88,34 @@ public class SubjectJdbcDao implements SubjectDao {
         // Order by cannot use "?" in the SQL query
         sb.append(" ORDER BY ").append(filters.getOrDefault("ob","subname"));
         sb.append(" ").append(filters.getOrDefault("dir","ASC"));
-
+        int offset = Integer.parseInt(filters.getOrDefault("pageNum","0")) * Integer.parseInt(PAGE_SIZE);
+        sb.append(" LIMIT " + PAGE_SIZE + " OFFSET ").append(offset);
         List<Subject> toReturn = jdbcTemplate.query(sb.toString(), SubjectJdbcDao::subjectListExtractor,  filterList.toArray());
         LOGGER.info("Got subjects with name {} and filters {}", name, filters.values().stream().toString());
         return toReturn;
+    }
+    @Override
+    public int getTotalPagesForSubjects(String name, Map<String, String> filters){
+        StringBuilder sb = new StringBuilder("SELECT * FROM ").append(TABLE_SUB).append(" WHERE subname ILIKE ?");
+        List<String> filterList = new ArrayList<>();
+        filterList.add("%" + name + "%");
+
+        for (Map.Entry<String, String> filter : filters.entrySet()) {
+            if(!Objects.equals(filter.getKey(), "ob") && !Objects.equals(filter.getKey(), "dir") && !Objects.equals(filter.getKey(),"pageNum")){
+                sb.append(" AND ").append(filter.getKey()).append(" = ").append(queryOptionBlanck.get(filter.getKey()));
+                filterList.add(filter.getValue());
+            }
+        }
+
+        // Order by cannot use "?" in the SQL query
+        sb.append(" GROUP BY id,subname ");
+        sb.append(" ORDER BY ").append(filters.getOrDefault("ob","subname"));
+        sb.append(" ").append(filters.getOrDefault("dir","ASC"));
+        // List<Integer>  ?????
+        List<Subject> toReturn = jdbcTemplate.query(sb.toString(), SubjectJdbcDao::subjectListExtractor,  filterList.toArray());
+        LOGGER.info("Got subjects with name {} and filters {}", name, filters.values().stream().toString());
+        return toReturn.size() / Integer.parseInt(PAGE_SIZE);
+        //return jdbcTemplate.queryForObject("SELECT COUNT(*) FROM " + TABLE_SUB + " WHERE subname ILIKE '%" + name + "%' ESCAPE '%'" ,Integer.class);
     }
 
 
@@ -221,17 +246,17 @@ public class SubjectJdbcDao implements SubjectDao {
             final String subName = rs.getString("subname");
             final String department = rs.getString("department");
             final int credits = rs.getInt("credits");
-            final Optional<String> idPrereq = Optional.ofNullable(rs.getString("idprereq"));
-            final Optional<Long> idProf = getOptionalLong(rs, "idprof");
-            final Optional<Long> idDeg = getOptionalLong(rs, "iddeg");
+            //final Optional<String> idPrereq = Optional.ofNullable(rs.getString("idprereq"));
+            //final Optional<Long> idProf = getOptionalLong(rs, "idprof");
+            //final Optional<Long> idDeg = getOptionalLong(rs, "iddeg");
 
             final Subject sub = subs.getOrDefault(idSub,
                     new Subject(idSub, subName, department, credits)
             );
 
-            idPrereq.ifPresent(id -> sub.getPrerequisites().add(id));
-            idProf.ifPresent(id -> sub.getProfessorIds().add(id));
-            idDeg.ifPresent(id -> sub.getDegreeIds().add(id));
+            //idPrereq.ifPresent(id -> sub.getPrerequisites().add(id));
+            //idProf.ifPresent(id -> sub.getProfessorIds().add(id));
+            //idDeg.ifPresent(id -> sub.getDegreeIds().add(id));
 
             subs.putIfAbsent(idSub, sub);
         }

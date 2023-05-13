@@ -13,6 +13,8 @@ public interface SubjectDao extends RWDao<String, Subject> {
 
     List<Subject> getByNameFiltered(String name, Map<String, String> filters);
 
+    int getTotalPagesForSubjects(String name, Map<String, String> filters);
+
     List<Subject> getAllByDegree(Long idCarrera);
 
     List<Subject> getAll();

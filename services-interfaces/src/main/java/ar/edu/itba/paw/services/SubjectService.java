@@ -28,6 +28,9 @@ public interface SubjectService extends BaseService<String, Subject> {
     List<Subject> getByName(String name);
 
     List<Subject> getByNameFiltered(String name, Map<String,String> filters);
+
+    int getTotalPagesForSubjects(String name, Map<String, String> filters);
+
     Map<String, Set<String>> getRelevantFilters(List<Subject> subjects);
 
     Subject create(String id, String name, String depto, Set<String> idCorrelativas, Set<Long> idProfesores, Set<Long> idCarreras, Integer creditos);

@@ -71,6 +71,13 @@
       .vert-divider {
           height: 11.5rem;
       }
+      .pagination-button{
+          display: flex;
+          flex-direction: column;
+          justify-content: space-around;
+          align-items: center;
+          padding-bottom: 3rem;
+      }
   </style>
 </head>
 <body>
@@ -196,11 +203,23 @@
       <c:import url="../components/subject_card.jsp"/>
     </c:forEach>
     </div>
+    <div class="pagination-button">
+      <sl-radio-group name="pagination-radio" value="${actualPage}">
+        <sl-radio-button id="prevPage" value="-1">
+          <sl-icon slot="prefix" name="chevron-left"></sl-icon>
+          <spring:message code="subject.previousPage" />
+        </sl-radio-button>
+        <c:forEach var="pageNum" begin="1" end="${totalPages+1}">
+          <sl-radio-button class="pageNumButton" value="${pageNum}">${pageNum}</sl-radio-button>
+        </c:forEach>
+        <sl-radio-button id="nextPage" value="0">
+          <sl-icon slot="suffix" name="chevron-right"></sl-icon>
+          <spring:message code="subject.nextPage" />
+        </sl-radio-button>
+      </sl-radio-group>
+    </div>
   </c:otherwise>
   </c:choose>
-
-
-
 
 </main>
 
@@ -317,6 +336,47 @@
       sectionUp.style.display = 'none';
       sectionDown.style.display = 'none';
     }
+  }
+
+  //Pagination buttons
+  let prevButton = document.getElementById("prevPage");
+  prevButton.addEventListener('click',
+          function(event) {
+            event.preventDefault();
+            let url = window.location.href;
+            console.log(">>>> pageNum:" + params.get('pageNum'));
+            let pageNum = Number(params.get('pageNum')) -1;
+            if(pageNum >= 0){
+              url = addOrUpdateParam(url,"pageNum",pageNum.toString());
+            } else {
+              url = addOrUpdateParam(url,"pageNum","0");
+            }
+            window.location.href = url;
+          });
+  let nextButton = document.getElementById("nextPage");
+  nextButton.addEventListener('click',
+          function(event) {
+            event.preventDefault();
+            let url = window.location.href;
+            let pageNum = Number(params.get('pageNum')) +1;
+            if(pageNum >= 0){
+              url = addOrUpdateParam(url,"pageNum",pageNum.toString());
+            } else {
+              url = addOrUpdateParam(url,"pageNum","0");
+            }
+            window.location.href = url;
+          });
+
+  let elements = document.getElementsByClassName("pageNumButton");
+  for (let i = 0, len = elements.length; i < len; i++) {
+    elements[i].addEventListener('click',
+            function(event) {
+              event.preventDefault();
+              let url = window.location.href;
+              let pageNum = Number(elements[i].value) -1;
+              url = addOrUpdateParam(url,"pageNum",pageNum.toString());
+              window.location.href = url;
+            });
   }
 </script>
 </body>

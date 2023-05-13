@@ -49,13 +49,19 @@ public class SubjectServiceImpl implements SubjectService {
             if(
                 (Objects.equals(filter.getKey(), "ob") && validOrderBy.contains(filter.getValue())) ||
                (Objects.equals(filter.getKey(), "dir") && validDir.contains(filter.getValue()) ||
-               (validFilters.containsKey(filter.getKey()) && Pattern.matches( validFilters.get(filter.getKey()) ,filter.getValue()))
-               )
+               (validFilters.containsKey(filter.getKey()) && Pattern.matches( validFilters.get(filter.getKey()) ,filter.getValue()))) ||
+               (Objects.equals(filter.getKey(), "pageNum") && filter.getValue().matches("[0-9]+"))
+
             ){
                 validatedFilters.put(filter.getKey(), filter.getValue());
             }
         }
         return subjectDao.getByNameFiltered(name, validatedFilters);
+    }
+
+    @Override
+    public int getTotalPagesForSubjects(String name, Map<String, String> filters){
+        return subjectDao.getTotalPagesForSubjects(name,filters);
     }
 
     @Override

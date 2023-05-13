@@ -46,7 +46,7 @@ public class SearchController {
         final Map<String, Set<String>> relevantFilters = subjectService.getRelevantFilters(subjects);
 
         Map<String, ReviewStatistic> reviewStats = reviewService.getReviewStatMapBySubjectList(subjects);
-
+        final int totalPages = subjectService.getTotalPagesForSubjects(params.getOrDefault("q",""),params);
         long userId;
         if(!authUserService.isAuthenticated())
             userId = -1;
@@ -61,6 +61,17 @@ public class SearchController {
         mav.addObject("reviewStats", reviewStats);
         mav.addObject("subjectProgress", subjectProgress);
         mav.addObject("relevantFilters", relevantFilters);
+        mav.addObject("totalPages",totalPages);
+        if(params.isEmpty()){
+            mav.addObject("actualPage",1);
+        } else {
+            if(!params.getOrDefault("pageNum","1").matches("[0-9]+")){
+                mav.addObject("actualPage",1);
+            } else {
+                int actualPage = Integer.parseInt(params.getOrDefault("pageNum","0")) + 1;
+                mav.addObject("actualPage",actualPage);
+            }
+        }
 
         return mav;
     }
