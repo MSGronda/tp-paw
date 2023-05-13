@@ -13,7 +13,6 @@ public interface ReviewService extends BaseService<Long, Review> {
     Optional<Review> findById(Long id);
 
     List<Review> getAll();
-    void recalculateStatistics();
     List<Review> getAllUserReviewsWithSubjectName(Long userId);
     int getAllCountSubjectReviews(String subjectId);
     List<Review> getAllSubjectReviewsWithUsername(String subjectId, Map<String,String> param);
@@ -39,11 +38,7 @@ public interface ReviewService extends BaseService<Long, Review> {
 
     void update(Review review);
 
-    void updateReviewStatistics( Integer easyBefore, Integer timeDemandingBefore, Review review);
-
     void delete(Review review);
 
     void deleteReview(Review review, User user, Boolean isEditor) throws NoGrantedPermissionException;
-
-    void deleteReviewStatistics(Review review);
 }

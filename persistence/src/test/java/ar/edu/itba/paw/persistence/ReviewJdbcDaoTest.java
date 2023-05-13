@@ -181,34 +181,6 @@ public class ReviewJdbcDaoTest {
     }
 
     @Test
-    public void testDeleteReviewStatistic(){
-        jdbcTemplateSubjects.execute("INSERT INTO subjects(id, subname, department, credits) VALUES (" + SUBJECTID + ", '" + NAME + "', '" + DEPARTMENT + "', " + CREDITS + ")");
-        jdbcTemplateReviewStat.execute("INSERT INTO subjectreviewstatistics(idsub, reviewcount, easycount, mediumcount, hardcount, nottimedemandingcount, averagetimedemandingcount, timedemandingcount) " +
-                "VALUES ('" + SUBJECTID + "', " + REVIEWCOUNT + ", " + EASYCOUNT + ", " + MEDIUMCOUNT + ", " + HARDCOUNT + ", " + NOTTIMEDEMANDINGCOUNT + ", " + AVERAGETIMEDEMANDING + ", " + TIMEDEMANDINGCOUNT + ")" );
-
-        Review review = new Review(ID, USERID, SUBJECTID, EASY, TIMEDEMANDING, TEXT, ANONYMOUS);
-        reviewDao.deleteReviewStatistics(review);
-
-        String query = "reviewcount = 9 AND easycount = 4 AND timedemandingcount = 3";
-        Assert.assertEquals(1, JdbcTestUtils.countRowsInTableWhere(jdbcTemplateReviewStat, "subjectreviewstatistics", query));
-    }
-
-    //TODO - hacer cuando se haya cambiado updateReviewStatistic con mediumTimeDemanding
-    @Test
-    public void testUpdateReviewStatistic(){
-        jdbcTemplateSubjects.execute("INSERT INTO subjects(id, subname, department, credits) VALUES (" + SUBJECTID + ", '" + NAME + "', '" + DEPARTMENT + "', " + CREDITS + ")");
-        jdbcTemplateReviewStat.execute("INSERT INTO subjectreviewstatistics(idsub, reviewcount, easycount, mediumcount, hardcount, nottimedemandingcount, averagetimedemandingcount, timedemandingcount) " +
-                "VALUES ('" + SUBJECTID + "', " + REVIEWCOUNT + ", " + EASYCOUNT + ", " + MEDIUMCOUNT + ", " + HARDCOUNT + ", " + NOTTIMEDEMANDINGCOUNT + ", " + AVERAGETIMEDEMANDING + ", " + TIMEDEMANDINGCOUNT + ")" );
-
-        Review review = new Review(ID, USERID, SUBJECTID, EASY, TIMEDEMANDING, TEXT, ANONYMOUS);
-        reviewDao.updateReviewStatistics(HARD, NOTTIMEDEMANDING, review);
-
-        String query = "reviewcount = 10 AND easycount = 6 AND hardcount = 1 AND timedemandingcount = 5 AND nottimedemandingcount = 4";
-        Assert.assertEquals(1, JdbcTestUtils.countRowsInTableWhere(jdbcTemplateReviewStat, "subjectreviewstatistics", query));
-
-    }
-
-    @Test
     public void testVoteReview(){
         jdbcTemplateImage.execute("INSERT INTO images VALUES (" + IMAGEID + ", " + IMAGE + ")");
 

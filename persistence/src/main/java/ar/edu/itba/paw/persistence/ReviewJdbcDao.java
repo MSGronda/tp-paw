@@ -22,13 +22,12 @@ public class ReviewJdbcDao implements ReviewDao {
     private final SimpleJdbcInsert jdbcInsertReview;
     private final SimpleJdbcInsert jdbcReviewVoteInsert;
     private final JdbcTemplate jdbcTemplateReviewStatistic;
-    private final SimpleJdbcInsert jdbcInsertReviewStatistic;
 
     private static final String TABLE_REVIEWS = "reviews";
     private static final String TABLE_SUB = "subjects";
     private static final String TABLE_REVIEW_VOTE = "reviewVote";
     private static final String TABLE_USERS = "users";
-    private static final String TABLE_REVIEW_STAT = "subjectReviewStatistics";
+    private static final String TABLE_REVIEW_STAT = "subjectreviewstatistics";
     private static final String PAGE_SIZE = "10";
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ReviewJdbcDao.class);
@@ -36,7 +35,6 @@ public class ReviewJdbcDao implements ReviewDao {
     public ReviewJdbcDao(final DataSource ds) {
         this.jdbcTemplate = new JdbcTemplate(ds);
         this.jdbcTemplateReviewStatistic = new JdbcTemplate(ds);
-        this.jdbcInsertReviewStatistic = new SimpleJdbcInsert(ds).withTableName(TABLE_REVIEW_STAT);
         this.jdbcReviewVoteInsert = new SimpleJdbcInsert(ds)
                 .withTableName(TABLE_REVIEW_VOTE);
         this.jdbcInsertReview = new SimpleJdbcInsert(ds).withTableName(TABLE_REVIEWS).usingGeneratedKeyColumns("id");
@@ -78,8 +76,6 @@ public class ReviewJdbcDao implements ReviewDao {
         Review review = new Review(key.longValue(), userId,  subjectId, easy, timeDemanding, text, anonymous);
 
         LOGGER.info("Review created with id {} by user {} with anonymous visibility {}", review.getId(), review.getUserId(), review.getAnonymous());
-
-        updateStatistics(review);
         return review;
 
     }
@@ -92,41 +88,6 @@ public class ReviewJdbcDao implements ReviewDao {
     }
 
     @Override
-    public void deleteReviewStatistics(Review review){
-        Optional<ReviewStatistic> stat = getReviewStatBySubject(review.getSubjectId());
-        int easy = 0, medium = 0, hard = 0, timeDemanding =0 ,averageTimeDemanding = 0, notTimeDemanding = 0;
-        switch (review.getEasy()){
-            case 0: easy--;break;
-            case 1: medium--;break;
-            case 2: hard--;break;
-        }
-        switch (review.getTimeDemanding()){
-            case 0: notTimeDemanding--;break;
-            case 1: averageTimeDemanding--;break;
-            case 2: timeDemanding--;break;
-        }
-
-        if(stat.isPresent()){
-            LOGGER.info("ReviewStatistics deleted from review with id {} by user {} with anonymous visibility {}", review.getId(), review.getUserId(), review.getAnonymous());
-
-            ReviewStatistic reviewStat= stat.get();
-            jdbcTemplateReviewStatistic.update("UPDATE " + TABLE_REVIEW_STAT +
-                            " SET reviewCount = ?, easyCount = ?, mediumCount = ?, hardCount = ?, " +
-                            "notTimeDemandingCount = ?, averageTimeDemandingCount = ?,timeDemandingCount = ? WHERE idSub = ?",
-                    reviewStat.getReviewCount() - 1,
-                    reviewStat.getEasyCount() + easy,
-                    reviewStat.getMediumCount() + medium,
-                    reviewStat.getHardCount() + hard,
-                    reviewStat.getNotTimeDemandingCount() + notTimeDemanding,
-                    reviewStat.getAverageTimeDemandingCount() + averageTimeDemanding,
-                    reviewStat.getTimeDemandingCount() + timeDemanding,
-                    reviewStat.getIdSub()
-            );
-
-        }
-    }
-
-    @Override
     public void update(Review review) {
         LOGGER.info("Review updated with id {} by user {}", review.getId(), review.getUserId());
 
@@ -135,110 +96,7 @@ public class ReviewJdbcDao implements ReviewDao {
                 review.getText(), review.getEasy(), review.getTimeDemanding(), review.getAnonymous(), review.getId());
     }
 
-    @Override
-    public void updateReviewStatistics( Integer easyBefore, Integer timeDemandingBefore, Review review){
-        Optional<ReviewStatistic> stat = getReviewStatBySubject(review.getSubjectId());
-        int easy = 0, medium = 0, hard = 0, timeDemanding =0, averageTimeDemanding = 0, notTimeDemanding = 0;
-        switch (easyBefore){
-            case 0: easy--;break;
-            case 1: medium--;break;
-            case 2: hard--;break;
-        }
-        switch (review.getEasy()){
-            case 0: easy++;break;
-            case 1: medium++;break;
-            case 2: hard++;break;
-        }
-        switch (timeDemandingBefore){
-            case 0: notTimeDemanding--;break;
-            case 1: averageTimeDemanding--;break;
-            case 2: timeDemanding--;break;
-        }
-        switch (review.getTimeDemanding()){
-            case 0: notTimeDemanding++;break;
-            case 1: averageTimeDemanding++;break;
-            case 2: timeDemanding++;break;
-        }
-
-        if(stat.isPresent()){
-            LOGGER.info("ReviewStatistics updated with id {} by user {} with anonymous visibility {}", review.getId(), review.getUserId(), review.getAnonymous());
-
-            ReviewStatistic reviewStat= stat.get();
-            jdbcTemplateReviewStatistic.update("UPDATE " + TABLE_REVIEW_STAT +
-                            " SET easyCount = ?, mediumCount = ?, hardCount = ?, " +
-                            "notTimeDemandingCount = ?, averageTimeDemandingCount = ? ,timeDemandingCount = ? WHERE idSub = ?",
-
-                    reviewStat.getEasyCount() + easy,
-                    reviewStat.getMediumCount() + medium,
-                    reviewStat.getHardCount() + hard,
-                    reviewStat.getNotTimeDemandingCount() + notTimeDemanding,
-                    reviewStat.getAverageTimeDemandingCount() + averageTimeDemanding,
-                    reviewStat.getTimeDemandingCount() + timeDemanding,
-                    reviewStat.getIdSub()
-            );
-
-        }
-
-    }
-
     // - - - - - REVIEW STATISTICS - - - - -
-
-    private void updateStatistics(Review review){
-        Optional<ReviewStatistic> stat = getReviewStatBySubject(review.getSubjectId());
-        int easy = 0, medium = 0, hard = 0, timeDemanding =0, averageTimeDemanding = 0, notTimeDemanding = 0;
-        switch (review.getEasy()){
-            case 0: easy++;break;
-            case 1: medium++;break;
-            case 2: hard++;break;
-        }
-        switch (review.getTimeDemanding()){
-            case 0: notTimeDemanding++;break;
-            case 1: averageTimeDemanding++;break;
-            case 2: timeDemanding++;break;
-        }
-
-        if(stat.isPresent()){
-            ReviewStatistic reviewStat= stat.get();
-            jdbcTemplateReviewStatistic.update("UPDATE " + TABLE_REVIEW_STAT +
-                    " SET reviewCount = ?, easyCount = ?, mediumCount = ?, hardCount = ?, " +
-                    "notTimeDemandingCount = ?, averagetimedemandingcount = ?, timeDemandingCount = ? WHERE idSub = ?",
-                    reviewStat.getReviewCount() +  1,
-                    reviewStat.getEasyCount() + easy,
-                    reviewStat.getMediumCount() + medium,
-                    reviewStat.getHardCount() + hard,
-                    reviewStat.getNotTimeDemandingCount() + notTimeDemanding,
-                    reviewStat.getAverageTimeDemandingCount() + averageTimeDemanding,
-                    reviewStat.getTimeDemandingCount() + timeDemanding,
-                    reviewStat.getIdSub()
-            );
-
-        }
-        else{
-            Map<String, Object> data = new HashMap<>();
-            data.put("idSub", review.getSubjectId());
-            data.put("reviewCount", 1);
-            data.put("easyCount", easy);
-            data.put("mediumCount", medium);
-            data.put("hardCount", hard);
-            data.put("notTimeDemandingCount", notTimeDemanding);
-            data.put("averageTimeDemandingCount",averageTimeDemanding);
-            data.put("timeDemandingCount", timeDemanding);
-            jdbcInsertReviewStatistic.execute(data);
-        }
-        LOGGER.info("Updated statistics for review {}", review.getId());
-    }
-
-
-    // This method is slow and costly. It is only meant to be used for table migration
-    // and not during normal execution.
-    public void recalculateStatistics(){
-        jdbcTemplateReviewStatistic.execute("DELETE FROM " + TABLE_REVIEW_STAT);
-
-        List<Review> reviews = getAll();
-        for(Review review : reviews){
-            updateStatistics(review);
-        }
-    }
 
     @Override
     public Optional<ReviewStatistic> getReviewStatBySubject(String idSub){

@@ -107,7 +107,7 @@ public class UserJdbcDaoTest {
 
         User user;
         try{
-            user = userDao.create(new User.UserBuilder(EMAIL, PASSWORD, USERNAME).imageId(IMAGEID),"");
+            user = userDao.create(new User.UserBuilder(EMAIL, PASSWORD, USERNAME).imageId(IMAGEID));
         }catch (UserEmailAlreadyTakenPersistenceException e){
             throw new RuntimeException();
         }
@@ -123,7 +123,7 @@ public class UserJdbcDaoTest {
     public void testCreateException() throws UserEmailAlreadyTakenPersistenceException {
         jdbcTemplate.execute("INSERT INTO users(id, email, pass, username) VALUES (" + ID + ", '" + EMAIL + "', '" + PASSWORD + "', '" + USERNAME + "')");
 
-        userDao.create(new User.UserBuilder(EMAIL, PASSWORD, USERNAME),"");
+        userDao.create(new User.UserBuilder(EMAIL, PASSWORD, USERNAME));
 
     }
 

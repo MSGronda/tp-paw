@@ -127,7 +127,6 @@ public class ReviewController {
         review.setAnonymous(reviewForm.getAnonymous());
 
         reviewService.update(review);
-        reviewService.updateReviewStatistics(easyBefore, timeDemandingBefore, review);
 
         return new ModelAndView("redirect:/subject/" + subjectId);
     }
