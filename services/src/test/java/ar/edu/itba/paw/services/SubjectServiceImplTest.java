@@ -11,6 +11,7 @@ import org.mockito.junit.MockitoJUnitRunner;
 
 import java.util.*;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
@@ -25,6 +26,14 @@ public class SubjectServiceImplTest {
     private static final String DEPARTMENT = "Ciencias Exactas y Naturales";
 
     private static final Integer CREDITS = 3;
+
+    private static final String ID2 = "72.34";
+
+    private static final String NAME2 = "Algebra";
+
+    private static final String DEPARTMENT2 = "Matematica";
+
+    private static final Integer CREDITS2 = 9;
 
     @Mock
     private SubjectDao subjectDao;
@@ -77,5 +86,31 @@ public class SubjectServiceImplTest {
         Assert.assertTrue(subjects.stream().findFirst().isPresent());
         Assert.assertEquals(ID, subjects.stream().findFirst().get().getId());
         Assert.assertEquals(DEPARTMENT, subjects.stream().findFirst().get().getDepartment());
+    }
+
+    @Test
+    public void testGetRelevantFilters(){
+        Subject subject1 = new Subject(ID, NAME, DEPARTMENT, CREDITS);
+        Subject subject2 = new Subject(ID2, NAME2, DEPARTMENT2, CREDITS2);
+        List<Subject> list = new ArrayList<>();
+        list.add(subject1);
+        list.add(subject2);
+
+        Map<String, Set<String>> map = subjectService.getRelevantFilters(list);
+        String department = "department";
+        String credits = "credits";
+
+        Assert.assertFalse(map.isEmpty());
+        Assert.assertFalse(map.get(department).isEmpty());
+        Assert.assertFalse(map.get(credits).isEmpty());
+
+        List<String> departmentList = new ArrayList<>(map.get(department));
+        Assert.assertEquals(DEPARTMENT, departmentList.get(0));
+        Assert.assertEquals(DEPARTMENT2, departmentList.get(1));
+
+        List<String> creditsList = new ArrayList<>(map.get(credits));
+        Assert.assertEquals(CREDITS.toString(), creditsList.get(0));
+        Assert.assertEquals(CREDITS2.toString(), creditsList.get(1));
+
     }
 }

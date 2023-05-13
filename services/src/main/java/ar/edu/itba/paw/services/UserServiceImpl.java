@@ -14,6 +14,12 @@ import ar.edu.itba.paw.services.exceptions.UserEmailNotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,6 +29,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.security.SecureRandom;
+import java.security.Security;
 import java.util.*;
 
 @Service
@@ -198,7 +205,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User confirmUser(String token) throws InvalidTokenException {
+    public void confirmUser(String token) throws InvalidTokenException {
         Optional<User> optUser = userDao.findUserByConfirmToken(token);
         if(!optUser.isPresent()){
             LOGGER.info("Invalid token when trying to confirm user");
@@ -207,8 +214,21 @@ public class UserServiceImpl implements UserService {
         User user = optUser.get();
 
         userDao.confirmUser(user.getId());
+        autoLogin(user.getId());
+    }
 
-        return user;
+    private void autoLogin(long userId) {
+        final Optional<User> maybeUser = findById(userId);
+        if(!maybeUser.isPresent()){
+            LOGGER.info("No registered user with id {}", userId);
+            throw new UserEmailNotFoundException();
+        }
+        User user = maybeUser.get();
+        final Collection<GrantedAuthority> authorities = new HashSet<>();
+        authorities.add(new SimpleGrantedAuthority("ROLE_USER"));
+        Authentication auth = new UsernamePasswordAuthenticationToken(user.getEmail(), user.getPassword(), authorities);
+        SecurityContextHolder.getContext().setAuthentication(auth);
+        LOGGER.info("Auto login for user {}", userId);
     }
 
     //-------------------------------- USER ROLES -----------------------------

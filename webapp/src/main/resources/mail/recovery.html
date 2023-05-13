@@ -6,8 +6,11 @@
   <style>
       .body {
           background-color: #efefef;
-          max-width: 800px;
+          max-width: 700px;
           margin: 0 auto;
+          border: 1px solid #ababab;
+          border-radius: 8px;
+          overflow: clip;
       }
 
       .header {
@@ -37,7 +40,7 @@
       }
 
       .content {
-          padding: 2rem;
+          padding: 5rem 2rem;
       }
 
       .button {
@@ -58,9 +61,6 @@
   </div>
 </div>
 <div class="content">
-  <div class="container">
-    <h1 th:text="#{recovery.title}"></h1>
-  </div>
   <div class="container">
     <a class="button" th:text="#{recovery.button}" th:href="${url}"></a>
   </div>

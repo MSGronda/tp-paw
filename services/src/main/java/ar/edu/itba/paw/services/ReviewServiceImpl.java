@@ -72,11 +72,6 @@ public class ReviewServiceImpl implements ReviewService {
         return reviewDao.getAllBySubject(idsub);
     }
 
-    @Transactional
-    public void recalculateStatistics(){
-        reviewDao.recalculateStatistics();
-    }
-
     @Override
     public Optional<ReviewStatistic> getReviewStatBySubject(String idSub) {
         return reviewDao.getReviewStatBySubject(idSub);
@@ -170,12 +165,6 @@ public class ReviewServiceImpl implements ReviewService {
 
     @Transactional
     @Override
-    public void updateReviewStatistics( Integer easyBefore, Integer timeDemandingBefore, Review review){
-        reviewDao.updateReviewStatistics(easyBefore, timeDemandingBefore, review);
-    }
-
-    @Transactional
-    @Override
     public void delete(Review review){
         reviewDao.delete(review.getId());
     }
@@ -187,7 +176,6 @@ public class ReviewServiceImpl implements ReviewService {
             throw new NoGrantedPermissionException();
 
         deleteReviewVoteByReviewId(review.getId());
-        deleteReviewStatistics(review);
         delete(review);
     }
 
@@ -195,11 +183,6 @@ public class ReviewServiceImpl implements ReviewService {
         if( !reviewUserId.equals(userId) && !isEditor )
             return false;
         return true;
-    }
-
-    @Override
-    public void deleteReviewStatistics(Review review) {
-        reviewDao.deleteReviewStatistics(review);
     }
 
     @Transactional

@@ -14,8 +14,11 @@ import org.thymeleaf.spring4.SpringTemplateEngine;
 
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
+import java.io.UnsupportedEncodingException;
+import java.util.HashSet;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 
 @Component
 public class MailServiceImpl implements MailService {
@@ -50,15 +53,15 @@ public class MailServiceImpl implements MailService {
 
     private void sendMail(String to, String subject, String body, boolean html) {
         MimeMessage mimeMsg = mailSender.createMimeMessage();
-        MimeMessageHelper helper = new MimeMessageHelper(mimeMsg, "utf-8");
+        MimeMessageHelper helper = new MimeMessageHelper(mimeMsg, "UTF-8");
 
         try {
-            helper.setFrom(env.getRequiredProperty("mail.username"));
+            helper.setFrom(env.getRequiredProperty("mail.username"), env.getRequiredProperty("mail.displayname"));
             helper.setTo(to);
             helper.setSubject(subject);
             helper.setText(body, html);
-        } catch (MessagingException e) {
-            LOGGER.warn("Failed to send mail to {}", to);
+        } catch (MessagingException | UnsupportedEncodingException e) {
+            LOGGER.error("Failed to send mail to {}", to);
             throw new IllegalStateException(e);
         }
 

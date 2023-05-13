@@ -11,8 +11,6 @@ import java.util.Optional;
 public interface ReviewDao extends RWDao<Long,Review> {
     Review create(final Boolean anonymous,final Integer easy, final Integer timeDemanding, final String text, final String subjectId, final long userId ) throws SQLException;
 
-    void deleteReviewStatistics(Review review);
-
     Integer deleteReviewVoteByReviewId(Long idReview);
     Integer deleteReviewVote(Long idUser, Long idReview);
     Integer voteReview(Long idUser, Long idReview, int vote);
@@ -24,10 +22,6 @@ public interface ReviewDao extends RWDao<Long,Review> {
 
     List<Review> getAllBySubject(String id);
 
-    // and not during normal execution.
-    // This method is slow and costly. It is only meant to be used for table migration
-    void recalculateStatistics();
-
     Map<String, ReviewStatistic> getReviewStatMapBySubjectList(List<String> idSubs);
     Optional<ReviewStatistic> getReviewStatBySubject(String idSub);
     List<ReviewStatistic> getReviewStatBySubjectList(List<String> idSubs);
@@ -37,6 +31,4 @@ public interface ReviewDao extends RWDao<Long,Review> {
     Boolean didUserReviewDB(String subjectId, Long userId);
 
     void update(Review review);
-
-    void updateReviewStatistics( Integer easyBefore, Integer timeDemandingBefore, Review review);
 }
