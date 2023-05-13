@@ -1,5 +1,6 @@
 package ar.edu.itba.paw.persistence;
 
+import ar.edu.itba.paw.models.Roles;
 import ar.edu.itba.paw.models.User;
 import ar.edu.itba.paw.persistence.config.TestConfig;
 import ar.edu.itba.paw.persistence.exceptions.UserEmailAlreadyTakenPersistenceException;
@@ -15,6 +16,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.jdbc.JdbcTestUtils;
 
 import javax.sql.DataSource;
+import java.util.List;
 import java.util.Optional;
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -33,9 +35,17 @@ public class UserJdbcDaoTest {
 
     private static final byte[] IMAGE = null;
 
-    private static final int USERID = 3;
+    private static final long ROLEID = 2;
+
+    private static final String ROLENAME = "EDITOR";
+
     private static final String SUBJECTID = "72.33";
-    private static final int SUBJECTPROGRESS = 0;
+
+    private static final String SUBJECTNAME = "Sistemas";
+
+    private static final String DEPARTMENT = "departamento";
+    private static final int CREDITS = 3;
+    private static final Integer SUBJECTPROGRESS = 0;
     private static final int NEWSUBJECTPROGRESS = 1;
 
 
@@ -45,6 +55,12 @@ public class UserJdbcDaoTest {
     private JdbcTemplate jdbcTemplateSubjectP;
 
     private JdbcTemplate jdbcTemplateImage;
+
+    private JdbcTemplate jdbcTemplateUserRoles;
+
+    private JdbcTemplate jdbcTemplateRoles;
+
+    private JdbcTemplate jdbcTemplateSubjects;
 
     @Autowired
     private DataSource ds;
@@ -56,9 +72,15 @@ public class UserJdbcDaoTest {
         jdbcTemplate = new JdbcTemplate(ds);
         jdbcTemplateSubjectP = new JdbcTemplate(ds);
         jdbcTemplateImage = new JdbcTemplate(ds);
+        jdbcTemplateRoles = new JdbcTemplate(ds);
+        jdbcTemplateUserRoles = new JdbcTemplate(ds);
+        jdbcTemplateSubjects = new JdbcTemplate(ds);
 
-        JdbcTestUtils.deleteFromTables(jdbcTemplate, "users");
         JdbcTestUtils.deleteFromTables(jdbcTemplateSubjectP, "usersubjectprogress");
+        JdbcTestUtils.deleteFromTables(jdbcTemplateUserRoles, "userroles");
+        JdbcTestUtils.deleteFromTables(jdbcTemplateRoles, "roles");
+        JdbcTestUtils.deleteFromTables(jdbcTemplate, "users");
+        JdbcTestUtils.deleteFromTables(jdbcTemplateSubjects, "subjects");
         JdbcTestUtils.deleteFromTables(jdbcTemplateImage, "images");
     }
 
@@ -121,6 +143,86 @@ public class UserJdbcDaoTest {
         userDao.editProfile(ID, NEW_USERNAME);
         String query = "username = '" + NEW_USERNAME + "'";
         Assert.assertEquals(1, JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, "users", query));
+    }
+
+    @Test
+    public void testGetUserRoles(){
+        jdbcTemplate.execute("INSERT INTO users(id, email, pass, username) VALUES (" + ID + ", '" + EMAIL + "', '" + PASSWORD + "', '" + USERNAME + "')");
+        jdbcTemplateRoles.execute("INSERT INTO roles(id, name) VALUES (" + ROLEID + ", '" + ROLENAME + "')");
+        jdbcTemplateUserRoles.execute("INSERT INTO userroles(roleid, userid) VALUES (" + ROLEID + ", " + ID + ")");
+
+        List<Roles> roles = userDao.getUserRoles(ID);
+
+        Assert.assertEquals(1, roles.size());
+        Assert.assertEquals(ROLENAME, roles.stream().findFirst().get().getName());
+    }
+
+    @Test
+    public void testAddIdToUserRoles(){
+        jdbcTemplate.execute("INSERT INTO users(id, email, pass, username) VALUES (" + ID + ", '" + EMAIL + "', '" + PASSWORD + "', '" + USERNAME + "')");
+        jdbcTemplateRoles.execute("INSERT INTO roles(id, name) VALUES (" + ROLEID + ", '" + ROLENAME + "')");
+
+        Integer success = userDao.addIdToUserRoles(ROLEID, ID);
+
+        String query = "roleid = " + ROLEID + " AND userid = " + ID;
+        Assert.assertEquals(1, JdbcTestUtils.countRowsInTableWhere(jdbcTemplateUserRoles, "userroles", query));
+    }
+
+    @Test
+    public void testGetUserSubjectProgress(){
+        jdbcTemplate.execute("INSERT INTO users(id, email, pass, username) VALUES (" + ID + ", '" + EMAIL + "', '" + PASSWORD + "', '" + USERNAME + "')");
+        jdbcTemplateSubjects.execute("INSERT INTO subjects(id, subname, department, credits) VALUES ('" + SUBJECTID + "', '" + SUBJECTNAME + "', '" + DEPARTMENT + "', " + CREDITS + ")");
+        jdbcTemplateSubjectP.execute("INSERT INTO usersubjectprogress VALUES (" + ID + ", '" + SUBJECTID + "', " + SUBJECTPROGRESS + ")" );
+
+        Optional<Integer> subjectP = userDao.getUserSubjectProgress(ID, SUBJECTID);
+
+        Assert.assertTrue(subjectP.isPresent());
+        Assert.assertEquals(SUBJECTPROGRESS, subjectP.get());
+
+    }
+
+    @Test
+    public void testUpdateSubjectProgressExisting(){
+        jdbcTemplate.execute("INSERT INTO users(id, email, pass, username) VALUES (" + ID + ", '" + EMAIL + "', '" + PASSWORD + "', '" + USERNAME + "')");
+        jdbcTemplateSubjects.execute("INSERT INTO subjects(id, subname, department, credits) VALUES ('" + SUBJECTID + "', '" + SUBJECTNAME + "', '" + DEPARTMENT + "', " + CREDITS + ")");
+        jdbcTemplateSubjectP.execute("INSERT INTO usersubjectprogress VALUES (" + ID + ", '" + SUBJECTID + "', " + SUBJECTPROGRESS + ")" );
+
+        int response = userDao.updateSubjectProgress(ID, SUBJECTID, NEWSUBJECTPROGRESS);
+
+        Assert.assertEquals(1, response);
+
+        String queryShouldNotExist = "iduser = " + ID + " AND idsub = " + SUBJECTID + " AND subjectstate = " + SUBJECTPROGRESS;
+        String queryUpdated = "iduser = " + ID + " AND idsub = " + SUBJECTID + " AND subjectstate = " + NEWSUBJECTPROGRESS;
+        Assert.assertEquals(0, JdbcTestUtils.countRowsInTableWhere(jdbcTemplateSubjectP, "usersubjectprogress", queryShouldNotExist));
+        Assert.assertEquals(1, JdbcTestUtils.countRowsInTableWhere(jdbcTemplateSubjectP, "usersubjectprogress", queryUpdated));
+
+    }
+
+    @Test
+    public void testUpdateSubjectProgressNew(){
+        jdbcTemplate.execute("INSERT INTO users(id, email, pass, username) VALUES (" + ID + ", '" + EMAIL + "', '" + PASSWORD + "', '" + USERNAME + "')");
+        jdbcTemplateSubjects.execute("INSERT INTO subjects(id, subname, department, credits) VALUES ('" + SUBJECTID + "', '" + SUBJECTNAME + "', '" + DEPARTMENT + "', " + CREDITS + ")");
+
+        int response = userDao.updateSubjectProgress(ID, SUBJECTID, SUBJECTPROGRESS);
+
+        Assert.assertEquals(1, response);
+        String queryShouldExist = "iduser = " + ID + " AND idsub = " + SUBJECTID + " AND subjectstate = " + SUBJECTPROGRESS;
+
+        Assert.assertEquals(1, JdbcTestUtils.countRowsInTableWhere(jdbcTemplateSubjectP, "usersubjectprogress", queryShouldExist));
+    }
+
+
+    @Test
+    public void testDeleteUserProgressForSubject(){
+        jdbcTemplate.execute("INSERT INTO users(id, email, pass, username) VALUES (" + ID + ", '" + EMAIL + "', '" + PASSWORD + "', '" + USERNAME + "')");
+        jdbcTemplateSubjects.execute("INSERT INTO subjects(id, subname, department, credits) VALUES ('" + SUBJECTID + "', '" + SUBJECTNAME + "', '" + DEPARTMENT + "', " + CREDITS + ")");
+        jdbcTemplateSubjectP.execute("INSERT INTO usersubjectprogress VALUES (" + ID + ", '" + SUBJECTID + "', " + SUBJECTPROGRESS + ")" );
+
+        int response = userDao.deleteUserProgressForSubject(ID, SUBJECTID);
+
+
+        Assert.assertEquals(1, response);
+        Assert.assertEquals(0, JdbcTestUtils.countRowsInTable(jdbcTemplateSubjectP, "usersubjectprogress"));
     }
 
 }
