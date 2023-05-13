@@ -39,5 +39,5 @@ public interface UserService extends BaseService<Long, User> {
 
     Integer updateUserRoles(Long roleId, Long userId);
 
-    User confirmUser(String token) throws InvalidTokenException;
+    void confirmUser(String token) throws InvalidTokenException;
 }

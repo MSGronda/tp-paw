@@ -147,21 +147,11 @@ public class UserController {
 
     @RequestMapping("/confirm/{token}")
     public String confirm(HttpServletRequest request, @PathVariable String token) {
-        User user;
         try {
-            user = userService.confirmUser(token);
+            userService.confirmUser(token);
         } catch (InvalidTokenException e) {
             return "user/confirm/invalidToken";
         }
-
-        // Auto-login
-//        final UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(user.getEmail(), null);
-//        final Authentication auth = authManager.authenticate(authToken);
-//        final SecurityContext ctx = SecurityContextHolder.getContext();
-//        ctx.setAuthentication(auth);
-//        final HttpSession session = request.getSession(true);
-//        session.setAttribute("SPRING_SECURITY_CONTEXT_KEY", ctx);
-
         return "user/confirm/success";
     }
 

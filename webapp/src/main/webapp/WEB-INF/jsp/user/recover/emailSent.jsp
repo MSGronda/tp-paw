@@ -10,11 +10,9 @@
       .card-basic {
           width: 100%;
       }
-
       .card-basic::part(body) {
           padding: 2rem;
       }
-
       .center2 {
           display: flex;
           flex-direction: column;
@@ -22,23 +20,15 @@
           justify-content: center;
           align-items: center;
       }
-
       h3 {
           font-size: 1.7rem;
           margin-bottom: 0;
           text-align: center;
       }
-
       .success {
           font-size: 5rem;
           color: limegreen;
       }
-
-      .row {
-          display: flex;
-          justify-content: space-evenly;
-      }
-
       h5 {
           font-weight: normal;
           font-size: 1rem;
