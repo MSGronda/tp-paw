@@ -417,7 +417,31 @@
                       <spring:message code="subject.previousPage" />
                   </sl-radio-button>
                   <c:forEach var="pageNum" begin="1" end="${totalPages+1}">
-                      <sl-radio-button class="pageNumButton" value="${pageNum}">${pageNum}</sl-radio-button>
+                      <c:choose>
+                          <c:when test="${(pageNum > actualPage -2 and pageNum < actualPage + 2) or (pageNum == 1 or pageNum == totalPages+1)}">
+                              <div class="active-pag-buttons">
+                                  <sl-radio-button class="pageNumButton" value="${pageNum}">${pageNum}</sl-radio-button>
+                              </div>
+                          </c:when>
+                          <c:when test="${pageNum < totalPages + 1 and pageNum == actualPage + 2}">
+                              <div class="active-pag-buttons">
+                                  <sl-radio-button class="pageNumButton" value="${pageNum}">${pageNum}</sl-radio-button>
+                                  <sl-radio-button value="..." disabled>...</sl-radio-button>
+                              </div>
+                          </c:when>
+                          <c:when test="${pageNum > 1 and pageNum == actualPage - 2}">
+                              <div class="active-pag-buttons">
+                                  <sl-radio-button value="..." disabled>...</sl-radio-button>
+                                  <sl-radio-button class="pageNumButton" value="${pageNum}">${pageNum}</sl-radio-button>
+                              </div>
+                          </c:when>
+                          <c:otherwise>
+                              <div class="hidden-pag-buttons">
+                                  <sl-radio-button class="pageNumButton" value="${pageNum}">${pageNum}</sl-radio-button>
+                              </div>
+                          </c:otherwise>
+                      </c:choose>
+
                   </c:forEach>
                   <sl-radio-button id="nextPage" value="0">
                       <sl-icon slot="suffix" name="chevron-right"></sl-icon>
@@ -569,6 +593,14 @@
                  url = addOrUpdateParam(url,"pageNum",pageNum.toString());
                  window.location.href = url;
              });
+    }
+    let activePaginationButtons = document.getElementsByClassName("active-pag-buttons");
+    for (let i = 0, len = activePaginationButtons.length; i < len; i++) {
+        activePaginationButtons[i].style.display = 'block';
+    }
+    let hiddenPaginationButtons = document.getElementsByClassName("hidden-pag-buttons");
+    for (let i = 0, len = hiddenPaginationButtons.length; i < len; i++) {
+        hiddenPaginationButtons[i].style.display = 'none';
     }
 </script>
 </body>
