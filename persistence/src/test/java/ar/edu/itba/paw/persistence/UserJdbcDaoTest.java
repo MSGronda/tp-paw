@@ -77,7 +77,7 @@ public class UserJdbcDaoTest {
     public void testFindById() {
         jdbcTemplate.execute("INSERT INTO images VALUES (" + IMAGEID + ", " + IMAGE + ")");
 
-        jdbcTemplate.execute("INSERT INTO users(id, email, pass, username, image_id, confirmtoken, confirmed ) VALUES (" + ID + ", '" + EMAIL + "', '" + PASSWORD + "', '" + USERNAME + "', " + IMAGEID + ", '" + CONFIRMTOKEN + "', " + CONFIRMED + ")");
+        jdbcTemplate.execute("INSERT INTO users(id, email, pass, username, image_id, CONFIRMTOKEN, CONFIRMED ) VALUES (" + ID + ", '" + EMAIL + "', '" + PASSWORD + "', '" + USERNAME + "', " + IMAGEID + ", '" + CONFIRMTOKEN + "', " + CONFIRMED + ")");
 
         Optional<User> maybeUser = userDao.findById(ID);
 
@@ -120,7 +120,7 @@ public class UserJdbcDaoTest {
         Assert.assertEquals(EMAIL, user.getEmail());
         Assert.assertEquals(PASSWORD, user.getPassword());
 
-        Assert.assertEquals(1, JdbcTestUtils.countRowsInTable(jdbcTemplate, "users"));*/
+        Assert.assertEquals(1, JdbcTestUtils.countRowsInTable(jdbcTemplate, "users"));
     }
 
     @Test(expected = UserEmailAlreadyTakenPersistenceException.class)

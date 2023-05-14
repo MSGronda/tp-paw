@@ -75,7 +75,7 @@ public class UserServiceImplTest {
         Assert.assertNotNull(newUser);
         Assert.assertEquals(EMAIL, newUser.getEmail());
         Assert.assertEquals(PASSWORD, newUser.getPassword());
-        Assert.assertEquals(USERNAME, newUser.getUsername());*/
+        Assert.assertEquals(USERNAME, newUser.getUsername());
     }
     @Test(expected = UserEmailAlreadyTakenException.class)
     public void testCreateAlreadyExists() throws UserEmailAlreadyTakenPersistenceException, UserEmailAlreadyTakenException, IOException {

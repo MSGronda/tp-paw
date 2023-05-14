@@ -111,7 +111,6 @@ public class SubjectJdbcDao implements SubjectDao {
         sb.append(" GROUP BY id,subname ");
         sb.append(" ORDER BY ").append(filters.getOrDefault("ob","subname"));
         sb.append(" ").append(filters.getOrDefault("dir","ASC"));
-        // List<Integer>  ?????
         List<Subject> toReturn = jdbcTemplate.query(sb.toString(), SubjectJdbcDao::subjectListExtractor,  filterList.toArray());
         LOGGER.info("Got subjects with name {} and filters {}", name, filters.values().stream().toString());
         return toReturn.size() / Integer.parseInt(PAGE_SIZE);
