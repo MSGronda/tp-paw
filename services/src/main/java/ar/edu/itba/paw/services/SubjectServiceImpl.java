@@ -61,7 +61,21 @@ public class SubjectServiceImpl implements SubjectService {
 
     @Override
     public int getTotalPagesForSubjects(String name, Map<String, String> filters){
-        return subjectDao.getTotalPagesForSubjects(name,filters);
+        Map<String, String> validatedFilters = new HashMap<>();
+
+        // Check if filters, order by and direction are valid
+        for(Map.Entry<String, String> filter : filters.entrySet()){
+            if(
+                    (Objects.equals(filter.getKey(), "ob") && validOrderBy.contains(filter.getValue())) ||
+                            (Objects.equals(filter.getKey(), "dir") && validDir.contains(filter.getValue()) ||
+                                    (validFilters.containsKey(filter.getKey()) && Pattern.matches( validFilters.get(filter.getKey()) ,filter.getValue()))) ||
+                            (Objects.equals(filter.getKey(), "pageNum") && filter.getValue().matches("[0-9]+"))
+
+            ){
+                validatedFilters.put(filter.getKey(), filter.getValue());
+            }
+        }
+        return subjectDao.getTotalPagesForSubjects(name,validatedFilters);
     }
 
     @Override
