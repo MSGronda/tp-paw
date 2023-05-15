@@ -39,6 +39,4 @@ public interface SubjectService extends BaseService<String, Subject> {
 
     Map<User,Set<Subject>> getAllUserUnreviewedNotifSubjects();
     void updateUnreviewedNotifTime();
-
-    Subject create(String id, String name, String depto, Set<String> idCorrelativas, Set<Long> idProfesores, Set<Long> idCarreras, Integer creditos);
 }
