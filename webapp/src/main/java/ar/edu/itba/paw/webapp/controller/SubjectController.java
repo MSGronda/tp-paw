@@ -75,7 +75,7 @@ public class SubjectController {
         }
 
         final List<Professor> professors = professorService.getAllBySubject(id);
-        final int totalPages = reviewService.getAllCountSubjectReviews(id);
+        final int totalPages = reviewService.getTotalPagesForReviews(id);
         final List<Review> reviews = reviewService.getAllSubjectReviewsWithUsername(id,param);
         final Boolean didReview = reviewService.didUserReview(reviews, user);
         final List<Subject> prereqs = subjectService.findByIds(new ArrayList<>(subject.getPrerequisites()));

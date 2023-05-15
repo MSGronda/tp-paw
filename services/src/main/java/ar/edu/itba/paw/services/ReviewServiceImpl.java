@@ -47,8 +47,8 @@ public class ReviewServiceImpl implements ReviewService {
     }
 
     @Override
-    public int getAllCountSubjectReviews(final String subjectId){
-        return reviewDao.getAllCountSubjectReviews(subjectId);
+    public int getTotalPagesForReviews(final String subjectId){
+        return reviewDao.getTotalPagesForReviews(subjectId);
     }
 
     @Override
