@@ -105,14 +105,13 @@ public class ReviewJdbcDao implements ReviewDao {
                 .stream().findFirst();
     }
 
-    private String generateSubjectListQuery(final List<String> idSubs){
+    private String generateSubjectListQuery(final int size){
         StringBuilder sql = new StringBuilder("SELECT * FROM " ).append(TABLE_REVIEW_STAT).append(" WHERE idSub IN (");
 
         // TODO change because its unsafe?
-        Iterator<String> iter = idSubs.iterator();
-        while(iter.hasNext()){
-            sql.append("'").append(iter.next()).append("'");
-            if(iter.hasNext()){
+        for(int i=0; i<size; i++){
+            sql.append(" ? ");
+            if(i+1<size){
                 sql.append(", ");
             }
         }
@@ -125,8 +124,8 @@ public class ReviewJdbcDao implements ReviewDao {
         if(idSubs.isEmpty()){
             return new ArrayList<>();
         }
-        String sql = generateSubjectListQuery(idSubs);
-        return jdbcTemplate.query(sql, ReviewJdbcDao::rowMapperReviewStatistic);
+        String sql = generateSubjectListQuery(idSubs.size());
+        return jdbcTemplate.query(sql, ReviewJdbcDao::rowMapperReviewStatistic, idSubs.toArray());
     }
 
     @Override
@@ -134,9 +133,9 @@ public class ReviewJdbcDao implements ReviewDao {
         if(idSubs.isEmpty()){
             return new HashMap<>();
         }
-        String sql = generateSubjectListQuery(idSubs);
+        String sql = generateSubjectListQuery(idSubs.size());
 
-        return jdbcTemplate.query(sql, ReviewJdbcDao::reviewStatisticMapExtractor);
+        return jdbcTemplate.query(sql, ReviewJdbcDao::reviewStatisticMapExtractor, idSubs.toArray());
     }
 
     private static Map<String,ReviewStatistic> reviewStatisticMapExtractor(final ResultSet rs) throws SQLException{
