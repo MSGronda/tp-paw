@@ -86,7 +86,7 @@ public class UserServiceImpl implements UserService {
         try {
             user = userDao.create(userBuilder);
         } catch (final UserEmailAlreadyTakenPersistenceException e) {
-            LOGGER.warn("User {} failed to create", userBuilder.getEmail());
+            LOGGER.info("User {} failed to create", userBuilder.getEmail());
             throw new UserEmailAlreadyTakenException();
         }
 

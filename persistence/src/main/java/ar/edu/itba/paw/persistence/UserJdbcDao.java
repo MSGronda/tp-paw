@@ -85,7 +85,7 @@ public class UserJdbcDao implements UserDao {
         try{
             key = jdbcInsert.executeAndReturnKey(data);
         }catch (DuplicateKeyException e){
-            LOGGER.warn("Duplicate key for user email {}",userBuilder.getEmail());
+            LOGGER.info("Duplicate key for user email {}",userBuilder.getEmail());
             throw new UserEmailAlreadyTakenPersistenceException();
         }
 
