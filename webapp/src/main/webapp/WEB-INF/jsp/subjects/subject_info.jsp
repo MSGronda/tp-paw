@@ -412,7 +412,7 @@
       <c:if test="${not empty reviews}">
           <div>
               <sl-radio-group name="pagination-radio" value="${actualPage}">
-                  <sl-radio-button id="prevPage" value="-1">
+                  <sl-radio-button id="prevPage" value="-1" <c:if test="${actualPage-1 <= 0}">disabled</c:if>>
                       <sl-icon slot="prefix" name="chevron-left"></sl-icon>
                       <spring:message code="subject.previousPage" />
                   </sl-radio-button>
@@ -443,7 +443,7 @@
                       </c:choose>
 
                   </c:forEach>
-                  <sl-radio-button id="nextPage" value="0">
+                  <sl-radio-button id="nextPage" value="0" <c:if test="${actualPage-1 >= totalPages}">disabled</c:if>>
                       <sl-icon slot="suffix" name="chevron-right"></sl-icon>
                       <spring:message code="subject.nextPage" />
                   </sl-radio-button>
