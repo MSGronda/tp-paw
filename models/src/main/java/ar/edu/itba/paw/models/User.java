@@ -1,5 +1,6 @@
 package ar.edu.itba.paw.models;
 
+import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
@@ -10,6 +11,7 @@ public class User {
     private final Long imageId;
     private final Map<String, Integer> subjectProgress;
     private final Optional<String> confirmToken;
+    private final Locale locale;
 
 
     public User(final UserBuilder builder) {
@@ -20,6 +22,7 @@ public class User {
         this.imageId = builder.imageId;
         this.subjectProgress = builder.subjectProgress;
         this.confirmToken = builder.confirmToken;
+        this.locale = builder.locale;
     }
 
     public long getImageId(){
@@ -46,6 +49,10 @@ public class User {
         return confirmToken;
     }
 
+    public Optional<Locale> getLocale(){
+        return Optional.ofNullable(locale);
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -66,6 +73,7 @@ public class User {
         private long imageId;
         private Map<String, Integer> subjectProgress;
         private Optional<String> confirmToken;
+        private Locale locale;
 
 
         public UserBuilder(final String email, final String password, final String username) {
@@ -123,6 +131,14 @@ public class User {
 
         public UserBuilder confirmToken(String token) {
             this.confirmToken = Optional.of(token);
+            return this;
+        }
+
+        public Locale getLocale(){
+            return locale;
+        }
+        public UserBuilder locale(Locale locale) {
+            this.locale = locale;
             return this;
         }
 

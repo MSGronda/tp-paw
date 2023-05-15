@@ -14,6 +14,7 @@ import ar.edu.itba.paw.webapp.form.EditUserDataForm;
 import ar.edu.itba.paw.webapp.form.EditUserPasswordForm;
 import ar.edu.itba.paw.webapp.form.RecoverPasswordForm;
 import ar.edu.itba.paw.webapp.form.UserForm;
+import ar.edu.itba.paw.webapp.Utils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.MessageSource;
@@ -58,7 +59,7 @@ public class UserController {
             RolesService rolesService,
             UniUserDetailsService uniUserDetailsService,
             AuthenticationManager authManager,
-            @Qualifier("emailMessageSource") MessageSource mailMessages
+            @Qualifier("mailMessageSource") MessageSource mailMessages
     ) {
         this.userService = userService;
         this.reviewService = reviewService;
@@ -129,7 +130,7 @@ public class UserController {
             return mav;
         }
 
-        final String baseUrl = Helpers.getBaseUrl();
+        final String baseUrl = Utils.getBaseUrl();
         final String subject = mailMessages.getMessage("confirmation.subject", null, locale);
 
         Map<String,Object> mailModel = new HashMap<>();
@@ -234,7 +235,7 @@ public class UserController {
             return mav;
         }
 
-        final String baseUrl = Helpers.getBaseUrl();
+        final String baseUrl = Utils.getBaseUrl();
         final String subject = mailMessages.getMessage("recovery.subject", null, locale);
 
         Map<String,Object> mailModel = new HashMap<>();

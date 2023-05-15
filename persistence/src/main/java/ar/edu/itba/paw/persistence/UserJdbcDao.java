@@ -15,10 +15,7 @@ import org.springframework.stereotype.Repository;
 import javax.sql.DataSource;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 @Repository
 public class UserJdbcDao implements UserDao {
@@ -193,6 +190,12 @@ public class UserJdbcDao implements UserDao {
 
     //-------------------------------------------------------------------------------------
 
+
+    @Override
+    public void setLocale(long userId, Locale locale) {
+        jdbcTemplate.update("UPDATE " + USERS_TABLE + " SET locale = ? WHERE id = ?", locale.toString(), userId);
+    }
+
     //------------------------ User Roles ---------------------------------------------------
     @Override
     public List<Roles> getUserRoles(final Long userId){
@@ -244,14 +247,17 @@ public class UserJdbcDao implements UserDao {
     }
 
     private static User rowMapper(final ResultSet rs, final int rowNum) throws SQLException {
-        return new User(
-                new User.UserBuilder(rs.getString("email"),
+        final String localeString = rs.getString("locale");
+        final Locale locale = localeString == null ? null : Locale.forLanguageTag(localeString);
+
+        return new User.UserBuilder(rs.getString("email"),
                         rs.getString("pass"),
                         rs.getString("username")
                 )
                     .id(rs.getLong("id"))
                     .imageId(rs.getLong("image_id"))
-        );
+                    .locale(locale)
+                    .build();
     }
 
     private static Integer rowMapperUserSubjectProgress(final ResultSet rs , final int rowNum) throws SQLException {

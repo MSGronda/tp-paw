@@ -1,8 +1,10 @@
 package ar.edu.itba.paw.webapp.config;
 
+import ar.edu.itba.paw.webapp.interceptors.LocaleInterceptor;
 import org.flywaydb.core.Flyway;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
@@ -20,8 +22,10 @@ import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.web.multipart.commons.CommonsMultipartFile;
 import org.springframework.web.multipart.commons.CommonsMultipartResolver;
+import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ViewResolver;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
+import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 import org.springframework.web.servlet.view.InternalResourceViewResolver;
@@ -35,7 +39,13 @@ import java.util.concurrent.TimeUnit;
 @EnableTransactionManagement
 @EnableScheduling
 @EnableWebMvc
-@ComponentScan({"ar.edu.itba.paw.webapp.controller", "ar.edu.itba.paw.services", "ar.edu.itba.paw.persistence"})
+@ComponentScan({
+        "ar.edu.itba.paw.webapp.controller",
+        "ar.edu.itba.paw.webapp.interceptors",
+        "ar.edu.itba.paw.webapp.tasks",
+        "ar.edu.itba.paw.services",
+        "ar.edu.itba.paw.persistence",
+})
 @PropertySources({
         @PropertySource("classpath:application.properties"),
         @PropertySource("classpath:application-${spring.profiles.active}.properties")
@@ -47,7 +57,11 @@ public class WebConfig extends WebMvcConfigurerAdapter {
     private final static Logger LOGGER = LoggerFactory.getLogger(WebConfig.class);
 
     @Autowired
-    Environment environment;
+    private Environment environment;
+
+    @Lazy
+    @Autowired
+    private LocaleInterceptor localeInterceptor;
 
     @Bean
     ViewResolver viewResolver() {
@@ -112,5 +126,11 @@ public class WebConfig extends WebMvcConfigurerAdapter {
     @Bean
     public PlatformTransactionManager transactionManager(final DataSource ds){
         return new DataSourceTransactionManager(ds);
+    }
+
+    @Override
+    public void addInterceptors(InterceptorRegistry registry) {
+        super.addInterceptors(registry);
+        registry.addInterceptor(localeInterceptor);
     }
 }

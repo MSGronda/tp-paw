@@ -14,6 +14,7 @@ import ar.edu.itba.paw.services.exceptions.UserEmailNotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -217,6 +218,17 @@ public class UserServiceImpl implements UserService {
 
         userDao.confirmUser(user.getId());
         autoLogin(user.getId());
+    }
+
+    @Override
+    public void setLocale(final User user, final Locale locale) {
+        userDao.setLocale(user.getId(), locale);
+    }
+
+    @Async
+    @Override
+    public void setLocaleAsync(final User user, final Locale locale) {
+        setLocale(user, locale);
     }
 
     private void autoLogin(final long userId) {

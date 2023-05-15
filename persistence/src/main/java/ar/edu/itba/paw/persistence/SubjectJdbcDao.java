@@ -233,6 +233,8 @@ public class SubjectJdbcDao implements SubjectDao {
                         " WHERE usp.subjectstate <> 0" +
                         " AND usp.iduser NOT IN (SELECT iduser FROM " + TABLE_REVIEWS + " r WHERE r.idsub = usp.idsub)"
         );
+
+        LOGGER.debug("Updated unreviewed notification time");
     }
 
     @Override
@@ -337,6 +339,9 @@ public class SubjectJdbcDao implements SubjectDao {
 
         while(rs.next()) {
             final long idUser = rs.getLong("iduser");
+            final String localeStr = rs.getString("locale");
+            final Locale locale = localeStr == null ? null : Locale.forLanguageTag(localeStr);
+
             final String username = rs.getString("username");
             final String email = rs.getString("email");
             final String idSub = rs.getString("idsub");
@@ -346,6 +351,7 @@ public class SubjectJdbcDao implements SubjectDao {
 
             final User user = new User.UserBuilder(email, "", username)
                     .id(idUser)
+                    .locale(locale)
                     .build();
             final Subject sub = new Subject(idSub, subName, department, credits);
 
