@@ -40,7 +40,7 @@
       }
 
       .content {
-          padding: 5rem 2rem;
+          padding: 3rem 2rem;
       }
 
       .button {
@@ -50,6 +50,15 @@
           color: white !important;
           text-decoration: none;
           border-radius: 5px;
+          font-size: 20px;
+      }
+
+      .subject-list {
+          list-style-type: none;
+          padding: 0;
+      }
+
+      .message {
           font-size: 20px;
       }
   </style>
@@ -62,8 +71,13 @@
 </div>
 <div class="content">
   <div class="container">
-    <p th:text="#{recovery.message}"></p>
-    <a class="button" th:text="#{recovery.button}" th:href="${url}"></a>
+    <p class="message" th:text="#{reviewnotif.message}"></p>
+    <ul class="subject-list">
+      <li th:each="subject : ${subjects}">
+        <a th:text="${subject.name}" th:href="${baseUrl + '/subject/' + subject.id}"></a>
+      </li>
+    </ul>
+    <p class="message" th:text="#{reviewnotif.message2}"></p>
   </div>
 </div>
 </body>

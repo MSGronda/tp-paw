@@ -1,6 +1,7 @@
 package ar.edu.itba.paw.services;
 
 import ar.edu.itba.paw.models.Subject;
+import ar.edu.itba.paw.models.User;
 import ar.edu.itba.paw.persistence.SubjectDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -137,6 +138,15 @@ public class SubjectServiceImpl implements SubjectService {
         return all.get(degreeId);
     }
 
+    @Override
+    public Map<User, Set<Subject>> getAllUserUnreviewedNotifSubjects() {
+        return subjectDao.getAllUserUnreviewedNotifSubjects();
+    }
+
+    @Override
+    public void updateUnreviewedNotifTime() {
+        subjectDao.updateUnreviewedNotifTime();
+    }
 
     @Transactional
     @Override

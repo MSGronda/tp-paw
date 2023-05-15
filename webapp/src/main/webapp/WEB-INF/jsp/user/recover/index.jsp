@@ -42,8 +42,8 @@
             <sl-card class="card-basic">
                 <h3><spring:message code="recover.subtitle"/></h3>
                 <h5><spring:message code="recover.description"/></h5>
-                <c:if test="${invalidToken}">
-                    <p class="error"><spring:message code="recover.invalidToken"/></p>
+                <c:if test="${emailNotFound}">
+                    <p class="error"><spring:message code="recover.email_not_found"/></p>
                 </c:if>
 
                 <form:errors path="email" cssClass="error" element="p"/>

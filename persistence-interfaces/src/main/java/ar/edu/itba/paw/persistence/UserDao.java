@@ -6,6 +6,7 @@ import ar.edu.itba.paw.models.User;
 import ar.edu.itba.paw.persistence.exceptions.UserEmailAlreadyTakenPersistenceException;
 
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 
@@ -32,4 +33,6 @@ public interface UserDao extends RWDao<Long,User> {
     Optional<User> findUserByConfirmToken(final String token);
 
     void confirmUser(final long userId);
+
+    void setLocale(long userId, Locale locale);
 }

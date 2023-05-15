@@ -1,6 +1,7 @@
 package ar.edu.itba.paw.persistence;
 
 import ar.edu.itba.paw.models.Subject;
+import ar.edu.itba.paw.models.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +23,9 @@ public class SubjectJdbcDao implements SubjectDao {
     private static final String TABLE_PROF_SUB = "professorsSubjects";
     private static final String TABLE_PREREQ = "prereqSubjects";
     private static final String TABLE_SUB_DEG = "subjectsDegrees";
+    private static final String TABLE_USERS = "users";
+    private static final String TABLE_USER_SUB_PROG = "usersubjectprogress";
+    private static final String TABLE_REVIEWS = "reviews";
 
     private static final Map<String, String> queryOptionBlanck = new HashMap<>();
 
@@ -209,6 +213,30 @@ public class SubjectJdbcDao implements SubjectDao {
 
     }
 
+    public Map<User,Set<Subject>> getAllUserUnreviewedNotifSubjects() {
+        return jdbcTemplate.query(
+                "SELECT * FROM " + TABLE_USERS + " u" +
+                        " LEFT JOIN " + TABLE_USER_SUB_PROG + " usp ON u.id = usp.iduser" +
+                        " LEFT JOIN " + TABLE_SUB + " s ON usp.idsub = s.id" +
+                        " WHERE usp.subjectstate <> 0" +
+                        " AND (usp.notiftime IS NULL OR usp.notiftime < now() - interval '1 week')" +
+                        " AND u.id NOT IN (SELECT iduser FROM " + TABLE_REVIEWS + " r WHERE r.idsub = usp.idsub)",
+
+                SubjectJdbcDao::userUnreviewedNotifSubjectExtractor
+        );
+    }
+
+    @Override
+    public void updateUnreviewedNotifTime() {
+        jdbcTemplate.update(
+                "UPDATE " + TABLE_USER_SUB_PROG + " usp SET notiftime = now()" +
+                        " WHERE usp.subjectstate <> 0" +
+                        " AND usp.iduser NOT IN (SELECT iduser FROM " + TABLE_REVIEWS + " r WHERE r.idsub = usp.idsub)"
+        );
+
+        LOGGER.debug("Updated unreviewed notification time");
+    }
+
     @Override
     public void update(final Subject subject) {
 
@@ -246,17 +274,17 @@ public class SubjectJdbcDao implements SubjectDao {
             final String subName = rs.getString("subname");
             final String department = rs.getString("department");
             final int credits = rs.getInt("credits");
-            //final Optional<String> idPrereq = Optional.ofNullable(rs.getString("idprereq"));
-            //final Optional<Long> idProf = getOptionalLong(rs, "idprof");
-            //final Optional<Long> idDeg = getOptionalLong(rs, "iddeg");
+            final Optional<String> idPrereq = Optional.ofNullable(rs.getString("idprereq"));
+            final Optional<Long> idProf = getOptionalLong(rs, "idprof");
+            final Optional<Long> idDeg = getOptionalLong(rs, "iddeg");
 
             final Subject sub = subs.getOrDefault(idSub,
                     new Subject(idSub, subName, department, credits)
             );
 
-            //idPrereq.ifPresent(id -> sub.getPrerequisites().add(id));
-            //idProf.ifPresent(id -> sub.getProfessorIds().add(id));
-            //idDeg.ifPresent(id -> sub.getDegreeIds().add(id));
+            idPrereq.ifPresent(id -> sub.getPrerequisites().add(id));
+            idProf.ifPresent(id -> sub.getProfessorIds().add(id));
+            idDeg.ifPresent(id -> sub.getDegreeIds().add(id));
 
             subs.putIfAbsent(idSub, sub);
         }
@@ -304,5 +332,34 @@ public class SubjectJdbcDao implements SubjectDao {
         }
 
         return result;
+    }
+
+    private static Map<User,Set<Subject>> userUnreviewedNotifSubjectExtractor(ResultSet rs) throws SQLException {
+        final Map<User,Set<Subject>> map = new LinkedHashMap<>();
+
+        while(rs.next()) {
+            final long idUser = rs.getLong("iduser");
+            final String localeStr = rs.getString("locale");
+            final Locale locale = localeStr == null ? null : Locale.forLanguageTag(localeStr);
+
+            final String username = rs.getString("username");
+            final String email = rs.getString("email");
+            final String idSub = rs.getString("idsub");
+            final String subName = rs.getString("subname");
+            final String department = rs.getString("department");
+            final int credits = rs.getInt("credits");
+
+            final User user = new User.UserBuilder(email, "", username)
+                    .id(idUser)
+                    .locale(locale)
+                    .build();
+            final Subject sub = new Subject(idSub, subName, department, credits);
+
+            final Set<Subject> subs = map.getOrDefault(user, new LinkedHashSet<>());
+            subs.add(sub);
+            map.putIfAbsent(user, subs);
+        }
+
+        return map;
     }
 }

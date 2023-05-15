@@ -1,6 +1,7 @@
 package ar.edu.itba.paw.services;
 
 import ar.edu.itba.paw.models.Subject;
+import ar.edu.itba.paw.models.User;
 
 import java.util.List;
 import java.util.Map;
@@ -35,4 +36,7 @@ public interface SubjectService extends BaseService<String, Subject> {
 
     Subject create(final String id, final String name, final String depto, final Set<String> idCorrelativas,
                    final Set<Long> idProfesores, final Set<Long> idCarreras, final Integer creditos);
+
+    Map<User,Set<Subject>> getAllUserUnreviewedNotifSubjects();
+    void updateUnreviewedNotifTime();
 }

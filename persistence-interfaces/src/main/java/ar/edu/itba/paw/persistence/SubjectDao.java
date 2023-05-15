@@ -1,6 +1,7 @@
 package ar.edu.itba.paw.persistence;
 
 import ar.edu.itba.paw.models.Subject;
+import ar.edu.itba.paw.models.User;
 
 import java.util.List;
 import java.util.Map;
@@ -33,4 +34,7 @@ public interface SubjectDao extends RWDao<String, Subject> {
     Map<Long, Map<Integer, List<Subject>>> getAllGroupedByDegIdAndYear();
 
     Map<Long, List<Subject>> getAllElectivesGroupedByDegId();
+
+    Map<User,Set<Subject>> getAllUserUnreviewedNotifSubjects();
+    void updateUnreviewedNotifTime();
 }

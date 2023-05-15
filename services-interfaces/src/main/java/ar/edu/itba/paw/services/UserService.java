@@ -1,6 +1,5 @@
 package ar.edu.itba.paw.services;
 
-import ar.edu.itba.paw.models.Image;
 import ar.edu.itba.paw.models.Roles;
 import ar.edu.itba.paw.models.User;
 import ar.edu.itba.paw.services.exceptions.InvalidTokenException;
@@ -9,6 +8,7 @@ import ar.edu.itba.paw.services.exceptions.UserEmailAlreadyTakenException;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 
@@ -41,4 +41,7 @@ public interface UserService extends BaseService<Long, User> {
     Integer updateUserRoles(final Long roleId, final Long userId);
 
     void confirmUser(final String token) throws InvalidTokenException;
+
+    void setLocale(User user, Locale locale);
+    void setLocaleAsync(User user, Locale locale);
 }
