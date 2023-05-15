@@ -14,12 +14,12 @@ public class RolesServiceImpl implements RolesService{
     private final RolesDao rolesDao;
 
     @Autowired
-    public RolesServiceImpl(RolesDao rolesDao) {
+    public RolesServiceImpl(final RolesDao rolesDao) {
         this.rolesDao = rolesDao;
     }
 
     @Override
-    public Optional<Roles> findById(Long id) {
+    public Optional<Roles> findById(final Long id) {
         return rolesDao.findById(id);
     }
 
@@ -29,7 +29,7 @@ public class RolesServiceImpl implements RolesService{
     }
 
     @Override
-    public Optional<Roles> findByName(String name) {
+    public Optional<Roles> findByName(final String name) {
         return rolesDao.findByName(name);
     }
 }

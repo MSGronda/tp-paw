@@ -37,7 +37,7 @@ public class RecoveryJdbcDao implements RecoveryDao {
     }
 
     @Override
-    public void create(String token, long userId) {
+    public void create(final String token, final long userId) {
         Map<String, Object> data = new HashMap<>();
         data.put("token", token);
         data.put("userid", userId);
@@ -51,25 +51,25 @@ public class RecoveryJdbcDao implements RecoveryDao {
     }
 
     @Override
-    public Optional<Long> findUserIdByToken(String token) {
+    public Optional<Long> findUserIdByToken(final String token) {
         return jdbcTemplate.query("SELECT * FROM " + TABLE + " WHERE token = ?", RecoveryJdbcDao::userIdRowMapper, token)
                 .stream()
                 .findFirst();
     }
 
     @Override
-    public void delete(String token) {
+    public void delete(final String token) {
         jdbcTemplate.update("DELETE FROM " + TABLE + " WHERE token = ?", token);
         LOGGER.info("Deleted token {} from recovery token table", token);
     }
 
     @Override
-    public void delete(long userId) {
+    public void delete(final long userId) {
         jdbcTemplate.update("DELETE FROM " + TABLE + " WHERE userid = ?", userId);
         LOGGER.info("Deleted user from recovery token table with id {}", userId);
     }
 
-    private static Long userIdRowMapper(ResultSet rs, int rowNum) throws SQLException {
+    private static Long userIdRowMapper(final ResultSet rs, final int rowNum) throws SQLException {
         return rs.getLong("userid");
     }
 }

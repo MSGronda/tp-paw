@@ -13,12 +13,12 @@ public class ImageServiceImpl implements ImageService {
     private final ImageDao imageDao;
 
     @Autowired
-    public ImageServiceImpl(ImageDao imageDao) {
+    public ImageServiceImpl(final ImageDao imageDao) {
         this.imageDao = imageDao;
     }
 
     @Override
-    public Optional<Image> findById(Long id) {
+    public Optional<Image> findById(final Long id) {
         return imageDao.findById(id);
     }
 

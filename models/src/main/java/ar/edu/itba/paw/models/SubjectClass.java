@@ -9,13 +9,14 @@ public class SubjectClass {
     private final Set<Professor> professors;
     private final Set<ClassTime> classTimes;
 
-    public SubjectClass(String idSub, String idClass) {
+    public SubjectClass(final String idSub, final String idClass) {
         this.idSub = idSub;
         this.idClass = idClass;
         this.professors = new LinkedHashSet<>();
         this.classTimes = new LinkedHashSet<>();
     }
-    public SubjectClass(String idSub, String idClass, Set<Professor> professors, Set<ClassTime> classTimes) {
+    public SubjectClass(final String idSub, final String idClass,
+                        final Set<Professor> professors, final Set<ClassTime> classTimes) {
         this.idSub = idSub;
         this.idClass = idClass;
         this.professors = professors;
@@ -52,7 +53,8 @@ public class SubjectClass {
         private final String building;
         private final String mode;
 
-        public ClassTime(Integer day, Time startTime, Time endTime, String classLoc, String building, String mode) {
+        public ClassTime(final Integer day, final Time startTime, final Time endTime,
+                         final String classLoc, final String building, final String mode) {
             this.day = day;
             this.startTime = startTime;
             this.endTime = endTime;

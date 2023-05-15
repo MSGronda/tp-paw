@@ -12,7 +12,8 @@ public class Subject {
     private Set<Long> degreeIds;
     private Map<String,SubjectClass> subjectClasses;
 
-    public Subject(String id, String name, String department, Set<String> prerequisites, Set<Long> professorIds, Set<Long> degreeIds, int credits) {
+    public Subject(final String id, final String name, final String department, final Set<String> prerequisites,
+                   final Set<Long> professorIds, final Set<Long> degreeIds, final int credits) {
         this.id = id;
         this.name = name;
         this.department = department;
@@ -22,7 +23,7 @@ public class Subject {
         this.credits = credits;
     }
 
-    public Subject(String id, String name, String department, int credits) {
+    public Subject(final String id, final String name, final String department, final int credits) {
         this.id = id;
         this.name = name;
         this.department = department;

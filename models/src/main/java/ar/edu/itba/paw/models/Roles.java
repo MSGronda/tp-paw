@@ -7,7 +7,7 @@ public class Roles {
 
     private final String name;
 
-    public Roles(Long id, String name) {
+    public Roles(final Long id, final String name) {
         this.id = id;
         this.name = name;
     }

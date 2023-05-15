@@ -38,7 +38,7 @@ public class DegreeJdbcDao implements DegreeDao {
     }
 
     @Override
-    public Optional<Degree> findById(Long id) {
+    public Optional<Degree> findById(final Long id) {
         Optional<Degree> maybeDegree = jdbcTemplate.query("SELECT * FROM " + degree_table_name + " WHERE id = ?", DegreeJdbcDao::rowMapper, id)
                 .stream().findFirst();
 
@@ -65,16 +65,16 @@ public class DegreeJdbcDao implements DegreeDao {
     }
 
     @Override
-    public void insert(Degree degree) {
+    public void insert(final Degree degree) {
         create(degree.getName());
     }
 
     @Override
-    public void delete(Long aLong) {
+    public void delete(final Long aLong) {
 
     }
 
-    public Degree create(String name) {
+    public Degree create(final String name) {
         Map<String, Object> data = new HashMap<>();
         data.put("name", name);
 
@@ -84,11 +84,11 @@ public class DegreeJdbcDao implements DegreeDao {
         return new Degree(key.longValue(), name, new ArrayList<>());
     }
 
-    public void update(Degree degree) {
+    public void update(final Degree degree) {
 
     }
 
-    private List<Semester> getSemesters(long degId) {
+    private List<Semester> getSemesters(final long degId) {
         List<Integer> semesterNumbers = jdbcTemplate.query("SELECT DISTINCT semester FROM " + subdegree_table_name + " WHERE iddeg = ?", DegreeJdbcDao::semesterCountRowMapper, degId);
 
         final List<Semester> semesters = new ArrayList<>();
@@ -100,15 +100,15 @@ public class DegreeJdbcDao implements DegreeDao {
         return semesters;
     }
 
-    private List<String> getSubjectsBySemester(long degId, int semesterNumber) {
+    private List<String> getSubjectsBySemester(final long degId, final int semesterNumber) {
         return jdbcTemplate.query("SELECT * FROM " + subdegree_table_name + " WHERE iddeg = ? AND semester = ?", DegreeJdbcDao::subIdRowMapper, degId, semesterNumber);
     }
 
-    private static String subIdRowMapper(ResultSet rs, int rowNum) throws SQLException {
+    private static String subIdRowMapper(final ResultSet rs, final int rowNum) throws SQLException {
         return rs.getString("idsub");
     }
 
-    private static Degree rowMapper(ResultSet rs, int rowNum) throws SQLException {
+    private static Degree rowMapper(final ResultSet rs, final int rowNum) throws SQLException {
         return new Degree(
                 rs.getLong("id"),
                 rs.getString("degname"),
@@ -116,7 +116,7 @@ public class DegreeJdbcDao implements DegreeDao {
         );
     }
 
-    private static Integer semesterCountRowMapper(ResultSet rs, int rowNum) throws SQLException {
+    private static Integer semesterCountRowMapper(final ResultSet rs, final int rowNum) throws SQLException {
         return rs.getInt(1);
     }
 }

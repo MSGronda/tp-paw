@@ -13,31 +13,32 @@ import java.util.Map;
 import java.util.Optional;
 
 public interface UserService extends BaseService<Long, User> {
-    User create(User.UserBuilder userBuilder, byte[] profilePic) throws UserEmailAlreadyTakenException;
-    User create(User.UserBuilder userBuilder) throws UserEmailAlreadyTakenException, IOException;
+    User create(final User.UserBuilder userBuilder, final byte[] profilePic) throws UserEmailAlreadyTakenException;
+    User create(final User.UserBuilder userBuilder) throws UserEmailAlreadyTakenException, IOException;
 
-    Optional<User> getUserWithEmail(String email);
+    Optional<User> getUserWithEmail(final String email);
 
-    Integer getUserSubjectProgress(Long id, String idSub);
-    Map<String, Integer> getUserAllSubjectProgress(Long id);
-    Integer deleteUserProgressForSubject(Long id, String idSub);
-    Integer updateSubjectProgress(Long id, String idSub, Integer newProgress);
-    void changePassword(Long userId, String password, String oldPassword, String userOldPassword) throws OldPasswordDoesNotMatchException;
-    void editProfile(Long userId, String username);
+    Integer getUserSubjectProgress(final Long id, final String idSub);
+    Map<String, Integer> getUserAllSubjectProgress(final Long id);
+    Integer deleteUserProgressForSubject(final Long id, final String idSub);
+    Integer updateSubjectProgress(final Long id, final String idSub, final Integer newProgress);
+    void changePassword(final Long userId, final String password, final String oldPassword,
+                        final String userOldPassword) throws OldPasswordDoesNotMatchException;
+    void editProfile(final Long userId, final String username);
 
-    void updateProfilePicture(User user, byte[] image);
+    void updateProfilePicture(final User user, final byte[] image);
 
-    String sendRecoveryMail(String email);
+    String sendRecoveryMail(final String email);
 
-    List<Roles> getUserRoles(Long userId);
+    List<Roles> getUserRoles(final Long userId);
 
-    boolean isValidRecoveryToken(String token);
+    boolean isValidRecoveryToken(final String token);
 
-    void recoverPassword(String token, String newPassword) throws InvalidTokenException;
+    void recoverPassword(final String token, final String newPassword) throws InvalidTokenException;
 
-    Integer addIdToUserRoles(Long roleId, Long userId);
+    Integer addIdToUserRoles(final Long roleId, final Long userId);
 
-    Integer updateUserRoles(Long roleId, Long userId);
+    Integer updateUserRoles(final Long roleId, final Long userId);
 
-    void confirmUser(String token) throws InvalidTokenException;
+    void confirmUser(final String token) throws InvalidTokenException;
 }

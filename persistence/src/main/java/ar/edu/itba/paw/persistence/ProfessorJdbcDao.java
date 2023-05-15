@@ -38,7 +38,7 @@ public class ProfessorJdbcDao implements ProfessorDao {
 
     // Incluye una lista de todas las materias que esta enseñando el profesor.
     @Override
-    public Optional<Professor> findById(Long id) {
+    public Optional<Professor> findById(final Long id) {
         Optional<Professor> optProf = findByIdRaw(id);
         if (!optProf.isPresent()) return Optional.empty();
 
@@ -55,12 +55,12 @@ public class ProfessorJdbcDao implements ProfessorDao {
     }
 
     @Override
-    public void insert(Professor professor) {
+    public void insert(final Professor professor) {
         create(professor.getName(), professor.getSubjectIds());
     }
 
     @Override
-    public Professor create(String name, List<String> subjects) {
+    public Professor create(final String name, final List<String> subjects) {
         Map<String, Object> data = new HashMap<>();
         data.put("profName", name);
 
@@ -84,7 +84,7 @@ public class ProfessorJdbcDao implements ProfessorDao {
     }
 
     @Override
-    public List<Professor> getAllBySubject(String idSubject) {
+    public List<Professor> getAllBySubject(final String idSubject) {
         return joinRowToProfs(jdbcTemplate.query("SELECT * FROM " + TABLE_PROF + " JOIN " + TABLE_PROF_SUB + " ps ON ps.idProf = id WHERE ps.idSub = ?", ProfessorJdbcDao::rowMapperJoin, idSubject));
     }
 
@@ -110,11 +110,11 @@ public class ProfessorJdbcDao implements ProfessorDao {
         );
     }
 
-    private static String rowMapperSubId(ResultSet rs, int rowNum) throws SQLException {
+    private static String rowMapperSubId(final ResultSet rs, final int rowNum) throws SQLException {
         return rs.getString("idSub");
     }
 
-    private static JoinRow rowMapperJoin(ResultSet rs, int rowNum) throws SQLException {
+    private static JoinRow rowMapperJoin(final ResultSet rs, final int rowNum) throws SQLException {
         return new JoinRow(
                 rs.getLong("idProf"),
                 rs.getString("profName"),
@@ -122,7 +122,7 @@ public class ProfessorJdbcDao implements ProfessorDao {
         );
     }
 
-    private List<Professor> joinRowToProfs(List<JoinRow> rows) {
+    private List<Professor> joinRowToProfs(final List<JoinRow> rows) {
         Map<Long, Professor> profs = new HashMap<>();
         for (JoinRow row : rows) {
             final long idProf = row.getIdProf();
@@ -137,7 +137,7 @@ public class ProfessorJdbcDao implements ProfessorDao {
         return new ArrayList<>(profs.values());
     }
 
-    private Map<String, List<Professor>> groupProfsBySubjectId(List<Professor> profs) {
+    private Map<String, List<Professor>> groupProfsBySubjectId(final List<Professor> profs) {
         Map<String, List<Professor>> profsBySubject = new HashMap<>();
         for (Professor prof : profs) {
             List<String> subIds = prof.getSubjectIds();
@@ -152,12 +152,12 @@ public class ProfessorJdbcDao implements ProfessorDao {
     }
 
     // No incluye las materias que enseña, el atributo es null
-    private Optional<Professor> findByIdRaw(Long id) {
+    private Optional<Professor> findByIdRaw(final Long id) {
         return jdbcTemplate.query("SELECT * FROM " + TABLE_PROF + " WHERE id = ?", ProfessorJdbcDao::rowMapperProf, id).stream().findFirst();
     }
 
     // Dado un ID de prof, busco todos los ids de las materias en cual esta ese prof
-    private List<String> findSubjects(Long id) {
+    private List<String> findSubjects(final Long id) {
         return jdbcTemplate.query("SELECT * FROM " + TABLE_PROF_SUB + " WHERE idProf = ?", ProfessorJdbcDao::rowMapperSubId, id);
     }
 
@@ -167,7 +167,7 @@ public class ProfessorJdbcDao implements ProfessorDao {
         private final String profName;
         private final String idSub;
 
-        public JoinRow(long idProf, String profName, String idSub) {
+        public JoinRow(final long idProf, final String profName, final String idSub) {
             this.idProf = idProf;
             this.profName = profName;
             this.idSub = idSub;

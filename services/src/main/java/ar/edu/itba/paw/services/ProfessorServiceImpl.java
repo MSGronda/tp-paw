@@ -14,12 +14,12 @@ public class ProfessorServiceImpl implements ProfessorService {
     private final ProfessorDao professorDao;
 
     @Autowired
-    public ProfessorServiceImpl(ProfessorDao professorDao) {
+    public ProfessorServiceImpl(final ProfessorDao professorDao) {
         this.professorDao = professorDao;
     }
 
     @Override
-    public Optional<Professor> findById(Long id) {
+    public Optional<Professor> findById(final Long id) {
         return professorDao.findById(id);
     }
 
@@ -29,7 +29,7 @@ public class ProfessorServiceImpl implements ProfessorService {
     }
 
     @Override
-    public List<Professor> getAllBySubject(String idSubject) {
+    public List<Professor> getAllBySubject(final String idSubject) {
         return professorDao.getAllBySubject(idSubject);
     }
 

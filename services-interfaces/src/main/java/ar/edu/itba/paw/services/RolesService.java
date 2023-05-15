@@ -6,6 +6,6 @@ import java.util.Optional;
 
 public interface RolesService extends BaseService<Long, Roles> {
 
-    Optional<Roles> findByName(String name);
+    Optional<Roles> findByName(final String name);
 
 }

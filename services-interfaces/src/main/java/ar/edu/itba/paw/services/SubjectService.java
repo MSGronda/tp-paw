@@ -9,29 +9,30 @@ import java.util.Set;
 
 public interface SubjectService extends BaseService<String, Subject> {
 
-    Optional<Subject> findById(String id);
-    List<Subject> findByIds(List<String> ids);
+    Optional<Subject> findById(final String id);
+    List<Subject> findByIds(final List<String> ids);
 
     List<Subject> getAll();
-    List<Subject> getAllByDegree(Long idDegree);
+    List<Subject> getAllByDegree(final Long idDegree);
     Map<Long, List<Subject>> getAllGroupedByDegreeId();
     Map<Long, Map<Integer, List<Subject>>> getAllGroupedByDegIdAndSemester();
     Map<Long, Map<Integer, List<Subject>>> getAllGroupedByDegIdAndYear();
 
-    Map<Integer, List<Subject>> getInfSubsByYear(Long degreeId);
+    Map<Integer, List<Subject>> getInfSubsByYear(final Long degreeId);
 
     Map<Long, List<Subject>> getAllElectivesGroupedByDegId();
 
-    List<Subject> getInfElectives(Long degreeId);
+    List<Subject> getInfElectives(final Long degreeId);
 
 
-    List<Subject> getByName(String name);
+    List<Subject> getByName(final String name);
 
-    List<Subject> getByNameFiltered(String name, Map<String,String> filters);
+    List<Subject> getByNameFiltered(final String name, final Map<String,String> filters);
 
-    int getTotalPagesForSubjects(String name, Map<String, String> filters);
+    int getTotalPagesForSubjects(final String name, final Map<String, String> filters);
 
-    Map<String, Set<String>> getRelevantFilters(List<Subject> subjects);
+    Map<String, Set<String>> getRelevantFilters(final List<Subject> subjects);
 
-    Subject create(String id, String name, String depto, Set<String> idCorrelativas, Set<Long> idProfesores, Set<Long> idCarreras, Integer creditos);
+    Subject create(final String id, final String name, final String depto, final Set<String> idCorrelativas,
+                   final Set<Long> idProfesores, final Set<Long> idCarreras, final Integer creditos);
 }

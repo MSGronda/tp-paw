@@ -26,7 +26,7 @@ public class RolesJdbcDao implements RolesDao{
         this.jdbcTemplate = new JdbcTemplate(ds);
     }
 
-    private static Roles rowMapper(ResultSet rs, int rowNum) throws SQLException{
+    private static Roles rowMapper(final ResultSet rs, final int rowNum) throws SQLException{
         return new Roles(
                 rs.getLong("id"),
                 rs.getString("name")
@@ -35,7 +35,7 @@ public class RolesJdbcDao implements RolesDao{
 
 
     @Override
-    public Optional<Roles> findById(Long id) {
+    public Optional<Roles> findById(final Long id) {
         return jdbcTemplate.query("SELECT * FROM " + ROLES_TABLE + " WHERE id = ?", ROW_MAPPER, id ).stream().findFirst();
     }
 
@@ -45,7 +45,7 @@ public class RolesJdbcDao implements RolesDao{
     }
 
     @Override
-    public Optional<Roles> findByName(String name) {
+    public Optional<Roles> findByName(final String name) {
         return jdbcTemplate.query("SELECT * FROM " + ROLES_TABLE + " WHERE name = ?", ROW_MAPPER, name).stream().findFirst();
     }
 }

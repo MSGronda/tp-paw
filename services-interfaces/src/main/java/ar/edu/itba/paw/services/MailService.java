@@ -4,6 +4,6 @@ import java.util.Locale;
 import java.util.Map;
 
 public interface MailService {
-    void sendMail(String to, String subject, String body);
-    void sendMail(String to, String subject, String template, Map<String, Object> model, Locale locale);
+    void sendMail(final String to, final String subject, final String body);
+    void sendMail(final String to, final String subject, final String template, final Map<String, Object> model, final Locale locale);
 }

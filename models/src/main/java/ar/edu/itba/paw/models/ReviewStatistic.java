@@ -20,8 +20,8 @@ public class ReviewStatistic {
     private static final int NO_DATA=-1, EASY = 0, MEDIUM = 1, HARD = 2;
     private static final int NOT_TIME_DEMANDING = 0, AVERAGE_TIME_DEMANDING = 1 ,TIME_DEMANDING = 2;
 
-    public ReviewStatistic(String idSub, int reviewCount, int easyCount, int mediumCount, int hardCount,
-                           int notTimeDemandingCount,int averageTimeDemandingCount ,int timeDemandingCount) {
+    public ReviewStatistic(final String idSub, final int reviewCount, final int easyCount, final int mediumCount, final int hardCount,
+                           final int notTimeDemandingCount, final int averageTimeDemandingCount, final int timeDemandingCount) {
         this.idSub = idSub;
         this.reviewCount = reviewCount;
         this.easyCount = easyCount;
@@ -35,7 +35,7 @@ public class ReviewStatistic {
         this.timeDemaning = getTimeDifficulty();
     }
 
-    public ReviewStatistic(String idSub){
+    public ReviewStatistic(final String idSub){
         this.idSub = idSub;
         this.reviewCount = 0;
         this.easyCount = 0;

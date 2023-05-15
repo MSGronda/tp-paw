@@ -19,29 +19,29 @@ public class SubjectServiceImpl implements SubjectService {
     private static final List<String> validDir = Arrays.asList("asc", "desc");
 
     @Autowired
-    public SubjectServiceImpl(SubjectDao subjectDao) {
+    public SubjectServiceImpl(final SubjectDao subjectDao) {
         this.subjectDao = subjectDao;
         validFilters.putIfAbsent("department", "[\\p{L} ]+");
         validFilters.putIfAbsent("credits", "\\d+");
     }
 
     @Override
-    public Optional<Subject> findById(String id) {
+    public Optional<Subject> findById(final String id) {
         return subjectDao.findById(id);
     }
 
     @Override
-    public List<Subject> findByIds(List<String> ids) {
+    public List<Subject> findByIds(final List<String> ids) {
         return subjectDao.findByIds(ids);
     }
 
     @Override
-    public List<Subject> getByName(String name) {
+    public List<Subject> getByName(final String name) {
         return subjectDao.getByName(name);
     }
 
     @Override
-    public List<Subject> getByNameFiltered(String name, Map<String,String> filters) {
+    public List<Subject> getByNameFiltered(final String name, final Map<String,String> filters) {
         Map<String, String> validatedFilters = new HashMap<>();
 
         // Check if filters, order by and direction are valid
@@ -60,7 +60,7 @@ public class SubjectServiceImpl implements SubjectService {
     }
 
     @Override
-    public int getTotalPagesForSubjects(String name, Map<String, String> filters){
+    public int getTotalPagesForSubjects(final String name, final Map<String,String> filters){
         Map<String, String> validatedFilters = new HashMap<>();
 
         // Check if filters, order by and direction are valid
@@ -79,7 +79,7 @@ public class SubjectServiceImpl implements SubjectService {
     }
 
     @Override
-    public Map<String, Set<String>> getRelevantFilters(List<Subject> subjects) {
+    public Map<String, Set<String>> getRelevantFilters(final List<Subject> subjects) {
         Map<String, Set<String>> relevant = new HashMap<>();
 
         relevant.put("department", new HashSet<>());
@@ -102,7 +102,7 @@ public class SubjectServiceImpl implements SubjectService {
     }
 
     @Override
-    public List<Subject> getAllByDegree(Long idDegree){
+    public List<Subject> getAllByDegree(final Long idDegree){
         return subjectDao.getAllByDegree(idDegree);
     }
 
@@ -121,7 +121,7 @@ public class SubjectServiceImpl implements SubjectService {
     }
 
     @Override
-    public Map<Integer, List<Subject>> getInfSubsByYear(Long degreeId){
+    public Map<Integer, List<Subject>> getInfSubsByYear(final Long degreeId){
         Map<Long, Map<Integer, List<Subject>>> all = getAllGroupedByDegIdAndYear();
         return all.get(degreeId);
     }
@@ -132,7 +132,7 @@ public class SubjectServiceImpl implements SubjectService {
     }
 
     @Override
-    public List<Subject> getInfElectives(Long degreeId){
+    public List<Subject> getInfElectives(final Long degreeId){
         Map<Long, List<Subject>> all = getAllElectivesGroupedByDegId();
         return all.get(degreeId);
     }
@@ -140,7 +140,8 @@ public class SubjectServiceImpl implements SubjectService {
 
     @Transactional
     @Override
-    public Subject create(String id, String name, String depto, Set<String> idCorrelativas, Set<Long> idProfesores, Set<Long> idCarreras, Integer creditos){
+    public Subject create(final String id, String name, final String depto, final Set<String> idCorrelativas,
+                          final Set<Long> idProfesores, final Set<Long> idCarreras, final Integer creditos){
         return subjectDao.create(id, name, depto, idCorrelativas, idProfesores, idCarreras, creditos);
     }
 }

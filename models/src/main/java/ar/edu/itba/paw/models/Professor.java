@@ -9,12 +9,12 @@ public class Professor {
     private final String name;
     private List<String> subjectIds;
 
-    public Professor(long id, String name){
+    public Professor(final long id, final String name){
         this.id = id;
         this.name = name;
         this.subjectIds = new ArrayList<>();
     }
-    public Professor(long id, String name, List<String> subjectIds) {
+    public Professor(final long id, final String name, final List<String> subjectIds) {
         this.id = id;
         this.name = name;
         this.subjectIds = subjectIds;

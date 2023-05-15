@@ -25,7 +25,8 @@ public class Review {
     private final int PREVIEW_SIZE=500;
 
 
-    public Review(long id, long userId, String subjectId, Integer easy, Integer timeDemanding, String text, Boolean anonymous) {
+    public Review(final long id, final long userId, final String subjectId, final Integer easy,
+                  final Integer timeDemanding, final String text, final Boolean anonymous) {
         this.id = id;
         this.userId = userId;
         this.subjectId = subjectId;
@@ -44,8 +45,8 @@ public class Review {
         }
     }
 
-    public Review(long id, long userId, String subjectId, Integer easy, Integer timeDemanding,
-                  String text, String subjectName, int upvotes, int downvotes, Boolean anonymous) {
+    public Review(final long id, final long userId, final String subjectId, final Integer easy, final Integer timeDemanding,
+                  final String text, final String subjectName, final int upvotes, final int downvotes, final Boolean anonymous) {
         this.id = id;
         this.userId = userId;
         this.subjectId = subjectId;
@@ -66,8 +67,8 @@ public class Review {
             this.showMoreText = "";
         }
     }
-    public Review(long id, long userId, String username, String subjectId, Integer easy, Integer timeDemanding,
-                  String text, int upvotes, int downvotes, Boolean anonymous) {
+    public Review(final long id, final long userId, final String username, final String subjectId, final Integer easy,
+                  final Integer timeDemanding, final String text, final int upvotes, final int downvotes, final Boolean anonymous) {
         this.id = id;
         this.userId = userId;
         this.subjectId = subjectId;
@@ -144,19 +145,19 @@ public class Review {
         return showMoreText;
     }
 
-    public void setText(String text){
+    public void setText(final String text){
         this.text = text;
     }
 
-    public void setEasy(Integer easy){
+    public void setEasy(final Integer easy){
         this.easy = easy;
     }
 
-    public void setTimeDemanding(Integer timeDemanding){
+    public void setTimeDemanding(final Integer timeDemanding){
         this.timeDemanding = timeDemanding;
     }
 
-    public void setAnonymous(Boolean anonymous){
+    public void setAnonymous(final Boolean anonymous){
         this.anonymous = anonymous;
     }
 }

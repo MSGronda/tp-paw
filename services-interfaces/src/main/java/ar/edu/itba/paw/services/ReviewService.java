@@ -10,35 +10,36 @@ import java.util.Map;
 import java.util.Optional;
 
 public interface ReviewService extends BaseService<Long, Review> {
-    Optional<Review> findById(Long id);
+    Optional<Review> findById(final Long id);
 
     List<Review> getAll();
-    List<Review> getAllUserReviewsWithSubjectName(Long userId);
-    int getAllCountSubjectReviews(String subjectId);
-    List<Review> getAllSubjectReviewsWithUsername(String subjectId, Map<String,String> param);
-    List<Review> getAllBySubject(String idsub);
+    List<Review> getAllUserReviewsWithSubjectName(final Long userId);
+    int getAllCountSubjectReviews(final String subjectId);
+    List<Review> getAllSubjectReviewsWithUsername(final String subjectId, final Map<String,String> param);
+    List<Review> getAllBySubject(final String idsub);
 
-    Optional<ReviewStatistic> getReviewStatBySubject(String idSub);
+    Optional<ReviewStatistic> getReviewStatBySubject(final String idSub);
 
-    Map<String, ReviewStatistic> getReviewStatMapBySubjectList(List<Subject> subjects);
-    Map<String, ReviewStatistic> getReviewStatMapBySubjectIdList(List<String> idSubs);
-    List<ReviewStatistic> getReviewStatBySubjectIdList(List<String> idSubs);
-    Review create(Boolean anonymous,Integer easy, Integer timeDemanding, String text,String subjectId,long userId ) throws SQLException;
+    Map<String, ReviewStatistic> getReviewStatMapBySubjectList(final List<Subject> subjects);
+    Map<String, ReviewStatistic> getReviewStatMapBySubjectIdList(final List<String> idSubs);
+    List<ReviewStatistic> getReviewStatBySubjectIdList(final List<String> idSubs);
+    Review create(final Boolean anonymous, final Integer easy, final Integer timeDemanding, final String text,
+                  final String subjectId, final long userId ) throws SQLException;
 
-    Integer deleteReviewVoteByReviewId(Long idReview);
-    Integer deleteReviewVote(Long idUser, Long idReview);
-    Integer voteReview(Long idUser, Long idReview, int vote);
-    Map<Long,Integer> userReviewVoteByIdUser(Long idUser);
-    Map<Long,Integer> userReviewVoteByIdSubAndIdUser(String idSub, Long idUser);
+    Integer deleteReviewVoteByReviewId(final Long idReview);
+    Integer deleteReviewVote(final Long idUser, final Long idReview);
+    Integer voteReview(final Long idUser, final Long idReview, final int vote);
+    Map<Long,Integer> userReviewVoteByIdUser(final Long idUser);
+    Map<Long,Integer> userReviewVoteByIdSubAndIdUser(final String idSub, final Long idUser);
 
 
-    Boolean didUserReview(List<Review> reviews, User user);
+    Boolean didUserReview(final List<Review> reviews, final User user);
 
-    Boolean didUserReviewDB(String subjectId, Long userId);
+    Boolean didUserReviewDB(final String subjectId, final Long userId);
 
-    void update(Review review);
+    void update(final Review review);
 
-    void delete(Review review);
+    void delete(final Review review);
 
-    void deleteReview(Review review, User user, Boolean isEditor) throws NoGrantedPermissionException;
+    void deleteReview(final Review review, final User user, final Boolean isEditor) throws NoGrantedPermissionException;
 }

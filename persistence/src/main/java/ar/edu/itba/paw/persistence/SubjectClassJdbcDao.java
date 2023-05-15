@@ -54,11 +54,11 @@ public class SubjectClassJdbcDao implements SubjectClassDao {
     private final SimpleJdbcInsert jdbcInsertSubjectClassProfessor;
 
     @Override
-    public List<Subject> getAllSubsWithClassThatUserCanDo(long userId){
+    public List<Subject> getAllSubsWithClassThatUserCanDo(final long userId){
         return jdbcTemplate.query(COMPLETE_SUB, SubjectClassJdbcDao::multipleCompleteClassExtractor,userId);
     }
 
-    private static List<Subject> multipleCompleteClassExtractor(ResultSet rs) throws SQLException {
+    private static List<Subject> multipleCompleteClassExtractor(final ResultSet rs) throws SQLException {
         Map<String,Subject> classes = new HashMap<>();
 
         while (rs.next()) {
@@ -108,19 +108,19 @@ public class SubjectClassJdbcDao implements SubjectClassDao {
     }
 
     @Override
-    public List<SubjectClass> getBySubIdRaw(String idSub) {
+    public List<SubjectClass> getBySubIdRaw(final String idSub) {
         return jdbcTemplate.query("SELECT * FROM " + TABLE_CLASS + " WHERE idSub = ?", SubjectClassJdbcDao::rowMapperClass, idSub);
     }
 
     @Override
-    public List<SubjectClass> getBySubId(String idSub) {
+    public List<SubjectClass> getBySubId(final String idSub) {
         return jdbcTemplate.query( QUERY_JOIN + " WHERE idSub = ?", SubjectClassJdbcDao::subjectListExtractor, idSub);
     }
 
 
 
     @Override
-    public Optional<SubjectClass> findById(String s) {
+    public Optional<SubjectClass> findById(final String s) {
         return Optional.empty();        // INVALID METHOD
     }
 
@@ -131,7 +131,7 @@ public class SubjectClassJdbcDao implements SubjectClassDao {
 
 
 
-    private static List<SubjectClass> subjectListExtractor(ResultSet rs) throws SQLException {
+    private static List<SubjectClass> subjectListExtractor(final ResultSet rs) throws SQLException {
         final Map<String, SubjectClass> subClasses = new HashMap<>();
         while (rs.next()) {
             String idSub = rs.getString("idSub");
@@ -157,7 +157,7 @@ public class SubjectClassJdbcDao implements SubjectClassDao {
 
 
 
-    private static SubjectClass rowMapperClass(ResultSet rs, int rowNum) throws SQLException {
+    private static SubjectClass rowMapperClass(final ResultSet rs, int rowNum) throws SQLException {
         return new SubjectClass(
                 rs.getString("idSub"),
                 rs.getString("idClass")
@@ -167,17 +167,17 @@ public class SubjectClassJdbcDao implements SubjectClassDao {
     /* =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- */
 
     @Override
-    public void insert(SubjectClass subjectClass) {
+    public void insert(final SubjectClass subjectClass) {
 
     }
 
     @Override
-    public void delete(String s) {
+    public void delete(final String s) {
 
     }
 
     @Override
-    public void update(SubjectClass subjectClass) {
+    public void update(final SubjectClass subjectClass) {
 
     }
 }

@@ -7,7 +7,7 @@ public class Semester {
     private final long degreeId;
     private final List<String> subjectIds;
 
-    public Semester(int number, long degreeId, List<String> subjects) {
+    public Semester(final int number, final long degreeId, final List<String> subjects) {
         this.number = number;
         this.degreeId = degreeId;
         this.subjectIds = subjects;

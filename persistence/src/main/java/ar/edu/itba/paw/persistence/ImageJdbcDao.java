@@ -34,7 +34,7 @@ public class ImageJdbcDao implements ImageDao {
     }
 
     @Override
-    public Optional<Image> findById(Long aLong) {
+    public Optional<Image> findById(final Long aLong) {
         return jdbcTemplate.query("SELECT * FROM " + TABLE + " WHERE id = ?", ImageJdbcDao::rowMapper, aLong)
             .stream().findFirst();
     }
@@ -45,17 +45,17 @@ public class ImageJdbcDao implements ImageDao {
     }
 
     @Override
-    public void insert(Image image) {
+    public void insert(final Image image) {
         insert(image.getData());
     }
 
     @Override
-    public void insert(byte[] image) {
+    public void insert(final byte[] image) {
         insertAndReturnKey(image);
     }
 
     @Override
-    public Long insertAndReturnKey(byte[] image) {
+    public Long insertAndReturnKey(final byte[] image) {
         Map<String,Object> args = new HashMap<>();
         args.put("image", image);
 
@@ -69,13 +69,13 @@ public class ImageJdbcDao implements ImageDao {
     }
 
     @Override
-    public void delete(Long aLong) {
+    public void delete(final Long aLong) {
         jdbcTemplate.execute("DELETE FROM " + TABLE + " WHERE id = " + aLong);
         LOGGER.warn("Image with id {} has been deleted", aLong);
     }
 
     @Override
-    public void update(Image image) {
+    public void update(final Image image) {
         int success = jdbcTemplate.update("UPDATE " + TABLE + " SET image = ? WHERE id = ?", image.getData(), image.getId());
         if(success != 0) {
             LOGGER.info("Updated profile picture for current user");
@@ -84,7 +84,7 @@ public class ImageJdbcDao implements ImageDao {
         }
     }
 
-    private static Image rowMapper(ResultSet rs, int rowNum) throws SQLException {
+    private static Image rowMapper(final ResultSet rs, final int rowNum) throws SQLException {
         return new Image(
             rs.getLong("id"),
             rs.getBytes("image")

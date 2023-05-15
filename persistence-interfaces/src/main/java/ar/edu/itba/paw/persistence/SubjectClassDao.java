@@ -6,7 +6,7 @@ import ar.edu.itba.paw.models.SubjectClass;
 import java.util.List;
 
 public interface SubjectClassDao extends RWDao<String, SubjectClass> {
-    List<SubjectClass> getBySubId(String id);
-    List<SubjectClass> getBySubIdRaw(String s);
-    List<Subject> getAllSubsWithClassThatUserCanDo(long userId);
+    List<SubjectClass> getBySubId(final String id);
+    List<SubjectClass> getBySubIdRaw(final String s);
+    List<Subject> getAllSubsWithClassThatUserCanDo(final long userId);
 }

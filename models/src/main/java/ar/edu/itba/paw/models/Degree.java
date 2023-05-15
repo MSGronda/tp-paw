@@ -10,7 +10,7 @@ public class Degree {
     private final String name;
     private final List<Semester> semesters;
 
-    public Degree(long id, String name, List<Semester> semesters) {
+    public Degree(final long id,final String name, final List<Semester> semesters) {
         this.id = id;
         this.name = name;
         this.semesters = semesters;

@@ -28,7 +28,7 @@ public class MailServiceImpl implements MailService {
     private static final Logger LOGGER = LoggerFactory.getLogger(MailServiceImpl.class);
 
     @Autowired
-    public MailServiceImpl(JavaMailSender mailSender, SpringTemplateEngine templateEngine, Environment env) {
+    public MailServiceImpl(final JavaMailSender mailSender, final SpringTemplateEngine templateEngine, final Environment env) {
         this.mailSender = mailSender;
         this.templateEngine = templateEngine;
         this.env = env;
@@ -36,13 +36,14 @@ public class MailServiceImpl implements MailService {
 
     @Async
     @Override
-    public void sendMail(String to, String subject, String body) {
+    public void sendMail(final String to, final String subject, final String body) {
         sendMail(to, subject, body, false);
     }
 
     @Async
     @Override
-    public void sendMail(String to, String subject, String template, Map<String, Object> model, Locale locale) throws MailException {
+    public void sendMail(final String to, final String subject, final String template,
+                         final Map<String, Object> model, final Locale locale) throws MailException {
         final Context ctx = new Context(locale);
         ctx.setVariables(model);
 
@@ -51,7 +52,7 @@ public class MailServiceImpl implements MailService {
         sendMail(to, subject, body, true);
     }
 
-    private void sendMail(String to, String subject, String body, boolean html) {
+    private void sendMail(final String to, final String subject, final String body, final boolean html) {
         MimeMessage mimeMsg = mailSender.createMimeMessage();
         MimeMessageHelper helper = new MimeMessageHelper(mimeMsg, "UTF-8");
 

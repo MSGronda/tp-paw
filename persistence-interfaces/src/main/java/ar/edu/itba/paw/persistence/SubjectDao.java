@@ -9,21 +9,22 @@ import java.util.Set;
 
 public interface SubjectDao extends RWDao<String, Subject> {
 
-    List<Subject> getByName(String name);
+    List<Subject> getByName(final String name);
 
-    List<Subject> getByNameFiltered(String name, Map<String, String> filters);
+    List<Subject> getByNameFiltered(final String name, final Map<String, String> filters);
 
-    int getTotalPagesForSubjects(String name, Map<String, String> filters);
+    int getTotalPagesForSubjects(final String name, final Map<String, String> filters);
 
-    List<Subject> getAllByDegree(Long idCarrera);
+    List<Subject> getAllByDegree(final Long idCarrera);
 
     List<Subject> getAll();
 
-    Optional<Subject> findById(String id);
-    List<Subject> findByIds(List<String> id);
+    Optional<Subject> findById(final String id);
+    List<Subject> findByIds(final List<String> id);
 
 
-    Subject create(String id, String name, String depto, Set<String> idCorrelativas, Set<Long> idProfesores, Set<Long> idCarreras, int creditos);
+    Subject create(final String id, String name, final String depto, final Set<String> idCorrelativas,
+                   final Set<Long> idProfesores, final Set<Long> idCarreras, final int creditos);
 
     Map<Long, List<Subject>> getAllGroupedByDegreeId();
 

@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 public interface ProfessorDao extends RWDao<Long, Professor> {
-    Professor create(String name , List<String> subjects);
-    List<Professor> getAllBySubject(String idSubject);
+    Professor create(final String name, final List<String> subjects);
+    List<Professor> getAllBySubject(final String idSubject);
     Map<String, List<Professor>> getAllGroupedBySubjectId();
 }

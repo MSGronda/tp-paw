@@ -15,17 +15,17 @@ public class SubjectClassServiceImpl implements SubjectClassService{
     private final SubjectClassDao subjectClassDao;
 
     @Autowired
-    public SubjectClassServiceImpl(SubjectClassDao subjectClassDao) {
+    public SubjectClassServiceImpl(final SubjectClassDao subjectClassDao) {
         this.subjectClassDao = subjectClassDao;
     }
 
     @Override
-    public List<Subject> getAllSubsWithClassThatUserCanDo(long userId){
+    public List<Subject> getAllSubsWithClassThatUserCanDo(final long userId){
         return subjectClassDao.getAllSubsWithClassThatUserCanDo(userId);
     }
 
     @Override
-    public Optional<SubjectClass> findById(String s) {
+    public Optional<SubjectClass> findById(final String s) {
         return Optional.empty();
     }
 
@@ -35,12 +35,12 @@ public class SubjectClassServiceImpl implements SubjectClassService{
     }
 
     @Override
-    public List<SubjectClass> getBySubIdRaw(String s) {
+    public List<SubjectClass> getBySubIdRaw(final String s) {
         return subjectClassDao.getBySubIdRaw(s);
     }
 
     @Override
-    public List<SubjectClass> getBySubId(String s) {
+    public List<SubjectClass> getBySubId(final String s) {
         return subjectClassDao.getBySubId(s);
     }
 }

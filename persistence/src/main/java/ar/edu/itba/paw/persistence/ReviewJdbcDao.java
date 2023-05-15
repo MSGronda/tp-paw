@@ -42,13 +42,13 @@ public class ReviewJdbcDao implements ReviewDao {
 
 
     @Override
-    public Optional<Review> findById(Long id) {
+    public Optional<Review> findById(final Long id) {
         return jdbcTemplate.query("SELECT * FROM " + TABLE_REVIEWS + " WHERE id = ?",ROW_MAPPER, id)
                 .stream().findFirst();
     }
 
     @Override
-    public List<Review> getAllBySubject(String idsub) {
+    public List<Review> getAllBySubject(final String idsub) {
         return jdbcTemplate.query("SELECT * FROM " + TABLE_REVIEWS + " WHERE idsub = ?", ROW_MAPPER, idsub );
     }
 
@@ -58,12 +58,13 @@ public class ReviewJdbcDao implements ReviewDao {
     }
 
     @Override
-    public void insert(Review review) {
+    public void insert(final Review review) {
         create(review.getAnonymous(),review.getEasy(), review.getTimeDemanding(), review.getText(), review.getSubjectId(),review.getUserId());
     }
 
     @Override
-    public Review create(Boolean anonymous,Integer easy, Integer timeDemanding, String text,String subjectId,long userId ) {
+    public Review create(final Boolean anonymous,final Integer easy, final Integer timeDemanding,
+                         final String text,final String subjectId,final long userId ) {
         Map<String, Object> data = new HashMap<>();
         data.put("easy", easy);
         data.put("timeDemanding", timeDemanding);
@@ -81,14 +82,14 @@ public class ReviewJdbcDao implements ReviewDao {
     }
 
     @Override
-    public void delete(Long id) {
+    public void delete(final Long id) {
         LOGGER.info("Review deleted with id {}", id);
 
         jdbcTemplate.update("DELETE FROM " + TABLE_REVIEWS + " WHERE id = ?", id);
     }
 
     @Override
-    public void update(Review review) {
+    public void update(final Review review) {
         LOGGER.info("Review updated with id {} by user {}", review.getId(), review.getUserId());
 
         jdbcTemplate.update("UPDATE " + TABLE_REVIEWS + " SET revtext = ?, " +
@@ -99,12 +100,12 @@ public class ReviewJdbcDao implements ReviewDao {
     // - - - - - REVIEW STATISTICS - - - - -
 
     @Override
-    public Optional<ReviewStatistic> getReviewStatBySubject(String idSub){
+    public Optional<ReviewStatistic> getReviewStatBySubject(final String idSub){
         return jdbcTemplate.query("SELECT * FROM " + TABLE_REVIEW_STAT + " WHERE idSub = ?", ReviewJdbcDao::rowMapperReviewStatistic, idSub)
                 .stream().findFirst();
     }
 
-    private String generateSubjectListQuery(List<String> idSubs){
+    private String generateSubjectListQuery(final List<String> idSubs){
         StringBuilder sql = new StringBuilder("SELECT * FROM " ).append(TABLE_REVIEW_STAT).append(" WHERE idSub IN (");
 
         // TODO change because its unsafe?
@@ -120,7 +121,7 @@ public class ReviewJdbcDao implements ReviewDao {
     }
 
     @Override
-    public List<ReviewStatistic> getReviewStatBySubjectList(List<String> idSubs){
+    public List<ReviewStatistic> getReviewStatBySubjectList(final List<String> idSubs){
         if(idSubs.isEmpty()){
             return new ArrayList<>();
         }
@@ -129,7 +130,7 @@ public class ReviewJdbcDao implements ReviewDao {
     }
 
     @Override
-    public Map<String, ReviewStatistic> getReviewStatMapBySubjectList(List<String> idSubs){
+    public Map<String, ReviewStatistic> getReviewStatMapBySubjectList(final List<String> idSubs){
         if(idSubs.isEmpty()){
             return new HashMap<>();
         }
@@ -138,7 +139,7 @@ public class ReviewJdbcDao implements ReviewDao {
         return jdbcTemplate.query(sql, ReviewJdbcDao::reviewStatisticMapExtractor);
     }
 
-    private static Map<String,ReviewStatistic> reviewStatisticMapExtractor(ResultSet rs) throws SQLException{
+    private static Map<String,ReviewStatistic> reviewStatisticMapExtractor(final ResultSet rs) throws SQLException{
         final Map<String, ReviewStatistic> reviewStats = new HashMap<>();
         while (rs.next()) {
             String idSub = rs.getString("idSub");
@@ -158,7 +159,7 @@ public class ReviewJdbcDao implements ReviewDao {
         return reviewStats;
     }
 
-    private static ReviewStatistic rowMapperReviewStatistic(ResultSet rs, int rowNum) throws SQLException {
+    private static ReviewStatistic rowMapperReviewStatistic(final ResultSet rs,final  int rowNum) throws SQLException {
         return new ReviewStatistic(
                 rs.getString("idSub"),
                 rs.getInt("reviewCount"),
@@ -172,7 +173,7 @@ public class ReviewJdbcDao implements ReviewDao {
     }
 
 
-    private static Review rowMapperReview(ResultSet rs, int rowNum) throws SQLException {
+    private static Review rowMapperReview(final ResultSet rs, final int rowNum) throws SQLException {
         return new Review(
                 rs.getLong("id"),
                 rs.getLong("idUser"),
@@ -185,16 +186,16 @@ public class ReviewJdbcDao implements ReviewDao {
     }
 
     @Override
-    public Boolean didUserReviewDB(String subjectId, Long userId){
+    public Boolean didUserReviewDB(final String subjectId, final Long userId){
         Optional<Review> review = jdbcTemplate.query("SELECT * FROM " + TABLE_REVIEWS + " WHERE idsub = ? AND iduser = ?", ReviewJdbcDao::rowMapperReview, subjectId, userId).stream().findFirst();
 
         return review.isPresent();
     }
 
-    private static Integer difficultyRowMapper(ResultSet rs, int rowNum) throws SQLException {
+    private static Integer difficultyRowMapper(final ResultSet rs, final int rowNum) throws SQLException {
         return rs.getInt("easy");
     }
-    private static Integer timeRowMapper(ResultSet rs, int rowNum) throws SQLException {
+    private static Integer timeRowMapper(final ResultSet rs, final int rowNum) throws SQLException {
         return rs.getInt("timedemanding");
     }
 
@@ -202,7 +203,7 @@ public class ReviewJdbcDao implements ReviewDao {
     // - - - - - - Review upvotes and downvotes - - - - - -
 
     @Override
-    public Integer deleteReviewVoteByReviewId(Long idReview){
+    public Integer deleteReviewVoteByReviewId(final Long idReview){
         int success = jdbcTemplate.update("DELETE FROM " + TABLE_REVIEW_VOTE + " WHERE idReview = ?", idReview);
         if(success != 0) {
             LOGGER.info("Deleted votes in review {}", idReview);
@@ -213,7 +214,7 @@ public class ReviewJdbcDao implements ReviewDao {
     }
 
     @Override
-    public Integer deleteReviewVote(Long idUser, Long idReview){
+    public Integer deleteReviewVote(final Long idUser, final Long idReview){
         int success = jdbcTemplate.update("DELETE FROM " + TABLE_REVIEW_VOTE + " WHERE idUser = ? AND idReview = ?", idUser,idReview);
         if(success != 0) {
             LOGGER.info("Deleted vote in review {} by user {}", idReview, idUser);
@@ -224,7 +225,7 @@ public class ReviewJdbcDao implements ReviewDao {
     }
 
     @Override
-    public boolean userVotedOnReview(Long idUser, Long idReview){
+    public boolean userVotedOnReview(final Long idUser, final Long idReview){
         return jdbcTemplate.query("SELECT * FROM "+TABLE_REVIEW_VOTE+ " WHERE idUser = ? AND idReview = ?",
                 ReviewJdbcDao::rowMapperReviewVote,idUser,idReview).stream().findFirst().isPresent();
     }
@@ -233,7 +234,7 @@ public class ReviewJdbcDao implements ReviewDao {
     }
 
     @Override
-    public Integer voteReview(Long idUser, Long idReview, int vote){
+    public Integer voteReview(final Long idUser, final Long idReview, final int vote){
         Map<String, Object> data = new HashMap<>();
 
         data.put("idUser", idUser);
@@ -245,7 +246,7 @@ public class ReviewJdbcDao implements ReviewDao {
     }
 
     @Override
-    public Integer updateVoteOnReview(Long idUser, Long idReview, int vote){
+    public Integer updateVoteOnReview(final Long idUser, final Long idReview, final int vote){
         LOGGER.info("Updated vote on review {} with value {} for user {}", idReview, vote, idUser);
         return jdbcTemplate.update("UPDATE " + TABLE_REVIEW_VOTE + " SET vote = ? WHERE idreview = ? AND iduser = ?",
                 vote,idReview,idUser);
@@ -253,16 +254,16 @@ public class ReviewJdbcDao implements ReviewDao {
 
     // key: idReview - value: vote
     @Override
-    public Map<Long,Integer> userReviewVoteByIdSubAndIdUser(String idSub, Long idUser){
+    public Map<Long,Integer> userReviewVoteByIdSubAndIdUser(final String idSub, final Long idUser){
         return jdbcTemplate.query("SELECT rv.idReview, rv.vote FROM "+ TABLE_REVIEW_VOTE + " AS rv FULL JOIN "+ TABLE_REVIEWS +
                 " AS r ON rv.idReview = r.id WHERE r.idSub = ? AND rv.idUser = ?", ReviewJdbcDao::userReviewVoteExtractor,idSub,idUser);
     }
     // key: idReview - value: vote
     @Override
-    public Map<Long,Integer> userReviewVoteByIdUser(Long idUser){
+    public Map<Long,Integer> userReviewVoteByIdUser(final Long idUser){
         return jdbcTemplate.query("SELECT idReview, vote FROM "+ TABLE_REVIEW_VOTE + " WHERE  idUser = ?", ReviewJdbcDao::userReviewVoteExtractor,idUser);
     }
-    private static Map<Long, Integer> userReviewVoteExtractor(ResultSet rs) throws SQLException{
+    private static Map<Long, Integer> userReviewVoteExtractor(final ResultSet rs) throws SQLException{
         Map<Long,Integer> res = new HashMap<>();
         while(rs.next()){
             Long id = rs.getLong("idReview");
@@ -281,18 +282,18 @@ public class ReviewJdbcDao implements ReviewDao {
    // - - - - - - Review with subject name - - - - - -
 
    @Override
-   public List<Review> getAllUserReviewsWithSubjectName(Long userId) {
+   public List<Review> getAllUserReviewsWithSubjectName(final Long userId) {
        return jdbcTemplate.query(completeReviewSqlSubjectName("WHERE r.iduser = ?"), ReviewJdbcDao::subjectNameRowMapper, userId);
 
    }
 
     @Override
-    public int getAllCountSubjectReviews(String subjectId) {
+    public int getAllCountSubjectReviews(final String subjectId) {
         return jdbcTemplate.queryForObject("SELECT COUNT(*) FROM " + TABLE_REVIEWS + " WHERE idsub = " + subjectId + "::text",Integer.class) / Integer.parseInt(PAGE_SIZE);
     }
 
     @Override
-    public List<Review> getAllSubjectReviewsWithUsername(String subjectId, Map<String,String> params) {
+    public List<Review> getAllSubjectReviewsWithUsername(final String subjectId, final Map<String,String> params) {
 
         String orderBY =" ORDER BY " + params.getOrDefault("order", "easy") + " " +
                 params.getOrDefault("dir", "ASC");
@@ -302,7 +303,7 @@ public class ReviewJdbcDao implements ReviewDao {
     }
 
 
-    private static Review subjectNameRowMapper(ResultSet rs, int rowNum) throws SQLException {
+    private static Review subjectNameRowMapper(final ResultSet rs, final int rowNum) throws SQLException {
         return new Review(
                 rs.getLong("id"),
                 rs.getLong("idUser"),
@@ -316,7 +317,7 @@ public class ReviewJdbcDao implements ReviewDao {
                 rs.getBoolean("useranonymous")
         );
     }
-    private static Review UsernameRowMapper(ResultSet rs, int rowNum) throws SQLException {
+    private static Review UsernameRowMapper(final ResultSet rs, final int rowNum) throws SQLException {
         return new Review(
                 rs.getLong("id"),
                 rs.getLong("idUser"),
@@ -333,7 +334,7 @@ public class ReviewJdbcDao implements ReviewDao {
     // - - - - - - - - - - - - - - - - - - - - - - - -
 
     // - - - - - - Review with subject name and upvotes, downvotes - - - - - -
-    private String completeReviewSqlSubjectName(String where){
+    private String completeReviewSqlSubjectName(final String where){
         return
                 "SELECT r.id, r.idUser, r.idSub, r.score, r.easy, r.timeDemanding, r.revText, r.useranonymous, s.subname, " +
                         "sum(CASE WHEN rv.vote = 1 THEN 1 ELSE 0 END) AS upvotes, sum(CASE WHEN rv.vote = -1 THEN 1 ELSE 0 END) AS downvotes " +
@@ -342,7 +343,7 @@ public class ReviewJdbcDao implements ReviewDao {
                         " GROUP BY r.id, s.subname";
     }
 
-    private String completeReviewSqlUserName(String where,String orderBy,String page){
+    private String completeReviewSqlUserName(final String where,final String orderBy,String page){
         return
                 "SELECT r.id, r.idUser, u.username, r.idSub, r.score, r.easy, r.timeDemanding, r.revText, r.useranonymous, " +
                         "sum(CASE WHEN rv.vote = 1 THEN 1 ELSE 0 END) AS upvotes, sum(CASE WHEN rv.vote = -1 THEN 1 ELSE 0 END) AS downvotes " +

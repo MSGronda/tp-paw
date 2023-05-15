@@ -13,12 +13,12 @@ public class DegreeServiceImpl implements DegreeService {
     private final DegreeDao degreeDao;
 
     @Autowired
-    public DegreeServiceImpl(DegreeDao degreeDao) {
+    public DegreeServiceImpl(final DegreeDao degreeDao) {
         this.degreeDao = degreeDao;
     }
 
     @Override
-    public Optional<Degree> findById(Long id) {
+    public Optional<Degree> findById(final Long id) {
         return degreeDao.findById(id);
 
     }

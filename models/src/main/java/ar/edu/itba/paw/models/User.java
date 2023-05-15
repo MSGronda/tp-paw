@@ -12,7 +12,7 @@ public class User {
     private final Optional<String> confirmToken;
 
 
-    public User(UserBuilder builder) {
+    public User(final UserBuilder builder) {
         this.id = builder.id;
         this.email = builder.email;
         this.password = builder.password;
@@ -63,20 +63,20 @@ public class User {
         private Optional<String> confirmToken;
 
 
-        public UserBuilder(String email, String password, String username) {
+        public UserBuilder(final String email, final String password, final String username) {
             this.email = email;
             this.password = password;
             this.username = username;
             this.confirmToken = Optional.empty();
         }
-        public UserBuilder id(long id) {
+        public UserBuilder id(final long id) {
             this.id = id;
             return this;
         }
         public Map<String, Integer> getSubjectProgress(){
             return this.subjectProgress;
         }
-        public UserBuilder subjectProgress(Map<String, Integer> subjectProgress){
+        public UserBuilder subjectProgress(final Map<String, Integer> subjectProgress){
             this.subjectProgress = subjectProgress;
             return this;
         }

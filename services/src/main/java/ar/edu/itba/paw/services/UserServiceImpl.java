@@ -47,7 +47,8 @@ public class UserServiceImpl implements UserService {
     private static final Logger LOGGER = LoggerFactory.getLogger(UserServiceImpl.class);
 
     @Autowired
-    public UserServiceImpl(UserDao userDao, RecoveryDao recDao, ImageDao imageDao, MailService mailService, RolesService rolesService, final PasswordEncoder passwordEncoder) {
+    public UserServiceImpl(final UserDao userDao, final RecoveryDao recDao, final ImageDao imageDao, final MailService mailService,
+                           final RolesService rolesService, final PasswordEncoder passwordEncoder) {
         this.userDao = userDao;
         this.passwordEncoder = passwordEncoder;
         this.recDao = recDao;
@@ -69,7 +70,7 @@ public class UserServiceImpl implements UserService {
 
     @Transactional
     @Override
-    public User create(User.UserBuilder userBuilder, byte[] profilePic) throws UserEmailAlreadyTakenException {
+    public User create(final User.UserBuilder userBuilder, final byte[] profilePic) throws UserEmailAlreadyTakenException {
         long imageId = imageDao.insertAndReturnKey(profilePic);
 
         final SecureRandom random = new SecureRandom();
@@ -102,7 +103,7 @@ public class UserServiceImpl implements UserService {
 
     @Transactional
     @Override
-    public User create(User.UserBuilder userBuilder) throws UserEmailAlreadyTakenException, IOException {
+    public User create(final User.UserBuilder userBuilder) throws UserEmailAlreadyTakenException, IOException {
         File file = ResourceUtils.getFile("classpath:images/default_user.png");
         byte[] defaultImg = Files.readAllBytes(file.toPath());
         return create(userBuilder, defaultImg);
@@ -110,7 +111,7 @@ public class UserServiceImpl implements UserService {
 
     @Transactional
     @Override
-    public void updateProfilePicture(User user, byte[] image){
+    public void updateProfilePicture(final User user, final byte[] image){
         if(image.length > MAX_IMAGE_SIZE){
             return;
         }
@@ -120,36 +121,37 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Optional<User> getUserWithEmail(String email) {
+    public Optional<User> getUserWithEmail(final String email) {
         return userDao.getUserWithEmail(email);
     }
 
     @Override
-    public Integer getUserSubjectProgress(Long id, String idSub) {
+    public Integer getUserSubjectProgress(final Long id, final String idSub) {
         return userDao.getUserSubjectProgress(id,idSub).orElse(0);
     }
 
 
     @Override
-    public Map<String, Integer> getUserAllSubjectProgress(Long id) {
+    public Map<String, Integer> getUserAllSubjectProgress(final Long id) {
         return userDao.getUserAllSubjectProgress(id);
     }
 
     @Transactional
     @Override
-    public Integer deleteUserProgressForSubject(Long id, String idSub){
+    public Integer deleteUserProgressForSubject(final Long id, final String idSub){
         return userDao.deleteUserProgressForSubject(id,idSub);
     }
 
     @Transactional
     @Override
-    public Integer updateSubjectProgress(Long id, String idSub, Integer newProgress) {
+    public Integer updateSubjectProgress(final Long id, final String idSub, final Integer newProgress) {
         return userDao.updateSubjectProgress(id,idSub,newProgress);
     }
 
     @Transactional
     @Override
-    public void changePassword(Long userId, String password, String oldPassword, String userOldPassword) throws OldPasswordDoesNotMatchException {
+    public void changePassword(final Long userId, final String password, final String oldPassword,
+                               final String userOldPassword) throws OldPasswordDoesNotMatchException {
 
         if(!passwordEncoder.matches(oldPassword, userOldPassword)){
             LOGGER.warn("Old password does not match with input. Update failed");
@@ -160,12 +162,12 @@ public class UserServiceImpl implements UserService {
 
     @Transactional
     @Override
-    public void editProfile(Long userId, String username) {
+    public void editProfile(final Long userId, final String username) {
         userDao.editProfile(userId, username);
     }
 
     @Override
-    public String sendRecoveryMail(String email){
+    public String sendRecoveryMail(final String email){
         final Optional<User> optUser = getUserWithEmail(email);
         if(!optUser.isPresent()){
             LOGGER.warn("Generation of recovery token failed. User not found");
@@ -186,13 +188,13 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public boolean isValidRecoveryToken(String token) {
+    public boolean isValidRecoveryToken(final String token) {
         return recDao.findUserIdByToken(token).isPresent();
     }
 
     @Transactional
     @Override
-    public void recoverPassword(String token, String newPassword) throws InvalidTokenException {
+    public void recoverPassword(final String token, final String newPassword) throws InvalidTokenException {
         Optional<Long> optUserId = recDao.findUserIdByToken(token);
         if(!optUserId.isPresent()){
             LOGGER.info("Invalid token when trying to recover password");
@@ -205,7 +207,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void confirmUser(String token) throws InvalidTokenException {
+    public void confirmUser(final String token) throws InvalidTokenException {
         Optional<User> optUser = userDao.findUserByConfirmToken(token);
         if(!optUser.isPresent()){
             LOGGER.info("Invalid token when trying to confirm user");
@@ -217,7 +219,7 @@ public class UserServiceImpl implements UserService {
         autoLogin(user.getId());
     }
 
-    private void autoLogin(long userId) {
+    private void autoLogin(final long userId) {
         final Optional<User> maybeUser = findById(userId);
         if(!maybeUser.isPresent()){
             LOGGER.info("No registered user with id {}", userId);
@@ -233,16 +235,16 @@ public class UserServiceImpl implements UserService {
 
     //-------------------------------- USER ROLES -----------------------------
     @Override
-    public List<Roles> getUserRoles(Long userId) {
+    public List<Roles> getUserRoles(final Long userId) {
         return userDao.getUserRoles(userId);
     }
 
     @Override
-    public Integer addIdToUserRoles(Long roleId, Long userId) {
+    public Integer addIdToUserRoles(final Long roleId, final Long userId) {
         return userDao.addIdToUserRoles(roleId, userId);
     }
 
-    public Integer updateUserRoles(Long roleId, Long userId) {
+    public Integer updateUserRoles(final Long roleId, final Long userId) {
         return userDao.updateUserRoles(roleId, userId);
     }
 }

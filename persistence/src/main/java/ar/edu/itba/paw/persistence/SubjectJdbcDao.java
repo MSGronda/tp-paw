@@ -43,12 +43,12 @@ public class SubjectJdbcDao implements SubjectDao {
 
 
     @Override
-    public Optional<Subject> findById(String id) {
+    public Optional<Subject> findById(final String id) {
         return jdbcTemplate.query("SELECT * FROM " + VIEW_JOIN + " WHERE id = ?", SubjectJdbcDao::subjectListExtractor, id)
                 .stream().findFirst();
     }
 
-    public List<Subject> findByIds(List<String> ids) {
+    public List<Subject> findByIds(final List<String> ids) {
         if(ids.isEmpty()) return new ArrayList<>();
 
         return jdbcTemplate.query("SELECT * FROM " + VIEW_JOIN + " WHERE id IN (" + sqlPlaceholders(ids.size()) + ")",
@@ -63,7 +63,7 @@ public class SubjectJdbcDao implements SubjectDao {
 
 
     @Override
-    public List<Subject> getByName(String name) {
+    public List<Subject> getByName(final String name) {
         List<Subject> toReturn = jdbcTemplate.query("SELECT * FROM " + VIEW_JOIN + " WHERE subname ILIKE ?",
                 SubjectJdbcDao::subjectListExtractor, ("%" + name + "%"));
         LOGGER.info("Got subjects with name {}", name);
@@ -71,7 +71,7 @@ public class SubjectJdbcDao implements SubjectDao {
     }
 
     @Override
-    public List<Subject> getByNameFiltered(String name, Map<String, String> filters) {
+    public List<Subject> getByNameFiltered(final String name, final Map<String, String> filters) {
         // All filters in map must be valid. Checks are made in service.
 
         StringBuilder sb = new StringBuilder("SELECT * FROM ").append(TABLE_SUB).append(" WHERE subname ILIKE ?");
@@ -95,7 +95,7 @@ public class SubjectJdbcDao implements SubjectDao {
         return toReturn;
     }
     @Override
-    public int getTotalPagesForSubjects(String name, Map<String, String> filters){
+    public int getTotalPagesForSubjects(final String name, final Map<String, String> filters){
         StringBuilder sb = new StringBuilder("SELECT * FROM ").append(TABLE_SUB).append(" WHERE subname ILIKE ?");
         List<String> filterList = new ArrayList<>();
         filterList.add("%" + name + "%");
@@ -119,7 +119,7 @@ public class SubjectJdbcDao implements SubjectDao {
 
 
     @Override
-    public List<Subject> getAllByDegree(Long idDegree) {
+    public List<Subject> getAllByDegree(final Long idDegree) {
         return jdbcTemplate.query("SELECT * FROM " + VIEW_JOIN + " WHERE idDeg = ?", SubjectJdbcDao::subjectListExtractor, idDegree);
     }
 
@@ -128,7 +128,7 @@ public class SubjectJdbcDao implements SubjectDao {
         return groupByDegreeId(getAll());
     }
 
-    private Map<Long, List<Subject>> groupByDegreeId(List<Subject> subs) {
+    private Map<Long, List<Subject>> groupByDegreeId(final List<Subject> subs) {
         Map<Long, List<Subject>> map = new HashMap<>();
         for (Subject sub : subs) {
             for (Long id : sub.getDegreeIds()) {
@@ -180,12 +180,13 @@ public class SubjectJdbcDao implements SubjectDao {
     }
 
     @Override
-    public void insert(Subject subject) {
+    public void insert(final Subject subject) {
         create(subject.getId(), subject.getName(), subject.getDepartment(), subject.getPrerequisites(), subject.getProfessorIds(), subject.getDegreeIds(), subject.getCredits());
     }
 
     @Override
-    public Subject create(String id, String name, String depto, Set<String> idCorrelativas, Set<Long> idProfesores, Set<Long> idCarreras, int creditos) {
+    public Subject create(final String id, final String name, final String depto, final Set<String> idCorrelativas,
+                          final Set<Long> idProfesores, final Set<Long> idCarreras, final int creditos) {
 
         Map<String, Object> data = new HashMap<>();
         data.put("name", name);
@@ -204,40 +205,40 @@ public class SubjectJdbcDao implements SubjectDao {
     }
 
     @Override
-    public void delete(String id) {
+    public void delete(final String id) {
 
     }
 
     @Override
-    public void update(Subject subject) {
+    public void update(final Subject subject) {
 
     }
 
-    private List<String> findPrerequisites(String id){
+    private List<String> findPrerequisites(final String id){
         return jdbcTemplate.query("Select * FROM " + TABLE_PREREQ + " WHERE idSub = ?", SubjectJdbcDao::rowMapperPrereqId, id );
     }
 
-    private List<Long> findProfessors(String id){
+    private List<Long> findProfessors(final String id){
         return jdbcTemplate.query("Select * FROM " + TABLE_PROF_SUB + " WHERE idSub = ?", SubjectJdbcDao::rowMapperProfessorId, id );
     }
 
-    private List<Long> findDegrees(String id){
+    private List<Long> findDegrees(final String id){
         return jdbcTemplate.query("Select * FROM " + TABLE_SUB_DEG + " WHERE idSub = ?", SubjectJdbcDao::rowMapperDegreeId, id );
     }
 
-    private static Long rowMapperProfessorId(ResultSet rs, int rowNum) throws SQLException {
+    private static Long rowMapperProfessorId(final ResultSet rs, final int rowNum) throws SQLException {
         return rs.getLong("idProf");
     }
 
-    private static String rowMapperPrereqId(ResultSet rs, int rowNum) throws SQLException {
+    private static String rowMapperPrereqId(final ResultSet rs, final int rowNum) throws SQLException {
         return rs.getString("idPrereq");
     }
 
-    private static Long rowMapperDegreeId(ResultSet rs, int rowNum) throws SQLException {
+    private static Long rowMapperDegreeId(final ResultSet rs, final int rowNum) throws SQLException {
         return rs.getLong("idDeg");
     }
 
-    private static List<Subject> subjectListExtractor(ResultSet rs) throws SQLException {
+    private static List<Subject> subjectListExtractor(final ResultSet rs) throws SQLException {
         final Map<String, Subject> subs = new LinkedHashMap<>();
 
         while (rs.next()) {
@@ -263,7 +264,7 @@ public class SubjectJdbcDao implements SubjectDao {
         return new ArrayList<>(subs.values());
     }
 
-    private static Map<Long, Map<Integer,List<Subject>>> groupedByDegAndSemesterExtractor(ResultSet rs) throws SQLException {
+    private static Map<Long, Map<Integer,List<Subject>>> groupedByDegAndSemesterExtractor(final ResultSet rs) throws SQLException {
         final Map<Long, Map<Integer, Map<String,Subject>>> auxMap = new LinkedHashMap<>();
 
         while (rs.next()) {

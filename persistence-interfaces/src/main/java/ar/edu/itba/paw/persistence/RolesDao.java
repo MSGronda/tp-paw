@@ -7,5 +7,5 @@ import java.util.Optional;
 public interface RolesDao extends ReadableDao<Long, Roles> {
 
 
-    Optional<Roles> findByName(String name);
+    Optional<Roles> findByName(final String name);
 }

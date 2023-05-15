@@ -26,13 +26,13 @@ public class ReviewServiceImpl implements ReviewService {
     private static final Integer VoteCreated = 2;
 
     @Autowired
-    public ReviewServiceImpl(ReviewDao reviewDao, AuthUserService authUserService) {
+    public ReviewServiceImpl(final ReviewDao reviewDao, final AuthUserService authUserService) {
         this.reviewDao = reviewDao;
         this.authUserService = authUserService;
     }
 
     @Override
-    public Optional<Review> findById(Long id) {
+    public Optional<Review> findById(final Long id) {
         return reviewDao.findById(id);
     }
 
@@ -42,17 +42,17 @@ public class ReviewServiceImpl implements ReviewService {
     }
 
     @Override
-    public List<Review> getAllUserReviewsWithSubjectName(Long userId) {
+    public List<Review> getAllUserReviewsWithSubjectName(final Long userId) {
         return reviewDao.getAllUserReviewsWithSubjectName(userId);
     }
 
     @Override
-    public int getAllCountSubjectReviews(String subjectId){
+    public int getAllCountSubjectReviews(final String subjectId){
         return reviewDao.getAllCountSubjectReviews(subjectId);
     }
 
     @Override
-    public List<Review> getAllSubjectReviewsWithUsername(String subjectId,Map<String,String> param){
+    public List<Review> getAllSubjectReviewsWithUsername(final String subjectId, final Map<String,String> param){
         Map<String, String> validatedParams = new HashMap<>();
 
         for(Map.Entry<String, String> filter : param.entrySet()){
@@ -68,16 +68,16 @@ public class ReviewServiceImpl implements ReviewService {
     }
 
     @Override
-    public List<Review> getAllBySubject(String idsub){
+    public List<Review> getAllBySubject(final String idsub){
         return reviewDao.getAllBySubject(idsub);
     }
 
     @Override
-    public Optional<ReviewStatistic> getReviewStatBySubject(String idSub) {
+    public Optional<ReviewStatistic> getReviewStatBySubject(final String idSub) {
         return reviewDao.getReviewStatBySubject(idSub);
     }
 
-    public Map<String, ReviewStatistic> getReviewStatMapBySubjectList(List<Subject> subjects){
+    public Map<String, ReviewStatistic> getReviewStatMapBySubjectList(final List<Subject> subjects){
         List<String> idSubs = new ArrayList<>();
         for(Subject sub : subjects){
             idSubs.add(sub.getId());
@@ -94,23 +94,24 @@ public class ReviewServiceImpl implements ReviewService {
     }
 
     @Override
-    public Map<String, ReviewStatistic> getReviewStatMapBySubjectIdList(List<String> idSubs){
+    public Map<String, ReviewStatistic> getReviewStatMapBySubjectIdList(final List<String> idSubs){
         return reviewDao.getReviewStatMapBySubjectList(idSubs);
     }
 
     @Override
-    public List<ReviewStatistic> getReviewStatBySubjectIdList(List<String> idSubs){
+    public List<ReviewStatistic> getReviewStatBySubjectIdList(final List<String> idSubs){
         return reviewDao.getReviewStatBySubjectList(idSubs);
     }
 
     @Transactional
     @Override
-    public Review create(Boolean anonymous,Integer easy, Integer timeDemanding, String text,String subjectId,long userId) throws SQLException {
+    public Review create(final Boolean anonymous, final Integer easy, final Integer timeDemanding, final String text,
+                         final String subjectId, final long userId) throws SQLException {
         return reviewDao.create(anonymous,easy, timeDemanding, text, subjectId, userId);
     }
     @Transactional
     @Override
-    public Integer deleteReviewVoteByReviewId(Long idReview) {
+    public Integer deleteReviewVoteByReviewId(final Long idReview) {
         return reviewDao.deleteReviewVoteByReviewId(idReview);
     }
 
@@ -118,7 +119,7 @@ public class ReviewServiceImpl implements ReviewService {
     // vote created: 1, 2 vote updated:
     @Transactional
     @Override
-    public Integer voteReview(Long idUser, Long idReview, int vote) {
+    public Integer voteReview(final Long idUser, final Long idReview, int vote) {
 
         // only one vote per user on a certain review
 
@@ -132,16 +133,16 @@ public class ReviewServiceImpl implements ReviewService {
     }
 
     @Override
-    public Map<Long,Integer> userReviewVoteByIdUser(Long idUser){
+    public Map<Long,Integer> userReviewVoteByIdUser(final Long idUser){
         return reviewDao.userReviewVoteByIdUser(idUser);
     }
     @Override
-    public Map<Long,Integer> userReviewVoteByIdSubAndIdUser(String idSub, Long idUser){
+    public Map<Long,Integer> userReviewVoteByIdSubAndIdUser(final String idSub, final Long idUser){
         return reviewDao.userReviewVoteByIdSubAndIdUser(idSub,idUser);
     }
 
     @Override
-    public Boolean didUserReview(List<Review> reviews, User user){
+    public Boolean didUserReview(final List<Review> reviews, final User user){
         if( user == null)
             return false;
         Long userId = user.getId();
@@ -153,25 +154,25 @@ public class ReviewServiceImpl implements ReviewService {
     }
 
     @Override
-    public Boolean didUserReviewDB(String subjectId, Long userId){
+    public Boolean didUserReviewDB(final String subjectId, final Long userId){
         return reviewDao.didUserReviewDB(subjectId, userId);
     }
 
     @Transactional
     @Override
-    public void update(Review review){
+    public void update(final Review review){
         reviewDao.update(review);
     }
 
     @Transactional
     @Override
-    public void delete(Review review){
+    public void delete(final Review review){
         reviewDao.delete(review.getId());
     }
 
     @Transactional
     @Override
-    public void deleteReview(Review review, User user, Boolean isEditor) throws NoGrantedPermissionException {
+    public void deleteReview(final Review review, final User user, final Boolean isEditor) throws NoGrantedPermissionException {
         if( !checkAuth(review.getUserId(), user.getId(), isEditor))
             throw new NoGrantedPermissionException();
 
@@ -179,7 +180,7 @@ public class ReviewServiceImpl implements ReviewService {
         delete(review);
     }
 
-    private Boolean checkAuth(Long reviewUserId, Long userId, Boolean isEditor) {
+    private Boolean checkAuth(final Long reviewUserId, final Long userId, final Boolean isEditor) {
         if( !reviewUserId.equals(userId) && !isEditor )
             return false;
         return true;
@@ -187,7 +188,7 @@ public class ReviewServiceImpl implements ReviewService {
 
     @Transactional
     @Override
-    public Integer deleteReviewVote(Long idUser, Long idReview){
+    public Integer deleteReviewVote(final Long idUser, final Long idReview){
         return reviewDao.deleteReviewVote(idUser,idReview);
     }
 

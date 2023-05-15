@@ -6,7 +6,7 @@ public class Image {
     private final long id;
     private final byte[] data;
 
-    public Image(long id, byte[] data) {
+    public Image(final long id, final byte[] data) {
         this.id = id;
         this.data = data;
     }

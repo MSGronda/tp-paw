@@ -10,26 +10,26 @@ import java.util.Map;
 import java.util.Optional;
 
 public interface UserDao extends RWDao<Long,User> {
-    User create(User.UserBuilder userBuilder) throws UserEmailAlreadyTakenPersistenceException;
+    User create(final User.UserBuilder userBuilder) throws UserEmailAlreadyTakenPersistenceException;
 
     Optional<User> getUserWithEmail(final String email);
 
-    Integer deleteUserProgressForSubject(Long id, String idSub);
-    Integer updateSubjectProgress(Long id, String idSub, Integer newProgress);
-    Optional<Integer> getUserSubjectProgress(Long id, String idSub);
-    Map<String, Integer> getUserAllSubjectProgress(Long id);
+    Integer deleteUserProgressForSubject(final Long id, final String idSub);
+    Integer updateSubjectProgress(final Long id, final String idSub, final Integer newProgress);
+    Optional<Integer> getUserSubjectProgress(final Long id, final String idSub);
+    Map<String, Integer> getUserAllSubjectProgress(final Long id);
 
-    void changePassword(Long userId, String password);
+    void changePassword(final Long userId, final String password);
 
-    void editProfile(Long userId, String username);
+    void editProfile(final Long userId, final String username);
 
-    List<Roles> getUserRoles(Long userId);
+    List<Roles> getUserRoles(final Long userId);
 
-    Integer addIdToUserRoles(Long roleId, Long userId);
+    Integer addIdToUserRoles(final Long roleId, final Long userId);
 
-    Integer updateUserRoles(Long roleId, Long userId);
+    Integer updateUserRoles(final Long roleId, final Long userId);
 
-    Optional<User> findUserByConfirmToken(String token);
+    Optional<User> findUserByConfirmToken(final String token);
 
-    void confirmUser(long userId);
+    void confirmUser(final long userId);
 }
