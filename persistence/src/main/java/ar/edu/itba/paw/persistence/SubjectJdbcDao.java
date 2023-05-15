@@ -48,7 +48,7 @@ public class SubjectJdbcDao implements SubjectDao {
 
     @Override
     public Optional<Subject> findById(final String id) {
-        return jdbcTemplate.query("SELECT * FROM " + VIEW_JOIN + " WHERE id = ?", SubjectJdbcDao::subjectListExtractor, id)
+        return jdbcTemplate.query("SELECT * FROM " + VIEW_JOIN + " WHERE id = ?", SubjectJdbcDao::subjectListExtractorWithProfsAndPrereq, id)
                 .stream().findFirst();
     }
 
@@ -56,20 +56,20 @@ public class SubjectJdbcDao implements SubjectDao {
         if(ids.isEmpty()) return new ArrayList<>();
 
         return jdbcTemplate.query("SELECT * FROM " + VIEW_JOIN + " WHERE id IN (" + sqlPlaceholders(ids.size()) + ")",
-                SubjectJdbcDao::subjectListExtractor,
+                SubjectJdbcDao::subjectListExtractorWithProfsAndPrereq,
                 ids.toArray());
     }
 
     @Override
     public List<Subject> getAll() {
-        return jdbcTemplate.query("SELECT * FROM " + VIEW_JOIN, SubjectJdbcDao::subjectListExtractor);
+        return jdbcTemplate.query("SELECT * FROM " + VIEW_JOIN, SubjectJdbcDao::subjectListExtractorWithProfsAndPrereq);
     }
 
 
     @Override
     public List<Subject> getByName(final String name) {
         List<Subject> toReturn = jdbcTemplate.query("SELECT * FROM " + VIEW_JOIN + " WHERE subname ILIKE ?",
-                SubjectJdbcDao::subjectListExtractor, ("%" + name + "%"));
+                SubjectJdbcDao::subjectListExtractorWithProfsAndPrereq, ("%" + sanitizeString(name) + "%"));
         LOGGER.info("Got subjects with name {}", name);
         return toReturn;
     }
@@ -78,9 +78,9 @@ public class SubjectJdbcDao implements SubjectDao {
     public List<Subject> getByNameFiltered(final String name, final Map<String, String> filters) {
         // All filters in map must be valid. Checks are made in service.
 
-        StringBuilder sb = new StringBuilder("SELECT * FROM ").append(TABLE_SUB).append(" WHERE subname ILIKE ? ESCAPE '_'");
+        StringBuilder sb = new StringBuilder("SELECT * FROM ").append(TABLE_SUB).append(" WHERE subname ILIKE ? ");
         List<String> filterList = new ArrayList<>();
-        filterList.add("%" + name + "%");
+        filterList.add("%" + sanitizeString(name) + "%");
 
         for (Map.Entry<String, String> filter : filters.entrySet()) {
             if(!Objects.equals(filter.getKey(), "ob") && !Objects.equals(filter.getKey(), "dir") && !Objects.equals(filter.getKey(),"pageNum")){
@@ -100,9 +100,9 @@ public class SubjectJdbcDao implements SubjectDao {
     }
     @Override
     public int getTotalPagesForSubjects(final String name, final Map<String, String> filters){
-        StringBuilder sb = new StringBuilder("SELECT * FROM ").append(TABLE_SUB).append(" WHERE subname ILIKE ? ESCAPE '_'");
+        StringBuilder sb = new StringBuilder("SELECT * FROM ").append(TABLE_SUB).append(" WHERE subname ILIKE ?");
         List<String> filterList = new ArrayList<>();
-        filterList.add("%" + name + "%");
+        filterList.add("%" + sanitizeString(name) + "%");
 
         for (Map.Entry<String, String> filter : filters.entrySet()) {
             if(!Objects.equals(filter.getKey(), "ob") && !Objects.equals(filter.getKey(), "dir") && !Objects.equals(filter.getKey(),"pageNum")){
@@ -118,13 +118,13 @@ public class SubjectJdbcDao implements SubjectDao {
         List<Subject> toReturn = jdbcTemplate.query(sb.toString(), SubjectJdbcDao::subjectListExtractor, filterList.toArray());
         LOGGER.info("Got subjects with name {} and filters {}", name, filters.values().stream().toString());
         return toReturn.size() / Integer.parseInt(PAGE_SIZE);
-        //return jdbcTemplate.queryForObject("SELECT COUNT(*) FROM " + TABLE_SUB + " WHERE subname ILIKE '%" + name + "%' ESCAPE '%'" ,Integer.class);
+
     }
 
 
     @Override
     public List<Subject> getAllByDegree(final Long idDegree) {
-        return jdbcTemplate.query("SELECT * FROM " + VIEW_JOIN + " WHERE idDeg = ?", SubjectJdbcDao::subjectListExtractor, idDegree);
+        return jdbcTemplate.query("SELECT * FROM " + VIEW_JOIN + " WHERE idDeg = ?", SubjectJdbcDao::subjectListExtractorWithProfsAndPrereq, idDegree);
     }
 
     @Override
@@ -274,6 +274,25 @@ public class SubjectJdbcDao implements SubjectDao {
             final String subName = rs.getString("subname");
             final String department = rs.getString("department");
             final int credits = rs.getInt("credits");
+
+            final Subject sub = subs.getOrDefault(idSub,
+                    new Subject(idSub, subName, department, credits)
+            );
+
+            subs.putIfAbsent(idSub, sub);
+        }
+
+        return new ArrayList<>(subs.values());
+    }
+
+    private static List<Subject> subjectListExtractorWithProfsAndPrereq(final ResultSet rs) throws SQLException {
+        final Map<String, Subject> subs = new LinkedHashMap<>();
+
+        while (rs.next()) {
+            final String idSub = rs.getString("id");
+            final String subName = rs.getString("subname");
+            final String department = rs.getString("department");
+            final int credits = rs.getInt("credits");
             final Optional<String> idPrereq = Optional.ofNullable(rs.getString("idprereq"));
             final Optional<Long> idProf = getOptionalLong(rs, "idprof");
             final Optional<Long> idDeg = getOptionalLong(rs, "iddeg");
@@ -361,5 +380,9 @@ public class SubjectJdbcDao implements SubjectDao {
         }
 
         return map;
+    }
+
+    private String sanitizeString(final String s){
+        return s.replace("%", "\\%").replace("_","\\_");
     }
 }
