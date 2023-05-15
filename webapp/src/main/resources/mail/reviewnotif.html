@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+      .body {
+          background-color: #efefef;
+          max-width: 700px;
+          margin: 0 auto;
+          border: 1px solid #ababab;
+          border-radius: 8px;
+          overflow: clip;
+      }
+
+      .header {
+          padding: 2rem;
+          background-color: white;
+      }
+
+      .logo-container {
+          width: fit-content;
+          height: 64px;
+          text-align: center;
+          justify-content: center;
+          align-items: center;
+          margin: auto;
+      }
+
+      .logo {
+          height: 100%;
+      }
+
+      .container {
+          width: fit-content;
+          text-align: center;
+          justify-content: center;
+          align-items: center;
+          margin: 0 auto;
+      }
+
+      .content {
+          padding: 3rem 2rem;
+      }
+
+      .button {
+          display: inline-block;
+          padding: 10px 20px;
+          background-color: #1a73e8;
+          color: white !important;
+          text-decoration: none;
+          border-radius: 5px;
+          font-size: 20px;
+      }
+
+      .subject-list {
+          list-style-type: none;
+          padding: 0;
+      }
+
+      .message {
+          font-size: 20px;
+      }
+  </style>
+</head>
+<body class="body">
+<div class="header">
+  <div class="logo-container">
+    <img class="logo" th:src="${logoUrl}" alt="Uni"/>
+  </div>
+</div>
+<div class="content">
+  <div class="container">
+    <p class="message" th:text="#{reviewnotif.message}"></p>
+    <ul class="subject-list">
+      <li th:each="subject : ${subjects}">
+        <a th:text="${subject.name}" th:href="${baseUrl + '/subject/' + subject.id}"></a>
+      </li>
+    </ul>
+    <p class="message" th:text="#{reviewnotif.message2}"></p>
+  </div>
+</div>
+</body>
+</html>

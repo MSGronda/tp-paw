@@ -48,10 +48,15 @@ public class User {
 
     @Override
     public boolean equals(Object o) {
-        if(this == o) return true;
-        if(o == null || getClass() != o.getClass()) return false;
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
         User user = (User) o;
-        return getId() == user.getId() && Objects.equals(getEmail(), user.getEmail()) && Objects.equals(getPassword() ,user.getPassword()) && Objects.equals(getUsername(), user.getUsername());
+        return id == user.id && Objects.equals(email, user.email) && Objects.equals(password, user.password) && Objects.equals(username, user.username) && Objects.equals(imageId, user.imageId);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
     }
 
     public static class UserBuilder {

@@ -178,7 +178,7 @@ public class UserJdbcDaoTest {
     public void testGetUserSubjectProgress(){
         jdbcTemplate.execute("INSERT INTO users(id, email, pass, username) VALUES (" + ID + ", '" + EMAIL + "', '" + PASSWORD + "', '" + USERNAME + "')");
         jdbcTemplate.execute("INSERT INTO subjects(id, subname, department, credits) VALUES ('" + SUBJECTID + "', '" + SUBJECTNAME + "', '" + DEPARTMENT + "', " + CREDITS + ")");
-        jdbcTemplate.execute("INSERT INTO usersubjectprogress VALUES (" + ID + ", '" + SUBJECTID + "', " + SUBJECTPROGRESS + ")" );
+        jdbcTemplate.execute("INSERT INTO usersubjectprogress(iduser, idsub, subjectstate) VALUES (" + ID + ", '" + SUBJECTID + "', " + SUBJECTPROGRESS + ")" );
 
         Optional<Integer> subjectP = userDao.getUserSubjectProgress(ID, SUBJECTID);
 
@@ -191,7 +191,7 @@ public class UserJdbcDaoTest {
     public void testUpdateSubjectProgressExisting(){
         jdbcTemplate.execute("INSERT INTO users(id, email, pass, username) VALUES (" + ID + ", '" + EMAIL + "', '" + PASSWORD + "', '" + USERNAME + "')");
         jdbcTemplate.execute("INSERT INTO subjects(id, subname, department, credits) VALUES ('" + SUBJECTID + "', '" + SUBJECTNAME + "', '" + DEPARTMENT + "', " + CREDITS + ")");
-        jdbcTemplate.execute("INSERT INTO usersubjectprogress VALUES (" + ID + ", '" + SUBJECTID + "', " + SUBJECTPROGRESS + ")" );
+        jdbcTemplate.execute("INSERT INTO usersubjectprogress(iduser, idsub, subjectstate) VALUES (" + ID + ", '" + SUBJECTID + "', " + SUBJECTPROGRESS + ")" );
 
         int response = userDao.updateSubjectProgress(ID, SUBJECTID, NEWSUBJECTPROGRESS);
 
@@ -222,7 +222,7 @@ public class UserJdbcDaoTest {
     public void testDeleteUserProgressForSubject(){
         jdbcTemplate.execute("INSERT INTO users(id, email, pass, username) VALUES (" + ID + ", '" + EMAIL + "', '" + PASSWORD + "', '" + USERNAME + "')");
         jdbcTemplate.execute("INSERT INTO subjects(id, subname, department, credits) VALUES ('" + SUBJECTID + "', '" + SUBJECTNAME + "', '" + DEPARTMENT + "', " + CREDITS + ")");
-        jdbcTemplate.execute("INSERT INTO usersubjectprogress VALUES (" + ID + ", '" + SUBJECTID + "', " + SUBJECTPROGRESS + ")" );
+        jdbcTemplate.execute("INSERT INTO usersubjectprogress(iduser, idsub, subjectstate) VALUES (" + ID + ", '" + SUBJECTID + "', " + SUBJECTPROGRESS + ")" );
 
         int response = userDao.deleteUserProgressForSubject(ID, SUBJECTID);
 
