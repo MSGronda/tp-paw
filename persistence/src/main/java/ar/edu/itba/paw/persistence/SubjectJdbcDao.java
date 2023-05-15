@@ -74,7 +74,7 @@ public class SubjectJdbcDao implements SubjectDao {
     public List<Subject> getByNameFiltered(final String name, final Map<String, String> filters) {
         // All filters in map must be valid. Checks are made in service.
 
-        StringBuilder sb = new StringBuilder("SELECT * FROM ").append(TABLE_SUB).append(" WHERE subname ILIKE ?");
+        StringBuilder sb = new StringBuilder("SELECT * FROM ").append(TABLE_SUB).append(" WHERE subname ILIKE ? ESCAPE '_'");
         List<String> filterList = new ArrayList<>();
         filterList.add("%" + name + "%");
 
@@ -96,7 +96,7 @@ public class SubjectJdbcDao implements SubjectDao {
     }
     @Override
     public int getTotalPagesForSubjects(final String name, final Map<String, String> filters){
-        StringBuilder sb = new StringBuilder("SELECT * FROM ").append(TABLE_SUB).append(" WHERE subname ILIKE ?");
+        StringBuilder sb = new StringBuilder("SELECT * FROM ").append(TABLE_SUB).append(" WHERE subname ILIKE ? ESCAPE '_'");
         List<String> filterList = new ArrayList<>();
         filterList.add("%" + name + "%");
 
@@ -111,7 +111,7 @@ public class SubjectJdbcDao implements SubjectDao {
         sb.append(" GROUP BY id,subname ");
         sb.append(" ORDER BY ").append(filters.getOrDefault("ob","subname"));
         sb.append(" ").append(filters.getOrDefault("dir","ASC"));
-        List<Subject> toReturn = jdbcTemplate.query(sb.toString(), SubjectJdbcDao::subjectListExtractor,  filterList.toArray());
+        List<Subject> toReturn = jdbcTemplate.query(sb.toString(), SubjectJdbcDao::subjectListExtractor, filterList.toArray());
         LOGGER.info("Got subjects with name {} and filters {}", name, filters.values().stream().toString());
         return toReturn.size() / Integer.parseInt(PAGE_SIZE);
         //return jdbcTemplate.queryForObject("SELECT COUNT(*) FROM " + TABLE_SUB + " WHERE subname ILIKE '%" + name + "%' ESCAPE '%'" ,Integer.class);
