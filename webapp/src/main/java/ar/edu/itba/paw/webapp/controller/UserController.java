@@ -211,7 +211,7 @@ public class UserController {
         }
         Roles role = maybeRole.get();
 
-        if(userService.updateUserRoles(role.getId(), id) == 0)
+        if(userService.updateUserRoles(role.getId(), id) == 0 || !authUserService.isCurrentUserEditor())
             return new ModelAndView("redirect:/error");
         return new ModelAndView("redirect:/user/" + id);
     }

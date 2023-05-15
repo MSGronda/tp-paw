@@ -226,7 +226,7 @@ public class UserJdbcDao implements UserDao {
     public Integer updateUserRoles(final Long roleId, final Long userId) {
         int success = jdbcTemplate.update("UPDATE " + USER_ROLES_TABLE + " SET roleid = ? WHERE userid = ?", roleId, userId);
         if(success != 0) {
-            LOGGER.warn("Updated user with id {} role to {}", userId, roleId);
+            LOGGER.info("Updated user with id {} role to {}", userId, roleId);
         } else {
             LOGGER.warn("Failed to update user with id {} role to {}", userId, roleId);
         }

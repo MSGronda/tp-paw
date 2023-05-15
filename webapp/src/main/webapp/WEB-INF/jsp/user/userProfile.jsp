@@ -2,6 +2,7 @@
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 
 
 <html>
@@ -84,11 +85,13 @@
           <h1 class="editor-text"> <spring:message code="profile.editor" /> </h1>
         </c:if>
       </div>
-      <div class="moderator-tag">
-        <c:if test="${!editor}">
-          <sl-button variant="primary" outline href="<c:out value="/user/${user.id}/moderator"/>"><spring:message code="profile.make_moderator" /> </sl-button>
-        </c:if>
-      </div>
+      <sec:authorize access="hasRole('EDITOR')">
+        <div class="moderator-tag">
+          <c:if test="${!editor}">
+            <sl-button variant="primary" outline href="<c:out value="/user/${user.id}/moderator"/>"><spring:message code="profile.make_moderator" /> </sl-button>
+          </c:if>
+        </div>
+      </sec:authorize>
     </div>
     <div>
     </div>

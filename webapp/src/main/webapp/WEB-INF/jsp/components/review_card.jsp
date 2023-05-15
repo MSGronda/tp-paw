@@ -79,11 +79,9 @@
       </c:otherwise>
     </c:choose>
 
-    <c:if test="${review.userId != user.id}">
-      <sec:authorize access="hasRole('EDITOR')">
-        <sl-icon-button name="trash3" class="delete-button" label="delete" href="<c:url value="/review/${review.subjectId}/delete/${review.id}"/>"></sl-icon-button>
-      </sec:authorize>
-    </c:if>
+    <sec:authorize access="hasRole('EDITOR')">
+      <sl-icon-button name="trash3" class="delete-button" label="delete" href="<c:url value="/review/${review.subjectId}/delete/${review.id}"/>"></sl-icon-button>
+    </sec:authorize>
     <c:if test="${review.userId == user.id}">
       <div>
         <sl-icon-button name="pencil-square" label="edit" href="<c:url value="/review/${review.subjectId}/edit/${review.id}"/>"></sl-icon-button>
