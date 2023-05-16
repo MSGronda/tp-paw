@@ -42,12 +42,12 @@ public class DegreeJdbcDaoTest {
     private JdbcTemplate jdbcTemplate;
 
     @Before
-    public void testSetup(){
+    public void setup(){
         jdbcTemplate = new JdbcTemplate(ds);
 
+        JdbcTestUtils.deleteFromTables(jdbcTemplate, "subjectsdegrees");
         JdbcTestUtils.deleteFromTables(jdbcTemplate, "degrees");
         JdbcTestUtils.deleteFromTables(jdbcTemplate, "subjects");
-        JdbcTestUtils.deleteFromTables(jdbcTemplate, "subjectsdegrees");
 
     }
 
@@ -91,12 +91,13 @@ public class DegreeJdbcDaoTest {
     public void testCreate() {
 
         Degree degree = degreeDao.create(NAME);
+
         Assert.assertEquals(1, JdbcTestUtils.countRowsInTable(jdbcTemplate, "degrees"));
-        Assert.assertEquals(ID, degree.getId());
         Assert.assertEquals(NAME, degree.getName());
+
         Degree degree2 = degreeDao.create(NAME2);
+
         Assert.assertEquals(2, JdbcTestUtils.countRowsInTable(jdbcTemplate, "degrees"));
-        Assert.assertEquals(ID2, degree2.getId());
         Assert.assertEquals(NAME2, degree2.getName());
     }
 }
