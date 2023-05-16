@@ -117,7 +117,7 @@ public class UserServiceImpl implements UserService {
     @Transactional
     @Override
     public void updateProfilePicture(final User user, final byte[] image){
-        if(image.length > MAX_IMAGE_SIZE){
+        if(image.length > MAX_IMAGE_SIZE || image.length == 0){
             return;
         }
 
