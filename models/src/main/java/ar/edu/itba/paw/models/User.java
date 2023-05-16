@@ -14,7 +14,8 @@ public class User {
     private final boolean confirmed;
     private final Locale locale;
 
-    public User(final UserBuilder builder) {
+
+    private User(final Builder builder) {
         this.id = builder.id;
         this.email = builder.email;
         this.password = builder.password;
@@ -53,6 +54,10 @@ public class User {
         return confirmed;
     }
 
+    public Map<String, Integer> getSubjectProgress() {
+        return subjectProgress;
+    }
+
     public Optional<Locale> getLocale(){
         return Optional.ofNullable(locale);
     }
@@ -70,7 +75,11 @@ public class User {
         return Objects.hash(id);
     }
 
-    public static class UserBuilder {
+    public static Builder builder(final String email, final String password, final String username) {
+        return new Builder(email, password, username);
+    }
+
+    public static class Builder {
         private long id;
         private final String email;
         private String password, username;
@@ -81,26 +90,26 @@ public class User {
         private Locale locale;
 
 
-        public UserBuilder(final String email, final String password, final String username) {
+        private Builder(final String email, final String password, final String username) {
             this.email = email;
             this.password = password;
             this.username = username;
         }
-        public UserBuilder id(final long id) {
+        public Builder id(final long id) {
             this.id = id;
             return this;
         }
         public Map<String, Integer> getSubjectProgress(){
             return this.subjectProgress;
         }
-        public UserBuilder subjectProgress(final Map<String, Integer> subjectProgress){
+        public Builder subjectProgress(final Map<String, Integer> subjectProgress){
             this.subjectProgress = subjectProgress;
             return this;
         }
         public Long getImageId(){
             return this.imageId;
         }
-        public UserBuilder imageId(long imageId) {
+        public Builder imageId(long imageId) {
             this.imageId = imageId;
             return this;
         }
@@ -112,7 +121,7 @@ public class User {
         }
 
 
-        public UserBuilder username(String username) {
+        public Builder username(String username) {
             this.username = username;
             return this;
         }
@@ -121,7 +130,7 @@ public class User {
         }
 
 
-        public UserBuilder password(String password) {
+        public Builder password(String password) {
             this.password = password;
             return this;
         }
@@ -133,7 +142,7 @@ public class User {
             return Optional.ofNullable(confirmToken);
         }
 
-        public UserBuilder confirmToken(String token) {
+        public Builder confirmToken(String token) {
             this.confirmToken = token;
             return this;
         }
@@ -142,7 +151,7 @@ public class User {
             return confirmed;
         }
 
-        public UserBuilder confirmed(boolean confirmed) {
+        public Builder confirmed(boolean confirmed) {
             this.confirmed = confirmed;
             return this;
         }
@@ -150,7 +159,7 @@ public class User {
         public Locale getLocale(){
             return locale;
         }
-        public UserBuilder locale(Locale locale) {
+        public Builder locale(Locale locale) {
             this.locale = locale;
             return this;
         }

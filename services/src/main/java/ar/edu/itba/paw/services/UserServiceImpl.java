@@ -65,7 +65,7 @@ public class UserServiceImpl implements UserService {
 
     @Transactional
     @Override
-    public User create(final User.UserBuilder userBuilder, final byte[] profilePic) throws UserEmailAlreadyTakenException {
+    public User create(final User.Builder userBuilder, final byte[] profilePic) throws UserEmailAlreadyTakenException {
         long imageId = imageDao.insertAndReturnKey(profilePic);
 
         final String confirmToken = generateConfirmToken();
@@ -95,7 +95,7 @@ public class UserServiceImpl implements UserService {
 
     @Transactional
     @Override
-    public User create(final User.UserBuilder userBuilder) throws UserEmailAlreadyTakenException, IOException {
+    public User create(final User.Builder userBuilder) throws UserEmailAlreadyTakenException, IOException {
         File file = ResourceUtils.getFile("classpath:images/default_user.png");
         byte[] defaultImg = Files.readAllBytes(file.toPath());
         return create(userBuilder, defaultImg);

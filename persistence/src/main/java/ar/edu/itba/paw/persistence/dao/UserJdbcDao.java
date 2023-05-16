@@ -60,7 +60,7 @@ public class UserJdbcDao implements UserDao {
     }
 
     @Override
-    public User create(final User.UserBuilder userBuilder) throws UserEmailAlreadyTakenPersistenceException {
+    public User create(final User.Builder userBuilder) throws UserEmailAlreadyTakenPersistenceException {
         if(!userBuilder.getConfirmToken().isPresent())
             throw new IllegalArgumentException("Confirm token must be present");
 
@@ -255,7 +255,7 @@ public class UserJdbcDao implements UserDao {
         final String localeString = rs.getString("locale");
         final Locale locale = localeString == null ? null : Locale.forLanguageTag(localeString);
 
-        return new User.UserBuilder(rs.getString("email"),
+        return User.builder(rs.getString("email"),
                         rs.getString("pass"),
                         rs.getString("username")
                 )

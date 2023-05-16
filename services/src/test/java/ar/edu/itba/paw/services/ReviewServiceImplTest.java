@@ -46,8 +46,9 @@ public class ReviewServiceImplTest {
         reviews.add(review1);
         reviews.add(review2);
         reviews.add(review3);
-        User.UserBuilder userBuilder = new User.UserBuilder(EMAIL, PASSWORD, USERNAME).id(USERID);
-        User user = new User(userBuilder);
+        User user =  User.builder(EMAIL, PASSWORD, USERNAME)
+            .id(USERID)
+            .build();
 
         Assert.assertTrue(reviewService.didUserReview(reviews, user));
 
@@ -61,8 +62,10 @@ public class ReviewServiceImplTest {
         reviews.add(review1);
         reviews.add(review2);
         reviews.add(review3);
-        User.UserBuilder userBuilder = new User.UserBuilder(EMAIL, PASSWORD, USERNAME).id(USERID);
-        User user = new User(userBuilder);
+
+        User user = User.builder(EMAIL, PASSWORD, USERNAME)
+            .id(USERID)
+            .build();
 
         Assert.assertFalse(reviewService.didUserReview(reviews, user));
 
@@ -95,7 +98,11 @@ public class ReviewServiceImplTest {
     @Test(expected = NoGrantedPermissionException.class)
     public void testCheckAuthFalse() throws NoGrantedPermissionException {
         Review review1 = new Review(ID, USERID, "31.08", 1, 1, "Resena", false);
-        User user = new User.UserBuilder(EMAIL, PASSWORD, USERNAME).id(ID+1).build();
+
+        User user = User.builder(EMAIL, PASSWORD, USERNAME)
+            .id(ID+1)
+            .build();
+
         reviewService.deleteReview(review1, user, false);
     }
 

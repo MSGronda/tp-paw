@@ -59,9 +59,9 @@ public class UserServiceImplTest {
     @Test
     public void testCreate() throws UserEmailAlreadyTakenPersistenceException, UserEmailAlreadyTakenException, IOException {
         //1. Precondiciones
-        User.UserBuilder userBuilder = new User.UserBuilder(EMAIL, PASSWORD, USERNAME);
+        User.Builder userBuilder = User.builder(EMAIL, PASSWORD, USERNAME);
         when(userDao.create(eq(userBuilder)))
-            .thenReturn(new User.UserBuilder(EMAIL, PASSWORD, USERNAME).build());
+            .thenReturn(User.builder(EMAIL, PASSWORD, USERNAME).build());
         when(imageDao.insertAndReturnKey(eq("asdf".getBytes()))).thenReturn(IMAGEID);
         when(rolesService.findByName(eq("USER"))).thenReturn(Optional.of(new Roles(ID, "USER")));
 
@@ -77,7 +77,7 @@ public class UserServiceImplTest {
     @Test(expected = UserEmailAlreadyTakenException.class)
     public void testCreateAlreadyExists() throws UserEmailAlreadyTakenPersistenceException, UserEmailAlreadyTakenException, IOException {
         //1. Precondiciones
-        User.UserBuilder userBuilder = new User.UserBuilder(EMAIL, PASSWORD, USERNAME);
+        User.Builder userBuilder = User.builder(EMAIL, PASSWORD, USERNAME);
         when(userDao.create(eq(userBuilder)))
                 .thenThrow(UserEmailAlreadyTakenPersistenceException.class);
         when(imageDao.insertAndReturnKey(eq("asdf".getBytes()))).thenReturn(IMAGEID);
@@ -88,7 +88,7 @@ public class UserServiceImplTest {
     }
     @Test
     public void testFindById() {
-        when(userDao.findById(eq(ID))).thenReturn(Optional.of(new User.UserBuilder(EMAIL, PASSWORD, USERNAME).id(ID).build()));
+        when(userDao.findById(eq(ID))).thenReturn(Optional.of(User.builder(EMAIL, PASSWORD, USERNAME).id(ID).build()));
 
         Optional<User> user = us.findById(ID);
 

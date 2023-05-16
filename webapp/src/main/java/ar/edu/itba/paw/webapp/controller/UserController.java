@@ -118,7 +118,7 @@ public class UserController {
             return registerForm(userForm);
         }
 
-        User.UserBuilder userBuilder = new User.UserBuilder(userForm.getEmail(), userForm.getPassword(), userForm.getName());
+        User.Builder userBuilder = User.builder(userForm.getEmail(), userForm.getPassword(), userForm.getName());
         User newUser;
         try {
             newUser = userService.create(userBuilder);

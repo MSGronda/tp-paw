@@ -4,7 +4,6 @@ import ar.edu.itba.paw.models.Roles;
 import ar.edu.itba.paw.models.User;
 import ar.edu.itba.paw.persistence.config.TestConfig;
 import ar.edu.itba.paw.persistence.constants.Tables;
-import ar.edu.itba.paw.persistence.dao.UserJdbcDao;
 import ar.edu.itba.paw.persistence.exceptions.UserEmailAlreadyTakenPersistenceException;
 import org.junit.After;
 import org.junit.Assert;
@@ -155,7 +154,7 @@ public class UserJdbcDaoTest {
 
         User user;
         try{
-            user = userDao.create(new User.UserBuilder(EMAIL, PASSWORD, USERNAME).imageId(IMAGEID).confirmToken(CONFIRMTOKEN));
+            user = userDao.create(User.builder(EMAIL, PASSWORD, USERNAME).imageId(IMAGEID).confirmToken(CONFIRMTOKEN));
         }catch (UserEmailAlreadyTakenPersistenceException e){
             throw new RuntimeException();
         }
@@ -173,7 +172,7 @@ public class UserJdbcDaoTest {
 
         jdbcTemplate.execute("INSERT INTO " + Tables.USERS + " (id, email, pass, username, image_id, confirmtoken, confirmed ) VALUES (" + ID + ", '" + EMAIL + "', '" + PASSWORD + "', '" + USERNAME + "', " + IMAGEID + ", '" + CONFIRMTOKEN + "', " + CONFIRMED + ")");
 
-        userDao.create(new User.UserBuilder(EMAIL, PASSWORD, USERNAME).confirmToken(CONFIRMTOKEN));
+        userDao.create(User.builder(EMAIL, PASSWORD, USERNAME).confirmToken(CONFIRMTOKEN));
 
     }
 
