@@ -76,18 +76,9 @@ public class SubjectJdbcDao implements SubjectDao {
 
     @Override
     public List<Subject> getByNameFiltered(final String name, final Map<String, String> filters) {
-        // All filters in map must be valid. Checks are made in service.
-
+        // All filters in map must be valid. Checks are made in service.}
         StringBuilder sb = new StringBuilder("SELECT * FROM ").append(TABLE_SUB).append(" WHERE subname ILIKE ? ");
-        List<String> filterList = new ArrayList<>();
-        filterList.add("%" + sanitizeString(name) + "%");
-
-        for (Map.Entry<String, String> filter : filters.entrySet()) {
-            if(!Objects.equals(filter.getKey(), "ob") && !Objects.equals(filter.getKey(), "dir") && !Objects.equals(filter.getKey(),"pageNum")){
-                sb.append(" AND ").append(filter.getKey()).append(" = ").append(queryOptionBlanck.get(filter.getKey()));
-                filterList.add(filter.getValue());
-            }
-        }
+        List<String> filterList = sanitizeFilters(name,filters,sb);
 
         // Order by cannot use "?" in the SQL query
         sb.append(" ORDER BY ").append(filters.getOrDefault("ob","subname"));
@@ -98,18 +89,13 @@ public class SubjectJdbcDao implements SubjectDao {
         LOGGER.info("Got subjects with name {} and filters {}", name, filters.values().stream().toString());
         return toReturn;
     }
+
+
+
     @Override
     public int getTotalPagesForSubjects(final String name, final Map<String, String> filters){
         StringBuilder sb = new StringBuilder("SELECT * FROM ").append(TABLE_SUB).append(" WHERE subname ILIKE ?");
-        List<String> filterList = new ArrayList<>();
-        filterList.add("%" + sanitizeString(name) + "%");
-
-        for (Map.Entry<String, String> filter : filters.entrySet()) {
-            if(!Objects.equals(filter.getKey(), "ob") && !Objects.equals(filter.getKey(), "dir") && !Objects.equals(filter.getKey(),"pageNum")){
-                sb.append(" AND ").append(filter.getKey()).append(" = ").append(queryOptionBlanck.get(filter.getKey()));
-                filterList.add(filter.getValue());
-            }
-        }
+        List<String> filterList =sanitizeFilters(name,filters,sb);
 
         // Order by cannot use "?" in the SQL query
         sb.append(" GROUP BY id,subname ");
@@ -384,5 +370,18 @@ public class SubjectJdbcDao implements SubjectDao {
 
     private String sanitizeString(final String s){
         return s.replace("%", "\\%").replace("_","\\_");
+    }
+
+    private List<String> sanitizeFilters(String name,Map<String,String> filters,StringBuilder sb){
+        List<String> toReturn = new ArrayList<>();
+        toReturn.add("%" + sanitizeString(name) + "%");
+
+        for (Map.Entry<String, String> filter : filters.entrySet()) {
+            if(!Objects.equals(filter.getKey(), "ob") && !Objects.equals(filter.getKey(), "dir") && !Objects.equals(filter.getKey(),"pageNum")){
+                sb.append(" AND ").append(filter.getKey()).append(" = ").append(queryOptionBlanck.get(filter.getKey()));
+                toReturn.add(filter.getValue());
+            }
+        }
+        return toReturn;
     }
 }
