@@ -4,7 +4,6 @@ import java.util.Objects;
 
 public class Roles {
     private final Long id;
-
     private final String name;
 
     public Roles(final Long id, final String name) {

@@ -7,7 +7,7 @@ import java.util.Objects;
 public class Professor {
     private final long id;
     private final String name;
-    private List<String> subjectIds;
+    private final List<String> subjectIds;
 
     public Professor(final long id, final String name){
         this.id = id;

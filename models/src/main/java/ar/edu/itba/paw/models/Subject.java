@@ -7,10 +7,10 @@ public class Subject {
     private final String name;
     private final String department;
     private final Integer credits;
-    private Set<String> prerequisites;
-    private Set<Long> professorIds;
-    private Set<Long> degreeIds;
-    private Map<String, SubjectClass> subjectClasses;
+    private final Set<String> prerequisites;
+    private final Set<Long> professorIds;
+    private final Set<Long> degreeIds;
+    private final Map<String, SubjectClass> subjectClasses;
 
     public Subject(
         final String id,
@@ -28,6 +28,7 @@ public class Subject {
         this.professorIds = professorIds;
         this.degreeIds = degreeIds;
         this.credits = credits;
+        this.subjectClasses = new LinkedHashMap<>();
     }
 
     public Subject(final String id, final String name, final String department, final int credits) {
