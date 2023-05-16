@@ -20,7 +20,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -30,7 +29,6 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.security.SecureRandom;
-import java.security.Security;
 import java.util.*;
 
 @Service
@@ -74,10 +72,7 @@ public class UserServiceImpl implements UserService {
     public User create(final User.UserBuilder userBuilder, final byte[] profilePic) throws UserEmailAlreadyTakenException {
         long imageId = imageDao.insertAndReturnKey(profilePic);
 
-        final SecureRandom random = new SecureRandom();
-        final byte[] bytes = new byte[20];
-        random.nextBytes(bytes);
-        final String confirmToken = new String(Base64.getUrlEncoder().encode(bytes));
+        final String confirmToken = generateConfirmToken();
 
         userBuilder.imageId(imageId)
             .password(passwordEncoder.encode(userBuilder.getPassword()))
@@ -110,6 +105,15 @@ public class UserServiceImpl implements UserService {
         return create(userBuilder, defaultImg);
     }
 
+    @Override
+    public String regenerateConfirmToken(final long userId) {
+        String newToken = generateConfirmToken();
+
+        userDao.updateConfirmToken(userId, newToken);
+
+        return newToken;
+    }
+
     @Transactional
     @Override
     public void updateProfilePicture(final User user, final byte[] image){
@@ -124,6 +128,11 @@ public class UserServiceImpl implements UserService {
     @Override
     public Optional<User> getUserWithEmail(final String email) {
         return userDao.getUserWithEmail(email);
+    }
+
+    @Override
+    public Optional<User> getUnconfirmedUserWithEmail(final String email) {
+        return userDao.getUnconfirmedUserWithEmail(email);
     }
 
     @Override
@@ -243,6 +252,13 @@ public class UserServiceImpl implements UserService {
         Authentication auth = new UsernamePasswordAuthenticationToken(user.getEmail(), user.getPassword(), authorities);
         SecurityContextHolder.getContext().setAuthentication(auth);
         LOGGER.info("Auto login for user {}", userId);
+    }
+
+    private String generateConfirmToken() {
+        final SecureRandom random = new SecureRandom();
+        final byte[] bytes = new byte[20];
+        random.nextBytes(bytes);
+        return new String(Base64.getUrlEncoder().encode(bytes));
     }
 
     //-------------------------------- USER ROLES -----------------------------

@@ -14,6 +14,7 @@ public interface UserDao extends RWDao<Long,User> {
     User create(final User.UserBuilder userBuilder) throws UserEmailAlreadyTakenPersistenceException;
 
     Optional<User> getUserWithEmail(final String email);
+    Optional<User> getUnconfirmedUserWithEmail(final String email);
 
     Integer deleteUserProgressForSubject(final Long id, final String idSub);
     Integer updateSubjectProgress(final Long id, final String idSub, final Integer newProgress);
@@ -35,4 +36,6 @@ public interface UserDao extends RWDao<Long,User> {
     void confirmUser(final long userId);
 
     void setLocale(long userId, Locale locale);
+
+    void updateConfirmToken(long userId, String token);
 }

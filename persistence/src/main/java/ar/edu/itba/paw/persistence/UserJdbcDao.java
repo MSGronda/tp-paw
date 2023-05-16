@@ -74,7 +74,7 @@ public class UserJdbcDao implements UserDao {
         data.put("pass", userBuilder.getPassword());
         data.put("username", userBuilder.getUsername());
         data.put("image_id", userBuilder.getImageId());
-        data.put("confirmtoken", userBuilder.getConfirmToken());
+        data.put("confirmtoken", userBuilder.getConfirmToken().get());
         data.put("confirmed", false);
 
         Number key;
@@ -89,6 +89,11 @@ public class UserJdbcDao implements UserDao {
         User toReturn = userBuilder.id(key.longValue()).build();
         LOGGER.info("User created with id {} and email {}", toReturn.getId(), toReturn.getEmail());
         return toReturn;
+    }
+
+    @Override
+    public void updateConfirmToken(long userId, String token) {
+        jdbcTemplate.update("UPDATE " + USERS_TABLE + " SET confirmtoken = ? WHERE id = ?", token, userId);
     }
 
     @Override
@@ -156,6 +161,11 @@ public class UserJdbcDao implements UserDao {
     @Override
     public Optional<User> getUserWithEmail(final String email){
         return jdbcTemplate.query("SELECT * FROM " + USERS_TABLE + " WHERE email = ? AND confirmed = true", UserJdbcDao::rowMapper, email).stream().findFirst();
+    }
+
+    @Override
+    public Optional<User> getUnconfirmedUserWithEmail(final String email) {
+        return jdbcTemplate.query("SELECT * FROM " + USERS_TABLE + " WHERE email = ? AND confirmed = false", UserJdbcDao::rowMapper, email).stream().findFirst();
     }
 
     private static Map<String,Integer> userAllSubjectsProgressExtractor(final ResultSet rs) throws SQLException {
@@ -257,6 +267,7 @@ public class UserJdbcDao implements UserDao {
                     .id(rs.getLong("id"))
                     .imageId(rs.getLong("image_id"))
                     .locale(locale)
+                    .confirmed(rs.getBoolean("confirmed"))
                     .build();
     }
 
