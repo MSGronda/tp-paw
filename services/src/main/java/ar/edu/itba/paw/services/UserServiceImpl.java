@@ -120,9 +120,7 @@ public class UserServiceImpl implements UserService {
         if(image.length > MAX_IMAGE_SIZE || image.length == 0){
             return;
         }
-
-        Image newImage = new Image(user.getImageId(), image);
-        imageDao.update(newImage);
+        imageDao.updateImage(user.getImageId(), image);
     }
 
     @Override

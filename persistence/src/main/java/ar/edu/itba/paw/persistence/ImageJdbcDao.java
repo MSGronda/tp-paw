@@ -76,7 +76,11 @@ public class ImageJdbcDao implements ImageDao {
 
     @Override
     public void update(final Image image) {
-        int success = jdbcTemplate.update("UPDATE " + TABLE + " SET image = ? WHERE id = ?", image.getData(), image.getId());
+        updateImage(image.getId(), image.getData());
+    }
+    @Override
+    public void updateImage(final long id, final byte[] image) {
+        int success = jdbcTemplate.update("UPDATE " + TABLE + " SET image = ? WHERE id = ?", image, id);
         if(success != 0) {
             LOGGER.info("Updated profile picture for current user");
         } else {
