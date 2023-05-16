@@ -2,10 +2,7 @@ package ar.edu.itba.paw.webapp.controller;
 
 import ar.edu.itba.paw.models.*;
 import ar.edu.itba.paw.services.*;
-import ar.edu.itba.paw.services.exceptions.InvalidTokenException;
-import ar.edu.itba.paw.services.exceptions.OldPasswordDoesNotMatchException;
-import ar.edu.itba.paw.services.exceptions.UserEmailAlreadyTakenException;
-import ar.edu.itba.paw.services.exceptions.UserEmailNotFoundException;
+import ar.edu.itba.paw.services.exceptions.*;
 import ar.edu.itba.paw.webapp.auth.UniUserDetailsService;
 import ar.edu.itba.paw.webapp.exceptions.RoleNotFoundException;
 import ar.edu.itba.paw.webapp.exceptions.UserNotFoundException;
@@ -343,8 +340,13 @@ public class UserController {
             return editProfilePictureForm(editProfilePictureForm);
         }
         User user = authUserService.getCurrentUser();
-
-        userService.updateProfilePicture(user, editProfilePictureForm.getProfilePicture().getBytes());
+        try {
+            userService.updateProfilePicture(user, editProfilePictureForm.getProfilePicture().getBytes());
+        }catch (InvalidImageSizeException e) {
+            ModelAndView mav = editProfilePictureForm(editProfilePictureForm);
+            mav.addObject("invalidImageSize", true);
+            return mav;
+        }
         return new ModelAndView("redirect:/profile");
     }
 

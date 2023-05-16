@@ -2,6 +2,7 @@ package ar.edu.itba.paw.services;
 
 import ar.edu.itba.paw.models.Roles;
 import ar.edu.itba.paw.models.User;
+import ar.edu.itba.paw.services.exceptions.InvalidImageSizeException;
 import ar.edu.itba.paw.services.exceptions.InvalidTokenException;
 import ar.edu.itba.paw.services.exceptions.OldPasswordDoesNotMatchException;
 import ar.edu.itba.paw.services.exceptions.UserEmailAlreadyTakenException;
@@ -29,7 +30,7 @@ public interface UserService extends BaseService<Long, User> {
                         final String userOldPassword) throws OldPasswordDoesNotMatchException;
     void editProfile(final Long userId, final String username);
 
-    void updateProfilePicture(final User user, final byte[] image);
+    void updateProfilePicture(final User user, final byte[] image) throws InvalidImageSizeException;
 
     String sendRecoveryMail(final String email);
 

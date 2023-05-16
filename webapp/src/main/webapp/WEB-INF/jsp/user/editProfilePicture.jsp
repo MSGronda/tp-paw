@@ -67,6 +67,13 @@
             width: 100%;
             justify-content: space-around;
         }
+        h5 {
+            color: red;
+            font-weight: normal;
+            font-size: 1rem;
+            display: flex;
+            justify-content: center;
+        }
     </style>
 </head>
 <body>
@@ -82,6 +89,9 @@
     </div>
     <div class="container-50" >
         <sl-card class="card-basic">
+            <c:if test="${invalidImageSize}">
+                <h5><spring:message code="profile.editing.picture.error"/></h5>
+            </c:if>
             <div class="images">
                 <div class="tower-picture">
                     <spring:message code="profile.editing.picture" />

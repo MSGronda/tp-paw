@@ -53,7 +53,7 @@ import java.util.concurrent.TimeUnit;
 @Configuration
 public class WebConfig extends WebMvcConfigurerAdapter {
 
-    private final static long MAX_SIZE = 1024*1024*50;
+    private final static long MAX_SIZE = 1024*1024*100;
     private final static Logger LOGGER = LoggerFactory.getLogger(WebConfig.class);
 
     @Autowired
@@ -119,6 +119,7 @@ public class WebConfig extends WebMvcConfigurerAdapter {
     @Bean(name="multipartResolver")
     public CommonsMultipartResolver mutipartResolver() {
         CommonsMultipartResolver resolver = new CommonsMultipartResolver();
+        resolver.setDefaultEncoding(StandardCharsets.UTF_8.name());
         resolver.setMaxUploadSize(MAX_SIZE); //50mb
         return resolver;
     }

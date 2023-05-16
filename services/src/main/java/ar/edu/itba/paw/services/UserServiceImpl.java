@@ -7,10 +7,7 @@ import ar.edu.itba.paw.persistence.ImageDao;
 import ar.edu.itba.paw.persistence.RecoveryDao;
 import ar.edu.itba.paw.persistence.UserDao;
 import ar.edu.itba.paw.persistence.exceptions.UserEmailAlreadyTakenPersistenceException;
-import ar.edu.itba.paw.services.exceptions.InvalidTokenException;
-import ar.edu.itba.paw.services.exceptions.OldPasswordDoesNotMatchException;
-import ar.edu.itba.paw.services.exceptions.UserEmailAlreadyTakenException;
-import ar.edu.itba.paw.services.exceptions.UserEmailNotFoundException;
+import ar.edu.itba.paw.services.exceptions.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -116,9 +113,9 @@ public class UserServiceImpl implements UserService {
 
     @Transactional
     @Override
-    public void updateProfilePicture(final User user, final byte[] image){
+    public void updateProfilePicture(final User user, final byte[] image) throws InvalidImageSizeException {
         if(image.length > MAX_IMAGE_SIZE || image.length == 0){
-            return;
+            throw new InvalidImageSizeException();
         }
         imageDao.updateImage(user.getImageId(), image);
     }
