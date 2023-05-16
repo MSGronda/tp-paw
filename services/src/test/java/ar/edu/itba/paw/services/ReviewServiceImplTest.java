@@ -1,9 +1,8 @@
 package ar.edu.itba.paw.services;
 
-import ar.edu.itba.paw.models.Review;
-import ar.edu.itba.paw.models.ReviewStats;
-import ar.edu.itba.paw.models.Subject;
-import ar.edu.itba.paw.models.User;
+import ar.edu.itba.paw.models.*;
+import ar.edu.itba.paw.models.constants.Difficulty;
+import ar.edu.itba.paw.models.constants.TimeDemanding;
 import ar.edu.itba.paw.persistence.dao.ReviewDao;
 import ar.edu.itba.paw.services.exceptions.NoGrantedPermissionException;
 import org.junit.Assert;
@@ -39,9 +38,36 @@ public class ReviewServiceImplTest {
 
     @Test
     public void testDidUserReviewTrue(){
-        Review review1 = new Review(1, USERID, "31.08", 1, 1, "Resena", false);
-        Review review2 = new Review(1, USERID+1, "31.08", 1, 1, "Resena", false);
-        Review review3 = new Review(1, USERID+2, "31.08", 1, 1, "Resena", false);
+        Review review1 = Review.builder()
+            .id(1)
+            .userId(USERID)
+            .subjectId("31.08")
+            .easy(Difficulty.MEDIUM)
+            .timeDemanding(TimeDemanding.MEDIUM)
+            .text("Resena")
+            .anonymous(false)
+            .build();
+
+        Review review2 = Review.builder()
+            .id(2)
+            .userId(USERID+1)
+            .subjectId("31.08")
+            .easy(Difficulty.MEDIUM)
+            .timeDemanding(TimeDemanding.MEDIUM)
+            .text("Resena")
+            .anonymous(false)
+            .build();
+
+        Review review3 = Review.builder()
+            .id(3)
+            .userId(USERID+2)
+            .subjectId("31.08")
+            .easy(Difficulty.MEDIUM)
+            .timeDemanding(TimeDemanding.MEDIUM)
+            .text("Resena")
+            .anonymous(false)
+            .build();
+
         List<Review> reviews = new ArrayList<>();
         reviews.add(review1);
         reviews.add(review2);
@@ -55,9 +81,36 @@ public class ReviewServiceImplTest {
     }
     @Test
     public void testDidUserReviewFalse(){
-        Review review1 = new Review(1, USERID-1, "31.08", 1, 1, "Resena", false);
-        Review review2 = new Review(1, USERID+1, "31.08", 1, 1, "Resena", false);
-        Review review3 = new Review(1, USERID+2, "31.08", 1, 1, "Resena", false);
+        Review review1 = Review.builder()
+            .id(1)
+            .userId(USERID-1)
+            .subjectId("31.08")
+            .easy(Difficulty.MEDIUM)
+            .timeDemanding(TimeDemanding.MEDIUM)
+            .text("Resena")
+            .anonymous(false)
+            .build();
+
+        Review review2 = Review.builder()
+            .id(2)
+            .userId(USERID+1)
+            .subjectId("31.08")
+            .easy(Difficulty.MEDIUM)
+            .timeDemanding(TimeDemanding.MEDIUM)
+            .text("Resena")
+            .anonymous(false)
+            .build();
+
+        Review review3 = Review.builder()
+            .id(3)
+            .userId(USERID+2)
+            .subjectId("31.08")
+            .easy(Difficulty.MEDIUM)
+            .timeDemanding(TimeDemanding.MEDIUM)
+            .text("Resena")
+            .anonymous(false)
+            .build();
+
         List<Review> reviews = new ArrayList<>();
         reviews.add(review1);
         reviews.add(review2);
@@ -97,7 +150,15 @@ public class ReviewServiceImplTest {
     }
     @Test(expected = NoGrantedPermissionException.class)
     public void testCheckAuthFalse() throws NoGrantedPermissionException {
-        Review review1 = new Review(ID, USERID, "31.08", 1, 1, "Resena", false);
+        Review review1 = Review.builder()
+            .id(1)
+            .userId(USERID)
+            .subjectId("31.08")
+            .easy(Difficulty.MEDIUM)
+            .timeDemanding(TimeDemanding.MEDIUM)
+            .text("Resena")
+            .anonymous(false)
+            .build();
 
         User user = User.builder(EMAIL, PASSWORD, USERNAME)
             .id(ID+1)

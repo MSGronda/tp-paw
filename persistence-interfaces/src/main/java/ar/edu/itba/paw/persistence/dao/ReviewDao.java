@@ -9,8 +9,7 @@ import java.util.Map;
 import java.util.Optional;
 
 public interface ReviewDao extends RWDao<Long,Review> {
-    Review create(final Boolean anonymous,final Integer easy, final Integer timeDemanding,
-                  final String text, final String subjectId, final long userId ) throws SQLException;
+    Review create(final Review review) throws SQLException;
 
     Integer deleteReviewVoteByReviewId(final Long idReview);
     Integer deleteReviewVote(final Long idUser, final Long idReview);

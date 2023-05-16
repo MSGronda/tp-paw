@@ -1,39 +1,38 @@
 package ar.edu.itba.paw.models;
 
 public class Review {
+    private static final int PREVIEW_SIZE=500;
+
     private final long id;
     private final long userId;
     private final String subjectId;
-    private Integer easy;
-    private Integer timeDemanding;
-    private String text;
-
-    private String subjectName = null;
-
-    private Integer upvotes = 0;
-    private Integer downvotes = 0;
-
-    private String username = null;
-    private Boolean anonymous;
-
+    private final int easy;
+    private final int timeDemanding;
+    private final String text;
+    private final String subjectName;
+    private final long upvotes;
+    private final long downvotes;
+    private final String username;
+    private final boolean anonymous;
     private final String previewText;
-
     private final String showMoreText;
+    private final boolean requiresShowMore;
 
-    private final Boolean requiresShowMore;
+    private Review(Builder builder) {
+        this.id = builder.id;
+        this.userId = builder.userId;
+        this.subjectId = builder.subjectId;
+        this.easy = builder.easy;
+        this.timeDemanding = builder.timeDemanding;
+        this.text = builder.text;
+        this.anonymous = builder.anonymous;
+        this.subjectName = builder.subjectName;
+        this.upvotes = builder.upvotes;
+        this.downvotes = builder.downvotes;
+        this.username = builder.username;
 
-    private final int PREVIEW_SIZE=500;
-
-
-    public Review(final long id, final long userId, final String subjectId, final Integer easy,
-                  final Integer timeDemanding, final String text, final Boolean anonymous) {
-        this.id = id;
-        this.userId = userId;
-        this.subjectId = subjectId;
-        this.easy = easy;
-        this.timeDemanding = timeDemanding;
-        this.text = text;
-        this.anonymous = anonymous;
+        //TODO: Esto tiene que ir en los controllers en webapp, no en models.
+        // Es detalle de implementación del frontend.
         if(text.length() > PREVIEW_SIZE){
             this.requiresShowMore = true;
             this.previewText = this.text.substring(0,PREVIEW_SIZE);
@@ -45,55 +44,10 @@ public class Review {
         }
     }
 
-    public Review(final long id, final long userId, final String subjectId, final Integer easy, final Integer timeDemanding,
-                  final String text, final String subjectName, final int upvotes, final int downvotes, final Boolean anonymous) {
-        this.id = id;
-        this.userId = userId;
-        this.subjectId = subjectId;
-        this.easy = easy;
-        this.timeDemanding = timeDemanding;
-        this.text = text;
-        this.subjectName=subjectName;
-        this.upvotes = upvotes;
-        this.downvotes = downvotes;
-        this.anonymous = anonymous;
-        if(text.length() > PREVIEW_SIZE){
-            this.requiresShowMore = true;
-            this.previewText = this.text.substring(0,PREVIEW_SIZE);
-            this.showMoreText = this.text.substring(PREVIEW_SIZE);
-        } else {
-            this.requiresShowMore = false;
-            this.previewText = "";
-            this.showMoreText = "";
-        }
-    }
-    public Review(final long id, final long userId, final String username, final String subjectId, final Integer easy,
-                  final Integer timeDemanding, final String text, final int upvotes, final int downvotes, final Boolean anonymous) {
-        this.id = id;
-        this.userId = userId;
-        this.subjectId = subjectId;
-        this.easy = easy;
-        this.timeDemanding = timeDemanding;
-        this.text = text;
-        this.username=username;
-        this.upvotes = upvotes;
-        this.downvotes = downvotes;
-        this.anonymous = anonymous;
-        if(text.length() > PREVIEW_SIZE){
-            this.requiresShowMore = true;
-            this.previewText = this.text.substring(0,PREVIEW_SIZE);
-            this.showMoreText = this.text.substring(PREVIEW_SIZE);
-        } else {
-            this.requiresShowMore = false;
-            this.previewText = "";
-            this.showMoreText = "";
-        }
-    }
-
-    public int getUpvotes(){
+    public long getUpvotes(){
         return upvotes;
     }
-    public int getDownvotes(){
+    public long getDownvotes(){
         return downvotes;
     }
 
@@ -113,11 +67,11 @@ public class Review {
         return text;
     }
 
-    public Integer getEasy(){
+    public int getEasy(){
     return easy;
     }
 
-    public Integer getTimeDemanding(){
+    public int getTimeDemanding(){
         return timeDemanding;
     }
 
@@ -145,21 +99,102 @@ public class Review {
         return showMoreText;
     }
 
-    public void setText(final String text){
-        this.text = text;
+    public static Builder builder() {
+        return new Builder();
     }
 
-    public void setEasy(final Integer easy){
-        this.easy = easy;
+    public static Builder builderFrom(Review review) {
+        return new Builder(review);
     }
 
-    public void setTimeDemanding(final Integer timeDemanding){
-        this.timeDemanding = timeDemanding;
-    }
+    public static class Builder {
+        private long id;
+        private long userId;
+        private String subjectId;
+        private int easy;
+        private int timeDemanding;
+        private String text;
+        private String subjectName;
+        private long upvotes;
+        private long downvotes;
+        private String username;
+        private boolean anonymous;
 
-    public void setAnonymous(final Boolean anonymous){
-        this.anonymous = anonymous;
+        private Builder() {
+
+        }
+
+        private Builder(Review review) {
+            this.id = review.id;
+            this.userId = review.userId;
+            this.subjectId = review.subjectId;
+            this.easy = review.easy;
+            this.timeDemanding = review.timeDemanding;
+            this.text = review.text;
+            this.subjectName = review.subjectName;
+            this.upvotes = review.upvotes;
+            this.downvotes = review.downvotes;
+            this.username = review.username;
+            this.anonymous = review.anonymous;
+        }
+
+        public Builder id(final long id) {
+            this.id = id;
+            return this;
+        }
+
+        public Builder userId(final long userId) {
+            this.userId = userId;
+            return this;
+        }
+
+        public Builder subjectId(final String subjectId) {
+            this.subjectId = subjectId;
+            return this;
+        }
+
+        public Builder easy(final int easy) {
+            this.easy = easy;
+            return this;
+        }
+
+        public Builder timeDemanding(final int timeDemanding) {
+            this.timeDemanding = timeDemanding;
+            return this;
+        }
+
+        public Builder text(final String text) {
+            this.text = text;
+            return this;
+        }
+
+        public Builder subjectName(final String subjectName) {
+            this.subjectName = subjectName;
+            return this;
+        }
+
+        public Builder upvotes(final long upvotes) {
+            this.upvotes = upvotes;
+            return this;
+        }
+
+        public Builder downvotes(final long downvotes) {
+            this.downvotes = downvotes;
+            return this;
+        }
+
+        public Builder username(final String username) {
+            this.username = username;
+            return this;
+        }
+
+        public Builder anonymous(final boolean anonymous) {
+            this.anonymous = anonymous;
+            return this;
+        }
+
+        public Review build() {
+            return new Review(this);
+        }
     }
 }
-
-

@@ -103,9 +103,8 @@ public class ReviewServiceImpl implements ReviewService {
 
     @Transactional
     @Override
-    public Review create(final Boolean anonymous, final Integer easy, final Integer timeDemanding, final String text,
-                         final String subjectId, final long userId) throws SQLException {
-        return reviewDao.create(anonymous,easy, timeDemanding, text, subjectId, userId);
+    public Review create(final Review review) throws SQLException {
+        return reviewDao.create(review);
     }
     @Transactional
     @Override

@@ -48,7 +48,17 @@ public class ReviewController {
             LOGGER.warn("Review form has errors");
             return reviewForm(subjectId, reviewForm);
         }
-        Review review = reviewService.create(reviewForm.getAnonymous(),reviewForm.getEasy(), reviewForm.getTimeDemanding(), reviewForm.getText(), subjectId, authUserService.getCurrentUser().getId());
+
+        reviewService.create(
+            Review.builder()
+                .anonymous(reviewForm.getAnonymous())
+                .easy(reviewForm.getEasy())
+                .timeDemanding(reviewForm.getTimeDemanding())
+                .text(reviewForm.getText())
+                .subjectId(subjectId)
+                .userId(authUserService.getCurrentUser().getId())
+                .build()
+        );
 
         return new ModelAndView("redirect:/subject/" + subjectId);
     }
@@ -110,15 +120,15 @@ public class ReviewController {
 
         Review review = maybeReview.get();
 
-        Integer easyBefore = review.getEasy();
-        Integer timeDemandingBefore = review.getTimeDemanding();
+        Review updatedRev = Review.builderFrom(review)
+            .text(reviewForm.getText())
+            .easy(reviewForm.getEasy())
+            .timeDemanding(reviewForm.getTimeDemanding())
+            .anonymous(review.getAnonymous())
+            .build();
 
-        review.setText(reviewForm.getText());
-        review.setEasy(reviewForm.getEasy());
-        review.setTimeDemanding(reviewForm.getTimeDemanding());
-        review.setAnonymous(reviewForm.getAnonymous());
         try {
-            reviewService.update(review);
+            reviewService.update(updatedRev);
         } catch(NoGrantedPermissionException e) {
             return new ModelAndView("redirect:/error/unauthorized");
         }
