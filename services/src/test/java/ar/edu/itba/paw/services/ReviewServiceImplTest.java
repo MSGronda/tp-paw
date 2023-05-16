@@ -38,7 +38,7 @@ public class ReviewServiceImplTest {
     private ReviewServiceImpl reviewService;
 
     @Test
-    public void TestDidUserReviewTrue(){
+    public void testDidUserReviewTrue(){
         Review review1 = new Review(1, USERID, "31.08", 1, 1, "Resena", false);
         Review review2 = new Review(1, USERID+1, "31.08", 1, 1, "Resena", false);
         Review review3 = new Review(1, USERID+2, "31.08", 1, 1, "Resena", false);
@@ -53,7 +53,7 @@ public class ReviewServiceImplTest {
 
     }
     @Test
-    public void TestDidUserReviewFalse(){
+    public void testDidUserReviewFalse(){
         Review review1 = new Review(1, USERID-1, "31.08", 1, 1, "Resena", false);
         Review review2 = new Review(1, USERID+1, "31.08", 1, 1, "Resena", false);
         Review review3 = new Review(1, USERID+2, "31.08", 1, 1, "Resena", false);
@@ -69,7 +69,7 @@ public class ReviewServiceImplTest {
     }
 
     @Test
-    public void TestGetReviewStatBySubject(){
+    public void testGetReviewStatBySubject(){
         Map<String, ReviewStatistic> map = new HashMap<>();
         ReviewStatistic reviewStatistic = new ReviewStatistic(ID1, COUNT, 2, 1, 0, 3,0,0);
         map.put(ID1, reviewStatistic);
