@@ -18,15 +18,21 @@ import ar.edu.itba.paw.webapp.Utils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.MessageSource;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
+import org.springframework.security.web.authentication.rememberme.PersistentTokenBasedRememberMeServices;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 import java.io.*;
 import java.sql.SQLException;
@@ -118,27 +124,22 @@ public class UserController {
             return registerForm(userForm);
         }
 
-        User.UserBuilder user = new User.UserBuilder(userForm.getEmail(), userForm.getPassword(), userForm.getName());
-
+        User.UserBuilder userBuilder = new User.UserBuilder(userForm.getEmail(), userForm.getPassword(), userForm.getName());
+        User newUser;
         try {
-            final User newUser = userService.create(user);
+            newUser = userService.create(userBuilder);
         }catch (UserEmailAlreadyTakenException e){
-
 //            errors.rejectValue("email", "UserForm.email.alreadyExists", "An account with this email already exists");
             ModelAndView mav = registerForm(userForm);
             mav.addObject("EmailAlreadyUsed", true);
             return mav;
         }
 
-        final String baseUrl = Utils.getBaseUrl();
-        final String subject = mailMessages.getMessage("confirmation.subject", null, locale);
+        final String token = newUser.getConfirmToken().orElseThrow(IllegalStateException::new);
 
-        Map<String,Object> mailModel = new HashMap<>();
-        mailModel.put("logoUrl", baseUrl + "/img/uni.png");
-        mailModel.put("url", baseUrl + "/confirm/" + user.getConfirmToken());
-        mailService.sendMail(user.getEmail(), subject, "confirmation", mailModel, locale);
+        sendVerificationEmail(locale, newUser, token);
 
-        return new ModelAndView("user/confirm/checkEmail");
+        return new ModelAndView("redirect:/verification?email=" + newUser.getEmail());
     }
 
     @RequestMapping(value = "/register", method = { RequestMethod.GET })
@@ -146,14 +147,54 @@ public class UserController {
         return new ModelAndView("user/register");
     }
 
-    @RequestMapping("/confirm/{token}")
-    public String confirm(HttpServletRequest request, @PathVariable String token) {
+    @RequestMapping("/verification")
+    public ModelAndView confirmPage(@RequestParam final String email, final HttpServletRequest req, final HttpServletResponse res) {
+        final Optional<User> maybeUser = userService.getUnconfirmedUserWithEmail(email);
+        if(!maybeUser.isPresent()) {
+            return new ModelAndView("redirect:/login");
+        }
+
+        final User user = maybeUser.get();
+
+        final ModelAndView mav = new ModelAndView("user/verification/checkEmail");
+        mav.addObject("user", user);
+
+        return mav;
+    }
+
+    @RequestMapping(value = "/verification/resend", method = { RequestMethod.POST })
+    public ModelAndView resendConfirmationEmail(@RequestParam final String email, final Locale locale) {
+        final Optional<User> maybeUser = userService.getUnconfirmedUserWithEmail(email);
+        if(!maybeUser.isPresent()) {
+            return new ModelAndView("redirect:/verification?error=true&email=" + email);
+        }
+
+        final User user = maybeUser.get();
+        final String token = userService.regenerateConfirmToken(user.getId());
+
+        sendVerificationEmail(locale, user, token);
+
+        return new ModelAndView("redirect:/verification?resent=true&email=" + email);
+    }
+
+    @RequestMapping("/verification/confirm")
+    public String confirm(@RequestParam final String token) {
         try {
             userService.confirmUser(token);
         } catch (InvalidTokenException e) {
-            return "user/confirm/invalidToken";
+            return "user/verification/invalidToken";
         }
-        return "user/confirm/success";
+        return "user/verification/success";
+    }
+
+    private void sendVerificationEmail(Locale locale, User user, String token) {
+        final String baseUrl = Utils.getBaseUrl();
+        final String subject = mailMessages.getMessage("confirmation.subject", null, locale);
+
+        Map<String,Object> mailModel = new HashMap<>();
+        mailModel.put("logoUrl", baseUrl + "/img/uni.png");
+        mailModel.put("url", baseUrl + "/verification/confirm?token=" + token);
+        mailService.sendMail(user.getEmail(), subject, "verification", mailModel, locale);
     }
 
     @RequestMapping(value = "/login", method = { RequestMethod.GET })

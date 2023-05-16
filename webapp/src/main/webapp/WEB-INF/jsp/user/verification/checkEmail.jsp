@@ -33,7 +33,30 @@
       font-size: 1rem;
       text-align: center;
     }
+
+    #resendButton {
+        display: inline;
+    }
   </style>
+  <script async>
+    window.addEventListener('load', () => {
+        setTimeout(() => {
+            document.getElementById('resendButton').disabled = false;
+        }, 10000);
+
+        var timeleft = 9;
+        var timer = setInterval(() => {
+            if(timeleft <= 0) {
+                document.getElementById('timer').innerHTML = "";
+                clearInterval(timer);
+                return;
+            }
+
+            document.getElementById('timer').innerHTML = ': ' + timeleft + 's';
+            timeleft -= 1;
+        }, 1000);
+    });
+  </script>
 </head>
 <body>
 <jsp:include page="../../components/navbar.jsp"/>
@@ -49,6 +72,17 @@
         <h3><spring:message code="user.confirm.checkEmail.title"/></h3>
         <h5><spring:message code="user.confirm.checkEmail.message"/></h5>
       </div>
+
+      <c:url var="resendUrl" value="/verification/resend"/>
+      <form method="post" action="${resendUrl}">
+        <input type="hidden" name="email" value="${param.email}"/>
+        <div class="center2">
+          <sl-button disabled variant="primary" id="resendButton" type="submit">
+            <spring:message code="user.confirm.checkEmail.resend.button"/>
+            <span id="timer"></span>
+          </sl-button>
+        </div>
+      </form>
     </sl-card>
   </div>
 </main>

@@ -16,7 +16,10 @@ public interface UserService extends BaseService<Long, User> {
     User create(final User.UserBuilder userBuilder, final byte[] profilePic) throws UserEmailAlreadyTakenException;
     User create(final User.UserBuilder userBuilder) throws UserEmailAlreadyTakenException, IOException;
 
+    String regenerateConfirmToken(long userId);
+
     Optional<User> getUserWithEmail(final String email);
+    Optional<User> getUnconfirmedUserWithEmail(final String email);
 
     Integer getUserSubjectProgress(final Long id, final String idSub);
     Map<String, Integer> getUserAllSubjectProgress(final Long id);

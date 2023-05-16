@@ -10,7 +10,8 @@ public class User {
     private final String email, password, username;
     private final Long imageId;
     private final Map<String, Integer> subjectProgress;
-    private final Optional<String> confirmToken;
+    private final String confirmToken;
+    private final boolean confirmed;
     private final Locale locale;
 
 
@@ -23,6 +24,7 @@ public class User {
         this.subjectProgress = builder.subjectProgress;
         this.confirmToken = builder.confirmToken;
         this.locale = builder.locale;
+        this.confirmed = builder.confirmed;
     }
 
     public long getImageId(){
@@ -46,7 +48,10 @@ public class User {
     }
 
     public Optional<String> getConfirmToken() {
-        return confirmToken;
+        return Optional.ofNullable(confirmToken);
+    }
+    public boolean isConfirmed() {
+        return confirmed;
     }
 
     public Optional<Locale> getLocale(){
@@ -72,7 +77,8 @@ public class User {
         private String password, username;
         private long imageId;
         private Map<String, Integer> subjectProgress;
-        private Optional<String> confirmToken;
+        private String confirmToken;
+        private boolean confirmed;
         private Locale locale;
 
 
@@ -80,7 +86,6 @@ public class User {
             this.email = email;
             this.password = password;
             this.username = username;
-            this.confirmToken = Optional.empty();
         }
         public UserBuilder id(final long id) {
             this.id = id;
@@ -126,11 +131,20 @@ public class User {
         }
 
         public Optional<String> getConfirmToken(){
-            return confirmToken;
+            return Optional.ofNullable(confirmToken);
         }
 
         public UserBuilder confirmToken(String token) {
-            this.confirmToken = Optional.of(token);
+            this.confirmToken = token;
+            return this;
+        }
+
+        public boolean getConfirmed() {
+            return confirmed;
+        }
+
+        public UserBuilder confirmed(boolean confirmed) {
+            this.confirmed = confirmed;
             return this;
         }
 
