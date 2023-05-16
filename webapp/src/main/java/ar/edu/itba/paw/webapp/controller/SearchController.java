@@ -42,7 +42,9 @@ public class SearchController {
     @RequestMapping("/search")
     public ModelAndView search(@RequestParam Map<String, String> params) {
 
-        final List<Subject> subjects = subjectService.getByNameFiltered(params.getOrDefault("q",""), params);
+        final List<Subject> subjectsWithoutPrereq = subjectService.getByNameFiltered(params.getOrDefault("q",""), params);
+        final List<String> subjectsIds = subjectService.getSubjectsids(subjectsWithoutPrereq);
+        final List<Subject> subjects = subjectService.findByIds(subjectsIds);
         final Map<String, Set<String>> relevantFilters = subjectService.getRelevantFilters(subjects);
 
         Map<String, ReviewStatistic> reviewStats = reviewService.getReviewStatMapBySubjectList(subjects);

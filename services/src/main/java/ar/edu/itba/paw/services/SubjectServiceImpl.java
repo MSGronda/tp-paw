@@ -43,40 +43,21 @@ public class SubjectServiceImpl implements SubjectService {
 
     @Override
     public List<Subject> getByNameFiltered(final String name, final Map<String,String> filters) {
-        Map<String, String> validatedFilters = new HashMap<>();
-
-        // Check if filters, order by and direction are valid
-        for(Map.Entry<String, String> filter : filters.entrySet()){
-            if(
-                (Objects.equals(filter.getKey(), "ob") && validOrderBy.contains(filter.getValue())) ||
-               (Objects.equals(filter.getKey(), "dir") && validDir.contains(filter.getValue()) ||
-               (validFilters.containsKey(filter.getKey()) && Pattern.matches( validFilters.get(filter.getKey()) ,filter.getValue()))) ||
-               (Objects.equals(filter.getKey(), "pageNum") && filter.getValue().matches("[0-9]+"))
-
-            ){
-                validatedFilters.put(filter.getKey(), filter.getValue());
-            }
-        }
-        return subjectDao.getByNameFiltered(name, validatedFilters);
+        return subjectDao.getByNameFiltered(name, filterValidation(filters));
     }
 
     @Override
     public int getTotalPagesForSubjects(final String name, final Map<String,String> filters){
-        Map<String, String> validatedFilters = new HashMap<>();
+        return subjectDao.getTotalPagesForSubjects(name,filterValidation(filters));
+    }
 
-        // Check if filters, order by and direction are valid
-        for(Map.Entry<String, String> filter : filters.entrySet()){
-            if(
-                    (Objects.equals(filter.getKey(), "ob") && validOrderBy.contains(filter.getValue())) ||
-                            (Objects.equals(filter.getKey(), "dir") && validDir.contains(filter.getValue()) ||
-                                    (validFilters.containsKey(filter.getKey()) && Pattern.matches( validFilters.get(filter.getKey()) ,filter.getValue()))) ||
-                            (Objects.equals(filter.getKey(), "pageNum") && filter.getValue().matches("[0-9]+"))
-
-            ){
-                validatedFilters.put(filter.getKey(), filter.getValue());
-            }
+    @Override
+    public List<String> getSubjectsids(List<Subject> subjects){
+        List<String> toReturn = new ArrayList<>();
+        for(Subject sub: subjects){
+            toReturn.add(sub.getId());
         }
-        return subjectDao.getTotalPagesForSubjects(name,validatedFilters);
+        return toReturn;
     }
 
     @Override
@@ -153,5 +134,23 @@ public class SubjectServiceImpl implements SubjectService {
     public Subject create(final String id, String name, final String depto, final Set<String> idCorrelativas,
                           final Set<Long> idProfesores, final Set<Long> idCarreras, final Integer creditos){
         return subjectDao.create(id, name, depto, idCorrelativas, idProfesores, idCarreras, creditos);
+    }
+
+    private Map<String,String> filterValidation(final Map<String,String> filters){
+        Map<String, String> validatedFilters = new HashMap<>();
+
+        // Check if filters, order by and direction are valid
+        for(Map.Entry<String, String> filter : filters.entrySet()){
+            if(
+                    (Objects.equals(filter.getKey(), "ob") && validOrderBy.contains(filter.getValue())) ||
+                            (Objects.equals(filter.getKey(), "dir") && validDir.contains(filter.getValue()) ||
+                                    (validFilters.containsKey(filter.getKey()) && Pattern.matches( validFilters.get(filter.getKey()) ,filter.getValue()))) ||
+                            (Objects.equals(filter.getKey(), "pageNum") && filter.getValue().matches("[0-9]+"))
+
+            ){
+                validatedFilters.put(filter.getKey(), filter.getValue());
+            }
+        }
+        return validatedFilters;
     }
 }

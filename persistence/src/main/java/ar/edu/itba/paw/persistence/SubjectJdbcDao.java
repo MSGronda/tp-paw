@@ -90,8 +90,6 @@ public class SubjectJdbcDao implements SubjectDao {
         return toReturn;
     }
 
-
-
     @Override
     public int getTotalPagesForSubjects(final String name, final Map<String, String> filters){
         StringBuilder sb = new StringBuilder("SELECT * FROM ").append(TABLE_SUB).append(" WHERE subname ILIKE ?");
@@ -104,7 +102,6 @@ public class SubjectJdbcDao implements SubjectDao {
         List<Subject> toReturn = jdbcTemplate.query(sb.toString(), SubjectJdbcDao::subjectListExtractor, filterList.toArray());
         LOGGER.info("Got subjects with name {} and filters {}", name, filters.values().stream().toString());
         return toReturn.size() / Integer.parseInt(PAGE_SIZE);
-
     }
 
 

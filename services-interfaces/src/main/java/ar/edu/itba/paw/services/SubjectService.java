@@ -32,6 +32,7 @@ public interface SubjectService extends BaseService<String, Subject> {
 
     int getTotalPagesForSubjects(final String name, final Map<String, String> filters);
 
+    List<String> getSubjectsids(List<Subject> subjects);
     Map<String, Set<String>> getRelevantFilters(final List<Subject> subjects);
 
     Subject create(final String id, final String name, final String depto, final Set<String> idCorrelativas,
