@@ -51,8 +51,8 @@
             <div>
                 <form:errors path="anonymous" cssClass="error" element="p"/>
                 <sl-radio-group name="anonymous" value="${ReviewForm.anonymous}">
-                    <sl-radio-button value="true"><spring:message code="form.anonymous"/></sl-radio-button>
                     <sl-radio-button value="false"><spring:message code="form.public"/></sl-radio-button>
+                    <sl-radio-button value="true"><spring:message code="form.anonymous"/></sl-radio-button>
                 </sl-radio-group>
             </div>
             <br />
