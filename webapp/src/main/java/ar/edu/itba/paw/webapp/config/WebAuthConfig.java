@@ -114,7 +114,7 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
 
             final Optional<User> maybeUser = userService.getUnconfirmedUserWithEmail(email);
             if(!maybeUser.isPresent() || !passwordEncoder().matches(pass, maybeUser.get().getPassword())){
-                res.sendRedirect("/login?error");
+                res.sendRedirect("/login?error=true");
                 return;
             }
 
