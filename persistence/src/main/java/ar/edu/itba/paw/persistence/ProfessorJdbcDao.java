@@ -80,7 +80,7 @@ public class ProfessorJdbcDao implements ProfessorDao {
     }
 
     public List<Professor> getAll() {
-        return joinRowToProfs(jdbcTemplate.query("SELECT * FROM " + TABLE_PROF_SUB + " JOIN " + TABLE_PROF + " p on idProf = p.id", ProfessorJdbcDao::rowMapperJoin));
+        return jdbcTemplate.query("SELECT * FROM " + TABLE_PROF, ProfessorJdbcDao::rowMapperProf);
     }
 
     @Override
