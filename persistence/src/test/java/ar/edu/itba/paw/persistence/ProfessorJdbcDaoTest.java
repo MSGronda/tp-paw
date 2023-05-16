@@ -22,8 +22,17 @@ import java.util.Optional;
 public class ProfessorJdbcDaoTest {
     private static String PROF_NAME1 = "Juan Ariel";
     private static String PROF_NAME2 = "Ariel Juan";
-    private static Long ID1 = 1L;
-    private static Long ID2 = 2L;
+    private static long ID1 = 1L;
+    private static long ID2 = 2L;
+    private static String SUB_ID1="31.08";
+    private static String SUB_ID2="72.03";
+    private static String SUB1_NAME="Sistemas";
+    private static String SUB2_NAME="Intro";
+    private static String SUB1_DEPARTMENT="Ciencias exactas y naturales";
+    private static String SUB2_DEPARTMENT="Sistemas Digitales";
+
+    private static Integer SUB1_CREDITS=3;
+    private static Integer SUB2_CREDITS=3;
 
 
     private JdbcTemplate jdbcTemplate;
@@ -39,7 +48,9 @@ public class ProfessorJdbcDaoTest {
 
     @After
     public void clearDb(){
+        JdbcTestUtils.deleteFromTables(jdbcTemplate, "professorssubjects");
         JdbcTestUtils.deleteFromTables(jdbcTemplate, "professors");
+        JdbcTestUtils.deleteFromTables(jdbcTemplate,"subjects");
     }
 
 
@@ -72,5 +83,36 @@ public class ProfessorJdbcDaoTest {
         Assert.assertEquals(2,professors.size());
         Assert.assertEquals(PROF_NAME1,professors.get(0).getName());
         Assert.assertEquals(PROF_NAME2,professors.get(1).getName());
+    }
+
+    @Test
+    public void testGetAllNotFound(){
+        List<Professor> professors = professorDao.getAll();
+
+        Assert.assertEquals(0,professors.size());
+    }
+
+    @Test
+    public void testGetAllBySubject(){
+        jdbcTemplate.execute("INSERT INTO professors (id,profname) VALUES ("+ ID1 +",'" + PROF_NAME1 + "')");
+        jdbcTemplate.execute("INSERT INTO professors (id,profname) VALUES ("+ ID2 +",'" + PROF_NAME2 + "')");
+        jdbcTemplate.execute("INSERT INTO subjects (id,subname,department,credits) VALUES ('"+ SUB_ID1 +"','"+ SUB1_NAME +"','"+ SUB1_DEPARTMENT +"',"+ SUB1_CREDITS +")");
+        jdbcTemplate.execute("INSERT INTO subjects (id,subname,department,credits) VALUES ('"+ SUB_ID2 +"','"+ SUB2_NAME +"','"+ SUB2_DEPARTMENT +"',"+ SUB2_CREDITS +")");
+        jdbcTemplate.execute("INSERT INTO professorssubjects (idprof,idsub) VALUES (" + ID1 + ",'"+ SUB_ID1 +"')");
+        jdbcTemplate.execute("INSERT INTO professorssubjects (idprof,idsub) VALUES (" + ID1 + ",'"+ SUB_ID2 +"')");
+        jdbcTemplate.execute("INSERT INTO professorssubjects (idprof,idsub) VALUES (" + ID2 + ",'"+ SUB_ID1 +"')");
+
+        List<Professor> professors = professorDao.getAllBySubject(SUB_ID1);
+
+        Assert.assertEquals(2,professors.size());
+        Assert.assertEquals(ID1, professors.get(0).getId());
+        Assert.assertEquals(ID2, professors.get(1).getId());
+    }
+
+    @Test
+    public void testGetAllBySubjectNotFound(){
+        List<Professor> professors = professorDao.getAllBySubject(SUB_ID1);
+
+        Assert.assertEquals(0,professors.size());
     }
 }

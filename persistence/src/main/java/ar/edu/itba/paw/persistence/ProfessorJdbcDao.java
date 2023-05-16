@@ -97,12 +97,6 @@ public class ProfessorJdbcDao implements ProfessorDao {
     public void update(Professor professor) {
 
     }
-
-    @Override
-    public Map<String, List<Professor>> getAllGroupedBySubjectId() {
-        return groupProfsBySubjectId(getAll());
-    }
-
     private static Professor rowMapperProf(ResultSet rs, int rowNum) throws SQLException {
         return new Professor(
                 rs.getLong("id"),
@@ -135,20 +129,6 @@ public class ProfessorJdbcDao implements ProfessorDao {
         }
         LOGGER.debug("Joined rows to professors");
         return new ArrayList<>(profs.values());
-    }
-
-    private Map<String, List<Professor>> groupProfsBySubjectId(final List<Professor> profs) {
-        Map<String, List<Professor>> profsBySubject = new HashMap<>();
-        for (Professor prof : profs) {
-            List<String> subIds = prof.getSubjectIds();
-            for (String subId : subIds) {
-                List<Professor> subProfs = profsBySubject.getOrDefault(subId, new ArrayList<>());
-                subProfs.add(prof);
-                profsBySubject.putIfAbsent(subId, subProfs);
-            }
-        }
-        LOGGER.info("Grouped professors by subject id");
-        return profsBySubject;
     }
 
     // No incluye las materias que enseña, el atributo es null

@@ -33,8 +33,4 @@ public class ProfessorServiceImpl implements ProfessorService {
         return professorDao.getAllBySubject(idSubject);
     }
 
-    @Override
-    public Map<String, List<Professor>> getAllGroupedBySubjectId() {
-        return professorDao.getAllGroupedBySubjectId();
-    }
 }
