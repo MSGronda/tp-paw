@@ -80,7 +80,9 @@
     </c:choose>
 
     <sec:authorize access="hasRole('EDITOR')">
-      <sl-icon-button name="trash3" class="delete-button" label="delete" href="<c:url value="/review/${review.subjectId}/delete/${review.id}"/>"></sl-icon-button>
+      <c:if test="${review.userId != user.id}">
+        <sl-icon-button name="trash3" class="delete-button" label="delete" href="<c:url value="/review/${review.subjectId}/delete/${review.id}"/>"></sl-icon-button>
+      </c:if>
     </sec:authorize>
     <c:if test="${review.userId == user.id}">
       <div>

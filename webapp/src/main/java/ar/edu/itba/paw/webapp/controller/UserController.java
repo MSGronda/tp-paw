@@ -246,7 +246,7 @@ public class UserController {
 
     @RequestMapping(value = "user/{id:\\d+}/moderator")
     public ModelAndView makeModerator(@PathVariable long id) {
-        Optional<Roles> maybeRole = rolesService.findByName("EDITOR");
+        Optional<Roles> maybeRole = rolesService.findByName(Roles.Role.EDITOR.getName());
         if(!maybeRole.isPresent()){
             throw new RoleNotFoundException();
         }

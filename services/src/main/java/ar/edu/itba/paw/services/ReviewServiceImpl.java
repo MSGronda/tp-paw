@@ -160,7 +160,9 @@ public class ReviewServiceImpl implements ReviewService {
 
     @Transactional
     @Override
-    public void update(final Review review){
+    public void update(final Review review) throws NoGrantedPermissionException {
+        if( !checkAuth(review.getUserId(), authUserService.getCurrentUser().getId(), authUserService.isCurrentUserEditor()))
+            throw new NoGrantedPermissionException();
         reviewDao.update(review);
     }
 

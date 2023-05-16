@@ -37,7 +37,7 @@ public interface ReviewService extends BaseService<Long, Review> {
 
     Boolean didUserReviewDB(final String subjectId, final Long userId);
 
-    void update(final Review review);
+    void update(final Review review) throws NoGrantedPermissionException;
 
     void delete(final Review review);
 

@@ -117,8 +117,11 @@ public class ReviewController {
         review.setEasy(reviewForm.getEasy());
         review.setTimeDemanding(reviewForm.getTimeDemanding());
         review.setAnonymous(reviewForm.getAnonymous());
-
-        reviewService.update(review);
+        try {
+            reviewService.update(review);
+        } catch(NoGrantedPermissionException e) {
+            return new ModelAndView("redirect:/error/unauthorized");
+        }
 
         return new ModelAndView("redirect:/subject/" + subjectId);
     }

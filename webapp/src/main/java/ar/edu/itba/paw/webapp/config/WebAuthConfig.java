@@ -3,6 +3,7 @@ package ar.edu.itba.paw.webapp.config;
 import ar.edu.itba.paw.models.User;
 import ar.edu.itba.paw.services.UserService;
 import ar.edu.itba.paw.webapp.auth.UniAuthUser;
+import ar.edu.itba.paw.models.Roles;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
@@ -77,7 +78,7 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
                 .sessionAuthenticationErrorUrl("/login")
             .and().authorizeRequests()
                 .antMatchers("/login","/register", "/recover/**", "/verification/**").anonymous()
-                .antMatchers("/user/{id:\\d+}/moderator").hasRole("EDITOR")
+                .antMatchers("/user/{id:\\d+}/moderator").hasRole(Roles.Role.EDITOR.getName())
                 .antMatchers("/subject/{id:\\d+\\.\\d+}", "/", "/user/{id:\\d+}", "/search/**","/image/**").permitAll()
                 .antMatchers("/**").authenticated()
             .and().formLogin()

@@ -32,4 +32,23 @@ public class Roles {
     public int hashCode() {
         return Objects.hash(id, name);
     }
+
+    public enum Role {
+        USER (1, "User"),
+
+        EDITOR (2, "Editor");
+
+        private final long id;
+        private final String name;
+        Role(long id, String name) {
+            this.id = id;
+            this.name = name;
+        }
+        public long getId() {
+            return id;
+        }
+        public String getName() {
+            return name;
+        }
+    }
 }
