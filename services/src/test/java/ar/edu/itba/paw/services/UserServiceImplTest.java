@@ -45,7 +45,7 @@ public class UserServiceImplTest {
 
     private static final long IMAGEID = 3;
 
-    private static final File IMAGE = new File("src/test/resources/large_image.png");
+    private static final File IMAGE = new File("src/test/resources/large_image.jpg");
 
 
     @Mock
@@ -129,11 +129,11 @@ public class UserServiceImplTest {
     }
 
     
-//    @Test(expected = InvalidImageSizeException.class)
-//    public void testUpdateProfilePictureLargeImage() throws InvalidImageSizeException, IOException {
-//        User user = new User.UserBuilder(EMAIL, PASSWORD, USERNAME).id(ID).build();
-//        byte[] image = Files.readAllBytes(IMAGE.toPath());
-//        us.updateProfilePicture(user, image);
-//    }
+    @Test(expected = InvalidImageSizeException.class)
+    public void testUpdateProfilePictureLargeImage() throws InvalidImageSizeException, IOException {
+        User user = new User.UserBuilder(EMAIL, PASSWORD, USERNAME).id(ID).build();
+        byte[] image = Files.readAllBytes(IMAGE.toPath());
+        us.updateProfilePicture(user, image);
+    }
 
 }
