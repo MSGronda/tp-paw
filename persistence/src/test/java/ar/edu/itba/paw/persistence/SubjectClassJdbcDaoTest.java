@@ -78,13 +78,14 @@ public class SubjectClassJdbcDaoTest {
     public void setup(){
         jdbcTemplate = new JdbcTemplate(ds);
 
+        JdbcTestUtils.deleteFromTables(jdbcTemplate, "prereqsubjects");
         JdbcTestUtils.deleteFromTables(jdbcTemplate, "usersubjectprogress");
         JdbcTestUtils.deleteFromTables(jdbcTemplate, "classloctime");
         JdbcTestUtils.deleteFromTables(jdbcTemplate, "classprofessors");
+        JdbcTestUtils.deleteFromTables(jdbcTemplate, "class");
         JdbcTestUtils.deleteFromTables(jdbcTemplate, "subjects");
         JdbcTestUtils.deleteFromTables(jdbcTemplate, "professors");
         JdbcTestUtils.deleteFromTables(jdbcTemplate, "users");
-        JdbcTestUtils.deleteFromTables(jdbcTemplate, "class");
     }
 
     @Test
