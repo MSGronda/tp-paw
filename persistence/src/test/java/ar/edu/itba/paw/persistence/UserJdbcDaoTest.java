@@ -17,13 +17,19 @@ import org.springframework.test.jdbc.JdbcTestUtils;
 
 import javax.sql.DataSource;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = TestConfig.class)
 public class UserJdbcDaoTest {
     private static final long ID = 1;
+
+    private static final long ID2 = 2;
     private static final String EMAIL = "email";
+
+    private static final String EMAIL2 = "liame";
+
     private static final String PASSWORD = "pass";
 
     private static final String NEW_PASSWORD = "newPass";
@@ -45,12 +51,24 @@ public class UserJdbcDaoTest {
 
     private static final String DEPARTMENT = "departamento";
     private static final int CREDITS = 3;
+
+    private static final String SUBJECTID2 = "23.66";
+
+    private static final String SUBJECTNAME2 = "Algo";
+
+    private static final String DEPARTMENT2 = "otro_departamento";
+    private static final int CREDITS2 = 6;
     private static final Integer SUBJECTPROGRESS = 0;
-    private static final int NEWSUBJECTPROGRESS = 1;
+    private static final Integer NEWSUBJECTPROGRESS = 1;
 
     private static final Boolean CONFIRMED = true;
 
+    private static final Boolean NOTCONFIRMED = false;
+
+
     private static final String CONFIRMTOKEN = "asdf";
+    private static final String CONFIRMTOKEN2 = "fdsa";
+
 
     private JdbcTemplate jdbcTemplate;
 
@@ -93,6 +111,20 @@ public class UserJdbcDaoTest {
     }
 
     @Test
+    public void testGetAll(){
+        jdbcTemplate.execute("INSERT INTO images VALUES (" + IMAGEID + ", " + IMAGE + ")");
+
+        jdbcTemplate.execute("INSERT INTO users(id, email, pass, username, image_id, CONFIRMTOKEN, CONFIRMED ) VALUES (" + ID + ", '" + EMAIL + "', '" + PASSWORD + "', '" + USERNAME + "', " + IMAGEID + ", '" + CONFIRMTOKEN + "', " + CONFIRMED + ")");
+        jdbcTemplate.execute("INSERT INTO users(id, email, pass, username, image_id, CONFIRMTOKEN, CONFIRMED ) VALUES (" + ID2 + ", '" + EMAIL2 + "', '" + NEW_PASSWORD + "', '" + NEW_USERNAME + "', " + IMAGEID + ", '" + CONFIRMTOKEN2 + "', " + CONFIRMED + ")");
+
+        List<User> list = userDao.getAll();
+
+        Assert.assertFalse(list.isEmpty());
+        Assert.assertEquals(EMAIL, list.stream().findFirst().get().getEmail());
+        Assert.assertEquals(EMAIL2, list.get(1).getEmail());
+    }
+
+    @Test
     public void testGetUserWithEmail(){
         jdbcTemplate.execute("INSERT INTO images VALUES (" + IMAGEID + ", " + IMAGE + ")");
 
@@ -103,6 +135,13 @@ public class UserJdbcDaoTest {
 
         Assert.assertTrue(user.isPresent());
         Assert.assertEquals(ID, user.get().getId());
+    }
+
+    @Test
+    public void testGetUserWithEmailNotExists(){
+        Optional<User> user = userDao.getUserWithEmail(EMAIL);
+
+        Assert.assertFalse(user.isPresent());
     }
 
     @Test
@@ -188,6 +227,23 @@ public class UserJdbcDaoTest {
     }
 
     @Test
+    public void testUserAllSubjectProgress(){
+        jdbcTemplate.execute("INSERT INTO users(id, email, pass, username) VALUES (" + ID + ", '" + EMAIL + "', '" + PASSWORD + "', '" + USERNAME + "')");
+        jdbcTemplate.execute("INSERT INTO subjects(id, subname, department, credits) VALUES ('" + SUBJECTID + "', '" + SUBJECTNAME + "', '" + DEPARTMENT + "', " + CREDITS + ")");
+        jdbcTemplate.execute("INSERT INTO subjects(id, subname, department, credits) VALUES ('" + SUBJECTID2 + "', '" + SUBJECTNAME2 + "', '" + DEPARTMENT2 + "', " + CREDITS2 + ")");
+
+        jdbcTemplate.execute("INSERT INTO usersubjectprogress(iduser, idsub, subjectstate) VALUES (" + ID + ", '" + SUBJECTID + "', " + SUBJECTPROGRESS + ")" );
+        jdbcTemplate.execute("INSERT INTO usersubjectprogress(iduser, idsub, subjectstate) VALUES (" + ID + ", '" + SUBJECTID2 + "', " + NEWSUBJECTPROGRESS + ")" );
+
+        Map<String, Integer> map = userDao.getUserAllSubjectProgress(ID);
+
+        Assert.assertEquals(2, map.size());
+        Assert.assertEquals(SUBJECTPROGRESS, map.get(SUBJECTID));
+        Assert.assertEquals(NEWSUBJECTPROGRESS, map.get(SUBJECTID2));
+
+    }
+
+    @Test
     public void testUpdateSubjectProgressExisting(){
         jdbcTemplate.execute("INSERT INTO users(id, email, pass, username) VALUES (" + ID + ", '" + EMAIL + "', '" + PASSWORD + "', '" + USERNAME + "')");
         jdbcTemplate.execute("INSERT INTO subjects(id, subname, department, credits) VALUES ('" + SUBJECTID + "', '" + SUBJECTNAME + "', '" + DEPARTMENT + "', " + CREDITS + ")");
@@ -230,5 +286,40 @@ public class UserJdbcDaoTest {
         Assert.assertEquals(1, response);
         Assert.assertEquals(0, JdbcTestUtils.countRowsInTable(jdbcTemplate, "usersubjectprogress"));
     }
+
+    @Test
+    public void testFindUserByConfirmToken(){
+        jdbcTemplate.execute("INSERT INTO images VALUES (" + IMAGEID + ", " + IMAGE + ")");
+
+        jdbcTemplate.execute("INSERT INTO users(id, email, pass, username, image_id, CONFIRMTOKEN, CONFIRMED ) VALUES (" + ID + ", '" + EMAIL + "', '" + PASSWORD + "', '" + USERNAME + "', " + IMAGEID + ", '" + CONFIRMTOKEN + "', " + CONFIRMED + ")");
+
+        Optional<User> maybeUser = userDao.findUserByConfirmToken(CONFIRMTOKEN);
+
+        Assert.assertTrue(maybeUser.isPresent());
+        Assert.assertEquals(USERNAME, maybeUser.get().getUsername());
+    }
+
+    @Test
+    public void testFindUserByConfirmTokenNotExits(){
+        Optional<User> maybeUser = userDao.findUserByConfirmToken(CONFIRMTOKEN);
+
+        Assert.assertFalse(maybeUser.isPresent());
+    }
+
+    @Test
+    public void testConfirmUser(){
+        jdbcTemplate.execute("INSERT INTO images VALUES (" + IMAGEID + ", " + IMAGE + ")");
+        jdbcTemplate.execute("INSERT INTO users(id, email, pass, username, image_id, CONFIRMTOKEN, CONFIRMED ) VALUES (" + ID + ", '" + EMAIL + "', '" + PASSWORD + "', '" + USERNAME + "', " + IMAGEID + ", '" + CONFIRMTOKEN + "', " + NOTCONFIRMED + ")");
+
+        userDao.confirmUser(ID);
+
+        String query = "confirmtoken is NULL AND confirmed = true";
+        String queryUnconfirmed = "confirmtoken is not null AND confirmed = false";
+
+        Assert.assertEquals(1, JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, "users", query));
+        Assert.assertEquals(0, JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, "users", queryUnconfirmed));
+
+    }
+
 
 }

@@ -228,18 +228,6 @@ public class SubjectJdbcDao implements SubjectDao {
 
     }
 
-    private List<String> findPrerequisites(final String id){
-        return jdbcTemplate.query("Select * FROM " + TABLE_PREREQ + " WHERE idSub = ?", SubjectJdbcDao::rowMapperPrereqId, id );
-    }
-
-    private List<Long> findProfessors(final String id){
-        return jdbcTemplate.query("Select * FROM " + TABLE_PROF_SUB + " WHERE idSub = ?", SubjectJdbcDao::rowMapperProfessorId, id );
-    }
-
-    private List<Long> findDegrees(final String id){
-        return jdbcTemplate.query("Select * FROM " + TABLE_SUB_DEG + " WHERE idSub = ?", SubjectJdbcDao::rowMapperDegreeId, id );
-    }
-
     private static Long rowMapperProfessorId(final ResultSet rs, final int rowNum) throws SQLException {
         return rs.getLong("idProf");
     }
