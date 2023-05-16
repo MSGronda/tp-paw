@@ -76,7 +76,7 @@ public class DegreeJdbcDao implements DegreeDao {
 
     public Degree create(final String name) {
         Map<String, Object> data = new HashMap<>();
-        data.put("name", name);
+        data.put("degname", name);
 
         Number key = jdbcInsert.executeAndReturnKey(data);
 
