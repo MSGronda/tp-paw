@@ -6,6 +6,7 @@ import ar.edu.itba.paw.persistence.ImageDao;
 import ar.edu.itba.paw.persistence.RecoveryDao;
 import ar.edu.itba.paw.persistence.UserDao;
 import ar.edu.itba.paw.persistence.exceptions.UserEmailAlreadyTakenPersistenceException;
+import ar.edu.itba.paw.services.exceptions.InvalidImageSizeException;
 import ar.edu.itba.paw.services.exceptions.OldPasswordDoesNotMatchException;
 import ar.edu.itba.paw.services.exceptions.UserEmailAlreadyTakenException;
 import org.junit.Assert;
@@ -43,6 +44,9 @@ public class UserServiceImplTest {
     private static final String USERNAME = "username";
 
     private static final long IMAGEID = 3;
+
+    private static final File IMAGE = new File("src/test/resources/large_image.png");
+
 
     @Mock
     private UserDao userDao;
@@ -117,5 +121,19 @@ public class UserServiceImplTest {
 
         //Funciona como esperado si larga excepcion
     }
+
+    @Test(expected = InvalidImageSizeException.class)
+    public void testUpdateProfilePictureNoImage() throws InvalidImageSizeException {
+        User user = new User.UserBuilder(EMAIL, PASSWORD, USERNAME).id(ID).build();
+        us.updateProfilePicture(user, new byte[]{});
+    }
+
+    
+//    @Test(expected = InvalidImageSizeException.class)
+//    public void testUpdateProfilePictureLargeImage() throws InvalidImageSizeException, IOException {
+//        User user = new User.UserBuilder(EMAIL, PASSWORD, USERNAME).id(ID).build();
+//        byte[] image = Files.readAllBytes(IMAGE.toPath());
+//        us.updateProfilePicture(user, image);
+//    }
 
 }
