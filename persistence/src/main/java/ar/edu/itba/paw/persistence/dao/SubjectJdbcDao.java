@@ -181,7 +181,7 @@ public class SubjectJdbcDao implements SubjectDao {
 
         jdbcInsert.execute(data);
         LOGGER.info("Created new subject with id {} and name {} from {} department",id, name, depto);
-        return new Subject(id, name, depto, idCorrelativas, idProfesores, idCarreras, creditos);
+        return new Subject(id, name, depto, creditos, idCorrelativas, idProfesores, idCarreras);
     }
 
     @Override

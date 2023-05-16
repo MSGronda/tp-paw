@@ -10,10 +10,17 @@ public class Subject {
     private Set<String> prerequisites;
     private Set<Long> professorIds;
     private Set<Long> degreeIds;
-    private Map<String,SubjectClass> subjectClasses;
+    private Map<String, SubjectClass> subjectClasses;
 
-    public Subject(final String id, final String name, final String department, final Set<String> prerequisites,
-                   final Set<Long> professorIds, final Set<Long> degreeIds, final int credits) {
+    public Subject(
+        final String id,
+        final String name,
+        final String department,
+        final int credits,
+        final Set<String> prerequisites,
+        final Set<Long> professorIds,
+        final Set<Long> degreeIds
+    ) {
         this.id = id;
         this.name = name;
         this.department = department;
@@ -28,10 +35,10 @@ public class Subject {
         this.name = name;
         this.department = department;
         this.credits = credits;
-        this.prerequisites = new HashSet<>();
-        this.professorIds = new HashSet<>();
-        this.degreeIds = new HashSet<>();
-        this.subjectClasses = new HashMap<>();
+        this.prerequisites = new LinkedHashSet<>();
+        this.professorIds = new LinkedHashSet<>();
+        this.degreeIds = new LinkedHashSet<>();
+        this.subjectClasses = new LinkedHashMap<>();
     }
 
     public Map<String, SubjectClass> getSubjectClasses() {
@@ -62,7 +69,9 @@ public class Subject {
         return degreeIds;
     }
 
-    public Integer getCredits(){ return credits; }
+    public Integer getCredits() {
+        return credits;
+    }
 
     @Override
     public boolean equals(Object o) {
