@@ -149,10 +149,10 @@ public class UserServiceImpl implements UserService {
 
     @Transactional
     @Override
-    public Integer updateSubjectProgress(final Long id, final String idSub, final Integer newProgress) {
+    public Integer updateSubjectProgress(final Long id, final String idSub, final User.SubjectProgressEnum newProgress) {
         int resp;
-        if(newProgress != 0)
-            resp = userDao.updateSubjectProgress(id, idSub,newProgress);
+        if(newProgress != User.SubjectProgressEnum.PENDING)
+            resp = userDao.updateSubjectProgress(id, idSub, newProgress.getProgress());
         else
             resp = userDao.deleteUserProgressForSubject(id, idSub);
 

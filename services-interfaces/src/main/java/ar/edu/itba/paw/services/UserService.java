@@ -25,7 +25,7 @@ public interface UserService extends BaseService<Long, User> {
     Integer getUserSubjectProgress(final Long id, final String idSub);
     Map<String, Integer> getUserAllSubjectProgress(final Long id);
     Integer deleteUserProgressForSubject(final Long id, final String idSub);
-    Integer updateSubjectProgress(final Long id, final String idSub, final Integer newProgress);
+    Integer updateSubjectProgress(final Long id, final String idSub, final User.SubjectProgressEnum newProgress);
     void changePassword(final Long userId, final String password, final String oldPassword,
                         final String userOldPassword) throws OldPasswordDoesNotMatchException;
     void editProfile(final Long userId, final String username);

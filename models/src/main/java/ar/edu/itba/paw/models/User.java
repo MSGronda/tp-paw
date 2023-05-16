@@ -14,7 +14,6 @@ public class User {
     private final boolean confirmed;
     private final Locale locale;
 
-
     public User(final UserBuilder builder) {
         this.id = builder.id;
         this.email = builder.email;
@@ -167,6 +166,28 @@ public class User {
                 throw new NullPointerException("Property \"password\" is null");
             }
             return new User(this);
+        }
+    }
+
+    public enum SubjectProgressEnum {
+
+        PENDING(0),
+        DONE(1);
+
+        private final int progress;
+        SubjectProgressEnum(int progress){
+            this.progress = progress;
+        }
+        public int getProgress() {
+            return progress;
+        }
+        public static SubjectProgressEnum getByInt(int progress){
+            for(SubjectProgressEnum p : SubjectProgressEnum.values()){
+                if(p.progress == progress){
+                    return p;
+                }
+            }
+            throw new IllegalArgumentException(String.valueOf(progress));
         }
     }
 }

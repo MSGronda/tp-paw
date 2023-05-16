@@ -33,6 +33,8 @@ public class UserJdbcDao implements UserDao {
     private final String USER_ROLES_TABLE = "userroles";
     private final String ROLES_TABLE = "roles";
 
+    private static final int NO_ROWS_AFFECTED = 0;
+
     @Autowired
     public UserJdbcDao(final DataSource ds, final ImageDao imageDao) {
         this.imageDao = imageDao;
@@ -124,7 +126,7 @@ public class UserJdbcDao implements UserDao {
         if(getUserSubjectProgress(id,idSub).isPresent()){
             toReturn = jdbcTemplate.update("UPDATE " + USER_SUB_PRG_TABLE + " SET subjectState = ? WHERE idSub = ? AND idUser = ?",
                     newProgress,idSub,id);
-            if(toReturn != 0) {
+            if(toReturn != NO_ROWS_AFFECTED) {
                 LOGGER.info("Updating subject {} progress for user {}", idSub, id);
             } else {
                LOGGER.warn("Failed to update subject {} progress for user {}", idSub, id);
@@ -137,7 +139,7 @@ public class UserJdbcDao implements UserDao {
             data.put("idSub",idSub);
             data.put("subjectState",newProgress);
             toReturn = jdbcUserProgressInsert.execute(data);
-            if(toReturn != 0) {
+            if(toReturn != NO_ROWS_AFFECTED) {
                 LOGGER.info("Generated subject progress in {} for user {}", idSub, id);
             } else {
                 LOGGER.warn("Failed to generate subject progress in {} for user {}", idSub, id);
@@ -149,7 +151,7 @@ public class UserJdbcDao implements UserDao {
     @Override
     public Integer deleteUserProgressForSubject(final Long id, final String idSub){
         int toReturn = jdbcTemplate.update("DELETE FROM " + USER_SUB_PRG_TABLE + " WHERE idSub = ? AND idUser = ?", idSub,id);
-        if(toReturn !=0 ) {
+        if(toReturn != NO_ROWS_AFFECTED) {
             LOGGER.info("Deleted subject progress in {} for user {}", idSub, id);
         } else {
             LOGGER.warn("Progress delete in subject {} for user {} failed", idSub, id);
@@ -181,8 +183,8 @@ public class UserJdbcDao implements UserDao {
 
     @Override
     public void changePassword(final Long userId, final String password) {
-        int success = jdbcTemplate.update("UPDATE " + USERS_TABLE + " SET pass = ? WHERE id = ?", password, userId);
-        if(success != 0) {
+        int toReturn = jdbcTemplate.update("UPDATE " + USERS_TABLE + " SET pass = ? WHERE id = ?", password, userId);
+        if(toReturn != NO_ROWS_AFFECTED) {
             LOGGER.info("Changed password for user {}", userId);
         } else {
             LOGGER.warn("Password change for user {} failed", userId);
@@ -191,8 +193,8 @@ public class UserJdbcDao implements UserDao {
 
     @Override
     public void editProfile(final Long userId, final String username) {
-        int success = jdbcTemplate.update("UPDATE " + USERS_TABLE + " SET username = ? WHERE id = ?", username, userId);
-        if(success != 0)
+        int toReturn = jdbcTemplate.update("UPDATE " + USERS_TABLE + " SET username = ? WHERE id = ?", username, userId);
+        if(toReturn != NO_ROWS_AFFECTED)
             LOGGER.info("Edited username for user {}", username);
         else
             LOGGER.warn("Username edition for user {} failed", userId);

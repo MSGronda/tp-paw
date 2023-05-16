@@ -15,13 +15,9 @@ import ar.edu.itba.paw.webapp.Utils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.MessageSource;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
-import org.springframework.security.web.authentication.rememberme.PersistentTokenBasedRememberMeServices;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
@@ -29,7 +25,6 @@ import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 import java.io.*;
 import java.sql.SQLException;
@@ -51,6 +46,8 @@ public class UserController {
 
     private final UniUserDetailsService uniUserDetailsService;
 
+
+    private static final int NOT_ALTERED = 0;
 
     @Autowired
     public UserController(
@@ -359,9 +356,9 @@ public class UserController {
         }
         User user = authUserService.getCurrentUser();
 
-        int resp = userService.updateSubjectProgress(user.getId(), progressForm.getIdSub(),progressForm.getProgress());
+        int resp = userService.updateSubjectProgress(user.getId(), progressForm.getIdSub(), User.SubjectProgressEnum.getByInt(progressForm.getProgress()));
 
-        if(resp != 1){
+        if(resp == NOT_ALTERED){
             return "invalid parameters"; // we do not give any information on the inner workings
         }
         return "voted";
