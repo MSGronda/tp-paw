@@ -1,4 +1,4 @@
-package ar.edu.itba.paw.persistence;
+package ar.edu.itba.paw.persistence.dao;
 
 import java.util.List;
 import java.util.Optional;

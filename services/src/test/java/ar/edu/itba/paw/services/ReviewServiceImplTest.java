@@ -4,7 +4,7 @@ import ar.edu.itba.paw.models.Review;
 import ar.edu.itba.paw.models.ReviewStatistic;
 import ar.edu.itba.paw.models.Subject;
 import ar.edu.itba.paw.models.User;
-import ar.edu.itba.paw.persistence.ReviewDao;
+import ar.edu.itba.paw.persistence.dao.ReviewDao;
 import ar.edu.itba.paw.services.exceptions.NoGrantedPermissionException;
 import org.junit.Assert;
 import org.junit.Test;

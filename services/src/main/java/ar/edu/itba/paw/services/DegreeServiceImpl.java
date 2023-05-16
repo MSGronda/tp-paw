@@ -1,7 +1,7 @@
 package ar.edu.itba.paw.services;
 
 import ar.edu.itba.paw.models.Degree;
-import ar.edu.itba.paw.persistence.DegreeDao;
+import ar.edu.itba.paw.persistence.dao.DegreeDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

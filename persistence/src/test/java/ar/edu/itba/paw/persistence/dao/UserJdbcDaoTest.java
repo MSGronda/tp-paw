@@ -1,9 +1,10 @@
-package ar.edu.itba.paw.persistence;
+package ar.edu.itba.paw.persistence.dao;
 
 import ar.edu.itba.paw.models.Roles;
 import ar.edu.itba.paw.models.User;
 import ar.edu.itba.paw.persistence.config.TestConfig;
 import ar.edu.itba.paw.persistence.constants.Tables;
+import ar.edu.itba.paw.persistence.dao.UserJdbcDao;
 import ar.edu.itba.paw.persistence.exceptions.UserEmailAlreadyTakenPersistenceException;
 import org.junit.After;
 import org.junit.Assert;
@@ -11,7 +12,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DuplicateKeyException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;

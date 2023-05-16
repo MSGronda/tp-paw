@@ -2,9 +2,8 @@ package ar.edu.itba.paw.services;
 
 import ar.edu.itba.paw.models.Roles;
 import ar.edu.itba.paw.models.User;
-import ar.edu.itba.paw.persistence.ImageDao;
-import ar.edu.itba.paw.persistence.RecoveryDao;
-import ar.edu.itba.paw.persistence.UserDao;
+import ar.edu.itba.paw.persistence.dao.ImageDao;
+import ar.edu.itba.paw.persistence.dao.UserDao;
 import ar.edu.itba.paw.persistence.exceptions.UserEmailAlreadyTakenPersistenceException;
 import ar.edu.itba.paw.services.exceptions.InvalidImageSizeException;
 import ar.edu.itba.paw.services.exceptions.OldPasswordDoesNotMatchException;
@@ -15,15 +14,9 @@ import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
-import org.springframework.mail.MailSender;
-import org.springframework.security.access.method.P;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.util.ResourceUtils;
 
-import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.sql.SQLException;
 import java.util.Optional;
 
 import static org.mockito.ArgumentMatchers.eq;

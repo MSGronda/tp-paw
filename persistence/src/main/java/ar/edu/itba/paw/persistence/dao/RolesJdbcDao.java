@@ -1,10 +1,9 @@
-package ar.edu.itba.paw.persistence;
+package ar.edu.itba.paw.persistence.dao;
 
 import ar.edu.itba.paw.models.Roles;
 import ar.edu.itba.paw.persistence.constants.Tables;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
 
 import javax.sql.DataSource;
@@ -14,7 +13,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public class RolesJdbcDao implements RolesDao{
+public class RolesJdbcDao implements RolesDao {
     private final JdbcTemplate jdbcTemplate;
 
 

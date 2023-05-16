@@ -1,7 +1,7 @@
 package ar.edu.itba.paw.services;
 
 import ar.edu.itba.paw.models.Subject;
-import ar.edu.itba.paw.persistence.SubjectDao;
+import ar.edu.itba.paw.persistence.dao.SubjectDao;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -11,7 +11,6 @@ import org.mockito.junit.MockitoJUnitRunner;
 
 import java.util.*;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;

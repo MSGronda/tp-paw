@@ -1,9 +1,10 @@
-package ar.edu.itba.paw.persistence;
+package ar.edu.itba.paw.persistence.dao;
 
 import ar.edu.itba.paw.models.Roles;
 import ar.edu.itba.paw.persistence.config.TestConfig;
 import org.junit.After;
 import ar.edu.itba.paw.persistence.constants.Tables;
+import ar.edu.itba.paw.persistence.dao.RolesDao;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -15,7 +16,6 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.jdbc.JdbcTestUtils;
 
 import javax.sql.DataSource;
-import javax.xml.crypto.Data;
 import java.util.List;
 import java.util.Optional;
 

@@ -1,8 +1,9 @@
-package ar.edu.itba.paw.persistence;
+package ar.edu.itba.paw.persistence.dao;
 
 import ar.edu.itba.paw.persistence.config.TestConfig;
 import org.junit.After;
 import ar.edu.itba.paw.persistence.constants.Tables;
+import ar.edu.itba.paw.persistence.dao.RecoveryDao;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -14,12 +15,9 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.jdbc.JdbcTestUtils;
 
 import javax.sql.DataSource;
-import javax.swing.text.html.Option;
 import java.sql.Date;
 import java.sql.Timestamp;
 import java.util.Optional;
-
-import static jdk.nashorn.internal.objects.NativeDate.now;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = TestConfig.class)

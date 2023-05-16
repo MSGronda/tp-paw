@@ -1,7 +1,7 @@
 package ar.edu.itba.paw.services;
 
 import ar.edu.itba.paw.models.Professor;
-import ar.edu.itba.paw.persistence.ProfessorDao;
+import ar.edu.itba.paw.persistence.dao.ProfessorDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

@@ -4,7 +4,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Optional;
 
-class Helpers {
+public class Utils {
     public static Optional<Long> getOptionalLong(final ResultSet rs, final String column) throws SQLException {
         long value = rs.getLong(column);
         return rs.wasNull() ? Optional.empty() : Optional.of(value);

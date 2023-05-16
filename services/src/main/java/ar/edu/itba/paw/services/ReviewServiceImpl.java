@@ -1,9 +1,7 @@
 package ar.edu.itba.paw.services;
 
 import ar.edu.itba.paw.models.*;
-import ar.edu.itba.paw.persistence.ReviewDao;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import ar.edu.itba.paw.persistence.dao.ReviewDao;
 import ar.edu.itba.paw.services.exceptions.NoGrantedPermissionException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

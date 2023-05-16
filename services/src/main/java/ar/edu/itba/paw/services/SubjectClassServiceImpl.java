@@ -2,7 +2,7 @@ package ar.edu.itba.paw.services;
 
 import ar.edu.itba.paw.models.Subject;
 import ar.edu.itba.paw.models.SubjectClass;
-import ar.edu.itba.paw.persistence.SubjectClassDao;
+import ar.edu.itba.paw.persistence.dao.SubjectClassDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

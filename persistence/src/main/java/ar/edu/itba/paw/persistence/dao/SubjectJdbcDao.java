@@ -1,4 +1,4 @@
-package ar.edu.itba.paw.persistence;
+package ar.edu.itba.paw.persistence.dao;
 
 import ar.edu.itba.paw.models.Subject;
 import ar.edu.itba.paw.models.User;
@@ -16,7 +16,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.*;
 
-import static ar.edu.itba.paw.persistence.Helpers.*;
+import static ar.edu.itba.paw.persistence.Utils.*;
 
 @Repository
 public class SubjectJdbcDao implements SubjectDao {
