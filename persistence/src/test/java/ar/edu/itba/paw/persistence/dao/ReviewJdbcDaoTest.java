@@ -1,11 +1,10 @@
 package ar.edu.itba.paw.persistence.dao;
 
 import ar.edu.itba.paw.models.Review;
-import ar.edu.itba.paw.models.ReviewStatistic;
+import ar.edu.itba.paw.models.ReviewStats;
 import ar.edu.itba.paw.persistence.config.TestConfig;
 import org.junit.After;
 import ar.edu.itba.paw.persistence.constants.Tables;
-import ar.edu.itba.paw.persistence.dao.ReviewJdbcDao;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -232,8 +231,8 @@ public class ReviewJdbcDaoTest {
         jdbcTemplate.execute("INSERT INTO " + Tables.REVIEWS + " (idsub, iduser, easy, revtext) VALUES" +
                 " ('" + SUBJECTID + "', " + USERID + ", " + EASY + ", '" + TEXT + "')");
 
-        Optional<ReviewStatistic> reviewStats = reviewDao.getReviewStatBySubject(SUBJECTID);
-        Optional<ReviewStatistic> reviewStats2 = reviewDao.getReviewStatBySubject("12.1");
+        Optional<ReviewStats> reviewStats = reviewDao.getReviewStatBySubject(SUBJECTID);
+        Optional<ReviewStats> reviewStats2 = reviewDao.getReviewStatBySubject("12.1");
 
         Assert.assertFalse(reviewStats2.isPresent());
         Assert.assertTrue(reviewStats.isPresent());
@@ -260,7 +259,7 @@ public class ReviewJdbcDaoTest {
         idList.add(SUBJECTID);
         idList.add(SUBJECTID2);
 
-        List<ReviewStatistic> list = reviewDao.getReviewStatBySubjectList(idList);
+        List<ReviewStats> list = reviewDao.getReviewStatBySubjectList(idList);
         Assert.assertEquals(2, list.size());
         Assert.assertEquals(SUBJECTID, list.get(0).getIdSub());
         Assert.assertEquals(SUBJECTID2, list.get(1).getIdSub());
@@ -288,7 +287,7 @@ public class ReviewJdbcDaoTest {
         idList.add(SUBJECTID);
         idList.add(SUBJECTID2);
 
-        Map<String, ReviewStatistic> map = reviewDao.getReviewStatMapBySubjectList(idList);
+        Map<String, ReviewStats> map = reviewDao.getReviewStatMapBySubjectList(idList);
         Assert.assertEquals(2, map.size());
         Assert.assertEquals(SUBJECTID, map.get(SUBJECTID).getIdSub());
         Assert.assertEquals(SUBJECTID2, map.get(SUBJECTID2).getIdSub());

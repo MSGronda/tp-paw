@@ -2,17 +2,13 @@ package ar.edu.itba.paw.webapp.controller;
 
 import ar.edu.itba.paw.models.*;
 import ar.edu.itba.paw.services.*;
-import ar.edu.itba.paw.webapp.auth.UniAuthUser;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -47,7 +43,7 @@ public class SearchController {
         final List<Subject> subjects = subjectService.findByIds(subjectsIds);
         final Map<String, Set<String>> relevantFilters = subjectService.getRelevantFilters(subjects);
 
-        Map<String, ReviewStatistic> reviewStats = reviewService.getReviewStatMapBySubjectList(subjects);
+        Map<String, ReviewStats> reviewStats = reviewService.getReviewStatMapBySubjectList(subjects);
         final int totalPages = subjectService.getTotalPagesForSubjects(params.getOrDefault("q",""),params);
         long userId;
         if(!authUserService.isAuthenticated())

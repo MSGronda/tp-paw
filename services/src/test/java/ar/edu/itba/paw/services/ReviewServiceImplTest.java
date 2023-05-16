@@ -1,7 +1,7 @@
 package ar.edu.itba.paw.services;
 
 import ar.edu.itba.paw.models.Review;
-import ar.edu.itba.paw.models.ReviewStatistic;
+import ar.edu.itba.paw.models.ReviewStats;
 import ar.edu.itba.paw.models.Subject;
 import ar.edu.itba.paw.models.User;
 import ar.edu.itba.paw.persistence.dao.ReviewDao;
@@ -73,9 +73,9 @@ public class ReviewServiceImplTest {
 
     @Test
     public void testGetReviewStatBySubject(){
-        Map<String, ReviewStatistic> map = new HashMap<>();
-        ReviewStatistic reviewStatistic = new ReviewStatistic(ID1, COUNT, 2, 1, 0, 3,0,0);
-        map.put(ID1, reviewStatistic);
+        Map<String, ReviewStats> map = new HashMap<>();
+        ReviewStats reviewStats = new ReviewStats(ID1, COUNT, 2, 1, 0, 3,0,0);
+        map.put(ID1, reviewStats);
         List<String> subjects = new ArrayList<>();
         subjects.add(ID1);
         subjects.add(ID2);
@@ -88,7 +88,7 @@ public class ReviewServiceImplTest {
         List<Subject> list = new ArrayList<>();
         list.add(subject);
         list.add(subject2);
-        Map<String, ReviewStatistic> toRet = reviewService.getReviewStatMapBySubjectList(list);
+        Map<String, ReviewStats> toRet = reviewService.getReviewStatMapBySubjectList(list);
 
         Assert.assertEquals(toRet.size(), 2);
         Assert.assertEquals(toRet.get(ID1).getReviewCount(), COUNT);

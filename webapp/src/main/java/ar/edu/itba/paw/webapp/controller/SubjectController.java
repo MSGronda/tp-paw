@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 import static java.lang.Long.parseLong;
 
@@ -47,7 +46,7 @@ public class SubjectController {
         }
         final Subject subject = maybeSubject.get();
 
-        final ReviewStatistic stats = reviewService.getReviewStatBySubject(id).orElseGet(() -> new ReviewStatistic(id));
+        final ReviewStats stats = reviewService.getReviewStatBySubject(id).orElseGet(() -> new ReviewStats(id));
 
         final Optional<Degree> maybeDegree = degreeService.findById(1L);
         if(!maybeDegree.isPresent()) {

@@ -1,7 +1,7 @@
 package ar.edu.itba.paw.persistence.dao;
 
 import ar.edu.itba.paw.models.Review;
-import ar.edu.itba.paw.models.ReviewStatistic;
+import ar.edu.itba.paw.models.ReviewStats;
 import ar.edu.itba.paw.persistence.constants.Tables;
 import ar.edu.itba.paw.persistence.constants.Views;
 import org.slf4j.Logger;
@@ -95,7 +95,7 @@ public class ReviewJdbcDao implements ReviewDao {
     // - - - - - REVIEW STATISTICS - - - - -
 
     @Override
-    public Optional<ReviewStatistic> getReviewStatBySubject(final String idSub){
+    public Optional<ReviewStats> getReviewStatBySubject(final String idSub){
         return jdbcTemplate.query("SELECT * FROM " + Views.REVIEW_STATS + " WHERE idSub = ?", ReviewJdbcDao::rowMapperReviewStatistic, idSub)
                 .stream().findFirst();
     }
@@ -115,7 +115,7 @@ public class ReviewJdbcDao implements ReviewDao {
     }
 
     @Override
-    public List<ReviewStatistic> getReviewStatBySubjectList(final List<String> idSubs){
+    public List<ReviewStats> getReviewStatBySubjectList(final List<String> idSubs){
         if(idSubs.isEmpty()){
             return new ArrayList<>();
         }
@@ -124,7 +124,7 @@ public class ReviewJdbcDao implements ReviewDao {
     }
 
     @Override
-    public Map<String, ReviewStatistic> getReviewStatMapBySubjectList(final List<String> idSubs){
+    public Map<String, ReviewStats> getReviewStatMapBySubjectList(final List<String> idSubs){
         if(idSubs.isEmpty()){
             return new HashMap<>();
         }
@@ -133,8 +133,8 @@ public class ReviewJdbcDao implements ReviewDao {
         return jdbcTemplate.query(sql, ReviewJdbcDao::reviewStatisticMapExtractor, idSubs.toArray());
     }
 
-    private static Map<String,ReviewStatistic> reviewStatisticMapExtractor(final ResultSet rs) throws SQLException{
-        final Map<String, ReviewStatistic> reviewStats = new HashMap<>();
+    private static Map<String, ReviewStats> reviewStatisticMapExtractor(final ResultSet rs) throws SQLException{
+        final Map<String, ReviewStats> reviewStats = new HashMap<>();
         while (rs.next()) {
             String idSub = rs.getString("idSub");
             int reviewCount = rs.getInt("reviewCount");
@@ -145,16 +145,16 @@ public class ReviewJdbcDao implements ReviewDao {
             int averageTimeDemandingCount = rs.getInt("averageTimeDemandingCount");
             int timeDemandingCount = rs.getInt("timeDemandingCount");
 
-            final ReviewStatistic subClass = reviewStats.getOrDefault(idSub,
-                    new ReviewStatistic(idSub,reviewCount,easyCount,mediumCount,hardCount,notTimeDemandingCount,averageTimeDemandingCount,timeDemandingCount));
+            final ReviewStats subClass = reviewStats.getOrDefault(idSub,
+                    new ReviewStats(idSub,reviewCount,easyCount,mediumCount,hardCount,notTimeDemandingCount,averageTimeDemandingCount,timeDemandingCount));
 
             reviewStats.put(idSub, subClass);
         }
         return reviewStats;
     }
 
-    private static ReviewStatistic rowMapperReviewStatistic(final ResultSet rs,final  int rowNum) throws SQLException {
-        return new ReviewStatistic(
+    private static ReviewStats rowMapperReviewStatistic(final ResultSet rs, final  int rowNum) throws SQLException {
+        return new ReviewStats(
                 rs.getString("idSub"),
                 rs.getInt("reviewCount"),
                 rs.getInt("easyCount"),

@@ -5,7 +5,6 @@ import ar.edu.itba.paw.services.exceptions.UserEmailNotFoundException;
 
 public interface AuthUserService {
     boolean isAuthenticated();
-
     Boolean isCurrentUserEditor();
     User getCurrentUser();
 }

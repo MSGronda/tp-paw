@@ -1,28 +1,18 @@
 package ar.edu.itba.paw.webapp.controller;
 
 import ar.edu.itba.paw.models.Degree;
-import ar.edu.itba.paw.models.Professor;
-import ar.edu.itba.paw.models.ReviewStatistic;
+import ar.edu.itba.paw.models.ReviewStats;
 import ar.edu.itba.paw.models.Subject;
-import ar.edu.itba.paw.models.User;
 import ar.edu.itba.paw.services.*;
-import ar.edu.itba.paw.webapp.auth.UniAuthUser;
 import ar.edu.itba.paw.webapp.exceptions.DegreeNotFoundException;
-import ar.edu.itba.paw.webapp.exceptions.UserNotFoundException;
-import ar.edu.itba.paw.webapp.exceptions.SubjectNotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
 
-import javax.swing.text.html.Option;
 import java.util.*;
-import javax.servlet.http.HttpSession;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -73,8 +63,8 @@ public class HomeController {
             subjects.addAll(yearSubjects);
         }
 
-        Map<String, ReviewStatistic> reviewStatistic = rs.getReviewStatMapBySubjectList(subjects);
-        Map<String, ReviewStatistic> electivesReviewStatistic = rs.getReviewStatMapBySubjectList(infElectives);
+        Map<String, ReviewStats> reviewStatistic = rs.getReviewStatMapBySubjectList(subjects);
+        Map<String, ReviewStats> electivesReviewStatistic = rs.getReviewStatMapBySubjectList(infElectives);
 
         long userId;
         if(!aus.isAuthenticated()) {

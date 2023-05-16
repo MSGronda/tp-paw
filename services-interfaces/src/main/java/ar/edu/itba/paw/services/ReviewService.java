@@ -2,7 +2,6 @@ package ar.edu.itba.paw.services;
 
 import ar.edu.itba.paw.models.*;
 import ar.edu.itba.paw.services.exceptions.NoGrantedPermissionException;
-import com.sun.org.apache.xpath.internal.operations.Bool;
 
 import java.sql.SQLException;
 import java.util.List;
@@ -18,11 +17,11 @@ public interface ReviewService extends BaseService<Long, Review> {
     List<Review> getAllSubjectReviewsWithUsername(final String subjectId, final Map<String,String> param);
     List<Review> getAllBySubject(final String idsub);
 
-    Optional<ReviewStatistic> getReviewStatBySubject(final String idSub);
+    Optional<ReviewStats> getReviewStatBySubject(final String idSub);
 
-    Map<String, ReviewStatistic> getReviewStatMapBySubjectList(final List<Subject> subjects);
-    Map<String, ReviewStatistic> getReviewStatMapBySubjectIdList(final List<String> idSubs);
-    List<ReviewStatistic> getReviewStatBySubjectIdList(final List<String> idSubs);
+    Map<String, ReviewStats> getReviewStatMapBySubjectList(final List<Subject> subjects);
+    Map<String, ReviewStats> getReviewStatMapBySubjectIdList(final List<String> idSubs);
+    List<ReviewStats> getReviewStatBySubjectIdList(final List<String> idSubs);
     Review create(final Boolean anonymous, final Integer easy, final Integer timeDemanding, final String text,
                   final String subjectId, final long userId ) throws SQLException;
 

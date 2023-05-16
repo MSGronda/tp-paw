@@ -1,10 +1,8 @@
 package ar.edu.itba.paw.models;
 
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.Objects;
 
-public class ReviewStatistic {
+public class ReviewStats {
     private final String idSub;
     private final int reviewCount;
     private final int easyCount;
@@ -20,8 +18,8 @@ public class ReviewStatistic {
     private static final int NO_DATA=-1, EASY = 0, MEDIUM = 1, HARD = 2;
     private static final int NOT_TIME_DEMANDING = 0, AVERAGE_TIME_DEMANDING = 1 ,TIME_DEMANDING = 2;
 
-    public ReviewStatistic(final String idSub, final int reviewCount, final int easyCount, final int mediumCount, final int hardCount,
-                           final int notTimeDemandingCount, final int averageTimeDemandingCount, final int timeDemandingCount) {
+    public ReviewStats(final String idSub, final int reviewCount, final int easyCount, final int mediumCount, final int hardCount,
+                       final int notTimeDemandingCount, final int averageTimeDemandingCount, final int timeDemandingCount) {
         this.idSub = idSub;
         this.reviewCount = reviewCount;
         this.easyCount = easyCount;
@@ -35,7 +33,7 @@ public class ReviewStatistic {
         this.timeDemaning = getTimeDifficulty();
     }
 
-    public ReviewStatistic(final String idSub){
+    public ReviewStats(final String idSub){
         this.idSub = idSub;
         this.reviewCount = 0;
         this.easyCount = 0;
@@ -117,7 +115,7 @@ public class ReviewStatistic {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        ReviewStatistic that = (ReviewStatistic) o;
+        ReviewStats that = (ReviewStats) o;
         return Objects.equals(idSub, that.idSub);
     }
 

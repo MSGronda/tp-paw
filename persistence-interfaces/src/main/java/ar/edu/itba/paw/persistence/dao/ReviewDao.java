@@ -1,7 +1,7 @@
 package ar.edu.itba.paw.persistence.dao;
 
 import ar.edu.itba.paw.models.Review;
-import ar.edu.itba.paw.models.ReviewStatistic;
+import ar.edu.itba.paw.models.ReviewStats;
 
 import java.sql.SQLException;
 import java.util.List;
@@ -23,9 +23,9 @@ public interface ReviewDao extends RWDao<Long,Review> {
 
     List<Review> getAllBySubject(final String id);
 
-    Map<String, ReviewStatistic> getReviewStatMapBySubjectList(final List<String> idSubs);
-    Optional<ReviewStatistic> getReviewStatBySubject(final String idSub);
-    List<ReviewStatistic> getReviewStatBySubjectList(final List<String> idSubs);
+    Map<String, ReviewStats> getReviewStatMapBySubjectList(final List<String> idSubs);
+    Optional<ReviewStats> getReviewStatBySubject(final String idSub);
+    List<ReviewStats> getReviewStatBySubjectList(final List<String> idSubs);
     List<Review> getAllUserReviewsWithSubjectName(final Long userId);
     int getTotalPagesForReviews(final String subjectId);
     List<Review> getAllSubjectReviewsWithUsername(final String subjectId, final Map<String,String> params);

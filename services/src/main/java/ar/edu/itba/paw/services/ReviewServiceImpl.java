@@ -71,20 +71,20 @@ public class ReviewServiceImpl implements ReviewService {
     }
 
     @Override
-    public Optional<ReviewStatistic> getReviewStatBySubject(final String idSub) {
+    public Optional<ReviewStats> getReviewStatBySubject(final String idSub) {
         return reviewDao.getReviewStatBySubject(idSub);
     }
 
-    public Map<String, ReviewStatistic> getReviewStatMapBySubjectList(final List<Subject> subjects){
+    public Map<String, ReviewStats> getReviewStatMapBySubjectList(final List<Subject> subjects){
         List<String> idSubs = new ArrayList<>();
         for(Subject sub : subjects){
             idSubs.add(sub.getId());
         }
 
-        Map<String, ReviewStatistic> incomplete = reviewDao.getReviewStatMapBySubjectList(idSubs);
+        Map<String, ReviewStats> incomplete = reviewDao.getReviewStatMapBySubjectList(idSubs);
 
         for(String idSub : idSubs){
-            incomplete.putIfAbsent(idSub, new ReviewStatistic(idSub));
+            incomplete.putIfAbsent(idSub, new ReviewStats(idSub));
         }
 
 
@@ -92,12 +92,12 @@ public class ReviewServiceImpl implements ReviewService {
     }
 
     @Override
-    public Map<String, ReviewStatistic> getReviewStatMapBySubjectIdList(final List<String> idSubs){
+    public Map<String, ReviewStats> getReviewStatMapBySubjectIdList(final List<String> idSubs){
         return reviewDao.getReviewStatMapBySubjectList(idSubs);
     }
 
     @Override
-    public List<ReviewStatistic> getReviewStatBySubjectIdList(final List<String> idSubs){
+    public List<ReviewStats> getReviewStatBySubjectIdList(final List<String> idSubs){
         return reviewDao.getReviewStatBySubjectList(idSubs);
     }
 
