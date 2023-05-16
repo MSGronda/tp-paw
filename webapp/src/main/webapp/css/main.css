@@ -36,11 +36,11 @@ body {
     flex-direction: column;
     background-color: #efefef;
     opacity: 0;
+    transition: .33s opacity ease-in;
 }
 
 body.ready {
     opacity: 1;
-    transition: .25s opacity;
 }
 
 main {
