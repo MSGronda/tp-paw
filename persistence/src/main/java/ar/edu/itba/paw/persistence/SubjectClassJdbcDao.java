@@ -3,6 +3,8 @@ package ar.edu.itba.paw.persistence;
 import ar.edu.itba.paw.models.Professor;
 import ar.edu.itba.paw.models.Subject;
 import ar.edu.itba.paw.models.SubjectClass;
+import ar.edu.itba.paw.persistence.constants.Tables;
+import ar.edu.itba.paw.persistence.constants.Views;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
@@ -16,33 +18,23 @@ import java.util.*;
 
 @Repository
 public class SubjectClassJdbcDao implements SubjectClassDao {
-
-    private static final String TABLE_CLASS = "class";
-    private static final String TABLE_CLASS_LOC_TIME = "classLocTime";
-    private static final String TABLE_CLASS_PROF = "classProfessors";
-    private static final String TABLE_PROF = "professors";
-    private static final String TABLE_SUBJECTS = "subjects";
-
-    private static final String VIEW_JOIN = "joinedsubjects";
-    private static final String USER_SUB_PRG_TABLE = "userSubjectProgress";
-
-    private static final String QUERY_JOIN = "SELECT * FROM " + TABLE_CLASS + " NATURAL JOIN " + TABLE_CLASS_LOC_TIME
-            + " NATURAL JOIN " + TABLE_CLASS_PROF + " FULL JOIN " + TABLE_PROF + " ON " + TABLE_CLASS_PROF + ".idProf = " +
-            TABLE_PROF + ".id";
+    private static final String QUERY_JOIN = "SELECT * FROM " + Tables.CLASS + " NATURAL JOIN " + Tables.CLASS_LOCTIME
+            + " NATURAL JOIN " + Tables.CLASS_PROFS + " FULL JOIN " + Tables.PROFS + " ON " + Tables.CLASS_PROFS + ".idProf = " +
+        Tables.PROFS + ".id";
 
     private static final String COMPLETE_SUB =
             "SELECT *\n" +
-            "FROM " + TABLE_SUBJECTS + " AS s LEFT JOIN " + TABLE_CLASS + " AS sc ON s.id = sc.idsub " + " LEFT JOIN " + TABLE_CLASS_LOC_TIME + " AS slt ON s.id = slt.idsub AND slt.idclass = sc.idclass " +
+            "FROM " + Tables.SUBJECTS + " AS s LEFT JOIN " + Tables.CLASS + " AS sc ON s.id = sc.idsub " + " LEFT JOIN " + Tables.CLASS_LOCTIME + " AS slt ON s.id = slt.idsub AND slt.idclass = sc.idclass " +
             "WHERE s.id IN (SELECT v.id\n" +
-            "                FROM " + VIEW_JOIN + " AS v\n" +
-            "                WHERE v.id NOT IN (SELECT idSub FROM " + USER_SUB_PRG_TABLE + " WHERE idSub = v.id)\n" +
+            "                FROM " + Views.JOINED_SUBJECTS + " AS v\n" +
+            "                WHERE v.id NOT IN (SELECT idSub FROM " + Tables.USER_SUBJECT_PROGRESS + " WHERE idSub = v.id)\n" +
             "                GROUP BY v.id\n" +
             "                HAVING sum(CASE WHEN v.idprereq IS null THEN 1 ELSE 0 END) > 0\n" +
             "                    OR\n" +
             "                        COUNT(DISTINCT v.idprereq) =\n" +
             "                        (\n" +
             "                            SELECT COUNT(*)\n" +
-            "                            FROM " + USER_SUB_PRG_TABLE  + " AS sp FULL JOIN prereqsubjects AS pr2 ON sp.idSub = pr2.idPreReq\n" +
+            "                            FROM " + Tables.USER_SUBJECT_PROGRESS  + " AS sp FULL JOIN prereqsubjects AS pr2 ON sp.idSub = pr2.idPreReq\n" +
             "                            WHERE sp.idUser = ? AND pr2.idSub = v.id\n" +
             "                            GROUP BY pr2.idSub\n" +
             "                        )\n" +
@@ -95,21 +87,21 @@ public class SubjectClassJdbcDao implements SubjectClassDao {
 
         // TODO: check if this is correct
         this.jdbcInsertSubjectClass = new SimpleJdbcInsert(ds)
-                .withTableName(TABLE_CLASS)
+                .withTableName(Tables.CLASS)
                 .usingGeneratedKeyColumns("idSub", "idClass");
 
         this.jdbcInsertSubjectClassLocTime = new SimpleJdbcInsert(ds)
-                .withTableName(TABLE_CLASS_LOC_TIME)
+                .withTableName(Tables.CLASS_LOCTIME)
                 .usingGeneratedKeyColumns("idLocTime");
 
         jdbcInsertSubjectClassProfessor = new SimpleJdbcInsert(ds)
-                .withTableName(TABLE_CLASS_PROF)
+                .withTableName(Tables.CLASS_PROFS)
                 .usingGeneratedKeyColumns("idSub", "idClass", "idProf");
     }
 
     @Override
     public List<SubjectClass> getBySubIdRaw(final String idSub) {
-        return jdbcTemplate.query("SELECT * FROM " + TABLE_CLASS + " WHERE idSub = ?", SubjectClassJdbcDao::rowMapperClass, idSub);
+        return jdbcTemplate.query("SELECT * FROM " + Tables.CLASS + " WHERE idSub = ?", SubjectClassJdbcDao::rowMapperClass, idSub);
     }
 
     @Override

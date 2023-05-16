@@ -1,8 +1,8 @@
 package ar.edu.itba.paw.persistence;
 
-import ar.edu.itba.paw.models.Image;
 import ar.edu.itba.paw.models.Roles;
 import ar.edu.itba.paw.models.User;
+import ar.edu.itba.paw.persistence.constants.Tables;
 import ar.edu.itba.paw.persistence.exceptions.UserEmailAlreadyTakenPersistenceException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,45 +19,38 @@ import java.util.*;
 
 @Repository
 public class UserJdbcDao implements UserDao {
+    private static final Logger LOGGER = LoggerFactory.getLogger(UserJdbcDao.class);
+
     private final JdbcTemplate jdbcTemplate;
     private final SimpleJdbcInsert jdbcInsert;
     private final SimpleJdbcInsert jdbcUserProgressInsert;
-    private final ImageDao imageDao;
-
     private final SimpleJdbcInsert jdbcUserRolesInsert;
 
-    private final String USERS_TABLE = "users";
-    private final String USER_SUB_PRG_TABLE = "userSubjectProgress";
-    private static final Logger LOGGER = LoggerFactory.getLogger(UserJdbcDao.class);
-
-    private final String USER_ROLES_TABLE = "userroles";
-    private final String ROLES_TABLE = "roles";
 
     private static final int NO_ROWS_AFFECTED = 0;
 
     @Autowired
-    public UserJdbcDao(final DataSource ds, final ImageDao imageDao) {
-        this.imageDao = imageDao;
+    public UserJdbcDao(final DataSource ds) {
         this.jdbcTemplate = new JdbcTemplate(ds);
         this.jdbcInsert = new SimpleJdbcInsert(ds)
-            .withTableName(USERS_TABLE)
+            .withTableName(Tables.USERS)
             .usingGeneratedKeyColumns("id");
         this.jdbcUserProgressInsert = new SimpleJdbcInsert(ds)
-                .withTableName(USER_SUB_PRG_TABLE);
+                .withTableName(Tables.USER_SUBJECT_PROGRESS);
         this.jdbcUserRolesInsert = new SimpleJdbcInsert(ds)
-                .withTableName(USER_ROLES_TABLE);
+                .withTableName(Tables.USER_ROLES);
     }
 
 
 
     public Optional<User> findById(final Long id) {
-        return jdbcTemplate.query("SELECT * FROM " + USERS_TABLE + " WHERE id = ? AND confirmed = true", UserJdbcDao::rowMapper, id)
+        return jdbcTemplate.query("SELECT * FROM " + Tables.USERS + " WHERE id = ? AND confirmed = true", UserJdbcDao::rowMapper, id)
             .stream().findFirst();
     }
 
     @Override
     public List<User> getAll() {
-        return jdbcTemplate.query("SELECT * FROM " + USERS_TABLE + " WHERE confirmed = true", UserJdbcDao::rowMapper);
+        return jdbcTemplate.query("SELECT * FROM " + Tables.USERS + " WHERE confirmed = true", UserJdbcDao::rowMapper);
     }
 
 
@@ -95,7 +88,7 @@ public class UserJdbcDao implements UserDao {
 
     @Override
     public void updateConfirmToken(long userId, String token) {
-        jdbcTemplate.update("UPDATE " + USERS_TABLE + " SET confirmtoken = ? WHERE id = ?", token, userId);
+        jdbcTemplate.update("UPDATE " + Tables.USERS + " SET confirmtoken = ? WHERE id = ?", token, userId);
     }
 
     @Override
@@ -112,19 +105,19 @@ public class UserJdbcDao implements UserDao {
     // - - - - - - - - - Subject Progress - - - - - - - - -
     @Override
     public Optional<Integer> getUserSubjectProgress(final Long id, final String idSub) {
-        return jdbcTemplate.query("SELECT * FROM " + USER_SUB_PRG_TABLE + " WHERE idUser = ? AND idSub = ?",
+        return jdbcTemplate.query("SELECT * FROM " + Tables.USER_SUBJECT_PROGRESS + " WHERE idUser = ? AND idSub = ?",
                 UserJdbcDao::rowMapperUserSubjectProgress, id, idSub).stream().findFirst();
     }
     @Override
     public Map<String, Integer> getUserAllSubjectProgress(final Long id) {
-        return jdbcTemplate.query("SELECT * FROM " + USER_SUB_PRG_TABLE + " WHERE idUser = ?",
+        return jdbcTemplate.query("SELECT * FROM " + Tables.USER_SUBJECT_PROGRESS + " WHERE idUser = ?",
                 UserJdbcDao::userAllSubjectsProgressExtractor, id);
     }
     @Override
     public Integer updateSubjectProgress(final Long id, final String idSub, final Integer newProgress){
         int toReturn;
         if(getUserSubjectProgress(id,idSub).isPresent()){
-            toReturn = jdbcTemplate.update("UPDATE " + USER_SUB_PRG_TABLE + " SET subjectState = ? WHERE idSub = ? AND idUser = ?",
+            toReturn = jdbcTemplate.update("UPDATE " + Tables.USER_SUBJECT_PROGRESS + " SET subjectState = ? WHERE idSub = ? AND idUser = ?",
                     newProgress,idSub,id);
             if(toReturn != NO_ROWS_AFFECTED) {
                 LOGGER.info("Updating subject {} progress for user {}", idSub, id);
@@ -150,7 +143,7 @@ public class UserJdbcDao implements UserDao {
 
     @Override
     public Integer deleteUserProgressForSubject(final Long id, final String idSub){
-        int toReturn = jdbcTemplate.update("DELETE FROM " + USER_SUB_PRG_TABLE + " WHERE idSub = ? AND idUser = ?", idSub,id);
+        int toReturn = jdbcTemplate.update("DELETE FROM " + Tables.USER_SUBJECT_PROGRESS + " WHERE idSub = ? AND idUser = ?", idSub,id);
         if(toReturn != NO_ROWS_AFFECTED) {
             LOGGER.info("Deleted subject progress in {} for user {}", idSub, id);
         } else {
@@ -162,12 +155,12 @@ public class UserJdbcDao implements UserDao {
 
     @Override
     public Optional<User> getUserWithEmail(final String email){
-        return jdbcTemplate.query("SELECT * FROM " + USERS_TABLE + " WHERE email = ? AND confirmed = true", UserJdbcDao::rowMapper, email).stream().findFirst();
+        return jdbcTemplate.query("SELECT * FROM " + Tables.USERS + " WHERE email = ? AND confirmed = true", UserJdbcDao::rowMapper, email).stream().findFirst();
     }
 
     @Override
     public Optional<User> getUnconfirmedUserWithEmail(final String email) {
-        return jdbcTemplate.query("SELECT * FROM " + USERS_TABLE + " WHERE email = ? AND confirmed = false", UserJdbcDao::rowMapper, email).stream().findFirst();
+        return jdbcTemplate.query("SELECT * FROM " + Tables.USERS + " WHERE email = ? AND confirmed = false", UserJdbcDao::rowMapper, email).stream().findFirst();
     }
 
     private static Map<String,Integer> userAllSubjectsProgressExtractor(final ResultSet rs) throws SQLException {
@@ -183,7 +176,7 @@ public class UserJdbcDao implements UserDao {
 
     @Override
     public void changePassword(final Long userId, final String password) {
-        int toReturn = jdbcTemplate.update("UPDATE " + USERS_TABLE + " SET pass = ? WHERE id = ?", password, userId);
+        int toReturn = jdbcTemplate.update("UPDATE " + Tables.USERS + " SET pass = ? WHERE id = ?", password, userId);
         if(toReturn != NO_ROWS_AFFECTED) {
             LOGGER.info("Changed password for user {}", userId);
         } else {
@@ -193,7 +186,7 @@ public class UserJdbcDao implements UserDao {
 
     @Override
     public void editProfile(final Long userId, final String username) {
-        int toReturn = jdbcTemplate.update("UPDATE " + USERS_TABLE + " SET username = ? WHERE id = ?", username, userId);
+        int toReturn = jdbcTemplate.update("UPDATE " + Tables.USERS + " SET username = ? WHERE id = ?", username, userId);
         if(toReturn != NO_ROWS_AFFECTED)
             LOGGER.info("Edited username for user {}", username);
         else
@@ -205,13 +198,13 @@ public class UserJdbcDao implements UserDao {
 
     @Override
     public void setLocale(long userId, Locale locale) {
-        jdbcTemplate.update("UPDATE " + USERS_TABLE + " SET locale = ? WHERE id = ?", locale.toString(), userId);
+        jdbcTemplate.update("UPDATE " + Tables.USERS + " SET locale = ? WHERE id = ?", locale.toString(), userId);
     }
 
     //------------------------ User Roles ---------------------------------------------------
     @Override
     public List<Roles> getUserRoles(final Long userId){
-        return jdbcTemplate.query("SELECT id,name FROM " + ROLES_TABLE + " FULL JOIN " + USER_ROLES_TABLE + " ON id = roleId WHERE userId = ?", UserJdbcDao::rolesRowMapper, userId);
+        return jdbcTemplate.query("SELECT id,name FROM " + Tables.ROLES + " FULL JOIN " + Tables.USER_ROLES + " ON id = roleId WHERE userId = ?", UserJdbcDao::rolesRowMapper, userId);
     }
 
     @Override
@@ -236,7 +229,7 @@ public class UserJdbcDao implements UserDao {
     }
 
     public Integer updateUserRoles(final Long roleId, final Long userId) {
-        int success = jdbcTemplate.update("UPDATE " + USER_ROLES_TABLE + " SET roleid = ? WHERE userid = ?", roleId, userId);
+        int success = jdbcTemplate.update("UPDATE " + Tables.USER_ROLES + " SET roleid = ? WHERE userid = ?", roleId, userId);
         if(success != 0) {
             LOGGER.info("Updated user with id {} role to {}", userId, roleId);
         } else {
@@ -249,13 +242,13 @@ public class UserJdbcDao implements UserDao {
 
     @Override
     public Optional<User> findUserByConfirmToken(final String token) {
-        return jdbcTemplate.query("SELECT * FROM " + USERS_TABLE + " WHERE confirmtoken = ?", UserJdbcDao::rowMapper, token)
+        return jdbcTemplate.query("SELECT * FROM " + Tables.USERS + " WHERE confirmtoken = ?", UserJdbcDao::rowMapper, token)
                 .stream().findFirst();
     }
 
     @Override
     public void confirmUser(final long userId) {
-        jdbcTemplate.update("UPDATE " + USERS_TABLE + " SET confirmtoken = NULL, confirmed = true WHERE id = ?", userId);
+        jdbcTemplate.update("UPDATE " + Tables.USERS + " SET confirmtoken = NULL, confirmed = true WHERE id = ?", userId);
     }
 
     private static User rowMapper(final ResultSet rs, final int rowNum) throws SQLException {

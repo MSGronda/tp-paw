@@ -1,6 +1,7 @@
 package ar.edu.itba.paw.persistence;
 
 import ar.edu.itba.paw.models.Professor;
+import ar.edu.itba.paw.persistence.constants.Tables;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,24 +16,21 @@ import java.util.*;
 
 @Repository
 public class ProfessorJdbcDao implements ProfessorDao {
-    private static final String TABLE_PROF = "professors";
-    private static final String TABLE_PROF_SUB = "professorsSubjects";
+    private static final Logger LOGGER = LoggerFactory.getLogger(ProfessorJdbcDao.class);
 
     private final JdbcTemplate jdbcTemplate;
     private final SimpleJdbcInsert jdbcInsertProfesor;
     private final SimpleJdbcInsert jdbcInsertMateriaProfesor;
-    private static final Logger LOGGER = LoggerFactory.getLogger(ProfessorJdbcDao.class);
-
 
     @Autowired
     public ProfessorJdbcDao(final DataSource ds) {
         this.jdbcTemplate = new JdbcTemplate(ds);
         this.jdbcInsertProfesor = new SimpleJdbcInsert(ds)
-                .withTableName(TABLE_PROF)
+                .withTableName(Tables.PROFS)
                 .usingGeneratedKeyColumns("id");
 
         this.jdbcInsertMateriaProfesor = new SimpleJdbcInsert(ds)
-                .withTableName(TABLE_PROF_SUB)
+                .withTableName(Tables.PROFS_SUBJECTS)
                 .usingGeneratedKeyColumns("idProf", "idSub");
     }
 
@@ -80,12 +78,12 @@ public class ProfessorJdbcDao implements ProfessorDao {
     }
 
     public List<Professor> getAll() {
-        return jdbcTemplate.query("SELECT * FROM " + TABLE_PROF, ProfessorJdbcDao::rowMapperProf);
+        return jdbcTemplate.query("SELECT * FROM " + Tables.PROFS_SUBJECTS, ProfessorJdbcDao::rowMapperProf);
     }
 
     @Override
     public List<Professor> getAllBySubject(final String idSubject) {
-        return joinRowToProfs(jdbcTemplate.query("SELECT * FROM " + TABLE_PROF + " JOIN " + TABLE_PROF_SUB + " ps ON ps.idProf = id WHERE ps.idSub = ?", ProfessorJdbcDao::rowMapperJoin, idSubject));
+        return joinRowToProfs(jdbcTemplate.query("SELECT * FROM " + Tables.PROFS + " JOIN " + Tables.PROFS_SUBJECTS + " ps ON ps.idProf = id WHERE ps.idSub = ?", ProfessorJdbcDao::rowMapperJoin, idSubject));
     }
 
     @Override
@@ -133,12 +131,12 @@ public class ProfessorJdbcDao implements ProfessorDao {
 
     // No incluye las materias que enseña, el atributo es null
     private Optional<Professor> findByIdRaw(final Long id) {
-        return jdbcTemplate.query("SELECT * FROM " + TABLE_PROF + " WHERE id = ?", ProfessorJdbcDao::rowMapperProf, id).stream().findFirst();
+        return jdbcTemplate.query("SELECT * FROM " + Tables.PROFS + " WHERE id = ?", ProfessorJdbcDao::rowMapperProf, id).stream().findFirst();
     }
 
     // Dado un ID de prof, busco todos los ids de las materias en cual esta ese prof
     private List<String> findSubjects(final Long id) {
-        return jdbcTemplate.query("SELECT * FROM " + TABLE_PROF_SUB + " WHERE idProf = ?", ProfessorJdbcDao::rowMapperSubId, id);
+        return jdbcTemplate.query("SELECT * FROM " + Tables.PROFS_SUBJECTS + " WHERE idProf = ?", ProfessorJdbcDao::rowMapperSubId, id);
     }
 
 

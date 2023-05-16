@@ -2,6 +2,7 @@ package ar.edu.itba.paw.persistence;
 
 import ar.edu.itba.paw.models.Degree;
 import ar.edu.itba.paw.models.Semester;
+import ar.edu.itba.paw.persistence.constants.Tables;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,28 +19,22 @@ import java.util.stream.Collectors;
 @Repository
 
 public class DegreeJdbcDao implements DegreeDao {
+    private static final Logger LOGGER = LoggerFactory.getLogger(DegreeJdbcDao.class);
 
     private final JdbcTemplate jdbcTemplate;
     private final SimpleJdbcInsert jdbcInsert;
-
-    private final static String degree_table_name = "degrees";
-    private final static String subdegree_table_name = "subjectsDegrees";
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(DegreeJdbcDao.class);
-
-
 
     @Autowired
     public DegreeJdbcDao(final DataSource ds) {
         this.jdbcTemplate = new JdbcTemplate(ds);
         this.jdbcInsert = new SimpleJdbcInsert(ds)
-                .withTableName(degree_table_name)
+                .withTableName(Tables.DEGREES)
                 .usingGeneratedKeyColumns("id");
     }
 
     @Override
     public Optional<Degree> findById(final Long id) {
-        Optional<Degree> maybeDegree = jdbcTemplate.query("SELECT * FROM " + degree_table_name + " WHERE id = ?", DegreeJdbcDao::rowMapper, id)
+        Optional<Degree> maybeDegree = jdbcTemplate.query("SELECT * FROM " + Tables.DEGREES + " WHERE id = ?", DegreeJdbcDao::rowMapper, id)
                 .stream().findFirst();
 
         if (!maybeDegree.isPresent()) return Optional.empty();
@@ -54,7 +49,7 @@ public class DegreeJdbcDao implements DegreeDao {
 
     @Override
     public List<Degree> getAll() {
-        return jdbcTemplate.query("SELECT * FROM " + degree_table_name, DegreeJdbcDao::rowMapper)
+        return jdbcTemplate.query("SELECT * FROM " + Tables.DEGREES, DegreeJdbcDao::rowMapper)
                 .stream().map((deg) ->
                     new Degree(
                             deg.getId(),
@@ -89,7 +84,7 @@ public class DegreeJdbcDao implements DegreeDao {
     }
 
     private List<Semester> getSemesters(final long degId) {
-        List<Integer> semesterNumbers = jdbcTemplate.query("SELECT DISTINCT semester FROM " + subdegree_table_name + " WHERE iddeg = ?", DegreeJdbcDao::semesterCountRowMapper, degId);
+        List<Integer> semesterNumbers = jdbcTemplate.query("SELECT DISTINCT semester FROM " + Tables.SUBJECTS_DEGREES + " WHERE iddeg = ?", DegreeJdbcDao::semesterCountRowMapper, degId);
 
         final List<Semester> semesters = new ArrayList<>();
         for (Integer num : semesterNumbers) {
@@ -101,7 +96,7 @@ public class DegreeJdbcDao implements DegreeDao {
     }
 
     private List<String> getSubjectsBySemester(final long degId, final int semesterNumber) {
-        return jdbcTemplate.query("SELECT * FROM " + subdegree_table_name + " WHERE iddeg = ? AND semester = ?", DegreeJdbcDao::subIdRowMapper, degId, semesterNumber);
+        return jdbcTemplate.query("SELECT * FROM " + Tables.SUBJECTS_DEGREES + " WHERE iddeg = ? AND semester = ?", DegreeJdbcDao::subIdRowMapper, degId, semesterNumber);
     }
 
     private static String subIdRowMapper(final ResultSet rs, final int rowNum) throws SQLException {

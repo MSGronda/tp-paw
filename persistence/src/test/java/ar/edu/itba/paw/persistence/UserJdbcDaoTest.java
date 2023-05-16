@@ -3,6 +3,7 @@ package ar.edu.itba.paw.persistence;
 import ar.edu.itba.paw.models.Roles;
 import ar.edu.itba.paw.models.User;
 import ar.edu.itba.paw.persistence.config.TestConfig;
+import ar.edu.itba.paw.persistence.constants.Tables;
 import ar.edu.itba.paw.persistence.exceptions.UserEmailAlreadyTakenPersistenceException;
 import org.junit.After;
 import org.junit.Assert;
@@ -85,21 +86,21 @@ public class UserJdbcDaoTest {
 
     @After
     public void clearDb(){
-        JdbcTestUtils.deleteFromTables(jdbcTemplate, "usersubjectprogress");
-        JdbcTestUtils.deleteFromTables(jdbcTemplate, "userroles");
-        JdbcTestUtils.deleteFromTables(jdbcTemplate, "roles");
-        JdbcTestUtils.deleteFromTables(jdbcTemplate, "reviews");
-        JdbcTestUtils.deleteFromTables(jdbcTemplate, "users");
-        JdbcTestUtils.deleteFromTables(jdbcTemplate, "subjectsdegrees");
-        JdbcTestUtils.deleteFromTables(jdbcTemplate, "subjects");
-        JdbcTestUtils.deleteFromTables(jdbcTemplate, "images");
+        JdbcTestUtils.deleteFromTables(jdbcTemplate, Tables.USER_SUBJECT_PROGRESS);
+        JdbcTestUtils.deleteFromTables(jdbcTemplate, Tables.USER_ROLES);
+        JdbcTestUtils.deleteFromTables(jdbcTemplate, Tables.ROLES);
+        JdbcTestUtils.deleteFromTables(jdbcTemplate, Tables.REVIEWS);
+        JdbcTestUtils.deleteFromTables(jdbcTemplate, Tables.USERS);
+        JdbcTestUtils.deleteFromTables(jdbcTemplate, Tables.SUBJECTS_DEGREES);
+        JdbcTestUtils.deleteFromTables(jdbcTemplate, Tables.SUBJECTS);
+        JdbcTestUtils.deleteFromTables(jdbcTemplate, Tables.IMG);
     }
 
     @Test
     public void testFindById() {
-        jdbcTemplate.execute("INSERT INTO images VALUES (" + IMAGEID + ", " + IMAGE + ")");
+        jdbcTemplate.execute("INSERT INTO " + Tables.IMG + " VALUES (" + IMAGEID + ", " + IMAGE + ")");
 
-        jdbcTemplate.execute("INSERT INTO users(id, email, pass, username, image_id, CONFIRMTOKEN, CONFIRMED ) VALUES (" + ID + ", '" + EMAIL + "', '" + PASSWORD + "', '" + USERNAME + "', " + IMAGEID + ", '" + CONFIRMTOKEN + "', " + CONFIRMED + ")");
+        jdbcTemplate.execute("INSERT INTO " + Tables.USERS + " (id, email, pass, username, image_id, CONFIRMTOKEN, CONFIRMED ) VALUES (" + ID + ", '" + EMAIL + "', '" + PASSWORD + "', '" + USERNAME + "', " + IMAGEID + ", '" + CONFIRMTOKEN + "', " + CONFIRMED + ")");
 
         Optional<User> maybeUser = userDao.findById(ID);
 
@@ -116,10 +117,10 @@ public class UserJdbcDaoTest {
 
     @Test
     public void testGetAll(){
-        jdbcTemplate.execute("INSERT INTO images VALUES (" + IMAGEID + ", " + IMAGE + ")");
+        jdbcTemplate.execute("INSERT INTO " + Tables.IMG + " VALUES (" + IMAGEID + ", " + IMAGE + ")");
 
-        jdbcTemplate.execute("INSERT INTO users(id, email, pass, username, image_id, CONFIRMTOKEN, CONFIRMED ) VALUES (" + ID + ", '" + EMAIL + "', '" + PASSWORD + "', '" + USERNAME + "', " + IMAGEID + ", '" + CONFIRMTOKEN + "', " + CONFIRMED + ")");
-        jdbcTemplate.execute("INSERT INTO users(id, email, pass, username, image_id, CONFIRMTOKEN, CONFIRMED ) VALUES (" + ID2 + ", '" + EMAIL2 + "', '" + NEW_PASSWORD + "', '" + NEW_USERNAME + "', " + IMAGEID + ", '" + CONFIRMTOKEN2 + "', " + CONFIRMED + ")");
+        jdbcTemplate.execute("INSERT INTO " + Tables.USERS + " (id, email, pass, username, image_id, CONFIRMTOKEN, CONFIRMED ) VALUES (" + ID + ", '" + EMAIL + "', '" + PASSWORD + "', '" + USERNAME + "', " + IMAGEID + ", '" + CONFIRMTOKEN + "', " + CONFIRMED + ")");
+        jdbcTemplate.execute("INSERT INTO " + Tables.USERS + " (id, email, pass, username, image_id, CONFIRMTOKEN, CONFIRMED ) VALUES (" + ID2 + ", '" + EMAIL2 + "', '" + NEW_PASSWORD + "', '" + NEW_USERNAME + "', " + IMAGEID + ", '" + CONFIRMTOKEN2 + "', " + CONFIRMED + ")");
 
         List<User> list = userDao.getAll();
 
@@ -130,9 +131,9 @@ public class UserJdbcDaoTest {
 
     @Test
     public void testGetUserWithEmail(){
-        jdbcTemplate.execute("INSERT INTO images VALUES (" + IMAGEID + ", " + IMAGE + ")");
+        jdbcTemplate.execute("INSERT INTO " + Tables.IMG + " VALUES (" + IMAGEID + ", " + IMAGE + ")");
 
-        jdbcTemplate.execute("INSERT INTO users(id, email, pass, username, image_id, confirmtoken, confirmed ) VALUES (" + ID + ", '" + EMAIL + "', '" + PASSWORD + "', '" + USERNAME + "', " + IMAGEID + ", '" + CONFIRMTOKEN + "', " + CONFIRMED + ")");
+        jdbcTemplate.execute("INSERT INTO " + Tables.USERS + " (id, email, pass, username, image_id, confirmtoken, confirmed ) VALUES (" + ID + ", '" + EMAIL + "', '" + PASSWORD + "', '" + USERNAME + "', " + IMAGEID + ", '" + CONFIRMTOKEN + "', " + CONFIRMED + ")");
 
 
         Optional<User> user = userDao.getUserWithEmail(EMAIL);
@@ -150,7 +151,7 @@ public class UserJdbcDaoTest {
 
     @Test
     public void testCreate() {
-        jdbcTemplate.execute("INSERT INTO images VALUES (" + IMAGEID + ", " + IMAGE + ")");
+        jdbcTemplate.execute("INSERT INTO " + Tables.IMG + " VALUES (" + IMAGEID + ", " + IMAGE + ")");
 
         User user;
         try{
@@ -168,9 +169,9 @@ public class UserJdbcDaoTest {
 
     @Test(expected = UserEmailAlreadyTakenPersistenceException.class)
     public void testCreateException() throws UserEmailAlreadyTakenPersistenceException {
-        jdbcTemplate.execute("INSERT INTO images VALUES (" + IMAGEID + ", " + IMAGE + ")");
+        jdbcTemplate.execute("INSERT INTO " + Tables.IMG + " VALUES (" + IMAGEID + ", " + IMAGE + ")");
 
-        jdbcTemplate.execute("INSERT INTO users(id, email, pass, username, image_id, confirmtoken, confirmed ) VALUES (" + ID + ", '" + EMAIL + "', '" + PASSWORD + "', '" + USERNAME + "', " + IMAGEID + ", '" + CONFIRMTOKEN + "', " + CONFIRMED + ")");
+        jdbcTemplate.execute("INSERT INTO " + Tables.USERS + " (id, email, pass, username, image_id, confirmtoken, confirmed ) VALUES (" + ID + ", '" + EMAIL + "', '" + PASSWORD + "', '" + USERNAME + "', " + IMAGEID + ", '" + CONFIRMTOKEN + "', " + CONFIRMED + ")");
 
         userDao.create(new User.UserBuilder(EMAIL, PASSWORD, USERNAME).confirmToken(CONFIRMTOKEN));
 
@@ -178,7 +179,7 @@ public class UserJdbcDaoTest {
 
     @Test
     public void testChangePassword(){
-        jdbcTemplate.execute("INSERT INTO users(id, email, pass, username) VALUES (" + ID + ", '" + EMAIL + "', '" + PASSWORD + "', '" + USERNAME + "')");
+        jdbcTemplate.execute("INSERT INTO " + Tables.USERS + " (id, email, pass, username) VALUES (" + ID + ", '" + EMAIL + "', '" + PASSWORD + "', '" + USERNAME + "')");
 
         userDao.changePassword(ID, NEW_PASSWORD);
         String query = "pass = '" + NEW_PASSWORD + "'";
@@ -187,7 +188,7 @@ public class UserJdbcDaoTest {
 
     @Test
     public void testEditProfile(){
-        jdbcTemplate.execute("INSERT INTO users(id, email, pass, username) VALUES (" + ID + ", '" + EMAIL + "', '" + PASSWORD + "', '" + USERNAME + "')");
+        jdbcTemplate.execute("INSERT INTO " + Tables.USERS + " (id, email, pass, username) VALUES (" + ID + ", '" + EMAIL + "', '" + PASSWORD + "', '" + USERNAME + "')");
 
         userDao.editProfile(ID, NEW_USERNAME);
         String query = "username = '" + NEW_USERNAME + "'";
@@ -196,9 +197,9 @@ public class UserJdbcDaoTest {
 
     @Test
     public void testGetUserRoles(){
-        jdbcTemplate.execute("INSERT INTO users(id, email, pass, username) VALUES (" + ID + ", '" + EMAIL + "', '" + PASSWORD + "', '" + USERNAME + "')");
-        jdbcTemplate.execute("INSERT INTO roles(id, name) VALUES (" + ROLEID + ", '" + ROLENAME + "')");
-        jdbcTemplate.execute("INSERT INTO userroles(roleid, userid) VALUES (" + ROLEID + ", " + ID + ")");
+        jdbcTemplate.execute("INSERT INTO " + Tables.USERS + " (id, email, pass, username) VALUES (" + ID + ", '" + EMAIL + "', '" + PASSWORD + "', '" + USERNAME + "')");
+        jdbcTemplate.execute("INSERT INTO " + Tables.ROLES + " (id, name) VALUES (" + ROLEID + ", '" + ROLENAME + "')");
+        jdbcTemplate.execute("INSERT INTO " + Tables.USER_ROLES + " (roleid, userid) VALUES (" + ROLEID + ", " + ID + ")");
 
         List<Roles> roles = userDao.getUserRoles(ID);
 
@@ -208,8 +209,8 @@ public class UserJdbcDaoTest {
 
     @Test
     public void testAddIdToUserRoles(){
-        jdbcTemplate.execute("INSERT INTO users(id, email, pass, username) VALUES (" + ID + ", '" + EMAIL + "', '" + PASSWORD + "', '" + USERNAME + "')");
-        jdbcTemplate.execute("INSERT INTO roles(id, name) VALUES (" + ROLEID + ", '" + ROLENAME + "')");
+        jdbcTemplate.execute("INSERT INTO " + Tables.USERS + " (id, email, pass, username) VALUES (" + ID + ", '" + EMAIL + "', '" + PASSWORD + "', '" + USERNAME + "')");
+        jdbcTemplate.execute("INSERT INTO " + Tables.ROLES + " (id, name) VALUES (" + ROLEID + ", '" + ROLENAME + "')");
 
         Integer success = userDao.addIdToUserRoles(ROLEID, ID);
 
@@ -219,9 +220,9 @@ public class UserJdbcDaoTest {
 
     @Test
     public void testGetUserSubjectProgress(){
-        jdbcTemplate.execute("INSERT INTO users(id, email, pass, username) VALUES (" + ID + ", '" + EMAIL + "', '" + PASSWORD + "', '" + USERNAME + "')");
-        jdbcTemplate.execute("INSERT INTO subjects(id, subname, department, credits) VALUES ('" + SUBJECTID + "', '" + SUBJECTNAME + "', '" + DEPARTMENT + "', " + CREDITS + ")");
-        jdbcTemplate.execute("INSERT INTO usersubjectprogress(iduser, idsub, subjectstate) VALUES (" + ID + ", '" + SUBJECTID + "', " + SUBJECTPROGRESS + ")" );
+        jdbcTemplate.execute("INSERT INTO " + Tables.USERS + " (id, email, pass, username) VALUES (" + ID + ", '" + EMAIL + "', '" + PASSWORD + "', '" + USERNAME + "')");
+        jdbcTemplate.execute("INSERT INTO " + Tables.SUBJECTS + " (id, subname, department, credits) VALUES ('" + SUBJECTID + "', '" + SUBJECTNAME + "', '" + DEPARTMENT + "', " + CREDITS + ")");
+        jdbcTemplate.execute("INSERT INTO " + Tables.USER_SUBJECT_PROGRESS + " (iduser, idsub, subjectstate) VALUES (" + ID + ", '" + SUBJECTID + "', " + SUBJECTPROGRESS + ")" );
 
         Optional<Integer> subjectP = userDao.getUserSubjectProgress(ID, SUBJECTID);
 
@@ -232,12 +233,12 @@ public class UserJdbcDaoTest {
 
     @Test
     public void testUserAllSubjectProgress(){
-        jdbcTemplate.execute("INSERT INTO users(id, email, pass, username) VALUES (" + ID + ", '" + EMAIL + "', '" + PASSWORD + "', '" + USERNAME + "')");
-        jdbcTemplate.execute("INSERT INTO subjects(id, subname, department, credits) VALUES ('" + SUBJECTID + "', '" + SUBJECTNAME + "', '" + DEPARTMENT + "', " + CREDITS + ")");
-        jdbcTemplate.execute("INSERT INTO subjects(id, subname, department, credits) VALUES ('" + SUBJECTID2 + "', '" + SUBJECTNAME2 + "', '" + DEPARTMENT2 + "', " + CREDITS2 + ")");
+        jdbcTemplate.execute("INSERT INTO " + Tables.USERS + " (id, email, pass, username) VALUES (" + ID + ", '" + EMAIL + "', '" + PASSWORD + "', '" + USERNAME + "')");
+        jdbcTemplate.execute("INSERT INTO " + Tables.SUBJECTS + " (id, subname, department, credits) VALUES ('" + SUBJECTID + "', '" + SUBJECTNAME + "', '" + DEPARTMENT + "', " + CREDITS + ")");
+        jdbcTemplate.execute("INSERT INTO " + Tables.SUBJECTS + " (id, subname, department, credits) VALUES ('" + SUBJECTID2 + "', '" + SUBJECTNAME2 + "', '" + DEPARTMENT2 + "', " + CREDITS2 + ")");
 
-        jdbcTemplate.execute("INSERT INTO usersubjectprogress(iduser, idsub, subjectstate) VALUES (" + ID + ", '" + SUBJECTID + "', " + SUBJECTPROGRESS + ")" );
-        jdbcTemplate.execute("INSERT INTO usersubjectprogress(iduser, idsub, subjectstate) VALUES (" + ID + ", '" + SUBJECTID2 + "', " + NEWSUBJECTPROGRESS + ")" );
+        jdbcTemplate.execute("INSERT INTO " + Tables.USER_SUBJECT_PROGRESS + " (iduser, idsub, subjectstate) VALUES (" + ID + ", '" + SUBJECTID + "', " + SUBJECTPROGRESS + ")" );
+        jdbcTemplate.execute("INSERT INTO " + Tables.USER_SUBJECT_PROGRESS + " (iduser, idsub, subjectstate) VALUES (" + ID + ", '" + SUBJECTID2 + "', " + NEWSUBJECTPROGRESS + ")" );
 
         Map<String, Integer> map = userDao.getUserAllSubjectProgress(ID);
 
@@ -249,9 +250,9 @@ public class UserJdbcDaoTest {
 
     @Test
     public void testUpdateSubjectProgressExisting(){
-        jdbcTemplate.execute("INSERT INTO users(id, email, pass, username) VALUES (" + ID + ", '" + EMAIL + "', '" + PASSWORD + "', '" + USERNAME + "')");
-        jdbcTemplate.execute("INSERT INTO subjects(id, subname, department, credits) VALUES ('" + SUBJECTID + "', '" + SUBJECTNAME + "', '" + DEPARTMENT + "', " + CREDITS + ")");
-        jdbcTemplate.execute("INSERT INTO usersubjectprogress(iduser, idsub, subjectstate) VALUES (" + ID + ", '" + SUBJECTID + "', " + SUBJECTPROGRESS + ")" );
+        jdbcTemplate.execute("INSERT INTO " + Tables.USERS + " (id, email, pass, username) VALUES (" + ID + ", '" + EMAIL + "', '" + PASSWORD + "', '" + USERNAME + "')");
+        jdbcTemplate.execute("INSERT INTO " + Tables.SUBJECTS + " (id, subname, department, credits) VALUES ('" + SUBJECTID + "', '" + SUBJECTNAME + "', '" + DEPARTMENT + "', " + CREDITS + ")");
+        jdbcTemplate.execute("INSERT INTO " + Tables.USER_SUBJECT_PROGRESS + " (iduser, idsub, subjectstate) VALUES (" + ID + ", '" + SUBJECTID + "', " + SUBJECTPROGRESS + ")" );
 
         int response = userDao.updateSubjectProgress(ID, SUBJECTID, NEWSUBJECTPROGRESS);
 
@@ -266,8 +267,8 @@ public class UserJdbcDaoTest {
 
     @Test
     public void testUpdateSubjectProgressNew(){
-        jdbcTemplate.execute("INSERT INTO users(id, email, pass, username) VALUES (" + ID + ", '" + EMAIL + "', '" + PASSWORD + "', '" + USERNAME + "')");
-        jdbcTemplate.execute("INSERT INTO subjects(id, subname, department, credits) VALUES ('" + SUBJECTID + "', '" + SUBJECTNAME + "', '" + DEPARTMENT + "', " + CREDITS + ")");
+        jdbcTemplate.execute("INSERT INTO " + Tables.USERS + " (id, email, pass, username) VALUES (" + ID + ", '" + EMAIL + "', '" + PASSWORD + "', '" + USERNAME + "')");
+        jdbcTemplate.execute("INSERT INTO " + Tables.SUBJECTS + " (id, subname, department, credits) VALUES ('" + SUBJECTID + "', '" + SUBJECTNAME + "', '" + DEPARTMENT + "', " + CREDITS + ")");
 
         int response = userDao.updateSubjectProgress(ID, SUBJECTID, SUBJECTPROGRESS);
 
@@ -280,9 +281,9 @@ public class UserJdbcDaoTest {
 
     @Test
     public void testDeleteUserProgressForSubject(){
-        jdbcTemplate.execute("INSERT INTO users(id, email, pass, username) VALUES (" + ID + ", '" + EMAIL + "', '" + PASSWORD + "', '" + USERNAME + "')");
-        jdbcTemplate.execute("INSERT INTO subjects(id, subname, department, credits) VALUES ('" + SUBJECTID + "', '" + SUBJECTNAME + "', '" + DEPARTMENT + "', " + CREDITS + ")");
-        jdbcTemplate.execute("INSERT INTO usersubjectprogress(iduser, idsub, subjectstate) VALUES (" + ID + ", '" + SUBJECTID + "', " + SUBJECTPROGRESS + ")" );
+        jdbcTemplate.execute("INSERT INTO " + Tables.USERS + " (id, email, pass, username) VALUES (" + ID + ", '" + EMAIL + "', '" + PASSWORD + "', '" + USERNAME + "')");
+        jdbcTemplate.execute("INSERT INTO " + Tables.SUBJECTS + " (id, subname, department, credits) VALUES ('" + SUBJECTID + "', '" + SUBJECTNAME + "', '" + DEPARTMENT + "', " + CREDITS + ")");
+        jdbcTemplate.execute("INSERT INTO " + Tables.USER_SUBJECT_PROGRESS + " (iduser, idsub, subjectstate) VALUES (" + ID + ", '" + SUBJECTID + "', " + SUBJECTPROGRESS + ")" );
 
         int response = userDao.deleteUserProgressForSubject(ID, SUBJECTID);
 
@@ -293,9 +294,9 @@ public class UserJdbcDaoTest {
 
     @Test
     public void testFindUserByConfirmToken(){
-        jdbcTemplate.execute("INSERT INTO images VALUES (" + IMAGEID + ", " + IMAGE + ")");
+        jdbcTemplate.execute("INSERT INTO " + Tables.IMG + " VALUES (" + IMAGEID + ", " + IMAGE + ")");
 
-        jdbcTemplate.execute("INSERT INTO users(id, email, pass, username, image_id, CONFIRMTOKEN, CONFIRMED ) VALUES (" + ID + ", '" + EMAIL + "', '" + PASSWORD + "', '" + USERNAME + "', " + IMAGEID + ", '" + CONFIRMTOKEN + "', " + CONFIRMED + ")");
+        jdbcTemplate.execute("INSERT INTO " + Tables.USERS + " (id, email, pass, username, image_id, CONFIRMTOKEN, CONFIRMED ) VALUES (" + ID + ", '" + EMAIL + "', '" + PASSWORD + "', '" + USERNAME + "', " + IMAGEID + ", '" + CONFIRMTOKEN + "', " + CONFIRMED + ")");
 
         Optional<User> maybeUser = userDao.findUserByConfirmToken(CONFIRMTOKEN);
 
@@ -312,8 +313,8 @@ public class UserJdbcDaoTest {
 
     @Test
     public void testConfirmUser(){
-        jdbcTemplate.execute("INSERT INTO images VALUES (" + IMAGEID + ", " + IMAGE + ")");
-        jdbcTemplate.execute("INSERT INTO users(id, email, pass, username, image_id, CONFIRMTOKEN, CONFIRMED ) VALUES (" + ID + ", '" + EMAIL + "', '" + PASSWORD + "', '" + USERNAME + "', " + IMAGEID + ", '" + CONFIRMTOKEN + "', " + NOTCONFIRMED + ")");
+        jdbcTemplate.execute("INSERT INTO " + Tables.IMG + " VALUES (" + IMAGEID + ", " + IMAGE + ")");
+        jdbcTemplate.execute("INSERT INTO " + Tables.USERS + " (id, email, pass, username, image_id, CONFIRMTOKEN, CONFIRMED ) VALUES (" + ID + ", '" + EMAIL + "', '" + PASSWORD + "', '" + USERNAME + "', " + IMAGEID + ", '" + CONFIRMTOKEN + "', " + NOTCONFIRMED + ")");
 
         userDao.confirmUser(ID);
 

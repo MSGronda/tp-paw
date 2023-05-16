@@ -2,6 +2,7 @@ package ar.edu.itba.paw.persistence;
 
 import ar.edu.itba.paw.persistence.config.TestConfig;
 import org.junit.After;
+import ar.edu.itba.paw.persistence.constants.Tables;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -28,7 +29,6 @@ public class RecoveryJdbcDaoTest {
     private static final String EMAIL = "email";
     private static final String PASSWORD = "pass";
     private static final String USERNAME = "username";
-
     private static final String TOKEN = "asdffdsa";
 
 
@@ -62,14 +62,14 @@ public class RecoveryJdbcDaoTest {
 
     @After
     public void clearDb(){
-        JdbcTestUtils.deleteFromTables(jdbcTemplate, "recoverytoken");
-        JdbcTestUtils.deleteFromTables(jdbcTemplate, "users");
+        JdbcTestUtils.deleteFromTables(jdbcTemplate, Tables.RECOVERY);
+        JdbcTestUtils.deleteFromTables(jdbcTemplate, Tables.USERS);
     }
 
     @Test
     public void testfindUserIdByToken(){
-        jdbcTemplate.execute("INSERT INTO users(id, email, pass, username) VALUES (" + ID + ", '" + EMAIL + "', '" + PASSWORD + "', '" + USERNAME + "')");
-        jdbcTemplate.execute("INSERT INTO recoverytoken(token, userid, created) VALUES ('" + TOKEN + "', " + ID + ", '" + CREATED + "')");
+        jdbcTemplate.execute("INSERT INTO " + Tables.USERS + " (id, email, pass, username) VALUES (" + ID + ", '" + EMAIL + "', '" + PASSWORD + "', '" + USERNAME + "')");
+        jdbcTemplate.execute("INSERT INTO " + Tables.RECOVERY + " (token, userid, created) VALUES ('" + TOKEN + "', " + ID + ", '" + CREATED + "')");
 
         Optional<Long> userId = recoveryDao.findUserIdByToken(TOKEN);
 
@@ -79,22 +79,22 @@ public class RecoveryJdbcDaoTest {
 
     @Test
     public void testDeleteWithToken(){
-        jdbcTemplate.execute("INSERT INTO users(id, email, pass, username) VALUES (" + ID + ", '" + EMAIL + "', '" + PASSWORD + "', '" + USERNAME + "')");
-        jdbcTemplate.execute("INSERT INTO recoverytoken(token, userid, created) VALUES ('" + TOKEN + "', " + ID + ", '" + CREATED + "')");
+        jdbcTemplate.execute("INSERT INTO " + Tables.USERS + " (id, email, pass, username) VALUES (" + ID + ", '" + EMAIL + "', '" + PASSWORD + "', '" + USERNAME + "')");
+        jdbcTemplate.execute("INSERT INTO " + Tables.RECOVERY + " (token, userid, created) VALUES ('" + TOKEN + "', " + ID + ", '" + CREATED + "')");
 
         recoveryDao.delete(TOKEN);
 
-        Assert.assertEquals(0, JdbcTestUtils.countRowsInTable(jdbcTemplate, "recoverytoken"));
+        Assert.assertEquals(0, JdbcTestUtils.countRowsInTable(jdbcTemplate, Tables.RECOVERY));
     }
 
     @Test
     public void testDeleteWithUserId(){
-        jdbcTemplate.execute("INSERT INTO users(id, email, pass, username) VALUES (" + ID + ", '" + EMAIL + "', '" + PASSWORD + "', '" + USERNAME + "')");
-        jdbcTemplate.execute("INSERT INTO recoverytoken(token, userid, created) VALUES ('" + TOKEN + "', " + ID + ", '" + CREATED + "')");
+        jdbcTemplate.execute("INSERT INTO " + Tables.USERS + " (id, email, pass, username) VALUES (" + ID + ", '" + EMAIL + "', '" + PASSWORD + "', '" + USERNAME + "')");
+        jdbcTemplate.execute("INSERT INTO " + Tables.RECOVERY + " (token, userid, created) VALUES ('" + TOKEN + "', " + ID + ", '" + CREATED + "')");
 
         recoveryDao.delete(ID);
 
-        Assert.assertEquals(0, JdbcTestUtils.countRowsInTable(jdbcTemplate, "recoverytoken"));
+        Assert.assertEquals(0, JdbcTestUtils.countRowsInTable(jdbcTemplate, Tables.RECOVERY));
     }
 
 }

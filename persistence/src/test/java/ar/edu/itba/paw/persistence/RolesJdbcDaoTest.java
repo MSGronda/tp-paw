@@ -3,6 +3,7 @@ package ar.edu.itba.paw.persistence;
 import ar.edu.itba.paw.models.Roles;
 import ar.edu.itba.paw.persistence.config.TestConfig;
 import org.junit.After;
+import ar.edu.itba.paw.persistence.constants.Tables;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -45,12 +46,12 @@ public class RolesJdbcDaoTest {
 
     @After
     public void clearDb(){
-        JdbcTestUtils.deleteFromTables(jdbcTemplate, "roles");
+        JdbcTestUtils.deleteFromTables(jdbcTemplate, Tables.ROLES);
     }
 
     @Test
     public void testFindById(){
-        jdbcTemplate.execute("INSERT INTO roles(id, name) VALUES (" + ID + ", '" + NAME + "' )");
+        jdbcTemplate.execute("INSERT INTO " + Tables.ROLES + " (id, name) VALUES (" + ID + ", '" + NAME + "' )");
 
         Optional<Roles> role = rolesDao.findById(ID);
 
@@ -60,8 +61,8 @@ public class RolesJdbcDaoTest {
 
     @Test
     public void testGetAll(){
-        jdbcTemplate.execute("INSERT INTO roles(id, name) VALUES (" + ID + ", '" + NAME + "' )");
-        jdbcTemplate.execute("INSERT INTO roles(id, name) VALUES (" + ID2 + ", '" + NAME2 + "' )");
+        jdbcTemplate.execute("INSERT INTO " + Tables.ROLES + " (id, name) VALUES (" + ID + ", '" + NAME + "' )");
+        jdbcTemplate.execute("INSERT INTO " + Tables.ROLES + " (id, name) VALUES (" + ID2 + ", '" + NAME2 + "' )");
 
         List<Roles> list = rolesDao.getAll();
 
@@ -72,7 +73,7 @@ public class RolesJdbcDaoTest {
 
     @Test
     public void testFindByName(){
-        jdbcTemplate.execute("INSERT INTO roles(id, name) VALUES (" + ID + ", '" + NAME + "' )");
+        jdbcTemplate.execute("INSERT INTO " + Tables.ROLES + " (id, name) VALUES (" + ID + ", '" + NAME + "' )");
 
         Optional<Roles> role = rolesDao.findByName(NAME);
 

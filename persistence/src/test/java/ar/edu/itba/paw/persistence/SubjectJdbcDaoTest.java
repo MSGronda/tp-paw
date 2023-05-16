@@ -4,6 +4,7 @@ import ar.edu.itba.paw.models.Subject;
 import ar.edu.itba.paw.models.User;
 import ar.edu.itba.paw.persistence.config.TestConfig;
 import org.junit.After;
+import ar.edu.itba.paw.persistence.constants.Tables;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -86,17 +87,17 @@ public class SubjectJdbcDaoTest {
 
     @After
     public void clearDb(){
-        JdbcTestUtils.deleteFromTables(jdbcTemplate, "usersubjectprogress");
-        JdbcTestUtils.deleteFromTables(jdbcTemplate, "users");
-        JdbcTestUtils.deleteFromTables(jdbcTemplate, "subjectsdegrees");
-        JdbcTestUtils.deleteFromTables(jdbcTemplate, "reviews");
-        JdbcTestUtils.deleteFromTables(jdbcTemplate, "subjects");
-        JdbcTestUtils.deleteFromTables(jdbcTemplate, "degrees");
+        JdbcTestUtils.deleteFromTables(jdbcTemplate, Tables.USER_SUBJECT_PROGRESS);
+        JdbcTestUtils.deleteFromTables(jdbcTemplate, Tables.REVIEWS);
+        JdbcTestUtils.deleteFromTables(jdbcTemplate, Tables.USERS);
+        JdbcTestUtils.deleteFromTables(jdbcTemplate, Tables.SUBJECTS_DEGREES);
+        JdbcTestUtils.deleteFromTables(jdbcTemplate, Tables.SUBJECTS);
+        JdbcTestUtils.deleteFromTables(jdbcTemplate, Tables.DEGREES);
     }
 
     @Test
     public void testFindById(){
-        jdbcTemplate.execute("INSERT INTO subjects(id, subname, department, credits) VALUES ('" + ID + "', '" + NAME + "', '" + DEPARTMENT + "', " + CREDITS + ")");
+        jdbcTemplate.execute("INSERT INTO " + Tables.SUBJECTS + " (id, subname, department, credits) VALUES ('" + ID + "', '" + NAME + "', '" + DEPARTMENT + "', " + CREDITS + ")");
 
         Optional<Subject> subject = subjectDao.findById(ID);
 
@@ -114,8 +115,8 @@ public class SubjectJdbcDaoTest {
 
     @Test
     public void testFindByIds(){
-        jdbcTemplate.execute("INSERT INTO subjects(id, subname, department, credits) VALUES ('" + ID + "', '" + NAME + "', '" + DEPARTMENT + "', " + CREDITS + ")");
-        jdbcTemplate.execute("INSERT INTO subjects(id, subname, department, credits) VALUES ('" + ID2 + "', '" + NAME2+ "', '" + DEPARTMENT2 + "', " + CREDITS + ")");
+        jdbcTemplate.execute("INSERT INTO " + Tables.SUBJECTS + " (id, subname, department, credits) VALUES ('" + ID + "', '" + NAME + "', '" + DEPARTMENT + "', " + CREDITS + ")");
+        jdbcTemplate.execute("INSERT INTO " + Tables.SUBJECTS + " (id, subname, department, credits) VALUES ('" + ID2 + "', '" + NAME2+ "', '" + DEPARTMENT2 + "', " + CREDITS + ")");
         List<String> list = new ArrayList<>();
         list.add(ID);
         list.add(ID2);
@@ -130,8 +131,8 @@ public class SubjectJdbcDaoTest {
 
     @Test
     public void testGetAll(){
-        jdbcTemplate.execute("INSERT INTO subjects(id, subname, department, credits) VALUES ('" + ID + "', '" + NAME + "', '" + DEPARTMENT + "', " + CREDITS + ")");
-        jdbcTemplate.execute("INSERT INTO subjects(id, subname, department, credits) VALUES ('" + ID2 + "', '" + NAME2+ "', '" + DEPARTMENT2 + "', " + CREDITS + ")");
+        jdbcTemplate.execute("INSERT INTO " + Tables.SUBJECTS + " (id, subname, department, credits) VALUES ('" + ID + "', '" + NAME + "', '" + DEPARTMENT + "', " + CREDITS + ")");
+        jdbcTemplate.execute("INSERT INTO " + Tables.SUBJECTS + " (id, subname, department, credits) VALUES ('" + ID2 + "', '" + NAME2+ "', '" + DEPARTMENT2 + "', " + CREDITS + ")");
 
         List<Subject> subjectList = subjectDao.getAll();
         Assert.assertEquals(2, subjectList.size());
@@ -142,14 +143,14 @@ public class SubjectJdbcDaoTest {
 
     @Test
     public void testGetAllByDegree(){
-        jdbcTemplate.execute("INSERT INTO degrees(id, degname) VALUES (" + DEGREEID1 + ", '" + DEGREENAME1 + "')");
-        jdbcTemplate.execute("INSERT INTO degrees(id, degname) VALUES (" + DEGREEID2 + ", '" + DEGREENAME2 + "')");
+        jdbcTemplate.execute("INSERT INTO " + Tables.DEGREES + " (id, degname) VALUES (" + DEGREEID1 + ", '" + DEGREENAME1 + "')");
+        jdbcTemplate.execute("INSERT INTO " + Tables.DEGREES + " (id, degname) VALUES (" + DEGREEID2 + ", '" + DEGREENAME2 + "')");
 
-        jdbcTemplate.execute("INSERT INTO subjects(id, subname, department, credits) VALUES ('" + ID + "', '" + NAME + "', '" + DEPARTMENT + "', " + CREDITS + ")");
-        jdbcTemplate.execute("INSERT INTO subjects(id, subname, department, credits) VALUES ('" + ID2 + "', '" + NAME2+ "', '" + DEPARTMENT2 + "', " + CREDITS + ")");
+        jdbcTemplate.execute("INSERT INTO " + Tables.SUBJECTS + " (id, subname, department, credits) VALUES ('" + ID + "', '" + NAME + "', '" + DEPARTMENT + "', " + CREDITS + ")");
+        jdbcTemplate.execute("INSERT INTO " + Tables.SUBJECTS + " (id, subname, department, credits) VALUES ('" + ID2 + "', '" + NAME2+ "', '" + DEPARTMENT2 + "', " + CREDITS + ")");
 
-        jdbcTemplate.execute("INSERT INTO subjectsdegrees(idsub, semester, iddeg) VALUES ('" + ID + "', " + SEMESTER1 + ", " + DEGREEID1 + ")");
-        jdbcTemplate.execute("INSERT INTO subjectsdegrees(idsub, semester, iddeg) VALUES ('" + ID2 + "', " + SEMESTER1 + ", " + DEGREEID1 + ")");
+        jdbcTemplate.execute("INSERT INTO " + Tables.SUBJECTS_DEGREES + " (idsub, semester, iddeg) VALUES ('" + ID + "', " + SEMESTER1 + ", " + DEGREEID1 + ")");
+        jdbcTemplate.execute("INSERT INTO " + Tables.SUBJECTS_DEGREES + " (idsub, semester, iddeg) VALUES ('" + ID2 + "', " + SEMESTER1 + ", " + DEGREEID1 + ")");
         jdbcTemplate.execute("INSERT INTO subjectsdegrees(idsub, semester, iddeg) VALUES ('" + ID2 + "', " + SEMESTER1 + ", " + DEGREEID2 + ")");
 
         List<Subject> list = subjectDao.getAllByDegree(DEGREEID1);
@@ -163,14 +164,14 @@ public class SubjectJdbcDaoTest {
 
     @Test
     public void testGetAllGroupedByDegreeId(){
-        jdbcTemplate.execute("INSERT INTO degrees(id, degname) VALUES (" + DEGREEID1 + ", '" + DEGREENAME1 + "' )");
-        jdbcTemplate.execute("INSERT INTO degrees(id, degname) VALUES (" + DEGREEID2 + ", '" + DEGREENAME2 + "' )");
+        jdbcTemplate.execute("INSERT INTO " + Tables.DEGREES + " (id, degname) VALUES (" + DEGREEID1 + ", '" + DEGREENAME1 + "' )");
+        jdbcTemplate.execute("INSERT INTO " + Tables.DEGREES + " (id, degname) VALUES (" + DEGREEID2 + ", '" + DEGREENAME2 + "' )");
 
-        jdbcTemplate.execute("INSERT INTO subjects(id, subname, department, credits) VALUES ('" + ID + "', '" + NAME + "', '" + DEPARTMENT + "', " + CREDITS + ")");
-        jdbcTemplate.execute("INSERT INTO subjects(id, subname, department, credits) VALUES ('" + ID2 + "', '" + NAME2 + "', '" + DEPARTMENT2 + "', " + CREDITS + ")");
+        jdbcTemplate.execute("INSERT INTO " + Tables.SUBJECTS + " (id, subname, department, credits) VALUES ('" + ID + "', '" + NAME + "', '" + DEPARTMENT + "', " + CREDITS + ")");
+        jdbcTemplate.execute("INSERT INTO " + Tables.SUBJECTS + " (id, subname, department, credits) VALUES ('" + ID2 + "', '" + NAME2 + "', '" + DEPARTMENT2 + "', " + CREDITS + ")");
 
-        jdbcTemplate.execute("INSERT INTO subjectsdegrees(idsub, semester, iddeg) VALUES ('" + ID + "', " + SEMESTER1 + ", " + DEGREEID1 + ")");
-        jdbcTemplate.execute("INSERT INTO subjectsdegrees(idsub, semester, iddeg) VALUES ('" + ID2 + "', " + SEMESTER2 + ", " + DEGREEID2 + ")");
+        jdbcTemplate.execute("INSERT INTO " + Tables.SUBJECTS_DEGREES + " (idsub, semester, iddeg) VALUES ('" + ID + "', " + SEMESTER1 + ", " + DEGREEID1 + ")");
+        jdbcTemplate.execute("INSERT INTO " + Tables.SUBJECTS_DEGREES + " (idsub, semester, iddeg) VALUES ('" + ID2 + "', " + SEMESTER2 + ", " + DEGREEID2 + ")");
 
 
         Map<Long, List<Subject>> map = subjectDao.getAllGroupedByDegreeId();
@@ -189,14 +190,14 @@ public class SubjectJdbcDaoTest {
 
     @Test
     public void testGetAllGroupedByDegIdAndSemester(){
-        jdbcTemplate.execute("INSERT INTO degrees(id, degname) VALUES (" + DEGREEID1 + ", '" + DEGREENAME1 + "' )");
-        jdbcTemplate.execute("INSERT INTO degrees(id, degname) VALUES (" + DEGREEID2 + ", '" + DEGREENAME2 + "' )");
+        jdbcTemplate.execute("INSERT INTO " + Tables.DEGREES + " (id, degname) VALUES (" + DEGREEID1 + ", '" + DEGREENAME1 + "' )");
+        jdbcTemplate.execute("INSERT INTO " + Tables.DEGREES + " (id, degname) VALUES (" + DEGREEID2 + ", '" + DEGREENAME2 + "' )");
 
-        jdbcTemplate.execute("INSERT INTO subjects(id, subname, department, credits) VALUES ('" + ID + "', '" + NAME + "', '" + DEPARTMENT + "', " + CREDITS + ")");
-        jdbcTemplate.execute("INSERT INTO subjects(id, subname, department, credits) VALUES ('" + ID2 + "', '" + NAME2 + "', '" + DEPARTMENT2 + "', " + CREDITS + ")");
+        jdbcTemplate.execute("INSERT INTO " + Tables.SUBJECTS + " (id, subname, department, credits) VALUES ('" + ID + "', '" + NAME + "', '" + DEPARTMENT + "', " + CREDITS + ")");
+        jdbcTemplate.execute("INSERT INTO " + Tables.SUBJECTS + " (id, subname, department, credits) VALUES ('" + ID2 + "', '" + NAME2 + "', '" + DEPARTMENT2 + "', " + CREDITS + ")");
 
-        jdbcTemplate.execute("INSERT INTO subjectsdegrees(idsub, semester, iddeg) VALUES ('" + ID + "', " + SEMESTER1 + ", " + DEGREEID1 + ")");
-        jdbcTemplate.execute("INSERT INTO subjectsdegrees(idsub, semester, iddeg) VALUES ('" + ID2 + "', " + SEMESTER2 + ", " + DEGREEID2 + ")");
+        jdbcTemplate.execute("INSERT INTO " + Tables.SUBJECTS_DEGREES + " (idsub, semester, iddeg) VALUES ('" + ID + "', " + SEMESTER1 + ", " + DEGREEID1 + ")");
+        jdbcTemplate.execute("INSERT INTO " + Tables.SUBJECTS_DEGREES + " (idsub, semester, iddeg) VALUES ('" + ID2 + "', " + SEMESTER2 + ", " + DEGREEID2 + ")");
 
         Map<Long, Map<Integer, List<Subject>>> supermap = subjectDao.getAllGroupedByDegIdAndSemester();
 
@@ -214,14 +215,14 @@ public class SubjectJdbcDaoTest {
 
     @Test
     public void testGetAllGroupedByDegIdAndYear(){
-        jdbcTemplate.execute("INSERT INTO degrees(id, degname) VALUES (" + DEGREEID1 + ", '" + DEGREENAME1 + "' )");
-        jdbcTemplate.execute("INSERT INTO degrees(id, degname) VALUES (" + DEGREEID2 + ", '" + DEGREENAME2 + "' )");
+        jdbcTemplate.execute("INSERT INTO " + Tables.DEGREES + " (id, degname) VALUES (" + DEGREEID1 + ", '" + DEGREENAME1 + "' )");
+        jdbcTemplate.execute("INSERT INTO " + Tables.DEGREES + " (id, degname) VALUES (" + DEGREEID2 + ", '" + DEGREENAME2 + "' )");
 
-        jdbcTemplate.execute("INSERT INTO subjects(id, subname, department, credits) VALUES ('" + ID + "', '" + NAME + "', '" + DEPARTMENT + "', " + CREDITS + ")");
-        jdbcTemplate.execute("INSERT INTO subjects(id, subname, department, credits) VALUES ('" + ID2 + "', '" + NAME2 + "', '" + DEPARTMENT2 + "', " + CREDITS + ")");
+        jdbcTemplate.execute("INSERT INTO " + Tables.SUBJECTS + " (id, subname, department, credits) VALUES ('" + ID + "', '" + NAME + "', '" + DEPARTMENT + "', " + CREDITS + ")");
+        jdbcTemplate.execute("INSERT INTO " + Tables.SUBJECTS + " (id, subname, department, credits) VALUES ('" + ID2 + "', '" + NAME2 + "', '" + DEPARTMENT2 + "', " + CREDITS + ")");
 
-        jdbcTemplate.execute("INSERT INTO subjectsdegrees(idsub, semester, iddeg) VALUES ('" + ID + "', " + SEMESTER1 + ", " + DEGREEID1 + ")");
-        jdbcTemplate.execute("INSERT INTO subjectsdegrees(idsub, semester, iddeg) VALUES ('" + ID2 + "', " + SEMESTER2 + ", " + DEGREEID2 + ")");
+        jdbcTemplate.execute("INSERT INTO " + Tables.SUBJECTS_DEGREES + " (idsub, semester, iddeg) VALUES ('" + ID + "', " + SEMESTER1 + ", " + DEGREEID1 + ")");
+        jdbcTemplate.execute("INSERT INTO " + Tables.SUBJECTS_DEGREES + " (idsub, semester, iddeg) VALUES ('" + ID2 + "', " + SEMESTER2 + ", " + DEGREEID2 + ")");
 
         Map<Long, Map<Integer, List<Subject>>> supermap = subjectDao.getAllGroupedByDegIdAndYear();
 

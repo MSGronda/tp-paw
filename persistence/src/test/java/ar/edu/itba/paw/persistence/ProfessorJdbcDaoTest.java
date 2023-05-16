@@ -3,6 +3,7 @@ package ar.edu.itba.paw.persistence;
 import ar.edu.itba.paw.models.Professor;
 import ar.edu.itba.paw.persistence.config.TestConfig;
 import org.junit.After;
+import ar.edu.itba.paw.persistence.constants.Tables;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -48,15 +49,15 @@ public class ProfessorJdbcDaoTest {
 
     @After
     public void clearDb(){
-        JdbcTestUtils.deleteFromTables(jdbcTemplate, "professorssubjects");
-        JdbcTestUtils.deleteFromTables(jdbcTemplate, "professors");
-        JdbcTestUtils.deleteFromTables(jdbcTemplate,"subjects");
+        JdbcTestUtils.deleteFromTables(jdbcTemplate, Tables.PROFS_SUBJECTS);
+        JdbcTestUtils.deleteFromTables(jdbcTemplate, Tables.PROFS);
+        JdbcTestUtils.deleteFromTables(jdbcTemplate, Tables.SUBJECTS);
     }
 
 
     @Test
     public void testFindById(){
-        jdbcTemplate.execute("INSERT INTO professors (profname) VALUES ('" + PROF_NAME1 + "')");
+        jdbcTemplate.execute("INSERT INTO " + Tables.PROFS + " (profname) VALUES ('" + PROF_NAME1 + "')");
 
         Optional<Professor> professor = professorDao.findById(ID1);
 
@@ -75,8 +76,8 @@ public class ProfessorJdbcDaoTest {
     @Test
     public void testGetAll(){
 
-        jdbcTemplate.execute("INSERT INTO professors (profname) VALUES ('" + PROF_NAME1 + "')");
-        jdbcTemplate.execute("INSERT INTO professors (profname) VALUES ('" + PROF_NAME2 + "')");
+        jdbcTemplate.execute("INSERT INTO " + Tables.PROFS + " (profname) VALUES ('" + PROF_NAME1 + "')");
+        jdbcTemplate.execute("INSERT INTO " + Tables.PROFS + " (profname) VALUES ('" + PROF_NAME2 + "')");
 
         List<Professor> professors = professorDao.getAll();
 

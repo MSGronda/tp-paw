@@ -2,6 +2,8 @@ package ar.edu.itba.paw.persistence;
 
 import ar.edu.itba.paw.models.Subject;
 import ar.edu.itba.paw.models.User;
+import ar.edu.itba.paw.persistence.constants.Tables;
+import ar.edu.itba.paw.persistence.constants.Views;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,27 +20,18 @@ import static ar.edu.itba.paw.persistence.Helpers.*;
 
 @Repository
 public class SubjectJdbcDao implements SubjectDao {
-    private static final String VIEW_JOIN = "joinedsubjects";
-    private static final String TABLE_SUB = "subjects";
-    private static final String TABLE_PROF_SUB = "professorsSubjects";
-    private static final String TABLE_PREREQ = "prereqSubjects";
-    private static final String TABLE_SUB_DEG = "subjectsDegrees";
-    private static final String TABLE_USERS = "users";
-    private static final String TABLE_USER_SUB_PROG = "usersubjectprogress";
-    private static final String TABLE_REVIEWS = "reviews";
-
+    private static final String PAGE_SIZE = "12";
     private static final Map<String, String> queryOptionBlanck = new HashMap<>();
+    private static final Logger LOGGER = LoggerFactory.getLogger(SubjectClassJdbcDao.class);
 
     private final JdbcTemplate jdbcTemplate;
     private final SimpleJdbcInsert jdbcInsert;
-    private static final Logger LOGGER = LoggerFactory.getLogger(SubjectClassJdbcDao.class);
-    private final String PAGE_SIZE = "12";
 
     @Autowired
     public SubjectJdbcDao(final DataSource ds) {
         this.jdbcTemplate = new JdbcTemplate(ds);
         this.jdbcInsert = new SimpleJdbcInsert(ds)
-                .withTableName(TABLE_SUB)
+                .withTableName(Tables.SUBJECTS)
                 .usingGeneratedKeyColumns("id");
 
         queryOptionBlanck.putIfAbsent("department","?");
@@ -48,27 +41,27 @@ public class SubjectJdbcDao implements SubjectDao {
 
     @Override
     public Optional<Subject> findById(final String id) {
-        return jdbcTemplate.query("SELECT * FROM " + VIEW_JOIN + " WHERE id = ?", SubjectJdbcDao::subjectListExtractorWithProfsAndPrereq, id)
+        return jdbcTemplate.query("SELECT * FROM " + Views.JOINED_SUBJECTS + " WHERE id = ?", SubjectJdbcDao::subjectListExtractorWithProfsAndPrereq, id)
                 .stream().findFirst();
     }
 
     public List<Subject> findByIds(final List<String> ids) {
         if(ids.isEmpty()) return new ArrayList<>();
 
-        return jdbcTemplate.query("SELECT * FROM " + VIEW_JOIN + " WHERE id IN (" + sqlPlaceholders(ids.size()) + ")",
+        return jdbcTemplate.query("SELECT * FROM " + Views.JOINED_SUBJECTS + " WHERE id IN (" + sqlPlaceholders(ids.size()) + ")",
                 SubjectJdbcDao::subjectListExtractorWithProfsAndPrereq,
                 ids.toArray());
     }
 
     @Override
     public List<Subject> getAll() {
-        return jdbcTemplate.query("SELECT * FROM " + VIEW_JOIN, SubjectJdbcDao::subjectListExtractorWithProfsAndPrereq);
+        return jdbcTemplate.query("SELECT * FROM " + Views.JOINED_SUBJECTS, SubjectJdbcDao::subjectListExtractorWithProfsAndPrereq);
     }
 
 
     @Override
     public List<Subject> getByName(final String name) {
-        List<Subject> toReturn = jdbcTemplate.query("SELECT * FROM " + VIEW_JOIN + " WHERE subname ILIKE ?",
+        List<Subject> toReturn = jdbcTemplate.query("SELECT * FROM " + Views.JOINED_SUBJECTS + " WHERE subname ILIKE ?",
                 SubjectJdbcDao::subjectListExtractorWithProfsAndPrereq, ("%" + sanitizeString(name) + "%"));
         LOGGER.info("Got subjects with name {}", name);
         return toReturn;
@@ -77,7 +70,7 @@ public class SubjectJdbcDao implements SubjectDao {
     @Override
     public List<Subject> getByNameFiltered(final String name, final Map<String, String> filters) {
         // All filters in map must be valid. Checks are made in service.}
-        StringBuilder sb = new StringBuilder("SELECT * FROM ").append(TABLE_SUB).append(" WHERE subname ILIKE ? ");
+        StringBuilder sb = new StringBuilder("SELECT * FROM ").append(Tables.SUBJECTS).append(" WHERE subname ILIKE ? ");
         List<String> filterList = sanitizeFilters(name,filters,sb);
 
         // Order by cannot use "?" in the SQL query
@@ -92,7 +85,7 @@ public class SubjectJdbcDao implements SubjectDao {
 
     @Override
     public int getTotalPagesForSubjects(final String name, final Map<String, String> filters){
-        StringBuilder sb = new StringBuilder("SELECT * FROM ").append(TABLE_SUB).append(" WHERE subname ILIKE ?");
+        StringBuilder sb = new StringBuilder("SELECT * FROM ").append(Tables.SUBJECTS).append(" WHERE subname ILIKE ?");
         List<String> filterList =sanitizeFilters(name,filters,sb);
 
         // Order by cannot use "?" in the SQL query
@@ -107,7 +100,7 @@ public class SubjectJdbcDao implements SubjectDao {
 
     @Override
     public List<Subject> getAllByDegree(final Long idDegree) {
-        return jdbcTemplate.query("SELECT * FROM " + VIEW_JOIN + " WHERE idDeg = ?", SubjectJdbcDao::subjectListExtractorWithProfsAndPrereq, idDegree);
+        return jdbcTemplate.query("SELECT * FROM " + Views.JOINED_SUBJECTS + " WHERE idDeg = ?", SubjectJdbcDao::subjectListExtractorWithProfsAndPrereq, idDegree);
     }
 
     @Override
@@ -129,7 +122,7 @@ public class SubjectJdbcDao implements SubjectDao {
 
     @Override
     public Map<Long, Map<Integer, List<Subject>>> getAllGroupedByDegIdAndSemester() {
-        return jdbcTemplate.query("SELECT * FROM " + VIEW_JOIN, SubjectJdbcDao::groupedByDegAndSemesterExtractor);
+        return jdbcTemplate.query("SELECT * FROM " + Views.JOINED_SUBJECTS, SubjectJdbcDao::groupedByDegAndSemesterExtractor);
     }
 
     @Override
@@ -198,12 +191,12 @@ public class SubjectJdbcDao implements SubjectDao {
 
     public Map<User,Set<Subject>> getAllUserUnreviewedNotifSubjects() {
         return jdbcTemplate.query(
-                "SELECT * FROM " + TABLE_USERS + " u" +
-                        " LEFT JOIN " + TABLE_USER_SUB_PROG + " usp ON u.id = usp.iduser" +
-                        " LEFT JOIN " + TABLE_SUB + " s ON usp.idsub = s.id" +
+                "SELECT * FROM " + Tables.USERS + " u" +
+                        " LEFT JOIN " + Tables.USER_SUBJECT_PROGRESS + " usp ON u.id = usp.iduser" +
+                        " LEFT JOIN " + Tables.SUBJECTS + " s ON usp.idsub = s.id" +
                         " WHERE usp.subjectstate <> 0" +
                         " AND (usp.notiftime IS NULL OR usp.notiftime < now() - interval '1 week')" +
-                        " AND u.id NOT IN (SELECT iduser FROM " + TABLE_REVIEWS + " r WHERE r.idsub = usp.idsub)",
+                        " AND u.id NOT IN (SELECT iduser FROM " + Tables.REVIEWS + " r WHERE r.idsub = usp.idsub)",
 
                 SubjectJdbcDao::userUnreviewedNotifSubjectExtractor
         );
@@ -212,9 +205,9 @@ public class SubjectJdbcDao implements SubjectDao {
     @Override
     public void updateUnreviewedNotifTime() {
         jdbcTemplate.update(
-                "UPDATE " + TABLE_USER_SUB_PROG + " usp SET notiftime = now()" +
+                "UPDATE " + Tables.USER_SUBJECT_PROGRESS + " usp SET notiftime = now()" +
                         " WHERE usp.subjectstate <> 0" +
-                        " AND usp.iduser NOT IN (SELECT iduser FROM " + TABLE_REVIEWS + " r WHERE r.idsub = usp.idsub)"
+                        " AND usp.iduser NOT IN (SELECT iduser FROM " + Tables.REVIEWS + " r WHERE r.idsub = usp.idsub)"
         );
 
         LOGGER.debug("Updated unreviewed notification time");
