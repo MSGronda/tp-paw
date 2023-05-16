@@ -355,12 +355,9 @@ public class UserController {
         if( !authUserService.isAuthenticated()){
             return "invalid parameters"; // we do not give any information on the inner workings
         }
-        int resp = 0, progressValue = progressForm.getProgress();
         User user = authUserService.getCurrentUser();
-        if(progressValue != 0)
-            resp = userService.updateSubjectProgress(user.getId(), progressForm.getIdSub(),progressValue);
-        else
-            resp = userService.deleteUserProgressForSubject(user.getId(), progressForm.getIdSub());
+
+        int resp = userService.updateSubjectProgress(user.getId(), progressForm.getIdSub(),progressForm.getProgress());
 
         if(resp != 1){
             return "invalid parameters"; // we do not give any information on the inner workings

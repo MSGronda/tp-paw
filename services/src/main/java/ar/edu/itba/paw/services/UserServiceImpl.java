@@ -153,7 +153,13 @@ public class UserServiceImpl implements UserService {
     @Transactional
     @Override
     public Integer updateSubjectProgress(final Long id, final String idSub, final Integer newProgress) {
-        return userDao.updateSubjectProgress(id,idSub,newProgress);
+        int resp;
+        if(newProgress != 0)
+            resp = userDao.updateSubjectProgress(id, idSub,newProgress);
+        else
+            resp = userDao.deleteUserProgressForSubject(id, idSub);
+
+        return resp;
     }
 
     @Transactional
