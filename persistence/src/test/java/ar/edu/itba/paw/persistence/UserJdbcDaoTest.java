@@ -4,6 +4,7 @@ import ar.edu.itba.paw.models.Roles;
 import ar.edu.itba.paw.models.User;
 import ar.edu.itba.paw.persistence.config.TestConfig;
 import ar.edu.itba.paw.persistence.exceptions.UserEmailAlreadyTakenPersistenceException;
+import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -80,7 +81,10 @@ public class UserJdbcDaoTest {
     @Before
     public void setup() {
         jdbcTemplate = new JdbcTemplate(ds);
+    }
 
+    @After
+    public void clearDb(){
         JdbcTestUtils.deleteFromTables(jdbcTemplate, "usersubjectprogress");
         JdbcTestUtils.deleteFromTables(jdbcTemplate, "userroles");
         JdbcTestUtils.deleteFromTables(jdbcTemplate, "roles");

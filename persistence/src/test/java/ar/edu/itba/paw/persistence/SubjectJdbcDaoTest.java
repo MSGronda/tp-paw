@@ -3,6 +3,7 @@ package ar.edu.itba.paw.persistence;
 import ar.edu.itba.paw.models.Subject;
 import ar.edu.itba.paw.models.User;
 import ar.edu.itba.paw.persistence.config.TestConfig;
+import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -81,7 +82,10 @@ public class SubjectJdbcDaoTest {
     @Before
     public void setup(){
         jdbcTemplate = new JdbcTemplate(ds);
+    }
 
+    @After
+    public void clearDb(){
         JdbcTestUtils.deleteFromTables(jdbcTemplate, "usersubjectprogress");
         JdbcTestUtils.deleteFromTables(jdbcTemplate, "users");
         JdbcTestUtils.deleteFromTables(jdbcTemplate, "subjectsdegrees");

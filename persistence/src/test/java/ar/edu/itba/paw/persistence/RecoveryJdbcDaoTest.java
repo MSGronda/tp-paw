@@ -1,6 +1,7 @@
 package ar.edu.itba.paw.persistence;
 
 import ar.edu.itba.paw.persistence.config.TestConfig;
+import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -45,10 +46,6 @@ public class RecoveryJdbcDaoTest {
     @Before
     public void setup(){
         jdbcTemplate = new JdbcTemplate(ds);
-
-        JdbcTestUtils.deleteFromTables(jdbcTemplate, "recoverytoken");
-        JdbcTestUtils.deleteFromTables(jdbcTemplate, "users");
-
     }
 
     //TODO - Revisar, creo que falla por sintaxis de hqsldb
@@ -61,6 +58,13 @@ public class RecoveryJdbcDaoTest {
 //        String query = "token = " + TOKEN + " AND userid = " + ID;
 //        Assert.assertEquals(1, JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, "recoverytoken", query));
 //    }
+
+
+    @After
+    public void clearDb(){
+        JdbcTestUtils.deleteFromTables(jdbcTemplate, "recoverytoken");
+        JdbcTestUtils.deleteFromTables(jdbcTemplate, "users");
+    }
 
     @Test
     public void testfindUserIdByToken(){

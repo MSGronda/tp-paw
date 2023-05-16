@@ -3,6 +3,7 @@ package ar.edu.itba.paw.persistence;
 import ar.edu.itba.paw.models.Review;
 import ar.edu.itba.paw.models.ReviewStatistic;
 import ar.edu.itba.paw.persistence.config.TestConfig;
+import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -97,7 +98,10 @@ public class ReviewJdbcDaoTest {
     @Before
     public void setup(){
         jdbcTemplate = new JdbcTemplate(ds);
+    }
 
+    @After
+    public void clearDb(){
         JdbcTestUtils.deleteFromTables(jdbcTemplate, "reviewvote");
         JdbcTestUtils.deleteFromTables(jdbcTemplate, "reviews");
         JdbcTestUtils.deleteFromTables(jdbcTemplate, "users");
@@ -472,5 +476,4 @@ public class ReviewJdbcDaoTest {
         Assert.assertEquals(USERNAME2, list.get(1).getUsername());
 
     }
-
 }

@@ -2,6 +2,7 @@ package ar.edu.itba.paw.persistence;
 
 import ar.edu.itba.paw.models.Roles;
 import ar.edu.itba.paw.persistence.config.TestConfig;
+import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -39,7 +40,11 @@ public class RolesJdbcDaoTest {
     @Before
     public void setup(){
         jdbcTemplate = new JdbcTemplate(ds);
+        JdbcTestUtils.deleteFromTables(jdbcTemplate, "roles");
+    }
 
+    @After
+    public void clearDb(){
         JdbcTestUtils.deleteFromTables(jdbcTemplate, "roles");
     }
 
@@ -63,7 +68,6 @@ public class RolesJdbcDaoTest {
         Assert.assertEquals(2, list.size());
         Assert.assertEquals(NAME, list.get(0).getName());
         Assert.assertEquals(NAME2, list.get(1).getName());
-
     }
 
     @Test

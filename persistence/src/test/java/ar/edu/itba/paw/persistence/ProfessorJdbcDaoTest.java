@@ -2,6 +2,7 @@ package ar.edu.itba.paw.persistence;
 
 import ar.edu.itba.paw.models.Professor;
 import ar.edu.itba.paw.persistence.config.TestConfig;
+import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -34,10 +35,13 @@ public class ProfessorJdbcDaoTest {
     @Before
     public void setup(){
         jdbcTemplate = new JdbcTemplate(ds);
-
-        JdbcTestUtils.deleteFromTables(jdbcTemplate, "professors");
-        JdbcTestUtils.deleteFromTables(jdbcTemplate, "professorssubjects");
     }
+
+    @After
+    public void clearDb(){
+        JdbcTestUtils.deleteFromTables(jdbcTemplate, "professors");
+    }
+
 
     @Test
     public void testFindById(){
