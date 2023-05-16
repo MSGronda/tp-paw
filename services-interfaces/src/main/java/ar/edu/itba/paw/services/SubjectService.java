@@ -40,4 +40,7 @@ public interface SubjectService extends BaseService<String, Subject> {
 
     Map<User,Set<Subject>> getAllUserUnreviewedNotifSubjects();
     void updateUnreviewedNotifTime();
+    int checkPageNum(Map<String,String> params);
+    String checkOrder(Map<String,String> params);
+    String checkDir(Map<String,String> params);
 }

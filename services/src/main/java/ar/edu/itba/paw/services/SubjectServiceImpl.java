@@ -129,6 +129,37 @@ public class SubjectServiceImpl implements SubjectService {
         subjectDao.updateUnreviewedNotifTime();
     }
 
+    @Override
+    public int checkPageNum(Map<String,String> params){
+        if(params.isEmpty()){
+            return 1;
+        } else {
+            if(!params.getOrDefault("pageNum","1").matches("[0-9]+")){
+                return 1;
+            } else {
+                return Integer.parseInt(params.getOrDefault("pageNum","0")) + 1;
+            }
+        }
+    }
+
+    @Override
+    public String checkOrder(Map<String,String> params){
+        if(params.isEmpty()){
+           return "easy";
+        } else {
+            return params.getOrDefault("order","easy");
+        }
+    }
+
+    @Override
+    public String checkDir(Map<String,String> params){
+        if(params.isEmpty()){
+            return "asc";
+        } else {
+            return params.getOrDefault("dir","asc");
+        }
+    }
+
     @Transactional
     @Override
     public Subject create(final String id, String name, final String depto, final Set<String> idCorrelativas,
@@ -153,4 +184,6 @@ public class SubjectServiceImpl implements SubjectService {
         }
         return validatedFilters;
     }
+
+
 }

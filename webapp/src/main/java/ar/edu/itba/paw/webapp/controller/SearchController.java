@@ -64,16 +64,7 @@ public class SearchController {
         mav.addObject("subjectProgress", subjectProgress);
         mav.addObject("relevantFilters", relevantFilters);
         mav.addObject("totalPages",totalPages);
-        if(params.isEmpty()){
-            mav.addObject("actualPage",1);
-        } else {
-            if(!params.getOrDefault("pageNum","1").matches("[0-9]+")){
-                mav.addObject("actualPage",1);
-            } else {
-                int actualPage = Integer.parseInt(params.getOrDefault("pageNum","0")) + 1;
-                mav.addObject("actualPage",actualPage);
-            }
-        }
+        mav.addObject("actualPage",subjectService.checkPageNum(params));
 
         return mav;
     }

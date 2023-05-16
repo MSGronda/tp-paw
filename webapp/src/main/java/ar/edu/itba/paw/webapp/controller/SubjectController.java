@@ -97,20 +97,10 @@ public class SubjectController {
         mav.addObject("userVotes", userVotes);
         mav.addObject("subjectProgress",subjectProgress);
         mav.addObject("user", user);
-        if(param.isEmpty()){
-            mav.addObject("order","easy");
-            mav.addObject("dir","asc");
-            mav.addObject("actualPage",1);
-        } else {
-            mav.addObject("order",param.get("order"));
-            mav.addObject("dir",param.get("dir"));
-            if(!param.getOrDefault("pageNum","0").matches("[0-9]+")){
-                mav.addObject("actualPage",1);
-            } else {
-                int actualPage = Integer.parseInt(param.getOrDefault("pageNum","0")) + 1;
-                mav.addObject("actualPage",actualPage);
-            }
-        }
+        mav.addObject("actualPage",subjectService.checkPageNum(param));
+        mav.addObject("order",subjectService.checkOrder(param));
+        mav.addObject("dir",subjectService.checkDir(param));
+
         return mav;
     }
 
