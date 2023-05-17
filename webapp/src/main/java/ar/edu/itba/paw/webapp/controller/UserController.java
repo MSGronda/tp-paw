@@ -103,9 +103,12 @@ public class UserController {
         final List<Review> userReviews = reviewService.getAllUserReviewsWithSubjectName(user.getId(),param);
         final int totalPages = reviewService.getTotalPagesFromUserReviews(user.getId());
         final Map<Long, Integer> userVotes = reviewService.userReviewVoteByIdUser(user.getId());
-        
-        UserDetails userDetails = uniUserDetailsService.loadUserByUsername(user.getEmail());
-        Boolean isEditor = userDetails.getAuthorities().contains(new SimpleGrantedAuthority(String.format("ROLE_%s", Roles.Role.EDITOR.getName())));
+
+        boolean isEditor = false;
+        if(user.getPassword() != null) {
+            UserDetails userDetails = uniUserDetailsService.loadUserByUsername(user.getEmail());
+            isEditor = userDetails.getAuthorities().contains(new SimpleGrantedAuthority(String.format("ROLE_%s", Roles.Role.EDITOR.getName())));
+        }
 
         mav.addObject("editor", isEditor);
         mav.addObject("user", user);
