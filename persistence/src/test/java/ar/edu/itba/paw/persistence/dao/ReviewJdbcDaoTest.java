@@ -87,6 +87,8 @@ public class ReviewJdbcDaoTest {
     private static final int VOTE = 1;
 
     private static final int NEWVOTE = -1;
+    private static final String PARAM_PAGE_NUM="pageNum";
+    private static final String PAGE_ZERO="0";
 
     private JdbcTemplate jdbcTemplate;
 
@@ -465,8 +467,9 @@ public class ReviewJdbcDaoTest {
                 "VALUES (" + ID + ", " + USERID + ", '" + SUBJECTID + "', " + SCORE + ", " + DIFFICULTY + ", " + TIMEDEMANDING + ", '" + TEXT + "', " + ANONYMOUS + ")" );
         jdbcTemplate.execute("INSERT INTO " + Tables.REVIEWS + " (id, iduser, idsub, score, easy, timedemanding, revtext, useranonymous) " +
                 "VALUES (" + ID2 + ", " + USERID + ", '" + SUBJECTID2 + "', " + SCORE + ", " + HARD + ", " + AVERAGETIMEDEMANDING + ", '" + NEWTEXT + "', " + ANONYMOUS + ")" );
-
-        List<Review> list = reviewDao.getAllUserReviewsWithSubjectName(USERID);
+        Map<String,String> params = new HashMap<>();
+        params.put(PARAM_PAGE_NUM,PAGE_ZERO);
+        List<Review> list = reviewDao.getAllUserReviewsWithSubjectName(USERID,params);
 
         Assert.assertEquals(2, list.size());
         Assert.assertEquals(NAME, list.get(0).getSubjectName());

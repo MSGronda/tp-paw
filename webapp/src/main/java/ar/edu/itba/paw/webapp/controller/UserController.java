@@ -34,6 +34,7 @@ import java.util.*;
 public class UserController {
     private final UserService userService;
     private final ReviewService reviewService;
+    private final SubjectService subjectService;
     private final MailService mailService;
 
     private final DegreeService degreeService;
@@ -53,6 +54,7 @@ public class UserController {
     public UserController(
             UserService userService,
             ReviewService reviewService,
+            SubjectService subjectService,
             MailService mailService,
             DegreeService degreeService,
             AuthUserService authUserService,
@@ -63,6 +65,7 @@ public class UserController {
     ) {
         this.userService = userService;
         this.reviewService = reviewService;
+        this.subjectService = subjectService;
         this.mailService = mailService;
         this.degreeService = degreeService;
         this.authUserService = authUserService;
@@ -73,7 +76,7 @@ public class UserController {
     }
 
     @RequestMapping("/user/{id:\\d+}")
-    public ModelAndView user(@PathVariable long id) {
+    public ModelAndView user(@PathVariable long id,@RequestParam Map<String, String> param) {
         final Optional<User> maybeUser = userService.findById(id);
         if(!maybeUser.isPresent()) {
             throw new UserNotFoundException();
@@ -86,18 +89,19 @@ public class UserController {
         final User user = maybeUser.get();
         ModelAndView mav = new ModelAndView("user/userProfile");
 
-        return setProfileData(user, mav);
+        return setProfileData(user, mav,param);
     }
 
     @RequestMapping("/profile")
-    public ModelAndView profile() {
+    public ModelAndView profile(@RequestParam Map<String, String> param) {
         ModelAndView mav = new ModelAndView("/user/profile");
         User user = authUserService.getCurrentUser();
-        return setProfileData(user, mav);
+        return setProfileData(user, mav,param);
     }
 
-    private ModelAndView setProfileData(User user, ModelAndView mav){
-        final List<Review> userReviews = reviewService.getAllUserReviewsWithSubjectName(user.getId());
+    private ModelAndView setProfileData(User user, ModelAndView mav,Map<String, String> param){
+        final List<Review> userReviews = reviewService.getAllUserReviewsWithSubjectName(user.getId(),param);
+        final int totalPages = reviewService.getTotalPagesFromUserReviews(user.getId());
         final Map<Long, Integer> userVotes = reviewService.userReviewVoteByIdUser(user.getId());
         
         UserDetails userDetails = uniUserDetailsService.loadUserByUsername(user.getEmail());
@@ -106,6 +110,8 @@ public class UserController {
         mav.addObject("editor", isEditor);
         mav.addObject("user", user);
         mav.addObject("reviews", userReviews);
+        mav.addObject("totalPages",totalPages);
+        mav.addObject("actualPage",subjectService.checkPageNum(param));
         mav.addObject("userVotes",userVotes);
 
         return mav;

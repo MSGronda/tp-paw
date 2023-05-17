@@ -70,7 +70,6 @@
           justify-content: space-around;
           align-items: center;
           padding-bottom: 3rem;
-
       }
 
       .card-header [slot='header'] {

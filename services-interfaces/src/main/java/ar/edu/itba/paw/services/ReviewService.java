@@ -12,7 +12,8 @@ public interface ReviewService extends BaseService<Long, Review> {
     Optional<Review> findById(final Long id);
 
     List<Review> getAll();
-    List<Review> getAllUserReviewsWithSubjectName(final Long userId);
+    List<Review> getAllUserReviewsWithSubjectName(final Long userId, final Map<String, String> params);
+    int getTotalPagesFromUserReviews(final Long userId);
     int getTotalPagesForReviews(final String subjectId);
     List<Review> getAllSubjectReviewsWithUsername(final String subjectId, final Map<String,String> param);
     List<Review> getAllBySubject(final String idsub);

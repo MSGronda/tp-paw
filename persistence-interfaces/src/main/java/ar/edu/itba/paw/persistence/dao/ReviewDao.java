@@ -25,7 +25,8 @@ public interface ReviewDao extends RWDao<Long,Review> {
     Map<String, ReviewStats> getReviewStatMapBySubjectList(final List<String> idSubs);
     Optional<ReviewStats> getReviewStatBySubject(final String idSub);
     List<ReviewStats> getReviewStatBySubjectList(final List<String> idSubs);
-    List<Review> getAllUserReviewsWithSubjectName(final Long userId);
+    List<Review> getAllUserReviewsWithSubjectName(final Long userId,final Map<String, String> params);
+    int getTotalPagesFromUserReviews(final Long userId);
     int getTotalPagesForReviews(final String subjectId);
     List<Review> getAllSubjectReviewsWithUsername(final String subjectId, final Map<String,String> params);
     Boolean didUserReviewDB(final String subjectId, final Long userId);

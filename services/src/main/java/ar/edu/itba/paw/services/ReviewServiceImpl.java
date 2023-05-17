@@ -40,10 +40,21 @@ public class ReviewServiceImpl implements ReviewService {
     }
 
     @Override
-    public List<Review> getAllUserReviewsWithSubjectName(final Long userId) {
-        return reviewDao.getAllUserReviewsWithSubjectName(userId);
+    public List<Review> getAllUserReviewsWithSubjectName(final Long userId, final Map<String, String> params) {
+        Map<String, String> validatedParams = new HashMap<>();
+
+        for(Map.Entry<String, String> filter : params.entrySet()){
+            if((Objects.equals(filter.getKey(), "pageNum") && filter.getValue().matches("[0-9]+"))){
+                validatedParams.put(filter.getKey(), filter.getValue());
+            }
+        }
+        return reviewDao.getAllUserReviewsWithSubjectName(userId,validatedParams);
     }
 
+    @Override
+    public int getTotalPagesFromUserReviews(final Long userId){
+        return reviewDao.getTotalPagesFromUserReviews(userId);
+    }
     @Override
     public int getTotalPagesForReviews(final String subjectId){
         return reviewDao.getTotalPagesForReviews(subjectId);
