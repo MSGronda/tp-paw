@@ -216,6 +216,7 @@ public class UserServiceImpl implements UserService {
 
         userDao.changePassword(userId, passwordEncoder.encode(newPassword));
         recDao.delete(token);
+        autoLogin(userId);
     }
 
     @Override

@@ -112,7 +112,7 @@
 
             <br />
             <c:url var="editProfilePicture" value="/profile/editprofilepicture" />
-            <form:form modelAttribute="editProfilePictureForm" action="${editProfilePicture}" method="post" enctype="multipart/form-data">
+            <form:form modelAttribute="editProfilePictureForm" acceptCharset="utf-8" action="${editProfilePicture}" method="post" enctype="multipart/form-data">
                 <form:errors path="profilePicture" cssClass="error" element="p"/>
                 <spring:message code="profile.upload.placeholder" var="uploadPlaceholder"/>
                 <span class="upload-button">

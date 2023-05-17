@@ -7,20 +7,42 @@
   <title>Uni</title>
 
   <style>
-    .loginButton {
-        width: fit-content;
+    .center{
+      margin-top: 2rem;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    .center2{
+      display: flex;
+      flex-direction: column;
+      width: 100%;
+      justify-content: center;
+      align-items: center;
+    }
+    h3{
+      font-size: 1rem;
+      font-weight: normal;
+    }
+    .success{
+      font-size: 5rem;
+      color: limegreen;
     }
   </style>
 </head>
 <body>
 <jsp:include page="../../components/navbar.jsp"/>
 
-<main class="container-50">
-  <h1><spring:message code="recover.success.title"/></h1>
-  <p><spring:message code="recover.success.body" /></p>
-
-  <c:url value="/login" var="loginUrl"/>
-  <sl-button class="loginButton" href="${loginUrl}" variant="success"><spring:message code="recover.success.loginbutton"/></sl-button>
+<main class="container-70">
+  <sl-card class="center">
+    <div class="center2">
+      <sl-icon class="success" name="check-circle"></sl-icon>
+      <h1><spring:message code="recover.success.title"/></h1>
+      <h3><spring:message code="recover.success.body"/></h3>
+      <p></p>
+      <sl-button href="<c:url value="/"/>" variant="primary" outline><spring:message code="home.returnHome"/></sl-button>
+    </div>
+  </sl-card>
 </main>
 
 <jsp:include page="../../components/footer.jsp"/>
