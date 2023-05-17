@@ -27,6 +27,9 @@ To run the project locally a file named `application-dev.properties` must be cre
     db.username=
     db.password=
 ```
+Also, the local database must be filed with the following SQL script:
+
+[Master SQL](https://drive.google.com/file/d/1o4RwuEiW01c00MXlRF4y0xqjixtE2NAK/view?usp=sharing)
 
 ## Technologies Used
 
