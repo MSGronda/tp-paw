@@ -20,25 +20,25 @@ import java.util.*;
 public class SubjectClassJdbcDao implements SubjectClassDao {
     private static final String QUERY_JOIN = "SELECT * FROM " + Tables.CLASS + " NATURAL JOIN " + Tables.CLASS_LOCTIME
             + " NATURAL JOIN " + Tables.CLASS_PROFS + " FULL JOIN " + Tables.PROFS + " ON " + Tables.CLASS_PROFS + ".idProf = " +
-        Tables.PROFS + ".id";
+            Tables.PROFS + ".id";
 
     private static final String COMPLETE_SUB =
             "SELECT *\n" +
-            "FROM " + Tables.SUBJECTS + " AS s LEFT JOIN " + Tables.CLASS + " AS sc ON s.id = sc.idsub " + " LEFT JOIN " + Tables.CLASS_LOCTIME + " AS slt ON s.id = slt.idsub AND slt.idclass = sc.idclass " +
-            "WHERE s.id IN (SELECT v.id\n" +
-            "                FROM " + Views.JOINED_SUBJECTS + " AS v\n" +
-            "                WHERE v.id NOT IN (SELECT idSub FROM " + Tables.USER_SUBJECT_PROGRESS + " WHERE idSub = v.id)\n" +
-            "                GROUP BY v.id\n" +
-            "                HAVING sum(CASE WHEN v.idprereq IS null THEN 1 ELSE 0 END) > 0\n" +
-            "                    OR\n" +
-            "                        COUNT(DISTINCT v.idprereq) =\n" +
-            "                        (\n" +
-            "                            SELECT COUNT(*)\n" +
-            "                            FROM " + Tables.USER_SUBJECT_PROGRESS  + " AS sp FULL JOIN prereqsubjects AS pr2 ON sp.idSub = pr2.idPreReq\n" +
-            "                            WHERE sp.idUser = ? AND pr2.idSub = v.id\n" +
-            "                            GROUP BY pr2.idSub\n" +
-            "                        )\n" +
-            "    )";
+                    "FROM " + Tables.SUBJECTS + " AS s LEFT JOIN " + Tables.CLASS + " AS sc ON s.id = sc.idsub " + " LEFT JOIN " + Tables.CLASS_LOCTIME + " AS slt ON s.id = slt.idsub AND slt.idclass = sc.idclass " +
+                    "WHERE s.id IN (SELECT v.id\n" +
+                    "                FROM " + Views.JOINED_SUBJECTS + " AS v\n" +
+                    "                WHERE v.id NOT IN (SELECT idSub FROM " + Tables.USER_SUBJECT_PROGRESS + " WHERE idSub = v.id)\n" +
+                    "                GROUP BY v.id\n" +
+                    "                HAVING sum(CASE WHEN v.idprereq IS null THEN 1 ELSE 0 END) > 0\n" +
+                    "                    OR\n" +
+                    "                        COUNT(DISTINCT v.idprereq) =\n" +
+                    "                        (\n" +
+                    "                            SELECT COUNT(*)\n" +
+                    "                            FROM " + Tables.USER_SUBJECT_PROGRESS + " AS sp FULL JOIN prereqsubjects AS pr2 ON sp.idSub = pr2.idPreReq\n" +
+                    "                            WHERE sp.idUser = ? AND pr2.idSub = v.id\n" +
+                    "                            GROUP BY pr2.idSub\n" +
+                    "                        )\n" +
+                    "    )";
 
     private final JdbcTemplate jdbcTemplate;
     private final SimpleJdbcInsert jdbcInsertSubjectClass;
@@ -46,12 +46,12 @@ public class SubjectClassJdbcDao implements SubjectClassDao {
     private final SimpleJdbcInsert jdbcInsertSubjectClassProfessor;
 
     @Override
-    public List<Subject> getAllSubsWithClassThatUserCanDo(final long userId){
-        return jdbcTemplate.query(COMPLETE_SUB, SubjectClassJdbcDao::multipleCompleteClassExtractor,userId);
+    public List<Subject> getAllSubsWithClassThatUserCanDo(final long userId) {
+        return jdbcTemplate.query(COMPLETE_SUB, SubjectClassJdbcDao::multipleCompleteClassExtractor, userId);
     }
 
     private static List<Subject> multipleCompleteClassExtractor(final ResultSet rs) throws SQLException {
-        Map<String,Subject> classes = new HashMap<>();
+        Map<String, Subject> classes = new HashMap<>();
 
         while (rs.next()) {
 
@@ -60,7 +60,15 @@ public class SubjectClassJdbcDao implements SubjectClassDao {
             String department = rs.getString("department");
             int credits = rs.getInt("credits");
 
-            Subject sub = classes.getOrDefault(idSub, new Subject(idSub,subName,department,credits));
+            Subject sub = classes.getOrDefault(
+                    idSub,
+                    Subject.builder()
+                            .id(idSub)
+                            .name(subName)
+                            .department(department)
+                            .credits(credits)
+                            .build()
+            );
 
             String idClass = rs.getString("idClass");
             Integer day = rs.getInt("day");
@@ -70,11 +78,11 @@ public class SubjectClassJdbcDao implements SubjectClassDao {
             String building = rs.getString("building");
             String mode = rs.getString("mode");
 
-            SubjectClass subjectClass = sub.getSubjectClasses().getOrDefault(idSub+idClass, new SubjectClass(idSub,idClass));
-            subjectClass.getClassTimes().add(new SubjectClass.ClassTime(day,start,end,classNumber,building,mode));
+            SubjectClass subjectClass = sub.getSubjectClasses().getOrDefault(idSub + idClass, new SubjectClass(idSub, idClass));
+            subjectClass.getClassTimes().add(new SubjectClass.ClassTime(day, start, end, classNumber, building, mode));
 
-            sub.getSubjectClasses().put(idSub+idClass, subjectClass);
-            classes.put(idSub,sub);
+            sub.getSubjectClasses().put(idSub + idClass, subjectClass);
+            classes.put(idSub, sub);
         }
 
         return new ArrayList<>(classes.values());
@@ -106,9 +114,8 @@ public class SubjectClassJdbcDao implements SubjectClassDao {
 
     @Override
     public List<SubjectClass> getBySubId(final String idSub) {
-        return jdbcTemplate.query( QUERY_JOIN + " WHERE idSub = ?", SubjectClassJdbcDao::subjectListExtractor, idSub);
+        return jdbcTemplate.query(QUERY_JOIN + " WHERE idSub = ?", SubjectClassJdbcDao::subjectListExtractor, idSub);
     }
-
 
 
     @Override
@@ -120,7 +127,6 @@ public class SubjectClassJdbcDao implements SubjectClassDao {
     public List<SubjectClass> getAll() {
         return jdbcTemplate.query(QUERY_JOIN, SubjectClassJdbcDao::subjectListExtractor);
     }
-
 
 
     private static List<SubjectClass> subjectListExtractor(final ResultSet rs) throws SQLException {
@@ -137,16 +143,15 @@ public class SubjectClassJdbcDao implements SubjectClassDao {
             String profName = rs.getString("profName");
             int profId = rs.getInt("id");
 
-            final SubjectClass subClass = subClasses.getOrDefault(idSub+idClass, new SubjectClass(idSub, idClass));
+            final SubjectClass subClass = subClasses.getOrDefault(idSub + idClass, new SubjectClass(idSub, idClass));
 
             subClass.getClassTimes().add(new SubjectClass.ClassTime(day, start, end, classNumber, building, mode));
             subClass.getProfessors().add(new Professor(profId, profName));
-            subClasses.put(idSub+idClass, subClass);
+            subClasses.put(idSub + idClass, subClass);
         }
 
         return new ArrayList<>(subClasses.values());
     }
-
 
 
     private static SubjectClass rowMapperClass(final ResultSet rs, int rowNum) throws SQLException {

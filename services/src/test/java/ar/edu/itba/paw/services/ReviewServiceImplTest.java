@@ -141,8 +141,19 @@ public class ReviewServiceImplTest {
 
         //Test to see if the method in service passes the subjectId correctly and
         // returns an empty ReviewStatistic in case it is missing
-        Subject subject = new Subject(ID1, "sistemas","departamento", 3, new HashSet<>(), new HashSet<>(), new HashSet<>());
-        Subject subject2 = new Subject(ID2, "otra","departamento", 3, new HashSet<>(), new HashSet<>(), new HashSet<>());
+        Subject subject = Subject.builder()
+                .id(ID1)
+                .name("sistemas")
+                .department("departamento")
+                .credits(3)
+                .build();
+        Subject subject2 = Subject.builder()
+                .id(ID2)
+                .name("otra")
+                .department("departamento")
+                .credits(3)
+                .build();
+
         List<Subject> list = new ArrayList<>();
         list.add(subject);
         list.add(subject2);

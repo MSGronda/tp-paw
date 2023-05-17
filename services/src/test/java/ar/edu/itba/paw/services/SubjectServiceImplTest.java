@@ -42,7 +42,14 @@ public class SubjectServiceImplTest {
 
     @Test
     public void testFindById(){
-        when(subjectDao.findById(eq(ID))).thenReturn(Optional.of(new Subject(ID, NAME, DEPARTMENT, CREDITS)));
+        when(subjectDao.findById(eq(ID))).thenReturn(Optional.of(
+                Subject.builder()
+                        .id(ID)
+                        .name(NAME)
+                        .department(DEPARTMENT)
+                        .credits(CREDITS)
+                        .build()
+        ));
 
         Optional<Subject> subject = subjectService.findById(ID);
 
@@ -57,7 +64,14 @@ public class SubjectServiceImplTest {
     @Test
     public void testFindByName(){
         ArrayList<Subject> arrayList = new ArrayList<>();
-        arrayList.add(new Subject(ID,NAME,DEPARTMENT,CREDITS));
+        arrayList.add(
+                Subject.builder()
+                        .id(ID)
+                        .name(NAME)
+                        .department(DEPARTMENT)
+                        .credits(CREDITS)
+                        .build()
+        );
         when(subjectDao.getByName(eq(NAME))).thenReturn(arrayList);
 
         List<Subject> subjects = subjectService.getByName(NAME);
@@ -72,7 +86,14 @@ public class SubjectServiceImplTest {
     public void testFindByNameFiltered(){
         Map<String, String> filterMap = new HashMap<>();
         List<Subject> subjectList = new ArrayList<>();
-        subjectList.add(new Subject(ID, NAME, DEPARTMENT, CREDITS));
+        subjectList.add(
+                Subject.builder()
+                        .id(ID)
+                        .name(NAME)
+                        .department(DEPARTMENT)
+                        .credits(CREDITS)
+                        .build()
+        );
         when(subjectDao.getByNameFiltered(eq(NAME), eq(filterMap))).thenReturn(subjectList);
 
         //FindByNameFiltered should ignore a faulty param
@@ -89,8 +110,20 @@ public class SubjectServiceImplTest {
 
     @Test
     public void testGetRelevantFilters(){
-        Subject subject1 = new Subject(ID, NAME, DEPARTMENT, CREDITS);
-        Subject subject2 = new Subject(ID2, NAME2, DEPARTMENT2, CREDITS2);
+        Subject subject1 = Subject.builder()
+                .id(ID)
+                .name(NAME)
+                .department(DEPARTMENT)
+                .credits(CREDITS)
+                .build();
+
+        Subject subject2 = Subject.builder()
+                .id(ID2)
+                .name(NAME2)
+                .department(DEPARTMENT2)
+                .credits(CREDITS2)
+                .build();
+
         List<Subject> list = new ArrayList<>();
         list.add(subject1);
         list.add(subject2);

@@ -8,7 +8,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
-public interface SubjectDao extends RWDao<String, Subject> {
+public interface SubjectDao extends ReadableDao<String, Subject> {
 
     List<Subject> getByName(final String name);
 
@@ -23,9 +23,6 @@ public interface SubjectDao extends RWDao<String, Subject> {
     Optional<Subject> findById(final String id);
     List<Subject> findByIds(final List<String> id);
 
-
-    Subject create(final String id, String name, final String depto, final Set<String> idCorrelativas,
-                   final Set<Long> idProfesores, final Set<Long> idCarreras, final int creditos);
 
     Map<Long, List<Subject>> getAllGroupedByDegreeId();
 

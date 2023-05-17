@@ -34,8 +34,8 @@ public class SubjectJdbcDao implements SubjectDao {
                 .withTableName(Tables.SUBJECTS)
                 .usingGeneratedKeyColumns("id");
 
-        queryOptionBlanck.putIfAbsent("department","?");
-        queryOptionBlanck.putIfAbsent("credits","CAST(? AS INTEGER)");
+        queryOptionBlanck.putIfAbsent("department", "?");
+        queryOptionBlanck.putIfAbsent("credits", "CAST(? AS INTEGER)");
     }
 
 
@@ -46,7 +46,7 @@ public class SubjectJdbcDao implements SubjectDao {
     }
 
     public List<Subject> findByIds(final List<String> ids) {
-        if(ids.isEmpty()) return new ArrayList<>();
+        if (ids.isEmpty()) return new ArrayList<>();
 
         return jdbcTemplate.query("SELECT * FROM " + Views.JOINED_SUBJECTS + " WHERE id IN (" + sqlPlaceholders(ids.size()) + ")",
                 SubjectJdbcDao::subjectListExtractorWithProfsAndPrereq,
@@ -71,27 +71,27 @@ public class SubjectJdbcDao implements SubjectDao {
     public List<Subject> getByNameFiltered(final String name, final Map<String, String> filters) {
         // All filters in map must be valid. Checks are made in service.}
         StringBuilder sb = new StringBuilder("SELECT * FROM ").append(Tables.SUBJECTS).append(" WHERE subname ILIKE ? ");
-        List<String> filterList = sanitizeFilters(name,filters,sb);
+        List<String> filterList = sanitizeFilters(name, filters, sb);
 
         // Order by cannot use "?" in the SQL query
-        sb.append(" ORDER BY ").append(filters.getOrDefault("ob","subname"));
-        sb.append(" ").append(filters.getOrDefault("dir","ASC"));
-        int offset = Integer.parseInt(filters.getOrDefault("pageNum","0")) * Integer.parseInt(PAGE_SIZE);
+        sb.append(" ORDER BY ").append(filters.getOrDefault("ob", "subname"));
+        sb.append(" ").append(filters.getOrDefault("dir", "ASC"));
+        int offset = Integer.parseInt(filters.getOrDefault("pageNum", "0")) * Integer.parseInt(PAGE_SIZE);
         sb.append(" LIMIT " + PAGE_SIZE + " OFFSET ").append(offset);
-        List<Subject> toReturn = jdbcTemplate.query(sb.toString(), SubjectJdbcDao::subjectListExtractor,  filterList.toArray());
+        List<Subject> toReturn = jdbcTemplate.query(sb.toString(), SubjectJdbcDao::subjectListExtractor, filterList.toArray());
         LOGGER.info("Got subjects with name {} and filters {}", name, filters.values().stream().toString());
         return toReturn;
     }
 
     @Override
-    public int getTotalPagesForSubjects(final String name, final Map<String, String> filters){
+    public int getTotalPagesForSubjects(final String name, final Map<String, String> filters) {
         StringBuilder sb = new StringBuilder("SELECT * FROM ").append(Tables.SUBJECTS).append(" WHERE subname ILIKE ?");
-        List<String> filterList =sanitizeFilters(name,filters,sb);
+        List<String> filterList = sanitizeFilters(name, filters, sb);
 
         // Order by cannot use "?" in the SQL query
         sb.append(" GROUP BY id,subname ");
-        sb.append(" ORDER BY ").append(filters.getOrDefault("ob","subname"));
-        sb.append(" ").append(filters.getOrDefault("dir","ASC"));
+        sb.append(" ORDER BY ").append(filters.getOrDefault("ob", "subname"));
+        sb.append(" ").append(filters.getOrDefault("dir", "ASC"));
         List<Subject> toReturn = jdbcTemplate.query(sb.toString(), SubjectJdbcDao::subjectListExtractor, filterList.toArray());
         LOGGER.info("Got subjects with name {} and filters {}", name, filters.values().stream().toString());
         return toReturn.size() / Integer.parseInt(PAGE_SIZE);
@@ -126,16 +126,16 @@ public class SubjectJdbcDao implements SubjectDao {
     }
 
     @Override
-    public Map<Long, Map<Integer, List<Subject>>> getAllGroupedByDegIdAndYear(){
+    public Map<Long, Map<Integer, List<Subject>>> getAllGroupedByDegIdAndYear() {
         Map<Long, Map<Integer, List<Subject>>> bySemester = getAllGroupedByDegIdAndSemester();
         Map<Long, Map<Integer, List<Subject>>> result = new LinkedHashMap<>();
 
-        for(Map.Entry<Long, Map<Integer, List<Subject>>> degree : bySemester.entrySet()){
+        for (Map.Entry<Long, Map<Integer, List<Subject>>> degree : bySemester.entrySet()) {
             Map<Integer, List<Subject>> byYearMap = new LinkedHashMap<>();
-            for(Map.Entry<Integer, List<Subject>> semester : degree.getValue().entrySet()){
-                if(semester.getKey() == -1) continue;
+            for (Map.Entry<Integer, List<Subject>> semester : degree.getValue().entrySet()) {
+                if (semester.getKey() == -1) continue;
 
-                int year = (int) Math.ceil(semester.getKey()/2.0d);
+                int year = (int) Math.ceil(semester.getKey() / 2.0d);
 
                 List<Subject> subjects = byYearMap.getOrDefault(year, new ArrayList<>());
                 subjects.addAll(semester.getValue());
@@ -148,48 +148,18 @@ public class SubjectJdbcDao implements SubjectDao {
     }
 
     @Override
-    public Map<Long, List<Subject>> getAllElectivesGroupedByDegId(){
+    public Map<Long, List<Subject>> getAllElectivesGroupedByDegId() {
         Map<Long, List<Subject>> result = new LinkedHashMap<>();
         Map<Long, Map<Integer, List<Subject>>> bySemester = getAllGroupedByDegIdAndSemester();
 
-        for(Map.Entry<Long, Map<Integer, List<Subject>>> degree : bySemester.entrySet()){
+        for (Map.Entry<Long, Map<Integer, List<Subject>>> degree : bySemester.entrySet()) {
             result.put(degree.getKey(), degree.getValue().getOrDefault(-1, new ArrayList<>()));
         }
 
         return result;
     }
 
-    @Override
-    public void insert(final Subject subject) {
-        create(subject.getId(), subject.getName(), subject.getDepartment(), subject.getPrerequisites(), subject.getProfessorIds(), subject.getDegreeIds(), subject.getCredits());
-    }
-
-    @Override
-    public Subject create(final String id, final String name, final String depto, final Set<String> idCorrelativas,
-                          final Set<Long> idProfesores, final Set<Long> idCarreras, final int creditos) {
-
-        Map<String, Object> data = new HashMap<>();
-        data.put("name", name);
-        data.put("department", depto);
-        data.put("creditos", creditos);
-
-        // TODO: Insert into corresponding tables
-        // data.put("idCorrelativas", idCorrelativas);
-        // data.put("idProfesores", idProfesores);
-        // data.put("idCarreras", idCarreras);
-
-
-        jdbcInsert.execute(data);
-        LOGGER.info("Created new subject with id {} and name {} from {} department",id, name, depto);
-        return new Subject(id, name, depto, creditos, idCorrelativas, idProfesores, idCarreras);
-    }
-
-    @Override
-    public void delete(final String id) {
-
-    }
-
-    public Map<User,Set<Subject>> getAllUserUnreviewedNotifSubjects() {
+    public Map<User, Set<Subject>> getAllUserUnreviewedNotifSubjects() {
         return jdbcTemplate.query(
                 "SELECT * FROM " + Tables.USERS + " u" +
                         " LEFT JOIN " + Tables.USER_SUBJECT_PROGRESS + " usp ON u.id = usp.iduser" +
@@ -211,11 +181,6 @@ public class SubjectJdbcDao implements SubjectDao {
         );
 
         LOGGER.debug("Updated unreviewed notification time");
-    }
-
-    @Override
-    public void update(final Subject subject) {
-
     }
 
     private static Long rowMapperProfessorId(final ResultSet rs, final int rowNum) throws SQLException {
@@ -240,7 +205,12 @@ public class SubjectJdbcDao implements SubjectDao {
             final int credits = rs.getInt("credits");
 
             final Subject sub = subs.getOrDefault(idSub,
-                    new Subject(idSub, subName, department, credits)
+                    Subject.builder()
+                            .id(idSub)
+                            .name(subName)
+                            .department(department)
+                            .credits(credits)
+                            .build()
             );
 
             subs.putIfAbsent(idSub, sub);
@@ -262,7 +232,12 @@ public class SubjectJdbcDao implements SubjectDao {
             final Optional<Long> idDeg = getOptionalLong(rs, "iddeg");
 
             final Subject sub = subs.getOrDefault(idSub,
-                    new Subject(idSub, subName, department, credits)
+                    Subject.builder()
+                            .id(idSub)
+                            .name(subName)
+                            .department(department)
+                            .credits(credits)
+                            .build()
             );
 
             idPrereq.ifPresent(id -> sub.getPrerequisites().add(id));
@@ -275,8 +250,8 @@ public class SubjectJdbcDao implements SubjectDao {
         return new ArrayList<>(subs.values());
     }
 
-    private static Map<Long, Map<Integer,List<Subject>>> groupedByDegAndSemesterExtractor(final ResultSet rs) throws SQLException {
-        final Map<Long, Map<Integer, Map<String,Subject>>> auxMap = new LinkedHashMap<>();
+    private static Map<Long, Map<Integer, List<Subject>>> groupedByDegAndSemesterExtractor(final ResultSet rs) throws SQLException {
+        final Map<Long, Map<Integer, Map<String, Subject>>> auxMap = new LinkedHashMap<>();
 
         while (rs.next()) {
             final String idSub = rs.getString("id");
@@ -288,12 +263,17 @@ public class SubjectJdbcDao implements SubjectDao {
             final Optional<Long> idDeg = getOptionalLong(rs, "iddeg");
             final Optional<Integer> semester = getOptionalInt(rs, "semester");
 
-            if(!idDeg.isPresent() || !semester.isPresent()) continue;
+            if (!idDeg.isPresent() || !semester.isPresent()) continue;
 
-            final Map<Integer, Map<String,Subject>> semesterMap = auxMap.getOrDefault(idDeg.get(), new LinkedHashMap<>());
-            final Map<String,Subject> subs = semesterMap.getOrDefault(semester.get(), new LinkedHashMap<>());
+            final Map<Integer, Map<String, Subject>> semesterMap = auxMap.getOrDefault(idDeg.get(), new LinkedHashMap<>());
+            final Map<String, Subject> subs = semesterMap.getOrDefault(semester.get(), new LinkedHashMap<>());
             final Subject sub = subs.getOrDefault(idSub,
-                    new Subject(idSub, subName, department, credits)
+                    Subject.builder()
+                            .id(idSub)
+                            .name(subName)
+                            .department(department)
+                            .credits(credits)
+                            .build()
             );
 
             sub.getDegreeIds().add(idDeg.get());
@@ -306,9 +286,9 @@ public class SubjectJdbcDao implements SubjectDao {
         }
 
         final Map<Long, Map<Integer, List<Subject>>> result = new LinkedHashMap<>();
-        for(Map.Entry<Long,Map<Integer,Map<String,Subject>>> degMap : auxMap.entrySet()) {
-            final Map<Integer,List<Subject>> newSemesterMap = new LinkedHashMap<>();
-            for(Map.Entry<Integer,Map<String,Subject>> semesterMap : degMap.getValue().entrySet()) {
+        for (Map.Entry<Long, Map<Integer, Map<String, Subject>>> degMap : auxMap.entrySet()) {
+            final Map<Integer, List<Subject>> newSemesterMap = new LinkedHashMap<>();
+            for (Map.Entry<Integer, Map<String, Subject>> semesterMap : degMap.getValue().entrySet()) {
                 newSemesterMap.put(semesterMap.getKey(), new ArrayList<>(semesterMap.getValue().values()));
             }
             result.put(degMap.getKey(), newSemesterMap);
@@ -317,10 +297,10 @@ public class SubjectJdbcDao implements SubjectDao {
         return result;
     }
 
-    private static Map<User,Set<Subject>> userUnreviewedNotifSubjectExtractor(ResultSet rs) throws SQLException {
-        final Map<User,Set<Subject>> map = new LinkedHashMap<>();
+    private static Map<User, Set<Subject>> userUnreviewedNotifSubjectExtractor(ResultSet rs) throws SQLException {
+        final Map<User, Set<Subject>> map = new LinkedHashMap<>();
 
-        while(rs.next()) {
+        while (rs.next()) {
             final long idUser = rs.getLong("iduser");
             final String localeStr = rs.getString("locale");
             final Locale locale = localeStr == null ? null : Locale.forLanguageTag(localeStr);
@@ -338,7 +318,12 @@ public class SubjectJdbcDao implements SubjectDao {
                     .id(idUser)
                     .locale(locale)
                     .build();
-            final Subject sub = new Subject(idSub, subName, department, credits);
+            final Subject sub = Subject.builder()
+                    .id(idSub)
+                    .name(subName)
+                    .department(department)
+                    .credits(credits)
+                    .build();
 
             final Set<Subject> subs = map.getOrDefault(user, new LinkedHashSet<>());
             subs.add(sub);
@@ -348,16 +333,16 @@ public class SubjectJdbcDao implements SubjectDao {
         return map;
     }
 
-    private String sanitizeString(final String s){
-        return s.replace("%", "\\%").replace("_","\\_");
+    private String sanitizeString(final String s) {
+        return s.replace("%", "\\%").replace("_", "\\_");
     }
 
-    private List<String> sanitizeFilters(String name,Map<String,String> filters,StringBuilder sb){
+    private List<String> sanitizeFilters(String name, Map<String, String> filters, StringBuilder sb) {
         List<String> toReturn = new ArrayList<>();
         toReturn.add("%" + sanitizeString(name) + "%");
 
         for (Map.Entry<String, String> filter : filters.entrySet()) {
-            if(!Objects.equals(filter.getKey(), "ob") && !Objects.equals(filter.getKey(), "dir") && !Objects.equals(filter.getKey(),"pageNum")){
+            if (!Objects.equals(filter.getKey(), "ob") && !Objects.equals(filter.getKey(), "dir") && !Objects.equals(filter.getKey(), "pageNum")) {
                 sb.append(" AND ").append(filter.getKey()).append(" = ").append(queryOptionBlanck.get(filter.getKey()));
                 toReturn.add(filter.getValue());
             }

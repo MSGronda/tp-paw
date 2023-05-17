@@ -34,10 +34,6 @@ public interface SubjectService extends BaseService<String, Subject> {
 
     List<String> getSubjectsids(List<Subject> subjects);
     Map<String, Set<String>> getRelevantFilters(final List<Subject> subjects);
-
-    Subject create(final String id, final String name, final String depto, final Set<String> idCorrelativas,
-                   final Set<Long> idProfesores, final Set<Long> idCarreras, final Integer creditos);
-
     Map<User,Set<Subject>> getAllUserUnreviewedNotifSubjects();
     void updateUnreviewedNotifTime();
     int checkPageNum(Map<String,String> params);

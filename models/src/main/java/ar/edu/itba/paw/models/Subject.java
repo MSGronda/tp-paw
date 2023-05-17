@@ -12,34 +12,15 @@ public class Subject {
     private final Set<Long> degreeIds;
     private final Map<String, SubjectClass> subjectClasses;
 
-    public Subject(
-        final String id,
-        final String name,
-        final String department,
-        final int credits,
-        final Set<String> prerequisites,
-        final Set<Long> professorIds,
-        final Set<Long> degreeIds
-    ) {
-        this.id = id;
-        this.name = name;
-        this.department = department;
-        this.prerequisites = prerequisites;
-        this.professorIds = professorIds;
-        this.degreeIds = degreeIds;
-        this.credits = credits;
-        this.subjectClasses = new LinkedHashMap<>();
-    }
-
-    public Subject(final String id, final String name, final String department, final int credits) {
-        this.id = id;
-        this.name = name;
-        this.department = department;
-        this.credits = credits;
-        this.prerequisites = new LinkedHashSet<>();
-        this.professorIds = new LinkedHashSet<>();
-        this.degreeIds = new LinkedHashSet<>();
-        this.subjectClasses = new LinkedHashMap<>();
+    private Subject(Builder builder) {
+        this.id = builder.id;
+        this.name = builder.name;
+        this.department = builder.department;
+        this.credits = builder.credits;
+        this.prerequisites = builder.prerequisites;
+        this.professorIds = builder.professorIds;
+        this.degreeIds = builder.degreeIds;
+        this.subjectClasses = builder.subjectClasses;
     }
 
     public Map<String, SubjectClass> getSubjectClasses() {
@@ -85,5 +66,87 @@ public class Subject {
     @Override
     public int hashCode() {
         return Objects.hash(id);
+    }
+
+    public static Builder builder() {
+        return new Builder();
+    }
+
+    public static Builder builderFrom(Subject subject) {
+        return new Builder(subject);
+    }
+
+
+    public static class Builder {
+        private String id;
+        private String name;
+        private String department;
+        private Integer credits;
+        private Set<String> prerequisites;
+        private Set<Long> professorIds;
+        private Set<Long> degreeIds;
+        private Map<String, SubjectClass> subjectClasses;
+
+        private Builder() {
+            this.prerequisites = new LinkedHashSet<>();
+            this.professorIds = new LinkedHashSet<>();
+            this.degreeIds = new LinkedHashSet<>();
+            this.subjectClasses = new LinkedHashMap<>();
+        }
+
+        private Builder(Subject subject) {
+            this.id = subject.id;
+            this.name = subject.name;
+            this.department = subject.department;
+            this.credits = subject.credits;
+            this.prerequisites = subject.prerequisites;
+            this.professorIds = subject.professorIds;
+            this.degreeIds = subject.degreeIds;
+            this.subjectClasses = subject.subjectClasses;
+        }
+
+        public Builder id(final String id) {
+            this.id = id;
+            return this;
+        }
+
+        public Builder name(final String name) {
+            this.name = name;
+            return this;
+        }
+
+        public Builder department(final String department) {
+            this.department = department;
+            return this;
+        }
+
+        public Builder credits(final Integer credits) {
+            this.credits = credits;
+            return this;
+        }
+
+        public Builder prerequisites(final Set<String> prerequisites) {
+            this.prerequisites = prerequisites;
+            return this;
+        }
+
+        public Builder professorIds(final Set<Long> professorIds) {
+            this.professorIds = professorIds;
+            return this;
+        }
+
+        public Builder degreeIds(final Set<Long> degreeIds) {
+            this.degreeIds = degreeIds;
+            return this;
+        }
+
+        public Builder subjectClasses(final Map<String, SubjectClass> subjectClasses) {
+            this.subjectClasses = subjectClasses;
+            return this;
+        }
+
+        public Subject build() {
+            return new Subject(this);
+        }
     }
 }
