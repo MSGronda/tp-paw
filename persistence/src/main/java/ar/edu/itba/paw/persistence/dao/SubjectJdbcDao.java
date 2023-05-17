@@ -80,7 +80,7 @@ public class SubjectJdbcDao implements SubjectDao {
         int offset = Integer.parseInt(filters.getOrDefault("pageNum", "0")) * Integer.parseInt(PAGE_SIZE);
         sb.append(" LIMIT " + PAGE_SIZE + " OFFSET ").append(offset);
 
-        List<Subject> toReturn = jdbcTemplate.query(sb.toString(), SubjectJdbcDao::subjectListExtractor, filterList.toArray());
+        List<Subject> toReturn = jdbcTemplate.query(sb.toString(), SubjectJdbcDao::rowMapperSubject, filterList.toArray());
         LOGGER.info("Got subjects with name {} and filters {}", name, filters.values().stream().toString());
         return toReturn;
     }
@@ -357,6 +357,15 @@ public class SubjectJdbcDao implements SubjectDao {
         }
 
         return map;
+    }
+
+    private static Subject rowMapperSubject(ResultSet rs, int rowNum) throws SQLException {
+        return Subject.builder()
+                .id(rs.getString("id"))
+                .name(rs.getString("subname"))
+                .department(rs.getString("department"))
+                .credits(rs.getInt("credits"))
+                .build();
     }
 
     private String sanitizeString(final String s) {

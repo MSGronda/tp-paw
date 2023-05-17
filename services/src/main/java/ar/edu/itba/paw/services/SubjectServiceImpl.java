@@ -49,10 +49,20 @@ public class SubjectServiceImpl implements SubjectService {
         // the other relevant information (professors, prerequisits)
 
         List<Subject> subjectsWithoutPreReqs = subjectDao.getByNameFiltered(name, filterValidation(filters));
-
         List<String> ids = subjectsWithoutPreReqs.stream().map(Subject::getId).collect(Collectors.toList());
+        List<Subject> fullSubjects = subjectDao.findByIds(ids);
 
-        return subjectDao.findByIds(ids);
+        final Map<String, Subject> fullSubMap = new HashMap<>();
+        for(Subject sub: fullSubjects){
+            fullSubMap.put(sub.getId(), sub);
+        }
+
+        final List<Subject> result = new ArrayList<>();
+        for(String subId : ids){
+            result.add(fullSubMap.get(subId));
+        }
+
+        return result;
     }
 
     @Override
