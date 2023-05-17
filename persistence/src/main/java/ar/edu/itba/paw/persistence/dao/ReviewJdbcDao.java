@@ -288,7 +288,9 @@ public class ReviewJdbcDao implements ReviewDao {
 
     @Override
     public int getTotalPagesForReviews(final String subjectId) {
-        return jdbcTemplate.queryForObject("SELECT COUNT(*) FROM " + Tables.REVIEWS + " WHERE idsub = " + subjectId + "::text", Integer.class) / Integer.parseInt(PAGE_SIZE);
+        int amountReviews = jdbcTemplate.queryForObject("SELECT COUNT(*) FROM " + Tables.REVIEWS + " WHERE idsub = " + subjectId + "::text", Integer.class);
+        int pageSize = Integer.parseInt(PAGE_SIZE);
+        return amountReviews%pageSize == 0? (amountReviews / pageSize)-1 : (amountReviews/pageSize);
     }
 
     @Override

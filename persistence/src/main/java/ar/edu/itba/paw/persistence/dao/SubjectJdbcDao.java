@@ -94,7 +94,8 @@ public class SubjectJdbcDao implements SubjectDao {
         sb.append(" ").append(filters.getOrDefault("dir", "ASC"));
         List<Subject> toReturn = jdbcTemplate.query(sb.toString(), SubjectJdbcDao::subjectListExtractor, filterList.toArray());
         LOGGER.info("Got subjects with name {} and filters {}", name, filters.values().stream().toString());
-        return toReturn.size() / Integer.parseInt(PAGE_SIZE);
+        int pageSize = Integer.parseInt(PAGE_SIZE);
+        return toReturn.size() % pageSize == 0? (toReturn.size()/pageSize -1) : (toReturn.size()/pageSize);
     }
 
 
