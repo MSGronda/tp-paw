@@ -27,6 +27,13 @@ public class DegreeServiceImpl implements DegreeService {
     }
 
     @Override
+    public int getSubjectYearForDegree(final String subId){
+        Optional<Integer> semester = degreeDao.getSubjectSemesterForDegree(subId);
+        int sem = semester.orElse(-1);
+        return (int) Math.ceil(sem / 2.0);
+    }
+
+    @Override
     public List<Degree> getAll() {
         return degreeDao.getAll();
     }

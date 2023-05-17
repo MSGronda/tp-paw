@@ -44,25 +44,6 @@ public class SubjectController {
         if(!maybeSubject.isPresent()) {
             throw new SubjectNotFoundException("No subject with given id");
         }
-        final Subject subject = maybeSubject.get();
-
-        final ReviewStats stats = reviewService.getReviewStatBySubject(id).orElseGet(() -> new ReviewStats(id));
-
-        final Optional<Degree> maybeDegree = degreeService.findById(1L);
-        if(!maybeDegree.isPresent()) {
-            throw new DegreeNotFoundException();
-        }
-        Degree degree = maybeDegree.get();
-        double maxYear = 0;
-        for(Semester semester : degree.getSemesters()) {
-            List<String> subjects = semester.getSubjectIds();
-            if(subjects.contains(id)){
-                maxYear = Math.ceil(semester.getNumber()/2.0);
-                break;
-            }
-        }
-        int year = (int) maxYear;
-
         long userId;
         User user;
         if( authUserService.isAuthenticated()){
@@ -73,11 +54,13 @@ public class SubjectController {
             userId = -1;
         }
 
+        final int year = degreeService.getSubjectYearForDegree(id);
+        final ReviewStats stats = reviewService.getReviewStatBySubject(id).orElseGet(() -> new ReviewStats(id));
         final List<Professor> professors = professorService.getAllBySubject(id);
         final int totalPages = reviewService.getTotalPagesForReviews(id);
         final List<Review> reviews = reviewService.getAllSubjectReviewsWithUsername(id,param);
         final Boolean didReview = reviewService.didUserReview(reviews, user);
-        final List<Subject> prereqs = subjectService.findByIds(new ArrayList<>(subject.getPrerequisites()));
+        final List<Subject> prereqs = subjectService.findByIds(new ArrayList<>(maybeSubject.get().getPrerequisites()));
         final List<SubjectClass> classes = subjectClassService.getBySubId(id);
         final Map<Long, Integer> userVotes = reviewService.userReviewVoteByIdSubAndIdUser(id, userId);
         final Integer subjectProgress = userService.getUserSubjectProgress(userId,id);
@@ -87,7 +70,7 @@ public class SubjectController {
         mav.addObject("reviews", reviews);
         mav.addObject("professors", professors);
         mav.addObject("time", stats.getTimeDifficulty());
-        mav.addObject("subject", subject);
+        mav.addObject("subject", maybeSubject.get());
         mav.addObject("year",year);
         mav.addObject("prereqs", prereqs);
         mav.addObject("difficulty", stats.getDifficulty());

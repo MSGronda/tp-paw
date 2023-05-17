@@ -51,11 +51,6 @@ public class HomeController {
             LOGGER.warn("Degree is not present");
             throw new DegreeNotFoundException();
         }
-
-        final Map<Integer, List<Subject>> infSubsByYear = ss.getInfSubsByYear(degree.get().getId());
-        final List<Subject> infElectives = ss.getInfElectives(degree.get().getId());
-
-        // TODO: unificar
         long userId;
         if(!aus.isAuthenticated()) {
             userId = -1;
@@ -63,13 +58,13 @@ public class HomeController {
         } else {
             userId = aus.getCurrentUser().getId();
         }
-        Map<String, Integer> subjectProgress = us.getUserAllSubjectProgress(userId);
-        // TODO: unificar
 
+        final Map<Integer, List<Subject>> infSubsByYear = ss.getInfSubsByYear(degree.get().getId());
+        final List<Subject> infElectives = ss.getInfElectives(degree.get().getId());
+        final Map<String, Integer> subjectProgress = us.getUserAllSubjectProgress(userId);
+        final Map<String, ReviewStats> reviewStats = rs.getReviewStatMapByDegreeId(degree.get().getId());
 
-        Map<String, ReviewStats> reviewStats = rs.getReviewStatMapByDegreeId(degree.get().getId());
-
-        ModelAndView mav = new ModelAndView("home/index");
+        ModelAndView mav = new ModelAndView("degree/index");
         mav.addObject("years", infSubsByYear.keySet());
         mav.addObject("infSubsByYear", infSubsByYear);
         mav.addObject("electives", infElectives);
