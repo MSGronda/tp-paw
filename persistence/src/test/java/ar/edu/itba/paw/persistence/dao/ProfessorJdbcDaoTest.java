@@ -58,7 +58,7 @@ public class ProfessorJdbcDaoTest {
 
     @Test
     public void testFindById(){
-        jdbcTemplate.execute("INSERT INTO " + Tables.PROFS + " (profname) VALUES ('" + PROF_NAME1 + "')");
+        jdbcTemplate.execute("INSERT INTO " + Tables.PROFS + " (id, profname) VALUES (" + ID1 + ",'" + PROF_NAME1 + "')");
 
         Optional<Professor> professor = professorDao.findById(ID1);
 

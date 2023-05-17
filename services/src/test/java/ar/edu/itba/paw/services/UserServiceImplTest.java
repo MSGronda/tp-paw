@@ -16,7 +16,9 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.util.Optional;
 
 import static org.mockito.ArgumentMatchers.eq;
@@ -151,16 +153,27 @@ public class UserServiceImplTest {
 
     @Test(expected = InvalidImageSizeException.class)
     public void testUpdateProfilePictureNoImage() throws InvalidImageSizeException {
-        User user = new User.UserBuilder(EMAIL, PASSWORD, USERNAME).id(ID).build();
+        User user = User.builder()
+                .email(EMAIL)
+                .password(PASSWORD)
+                .username(USERNAME)
+                .id(ID)
+                .build();
+
         us.updateProfilePicture(user, new byte[]{});
     }
 
     
     @Test(expected = InvalidImageSizeException.class)
     public void testUpdateProfilePictureLargeImage() throws InvalidImageSizeException, IOException {
-        User user = new User.UserBuilder(EMAIL, PASSWORD, USERNAME).id(ID).build();
+        User user = User.builder()
+                .email(EMAIL)
+                .password(PASSWORD)
+                .username(USERNAME)
+                .id(ID)
+                .build();
+
         byte[] image = Files.readAllBytes(IMAGE.toPath());
         us.updateProfilePicture(user, image);
     }
-
 }

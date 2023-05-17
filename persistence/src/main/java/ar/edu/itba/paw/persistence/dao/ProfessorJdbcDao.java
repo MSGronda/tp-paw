@@ -78,7 +78,7 @@ public class ProfessorJdbcDao implements ProfessorDao {
     }
 
     public List<Professor> getAll() {
-        return jdbcTemplate.query("SELECT * FROM " + Tables.PROFS_SUBJECTS, ProfessorJdbcDao::rowMapperProf);
+        return jdbcTemplate.query("SELECT * FROM " + Tables.PROFS, ProfessorJdbcDao::rowMapperProf);
     }
 
     @Override

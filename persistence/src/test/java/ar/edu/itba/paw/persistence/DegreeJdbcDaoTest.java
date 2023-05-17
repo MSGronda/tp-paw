@@ -3,6 +3,7 @@ package ar.edu.itba.paw.persistence;
 import ar.edu.itba.paw.models.Degree;
 import ar.edu.itba.paw.models.Semester;
 import ar.edu.itba.paw.persistence.config.TestConfig;
+import ar.edu.itba.paw.persistence.dao.DegreeJdbcDao;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;

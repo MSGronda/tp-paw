@@ -160,13 +160,6 @@ public class SubjectServiceImpl implements SubjectService {
         }
     }
 
-    @Transactional
-    @Override
-    public Subject create(final String id, String name, final String depto, final Set<String> idCorrelativas,
-                          final Set<Long> idProfesores, final Set<Long> idCarreras, final Integer creditos){
-        return subjectDao.create(id, name, depto, idCorrelativas, idProfesores, idCarreras, creditos);
-    }
-
     private Map<String,String> filterValidation(final Map<String,String> filters){
         Map<String, String> validatedFilters = new HashMap<>();
 
