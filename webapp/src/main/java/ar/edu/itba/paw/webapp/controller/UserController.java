@@ -32,23 +32,15 @@ import java.util.*;
 
 @Controller
 public class UserController {
+    private static final int NOT_ALTERED = 0;
+
     private final UserService userService;
     private final ReviewService reviewService;
     private final SubjectService subjectService;
     private final MailService mailService;
-
-    private final DegreeService degreeService;
-
     private final AuthUserService authUserService;
-    private final AuthenticationManager authManager;
-    private final MessageSource mailMessages;
-
     private final RolesService rolesService;
-
     private final UniUserDetailsService uniUserDetailsService;
-
-
-    private static final int NOT_ALTERED = 0;
 
     @Autowired
     public UserController(
@@ -56,23 +48,17 @@ public class UserController {
             ReviewService reviewService,
             SubjectService subjectService,
             MailService mailService,
-            DegreeService degreeService,
             AuthUserService authUserService,
             RolesService rolesService,
-            UniUserDetailsService uniUserDetailsService,
-            AuthenticationManager authManager,
-            @Qualifier("mailMessageSource") MessageSource mailMessages
+            UniUserDetailsService uniUserDetailsService
     ) {
         this.userService = userService;
         this.reviewService = reviewService;
         this.subjectService = subjectService;
         this.mailService = mailService;
-        this.degreeService = degreeService;
         this.authUserService = authUserService;
         this.rolesService = rolesService;
         this.uniUserDetailsService = uniUserDetailsService;
-        this.authManager = authManager;
-        this.mailMessages = mailMessages;
     }
 
     @RequestMapping("/user/{id:\\d+}")
@@ -146,7 +132,10 @@ public class UserController {
 
         final String token = newUser.getConfirmToken().orElseThrow(IllegalStateException::new);
 
-        sendVerificationEmail(locale, newUser, token);
+        final String baseUrl = Utils.getBaseUrl();
+        final String verifUrl = baseUrl + "/verification/confirm?token=" + token;
+        final String logoUrl = baseUrl + "/img/uni.png";
+        mailService.sendVerification(newUser.getEmail(), verifUrl, logoUrl, locale);
 
         return new ModelAndView("redirect:/verification?email=" + newUser.getEmail());
     }
@@ -181,7 +170,10 @@ public class UserController {
         final User user = maybeUser.get();
         final String token = userService.regenerateConfirmToken(user.getId());
 
-        sendVerificationEmail(locale, user, token);
+        final String baseUrl = Utils.getBaseUrl();
+        final String verifUrl = baseUrl + "/verification/confirm?token=" + token;
+        final String logoUrl = baseUrl + "/img/uni.png";
+        mailService.sendVerification(user.getEmail(), verifUrl, logoUrl, locale);
 
         return new ModelAndView("redirect:/verification?resent=true&email=" + email);
     }
@@ -194,16 +186,6 @@ public class UserController {
             return "user/verification/invalidToken";
         }
         return "user/verification/success";
-    }
-
-    private void sendVerificationEmail(Locale locale, User user, String token) {
-        final String baseUrl = Utils.getBaseUrl();
-        final String subject = mailMessages.getMessage("confirmation.subject", null, locale);
-
-        Map<String,Object> mailModel = new HashMap<>();
-        mailModel.put("logoUrl", baseUrl + "/img/uni.png");
-        mailModel.put("url", baseUrl + "/verification/confirm?token=" + token);
-        mailService.sendMail(user.getEmail(), subject, "verification", mailModel, locale);
     }
 
     @RequestMapping(value = "/login", method = { RequestMethod.GET })
@@ -267,9 +249,9 @@ public class UserController {
     }
 
     @RequestMapping(value = "/recover", method = { RequestMethod.POST })
-    public ModelAndView sendEmail(@Valid @ModelAttribute ("RecoverPasswordForm") final RecoverPasswordForm recoverPasswordForm,
-                                  final BindingResult errors,
-                                  final Locale locale){
+    public ModelAndView sendRecover(@Valid @ModelAttribute ("RecoverPasswordForm") final RecoverPasswordForm recoverPasswordForm,
+                                    final BindingResult errors,
+                                    final Locale locale){
         if( errors.hasErrors()){
             return recoverPassword(recoverPasswordForm);
         }
@@ -278,7 +260,7 @@ public class UserController {
 
         String token;
         try {
-            token = userService.sendRecoveryMail(email);
+            token = userService.generateRecoveryToken(email);
         } catch (UserEmailNotFoundException e) {
             ModelAndView mav = recoverPassword(recoverPasswordForm);
             mav.addObject("emailNotFound", true);
@@ -286,12 +268,9 @@ public class UserController {
         }
 
         final String baseUrl = Utils.getBaseUrl();
-        final String subject = mailMessages.getMessage("recovery.subject", null, locale);
-
-        Map<String,Object> mailModel = new HashMap<>();
-        mailModel.put("logoUrl", baseUrl + "/img/uni.png");
-        mailModel.put("url", baseUrl + "/recover/" + token);
-        mailService.sendMail(email, subject, "recovery", mailModel, locale);
+        final String logoUrl = baseUrl + "/img/uni.png";
+        final String recoverUrl = baseUrl + "/recover/" + token;
+        mailService.sendRecover(email, recoverUrl, logoUrl, locale);
 
         return new ModelAndView("user/recover/emailSent");
     }

@@ -21,12 +21,11 @@ import java.util.Set;
 @Component
 public class NotificationTask {
 
-    private static final long TASK_DELAY = 5 * 60 * 1000; // 5 minutes
+    private static final long TASK_DELAY = 10 * 60 * 1000; // 10 minutes
 
     private static final Logger LOGGER = LoggerFactory.getLogger(NotificationTask.class);
 
     private final MailService mailService;
-    private final MessageSource mailMessages;
     private final SubjectService subjectService;
     private final String baseUrl;
 
@@ -34,12 +33,12 @@ public class NotificationTask {
     NotificationTask(MailService mailService, @Qualifier("mailMessageSource")MessageSource mailMessages, SubjectService subjectService, Environment env) {
         this.mailService = mailService;
         this.subjectService = subjectService;
-        this.mailMessages = mailMessages;
         this.baseUrl = env.getRequiredProperty("baseUrl");
     }
 
     @Scheduled(fixedDelay = TASK_DELAY)
     private void notifScheduledTask() {
+
         LOGGER.debug("Running notification task");
 
         Map<User, Set<Subject>> map = subjectService.getAllUserUnreviewedNotifSubjects();
@@ -50,13 +49,14 @@ public class NotificationTask {
             final User user = mapEntry.getKey();
             final Locale locale = user.getLocale().orElse(Locale.getDefault());
             final Set<Subject> subjects = mapEntry.getValue();
-            final String subject = mailMessages.getMessage("reviewnotif.subject", null, locale);
 
-            final Map<String,Object> mailModel = new HashMap<>();
-            mailModel.put("baseUrl", baseUrl);
-            mailModel.put("logoUrl", baseUrl + "/img/uni.png");
-            mailModel.put("subjects", subjects);
-            mailService.sendMail(user.getEmail(), subject, "reviewnotif", mailModel, locale);
+            final String logoUrl = baseUrl + "/img/uni.png";
+            final Map<String,String> subjectUrls = new HashMap<>();
+            for(Subject s : subjects) {
+                subjectUrls.put(s.getId(), baseUrl + "/subject/" + s.getId());
+            }
+
+            mailService.sendReviewNotification(user.getEmail(), subjects, subjectUrls, logoUrl, locale);
         }
 
         LOGGER.info("Notified {} users to review their subjects", map.size());

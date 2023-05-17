@@ -32,7 +32,7 @@ public interface UserService extends BaseService<Long, User> {
 
     void updateProfilePicture(final User user, final byte[] image) throws InvalidImageSizeException;
 
-    String sendRecoveryMail(final String email);
+    String generateRecoveryToken(final String email);
 
     List<Roles> getUserRoles(final Long userId);
 

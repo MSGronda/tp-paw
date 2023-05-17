@@ -179,7 +179,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public String sendRecoveryMail(final String email){
+    public String generateRecoveryToken(final String email){
         final Optional<User> optUser = getUserWithEmail(email);
         if(!optUser.isPresent()){
             LOGGER.warn("Generation of recovery token failed. User not found");

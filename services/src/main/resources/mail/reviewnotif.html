@@ -74,7 +74,7 @@
     <p class="message" th:text="#{reviewnotif.message}"></p>
     <ul class="subject-list">
       <li th:each="subject : ${subjects}">
-        <a th:text="${subject.name}" th:href="${baseUrl + '/subject/' + subject.id}"></a>
+        <a th:text="${subject.name}" th:href="${subjectUrls.get(subject.id)}"></a>
       </li>
     </ul>
     <p class="message" th:text="#{reviewnotif.message2}"></p>
