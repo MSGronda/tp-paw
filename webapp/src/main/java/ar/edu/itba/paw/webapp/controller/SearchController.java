@@ -64,9 +64,4 @@ public class SearchController {
 
         return mav;
     }
-
-    @ModelAttribute("degrees")
-    public List<Degree> degrees(){
-        return degreeService.getAll();
-    }
 }

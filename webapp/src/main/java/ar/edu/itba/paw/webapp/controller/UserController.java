@@ -327,11 +327,6 @@ public class UserController {
         return mav;
     }
 
-    @ModelAttribute("degrees")
-    public List<Degree> degrees(){
-        return degreeService.getAll();
-    }
-
     @RequestMapping(value = "/profile/editprofilepicture", method = { RequestMethod.GET })
     public ModelAndView editProfilePictureForm(@ModelAttribute ("editProfilePictureForm") final EditProfilePictureForm editProfilePictureForm) {
         ModelAndView mav = new ModelAndView("user/editProfilePicture");

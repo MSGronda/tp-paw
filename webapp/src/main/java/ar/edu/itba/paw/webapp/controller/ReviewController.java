@@ -183,10 +183,4 @@ public class ReviewController {
 
         return mav;
     }
-
-    @ModelAttribute("degrees")
-    public List<Degree> degrees(){
-        return degreeService.getAll();
-    }
-
 }

@@ -102,9 +102,4 @@ public class SubjectController {
 
         return mav;
     }
-
-    @ModelAttribute("degrees")
-    public List<Degree> degrees(){
-        return degreeService.getAll();
-    }
 }
