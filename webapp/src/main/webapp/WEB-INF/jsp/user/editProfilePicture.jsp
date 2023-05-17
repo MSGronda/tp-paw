@@ -42,6 +42,8 @@
         .profile-image {
             height:8rem ;
             width:8rem;
+            border-radius: 100%;
+            object-fit: cover;
         }
         .tower-picture {
             display: flex;
@@ -104,7 +106,7 @@
                     <spring:message code="profile.new_image" />
                     <br/>
                     <br/>
-                    <img id="imagePreview" src="#" alt="<spring:message code="profile.no_image"/>" class="profile-image">
+                    <img id="imagePreview" src="<c:url value="/image/${user.imageId}"/>" class="profile-image">
                 </div>
             </div>
 

@@ -56,6 +56,8 @@
         .profile-image {
             height:5rem ;
             width:5rem;
+            border-radius: 100%;
+            object-fit: cover;
         }
         .header {
             display: flex;
@@ -82,7 +84,12 @@
             bottom: 0;
             right: 0;
             padding-bottom: 0.65rem;
+            opacity: 85%;
         }
+        .edit-picture:hover {
+            opacity: 100%;
+        }
+
         .moderator-tag {
             display: flex;
             flex-direction: row;
@@ -97,7 +104,7 @@
         <div class="image-container">
             <spring:message code="profile.picture.alt" var="pic" arguments="${user.username}"/>
             <img class="profile-image" src="<c:url value="/image/${user.imageId}"/>" alt="${pic}" >
-            <sl-button class="edit-picture" variant="primary" size="small" outline  href="<c:url value="/profile/editprofilepicture"/>">
+            <sl-button class="edit-picture" variant="primary" size="small" href="<c:url value="/profile/editprofilepicture"/>">
                 <sl-icon name="pen" label="Edit"></sl-icon>
             </sl-button>
         </div>

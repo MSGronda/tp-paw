@@ -43,8 +43,10 @@
     }
 
     .profile-image {
-      height:5rem ;
+      height:5rem;
       width:5rem;
+      border-radius: 100%;
+      object-fit: cover;
     }
     .header {
       display: flex;
