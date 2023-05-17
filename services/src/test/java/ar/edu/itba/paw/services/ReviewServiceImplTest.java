@@ -140,7 +140,7 @@ public class ReviewServiceImplTest {
         when(reviewDao.getReviewStatMapBySubjectList(subjects)).thenReturn(map);
 
         //Test to see if the method in service passes the subjectId correctly and
-        // returns an empty ReviewStatistic in case it is missing
+        // returns an empty ReviewStats in case it is missing
         Subject subject = Subject.builder()
                 .id(ID1)
                 .name("sistemas")

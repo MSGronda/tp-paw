@@ -63,7 +63,7 @@ public class HomeController {
             subjects.addAll(yearSubjects);
         }
 
-        Map<String, ReviewStats> reviewStatistic = rs.getReviewStatMapBySubjectList(subjects);
+        Map<String, ReviewStats> reviewStats = rs.getReviewStatMapBySubjectList(subjects);
         Map<String, ReviewStats> electivesReviewStatistic = rs.getReviewStatMapBySubjectList(infElectives);
 
         long userId;
@@ -80,7 +80,7 @@ public class HomeController {
         mav.addObject("years", years);
         mav.addObject("infSubsByYear", infSubsByYear);
         mav.addObject("electives", infElectives);
-        mav.addObject("reviewStatistics", reviewStatistic);
+        mav.addObject("reviewStatistics", reviewStats);
         mav.addObject("electivesReviewStatistics", electivesReviewStatistic);
         mav.addObject("subjectProgress", subjectProgress);
         return mav;
