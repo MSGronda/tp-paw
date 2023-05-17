@@ -273,11 +273,16 @@
   for(let elem in dptFilterBtns){
     // Comportamiento de boton de aplicar filtro
     document.getElementById(dptFilterBtns[elem][0]).addEventListener('click',
-            function() { window.location.href = addOrUpdateParam(window.location.href,"department",dptFilterBtns[elem][1])});
+            function() {
+      // debemos remover el pageNum tambien
+      window.location.href = removeURLParam(addOrUpdateParam(window.location.href,"department",dptFilterBtns[elem][1]), 'pageNum')
+
+    });
 
     // Comportamiento de boton de eliminar filtro
     document.getElementById(dptFilterBtns[elem][2]).addEventListener('click',
-            function() { window.location.href = removeURLParam(window.location.href,"department")});
+            // debemos remover el pageNum tambien
+            function() { window.location.href = removeURLParam(removeURLParam(window.location.href,"department"), 'pageNum')});
 
     // Visibiliad de boton de eliminar filtro
     const section = document.getElementById(dptFilterBtns[elem][3])
@@ -302,9 +307,15 @@
   for(let elem in creditFilterBtns)
   {
     document.getElementById(creditFilterBtns[elem][0]).addEventListener('click',
-            function() { window.location.href = addOrUpdateParam(window.location.href,"credits",creditFilterBtns[elem][1]);});
+            function() {
+              // debemos remover el pageNum tambien
+      window.location.href = removeURLParam(addOrUpdateParam(window.location.href,"credits",creditFilterBtns[elem][1]), 'pageNum');
+    });
     document.getElementById(creditFilterBtns[elem][2]).addEventListener('click',
-            function() { window.location.href = removeURLParam(window.location.href,"credits")});
+            // debemos remover el pageNum tambien
+            function() {
+      window.location.href = removeURLParam(removeURLParam(window.location.href,"credits"),'pageNum');
+    });
     const section = document.getElementById(creditFilterBtns[elem][3])
     if(credits === creditFilterBtns[elem][1])
       section.style.display = "block";
@@ -338,13 +349,14 @@
   {
     document.getElementById(addOrderByBtns[elem][0]).addEventListener('click',
             function() {
-              window.location.href = addOrUpdateParam(addOrUpdateParam(window.location.href,"ob",addOrderByBtns[elem][1]), "dir", "asc");
+              // debemos remover el pageNum tambien
+              window.location.href = removeURLParam(addOrUpdateParam(addOrUpdateParam(window.location.href,"ob",addOrderByBtns[elem][1]), "dir", "asc"), 'pageNum') ;
             });
     const sectionUp = document.getElementById(addOrderByBtns[elem][2])
     const sectionDown = document.getElementById(addOrderByBtns[elem][3])
 
-    sectionUp.addEventListener('click', function() { window.location.href = addOrUpdateParam(window.location.href,"dir", "desc");})
-    sectionDown.addEventListener('click', function() { window.location.href = addOrUpdateParam(window.location.href,"dir", "asc");})
+    sectionUp.addEventListener('click', function() { window.location.href = removeURLParam(addOrUpdateParam(window.location.href,"dir", "desc"),'pageNum');})
+    sectionDown.addEventListener('click', function() { window.location.href = removeURLParam(addOrUpdateParam(window.location.href,"dir", "asc"),'pageNum');})
 
     if(ob === addOrderByBtns[elem][1]){
       if(dir === "asc"){
