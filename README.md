@@ -13,19 +13,19 @@ Uni is a project intended for students to review subjects completed in their cur
 To run the project locally a file named `application-dev.properties` must be created in the `src/main/resources` folder in the webapp module. This file must contain the following structure:
 
 ```
-auth.rememberMe.key=
+    auth.rememberMe.key=
 
-baseUrl=http://localhost:8080
+    baseUrl=http://localhost:8080
 
-mail.host=
-mail.port=
-mail.username=
-mail.displayname=Uni
-mail.password=
+    mail.host=
+    mail.port=
+    mail.username=
+    mail.displayname=Uni
+    mail.password=
 
-db.url=
-db.username=
-db.password=
+    db.url=
+    db.username=
+    db.password=
 ```
 
 ## Technologies Used
@@ -62,14 +62,16 @@ This is the first issue of the project due to 17/5/2023 at 19hs
   - Internationalization (English and Spanish)
 
 ### Feature Explanation
-  - Mailing: - It is used to verify an email linked to a new user's account.
-             - It is used to send a password recovery link to a user.
-             - It is used to send a notification to a user when a subject is marked as completed but the user did not post review for it (within 10 minutes of completion).
-          - User Roles: - User can post and vote reviews, edit and delete their own reviews.
-                      - Moderator can do everything a user can do, but can also delete any review and promote a user to Moderator.
-          - Moderator Account:
-                - Username: paw.uni.mod@gmail.com
-                - Password: Pawuni23
+  - Mailing:
+    - It is used to verify an email linked to a new user's account.
+    - It is used to send a password recovery link to a user.
+    - It is used to send a notification to a user when a subject is marked as completed but the user did not post review for it (within 10 minutes of completion).
+  - User Roles: 
+    - User can post and vote reviews, edit and delete their own reviews.
+    - Moderator can do everything a user can do, but can also delete any review and promote a user to Moderator.
+  - Moderator Account:
+    - Username: paw.uni.mod@gmail.com
+    - Password: Pawuni23
 
 ## Authors
 
