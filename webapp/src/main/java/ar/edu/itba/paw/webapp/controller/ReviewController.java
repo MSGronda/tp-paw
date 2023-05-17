@@ -124,7 +124,7 @@ public class ReviewController {
             .text(reviewForm.getText())
             .easy(reviewForm.getEasy())
             .timeDemanding(reviewForm.getTimeDemanding())
-            .anonymous(review.getAnonymous())
+            .anonymous(reviewForm.getAnonymous())
             .build();
 
         try {

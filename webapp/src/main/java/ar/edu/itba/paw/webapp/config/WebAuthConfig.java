@@ -2,6 +2,7 @@ package ar.edu.itba.paw.webapp.config;
 
 import ar.edu.itba.paw.models.User;
 import ar.edu.itba.paw.services.UserService;
+import ar.edu.itba.paw.webapp.Utils;
 import ar.edu.itba.paw.webapp.auth.UniAuthUser;
 import ar.edu.itba.paw.models.Roles;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -111,15 +112,16 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
         public void onAuthenticationFailure(HttpServletRequest req, HttpServletResponse res, AuthenticationException e) throws IOException, ServletException {
             final String email = req.getParameter("email");
             final String pass = req.getParameter("password");
+            final String baseUrl = req.getContextPath();
 
             final Optional<User> maybeUser = userService.getUnconfirmedUserWithEmail(email);
             if(!maybeUser.isPresent() || !passwordEncoder().matches(pass, maybeUser.get().getPassword())){
-                res.sendRedirect("/login?error=true");
+                res.sendRedirect(baseUrl + "/login?error=true");
                 return;
             }
 
             final User user = maybeUser.get();
-            res.sendRedirect("/verification?email=" + user.getEmail());
+            res.sendRedirect(baseUrl + "/verification?email=" + user.getEmail());
         }
     }
 }

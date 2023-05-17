@@ -64,8 +64,8 @@
   <div slot="header" class="header">
     <c:choose>
       <c:when test="${fromProfile}">
-
-        <a class="username-redirect" href="/subject/${review.subjectId}"><c:out value="${review.subjectId}" /> - <c:out value="${review.subjectName}"/></a>
+        <c:url value="/subject/${review.subjectId}" var="subjectUrl"/>
+        <a class="username-redirect" href="${subjectUrl}"><c:out value="${review.subjectId}" /> - <c:out value="${review.subjectName}"/></a>
       </c:when>
       <c:otherwise>
         <c:choose>

@@ -99,7 +99,7 @@ public class UserController {
     private ModelAndView setProfileData(User user, ModelAndView mav){
         final List<Review> userReviews = reviewService.getAllUserReviewsWithSubjectName(user.getId());
         final Map<Long, Integer> userVotes = reviewService.userReviewVoteByIdUser(user.getId());
-
+        
         UserDetails userDetails = uniUserDetailsService.loadUserByUsername(user.getEmail());
         Boolean isEditor = userDetails.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_EDITOR"));
 

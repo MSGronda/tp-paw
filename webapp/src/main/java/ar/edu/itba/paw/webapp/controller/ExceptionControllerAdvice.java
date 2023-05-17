@@ -35,12 +35,4 @@ public class ExceptionControllerAdvice {
     public String handleImageNotFoundException(ImageNotFoundException e) {
         return "error/page_not_found";
     }
-
-
-    @ResponseStatus(HttpStatus.NOT_FOUND)
-    @ExceptionHandler(NoHandlerFoundException.class)
-    public String handlePageNotFoundException(NoHandlerFoundException e) {
-        e.printStackTrace();
-        return "error/page_not_found";
-    }
 }
