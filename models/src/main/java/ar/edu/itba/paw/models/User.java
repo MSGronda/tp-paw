@@ -6,7 +6,7 @@ import java.util.Objects;
 import java.util.Optional;
 
 public class User {
-    private final long id;
+    private final Long id;
     private final String email, password, username;
     private final Long imageId;
     private final Map<String, Integer> subjectProgress;
@@ -67,7 +67,7 @@ public class User {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         User user = (User) o;
-        return id == user.id && Objects.equals(email, user.email) && Objects.equals(password, user.password) && Objects.equals(username, user.username) && Objects.equals(imageId, user.imageId);
+        return confirmed == user.confirmed && Objects.equals(id, user.id) && Objects.equals(email, user.email) && Objects.equals(password, user.password) && Objects.equals(username, user.username) && Objects.equals(imageId, user.imageId);
     }
 
     @Override
@@ -75,71 +75,69 @@ public class User {
         return Objects.hash(id);
     }
 
-    public static Builder builder(final String email, final String password, final String username) {
-        return new Builder(email, password, username);
+    public static Builder builder() {
+        return new Builder();
+    }
+
+    public static Builder builderFrom(final User user) {
+        return new Builder(user);
     }
 
     public static class Builder {
-        private long id;
-        private final String email;
+        private Long id;
+        private String email;
         private String password, username;
-        private long imageId;
+        private Long imageId;
         private Map<String, Integer> subjectProgress;
         private String confirmToken;
         private boolean confirmed;
         private Locale locale;
 
 
-        private Builder(final String email, final String password, final String username) {
-            this.email = email;
-            this.password = password;
-            this.username = username;
+        private Builder() {
+
         }
+
+        private Builder(final User user) {
+            this.id = user.id;
+            this.email = user.email;
+            this.password = user.password;
+            this.username = user.username;
+            this.imageId = user.imageId;
+            this.subjectProgress = user.subjectProgress;
+            this.confirmToken = user.confirmToken;
+            this.confirmed = user.confirmed;
+            this.locale = user.locale;
+        }
+
         public Builder id(final long id) {
             this.id = id;
             return this;
         }
-        public Map<String, Integer> getSubjectProgress(){
-            return this.subjectProgress;
-        }
-        public Builder subjectProgress(final Map<String, Integer> subjectProgress){
-            this.subjectProgress = subjectProgress;
-            return this;
-        }
-        public Long getImageId(){
-            return this.imageId;
-        }
-        public Builder imageId(long imageId) {
-            this.imageId = imageId;
-            return this;
-        }
-        public Long getId() {
-            return id;
-        }
-        public String getEmail(){
-            return email;
-        }
 
+        public Builder email(final String email) {
+            this.email = email;
+            return this;
+        }
 
         public Builder username(String username) {
             this.username = username;
             return this;
         }
-        public String getUsername(){
-            return username;
-        }
-
 
         public Builder password(String password) {
             this.password = password;
             return this;
         }
-        public String getPassword(){
-            return password;
+
+        public Builder imageId(long imageId) {
+            this.imageId = imageId;
+            return this;
         }
 
-        public Optional<String> getConfirmToken(){
-            return Optional.ofNullable(confirmToken);
+        public Builder subjectProgress(final Map<String, Integer> subjectProgress){
+            this.subjectProgress = subjectProgress;
+            return this;
         }
 
         public Builder confirmToken(String token) {
@@ -147,33 +145,17 @@ public class User {
             return this;
         }
 
-        public boolean getConfirmed() {
-            return confirmed;
-        }
-
         public Builder confirmed(boolean confirmed) {
             this.confirmed = confirmed;
             return this;
         }
 
-        public Locale getLocale(){
-            return locale;
-        }
         public Builder locale(Locale locale) {
             this.locale = locale;
             return this;
         }
 
         public User build() {
-            if(this.username == null) {
-                throw new NullPointerException("Property \"name\" is null");
-            }
-            if(this.email == null) {
-                throw new NullPointerException("Property \"email\" is null");
-            }
-            if(this.password == null) {
-                throw new NullPointerException("Property \"password\" is null");
-            }
             return new User(this);
         }
     }

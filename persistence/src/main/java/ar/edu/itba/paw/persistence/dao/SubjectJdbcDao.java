@@ -332,7 +332,9 @@ public class SubjectJdbcDao implements SubjectDao {
             final String department = rs.getString("department");
             final int credits = rs.getInt("credits");
 
-            final User user = User.builder(email, "", username)
+            final User user = User.builder()
+                    .email(email)
+                    .username(username)
                     .id(idUser)
                     .locale(locale)
                     .build();

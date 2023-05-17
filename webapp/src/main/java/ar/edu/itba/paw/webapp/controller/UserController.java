@@ -118,12 +118,16 @@ public class UserController {
             return registerForm(userForm);
         }
 
-        User.Builder userBuilder = User.builder(userForm.getEmail(), userForm.getPassword(), userForm.getName());
         User newUser;
         try {
-            newUser = userService.create(userBuilder);
+            newUser = userService.create(
+                    User.builder()
+                            .email(userForm.getEmail())
+                            .password(userForm.getPassword())
+                            .username(userForm.getName())
+                            .build()
+            );
         }catch (UserEmailAlreadyTakenException e){
-//            errors.rejectValue("email", "UserForm.email.alreadyExists", "An account with this email already exists");
             ModelAndView mav = registerForm(userForm);
             mav.addObject("EmailAlreadyUsed", true);
             return mav;

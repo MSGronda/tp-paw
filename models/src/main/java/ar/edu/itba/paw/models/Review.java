@@ -31,8 +31,6 @@ public class Review {
         this.downvotes = builder.downvotes;
         this.username = builder.username;
 
-        //TODO: Esto tiene que ir en los controllers en webapp, no en models.
-        // Es detalle de implementación del frontend.
         if(text.length() > PREVIEW_SIZE){
             this.requiresShowMore = true;
             this.previewText = this.text.substring(0,PREVIEW_SIZE);

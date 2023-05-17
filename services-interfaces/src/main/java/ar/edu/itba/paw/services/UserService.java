@@ -14,8 +14,8 @@ import java.util.Map;
 import java.util.Optional;
 
 public interface UserService extends BaseService<Long, User> {
-    User create(final User.Builder userBuilder, final byte[] profilePic) throws UserEmailAlreadyTakenException;
-    User create(final User.Builder userBuilder) throws UserEmailAlreadyTakenException, IOException;
+    User create(final User user, final byte[] profilePic) throws UserEmailAlreadyTakenException;
+    User create(final User user) throws UserEmailAlreadyTakenException, IOException;
 
     String regenerateConfirmToken(long userId);
 

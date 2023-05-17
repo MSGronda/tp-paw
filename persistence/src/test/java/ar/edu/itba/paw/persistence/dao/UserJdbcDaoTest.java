@@ -154,7 +154,15 @@ public class UserJdbcDaoTest {
 
         User user;
         try{
-            user = userDao.create(User.builder(EMAIL, PASSWORD, USERNAME).imageId(IMAGEID).confirmToken(CONFIRMTOKEN));
+            user = userDao.create(
+                    User.builder()
+                            .email(EMAIL)
+                            .password(PASSWORD)
+                            .username(USERNAME)
+                            .imageId(IMAGEID)
+                            .confirmToken(CONFIRMTOKEN)
+                            .build()
+            );
         }catch (UserEmailAlreadyTakenPersistenceException e){
             throw new RuntimeException();
         }
@@ -172,7 +180,15 @@ public class UserJdbcDaoTest {
 
         jdbcTemplate.execute("INSERT INTO " + Tables.USERS + " (id, email, pass, username, image_id, confirmtoken, confirmed ) VALUES (" + ID + ", '" + EMAIL + "', '" + PASSWORD + "', '" + USERNAME + "', " + IMAGEID + ", '" + CONFIRMTOKEN + "', " + CONFIRMED + ")");
 
-        userDao.create(User.builder(EMAIL, PASSWORD, USERNAME).confirmToken(CONFIRMTOKEN));
+        userDao.create(
+                User.builder()
+                        .email(EMAIL)
+                        .password(PASSWORD)
+                        .username(USERNAME)
+                        .confirmToken(CONFIRMTOKEN)
+                        .imageId(IMAGEID)
+                        .build()
+        );
 
     }
 

@@ -72,9 +72,12 @@ public class ReviewServiceImplTest {
         reviews.add(review1);
         reviews.add(review2);
         reviews.add(review3);
-        User user =  User.builder(EMAIL, PASSWORD, USERNAME)
-            .id(USERID)
-            .build();
+        User user =  User.builder()
+                .email(EMAIL)
+                .password(PASSWORD)
+                .username(USERNAME)
+                .id(USERID)
+                .build();
 
         Assert.assertTrue(reviewService.didUserReview(reviews, user));
 
@@ -116,12 +119,14 @@ public class ReviewServiceImplTest {
         reviews.add(review2);
         reviews.add(review3);
 
-        User user = User.builder(EMAIL, PASSWORD, USERNAME)
-            .id(USERID)
-            .build();
+        User user = User.builder()
+                .email(EMAIL)
+                .password(PASSWORD)
+                .username(USERNAME)
+                .id(USERID)
+                .build();
 
         Assert.assertFalse(reviewService.didUserReview(reviews, user));
-
     }
 
     @Test
@@ -160,7 +165,10 @@ public class ReviewServiceImplTest {
             .anonymous(false)
             .build();
 
-        User user = User.builder(EMAIL, PASSWORD, USERNAME)
+        User user = User.builder()
+            .email(EMAIL)
+            .password(PASSWORD)
+            .username(USERNAME)
             .id(ID+1)
             .build();
 

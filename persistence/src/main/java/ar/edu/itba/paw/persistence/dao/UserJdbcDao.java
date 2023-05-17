@@ -33,8 +33,8 @@ public class UserJdbcDao implements UserDao {
     public UserJdbcDao(final DataSource ds) {
         this.jdbcTemplate = new JdbcTemplate(ds);
         this.jdbcInsert = new SimpleJdbcInsert(ds)
-            .withTableName(Tables.USERS)
-            .usingGeneratedKeyColumns("id");
+                .withTableName(Tables.USERS)
+                .usingGeneratedKeyColumns("id");
         this.jdbcUserProgressInsert = new SimpleJdbcInsert(ds)
                 .withTableName(Tables.USER_SUBJECT_PROGRESS);
         this.jdbcUserRolesInsert = new SimpleJdbcInsert(ds)
@@ -42,10 +42,9 @@ public class UserJdbcDao implements UserDao {
     }
 
 
-
     public Optional<User> findById(final Long id) {
         return jdbcTemplate.query("SELECT * FROM " + Tables.USERS + " WHERE id = ? AND confirmed = true", UserJdbcDao::rowMapper, id)
-            .stream().findFirst();
+                .stream().findFirst();
     }
 
     @Override
@@ -60,30 +59,33 @@ public class UserJdbcDao implements UserDao {
     }
 
     @Override
-    public User create(final User.Builder userBuilder) throws UserEmailAlreadyTakenPersistenceException {
-        if(!userBuilder.getConfirmToken().isPresent())
+    public User create(final User user) throws UserEmailAlreadyTakenPersistenceException {
+        if (!user.getConfirmToken().isPresent())
             throw new IllegalArgumentException("Confirm token must be present");
 
         Map<String, Object> data = new HashMap<>();
-        data.put("email", userBuilder.getEmail());
-        data.put("pass", userBuilder.getPassword());
-        data.put("username", userBuilder.getUsername());
-        data.put("image_id", userBuilder.getImageId());
-        data.put("confirmtoken", userBuilder.getConfirmToken().get());
+        data.put("email", user.getEmail());
+        data.put("pass", user.getPassword());
+        data.put("username", user.getUsername());
+        data.put("image_id", user.getImageId());
+        data.put("confirmtoken", user.getConfirmToken().get());
         data.put("confirmed", false);
 
         Number key;
 
-        try{
+        try {
             key = jdbcInsert.executeAndReturnKey(data);
-        }catch (DuplicateKeyException e){
-            LOGGER.info("Duplicate key for user email {}",userBuilder.getEmail());
+        } catch (DuplicateKeyException e) {
+            LOGGER.info("Duplicate key for user email {}", user.getEmail());
             throw new UserEmailAlreadyTakenPersistenceException();
         }
 
-        User toReturn = userBuilder.id(key.longValue()).build();
-        LOGGER.info("User created with id {} and email {}", toReturn.getId(), toReturn.getEmail());
-        return toReturn;
+        User newUser = User.builderFrom(user)
+                .id(key.longValue())
+                .build();
+
+        LOGGER.info("User created with id {} and email {}", newUser.getId(), newUser.getEmail());
+        return newUser;
     }
 
     @Override
@@ -108,29 +110,30 @@ public class UserJdbcDao implements UserDao {
         return jdbcTemplate.query("SELECT * FROM " + Tables.USER_SUBJECT_PROGRESS + " WHERE idUser = ? AND idSub = ?",
                 UserJdbcDao::rowMapperUserSubjectProgress, id, idSub).stream().findFirst();
     }
+
     @Override
     public Map<String, Integer> getUserAllSubjectProgress(final Long id) {
         return jdbcTemplate.query("SELECT * FROM " + Tables.USER_SUBJECT_PROGRESS + " WHERE idUser = ?",
                 UserJdbcDao::userAllSubjectsProgressExtractor, id);
     }
+
     @Override
-    public Integer updateSubjectProgress(final Long id, final String idSub, final Integer newProgress){
+    public Integer updateSubjectProgress(final Long id, final String idSub, final Integer newProgress) {
         int toReturn;
-        if(getUserSubjectProgress(id,idSub).isPresent()){
+        if (getUserSubjectProgress(id, idSub).isPresent()) {
             toReturn = jdbcTemplate.update("UPDATE " + Tables.USER_SUBJECT_PROGRESS + " SET subjectState = ? WHERE idSub = ? AND idUser = ?",
                     newProgress,idSub,id);
             if(toReturn != NO_ROWS_AFFECTED) {
                 LOGGER.info("Updating subject {} progress for user {}", idSub, id);
             } else {
-               LOGGER.warn("Failed to update subject {} progress for user {}", idSub, id);
+                LOGGER.warn("Failed to update subject {} progress for user {}", idSub, id);
             }
-        }
-        else{
+        } else {
             Map<String, Object> data = new HashMap<>();
 
-            data.put("idUser",id);
-            data.put("idSub",idSub);
-            data.put("subjectState",newProgress);
+            data.put("idUser", id);
+            data.put("idSub", idSub);
+            data.put("subjectState", newProgress);
             toReturn = jdbcUserProgressInsert.execute(data);
             if(toReturn != NO_ROWS_AFFECTED) {
                 LOGGER.info("Generated subject progress in {} for user {}", idSub, id);
@@ -154,7 +157,7 @@ public class UserJdbcDao implements UserDao {
     // - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
     @Override
-    public Optional<User> getUserWithEmail(final String email){
+    public Optional<User> getUserWithEmail(final String email) {
         return jdbcTemplate.query("SELECT * FROM " + Tables.USERS + " WHERE email = ? AND confirmed = true", UserJdbcDao::rowMapper, email).stream().findFirst();
     }
 
@@ -163,13 +166,13 @@ public class UserJdbcDao implements UserDao {
         return jdbcTemplate.query("SELECT * FROM " + Tables.USERS + " WHERE email = ? AND confirmed = false", UserJdbcDao::rowMapper, email).stream().findFirst();
     }
 
-    private static Map<String,Integer> userAllSubjectsProgressExtractor(final ResultSet rs) throws SQLException {
+    private static Map<String, Integer> userAllSubjectsProgressExtractor(final ResultSet rs) throws SQLException {
         final Map<String, Integer> res = new HashMap<>();
 
-        while(rs.next()){
+        while (rs.next()) {
             String idSub = rs.getString("idSub");
             Integer state = rs.getInt("subjectState");
-            res.put(idSub,state);
+            res.put(idSub, state);
         }
         return res;
     }
@@ -203,17 +206,17 @@ public class UserJdbcDao implements UserDao {
 
     //------------------------ User Roles ---------------------------------------------------
     @Override
-    public List<Roles> getUserRoles(final Long userId){
+    public List<Roles> getUserRoles(final Long userId) {
         return jdbcTemplate.query("SELECT id,name FROM " + Tables.ROLES + " FULL JOIN " + Tables.USER_ROLES + " ON id = roleId WHERE userId = ?", UserJdbcDao::rolesRowMapper, userId);
     }
 
     @Override
-    public Integer addIdToUserRoles(final Long roleId, final Long userId){
+    public Integer addIdToUserRoles(final Long roleId, final Long userId) {
         Map<String, Long> data = new HashMap<>();
         data.put("roleId", roleId);
         data.put("userId", userId);
         int success = jdbcUserRolesInsert.execute(data);
-        if(success != 0) {
+        if (success != 0) {
             LOGGER.info("Added role {} to user with id {}", roleId, userId);
         } else {
             LOGGER.warn("Failed to add role {} to user with id {}", roleId, userId);
@@ -222,7 +225,7 @@ public class UserJdbcDao implements UserDao {
     }
 
     private static Roles rolesRowMapper(final ResultSet rs, final int rowNum) throws SQLException {
-        return new Roles (
+        return new Roles(
                 rs.getLong("id"),
                 rs.getString("name")
         );
@@ -230,7 +233,7 @@ public class UserJdbcDao implements UserDao {
 
     public Integer updateUserRoles(final Long roleId, final Long userId) {
         int success = jdbcTemplate.update("UPDATE " + Tables.USER_ROLES + " SET roleid = ? WHERE userid = ?", roleId, userId);
-        if(success != 0) {
+        if (success != 0) {
             LOGGER.info("Updated user with id {} role to {}", userId, roleId);
         } else {
             LOGGER.warn("Failed to update user with id {} role to {}", userId, roleId);
@@ -255,18 +258,18 @@ public class UserJdbcDao implements UserDao {
         final String localeString = rs.getString("locale");
         final Locale locale = localeString == null ? null : Locale.forLanguageTag(localeString);
 
-        return User.builder(rs.getString("email"),
-                        rs.getString("pass"),
-                        rs.getString("username")
-                )
-                    .id(rs.getLong("id"))
-                    .imageId(rs.getLong("image_id"))
-                    .locale(locale)
-                    .confirmed(rs.getBoolean("confirmed"))
-                    .build();
+        return User.builder()
+                .email(rs.getString("email"))
+                .password(rs.getString("pass"))
+                .username(rs.getString("username"))
+                .id(rs.getLong("id"))
+                .imageId(rs.getLong("image_id"))
+                .locale(locale)
+                .confirmed(rs.getBoolean("confirmed"))
+                .build();
     }
 
-    private static Integer rowMapperUserSubjectProgress(final ResultSet rs , final int rowNum) throws SQLException {
+    private static Integer rowMapperUserSubjectProgress(final ResultSet rs, final int rowNum) throws SQLException {
         return rs.getInt("subjectState");
     }
 }

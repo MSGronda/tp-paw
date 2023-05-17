@@ -65,20 +65,22 @@ public class UserServiceImpl implements UserService {
 
     @Transactional
     @Override
-    public User create(final User.Builder userBuilder, final byte[] profilePic) throws UserEmailAlreadyTakenException {
+    public User create(final User user, final byte[] profilePic) throws UserEmailAlreadyTakenException {
         long imageId = imageDao.insertAndReturnKey(profilePic);
 
         final String confirmToken = generateConfirmToken();
 
-        userBuilder.imageId(imageId)
-            .password(passwordEncoder.encode(userBuilder.getPassword()))
-            .confirmToken(confirmToken);
-
-        User user;
+        User newUser;
         try {
-            user = userDao.create(userBuilder);
+            newUser = userDao.create(
+                    User.builderFrom(user)
+                            .password(passwordEncoder.encode(user.getPassword()))
+                            .confirmToken(confirmToken)
+                            .imageId(imageId)
+                            .build()
+            );
         } catch (final UserEmailAlreadyTakenPersistenceException e) {
-            LOGGER.info("User {} failed to create", userBuilder.getEmail());
+            LOGGER.info("User {} failed to create", user.getEmail());
             throw new UserEmailAlreadyTakenException();
         }
 
@@ -87,18 +89,18 @@ public class UserServiceImpl implements UserService {
             throw new IllegalStateException("USER role not found");
         }
         Roles role = maybeRole.get();
-        addIdToUserRoles(role.getId(), user.getId());
+        addIdToUserRoles(role.getId(), newUser.getId());
 
 
-        return user;
+        return newUser;
     }
 
     @Transactional
     @Override
-    public User create(final User.Builder userBuilder) throws UserEmailAlreadyTakenException, IOException {
+    public User create(final User user) throws UserEmailAlreadyTakenException, IOException {
         File file = ResourceUtils.getFile("classpath:images/default_user.png");
         byte[] defaultImg = Files.readAllBytes(file.toPath());
-        return create(userBuilder, defaultImg);
+        return create(user, defaultImg);
     }
 
     @Override

@@ -59,36 +59,70 @@ public class UserServiceImplTest {
     @Test
     public void testCreate() throws UserEmailAlreadyTakenPersistenceException, UserEmailAlreadyTakenException, IOException {
         //1. Precondiciones
-        User.Builder userBuilder = User.builder(EMAIL, PASSWORD, USERNAME);
-        when(userDao.create(eq(userBuilder)))
-            .thenReturn(User.builder(EMAIL, PASSWORD, USERNAME).build());
+        User user = User.builder()
+                .email(EMAIL)
+                .password(PASSWORD)
+                .username(USERNAME)
+                .build();
+
+        User serviceUser = User.builderFrom(user)
+                .password(PASSWORD_ENCRYPTED)
+                .imageId(IMAGEID)
+                .build();
+
+        User daoUser = User.builderFrom(serviceUser)
+                .id(ID)
+                .build();
+
+        when(userDao.create(eq(serviceUser)))
+                .thenReturn(daoUser);
+        when(passwordEncoder.encode(eq(PASSWORD))).thenReturn(PASSWORD_ENCRYPTED);
         when(imageDao.insertAndReturnKey(eq("asdf".getBytes()))).thenReturn(IMAGEID);
         when(rolesService.findByName(eq("USER"))).thenReturn(Optional.of(new Roles(ID, "USER")));
 
         // 2. Execute class under test
-        User newUser = us.create(userBuilder, "asdf".getBytes());
+        User newUser = us.create(user, "asdf".getBytes());
 
         // 3. Meaningful assertions
         Assert.assertNotNull(newUser);
         Assert.assertEquals(EMAIL, newUser.getEmail());
-        Assert.assertEquals(PASSWORD, newUser.getPassword());
+        Assert.assertEquals(PASSWORD_ENCRYPTED, newUser.getPassword());
         Assert.assertEquals(USERNAME, newUser.getUsername());
     }
+
     @Test(expected = UserEmailAlreadyTakenException.class)
     public void testCreateAlreadyExists() throws UserEmailAlreadyTakenPersistenceException, UserEmailAlreadyTakenException, IOException {
         //1. Precondiciones
-        User.Builder userBuilder = User.builder(EMAIL, PASSWORD, USERNAME);
-        when(userDao.create(eq(userBuilder)))
+        User user = User.builder()
+                .email(EMAIL)
+                .password(PASSWORD)
+                .username(USERNAME)
+                .build();
+
+        User serviceUser = User.builderFrom(user)
+                .password(PASSWORD_ENCRYPTED)
+                .imageId(IMAGEID)
+                .build();
+
+        when(userDao.create(eq(serviceUser)))
                 .thenThrow(UserEmailAlreadyTakenPersistenceException.class);
         when(imageDao.insertAndReturnKey(eq("asdf".getBytes()))).thenReturn(IMAGEID);
         when(passwordEncoder.encode(eq(PASSWORD))).thenReturn(PASSWORD_ENCRYPTED);
 
         // 2. Execute class under test
-        us.create(userBuilder, "asdf".getBytes());
+        us.create(user, "asdf".getBytes());
     }
+
     @Test
     public void testFindById() {
-        when(userDao.findById(eq(ID))).thenReturn(Optional.of(User.builder(EMAIL, PASSWORD, USERNAME).id(ID).build()));
+        when(userDao.findById(eq(ID))).thenReturn(Optional.of(
+                User.builder()
+                        .id(ID)
+                        .email(EMAIL)
+                        .password(PASSWORD)
+                        .username(USERNAME)
+                        .build()
+        ));
 
         Optional<User> user = us.findById(ID);
 

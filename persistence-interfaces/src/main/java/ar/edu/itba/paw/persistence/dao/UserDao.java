@@ -10,7 +10,7 @@ import java.util.Map;
 import java.util.Optional;
 
 public interface UserDao extends RWDao<Long,User> {
-    User create(final User.Builder userBuilder) throws UserEmailAlreadyTakenPersistenceException;
+    User create(final User user) throws UserEmailAlreadyTakenPersistenceException;
 
     Optional<User> getUserWithEmail(final String email);
     Optional<User> getUnconfirmedUserWithEmail(final String email);
