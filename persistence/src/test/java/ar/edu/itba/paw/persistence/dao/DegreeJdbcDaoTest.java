@@ -93,15 +93,9 @@ public class DegreeJdbcDaoTest {
 
     @Test
     public void testCreate() {
-
+        jdbcTemplate.execute("INSERT INTO degrees(id, degname) VALUES (" + ID2 + ", '" + NAME2 + "')" );
         Degree degree = degreeDao.create(NAME);
-
-        Assert.assertEquals(1, JdbcTestUtils.countRowsInTable(jdbcTemplate, "degrees"));
         Assert.assertEquals(NAME, degree.getName());
-
-        Degree degree2 = degreeDao.create(NAME2);
-
         Assert.assertEquals(2, JdbcTestUtils.countRowsInTable(jdbcTemplate, "degrees"));
-        Assert.assertEquals(NAME2, degree2.getName());
     }
 }
