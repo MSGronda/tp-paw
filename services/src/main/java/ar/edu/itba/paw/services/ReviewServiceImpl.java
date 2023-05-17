@@ -112,8 +112,16 @@ public class ReviewServiceImpl implements ReviewService {
         return reviewDao.deleteReviewVoteByReviewId(idReview);
     }
 
+    @Transactional
+    @Override
+    public Integer updateReviewVote(final Long idUser, final Long idReview, Review.ReviewVote vote){
+        if(vote == Review.ReviewVote.DELETE)
+            return deleteReviewVote(idUser, idReview) ;
+        else
+            return voteReview(idUser, idReview, vote.getVote());
+    }
 
-    // vote created: 1, 2 vote updated:
+
     @Transactional
     @Override
     public Integer voteReview(final Long idUser, final Long idReview, int vote) {

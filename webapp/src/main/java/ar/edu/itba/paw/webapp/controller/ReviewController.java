@@ -31,6 +31,7 @@ public class ReviewController {
     private final AuthUserService authUserService;
     private static final Logger LOGGER = LoggerFactory.getLogger(ReviewController.class);
 
+    private static final int NOT_ALTERED= 0;
 
     @Autowired
     public ReviewController(UserService userService, SubjectService subjectService, ReviewService reviewService, DegreeService degreeService, AuthUserService authUserService) {
@@ -164,14 +165,10 @@ public class ReviewController {
         if( !authUserService.isAuthenticated()){
             return "invalid parameters"; // we do not give any information on the inner workings
         }
-        int resp, voteValue = vote.getVote();
-        User user = authUserService.getCurrentUser();
-        if(voteValue != 0)
-            resp = reviewService.voteReview(user.getId(), vote.getReviewId(),voteValue);
-        else
-            resp = reviewService.deleteReviewVote(user.getId(), vote.getReviewId());
 
-        if(resp != 1){
+        int resp = reviewService.updateReviewVote(authUserService.getCurrentUser().getId(), vote.getReviewId(), Review.ReviewVote.getVoteByNum(vote.getVote()));
+
+        if(resp == NOT_ALTERED){
             return "invalid parameters"; // we do not give any information on the inner workings
         }
         return "voted";

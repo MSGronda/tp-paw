@@ -195,4 +195,27 @@ public class Review {
             return new Review(this);
         }
     }
+
+    public enum ReviewVote{
+        UPVOTE(1),
+        DOWNVOTE(-1),
+        DELETE(0);
+
+        private int vote;
+        ReviewVote(int vote){
+            this.vote = vote;
+        }
+
+        public int getVote() {
+            return vote;
+        }
+        public static ReviewVote getVoteByNum(int vote){
+            for(ReviewVote v : ReviewVote.values()){
+                if(v.vote == vote){
+                    return v;
+                }
+            }
+            throw new IllegalArgumentException(String.valueOf(vote));
+        }
+    }
 }

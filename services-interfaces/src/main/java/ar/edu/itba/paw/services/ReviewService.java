@@ -25,6 +25,7 @@ public interface ReviewService extends BaseService<Long, Review> {
     Review create(final Review review) throws SQLException;
 
     Integer deleteReviewVoteByReviewId(final Long idReview);
+    Integer updateReviewVote(final Long idUser, final Long idReview, Review.ReviewVote vote);
     Integer deleteReviewVote(final Long idUser, final Long idReview);
     Integer voteReview(final Long idUser, final Long idReview, final int vote);
     Map<Long,Integer> userReviewVoteByIdUser(final Long idUser);
