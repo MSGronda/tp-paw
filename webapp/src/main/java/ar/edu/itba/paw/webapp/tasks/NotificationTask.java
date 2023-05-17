@@ -61,6 +61,6 @@ public class NotificationTask {
 
         LOGGER.info("Notified {} users to review their subjects", map.size());
 
-        subjectService.updateUnreviewedNotifTime();
+        subjectService.updateUnreviewedNotIfTime();
     }
 }

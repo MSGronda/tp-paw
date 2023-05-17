@@ -31,7 +31,7 @@ public interface SubjectDao extends ReadableDao<String, Subject> {
     Map<Long, Map<Integer, List<Subject>>> getAllGroupedByDegIdAndYear();
 
     Map<Long, List<Subject>> getAllElectivesGroupedByDegId();
-
-    Map<User,Set<Subject>> getAllUserUnreviewedNotifSubjects();
-    void updateUnreviewedNotifTime();
+    Map<String, Set<String>> getRelevantFiltersForSearchByName(final String name, final Map<String,String> filters);
+    Map<User,Set<Subject>> getAllUserUnreviewedNotIfSubjects();
+    void updateUnreviewedNotIfTime();
 }

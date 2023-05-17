@@ -76,11 +76,35 @@ public class SubjectJdbcDao implements SubjectDao {
         // Order by cannot use "?" in the SQL query
         sb.append(" ORDER BY ").append(filters.getOrDefault("ob", "subname"));
         sb.append(" ").append(filters.getOrDefault("dir", "ASC"));
+
         int offset = Integer.parseInt(filters.getOrDefault("pageNum", "0")) * Integer.parseInt(PAGE_SIZE);
         sb.append(" LIMIT " + PAGE_SIZE + " OFFSET ").append(offset);
+
         List<Subject> toReturn = jdbcTemplate.query(sb.toString(), SubjectJdbcDao::subjectListExtractor, filterList.toArray());
         LOGGER.info("Got subjects with name {} and filters {}", name, filters.values().stream().toString());
         return toReturn;
+    }
+
+    @Override
+    public Map<String, Set<String>> getRelevantFiltersForSearchByName(final String name, final Map<String,String> filters){
+        StringBuilder sb = new StringBuilder("SELECT * FROM ").append(Tables.SUBJECTS).append(" WHERE subname ILIKE ? ");
+        List<String> filterList = sanitizeFilters(name, filters, sb);
+
+        return jdbcTemplate.query(sb.toString(), SubjectJdbcDao::filterExtractor, filterList.toArray());
+    }
+
+    private static Map<String, Set<String>>  filterExtractor(final ResultSet rs) throws SQLException {
+        final Map<String, Set<String>> filters = new HashMap<>();
+        final Set<String> dpt =  new HashSet<>();
+        final Set<String> credits =  new HashSet<>();
+
+        while (rs.next()) {
+            dpt.add(rs.getString("department"));
+            credits.add(String.valueOf(rs.getInt("credits")));
+        }
+        filters.put("department", dpt);
+        filters.put("credits",credits);
+        return filters;
     }
 
     @Override
@@ -101,7 +125,8 @@ public class SubjectJdbcDao implements SubjectDao {
 
     @Override
     public List<Subject> getAllByDegree(final Long idDegree) {
-        return jdbcTemplate.query("SELECT * FROM " + Views.JOINED_SUBJECTS + " WHERE idDeg = ?", SubjectJdbcDao::subjectListExtractorWithProfsAndPrereq, idDegree);
+        return jdbcTemplate.query("SELECT * FROM " + Views.JOINED_SUBJECTS + " WHERE idDeg = ?",
+                SubjectJdbcDao::subjectListExtractorWithProfsAndPrereq, idDegree);
     }
 
     @Override
@@ -160,7 +185,7 @@ public class SubjectJdbcDao implements SubjectDao {
         return result;
     }
 
-    public Map<User, Set<Subject>> getAllUserUnreviewedNotifSubjects() {
+    public Map<User, Set<Subject>> getAllUserUnreviewedNotIfSubjects() {
         return jdbcTemplate.query(
                 "SELECT * FROM " + Tables.USERS + " u" +
                         " LEFT JOIN " + Tables.USER_SUBJECT_PROGRESS + " usp ON u.id = usp.iduser" +
@@ -174,7 +199,7 @@ public class SubjectJdbcDao implements SubjectDao {
     }
 
     @Override
-    public void updateUnreviewedNotifTime() {
+    public void updateUnreviewedNotIfTime() {
         jdbcTemplate.update(
                 "UPDATE " + Tables.USER_SUBJECT_PROGRESS + " usp SET notiftime = now()" +
                         " WHERE usp.subjectstate <> 0" +
@@ -343,7 +368,8 @@ public class SubjectJdbcDao implements SubjectDao {
         toReturn.add("%" + sanitizeString(name) + "%");
 
         for (Map.Entry<String, String> filter : filters.entrySet()) {
-            if (!Objects.equals(filter.getKey(), "ob") && !Objects.equals(filter.getKey(), "dir") && !Objects.equals(filter.getKey(), "pageNum")) {
+            if (!Objects.equals(filter.getKey(), "ob") && !Objects.equals(filter.getKey(), "dir")
+                    && !Objects.equals(filter.getKey(), "pageNum")&& !Objects.equals(filter.getKey(), "q")) {
                 sb.append(" AND ").append(filter.getKey()).append(" = ").append(queryOptionBlanck.get(filter.getKey()));
                 toReturn.add(filter.getValue());
             }

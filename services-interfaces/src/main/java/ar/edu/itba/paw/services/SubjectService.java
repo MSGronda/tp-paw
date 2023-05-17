@@ -25,17 +25,16 @@ public interface SubjectService extends BaseService<String, Subject> {
 
     List<Subject> getInfElectives(final Long degreeId);
 
-
     List<Subject> getByName(final String name);
 
     List<Subject> getByNameFiltered(final String name, final Map<String,String> filters);
 
     int getTotalPagesForSubjects(final String name, final Map<String, String> filters);
 
-    List<String> getSubjectsids(List<Subject> subjects);
-    Map<String, Set<String>> getRelevantFilters(final List<Subject> subjects);
+    List<String> getSubjectsIds(List<Subject> subjects);
+    Map<String, Set<String>> getRelevantFilters(final String name, final Map<String,String> filters);
     Map<User,Set<Subject>> getAllUserUnreviewedNotifSubjects();
-    void updateUnreviewedNotifTime();
+    void updateUnreviewedNotIfTime();
     int checkPageNum(Map<String,String> params);
     String checkOrder(Map<String,String> params);
     String checkDir(Map<String,String> params);

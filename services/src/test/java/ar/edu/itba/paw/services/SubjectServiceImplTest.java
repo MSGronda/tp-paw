@@ -107,42 +107,4 @@ public class SubjectServiceImplTest {
         Assert.assertEquals(ID, subjects.stream().findFirst().get().getId());
         Assert.assertEquals(DEPARTMENT, subjects.stream().findFirst().get().getDepartment());
     }
-
-    @Test
-    public void testGetRelevantFilters(){
-        Subject subject1 = Subject.builder()
-                .id(ID)
-                .name(NAME)
-                .department(DEPARTMENT)
-                .credits(CREDITS)
-                .build();
-
-        Subject subject2 = Subject.builder()
-                .id(ID2)
-                .name(NAME2)
-                .department(DEPARTMENT2)
-                .credits(CREDITS2)
-                .build();
-
-        List<Subject> list = new ArrayList<>();
-        list.add(subject1);
-        list.add(subject2);
-
-        Map<String, Set<String>> map = subjectService.getRelevantFilters(list);
-        String department = "department";
-        String credits = "credits";
-
-        Assert.assertFalse(map.isEmpty());
-        Assert.assertFalse(map.get(department).isEmpty());
-        Assert.assertFalse(map.get(credits).isEmpty());
-
-        List<String> departmentList = new ArrayList<>(map.get(department));
-        Assert.assertEquals(DEPARTMENT, departmentList.get(0));
-        Assert.assertEquals(DEPARTMENT2, departmentList.get(1));
-
-        List<String> creditsList = new ArrayList<>(map.get(credits));
-        Assert.assertEquals(CREDITS.toString(), creditsList.get(0));
-        Assert.assertEquals(CREDITS2.toString(), creditsList.get(1));
-
-    }
 }

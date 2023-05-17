@@ -37,21 +37,17 @@ public class SearchController {
 
     @RequestMapping("/search")
     public ModelAndView search(@RequestParam Map<String, String> params) {
-
-        final List<Subject> subjectsWithoutPrereq = subjectService.getByNameFiltered(params.getOrDefault("q",""), params);
-        final List<String> subjectsIds = subjectService.getSubjectsids(subjectsWithoutPrereq);
-        final List<Subject> subjects = subjectService.findByIds(subjectsIds);
-        final Map<String, Set<String>> relevantFilters = subjectService.getRelevantFilters(subjects);
-
-        Map<String, ReviewStats> reviewStats = reviewService.getReviewStatMapBySubjectList(subjects);
-        final int totalPages = subjectService.getTotalPagesForSubjects(params.getOrDefault("q",""),params);
         long userId;
         if(!authUserService.isAuthenticated())
             userId = -1;
         else
             userId = authUserService.getCurrentUser().getId();
 
-        Map<String,Integer> subjectProgress = userService.getUserAllSubjectProgress(userId);
+        final List<Subject> subjects = subjectService.getByNameFiltered(params.getOrDefault("q",""), params);
+        final int totalPages = subjectService.getTotalPagesForSubjects(params.getOrDefault("q",""),params);
+        final Map<String, Set<String>> relevantFilters = subjectService.getRelevantFilters(params.getOrDefault("q",""),params);
+        final Map<String, ReviewStats> reviewStats = reviewService.getReviewStatMapBySubjectList(subjects);
+        final Map<String,Integer> subjectProgress = userService.getUserAllSubjectProgress(userId);
 
         ModelAndView mav = new ModelAndView("subjects/search");
         mav.addObject("subjects", subjects);

@@ -5,10 +5,10 @@ import ar.edu.itba.paw.models.User;
 import ar.edu.itba.paw.persistence.dao.SubjectDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 @Service
 public class SubjectServiceImpl implements SubjectService {
@@ -43,7 +43,16 @@ public class SubjectServiceImpl implements SubjectService {
 
     @Override
     public List<Subject> getByNameFiltered(final String name, final Map<String,String> filters) {
-        return subjectDao.getByNameFiltered(name, filterValidation(filters));
+
+        // Given that pagination does not work "properly" when joining multiple tables
+        // we must first get the ids of the subjects (which is paginated) and then get
+        // the other relevant information (professors, prerequisits)
+
+        List<Subject> subjectsWithoutPreReqs = subjectDao.getByNameFiltered(name, filterValidation(filters));
+
+        List<String> ids = subjectsWithoutPreReqs.stream().map(Subject::getId).collect(Collectors.toList());
+
+        return subjectDao.findByIds(ids);
     }
 
     @Override
@@ -52,7 +61,7 @@ public class SubjectServiceImpl implements SubjectService {
     }
 
     @Override
-    public List<String> getSubjectsids(List<Subject> subjects){
+    public List<String> getSubjectsIds(List<Subject> subjects){
         List<String> toReturn = new ArrayList<>();
         for(Subject sub: subjects){
             toReturn.add(sub.getId());
@@ -60,22 +69,13 @@ public class SubjectServiceImpl implements SubjectService {
         return toReturn;
     }
 
+
+    // In order to obtain ALL of the relevant filters for a certain search,
     @Override
-    public Map<String, Set<String>> getRelevantFilters(final List<Subject> subjects) {
-        Map<String, Set<String>> relevant = new HashMap<>();
-
-        relevant.put("department", new HashSet<>());
-        relevant.put("credits", new HashSet<>());
-
-        for(Subject sub : subjects){
-            String dpt = sub.getDepartment();
-            int cdts = sub.getCredits();
-            if(dpt != null && !dpt.equals(""))
-                relevant.get("department").add(dpt);
-            if(cdts != 0)
-                relevant.get("credits").add(sub.getCredits().toString());
-        }
-        return relevant;
+    public Map<String, Set<String>> getRelevantFilters(final String name, final Map<String,String> filters) {
+        Map<String, Set<String>> map =  subjectDao.getRelevantFiltersForSearchByName(name, filters);
+        map.get("department").remove("");
+        return map;
     }
 
     @Override
@@ -121,12 +121,12 @@ public class SubjectServiceImpl implements SubjectService {
 
     @Override
     public Map<User, Set<Subject>> getAllUserUnreviewedNotifSubjects() {
-        return subjectDao.getAllUserUnreviewedNotifSubjects();
+        return subjectDao.getAllUserUnreviewedNotIfSubjects();
     }
 
     @Override
-    public void updateUnreviewedNotifTime() {
-        subjectDao.updateUnreviewedNotifTime();
+    public void updateUnreviewedNotIfTime() {
+        subjectDao.updateUnreviewedNotIfTime();
     }
 
     @Override
