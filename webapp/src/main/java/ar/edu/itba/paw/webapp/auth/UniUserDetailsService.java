@@ -34,14 +34,6 @@ public class UniUserDetailsService implements UserDetailsService {
         final User user = us.getUserWithEmail(email)
                 .orElseThrow(() -> new UsernameNotFoundException("No user for email" + email));
 
-//        if( !BCRYPT_PATTERN.matcher(user.getPassword()).matches()){
-//            //TODO - update password with hashed version
-//            us.changePassword(email, user.getPassword());
-//            return loadUserByUsername(email);
-//        }
-
-        //TODO: implement logic to grant roles required authorities
-
         final List<Roles> userRoles = us.getUserRoles(user.getId());
 
         final Collection<GrantedAuthority> authorities = new HashSet<>();

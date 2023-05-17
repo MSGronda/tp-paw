@@ -207,7 +207,7 @@ public class UserJdbcDao implements UserDao {
     //------------------------ User Roles ---------------------------------------------------
     @Override
     public List<Roles> getUserRoles(final Long userId) {
-        return jdbcTemplate.query("SELECT id,name FROM " + Tables.ROLES + " FULL JOIN " + Tables.USER_ROLES + " ON id = roleId WHERE userId = ?", UserJdbcDao::rolesRowMapper, userId);
+        return jdbcTemplate.query("SELECT id,name FROM " + Tables.ROLES + " JOIN " + Tables.USER_ROLES + " ON id = roleId WHERE userId = ?", UserJdbcDao::rolesRowMapper, userId);
     }
 
     @Override
