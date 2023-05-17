@@ -58,7 +58,21 @@
     font-size: 20px;
     padding-top: 0.3rem;
   }
+  .clickable{
+    pointer-events: all !important;
+  }
+  sl-tooltip::part(body){
+    color: black;
+    background-color: white;
+    margin: 0;
+    padding: 0;
+  }
+  sl-tooltip::part(base__arrow){
+    background-color: white;
+  }
 </style>
+
+
 
 <sl-card class="card-header">
   <div slot="header" class="header">
@@ -81,13 +95,33 @@
 
     <sec:authorize access="hasRole('EDITOR')">
       <c:if test="${review.userId != user.id}">
-        <sl-icon-button name="trash3" class="delete-button" label="delete" href="<c:url value="/review/${review.subjectId}/delete/${review.id}"/>"></sl-icon-button>
+        <sl-icon-button name="trash3" class="delete-button" label="delete" onclick="confirmAction()"></sl-icon-button>
       </c:if>
     </sec:authorize>
     <c:if test="${review.userId == user.id}">
       <div>
         <sl-icon-button name="pencil-square" label="edit" href="<c:url value="/review/${review.subjectId}/edit/${review.id}"/>"></sl-icon-button>
-        <sl-icon-button name="trash3" class="delete-button" label="delete" href="<c:url value="/review/${review.subjectId}/delete/${review.id}"/>"></sl-icon-button>
+
+        <sl-tooltip trigger="click">
+          <div class="clickable" slot="content">
+            <sl-card>
+              <div class="column-center">
+                <span><spring:message code="review.delete.doyouwish"/></span>
+                <div style="padding-top: 1rem;" class="row">
+                  <sl-button style="padding-right: 1rem " class="delete-button" label="delete" href="<c:url value="/review/${review.subjectId}/delete/${review.id}"/>">
+                    <spring:message code="review.delete.confirm"/>
+                  </sl-button>
+                  <sl-button class="delete-button" label="cancel">
+                    <spring:message code="review.delete.cancel"/>
+                  </sl-button>
+                </div>
+              </div>
+            </sl-card>
+
+          </div>
+          <sl-icon-button name="trash3" class="delete-button" label="delete"></sl-icon-button>
+        </sl-tooltip>
+
       </div>
     </c:if>
   </div>
@@ -195,6 +229,7 @@
     </form>
   </div>
 </sl-card>
+
 
 
 
