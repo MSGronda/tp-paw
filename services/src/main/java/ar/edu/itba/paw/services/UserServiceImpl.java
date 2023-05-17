@@ -250,7 +250,7 @@ public class UserServiceImpl implements UserService {
         }
         User user = maybeUser.get();
         final Collection<GrantedAuthority> authorities = new HashSet<>();
-        authorities.add(new SimpleGrantedAuthority("ROLE_USER"));
+        authorities.add(new SimpleGrantedAuthority(String.format("ROLE_%s", Roles.Role.USER.getName())));
         Authentication auth = new UsernamePasswordAuthenticationToken(user.getEmail(), user.getPassword(), authorities);
         SecurityContextHolder.getContext().setAuthentication(auth);
         LOGGER.info("Auto login for user {}", userId);

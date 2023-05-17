@@ -33,9 +33,9 @@ public class Roles {
     }
 
     public enum Role {
-        USER (1, "User"),
+        USER (1, "USER"),
 
-        EDITOR (2, "Editor");
+        EDITOR (2, "EDITOR");
 
         private final long id;
         private final String name;

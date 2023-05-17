@@ -101,7 +101,7 @@ public class UserController {
         final Map<Long, Integer> userVotes = reviewService.userReviewVoteByIdUser(user.getId());
         
         UserDetails userDetails = uniUserDetailsService.loadUserByUsername(user.getEmail());
-        Boolean isEditor = userDetails.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_EDITOR"));
+        Boolean isEditor = userDetails.getAuthorities().contains(new SimpleGrantedAuthority(String.format("ROLE_%s", Roles.Role.EDITOR.getName())));
 
         mav.addObject("editor", isEditor);
         mav.addObject("user", user);

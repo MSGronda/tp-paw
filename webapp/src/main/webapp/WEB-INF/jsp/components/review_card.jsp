@@ -95,7 +95,28 @@
 
     <sec:authorize access="hasRole('EDITOR')">
       <c:if test="${review.userId != user.id}">
-        <sl-icon-button name="trash3" class="delete-button" label="delete" onclick="confirmAction()"></sl-icon-button>
+        <div>
+          <sl-tooltip trigger="click">
+            <div class="clickable" slot="content">
+              <sl-card>
+                <div class="column-center">
+                  <span><spring:message code="review.delete.doyouwish"/></span>
+                  <div style="padding-top: 1rem;" class="row">
+                    <sl-button style="padding-right: 1rem " class="delete-button" label="delete" href="<c:url value="/review/${review.subjectId}/delete/${review.id}"/>">
+                      <spring:message code="review.delete.confirm"/>
+                    </sl-button>
+                    <sl-button class="delete-button" label="cancel">
+                      <spring:message code="review.delete.cancel"/>
+                    </sl-button>
+                  </div>
+                </div>
+              </sl-card>
+
+            </div>
+            <sl-icon-button name="trash3" class="delete-button" label="delete"></sl-icon-button>
+          </sl-tooltip>
+
+        </div>
       </c:if>
     </sec:authorize>
     <c:if test="${review.userId == user.id}">

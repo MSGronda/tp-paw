@@ -26,7 +26,7 @@ public class AuthUserServiceImpl implements AuthUserService{
 
     @Override
     public Boolean isCurrentUserEditor(){
-        return SecurityContextHolder.getContext().getAuthentication().getAuthorities().contains(new SimpleGrantedAuthority("ROLE_"+Roles.Role.EDITOR.getName()));
+        return SecurityContextHolder.getContext().getAuthentication().getAuthorities().contains(new SimpleGrantedAuthority(String.format("ROLE_%s", Roles.Role.EDITOR.getName())));
     }
 
     @Override
