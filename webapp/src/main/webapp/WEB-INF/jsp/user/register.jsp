@@ -7,23 +7,10 @@
 <head>
     <title><spring:message code="userform.header" /></title>
     <jsp:include page="../components/head_shared.jsp"/>
-
-    <style>
-        main {
-            background-color: #efefef;
-            flex: 1 0 auto;
-            display: flex;
-            flex-direction: column;
-            padding: 8px;
-        }
-        .error{
-            color: red;
-        }
-    </style>
 </head>
 <body>
 <jsp:include page="../components/navbar.jsp"/>
-<main class="container-50 pusher">
+<main class="container-50 pusher container-account">
     <h1><spring:message code="userform.header" /></h1>
     <c:url var="registerUrl" value="/register"/>
     <form:form modelAttribute="UserForm" action="${registerUrl}" method="post" >

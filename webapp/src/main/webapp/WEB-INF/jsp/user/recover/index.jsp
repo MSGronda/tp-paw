@@ -13,9 +13,7 @@
         .card-basic {
             width: 100%;
         }
-        .error {
-            color: red;
-        }
+
         .submit-button {
             display: flex;
             justify-content: center;

@@ -9,16 +9,7 @@
   <jsp:include page="../components/head_shared.jsp"/>
 
   <style>
-    main {
-      background-color: #efefef;
-      flex: 1 0 auto;
-      display: flex;
-      flex-direction: column;
-      padding: 8px;
-    }
-    .error {
-      color: red;
-    }
+
     a{
       color: #0369a1;
     }
@@ -26,7 +17,7 @@
 </head>
 <body>
 <jsp:include page="../components/navbar.jsp"/>
-<main class="container-50 pusher">
+<main class="container-50 pusher container-account">
   <h1><spring:message code="navbar.login" /></h1>
   <c:if test="${error == true}">
     <p class="error"><spring:message code="userform.invalidcredentials" /></p>

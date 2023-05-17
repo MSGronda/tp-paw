@@ -15,7 +15,7 @@
             flex: 1 0 auto;
             display: flex;
             flex-direction: column;
-            padding: 8px;
+            padding: 0.5rem;
         }
 
         sl-tab-panel.year-panel::part(base) {

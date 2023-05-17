@@ -10,13 +10,6 @@
   <jsp:include page="../components/head_shared.jsp"/>
 
   <style>
-    main {
-      background-color: #efefef;
-      flex: 1 0 auto;
-      display: flex;
-      flex-direction: column;
-      padding: 8px;
-    }
     hr {
       width: 30rem;
     }
@@ -34,16 +27,14 @@
     .card-basic {
       width: 100%;
     }
-    .error{
-      color: red;
-    }
+
   </style>
 </head>
 <jsp:include page="../components/navbar.jsp" />
 
 <body>
 
-<main>
+<main class="container-account">
   <div class="title container-50">
     <h1><spring:message code="profile.editing"/></h1>
     <div class="editButton">

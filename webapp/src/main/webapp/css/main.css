@@ -48,6 +48,9 @@ main {
     flex-direction: column;
     flex-grow: 1;
 }
+.error {
+    color: red;
+}
 
 a {
     text-decoration: none;
@@ -104,6 +107,13 @@ sl-card.subject-card::part(body) {
     align-self: center;
     justify-self: center;
     margin: 0 auto;
+}
+.container-account{
+    background-color: #efefef;
+    flex: 1 0 auto;
+    display: flex;
+    flex-direction: column;
+    padding: 0.5rem;
 }
 
 .container-small {

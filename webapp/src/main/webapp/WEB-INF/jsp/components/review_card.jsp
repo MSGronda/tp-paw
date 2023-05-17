@@ -12,7 +12,7 @@
 <style>
   .card-header {
     width: 100%;
-    margin: 15px;
+    margin: 1rem;
   }
   .header{
     display: flex;

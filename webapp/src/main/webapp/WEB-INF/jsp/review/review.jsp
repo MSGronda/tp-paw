@@ -11,9 +11,7 @@
         .row{
             display: flex;
         }
-        .error{
-            color: red;
-        }
+
     </style>
 </head>
 <body>

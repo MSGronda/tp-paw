@@ -10,13 +10,7 @@
     <jsp:include page="../components/head_shared.jsp"/>
 
     <style>
-        main {
-            background-color: #efefef;
-            flex: 1 0 auto;
-            display: flex;
-            flex-direction: column;
-            padding: 8px;
-        }
+
         hr {
             width: 40rem;
         }
@@ -99,7 +93,7 @@
 </head>
 <body>
 <jsp:include page="../components/navbar.jsp" />
-<main class="container-50 pusher">
+<main class="container-50 pusher container-account">
     <div class="header">
         <div class="image-container">
             <spring:message code="profile.picture.alt" var="pic" arguments="${user.username}"/>

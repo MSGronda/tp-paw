@@ -10,13 +10,7 @@
   <jsp:include page="../../components/head_shared.jsp"/>
 
   <style>
-      main {
-          background-color: #efefef;
-          flex: 1 0 auto;
-          display: flex;
-          flex-direction: column;
-          padding: 8px;
-      }
+
       hr {
           width: 30rem;
       }
@@ -34,9 +28,7 @@
       .card-basic {
           width: 100%;
       }
-      .error{
-          color: red;
-      }
+
       h3 {
         margin-top: 0;
       }
@@ -46,7 +38,7 @@
 
 <body>
 
-<main>
+<main class="container-account">
   <div class="title container-small">
     <h1><spring:message code="recover.title"/></h1>
   </div>
