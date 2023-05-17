@@ -62,22 +62,22 @@ This is the first issue of the project due to 17/5/2023 at 19hs
   - Internationalization (English and Spanish)
 
 ### Feature Explanation
-  Mailing: * It is used to verify an email linked to a new user's account.
-           * It is used to send a password recovery link to a user.
-           * It is used to send a notification to a user when a subject is marked as completed but the user did not post review for it (within 10 minutes of completion).
-  User Roles: * User can post and vote reviews, edit and delete their own reviews.
-              * Moderator can do everything a user can do, but can also delete any review and promote a user to Moderator.
-  Moderator Account:
-        - Username: Uni.PAW.mod@gmail.com
-        - Password: Pawuni23
+  - Mailing: - It is used to verify an email linked to a new user's account.
+             - It is used to send a password recovery link to a user.
+             - It is used to send a notification to a user when a subject is marked as completed but the user did not post review for it (within 10 minutes of completion).
+          - User Roles: - User can post and vote reviews, edit and delete their own reviews.
+                      - Moderator can do everything a user can do, but can also delete any review and promote a user to Moderator.
+          - Moderator Account:
+                - Username: paw.uni.mod@gmail.com
+                - Password: Pawuni23
 
 ## Authors
 
-  - **Carro Wetzel, Andrés**
-  - **Casiraghi, Marcos**
-  - **Gronda, Marcos**
-  - **Morantes, Agustín**
-  - **Rojas Pelliccia, Máximo**
+  - Carro Wetzel, Andrés
+  - Casiraghi, Marcos
+  - Gronda, Marcos
+  - Morantes, Agustín
+  - Rojas Pelliccia, Máximo 
 
 
 ## Acknowledgments
