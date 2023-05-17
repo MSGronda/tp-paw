@@ -17,7 +17,7 @@
 </head>
 <body>
 <jsp:include page="../components/navbar.jsp"/>
-<main class="container-50 pusher container-account">
+<main class="container-small pusher container-account">
   <h1><spring:message code="navbar.login" /></h1>
   <c:if test="${error == true}">
     <p class="error"><spring:message code="userform.invalidcredentials" /></p>
@@ -43,9 +43,9 @@
     </div>
     <br/>
     <div>
-      <span><spring:message code="login.noAccount"/><a href="<c:url value="/register"/>"><spring:message code="login.register"/></a></span>
+      <span><spring:message code="login.noAccount"/></span>
+      <span><a href="<c:url value="/register"/>"><spring:message code="login.register"/></a></span>
     </div>
-    <br/>
     <br/>
     <div>
       <span><spring:message code="login.forgotPassword"/></span>

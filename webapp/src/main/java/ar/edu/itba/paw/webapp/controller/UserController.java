@@ -290,9 +290,7 @@ public class UserController {
         try {
             userService.recoverPassword(token, recoverPasswordEditForm.getPassword());
         } catch (InvalidTokenException e) {
-            ModelAndView mav = new ModelAndView("user/recover/index");
-            mav.addObject("invalidToken", true);
-            return mav;
+            return new ModelAndView("user/recover/invalidToken");
         }
 
         return new ModelAndView("user/recover/success");
@@ -301,9 +299,7 @@ public class UserController {
     @RequestMapping(value = "/recover/{token}", method = { RequestMethod.GET })
     public ModelAndView recoverPasswordEditForm(@PathVariable String token, @ModelAttribute("RecoverPasswordEditForm") final RecoverPasswordEditForm form){
         if(!userService.isValidRecoveryToken(token)){
-            ModelAndView mav = new ModelAndView("user/recover/index");
-            mav.addObject("invalidToken", true);
-            return mav;
+            return new ModelAndView("user/recover/invalidToken");
         }
 
         ModelAndView mav = new ModelAndView("user/recover/editPassword");
