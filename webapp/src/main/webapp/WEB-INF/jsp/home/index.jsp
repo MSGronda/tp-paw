@@ -30,6 +30,7 @@
             overflow: hidden;
         }
     </style>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
 </head>
 <body>
 <jsp:include page="../components/navbar.jsp"/>
@@ -41,7 +42,7 @@
                 <spring:message code="home.year" arguments="${year}"/>
             </sl-tab>
         </c:forEach>
-        <sl-tab slot="nav" panel="electivas">
+        <sl-tab slot="nav" panel="electives">
             <spring:message code="home.electives"/>
         </sl-tab>
 
@@ -58,7 +59,7 @@
 
             </sl-tab-panel>
         </c:forEach>
-        <sl-tab-panel class="year-panel" name="electivas">
+        <sl-tab-panel class="year-panel" name="electives">
             <c:forEach var="elective" items="${electives}">
                 <c:set var="subject" value="${elective}" scope="request"/>
                 <c:set var="reviewCount" value="${electivesReviewStatistics[subject.id].reviewCount}" scope="request"/>
@@ -74,3 +75,19 @@
 <jsp:include page="../components/body_scripts.jsp"/>
 </body>
 </html>
+
+<script>
+    $('document').ready(function(){
+        const urlParams = new URLSearchParams(window.location.search);
+        const tab = urlParams.get('tab')
+        const tabGroup = document.querySelector('.year-group');
+
+        if(tab ==='1' ||tab ==='2' ||tab ==='3' ||tab ==='4' ||tab ==='5'){
+            tabGroup.show('year-'+tab);
+        }
+        else if(tab ==='electives'){
+            tabGroup.show('electives');
+        }
+    });
+
+</script>
