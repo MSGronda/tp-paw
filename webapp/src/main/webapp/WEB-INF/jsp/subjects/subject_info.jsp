@@ -135,10 +135,10 @@
               <sl-breadcrumb-item><a href='<c:url value="/"/>'><spring:message code="subject.home"/></a></sl-breadcrumb-item>
               <c:choose>
                   <c:when test="${year == 0}">
-                      <sl-breadcrumb-item><a href='<c:url value="/?tab=electives"/>'><spring:message code="home.electives"/></a></sl-breadcrumb-item>
+                      <sl-breadcrumb-item><a href='<c:url value="/degree/Ingenieria en Informatica?tab=electives"/>'><spring:message code="home.electives"/></a></sl-breadcrumb-item>
                   </c:when>
                   <c:otherwise>
-                      <sl-breadcrumb-item><a href='<c:url value="/?tab=${year}"/>'><spring:message code="subject.year" arguments="${year}"/></a></sl-breadcrumb-item>
+                      <sl-breadcrumb-item><a href='<c:url value="/degree/Ingenieria en Informatica?tab=${year}"/>'><spring:message code="subject.year" arguments="${year}"/></a></sl-breadcrumb-item>
                   </c:otherwise>
               </c:choose>
           </sl-breadcrumb>

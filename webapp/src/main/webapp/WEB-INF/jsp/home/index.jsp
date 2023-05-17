@@ -62,9 +62,9 @@
         <sl-tab-panel class="year-panel" name="electives">
             <c:forEach var="elective" items="${electives}">
                 <c:set var="subject" value="${elective}" scope="request"/>
-                <c:set var="reviewCount" value="${electivesReviewStatistics[subject.id].reviewCount}" scope="request"/>
-                <c:set var="difficulty" value="${electivesReviewStatistics[subject.id].difficulty}" scope="request"/>
-                <c:set var="time" value="${electivesReviewStatistics[subject.id].timeDifficulty}" scope="request"/>
+                <c:set var="reviewCount" value="${reviewStatistics[elective.id].reviewCount}" scope="request"/>
+                <c:set var="difficulty" value="${reviewStatistics[elective.id].difficulty}" scope="request"/>
+                <c:set var="time" value="${reviewStatistics[elective.id].timeDifficulty}" scope="request"/>
                 <c:set var="progress" value="${subjectProgress.getOrDefault(elective.id, 0)}" scope="request"/>
                 <c:import url="../components/subject_card.jsp"/>
             </c:forEach>

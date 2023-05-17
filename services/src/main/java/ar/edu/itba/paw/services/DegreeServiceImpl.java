@@ -20,7 +20,10 @@ public class DegreeServiceImpl implements DegreeService {
     @Override
     public Optional<Degree> findById(final Long id) {
         return degreeDao.findById(id);
-
+    }
+    @Override
+    public Optional<Degree> getByName(final String name) {
+        return degreeDao.getByName(name);
     }
 
     @Override

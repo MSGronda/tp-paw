@@ -2,15 +2,12 @@ package ar.edu.itba.paw.webapp.controller;
 
 import ar.edu.itba.paw.models.*;
 import ar.edu.itba.paw.services.*;
-import ar.edu.itba.paw.webapp.exceptions.DegreeNotFoundException;
-import ar.edu.itba.paw.webapp.exceptions.SubjectNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 import static java.lang.Long.parseLong;
 
@@ -33,7 +30,7 @@ public class SemesterBuilderController {
            user = authUserService.getCurrentUser();
         }
         else{
-            return new ModelAndView("redirect:/login/");
+            return new ModelAndView(":/login/");
         }
 
         ModelAndView mav = new ModelAndView("builder/semester-builder");

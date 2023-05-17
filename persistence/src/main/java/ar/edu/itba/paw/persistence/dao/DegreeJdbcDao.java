@@ -60,6 +60,11 @@ public class DegreeJdbcDao implements DegreeDao {
     }
 
     @Override
+    public Optional<Degree> getByName(final String name){
+        return jdbcTemplate.query("SELECT * FROM " + Tables.DEGREES + " WHERE degname = ?", DegreeJdbcDao::rowMapper, name).stream().findFirst();
+    }
+
+    @Override
     public void insert(final Degree degree) {
         create(degree.getName());
     }

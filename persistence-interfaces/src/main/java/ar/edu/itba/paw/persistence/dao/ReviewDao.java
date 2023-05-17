@@ -19,6 +19,8 @@ public interface ReviewDao extends RWDao<Long,Review> {
     Map<Long,Integer> userReviewVoteByIdSubAndIdUser(final String idSub, final Long idUser);
     Map<Long,Integer> userReviewVoteByIdUser(final Long idUser);
 
+    List<ReviewStats> getReviewStatListByDegreeId(final long id);
+
 
     List<Review> getAllBySubject(final String id);
 

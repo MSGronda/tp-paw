@@ -86,6 +86,18 @@ public class ReviewServiceImpl implements ReviewService {
         return reviewDao.getReviewStatBySubject(idSub);
     }
 
+    @Override
+    public Map<String, ReviewStats> getReviewStatMapByDegreeId(final long id){
+        List<ReviewStats> rs  =  reviewDao.getReviewStatListByDegreeId(id);
+        Map<String, ReviewStats> map = new HashMap<>();
+
+        for(ReviewStats reviewStat : rs){
+            map.put(reviewStat.getIdSub(), reviewStat);
+        }
+
+        return map;
+    }
+
     public Map<String, ReviewStats> getReviewStatMapBySubjectList(final List<Subject> subjects){
         List<String> idSubs = new ArrayList<>();
         for(Subject sub : subjects){

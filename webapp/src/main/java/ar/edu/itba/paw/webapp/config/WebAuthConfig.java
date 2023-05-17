@@ -80,7 +80,7 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
             .and().authorizeRequests()
                 .antMatchers("/login","/register", "/recover/**", "/verification/**").anonymous()
                 .antMatchers("/user/{id:\\d+}/moderator").hasRole(Roles.Role.EDITOR.getName())
-                .antMatchers("/subject/{id:\\d+\\.\\d+}", "/", "/user/{id:\\d+}", "/search/**","/image/**").permitAll()
+                .antMatchers("/subject/{id:\\d+\\.\\d+}", "/", "/user/{id:\\d+}", "/search/**", "/image/**", "/degree/**").permitAll()
                 .antMatchers("/**").authenticated()
             .and().formLogin()
                 .loginPage("/login")

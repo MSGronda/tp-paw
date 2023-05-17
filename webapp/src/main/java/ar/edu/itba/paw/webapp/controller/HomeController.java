@@ -9,6 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -42,30 +43,19 @@ public class HomeController {
         this.aus = aus;
     }
 
-    @RequestMapping("/")
-    public ModelAndView home() {
-        final List<Degree> degrees = ds.getAll();
-        Optional<Degree> maybeDegree = degrees.stream().findFirst();
+    @RequestMapping("/degree/{degreeName}")
+    public ModelAndView degree(@PathVariable String degreeName) {
+        final Optional<Degree> degree = ds.getByName(degreeName);
 
-        if( !maybeDegree.isPresent() ){
-            //TODO - error
+        if( !degree.isPresent() ){
             LOGGER.warn("Degree is not present");
             throw new DegreeNotFoundException();
         }
 
-        final Map<Integer, List<Subject>> infSubsByYear = ss.getInfSubsByYear(maybeDegree.get().getId());
-        final List<Subject> infElectives = ss.getInfElectives(maybeDegree.get().getId());
+        final Map<Integer, List<Subject>> infSubsByYear = ss.getInfSubsByYear(degree.get().getId());
+        final List<Subject> infElectives = ss.getInfElectives(degree.get().getId());
 
-        Set<Integer> years = infSubsByYear.keySet();
-
-        List<Subject> subjects = new ArrayList<>();
-        for(List<Subject> yearSubjects: infSubsByYear.values()){
-            subjects.addAll(yearSubjects);
-        }
-
-        Map<String, ReviewStats> reviewStats = rs.getReviewStatMapBySubjectList(subjects);
-        Map<String, ReviewStats> electivesReviewStatistic = rs.getReviewStatMapBySubjectList(infElectives);
-
+        // TODO: unificar
         long userId;
         if(!aus.isAuthenticated()) {
             userId = -1;
@@ -74,16 +64,23 @@ public class HomeController {
             userId = aus.getCurrentUser().getId();
         }
         Map<String, Integer> subjectProgress = us.getUserAllSubjectProgress(userId);
+        // TODO: unificar
+
+
+        Map<String, ReviewStats> reviewStats = rs.getReviewStatMapByDegreeId(degree.get().getId());
 
         ModelAndView mav = new ModelAndView("home/index");
-        mav.addObject("degrees", degrees);
-        mav.addObject("years", years);
+        mav.addObject("years", infSubsByYear.keySet());
         mav.addObject("infSubsByYear", infSubsByYear);
         mav.addObject("electives", infElectives);
         mav.addObject("reviewStatistics", reviewStats);
-        mav.addObject("electivesReviewStatistics", electivesReviewStatistic);
         mav.addObject("subjectProgress", subjectProgress);
         return mav;
+    }
+
+    @RequestMapping("/")
+    public ModelAndView home() {
+        return new ModelAndView("redirect:/degree/Ingenieria en Informatica");
     }
 
 }

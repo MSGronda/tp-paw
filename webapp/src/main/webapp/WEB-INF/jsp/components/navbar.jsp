@@ -52,19 +52,6 @@
 
 
     <sl-button-group label="Alignment">
-      <sl-select class="dropdown" value="1">
-        <c:forEach var="degree" items="${degrees}">
-          <sl-option value="${degree.id}"><c:out value="${degree.name}"/></sl-option>
-        </c:forEach>
-        <sl-divider></sl-divider>
-        <sl-option disabled>Ingeniería Industrial</sl-option>
-        <sl-option disabled>Ingeniería Mecánica</sl-option>
-        <sl-option disabled>Ingeniería Naval</sl-option>
-        <sl-option disabled>Ingeniería Electrónica</sl-option>
-        <sl-option disabled>Ingeniería Química</sl-option>
-        <sl-option disabled>Ingeniería Petróleo</sl-option>
-        <sl-option disabled>Bioingeniería</sl-option>
-      </sl-select>
       <sl-button variant="text" href="${pageContext.request.contextPath}/search"><spring:message code="navbar.subject"/></sl-button>
       <sl-button variant="text" href="${pageContext.request.contextPath}/builder"><spring:message code="navbar.builder"/></sl-button>
     </sl-button-group>

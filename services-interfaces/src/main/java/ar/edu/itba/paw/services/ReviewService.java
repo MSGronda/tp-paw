@@ -31,7 +31,7 @@ public interface ReviewService extends BaseService<Long, Review> {
     Integer voteReview(final Long idUser, final Long idReview, final int vote);
     Map<Long,Integer> userReviewVoteByIdUser(final Long idUser);
     Map<Long,Integer> userReviewVoteByIdSubAndIdUser(final String idSub, final Long idUser);
-
+    Map<String, ReviewStats> getReviewStatMapByDegreeId(final long id);
 
     Boolean didUserReview(final List<Review> reviews, final User user);
 

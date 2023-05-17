@@ -104,7 +104,6 @@ public class ReviewJdbcDao implements ReviewDao {
     private String generateSubjectListQuery(final int size) {
         StringBuilder sql = new StringBuilder("SELECT * FROM ").append(Views.REVIEW_STATS).append(" WHERE idSub IN (");
 
-        // TODO change because its unsafe?
         for (int i = 0; i < size; i++) {
             sql.append(" ? ");
             if (i + 1 < size) {
@@ -179,10 +178,20 @@ public class ReviewJdbcDao implements ReviewDao {
             .anonymous(rs.getBoolean("useranonymous"))
             .build();
     }
+    @Override
+    public List<ReviewStats> getReviewStatListByDegreeId(final long id){
+        return jdbcTemplate.query(
+                "SELECT * FROM " + Tables.SUBJECTS_DEGREES + " AS sg FULL JOIN " + Views.REVIEW_STATS +
+                        " AS rs ON rs.idsub = sg.idsub WHERE  sg.iddeg = ? "
+                , ReviewJdbcDao::rowMapperReviewStatistic, id);
+    }
+
+
 
     @Override
     public Boolean didUserReviewDB(final String subjectId, final Long userId) {
-        Optional<Review> review = jdbcTemplate.query("SELECT * FROM " + Tables.REVIEWS + " WHERE idsub = ? AND iduser = ?", ReviewJdbcDao::rowMapperReview, subjectId, userId).stream().findFirst();
+        Optional<Review> review = jdbcTemplate.query("SELECT * FROM " + Tables.REVIEWS + " WHERE idsub = ? AND iduser = ?",
+                ReviewJdbcDao::rowMapperReview, subjectId, userId).stream().findFirst();
 
         return review.isPresent();
     }
@@ -211,7 +220,8 @@ public class ReviewJdbcDao implements ReviewDao {
 
     @Override
     public Integer deleteReviewVote(final Long idUser, final Long idReview) {
-        int success = jdbcTemplate.update("DELETE FROM " + Tables.REVIEW_VOTES + " WHERE idUser = ? AND idReview = ?", idUser, idReview);
+        int success = jdbcTemplate.update("DELETE FROM " + Tables.REVIEW_VOTES + " WHERE idUser = ? AND idReview = ?",
+                idUser, idReview);
         if (success != 0) {
             LOGGER.info("Deleted vote in review {} by user {}", idReview, idUser);
         } else {
@@ -259,7 +269,8 @@ public class ReviewJdbcDao implements ReviewDao {
     // key: idReview - value: vote
     @Override
     public Map<Long, Integer> userReviewVoteByIdUser(final Long idUser) {
-        return jdbcTemplate.query("SELECT idReview, vote FROM " + Tables.REVIEW_VOTES + " WHERE  idUser = ?", ReviewJdbcDao::userReviewVoteExtractor, idUser);
+        return jdbcTemplate.query("SELECT idReview, vote FROM " + Tables.REVIEW_VOTES + " WHERE  idUser = ?",
+                ReviewJdbcDao::userReviewVoteExtractor, idUser);
     }
 
     private static Map<Long, Integer> userReviewVoteExtractor(final ResultSet rs) throws SQLException {
