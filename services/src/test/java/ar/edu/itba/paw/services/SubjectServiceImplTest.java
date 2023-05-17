@@ -11,6 +11,7 @@ import org.mockito.junit.MockitoJUnitRunner;
 
 import java.util.*;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
@@ -95,6 +96,7 @@ public class SubjectServiceImplTest {
                         .build()
         );
         when(subjectDao.getByNameFiltered(eq(NAME), eq(filterMap))).thenReturn(subjectList);
+        when(subjectDao.findByIds(eq(subjectList.stream().map(Subject::getId).collect(Collectors.toList())))).thenReturn(subjectList);
 
         //FindByNameFiltered should ignore a faulty param
         Map<String, String> filterMap2 = new HashMap<>();
