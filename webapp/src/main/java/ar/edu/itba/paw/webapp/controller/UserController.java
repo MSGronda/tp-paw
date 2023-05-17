@@ -116,6 +116,8 @@ public class UserController {
         mav.addObject("totalPages",totalPages);
         mav.addObject("actualPage",subjectService.checkPageNum(param));
         mav.addObject("userVotes",userVotes);
+        mav.addObject("order",subjectService.checkOrder(param));
+        mav.addObject("dir",subjectService.checkDir(param));
 
         return mav;
     }

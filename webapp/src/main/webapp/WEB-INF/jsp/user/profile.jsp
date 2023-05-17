@@ -152,9 +152,13 @@
             </div>
         </sl-card>
     <br/>
-    <br>
+    <br/>
     <hr />
-    <h3><spring:message code="profile.reviews"/></h3>
+    <c:if test="${not empty reviews}">
+        <c:set var="order" value="${order}" scope="request"/>
+        <c:set var="dir" value="${dir}" scope="request"/>
+        <c:import url="../components/order_dropdown.jsp"/>
+    </c:if>
     <c:if test="${empty reviews}">
         <h4><spring:message code="subject.noreviews"/></h4>
     </c:if>

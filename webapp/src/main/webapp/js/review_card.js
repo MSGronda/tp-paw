@@ -1,7 +1,3 @@
-
-// perdon
-
-
 function updateCounters(formId, changeLikes, changeDislikes){
     const likehtml = $('#like-number-'+formId)
     const like_string = likehtml.text()

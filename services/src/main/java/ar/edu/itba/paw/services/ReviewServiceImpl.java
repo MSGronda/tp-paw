@@ -16,9 +16,11 @@ public class ReviewServiceImpl implements ReviewService {
 
     private final AuthUserService authUserService;
 
-    private static final List<String> validOrders = Arrays.asList("easy", "timedemanding");
+    private static final List<String> validOrders = Arrays.asList("easy", "timedemanding","semester");
 
     private static final List<String> validDir = Arrays.asList("asc", "desc");
+
+    private static final String VALID_REGEX="[0-9]+";
 
     private static final Integer VoteUpdate = 1;
     private static final Integer VoteCreated = 2;
@@ -44,7 +46,9 @@ public class ReviewServiceImpl implements ReviewService {
         Map<String, String> validatedParams = new HashMap<>();
 
         for(Map.Entry<String, String> filter : params.entrySet()){
-            if((Objects.equals(filter.getKey(), "pageNum") && filter.getValue().matches("[0-9]+"))){
+            if((Objects.equals(filter.getKey(), "pageNum") && filter.getValue().matches(VALID_REGEX)) ||
+                    (Objects.equals(filter.getKey(), "order") && validOrders.contains(filter.getValue())) ||
+                    (Objects.equals(filter.getKey(), "dir") && validDir.contains(filter.getValue()))){
                 validatedParams.put(filter.getKey(), filter.getValue());
             }
         }
@@ -67,7 +71,7 @@ public class ReviewServiceImpl implements ReviewService {
         for(Map.Entry<String, String> filter : param.entrySet()){
             if((Objects.equals(filter.getKey(), "order") && validOrders.contains(filter.getValue())) ||
                     (Objects.equals(filter.getKey(), "dir") && validDir.contains(filter.getValue())) ||
-                    (Objects.equals(filter.getKey(), "pageNum") && filter.getValue().matches("[0-9]+"))
+                    (Objects.equals(filter.getKey(), "pageNum") && filter.getValue().matches(VALID_REGEX))
             ){
                 validatedParams.put(filter.getKey(), filter.getValue());
             }

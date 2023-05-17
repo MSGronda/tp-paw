@@ -293,9 +293,11 @@ public class ReviewJdbcDao implements ReviewDao {
 
     @Override
     public List<Review> getAllUserReviewsWithSubjectName(final Long userId,final Map<String, String> params) {
+        String orderBy = " ORDER BY " + params.getOrDefault("order", "semester") + " " +
+                params.getOrDefault("dir", "DESC");
         int offset = Integer.parseInt(params.getOrDefault("pageNum", "0")) * Integer.parseInt(PAGE_SIZE);
         String pageNum = " LIMIT " + PAGE_SIZE + " OFFSET " + offset;
-        return jdbcTemplate.query(completeReviewSqlSubjectName("WHERE r.iduser = ?",pageNum), ReviewJdbcDao::subjectNameRowMapper, userId);
+        return jdbcTemplate.query(completeReviewSqlSubjectName("WHERE r.iduser = ?",orderBy,pageNum), ReviewJdbcDao::subjectNameRowMapper, userId);
     }
 
     @Override
@@ -355,13 +357,16 @@ public class ReviewJdbcDao implements ReviewDao {
     // - - - - - - - - - - - - - - - - - - - - - - - -
 
     // - - - - - - Review with subject name and upvotes, downvotes - - - - - -
-    private String completeReviewSqlSubjectName(final String where,final String pageOffset) {
+    private String completeReviewSqlSubjectName(final String where,final String orderBy,final String pageOffset) {
         return
             "SELECT r.id, r.idUser, r.idSub, r.score, r.easy, r.timeDemanding, r.revText, r.useranonymous, s.subname, " +
                 "sum(CASE WHEN rv.vote = 1 THEN 1 ELSE 0 END) AS upvotes, sum(CASE WHEN rv.vote = -1 THEN 1 ELSE 0 END) AS downvotes " +
-                "FROM " + Tables.REVIEWS + " AS r FULL JOIN " + Tables.SUBJECTS + " AS s ON r.idSub = s.id FULL JOIN " + Tables.REVIEW_VOTES + " AS rv ON r.id = rv.idReview " +
+                "FROM " + Tables.REVIEWS + " AS r FULL JOIN " + Tables.SUBJECTS + " AS s ON r.idSub = s.id FULL JOIN " + Tables.REVIEW_VOTES + " AS rv ON r.id = rv.idReview "
+                    + " FULL JOIN " +Tables.SUBJECTS_DEGREES + " AS sd ON s.id = sd.idsub " +
                 where +
-                " GROUP BY r.id, s.subname" + pageOffset;
+                " GROUP BY r.id, s.subname, sd.semester" +
+                    orderBy+
+                    pageOffset;
     }
 
     private String completeReviewSqlSubjectName(final String where) {

@@ -145,18 +145,18 @@ public class SubjectServiceImpl implements SubjectService {
     @Override
     public String checkOrder(Map<String,String> params){
         if(params.isEmpty()){
-           return "easy";
+           return "semester";
         } else {
-            return params.getOrDefault("order","easy");
+            return params.getOrDefault("order","semester");
         }
     }
 
     @Override
     public String checkDir(Map<String,String> params){
         if(params.isEmpty()){
-            return "asc";
+            return "desc";
         } else {
-            return params.getOrDefault("dir","asc");
+            return params.getOrDefault("dir","desc");
         }
     }
 
