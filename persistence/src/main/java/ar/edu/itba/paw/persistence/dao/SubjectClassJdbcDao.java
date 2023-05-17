@@ -27,7 +27,7 @@ public class SubjectClassJdbcDao implements SubjectClassDao {
                     "FROM " + Tables.SUBJECTS + " AS s LEFT JOIN " + Tables.CLASS + " AS sc ON s.id = sc.idsub " + " LEFT JOIN " + Tables.CLASS_LOCTIME + " AS slt ON s.id = slt.idsub AND slt.idclass = sc.idclass " +
                     "WHERE s.id IN (SELECT v.id\n" +
                     "                FROM " + Views.JOINED_SUBJECTS + " AS v\n" +
-                    "                WHERE v.id NOT IN (SELECT idSub FROM " + Tables.USER_SUBJECT_PROGRESS + " WHERE idSub = v.id)\n" +
+                    "                WHERE v.id NOT IN (SELECT idSub FROM " + Tables.USER_SUBJECT_PROGRESS + " WHERE iduser = ? AND idSub = v.id)\n" +
                     "                GROUP BY v.id\n" +
                     "                HAVING sum(CASE WHEN v.idprereq IS null THEN 1 ELSE 0 END) > 0\n" +
                     "                    OR\n" +
@@ -47,7 +47,7 @@ public class SubjectClassJdbcDao implements SubjectClassDao {
 
     @Override
     public List<Subject> getAllSubsWithClassThatUserCanDo(final long userId) {
-        return jdbcTemplate.query(COMPLETE_SUB, SubjectClassJdbcDao::multipleCompleteClassExtractor, userId);
+        return jdbcTemplate.query(COMPLETE_SUB, SubjectClassJdbcDao::multipleCompleteClassExtractor, userId, userId);
     }
 
     private static List<Subject> multipleCompleteClassExtractor(final ResultSet rs) throws SQLException {
