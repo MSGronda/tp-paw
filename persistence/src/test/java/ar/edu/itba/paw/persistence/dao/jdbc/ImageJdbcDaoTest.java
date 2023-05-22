@@ -1,4 +1,4 @@
-package ar.edu.itba.paw.persistence.dao;
+package ar.edu.itba.paw.persistence.dao.jdbc;
 
 import ar.edu.itba.paw.models.Image;
 import ar.edu.itba.paw.persistence.config.TestConfig;

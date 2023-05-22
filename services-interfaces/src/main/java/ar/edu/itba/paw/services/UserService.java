@@ -1,6 +1,6 @@
 package ar.edu.itba.paw.services;
 
-import ar.edu.itba.paw.models.Roles;
+import ar.edu.itba.paw.models.Role;
 import ar.edu.itba.paw.models.User;
 import ar.edu.itba.paw.services.exceptions.InvalidImageSizeException;
 import ar.edu.itba.paw.services.exceptions.InvalidTokenException;
@@ -34,7 +34,7 @@ public interface UserService extends BaseService<Long, User> {
 
     String generateRecoveryToken(final String email);
 
-    List<Roles> getUserRoles(final Long userId);
+    List<Role> getUserRoles(final Long userId);
 
     boolean isValidRecoveryToken(final String token);
 

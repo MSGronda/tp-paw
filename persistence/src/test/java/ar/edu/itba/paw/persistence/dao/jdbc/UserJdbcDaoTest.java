@@ -1,9 +1,10 @@
-package ar.edu.itba.paw.persistence.dao;
+package ar.edu.itba.paw.persistence.dao.jdbc;
 
-import ar.edu.itba.paw.models.Roles;
+import ar.edu.itba.paw.models.Role;
 import ar.edu.itba.paw.models.User;
 import ar.edu.itba.paw.persistence.config.TestConfig;
 import ar.edu.itba.paw.persistence.constants.Tables;
+import ar.edu.itba.paw.persistence.dao.hibernate.UserHibernateDao;
 import ar.edu.itba.paw.persistence.exceptions.UserEmailAlreadyTakenPersistenceException;
 import org.junit.After;
 import org.junit.Assert;
@@ -76,7 +77,7 @@ public class UserJdbcDaoTest {
     @Autowired
     private DataSource ds;
     @Autowired
-    private UserJdbcDao userDao;
+    private UserHibernateDao userDao;
 
     @Before
     public void setup() {
@@ -216,7 +217,7 @@ public class UserJdbcDaoTest {
         jdbcTemplate.execute("INSERT INTO " + Tables.ROLES + " (id, name) VALUES (" + ROLEID + ", '" + ROLENAME + "')");
         jdbcTemplate.execute("INSERT INTO " + Tables.USER_ROLES + " (roleid, userid) VALUES (" + ROLEID + ", " + ID + ")");
 
-        List<Roles> roles = userDao.getUserRoles(ID);
+        List<Role> roles = userDao.getUserRoles(ID);
 
         Assert.assertEquals(1, roles.size());
         Assert.assertEquals(ROLENAME, roles.stream().findFirst().get().getName());

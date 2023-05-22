@@ -1,6 +1,6 @@
 package ar.edu.itba.paw.services;
 
-import ar.edu.itba.paw.models.Roles;
+import ar.edu.itba.paw.models.Role;
 import ar.edu.itba.paw.models.User;
 import ar.edu.itba.paw.persistence.dao.ImageDao;
 import ar.edu.itba.paw.persistence.dao.UserDao;
@@ -80,7 +80,7 @@ public class UserServiceImplTest {
                 .thenReturn(daoUser);
         when(passwordEncoder.encode(eq(PASSWORD))).thenReturn(PASSWORD_ENCRYPTED);
         when(imageDao.insertAndReturnKey(eq("asdf".getBytes()))).thenReturn(IMAGEID);
-        when(rolesService.findByName(eq("USER"))).thenReturn(Optional.of(new Roles(ID, "USER")));
+        when(rolesService.findByName(eq("USER"))).thenReturn(Optional.of(new Role(ID, "USER")));
 
         // 2. Execute class under test
         User newUser = us.create(user, "asdf".getBytes());

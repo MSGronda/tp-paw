@@ -1,9 +1,10 @@
-package ar.edu.itba.paw.persistence.dao;
+package ar.edu.itba.paw.persistence.dao.jdbc;
 
 import ar.edu.itba.paw.models.Review;
 import ar.edu.itba.paw.models.ReviewStats;
 import ar.edu.itba.paw.persistence.constants.Tables;
 import ar.edu.itba.paw.persistence.constants.Views;
+import ar.edu.itba.paw.persistence.dao.ReviewDao;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

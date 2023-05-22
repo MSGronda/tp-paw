@@ -1,6 +1,6 @@
 package ar.edu.itba.paw.webapp.auth;
 
-import ar.edu.itba.paw.models.Roles;
+import ar.edu.itba.paw.models.Role;
 import ar.edu.itba.paw.models.User;
 import ar.edu.itba.paw.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,7 +34,7 @@ public class UniUserDetailsService implements UserDetailsService {
         final User user = us.getUserWithEmail(email)
                 .orElseThrow(() -> new UsernameNotFoundException("No user for email" + email));
 
-        final List<Roles> userRoles = us.getUserRoles(user.getId());
+        final List<Role> userRoles = us.getUserRoles(user.getId());
 
         final Collection<GrantedAuthority> authorities = new HashSet<>();
         userRoles.forEach(roles -> authorities.add(new SimpleGrantedAuthority(String.format("ROLE_%s", roles.getName()))));

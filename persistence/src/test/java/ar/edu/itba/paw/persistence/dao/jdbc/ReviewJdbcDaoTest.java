@@ -1,8 +1,9 @@
-package ar.edu.itba.paw.persistence.dao;
+package ar.edu.itba.paw.persistence.dao.jdbc;
 
 import ar.edu.itba.paw.models.Review;
 import ar.edu.itba.paw.models.ReviewStats;
 import ar.edu.itba.paw.persistence.config.TestConfig;
+import ar.edu.itba.paw.persistence.dao.jdbc.ReviewJdbcDao;
 import org.junit.After;
 import ar.edu.itba.paw.persistence.constants.Tables;
 import org.junit.Assert;

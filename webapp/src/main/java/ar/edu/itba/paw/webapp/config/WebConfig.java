@@ -16,6 +16,10 @@ import org.springframework.jdbc.datasource.SimpleDriverDataSource;
 import org.springframework.jdbc.datasource.init.DataSourceInitializer;
 import org.springframework.jdbc.datasource.init.DatabasePopulator;
 import org.springframework.jdbc.datasource.init.ResourceDatabasePopulator;
+import org.springframework.orm.jpa.JpaTransactionManager;
+import org.springframework.orm.jpa.JpaVendorAdapter;
+import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
+import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.transaction.PlatformTransactionManager;
@@ -31,8 +35,10 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter
 import org.springframework.web.servlet.view.InternalResourceViewResolver;
 import org.springframework.web.servlet.view.JstlView;
 
+import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
 import java.nio.charset.StandardCharsets;
+import java.util.Properties;
 import java.util.concurrent.TimeUnit;
 
 @EnableAsync
@@ -53,7 +59,7 @@ import java.util.concurrent.TimeUnit;
 @Configuration
 public class WebConfig extends WebMvcConfigurerAdapter {
 
-    private final static long MAX_SIZE = 1024*1024*100;
+    private final static long MAX_SIZE = 1024 * 1024 * 100;
     private final static Logger LOGGER = LoggerFactory.getLogger(WebConfig.class);
 
     @Autowired
@@ -86,17 +92,17 @@ public class WebConfig extends WebMvcConfigurerAdapter {
         return ds;
     }
 
-    @Bean
-    public Flyway flyway() {
-        Flyway f = Flyway.configure()
-            .dataSource(dataSource())
-            .load();
-
-        f.repair();
-        f.migrate();
-
-        return f;
-    }
+//    @Bean
+//    public Flyway flyway() {
+//        Flyway f = Flyway.configure()
+//                .dataSource(dataSource())
+//                .load();
+//
+//        f.repair();
+//        f.migrate();
+//
+//        return f;
+//    }
 
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
@@ -107,7 +113,7 @@ public class WebConfig extends WebMvcConfigurerAdapter {
     }
 
     @Bean
-    public MessageSource messageSource(){
+    public MessageSource messageSource() {
         final ReloadableResourceBundleMessageSource ms = new ReloadableResourceBundleMessageSource();
 
         ms.setCacheSeconds((int) TimeUnit.MINUTES.toSeconds(5));
@@ -116,7 +122,8 @@ public class WebConfig extends WebMvcConfigurerAdapter {
 
         return ms;
     }
-    @Bean(name="multipartResolver")
+
+    @Bean(name = "multipartResolver")
     public CommonsMultipartResolver mutipartResolver() {
         CommonsMultipartResolver resolver = new CommonsMultipartResolver();
         resolver.setDefaultEncoding(StandardCharsets.UTF_8.name());
@@ -125,8 +132,30 @@ public class WebConfig extends WebMvcConfigurerAdapter {
     }
 
     @Bean
-    public PlatformTransactionManager transactionManager(final DataSource ds){
-        return new DataSourceTransactionManager(ds);
+    public PlatformTransactionManager transactionManager(final EntityManagerFactory emf) {
+        return new JpaTransactionManager(emf);
+    }
+
+    @Bean
+    public LocalContainerEntityManagerFactoryBean entityManagerFactory() {
+        final LocalContainerEntityManagerFactoryBean factoryBean = new
+                LocalContainerEntityManagerFactoryBean();
+        factoryBean.setPackagesToScan("ar.edu.itba.paw.models");
+        factoryBean.setDataSource(dataSource());
+        final JpaVendorAdapter vendorAdapter = new HibernateJpaVendorAdapter();
+        factoryBean.setJpaVendorAdapter(vendorAdapter);
+        final Properties properties = new Properties();
+        properties.setProperty("hibernate.hbm2ddl.auto", "update");
+        properties.setProperty("hibernate.dialect",
+                "org.hibernate.dialect.PostgreSQL92Dialect");
+
+
+        boolean show_sql = environment.getProperty("hibernate.show_sql").equals("true");
+        properties.setProperty("hibernate.show_sql", show_sql ? "true" : "false");
+        properties.setProperty("format_sql", show_sql ? "true" : "false");
+
+        factoryBean.setJpaProperties(properties);
+        return factoryBean;
     }
 
     @Override

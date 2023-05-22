@@ -1,8 +1,9 @@
-package ar.edu.itba.paw.persistence.dao;
+package ar.edu.itba.paw.persistence.dao.jdbc;
 
-import ar.edu.itba.paw.models.Roles;
+import ar.edu.itba.paw.models.Role;
 import ar.edu.itba.paw.models.User;
 import ar.edu.itba.paw.persistence.constants.Tables;
+import ar.edu.itba.paw.persistence.dao.UserDao;
 import ar.edu.itba.paw.persistence.exceptions.UserEmailAlreadyTakenPersistenceException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -10,14 +11,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
-import org.springframework.stereotype.Repository;
 
 import javax.sql.DataSource;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.*;
 
-@Repository
+//@Repository
 public class UserJdbcDao implements UserDao {
     private static final Logger LOGGER = LoggerFactory.getLogger(UserJdbcDao.class);
 
@@ -206,7 +206,7 @@ public class UserJdbcDao implements UserDao {
 
     //------------------------ User Roles ---------------------------------------------------
     @Override
-    public List<Roles> getUserRoles(final Long userId) {
+    public List<Role> getUserRoles(final Long userId) {
         return jdbcTemplate.query("SELECT id,name FROM " + Tables.ROLES + " JOIN " + Tables.USER_ROLES + " ON id = roleId WHERE userId = ?", UserJdbcDao::rolesRowMapper, userId);
     }
 
@@ -224,8 +224,8 @@ public class UserJdbcDao implements UserDao {
         return success;
     }
 
-    private static Roles rolesRowMapper(final ResultSet rs, final int rowNum) throws SQLException {
-        return new Roles(
+    private static Role rolesRowMapper(final ResultSet rs, final int rowNum) throws SQLException {
+        return new Role(
                 rs.getLong("id"),
                 rs.getString("name")
         );

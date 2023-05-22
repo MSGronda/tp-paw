@@ -1,18 +1,53 @@
 package ar.edu.itba.paw.models;
 
-import java.util.Locale;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
+import javax.persistence.*;
+import java.util.*;
 
+@Entity
+@Table(name = "users")
 public class User {
-    private final Long id;
-    private final String email, password, username;
-    private final Long imageId;
-    private final Map<String, Integer> subjectProgress;
-    private final String confirmToken;
-    private final boolean confirmed;
-    private final Locale locale;
+    @Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "users_id_seq")
+    @SequenceGenerator(sequenceName = "users_id_seq", name = "users_id_seq", allocationSize = 1)
+    private Long id;
+
+    @Column(length = 100, nullable = false, unique = true)
+    private String email;
+
+    @Column(name = "pass", length = 100)
+    private String password;
+
+    @Column(length = 100)
+    private String username;
+
+    @Column(length = 100, name = "confirmtoken")
+    private String confirmToken;
+
+    @Column(name = "image_id")
+    private Long imageId;
+
+    @ElementCollection
+    @CollectionTable(
+            name = "usersubjectprogress",
+            joinColumns = @JoinColumn(name = "iduser", referencedColumnName = "id")
+    )
+    @MapKeyColumn(name = "idsub")
+    @Column(name = "subjectstate")
+    private Map<String, Integer> subjectProgress;
+
+    @Column
+    private boolean confirmed;
+
+    @Column(length = 32)
+    private Locale locale;
+
+    @OneToMany
+    @JoinTable(
+            name = "userroles",
+            joinColumns = @JoinColumn(name = "userid"),
+            inverseJoinColumns = @JoinColumn(name = "roleid")
+    )
+    private List<Role> roles;
 
 
     private User(final Builder builder) {
@@ -26,6 +61,8 @@ public class User {
         this.locale = builder.locale;
         this.confirmed = builder.confirmed;
     }
+
+    User() {}
 
     public long getImageId(){
         return imageId;
@@ -60,6 +97,46 @@ public class User {
 
     public Optional<Locale> getLocale(){
         return Optional.ofNullable(locale);
+    }
+
+    public List<Role> getRoles() {
+        return roles;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public void setConfirmToken(String confirmToken) {
+        this.confirmToken = confirmToken;
+    }
+
+    public void setImageId(Long imageId) {
+        this.imageId = imageId;
+    }
+
+    public void setSubjectProgress(Map<String, Integer> subjectProgress) {
+        this.subjectProgress = subjectProgress;
+    }
+
+    public void setConfirmed(boolean confirmed) {
+        this.confirmed = confirmed;
+    }
+
+    public void setLocale(Locale locale) {
+        this.locale = locale;
+    }
+
+    public void setRoles(List<Role> roles) {
+        this.roles = roles;
     }
 
     @Override
@@ -160,12 +237,15 @@ public class User {
         }
     }
 
+
     public enum SubjectProgressEnum {
 
         PENDING(0),
         DONE(1);
 
+
         private final int progress;
+
         SubjectProgressEnum(int progress){
             this.progress = progress;
         }

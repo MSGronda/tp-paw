@@ -2,9 +2,7 @@ package ar.edu.itba.paw.webapp.config;
 
 import ar.edu.itba.paw.models.User;
 import ar.edu.itba.paw.services.UserService;
-import ar.edu.itba.paw.webapp.Utils;
-import ar.edu.itba.paw.webapp.auth.UniAuthUser;
-import ar.edu.itba.paw.models.Roles;
+import ar.edu.itba.paw.models.Role;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
@@ -17,25 +15,18 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
-import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
-import org.springframework.security.web.authentication.RememberMeServices;
-import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
 
 
 @EnableWebSecurity
@@ -79,7 +70,7 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
                 .sessionAuthenticationErrorUrl("/login")
             .and().authorizeRequests()
                 .antMatchers("/login","/register", "/recover/**", "/verification/**").anonymous()
-                .antMatchers("/user/{id:\\d+}/moderator").hasRole(Roles.Role.EDITOR.getName())
+                .antMatchers("/user/{id:\\d+}/moderator").hasRole(Role.RoleEnum.EDITOR.getName())
                 .antMatchers("/subject/{id:\\d+\\.\\d+}", "/", "/user/{id:\\d+}", "/search/**", "/image/**", "/degree/**").permitAll()
                 .antMatchers("/**").authenticated()
             .and().formLogin()

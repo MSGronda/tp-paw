@@ -1,6 +1,6 @@
 package ar.edu.itba.paw.services;
 
-import ar.edu.itba.paw.models.Roles;
+import ar.edu.itba.paw.models.Role;
 import ar.edu.itba.paw.models.User;
 import ar.edu.itba.paw.services.exceptions.UserEmailNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,8 +8,6 @@ import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
 
 @Service
 public class AuthUserServiceImpl implements AuthUserService{
@@ -26,7 +24,7 @@ public class AuthUserServiceImpl implements AuthUserService{
 
     @Override
     public Boolean isCurrentUserEditor(){
-        return SecurityContextHolder.getContext().getAuthentication().getAuthorities().contains(new SimpleGrantedAuthority(String.format("ROLE_%s", Roles.Role.EDITOR.getName())));
+        return SecurityContextHolder.getContext().getAuthentication().getAuthorities().contains(new SimpleGrantedAuthority(String.format("ROLE_%s", Role.RoleEnum.EDITOR.getName())));
     }
 
     @Override

@@ -1,10 +1,10 @@
-package ar.edu.itba.paw.persistence.dao;
+package ar.edu.itba.paw.persistence.dao.jdbc;
 
 import ar.edu.itba.paw.models.Professor;
 import ar.edu.itba.paw.persistence.config.TestConfig;
 import org.junit.After;
 import ar.edu.itba.paw.persistence.constants.Tables;
-import ar.edu.itba.paw.persistence.dao.ProfessorJdbcDao;
+import ar.edu.itba.paw.persistence.dao.jdbc.ProfessorJdbcDao;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;

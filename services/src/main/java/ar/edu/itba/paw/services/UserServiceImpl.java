@@ -1,6 +1,6 @@
 package ar.edu.itba.paw.services;
 
-import ar.edu.itba.paw.models.Roles;
+import ar.edu.itba.paw.models.Role;
 import ar.edu.itba.paw.models.User;
 import ar.edu.itba.paw.persistence.dao.ImageDao;
 import ar.edu.itba.paw.persistence.dao.RecoveryDao;
@@ -84,11 +84,11 @@ public class UserServiceImpl implements UserService {
             throw new UserEmailAlreadyTakenException();
         }
 
-        Optional<Roles> maybeRole = rolesService.findByName("USER");
+        Optional<Role> maybeRole = rolesService.findByName("USER");
         if(!maybeRole.isPresent()){
             throw new IllegalStateException("USER role not found");
         }
-        Roles role = maybeRole.get();
+        Role role = maybeRole.get();
         addIdToUserRoles(role.getId(), newUser.getId());
 
 
@@ -103,6 +103,7 @@ public class UserServiceImpl implements UserService {
         return create(user, defaultImg);
     }
 
+    @Transactional
     @Override
     public String regenerateConfirmToken(final long userId) {
         String newToken = generateConfirmToken();
@@ -178,6 +179,7 @@ public class UserServiceImpl implements UserService {
         userDao.editProfile(userId, username);
     }
 
+    @Transactional
     @Override
     public String generateRecoveryToken(final String email){
         final Optional<User> optUser = getUserWithEmail(email);
@@ -219,6 +221,7 @@ public class UserServiceImpl implements UserService {
         autoLogin(userId);
     }
 
+    @Transactional
     @Override
     public void confirmUser(final String token) throws InvalidTokenException {
         Optional<User> optUser = userDao.findUserByConfirmToken(token);
@@ -232,12 +235,14 @@ public class UserServiceImpl implements UserService {
         autoLogin(user.getId());
     }
 
+    @Transactional
     @Override
     public void setLocale(final User user, final Locale locale) {
         userDao.setLocale(user.getId(), locale);
     }
 
     @Async
+    @Transactional
     @Override
     public void setLocaleAsync(final User user, final Locale locale) {
         setLocale(user, locale);
@@ -251,7 +256,7 @@ public class UserServiceImpl implements UserService {
         }
         User user = maybeUser.get();
         final Collection<GrantedAuthority> authorities = new HashSet<>();
-        authorities.add(new SimpleGrantedAuthority(String.format("ROLE_%s", Roles.Role.USER.getName())));
+        authorities.add(new SimpleGrantedAuthority(String.format("ROLE_%s", Role.RoleEnum.USER.getName())));
         Authentication auth = new UsernamePasswordAuthenticationToken(user.getEmail(), user.getPassword(), authorities);
         SecurityContextHolder.getContext().setAuthentication(auth);
         LOGGER.info("Auto login for user {}", userId);
@@ -266,15 +271,19 @@ public class UserServiceImpl implements UserService {
 
     //-------------------------------- USER ROLES -----------------------------
     @Override
-    public List<Roles> getUserRoles(final Long userId) {
+    public List<Role> getUserRoles(final Long userId) {
         return userDao.getUserRoles(userId);
     }
 
+
+    @Transactional
     @Override
     public Integer addIdToUserRoles(final Long roleId, final Long userId) {
         return userDao.addIdToUserRoles(roleId, userId);
     }
 
+    @Transactional
+    @Override
     public Integer updateUserRoles(final Long roleId, final Long userId) {
         return userDao.updateUserRoles(roleId, userId);
     }

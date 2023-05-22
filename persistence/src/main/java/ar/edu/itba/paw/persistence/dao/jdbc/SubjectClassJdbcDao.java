@@ -1,10 +1,11 @@
-package ar.edu.itba.paw.persistence.dao;
+package ar.edu.itba.paw.persistence.dao.jdbc;
 
 import ar.edu.itba.paw.models.Professor;
 import ar.edu.itba.paw.models.Subject;
 import ar.edu.itba.paw.models.SubjectClass;
 import ar.edu.itba.paw.persistence.constants.Tables;
 import ar.edu.itba.paw.persistence.constants.Views;
+import ar.edu.itba.paw.persistence.dao.SubjectClassDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;

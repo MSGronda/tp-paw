@@ -1,6 +1,6 @@
-package ar.edu.itba.paw.persistence.dao;
+package ar.edu.itba.paw.persistence.dao.jdbc;
 
-import ar.edu.itba.paw.models.Roles;
+import ar.edu.itba.paw.models.Role;
 import ar.edu.itba.paw.persistence.config.TestConfig;
 import org.junit.After;
 import ar.edu.itba.paw.persistence.constants.Tables;
@@ -53,7 +53,7 @@ public class RolesJdbcDaoTest {
     public void testFindById(){
         jdbcTemplate.execute("INSERT INTO " + Tables.ROLES + " (id, name) VALUES (" + ID + ", '" + NAME + "' )");
 
-        Optional<Roles> role = rolesDao.findById(ID);
+        Optional<Role> role = rolesDao.findById(ID);
 
         Assert.assertTrue(role.isPresent());
         Assert.assertEquals(NAME, role.get().getName());
@@ -64,7 +64,7 @@ public class RolesJdbcDaoTest {
         jdbcTemplate.execute("INSERT INTO " + Tables.ROLES + " (id, name) VALUES (" + ID + ", '" + NAME + "' )");
         jdbcTemplate.execute("INSERT INTO " + Tables.ROLES + " (id, name) VALUES (" + ID2 + ", '" + NAME2 + "' )");
 
-        List<Roles> list = rolesDao.getAll();
+        List<Role> list = rolesDao.getAll();
 
         Assert.assertEquals(2, list.size());
         Assert.assertEquals(NAME, list.get(0).getName());
@@ -75,7 +75,7 @@ public class RolesJdbcDaoTest {
     public void testFindByName(){
         jdbcTemplate.execute("INSERT INTO " + Tables.ROLES + " (id, name) VALUES (" + ID + ", '" + NAME + "' )");
 
-        Optional<Roles> role = rolesDao.findByName(NAME);
+        Optional<Role> role = rolesDao.findByName(NAME);
 
         Assert.assertTrue(role.isPresent());
         Assert.assertEquals(NAME, role.get().getName());

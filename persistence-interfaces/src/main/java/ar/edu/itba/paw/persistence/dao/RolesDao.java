@@ -1,11 +1,11 @@
 package ar.edu.itba.paw.persistence.dao;
 
-import ar.edu.itba.paw.models.Roles;
+import ar.edu.itba.paw.models.Role;
 
 import java.util.Optional;
 
-public interface RolesDao extends ReadableDao<Long, Roles> {
+public interface RolesDao extends ReadableDao<Long, Role> {
 
 
-    Optional<Roles> findByName(final String name);
+    Optional<Role> findByName(final String name);
 }

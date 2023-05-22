@@ -13,11 +13,8 @@ import ar.edu.itba.paw.webapp.form.RecoverPasswordForm;
 import ar.edu.itba.paw.webapp.form.UserForm;
 import ar.edu.itba.paw.webapp.Utils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.context.MessageSource;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
@@ -93,7 +90,7 @@ public class UserController {
         boolean isEditor = false;
         if(user.getPassword() != null) {
             UserDetails userDetails = uniUserDetailsService.loadUserByUsername(user.getEmail());
-            isEditor = userDetails.getAuthorities().contains(new SimpleGrantedAuthority(String.format("ROLE_%s", Roles.Role.EDITOR.getName())));
+            isEditor = userDetails.getAuthorities().contains(new SimpleGrantedAuthority(String.format("ROLE_%s", Role.RoleEnum.EDITOR.getName())));
         }
 
         mav.addObject("editor", isEditor);
@@ -237,11 +234,11 @@ public class UserController {
 
     @RequestMapping(value = "user/{id:\\d+}/moderator")
     public ModelAndView makeModerator(@PathVariable long id) {
-        Optional<Roles> maybeRole = rolesService.findByName(Roles.Role.EDITOR.getName());
+        Optional<Role> maybeRole = rolesService.findByName(Role.RoleEnum.EDITOR.getName());
         if(!maybeRole.isPresent()){
             throw new RoleNotFoundException();
         }
-        Roles role = maybeRole.get();
+        Role role = maybeRole.get();
 
         if(userService.updateUserRoles(role.getId(), id) == 0 || !authUserService.isCurrentUserEditor())
             return new ModelAndView("redirect:/error");
