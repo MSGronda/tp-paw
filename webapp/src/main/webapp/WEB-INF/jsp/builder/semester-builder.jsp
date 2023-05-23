@@ -217,7 +217,25 @@
 
         </div>
         <div id="subject-list" class="subject-list">
-          <%-- insert with js subject list into here --%>
+          <c:forEach var="subject" items="${availableSubjects}">
+            <sl-card id="subject-card-${subject.id}" class="subject-card">
+              <div class="chooser">
+                <div class="column">
+                  <h5><c:out value="${subject.name}"/></h5>
+                  <spring:message code="subject.credits"/> <c:out value="${subject.credits}"/>
+                </div>
+                <div class="column">
+                  <sl-button id="select-${subject.id}" variant="default" size="small" circle>
+                    <sl-icon class="icon" name="check2" label="Select Subject"></sl-icon>
+                  </sl-button>
+                  <sl-button id="deselect-subject-${subject.id}" style="display: none; align-self: end" variant="default" size="small" circle>
+                    <sl-icon class="icon" name="x-lg" label="Remove subject"></sl-icon>
+                  </sl-button>
+                  <span id="selected-${subject.id}" style="display: none; color: #7db6f8; padding-top:0.5rem">Selected</span>
+                </div>
+              </div>
+            </sl-card>
+          </c:forEach>
         </div>
       </sl-card>
 
@@ -232,7 +250,45 @@
           </div>
         </div>
         <div id="class-list" class="subject-list">
-          <%-- insert with js  clases list into here--%>
+
+          <c:forEach var="subject" items="${availableSubjects}">
+          <div class="subject-class-info column" id="classes-${subject.id}">
+
+            <c:forEach var="subClass" items="${subject.subjectClasses.values()}">
+            <sl-card id="class-card-${subClass.getIdSub()}-${subClass.getIdClass()}" class="subject-card">
+              <div class="chooser" slot="header">
+                <h5>${subClass.getIdClass()}</h5>
+                <sl-button id="select-class-${subClass.getIdSub()}-${subClass.getIdClass()}" variant="default" size="small" circle>
+                  <sl-icon class="icon" name="check2" label="Select Subject"></sl-icon>
+                </sl-button>
+              </div>
+
+              <div class="column">
+                <c:forEach varStatus="status" var="classTime" items="${subClass.getClassTimes()}">
+                  <table>
+                    <tbody>
+                    <c:choose>
+                      <c:when test="${classTime.getDay() != 0}">
+                        <tr><th><spring:message code="subject.classDay"/></th><td><spring:message code="subject.classDay${classTime.getDay()}"/></td></tr>
+                      </c:when>
+                      <c:otherwise><tr><th><spring:message code="subject.classDay"/></th><td>-</td></tr></c:otherwise>
+                    </c:choose>
+                    <tr><th><spring:message code="builder.time"/></th><td>${classTime.getStartTime()} - ${classTime.getEndTime()}</td></tr>
+                    <tr><th><spring:message code="builder.class"/></th><td>${classTime.getClassLoc()}</td></tr>
+                    <tr><th><spring:message code="builder.building"/></th><td>${classTime.getBuilding()}</td></tr>
+                    <tr><th><spring:message code="builder.mode"/></th><td>${classTime.getMode()}</td></tr>
+                    </tbody>
+                  </table>
+                </c:forEach>
+              </div>
+
+            </sl-card>
+            </c:forEach>
+          </div>
+          </c:forEach>
+
+
+
         </div>
       </sl-card>
 
@@ -296,7 +352,8 @@
                     ]
                 },
                 </c:forEach>
-            ]
+            ],
+          'difficulty': '${availableSubjectsStatistics[sub.id].difficulty}'
         },
         </c:forEach>
     ]
@@ -304,15 +361,19 @@
     subjectClasses.sort(sortByCreditsDesc)
     let currentOrder = 'creditsDesc'
 
-    // create subject list and class list and set actions
-    const subjectList = document.getElementById('subject-list')
-    const classList = document.getElementById('class-list')
-    for (let subjectNum in subjectClasses) {
-        const card = createSubjectCard(subjectList, subjectClasses[subjectNum]);
-        subjectList.appendChild(card)
 
-        const subjectClassCards = createSubjectClassInfo(subjectClasses[subjectNum])
-        classList.appendChild(subjectClassCards)
+    for (let subjectNum in subjectClasses) {
+      document.getElementById('select-'+subjectClasses[subjectNum].id).addEventListener('click',
+              createSubjectSelectAction(subjectClasses[subjectNum].id)
+      )
+      document.getElementById('deselect-subject-'+subjectClasses[subjectNum].id).addEventListener('click',
+              createSubjectDeselectAction(subjectClasses[subjectNum].id)
+      );
+      for(let classNum in subjectClasses[subjectNum].classes){
+        document.getElementById('select-class-'+subjectClasses[subjectNum].id + '-' + subjectClasses[subjectNum].classes[classNum].idClass).addEventListener('click',
+                createClassSelectionAction(subjectClasses[subjectNum].id,subjectClasses[subjectNum].name,subjectClasses[subjectNum].classes[classNum]));
+      }
+
     }
 
     // set exit class selection action
