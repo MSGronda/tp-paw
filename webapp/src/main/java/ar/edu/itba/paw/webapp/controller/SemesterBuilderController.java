@@ -16,11 +16,13 @@ public class SemesterBuilderController {
 
     private final SubjectClassService subjectClassService;
     private final AuthUserService authUserService;
+    private final ReviewService reviewService;
 
     @Autowired
-    public SemesterBuilderController( SubjectClassService subjectClassService, AuthUserService authUserService ) {
+    public SemesterBuilderController( SubjectClassService subjectClassService, ReviewService reviewService, AuthUserService authUserService ) {
         this.subjectClassService = subjectClassService;
         this.authUserService = authUserService;
+        this.reviewService = reviewService;
     }
 
     @RequestMapping("/builder")
@@ -36,8 +38,11 @@ public class SemesterBuilderController {
         ModelAndView mav = new ModelAndView("builder/semester-builder");
 
         List<Subject> availableSubjects = subjectClassService.getAllSubsWithClassThatUserCanDo(user.getId());
+        Map<String, ReviewStats> availableSubjectsStatistics = reviewService.getReviewStatMapBySubjectList(availableSubjects);
+
 
         mav.addObject("availableSubjects", availableSubjects);
+        mav.addObject("availableSubjectsStatistics", availableSubjectsStatistics);
 
         return mav;
     }

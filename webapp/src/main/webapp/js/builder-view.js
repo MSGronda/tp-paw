@@ -6,19 +6,21 @@ function sortByCreditsAsc(a,b){
 }
 function orderByCreditAction() {
     let sorter;
-    if(currentOrder === 'creditsDesc'){
+    if (currentOrder === 'creditsDesc') {
         sorter = sortByCreditsAsc
         document.getElementById('credits-down').style.display = 'none'
         document.getElementById('credits-up').style.display = 'flex'
         currentOrder = 'creditsAsc'
-    }
-    else{
+    } else {
         sorter = sortByCreditsDesc
         document.getElementById('credits-down').style.display = 'flex'
         document.getElementById('credits-up').style.display = 'none'
         currentOrder = 'creditsDesc'
     }
     subjectClasses.sort(sorter)
+    rebuildSubjectList()
+}
+function rebuildSubjectList(){
     const subjectList = document.getElementById('subject-list');
     let elements = document.createDocumentFragment();
 
@@ -40,6 +42,7 @@ function orderByCreditAction() {
     subjectList.innerHTML = null;
     subjectList.appendChild(elements);
 }
+
 function switchSelector(chooseClassVisibility, chooseSubjectVisibility){
     document.getElementById('choose-class').style.display = chooseClassVisibility;
     document.getElementById('choose-subject').style.display = chooseSubjectVisibility;

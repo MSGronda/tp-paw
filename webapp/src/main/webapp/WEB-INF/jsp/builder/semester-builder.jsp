@@ -223,6 +223,18 @@
                 <div class="column">
                   <h5><c:out value="${subject.name}"/></h5>
                   <spring:message code="subject.credits"/> <c:out value="${subject.credits}"/>
+                  <c:choose>
+                    <c:when test="${availableSubjectsStatistics[subject.id].difficulty == 0}">
+                      <sl-badge size="medium" variant="success" pill><spring:message code="form.easy"/></sl-badge>
+                    </c:when>
+                    <c:when test="${availableSubjectsStatistics[subject.id].difficulty == 1}">
+                      <sl-badge size="medium" variant="primary" pill><spring:message code="form.normal"/></sl-badge>
+                    </c:when>
+                    <c:when test="${availableSubjectsStatistics[subject.id].difficulty == 2}">
+                      <sl-badge size="medium" variant="danger" pill><spring:message code="form.hard"/></sl-badge>
+                    </c:when>
+                    <c:otherwise><sl-badge size="medium" variant="neutral" pill><spring:message code="form.noDif"/></sl-badge></c:otherwise>
+                  </c:choose>
                 </div>
                 <div class="column">
                   <sl-button id="select-${subject.id}" variant="default" size="small" circle>
@@ -291,17 +303,6 @@
 
         </div>
       </sl-card>
-
-      <sl-card style="padding-left: 0.5rem;padding-right: 0.5rem; align-items: center">
-        <div class="button-section">
-          <sl-button id="download-button">
-            <spring:message code="builder.download"/>
-            <sl-icon slot="suffix" name="download"></sl-icon>
-          </sl-button>
-          <sl-divider vertical style="height: 3rem"></sl-divider>
-        </div>
-
-      </sl-card>
     </div>
   </div>
 </main>
@@ -329,6 +330,7 @@
         'class': '<spring:message code="builder.class"/>', 'building': '<spring:message code="builder.building"/>',
         'mode': '<spring:message code="builder.mode"/>'
     }
+    let currentOrder = 'none'
 
     const subjectClasses = [
         <c:forEach var="sub" items="${availableSubjects}">
@@ -357,11 +359,6 @@
         },
         </c:forEach>
     ]
-
-    subjectClasses.sort(sortByCreditsDesc)
-    let currentOrder = 'creditsDesc'
-
-
     for (let subjectNum in subjectClasses) {
       document.getElementById('select-'+subjectClasses[subjectNum].id).addEventListener('click',
               createSubjectSelectAction(subjectClasses[subjectNum].id)
@@ -373,7 +370,6 @@
         document.getElementById('select-class-'+subjectClasses[subjectNum].id + '-' + subjectClasses[subjectNum].classes[classNum].idClass).addEventListener('click',
                 createClassSelectionAction(subjectClasses[subjectNum].id,subjectClasses[subjectNum].name,subjectClasses[subjectNum].classes[classNum]));
       }
-
     }
 
     // set exit class selection action
