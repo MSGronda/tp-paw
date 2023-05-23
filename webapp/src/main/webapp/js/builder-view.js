@@ -117,7 +117,7 @@ function enableCompatibleSubjects(){
     }
 }
 
-function createSubjectDeselectAction(subId){
+function createSubjectDeselectAction(subId,idClass){
     return function() {
         // modify schedule table
         schedule.removeClass(subId)
@@ -125,10 +125,14 @@ function createSubjectDeselectAction(subId){
         // enable subjects that can are now compatible after removing this subject
         enableCompatibleSubjects()
 
-        // disable deselect button
-        document.getElementById('select-'+ subId).style.display = 'block'
-        document.getElementById('deselect-subject-'+ subId).style.display = 'none'
-        document.getElementById('selected-'+ subId).style.display = 'none'
+        // unhide subject from subject list
+        document.getElementById('subject-card-'+subId).style.display = 'block';
+
+        // remove selected subject from selected subject list
+        document.getElementById('selected-subject-info-list').removeChild(document.getElementById('selected-class-card-'+subId + '-'+idClass))
+
+        // switch selection buttons
+        document.getElementById('select-class-'+ subId + '-' + idClass).style.display = 'block'
     }
 }
 
@@ -139,6 +143,20 @@ function createSubjectSelectAction(subId){
         document.getElementById('classes-' + subId).style.display = 'flex';
     }
 }
+function addSelectedClassToList(subId, subName,subClass){
+    const selected = document.getElementById('selected-subject-info-list');
+    const selectedSubjectClass = document.getElementById('class-card-' +subId + '-'+subClass.idClass).cloneNode(true);
+    selectedSubjectClass.id = 'selected-class-card-' +subId + '-'+subClass.idClass
+    selectedSubjectClass.firstElementChild.firstElementChild.textContent = subName + ' - ' + subClass.idClass
+
+    selectedSubjectClass.firstElementChild.children[1].style.display= 'none'
+    selectedSubjectClass.firstElementChild.children[2].style.display= 'flex'
+
+    selectedSubjectClass.firstElementChild.children[2].addEventListener('click', createSubjectDeselectAction(subId, subClass.idClass));
+
+    selected.appendChild(selectedSubjectClass)
+}
+
 
 function createClassSelectionAction(subId, subName,subClass){
     return function() {
@@ -146,16 +164,16 @@ function createClassSelectionAction(subId, subName,subClass){
         switchSelector('none','flex')
         document.getElementById('classes-' + subId).style.display = 'none';
 
+        addSelectedClassToList(subId, subName,subClass)
+
         // modify schedule table
-        schedule.addClass(subId, subName, subClass.classTimes)
+        schedule.addClass(subId, subName, subClass.classTimes);
 
         // disable all incompatible classes (already signed up to that subject or it doesn't fit in your schedule)
         disableIncompatibleSubjects();
 
-        // enable deselect button
-        document.getElementById('deselect-subject-'+ subId).style.display = 'block'
-        document.getElementById('select-'+ subId).style.display = 'none'
-        document.getElementById('selected-'+ subId).style.display = 'block'
+        // hide subject from subject list
+        document.getElementById('subject-card-'+subId).style.display = 'none';
     }
 }
 

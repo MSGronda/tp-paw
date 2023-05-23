@@ -14,43 +14,151 @@
   body {
       height: 100vh;
   }
-
   .builder-area {
       display: flex;
       flex-direction: row;
       align-items: stretch;
-      max-height: 94vh;
+      height: 94vh;
       margin: auto 0;
   }
-
   .no-padding {
       padding: 0;
   }
-
-  .subject-list {
-      display: flex;
-      flex-direction: column;
-      overflow: auto;
+  .icon {
+    padding-top: .5rem;
+    font-size: 1rem;
   }
 
+  h4 {
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  h5 {
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  /* Layout */
+  .chooser {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .chooser-tab {
+    padding-bottom: 0.5rem;
+    width: 33rem;
+  }
+
+  /* Subject information */
+  .subject-chooser-tab-area {
+    padding: 0.5rem 0.2rem;
+    flex: 1;
+    min-height: 0;
+  }
+  .subject-chooser-tab-area::part(base) {
+    height: 100%;
+  }
+  .subject-chooser-tab-area::part(body) {
+    height: 100%;
+    overflow-y: auto;
+  }
+  .subject-list {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+  }
+  .subject-info-card {
+    width: 100%;
+    padding: 0.3rem;
+  }
+  .subject-info-card::part(base) {
+    height: 8rem;
+  }
+  .subject-info-card-details{
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    height: 6rem;
+  }
+
+  /* Class information */
+  .class-chooser-tab-area {
+    display: none;
+    padding: 0.5rem 0.2rem;
+    flex: 1;
+    height: 100%;
+  }
+  .class-chooser-tab-area::part(body) {
+    height: 100%;
+    overflow-y: auto;
+  }
+  .class-chooser-tab-area::part(base) {
+    height: 100%;
+  }
+  .class-list{
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+  .class-subject-list {
+    display: none;
+    flex-direction: column;
+    overflow-y: auto;
+    max-height: 100%;
+  }
+  .class-card{
+    padding-top: 0.5rem;
+  }
+  .class-card::part(base){
+    width: 100%;
+  }
+  .class-card::part(body){
+    padding: 0.1rem;
+  }
+
+  /* Selected subjects */
+  .selected-tab-area{
+    padding: 0.5rem 0.2rem;
+    width: 33%;
+    height: 100%;
+  }
+  .selected-tab{
+    width: 100%;
+  }
+  .selected-tab::part(base){
+    height: 100%;
+    overflow-y: auto;
+  }
+  .selected-tab::part(body){
+     padding: 0.5rem;
+   }
+
+  /* Semester overview */
+  .semester-overview-tab-area{
+    padding: 0.5rem 0.2rem;
+    width: 25%;
+    height: 100%;
+  }
+  .semester-overview-tab{
+    width: 100%;
+  }
+  .semester-overview-tab::part(base){
+    width: 100% !important;
+    height: 100%;
+  }
+
+  /* Time table */
   table {
       margin-bottom: 0;
   }
-
-  .subject-card {
-      width: 16rem;
-      padding: 0.3rem;
-  }
-
-  .subject-card table {
-      margin-bottom: 0.5rem;
-  }
-
   .time-table {
       padding: 0.5rem;
       --padding: 0.1rem;
       flex: 1;
-      display: flex;
+      display: none;
   }
 
   .time-table::part(body), .time-table::part(base) {
@@ -59,88 +167,37 @@
       align-items: stretch;
       flex: 1;
   }
-
-  .icon {
-      padding-top: .5rem;
-      font-size: 1rem;
-  }
-
-  h4 {
-      margin: 0 !important;
-      padding: 0 !important;
-  }
-
-  h5 {
-      margin: 0 !important;
-      padding: 0 !important;
-  }
-
-  .chooser {
-      display: flex;
-      flex-direction: row;
-      align-items: center;
-      justify-content: space-between;
-  }
-
-  .choose-class {
-      display: none;
-      padding: 0.5rem;
-      flex: 1;
-      min-height: 0;
-  }
-
-  .choose-class::part(body) {
-      overflow-y: auto;
-  }
-
-  .builder-right-pane {
-      padding-bottom: 0.5rem;
-      width: 20.5rem;
-  }
-
-  .choose-subject {
-      padding: 0.5rem;
-      flex: 1;
-      min-height: 0;
-  }
-
-  .choose-subject::part(base) {
-      height: 100%;
-  }
-
-  .choose-subject::part(body) {
-      height: 100%;
-      overflow-y: auto;
-  }
-
-  .subject-class-info {
-      display: none;
-      flex-direction: column;
-  }
-
   .table-scroll {
-      overflow: auto;
-      flex: 1;
-      width: 100%;
+    overflow: auto;
+    flex: 1;
+    width: 100%;
   }
 
   tbody td {
-      font-size: 0.9rem;
-      padding: 0.25rem !important;
-      border-left: 1px solid #e9ecef;
+    font-size: 0.9rem;
+    padding: 0.25rem !important;
+    border-left: 1px solid #e9ecef;
   }
 
   tbody th {
-      background-color: #f8f9fa;
-      margin-right: 0;
-      padding-right: 0;
+    background-color: #f8f9fa;
+    margin-right: 0;
+    padding-right: 0;
   }
 
   thead th {
-      background-color: #f8f9fa;
-      position: sticky;
-      top: 0
+    background-color: #f8f9fa;
+    position: sticky;
+    top: 0
   }
+
+  /* Ordering */
+  sl-dropdown {
+    padding: 0;
+    height: 1.5rem;
+  }
+
+
 
   .order-menu {
       display: flex;
@@ -148,6 +205,8 @@
       justify-content: space-around;
   }
 
+
+  /* Unused */
   .class-selection {
       display: flex;
       flex-direction: row;
@@ -156,11 +215,6 @@
       margin: 1rem;
       min-height: 0;
   }
-
-  sl-dropdown {
-      padding: 0;
-  }
-
   .button-section {
       display: flex;
       align-items: center;
@@ -171,8 +225,9 @@
 <body>
 </body>
 <jsp:include page="../components/navbar.jsp"/>
-<main class="no-padding container-80">
+<main class="no-padding container-90">
   <div class="builder-area">
+
     <sl-card class="time-table">
       <div class="table-scroll">
         <table>
@@ -193,16 +248,17 @@
       </div>
     </sl-card>
 
-    <div class="column builder-right-pane">
-      <sl-card id="choose-subject" class="choose-subject">
+    <div class="column chooser-tab">
+      <sl-card id="choose-subject" class="subject-chooser-tab-area">
         <div slot="header">
-          <div class="row ">
+          <div class="row-space-between ">
             <h4><spring:message code="builder.available"/></h4>
-            <sl-dropdown style="padding-left: 1rem">
-              <sl-button variant="text" slot="trigger" size="large" caret>
-                <spring:message code="subject.sort"/>
+            <sl-dropdown>
+              <sl-button class="dropdown-button" variant="text" slot="trigger" size="medium" caret>
+                <span class="dropdown-text"><spring:message code="subject.sort"/></span>
                 <sl-icon slot="prefix" name="sort-down"></sl-icon>
               </sl-button>
+
               <sl-menu>
                 <sl-menu-item id="credit-orderby">
                   <div class="order-menu">
@@ -214,13 +270,12 @@
               </sl-menu>
             </sl-dropdown>
           </div>
-
         </div>
         <div id="subject-list" class="subject-list">
           <c:forEach var="subject" items="${availableSubjects}">
-            <sl-card id="subject-card-${subject.id}" class="subject-card">
+            <sl-card id="subject-card-${subject.id}" class="subject-info-card">
               <div class="chooser">
-                <div class="column">
+                <div class="subject-info-card-details">
                   <h5><c:out value="${subject.name}"/></h5>
                   <spring:message code="subject.credits"/> <c:out value="${subject.credits}"/>
                   <c:choose>
@@ -250,8 +305,7 @@
           </c:forEach>
         </div>
       </sl-card>
-
-      <sl-card id="choose-class" class="choose-class">
+      <sl-card id="choose-class" class="class-chooser-tab-area">
         <div slot="header">
           <div class="row" style="justify-content: space-between">
             <h4><spring:message code="builder.selectClass"/></h4>
@@ -261,49 +315,84 @@
             </sl-button>
           </div>
         </div>
-        <div id="class-list" class="subject-list">
+        <div id="class-list" class="class-list">
 
           <c:forEach var="subject" items="${availableSubjects}">
-          <div class="subject-class-info column" id="classes-${subject.id}">
+          <div class="class-subject-list" id="classes-${subject.id}">
 
             <c:forEach var="subClass" items="${subject.subjectClasses.values()}">
-            <sl-card id="class-card-${subClass.getIdSub()}-${subClass.getIdClass()}" class="subject-card">
+            <sl-card id="class-card-${subClass.getIdSub()}-${subClass.getIdClass()}" class="class-card">
               <div class="chooser" slot="header">
                 <h5>${subClass.getIdClass()}</h5>
                 <sl-button id="select-class-${subClass.getIdSub()}-${subClass.getIdClass()}" variant="default" size="small" circle>
                   <sl-icon class="icon" name="check2" label="Select Subject"></sl-icon>
                 </sl-button>
+                <sl-button style="display: none;" id="deselect-class-${subClass.getIdSub()}-${subClass.getIdClass()}"
+                           variant="default" size="small" circle>
+                  <sl-icon class="icon" name="x-lg" label="Select Subject"></sl-icon>
+                </sl-button>
               </div>
-
               <div class="column">
-                <c:forEach varStatus="status" var="classTime" items="${subClass.getClassTimes()}">
                   <table>
+                    <thead>
+                          <tr>
+                            <th><spring:message code="subject.classDay"/>
+                            <th><spring:message code="builder.time"/></th>
+                            <th><spring:message code="builder.class"/></th>
+                            <th><spring:message code="builder.building"/></th>
+                            <th><spring:message code="builder.mode"/></th>
+                          </tr>
+                    </thead>
                     <tbody>
-                    <c:choose>
-                      <c:when test="${classTime.getDay() != 0}">
-                        <tr><th><spring:message code="subject.classDay"/></th><td><spring:message code="subject.classDay${classTime.getDay()}"/></td></tr>
-                      </c:when>
-                      <c:otherwise><tr><th><spring:message code="subject.classDay"/></th><td>-</td></tr></c:otherwise>
-                    </c:choose>
-                    <tr><th><spring:message code="builder.time"/></th><td>${classTime.getStartTime()} - ${classTime.getEndTime()}</td></tr>
-                    <tr><th><spring:message code="builder.class"/></th><td>${classTime.getClassLoc()}</td></tr>
-                    <tr><th><spring:message code="builder.building"/></th><td>${classTime.getBuilding()}</td></tr>
-                    <tr><th><spring:message code="builder.mode"/></th><td>${classTime.getMode()}</td></tr>
+                    <c:forEach varStatus="status" var="classTime" items="${subClass.getClassTimes()}">
+                      <tr>
+                      <c:choose>
+                        <c:when test="${classTime.getDay() != 0}">
+                          <td><spring:message code="subject.classDay${classTime.getDay()}"/>
+                        </c:when>
+                        <c:otherwise><<td>-</td></c:otherwise>
+                      </c:choose>
+                        <td>${classTime.getStartTime()} - ${classTime.getEndTime()}</td>
+                        <td>${classTime.getClassLoc()}</td>
+                        <td>${classTime.getBuilding()}</td>
+                        <td>${classTime.getMode()}</td>
+                      </tr>
+                    </c:forEach>
                     </tbody>
                   </table>
-                </c:forEach>
+
               </div>
 
             </sl-card>
             </c:forEach>
           </div>
           </c:forEach>
-
-
-
         </div>
       </sl-card>
     </div>
+
+    <div class="selected-tab-area">
+      <sl-card class="selected-tab">
+        <div slot="header">
+          <div class="row-space-between ">
+            <h4>Selected classes</h4>
+          </div>
+        </div>
+        <div id="selected-subject-info-list" class="selected-subject-info-list" >
+            <%-- Insert select subject list using js --%>
+        </div>
+      </sl-card>
+    </div>
+    <div class="semester-overview-tab-area">
+      <sl-card class="semester-overview-tab">
+        <div slot="header">
+          <div class="row-space-between ">
+            <h4>Your semester overview</h4>
+          </div>
+        </div>
+      </sl-card>
+    </div>
+
   </div>
 </main>
 <jsp:include page="../components/footer.jsp"/>
@@ -363,12 +452,11 @@
       document.getElementById('select-'+subjectClasses[subjectNum].id).addEventListener('click',
               createSubjectSelectAction(subjectClasses[subjectNum].id)
       )
-      document.getElementById('deselect-subject-'+subjectClasses[subjectNum].id).addEventListener('click',
-              createSubjectDeselectAction(subjectClasses[subjectNum].id)
-      );
+
       for(let classNum in subjectClasses[subjectNum].classes){
         document.getElementById('select-class-'+subjectClasses[subjectNum].id + '-' + subjectClasses[subjectNum].classes[classNum].idClass).addEventListener('click',
                 createClassSelectionAction(subjectClasses[subjectNum].id,subjectClasses[subjectNum].name,subjectClasses[subjectNum].classes[classNum]));
+
       }
     }
 
@@ -377,10 +465,6 @@
 
     // set order by action for credits
     document.getElementById('credit-orderby').addEventListener('click', orderByCreditAction)
-
-    document.getElementById('download-button').addEventListener('click', function () {
-        downloadTable('<spring:message code="builder.csvName"/>' + '.csv')
-    })
 
 </script>
 
