@@ -76,11 +76,11 @@
             </div>
             <div id="step3" style="display: none">
                 <c:forEach var="degree" items="${degrees}">
-                    <h1 id="degree-${degree.id}"><c:out value="${degree.name}"/></h1>
+                    <h1 id="degree-${degree.id}" style="display: none"><c:out value="${degree.name}"/></h1>
                 </c:forEach>
                 <h3 style="font-weight: normal"><spring:message code="register.selectSubjects"/></h3>
                 <c:forEach var="degreeSet" items="${degreeMapAndYearSubjects}">
-                    <sl-tree id="tree-${degreeSet.key}">
+                    <sl-tree id="tree-${degreeSet.key}" style="display: none">
                         <c:forEach var="yearSet" items="${degreeSet.value}">
                             <div class="YearItem">
                                 <sl-tree-item>
@@ -95,8 +95,21 @@
                                 </sl-tree-item>
                                 <sl-checkbox id="year-checkbox-${yearSet.key}" class="year-checkbox"></sl-checkbox>
                             </div>
-
                         </c:forEach>
+                        <div id="elective-tree-${degreeSet.key}" style="display:none;">
+                            <div class="YearItem">
+                                <sl-tree-item>
+                                    <h3><spring:message code="home.electives"/></h3>
+                                    <c:forEach var="elective" items="${degreeMapAndYearElectives[degreeSet.key]}">
+                                        <sl-tree-item>
+                                            <sl-checkbox id="elective-${degreeSet.key}-subject-${elective.id}" class="elective-${degreeSet.key}-subject">
+                                                <c:out value="${elective.name}"/>
+                                            </sl-checkbox>
+                                        </sl-tree-item>
+                                    </c:forEach>
+                                </sl-tree-item>
+                            </div>
+                        </div>
                     </sl-tree>
                 </c:forEach>
                 <br/>
@@ -108,6 +121,8 @@
 <jsp:include page="../components/footer.jsp"/>
 <script>
     var degreeId;
+
+    var subjectList = [];
 
     function nextStep() {
         var currentStepValue = getCurrentStep();
@@ -147,6 +162,34 @@
 
         var nextButton = document.getElementById('nextButton');
         nextButton.disabled = false;
+
+        var degreeTitle = document.getElementById("degree-"+degreeId);
+        degreeTitle.style.display = "block"
+        var degreeTree = document.getElementById("tree-" + degreeId);
+        degreeTree.style.display = "block";
+        var electiveTree = document.getElementById("elective-tree-"+degreeId);
+        electiveTree.style.display = "block";
+
+        const electiveCheckboxes = document.querySelectorAll('.elective-' + degreeId +'-subject');
+
+        // Attach event listeners to each year checkbox
+        electiveCheckboxes.forEach((checkbox) => {
+            checkbox.addEventListener('sl-change', function () {
+                const checked = document.getElementById(checkbox.id).checked;
+                const subjectID = checkbox.id.split('-')[3];
+
+                if( !checked ){
+                    let index = subjectList.findIndex(element => element === subjectID);
+                    subjectList.splice(index, 1);
+                    console.log(subjectList)
+                }else{
+                    if( subjectList.findIndex(element => element === subjectID) === -1 ){
+                        subjectList.push(subjectID)
+                        console.log(subjectList)
+                    }
+                }
+            });
+        });
     }
 
     // Get all year checkboxes
@@ -159,9 +202,17 @@
         yearSubjectCheckboxes.forEach((subjectCheckbox) => {
             subjectCheckbox.addEventListener('sl-change', function () {
                 const checked = document.getElementById(subjectCheckbox.id).checked;
+                const subjectID = subjectCheckbox.id.split('-')[3];
                 if( !checked ){
                     checkbox.checked = false;
+                    let index = subjectList.findIndex(element => element === subjectID);
+                    subjectList.splice(index, 1);
+                    console.log(subjectList)
                 }else{
+                    if( subjectList.findIndex(element => element === subjectID) === -1 ){
+                        subjectList.push(subjectID)
+                        console.log(subjectList)
+                    }
                     //chequear que estan todas prendidas
                     let allSelected = true;
                     const yearSubjectCheckboxes = document.querySelectorAll('.year-' + year + '-subject');
@@ -175,8 +226,6 @@
             });
         });
 
-
-
         checkbox.addEventListener('sl-change', function () {
             const year = this.id.split('-')[2]; // Extract the year value from the checkbox ID
             const checked = document.getElementById('year-checkbox-'+year).checked;
@@ -187,16 +236,23 @@
             // Set the checked property of each year subject checkbox
             yearSubjectCheckboxes.forEach((subjectCheckbox) => {
                 subjectCheckbox.checked = checked;
-                // console.log(subjectCheckbox.id);
-                subjectCheckbox.addEventListener('sl-change', function () {
-                    const checked = document.getElementById(subjectCheckbox.id).checked;
-                    if( !checked ){
-                        checkbox.checked = false;
+                const subjectID = subjectCheckbox.id.split('-')[3];
+                if( checked ){
+                    if( subjectList.findIndex(element => element === subjectID) === -1 ){
+                        subjectList.push(subjectID)
+                        console.log(subjectList)
                     }
-                });
+
+                }else{
+                    let index = subjectList.findIndex(element => element === subjectID);
+                    subjectList.splice(index, 1);
+                    console.log(subjectList)
+                }
             });
         });
     });
+
+
 
 
 </script>
