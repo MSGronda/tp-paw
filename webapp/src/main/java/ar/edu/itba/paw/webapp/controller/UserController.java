@@ -42,6 +42,8 @@ public class UserController {
     private final RolesService rolesService;
     private final UniUserDetailsService uniUserDetailsService;
 
+    private final DegreeService degreeService;
+
     @Autowired
     public UserController(
             UserService userService,
@@ -50,7 +52,8 @@ public class UserController {
             MailService mailService,
             AuthUserService authUserService,
             RolesService rolesService,
-            UniUserDetailsService uniUserDetailsService
+            UniUserDetailsService uniUserDetailsService,
+            DegreeService degreeService
     ) {
         this.userService = userService;
         this.reviewService = reviewService;
@@ -59,6 +62,7 @@ public class UserController {
         this.authUserService = authUserService;
         this.rolesService = rolesService;
         this.uniUserDetailsService = uniUserDetailsService;
+        this.degreeService = degreeService;
     }
 
     @RequestMapping("/user/{id:\\d+}")
@@ -142,7 +146,15 @@ public class UserController {
 
     @RequestMapping(value = "/register", method = { RequestMethod.GET })
     public ModelAndView registerForm(@ModelAttribute ("UserForm") final UserForm userForm) {
-        return new ModelAndView("user/register");
+        List<Degree> degreeList = degreeService.getAll();
+        Map<Long, Map<Integer, List<Subject>>> degreeMapAndYearSubjects = subjectService.getAllGroupedByDegIdAndYear();
+        Map<Long, List<Subject>> degreeMapAndYearElectives = subjectService.getAllElectivesGroupedByDegId();
+
+        ModelAndView mav = new ModelAndView("user/register");
+        mav.addObject("degrees", degreeList);
+        mav.addObject("degreeMapAndYearSubjects", degreeMapAndYearSubjects);
+        mav.addObject("degreeMapAndYearElectives", degreeMapAndYearElectives);
+        return mav;
     }
 
     @RequestMapping("/verification")
