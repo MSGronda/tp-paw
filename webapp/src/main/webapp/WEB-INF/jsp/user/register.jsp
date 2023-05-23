@@ -87,13 +87,13 @@
                                     <h3 ><spring:message code="subject.year" arguments="${yearSet.key}"/></h3>
                                     <c:forEach var="subject" items="${yearSet.value}">
                                         <sl-tree-item>
-                                            <sl-checkbox id="year-${yearSet.key}-subject-${subject.id}" class="year-${yearSet.key}-subject">
+                                            <sl-checkbox id="degree-${degreeSet.key}-year-${yearSet.key}-subject-${subject.id}" class="degree-${degreeSet.key}-year-${yearSet.key}-subject">
                                                 <c:out value="${subject.name}"/>
                                             </sl-checkbox>
                                         </sl-tree-item>
                                     </c:forEach>
                                 </sl-tree-item>
-                                <sl-checkbox id="year-checkbox-${yearSet.key}" class="year-checkbox"></sl-checkbox>
+                                <sl-checkbox id="degree-${degreeSet.key}-year-checkbox-${yearSet.key}" class="degree-${degreeSet.key}-year-checkbox"></sl-checkbox>
                             </div>
                         </c:forEach>
                         <div id="elective-tree-${degreeSet.key}" style="display:none;">
@@ -170,6 +170,69 @@
         var electiveTree = document.getElementById("elective-tree-"+degreeId);
         electiveTree.style.display = "block";
 
+
+        // Get all year checkboxes
+        const yearCheckboxes = document.querySelectorAll('.degree-' + degreeId + '-year-checkbox');
+
+        // Attach event listeners to each year checkbox
+        yearCheckboxes.forEach((checkbox) => {
+            const year = checkbox.id.split('-')[4]; // Extract the year value from the checkbox ID
+            const yearSubjectCheckboxes = document.querySelectorAll('.degree-' + degreeId + '-year-' + year + '-subject');
+            yearSubjectCheckboxes.forEach((subjectCheckbox) => {
+                subjectCheckbox.addEventListener('sl-change', function () {
+                    const checked = document.getElementById(subjectCheckbox.id).checked;
+                    const subjectID = subjectCheckbox.id.split('-')[5];
+                    if( !checked ){
+                        checkbox.checked = false;
+                        let index = subjectList.findIndex(element => element === subjectID);
+                        subjectList.splice(index, 1);
+                        console.log(subjectList)
+                    }else{
+                        if( subjectList.findIndex(element => element === subjectID) === -1 ){
+                            subjectList.push(subjectID)
+                            console.log(subjectList)
+                        }
+                        //chequear que estan todas prendidas
+                        let allSelected = true;
+                        const yearSubjectCheckboxes = document.querySelectorAll('.degree-' + degreeId + '-year-' + year + '-subject');
+                        yearSubjectCheckboxes.forEach((subjectCheckbox2) => {
+                            if ( !subjectCheckbox2.checked ){
+                                allSelected = false;
+                            }
+                        })
+                        checkbox.checked = allSelected;
+                    }
+                });
+            });
+
+            checkbox.addEventListener('sl-change', function () {
+                const year = this.id.split('-')[4]; // Extract the year value from the checkbox ID
+                const checked = document.getElementById('degree-' + degreeId + '-year-checkbox-'+year).checked;
+
+                // Get all checkboxes within the corresponding year
+                const yearSubjectCheckboxes = document.querySelectorAll('.degree-' + degreeId + '-year-' + year + '-subject');
+
+                // Set the checked property of each year subject checkbox
+                yearSubjectCheckboxes.forEach((subjectCheckbox) => {
+                    subjectCheckbox.checked = checked;
+                    const subjectID = subjectCheckbox.id.split('-')[5];
+                    if( checked ){
+                        if( subjectList.findIndex(element => element === subjectID) === -1 ){
+                            subjectList.push(subjectID)
+                            console.log(subjectList)
+                        }
+
+                    }else{
+                        let index = subjectList.findIndex(element => element === subjectID);
+                        subjectList.splice(index, 1);
+                        console.log(subjectList)
+                    }
+                });
+            });
+        });
+
+
+
         const electiveCheckboxes = document.querySelectorAll('.elective-' + degreeId +'-subject');
 
         // Attach event listeners to each year checkbox
@@ -192,65 +255,6 @@
         });
     }
 
-    // Get all year checkboxes
-    const yearCheckboxes = document.querySelectorAll('.year-checkbox');
-
-    // Attach event listeners to each year checkbox
-    yearCheckboxes.forEach((checkbox) => {
-        const year = checkbox.id.split('-')[2]; // Extract the year value from the checkbox ID
-        const yearSubjectCheckboxes = document.querySelectorAll('.year-' + year + '-subject');
-        yearSubjectCheckboxes.forEach((subjectCheckbox) => {
-            subjectCheckbox.addEventListener('sl-change', function () {
-                const checked = document.getElementById(subjectCheckbox.id).checked;
-                const subjectID = subjectCheckbox.id.split('-')[3];
-                if( !checked ){
-                    checkbox.checked = false;
-                    let index = subjectList.findIndex(element => element === subjectID);
-                    subjectList.splice(index, 1);
-                    console.log(subjectList)
-                }else{
-                    if( subjectList.findIndex(element => element === subjectID) === -1 ){
-                        subjectList.push(subjectID)
-                        console.log(subjectList)
-                    }
-                    //chequear que estan todas prendidas
-                    let allSelected = true;
-                    const yearSubjectCheckboxes = document.querySelectorAll('.year-' + year + '-subject');
-                    yearSubjectCheckboxes.forEach((subjectCheckbox2) => {
-                        if ( !subjectCheckbox2.checked ){
-                            allSelected = false;
-                        }
-                    })
-                    checkbox.checked = allSelected;
-                }
-            });
-        });
-
-        checkbox.addEventListener('sl-change', function () {
-            const year = this.id.split('-')[2]; // Extract the year value from the checkbox ID
-            const checked = document.getElementById('year-checkbox-'+year).checked;
-
-            // Get all checkboxes within the corresponding year
-            const yearSubjectCheckboxes = document.querySelectorAll('.year-' + year + '-subject');
-
-            // Set the checked property of each year subject checkbox
-            yearSubjectCheckboxes.forEach((subjectCheckbox) => {
-                subjectCheckbox.checked = checked;
-                const subjectID = subjectCheckbox.id.split('-')[3];
-                if( checked ){
-                    if( subjectList.findIndex(element => element === subjectID) === -1 ){
-                        subjectList.push(subjectID)
-                        console.log(subjectList)
-                    }
-
-                }else{
-                    let index = subjectList.findIndex(element => element === subjectID);
-                    subjectList.splice(index, 1);
-                    console.log(subjectList)
-                }
-            });
-        });
-    });
 
 
 
