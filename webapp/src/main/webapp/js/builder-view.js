@@ -32,9 +32,12 @@ function rebuildSubjectList(){
         subjectClone.children[0].children[1].children[0].addEventListener('click',
             createSubjectSelectAction(subjectClasses[subjectNum].id)
         )
-        subjectClone.children[0].children[1].children[1].addEventListener('click',
-            createSubjectDeselectAction(subjectClasses[subjectNum].id)
-        )
+        for(let classNum in subjectClasses[subjectNum].classes){
+            subjectClone.children[0].children[1].children[1].addEventListener('click',
+                createSubjectDeselectAction(subjectClasses[subjectNum], subjectClasses[subjectNum].classes[classNum])
+            )
+        }
+
 
         elements.appendChild(subjectClone);
     }
@@ -117,23 +120,74 @@ function enableCompatibleSubjects(){
     }
 }
 
-function createSubjectDeselectAction(subId,idClass){
+function createSubjectDeselectAction(subject,idClass){
     return function() {
         // modify schedule table
-        schedule.removeClass(subId)
+        schedule.removeClass(subject.id)
 
         // enable subjects that can are now compatible after removing this subject
         enableCompatibleSubjects()
 
         // unhide subject from subject list
-        document.getElementById('subject-card-'+subId).style.display = 'block';
+        document.getElementById('subject-card-'+subject.id).style.display = 'block';
 
         // remove selected subject from selected subject list
-        document.getElementById('selected-subject-info-list').removeChild(document.getElementById('selected-class-card-'+subId + '-'+idClass))
+        document.getElementById('selected-subject-info-list').removeChild(document.getElementById('selected-class-card-'+subject.id + '-'+idClass))
 
         // switch selection buttons
-        document.getElementById('select-class-'+ subId + '-' + idClass).style.display = 'block'
+        document.getElementById('select-class-'+ subject.id + '-' + idClass).style.display = 'block'
+
+        //update
+        updateCreditCounter(-subject.credits)
+        updateTimeDemand(-(subject.timeDemand+1))
+        updateOverallDifficulty(-(subject.difficulty+1))
     }
+}
+function _modifyBanners(delta, prefix, scriptVariable){
+
+    overviewStats[scriptVariable] += delta;
+
+    let average = 0;
+    if(Object.keys(schedule.chosenSubjectMap).length !== 0){
+        average = (overviewStats[scriptVariable] *  (overviewStats.totalCredits/24) ) / Object.keys(schedule.chosenSubjectMap).length
+    }
+    console.log(average)
+    if(average===0){
+        document.getElementById(prefix+'-difficulty-none').style.display = 'flex';
+        document.getElementById(prefix+'-difficulty-easy').style.display = 'none';
+        document.getElementById(prefix+'-difficulty-medium').style.display = 'none';
+        document.getElementById(prefix+'-difficulty-hard').style.display = 'none';
+    }
+    else if(average > 0 && average <= 1){
+        document.getElementById(prefix+'-difficulty-none').style.display = 'none';
+        document.getElementById(prefix+'-difficulty-easy').style.display = 'flex';
+        document.getElementById(prefix+'-difficulty-medium').style.display = 'none';
+        document.getElementById(prefix+'-difficulty-hard').style.display = 'none';
+    }
+    else if(average > 1 && average <= 2){
+        document.getElementById(prefix+'-difficulty-none').style.display = 'none';
+        document.getElementById(prefix+'-difficulty-easy').style.display = 'none';
+        document.getElementById(prefix+'-difficulty-medium').style.display = 'flex';
+        document.getElementById(prefix+'-difficulty-hard').style.display = 'none';
+    }
+    else if(average > 2 && average <= 3){
+        document.getElementById(prefix+'-difficulty-none').style.display = 'none';
+        document.getElementById(prefix+'-difficulty-easy').style.display = 'none';
+        document.getElementById(prefix+'-difficulty-medium').style.display = 'none';
+        document.getElementById(prefix+'-difficulty-hard').style.display = 'flex';
+    }
+}
+
+function updateCreditCounter(delta){
+    overviewStats.totalCredits += delta;
+    document.getElementById('number-of-credits').innerText = overviewStats.totalCredits.toString();
+}
+function updateTimeDemand(delta){
+    _modifyBanners(delta,'time','timeDemand');
+}
+
+function updateOverallDifficulty(delta){
+    _modifyBanners(delta,'overall','overallDifficulty');
 }
 
 function createSubjectSelectAction(subId){
@@ -143,37 +197,42 @@ function createSubjectSelectAction(subId){
         document.getElementById('classes-' + subId).style.display = 'flex';
     }
 }
-function addSelectedClassToList(subId, subName,subClass){
+function addSelectedClassToList(subject,classSubject){
     const selected = document.getElementById('selected-subject-info-list');
-    const selectedSubjectClass = document.getElementById('class-card-' +subId + '-'+subClass.idClass).cloneNode(true);
-    selectedSubjectClass.id = 'selected-class-card-' +subId + '-'+subClass.idClass
-    selectedSubjectClass.firstElementChild.firstElementChild.textContent = subName + ' - ' + subClass.idClass
+    const selectedSubjectClass = document.getElementById('class-card-' +subject.id + '-'+classSubject.idClass).cloneNode(true);
+    selectedSubjectClass.id = 'selected-class-card-' +subject.id + '-'+classSubject.idClass
+    selectedSubjectClass.firstElementChild.firstElementChild.textContent = subject.name + ' - ' + classSubject.idClass
 
     selectedSubjectClass.firstElementChild.children[1].style.display= 'none'
     selectedSubjectClass.firstElementChild.children[2].style.display= 'flex'
 
-    selectedSubjectClass.firstElementChild.children[2].addEventListener('click', createSubjectDeselectAction(subId, subClass.idClass));
+    selectedSubjectClass.firstElementChild.children[2].addEventListener('click', createSubjectDeselectAction(subject, classSubject.idClass));
 
     selected.appendChild(selectedSubjectClass)
 }
 
 
-function createClassSelectionAction(subId, subName,subClass){
+function createClassSelectionAction(subject,classSubject){
     return function() {
         // go back to subject selection
         switchSelector('none','flex')
-        document.getElementById('classes-' + subId).style.display = 'none';
+        document.getElementById('classes-' + subject.id).style.display = 'none';
 
-        addSelectedClassToList(subId, subName,subClass)
+        addSelectedClassToList(subject,classSubject)
 
         // modify schedule table
-        schedule.addClass(subId, subName, subClass.classTimes);
+        schedule.addClass(subject.id, subject.name, classSubject.classTimes);
 
         // disable all incompatible classes (already signed up to that subject or it doesn't fit in your schedule)
         disableIncompatibleSubjects();
 
         // hide subject from subject list
-        document.getElementById('subject-card-'+subId).style.display = 'none';
+        document.getElementById('subject-card-'+subject.id).style.display = 'none';
+
+        // update
+        updateCreditCounter(subject.credits)
+        updateTimeDemand((subject.timeDemand+1))
+        updateOverallDifficulty((subject.difficulty+1))
     }
 }
 

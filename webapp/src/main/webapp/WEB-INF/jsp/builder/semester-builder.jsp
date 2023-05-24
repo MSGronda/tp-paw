@@ -149,6 +149,18 @@
     width: 100% !important;
     height: 100%;
   }
+  .semester-overview-tab::part(body), .overview-item::part(body){
+    padding: 0.5rem;
+  }
+  .overview-item{
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
+  }
+   .overview-item::part(body){
+     padding: 0.5rem;
+     display: flex;
+     align-items: center;
+   }
 
   /* Time table */
   table {
@@ -378,17 +390,40 @@
             <h4>Selected classes</h4>
           </div>
         </div>
-        <div id="selected-subject-info-list" class="selected-subject-info-list" >
-            <%-- Insert select subject list using js --%>
+        <div id="selected-subject-info-list">
         </div>
       </sl-card>
     </div>
     <div class="semester-overview-tab-area">
       <sl-card class="semester-overview-tab">
         <div slot="header">
-          <div class="row-space-between ">
+          <div class="row-space-between">
             <h4>Your semester overview</h4>
           </div>
+        </div>
+        <div class="column">
+          <sl-card class="overview-item">
+            <span>Number of credits</span>
+            <sl-divider vertical style="height: 1rem"></sl-divider>
+            <span id="number-of-credits">0</span>
+          </sl-card>
+          <sl-card  class="overview-item">
+            <span>Time Demand</span>
+            <sl-divider vertical style="height:  1rem; margin: 0.5rem"></sl-divider>
+            <sl-badge id="time-difficulty-none"  size="medium" variant="neutral" pill>No reviews</sl-badge>
+            <sl-badge id="time-difficulty-easy" style="display: none;" size="medium" variant="success" pill><spring:message code="form.NotTimeDemanding" /></sl-badge>
+            <sl-badge id="time-difficulty-medium" style="display: none;" size="medium" variant="primary" pill><spring:message code="form.averageTimeDemand" /></sl-badge>
+            <sl-badge id="time-difficulty-hard" style="display: none;" size="medium" variant="warning" pill><spring:message code="form.timeDemanding" /></sl-badge>
+          </sl-card>
+          <sl-card  class="overview-item">
+            <span>Overall Difficulty</span>
+            <sl-divider vertical style="height:  1rem; margin: 0.5rem"></sl-divider>
+            <sl-badge id="overall-difficulty-none"  size="medium" variant="neutral" pill>No reviews</sl-badge>
+            <sl-badge id="overall-difficulty-easy" style="display: none;" size="medium" variant="success" pill><spring:message code="form.easy"/></sl-badge>
+            <sl-badge id="overall-difficulty-medium" style="display: none;" size="medium" variant="primary" pill><spring:message code="form.normal"/></sl-badge>
+            <sl-badge id="overall-difficulty-hard" style="display: none;" size="medium" variant="danger" pill><spring:message code="form.hard"/></sl-badge>
+          </sl-card>
+
         </div>
       </sl-card>
     </div>
@@ -408,6 +443,9 @@
     const normalColor = '#000000'
     const normalBorderColor = '#e0e0e0'
 
+    const overviewStats = {'totalCredits': 0, 'overallDifficulty': 0, 'timeDemand': 0}
+
+
     const daysOfWeek = [
         '<spring:message code="subject.classDay1"/>', '<spring:message code="subject.classDay2"/>', '<spring:message code="subject.classDay3"/>',
         '<spring:message code="subject.classDay4"/>', '<spring:message code="subject.classDay5"/>', '<spring:message code="subject.classDay6"/>'
@@ -424,7 +462,7 @@
     const subjectClasses = [
         <c:forEach var="sub" items="${availableSubjects}">
         {
-            'id': '${sub.id}', 'name': '${sub.name}', 'department': '${sub.department}', 'credits': '${sub.credits}',
+            'id': '${sub.id}', 'name': '${sub.name}', 'department': '${sub.department}', 'credits': ${sub.credits},
             'classes': [
                 <c:forEach var="subClass" items="${sub.subjectClasses.values()}">
                 {
@@ -444,7 +482,8 @@
                 },
                 </c:forEach>
             ],
-          'difficulty': '${availableSubjectsStatistics[sub.id].difficulty}'
+          'difficulty': ${availableSubjectsStatistics[sub.id].difficulty},
+          'timeDemand': ${availableSubjectsStatistics[sub.id].timeDifficulty}
         },
         </c:forEach>
     ]
@@ -455,8 +494,11 @@
 
       for(let classNum in subjectClasses[subjectNum].classes){
         document.getElementById('select-class-'+subjectClasses[subjectNum].id + '-' + subjectClasses[subjectNum].classes[classNum].idClass).addEventListener('click',
-                createClassSelectionAction(subjectClasses[subjectNum].id,subjectClasses[subjectNum].name,subjectClasses[subjectNum].classes[classNum]));
-
+                createClassSelectionAction(
+                        subjectClasses[subjectNum],
+                        subjectClasses[subjectNum].classes[classNum]
+                )
+        );
       }
     }
 
