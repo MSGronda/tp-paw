@@ -162,6 +162,32 @@ public class UserServiceImpl implements UserService {
 
     @Transactional
     @Override
+    public void updateSubjectProgressWithSubList( final Long id, final String subIds){
+        List<String> subjectIdList = parseString(subIds);
+        for( String subId : subjectIdList){
+            updateSubjectProgress(id, subId, User.SubjectProgressEnum.DONE);
+        }
+    }
+
+    private List<String> parseString(String stringifyString){
+        String trimmedInput = stringifyString.replace("[", "").replace("]", "");
+
+        String[] elements = trimmedInput.split(",");
+
+        List<String> parsedList = new ArrayList<>();
+
+        for (String element : elements) {
+            // Remove quotes around each element
+            String parsedElement = element.replace("\"", "");
+            parsedList.add(parsedElement);
+        }
+
+        return parsedList;
+
+    }
+
+    @Transactional
+    @Override
     public void changePassword(final Long userId, final String password, final String oldPassword,
                                final String userOldPassword) throws OldPasswordDoesNotMatchException {
 

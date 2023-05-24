@@ -13,11 +13,8 @@ import ar.edu.itba.paw.webapp.form.RecoverPasswordForm;
 import ar.edu.itba.paw.webapp.form.UserForm;
 import ar.edu.itba.paw.webapp.Utils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.context.MessageSource;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
@@ -140,6 +137,8 @@ public class UserController {
         final String verifUrl = baseUrl + "/verification/confirm?token=" + token;
         final String logoUrl = baseUrl + "/img/uni.png";
         mailService.sendVerification(newUser.getEmail(), verifUrl, logoUrl, locale);
+
+        userService.updateSubjectProgressWithSubList(newUser.getId(), userForm.getSubjectIds());
 
         return new ModelAndView("redirect:/verification?email=" + newUser.getEmail());
     }

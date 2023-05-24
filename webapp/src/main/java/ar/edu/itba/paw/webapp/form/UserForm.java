@@ -23,6 +23,11 @@ public class UserForm {
     @Size(min = 8, max = 25)
     private String passwordConfirmation;
 
+    @NotNull
+    private long degreeId;
+
+    private String subjectIds;
+
     public void setEmail(String email) {
         this.email = email;
     }
@@ -55,5 +60,21 @@ public class UserForm {
         if(!this.password.equals(passwordConfirmation)){
             this.passwordConfirmation = null;
         }
+    }
+
+    public long getDegreeId() {
+        return degreeId;
+    }
+
+    public void setDegreeId(long degreeId) {
+        this.degreeId = degreeId;
+    }
+
+    public String getSubjectIds() {
+        return subjectIds;
+    }
+
+    public void setSubjectIds(String subjectIds) {
+        this.subjectIds = subjectIds;
     }
 }

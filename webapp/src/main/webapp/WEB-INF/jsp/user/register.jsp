@@ -113,8 +113,9 @@
                     </sl-tree>
                 </c:forEach>
                 <br/>
+                <input name="subjectIds" type="hidden" id="hiddenInput"/>
                 <sl-button variant="success" onclick="previousStep()"><spring:message code="register.previous"/></sl-button>
-                <sl-button type="submit" variant="success" onclick="this.disabled = true"><spring:message code="userform.submit"/></sl-button>
+                <sl-button id="submit-button" type="submit" variant="success" onclick="this.disabled = true; updateSubjectList()"><spring:message code="userform.submit"/></sl-button>
             </div>
         </form:form>
 </main>
@@ -158,7 +159,6 @@
 
     function updateDegreeSelection() {
         degreeId = document.getElementById('select-degree').value;
-        console.log(degreeId)
 
         var nextButton = document.getElementById('nextButton');
         nextButton.disabled = false;
@@ -186,11 +186,11 @@
                         checkbox.checked = false;
                         let index = subjectList.findIndex(element => element === subjectID);
                         subjectList.splice(index, 1);
-                        console.log(subjectList)
+                        document.getElementById('hiddenInput').value = JSON.stringify(subjectList);
                     }else{
                         if( subjectList.findIndex(element => element === subjectID) === -1 ){
                             subjectList.push(subjectID)
-                            console.log(subjectList)
+                            document.getElementById('hiddenInput').value = JSON.stringify(subjectList);
                         }
                         //chequear que estan todas prendidas
                         let allSelected = true;
@@ -219,13 +219,13 @@
                     if( checked ){
                         if( subjectList.findIndex(element => element === subjectID) === -1 ){
                             subjectList.push(subjectID)
-                            console.log(subjectList)
+                            document.getElementById('hiddenInput').value = JSON.stringify(subjectList);
                         }
 
                     }else{
                         let index = subjectList.findIndex(element => element === subjectID);
                         subjectList.splice(index, 1);
-                        console.log(subjectList)
+                        document.getElementById('hiddenInput').value = JSON.stringify(subjectList);
                     }
                 });
             });
@@ -244,18 +244,16 @@
                 if( !checked ){
                     let index = subjectList.findIndex(element => element === subjectID);
                     subjectList.splice(index, 1);
-                    console.log(subjectList)
+                    document.getElementById('hiddenInput').value = JSON.stringify(subjectList);
                 }else{
                     if( subjectList.findIndex(element => element === subjectID) === -1 ){
                         subjectList.push(subjectID)
-                        console.log(subjectList)
+                        document.getElementById('hiddenInput').value = JSON.stringify(subjectList);
                     }
                 }
             });
         });
     }
-
-
 
 
 
