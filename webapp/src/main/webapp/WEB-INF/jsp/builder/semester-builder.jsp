@@ -89,19 +89,22 @@
     flex: 1;
     height: 100%;
   }
+
   .class-chooser-tab-area::part(body) {
     height: 100%;
     overflow-y: auto;
+    padding: 0;
   }
   .class-chooser-tab-area::part(base) {
     height: 100%;
+    width: 100%;
   }
   .class-list{
     display: flex;
     flex-direction: column;
     height: 100%;
-    padding-left: 1rem;
-    padding-right: 1rem;
+    padding-left: 0.3rem;
+    padding-right: 0.3rem;
   }
   .class-subject-list {
     display: none;
@@ -130,10 +133,10 @@
   }
   .selected-tab::part(base){
     height: 100%;
-    overflow-y: auto;
   }
   .selected-tab::part(body){
      padding: 0.5rem;
+     overflow-y: auto;
    }
 
   /* Semester overview */
@@ -144,6 +147,11 @@
   }
   .semester-overview-tab{
     width: 100%;
+  }
+  .semester-overview-tab::part(header){
+    height: 3.3rem;
+    display: flex;
+    align-items: center;
   }
   .semester-overview-tab::part(base){
     width: 100% !important;
@@ -168,16 +176,25 @@
   }
   .time-table {
       padding: 0.5rem;
-      --padding: 0.1rem;
       flex: 1;
       display: none;
   }
+  .time-table::part(base){
+    width: 100%;
+  }
+  .time-table::part(header){
+    height: 3.3rem;
+    /*display: flex;*/
+    /*align-items: center;*/
+    /*justify-content: center;*/
+  }
 
-  .time-table::part(body), .time-table::part(base) {
+  .time-table::part(body) {
       display: flex;
-      flex-direction: row;
+    --padding: 0.1rem;
       align-items: stretch;
       flex: 1;
+      max-height: 93%;
   }
   .table-scroll {
     overflow: auto;
@@ -206,7 +223,7 @@
   /* Ordering */
   sl-dropdown {
     padding: 0;
-    height: 1.5rem;
+    height: 2rem;
   }
 
 
@@ -240,27 +257,7 @@
 <main class="no-padding container-90">
   <div class="builder-area">
 
-    <sl-card class="time-table">
-      <div class="table-scroll">
-        <table>
-          <thead>
-          <tr>
-            <th></th>
-            <th><spring:message code="subject.classDay1"/></th>
-            <th><spring:message code="subject.classDay2"/></th>
-            <th><spring:message code="subject.classDay3"/></th>
-            <th><spring:message code="subject.classDay4"/></th>
-            <th><spring:message code="subject.classDay5"/></th>
-            <th><spring:message code="subject.classDay6"/></th>
-          </tr>
-          </thead>
-          <tbody id="weekly-schedule">
-          </tbody>
-        </table>
-      </div>
-    </sl-card>
-
-    <div class="column chooser-tab">
+    <div id="choosing-tab" class="column chooser-tab">
       <sl-card id="choose-subject" class="subject-chooser-tab-area">
         <div slot="header">
           <div class="row-space-between ">
@@ -319,9 +316,9 @@
       </sl-card>
       <sl-card id="choose-class" class="class-chooser-tab-area">
         <div slot="header">
-          <div class="row" style="justify-content: space-between">
+          <div class="row-space-between">
             <h4><spring:message code="builder.selectClass"/></h4>
-            <sl-button style="padding-top: 0.64rem; padding-bottom: 0.64rem" id="exit-class-selector" variant="default"
+            <sl-button style="" id="exit-class-selector" variant="default"
                        size="small" circle>
               <sl-icon name="x-lg" label="Exit" class="icon"></sl-icon>
             </sl-button>
@@ -383,18 +380,52 @@
       </sl-card>
     </div>
 
-    <div class="selected-tab-area">
+    <sl-card id="time-table" class="time-table">
+      <div slot="header">
+        <div  class="row-space-between">
+          <h4>Your time table</h4>
+          <hr>
+          <sl-tooltip content="View subject list">
+            <sl-icon-button id="switch-to-list-button" name="view-list" label="Switch to list view"></sl-icon-button>
+          </sl-tooltip>
+
+        </div>
+      </div>
+      <div class="table-scroll">
+        <table>
+          <thead>
+          <tr>
+            <th></th>
+            <th><spring:message code="subject.classDay1"/></th>
+            <th><spring:message code="subject.classDay2"/></th>
+            <th><spring:message code="subject.classDay3"/></th>
+            <th><spring:message code="subject.classDay4"/></th>
+            <th><spring:message code="subject.classDay5"/></th>
+            <th><spring:message code="subject.classDay6"/></th>
+          </tr>
+          </thead>
+          <tbody id="weekly-schedule">
+          </tbody>
+        </table>
+      </div>
+    </sl-card>
+
+    <div id="chosen-tab" class="selected-tab-area">
       <sl-card class="selected-tab">
         <div slot="header">
-          <div class="row-space-between ">
+          <div class="row-space-between">
             <h4>Selected classes</h4>
+            <sl-tooltip content="View time table">
+              <sl-icon-button id="switch-to-table-button" name="table" label="Switch to timetable view"></sl-icon-button>
+            </sl-tooltip>
           </div>
         </div>
         <div id="selected-subject-info-list">
         </div>
       </sl-card>
     </div>
-    <div class="semester-overview-tab-area">
+
+    <div id="overview-tab" class="semester-overview-tab-area">
       <sl-card class="semester-overview-tab">
         <div slot="header">
           <div class="row-space-between">
@@ -507,6 +538,13 @@
 
     // set order by action for credits
     document.getElementById('credit-orderby').addEventListener('click', orderByCreditAction)
+
+    // set switch to table view
+    document.getElementById('switch-to-table-button').addEventListener('click',switchToTableView);
+
+    // set switch to table view
+    document.getElementById('switch-to-list-button').addEventListener('click',switchToListView);
+
 
 </script>
 

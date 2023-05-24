@@ -151,7 +151,7 @@ function _modifyBanners(delta, prefix, scriptVariable){
     if(Object.keys(schedule.chosenSubjectMap).length !== 0){
         average = (overviewStats[scriptVariable] *  (overviewStats.totalCredits/24) ) / Object.keys(schedule.chosenSubjectMap).length
     }
-    console.log(average)
+
     if(average===0){
         document.getElementById(prefix+'-difficulty-none').style.display = 'flex';
         document.getElementById(prefix+'-difficulty-easy').style.display = 'none';
@@ -242,6 +242,24 @@ function exitClassSelectionAction(){
     hideAllClasses();
 }
 
+function switchToTableView(){
+    switchToView('none','flex');
+}
+function switchToListView(){
+    switchToView('flex','none');
+}
+
+function switchToView(a,b){
+    // switch selector buttons
+    document.getElementById('switch-to-table-button').style.display = a;
+    document.getElementById('switch-to-list-button').style.display = b;
+
+    // document.getElementById('choosing-tab').style.display = a;
+    document.getElementById('chosen-tab').style.display = a;
+    document.getElementById('overview-tab').style.display = a;
+
+    document.getElementById('time-table').style.display = b;
+}
 
 function downloadTable(csvName) {
     const csv_data = schedule.generateCsv();
