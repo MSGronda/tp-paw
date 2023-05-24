@@ -3,6 +3,7 @@ package ar.edu.itba.paw.webapp.controller;
 import ar.edu.itba.paw.models.Degree;
 import ar.edu.itba.paw.models.ReviewStats;
 import ar.edu.itba.paw.models.Subject;
+import ar.edu.itba.paw.models.User;
 import ar.edu.itba.paw.services.*;
 import ar.edu.itba.paw.webapp.exceptions.DegreeNotFoundException;
 import org.slf4j.Logger;
@@ -43,9 +44,9 @@ public class HomeController {
         this.aus = aus;
     }
 
-    @RequestMapping("/degree/{degreeName}")
-    public ModelAndView degree(@PathVariable String degreeName) {
-        final Optional<Degree> degree = ds.getByName(degreeName);
+    @RequestMapping("/degree/{id:\\d+}")
+    public ModelAndView degree(@PathVariable Long id) {
+        final Optional<Degree> degree = ds.findById(id);
 
         if( !degree.isPresent() ){
             LOGGER.warn("Degree is not present");
@@ -74,8 +75,20 @@ public class HomeController {
     }
 
     @RequestMapping("/")
-    public ModelAndView home() {
-        return new ModelAndView("redirect:/degree/Ingenieria en Informatica");
+    public ModelAndView dashboard() {
+        User user;
+        if(aus.isAuthenticated()) {
+            user = aus.getCurrentUser();
+        }
+        else{
+            return new ModelAndView("user/login");
+        }
+
+        Map<String, Integer> passedSubjects = us.getUserAllSubjectProgress(user.getId());
+
+
+        ModelAndView mav = new ModelAndView("dashboard/dashboard");
+        return mav;
     }
 
 }
