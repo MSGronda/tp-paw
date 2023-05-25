@@ -76,11 +76,12 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(final HttpSecurity http) throws Exception {
         http.sessionManagement()
-                .sessionAuthenticationErrorUrl("/login")
+                .sessionAuthenticationErrorUrl("/landing")
             .and().authorizeRequests()
-                .antMatchers("/login","/register", "/recover/**", "/verification/**").anonymous()
+                .antMatchers("/login","/register", "/recover/**", "/verification/**", "/landing").anonymous()
                 .antMatchers("/user/{id:\\d+}/moderator").hasRole(Roles.Role.EDITOR.getName())
-                .antMatchers("/subject/{id:\\d+\\.\\d+}", "/", "/user/{id:\\d+}", "/search/**", "/image/**", "/degree/**").permitAll()
+                .antMatchers("/subject/{id:\\d+\\.\\d+}", "/user/{id:\\d+}", "/search/**", "/image/**", "/degree/**").authenticated()
+                .antMatchers("/").permitAll()
                 .antMatchers("/**").authenticated()
             .and().formLogin()
                 .loginPage("/login")

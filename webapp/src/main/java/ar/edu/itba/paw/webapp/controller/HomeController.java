@@ -75,7 +75,14 @@ public class HomeController {
 
     @RequestMapping("/")
     public ModelAndView home() {
+        if(!aus.isAuthenticated())
+            return new ModelAndView("redirect:/landing");
         return new ModelAndView("redirect:/degree/Ingenieria en Informatica");
+    }
+
+    @RequestMapping("/landing")
+    public ModelAndView landing() {
+        return new ModelAndView("landing");
     }
 
 }
