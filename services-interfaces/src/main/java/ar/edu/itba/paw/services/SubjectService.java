@@ -2,6 +2,7 @@ package ar.edu.itba.paw.services;
 
 import ar.edu.itba.paw.models.Subject;
 import ar.edu.itba.paw.models.User;
+import ar.edu.itba.paw.models.enums.SubjectFilterField;
 
 import java.util.List;
 import java.util.Map;
@@ -9,33 +10,23 @@ import java.util.Optional;
 import java.util.Set;
 
 public interface SubjectService extends BaseService<String, Subject> {
-
     Optional<Subject> findById(final String id);
-    List<Subject> findByIds(final List<String> ids);
-
+    List<Subject> findAllThatUserCanDo(final User user);
     List<Subject> getAll();
-    List<Subject> getAllByDegree(final Long idDegree);
-    Map<Long, List<Subject>> getAllGroupedByDegreeId();
-    Map<Long, Map<Integer, List<Subject>>> getAllGroupedByDegIdAndSemester();
-    Map<Long, Map<Integer, List<Subject>>> getAllGroupedByDegIdAndYear();
 
-    Map<Integer, List<Subject>> getInfSubsByYear(final Long degreeId);
+    List<Subject> search(final String name, final int page);
+    List<Subject> search(
+            final String name,
+            final int page,
+            final Map<String,String> filters,
+            final String orderBy,
+            final String dir
+    );
+    int getTotalPagesForSearch(final String name);
+    int getTotalPagesForSearch(final String name, final Map<String, String> filters);
+    Map<SubjectFilterField, List<String>> getRelevantFiltersForSearch(final String name);
+    Map<SubjectFilterField, List<String>> getRelevantFiltersForSearch(final String name, final Map<String,String> filters);
 
-    Map<Long, List<Subject>> getAllElectivesGroupedByDegId();
-
-    List<Subject> getInfElectives(final Long degreeId);
-
-    List<Subject> getByName(final String name);
-
-    List<Subject> getByNameFiltered(final String name, final Map<String,String> filters);
-
-    int getTotalPagesForSubjects(final String name, final Map<String, String> filters);
-
-    List<String> getSubjectsIds(List<Subject> subjects);
-    Map<String, Set<String>> getRelevantFilters(final String name, final Map<String,String> filters);
-    Map<User,Set<Subject>> getAllUserUnreviewedNotifSubjects();
-    void updateUnreviewedNotIfTime();
-    int checkPageNum(Map<String,String> params);
-    String checkOrder(Map<String,String> params);
-    String checkDir(Map<String,String> params);
+    Map<User,Set<Subject>> getAllUserUnreviewedNotificationSubjects();
+    void updateUnreviewedNotificationTime();
 }

@@ -1,4 +1,6 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ page import="ar.edu.itba.paw.models.enums.Difficulty" %>
+<%@ page import="ar.edu.itba.paw.models.enums.TimeDemanding" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jstl/core_rt" %>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
@@ -166,10 +168,10 @@
                   <tr>
                       <th><spring:message code="subject.prerequisites"/></th>
                       <td>
-                          <c:if test="${empty prereqs}">
+                          <c:if test="${empty subject.prerequisites}">
                               <spring:message code="subject.prerequisites?"/>
                           </c:if>
-                          <c:forEach var="prereq" items="${prereqs}" varStatus="status">
+                          <c:forEach var="prereq" items="${subject.prerequisites}" varStatus="status">
                               <a href='<c:url value="/subject/${prereq.id}"/>'><c:out value="${prereq.name}"/></a>
                               <c:if test="${not status.last}">
                                   ,
@@ -180,9 +182,9 @@
                     <tr>
                         <th><spring:message code="subject.professors"/></th>
                         <td>
-                            <c:forEach var="proffesor" items="${professors}" varStatus="status">
+                            <c:forEach var="professor" items="${subject.professors}" varStatus="status">
                                 <sl-badge variant="primary">
-                                    <c:out value="${proffesor.name}"/>
+                                    <c:out value="${professor.name}"/>
                                 </sl-badge>
 
                             </c:forEach>
@@ -192,13 +194,13 @@
                         <th><spring:message code="subject.difficulty"/></th>
                         <td>
                             <c:choose>
-                                <c:when test="${difficulty == 0}">
+                                <c:when test="${subject.reviewStats.difficulty == Difficulty.EASY}">
                                     <sl-badge size="medium" variant="success"><spring:message code="form.easy"/></sl-badge>
                                 </c:when>
-                                <c:when test="${difficulty == 1}">
+                                <c:when test="${subject.reviewStats.difficulty == Difficulty.MEDIUM}">
                                     <sl-badge size="medium" variant="primary"><spring:message code="form.normal"/></sl-badge>
                                 </c:when>
-                                <c:when test="${difficulty == 2}">
+                                <c:when test="${subject.reviewStats.difficulty == Difficulty.HARD}">
                                     <sl-badge size="medium" variant="danger"><spring:message code="form.hard"/></sl-badge>
                                 </c:when>
                                 <c:otherwise>
@@ -211,13 +213,13 @@
                         <th><spring:message code="subject.time" /></th>
                         <td>
                             <c:choose>
-                                <c:when test="${time == 0}">
+                                <c:when test="${subject.reviewStats.timeDemanding == TimeDemanding.LOW}">
                                     <sl-badge size="medium" variant="success"><spring:message code="form.NotTimeDemanding" /></sl-badge>
                                 </c:when>
-                                <c:when test="${time == 1}">
+                                <c:when test="${subject.reviewStats.timeDemanding == TimeDemanding.MEDIUM}">
                                     <sl-badge size="medium" variant="primary"><spring:message code="form.averageTimeDemand" /></sl-badge>
                                 </c:when>
-                                <c:when test="${time == 2}">
+                                <c:when test="${subject.reviewStats.timeDemanding == TimeDemanding.HIGH}">
                                     <sl-badge size="medium" variant="warning"><spring:message code="form.timeDemanding" /></sl-badge>
                                 </c:when>
                                 <c:otherwise>
@@ -244,22 +246,22 @@
                     </tr>
                 </thead>
                 <tbody>
-                <c:forEach var="clase" items="${classes}">
-                    <c:forEach var="horario" items="${clase.classTimes}"  varStatus="status">
+                <c:forEach var="subjectClass" items="${subject.classes}">
+                    <c:forEach var="classTime" items="${subjectClass.classTimes}"  varStatus="status">
                         <tr>
                             <td>
                                 <c:if test="${status.first}">
-                                    <c:out value="${clase.idClass}"/>
+                                    <c:out value="${subjectClass.classId}"/>
                                 </c:if>
                             </td>
-                            <td><spring:message code="subject.classDay${horario.day}"/></td>
+                            <td><spring:message code="subject.classDay${classTime.day}"/></td>
 
-                            <td><c:out value="${horario.startTime.hours}:${horario.startTime.minutes}"/><c:if test="${horario.startTime.minutes  == 0}">0</c:if>
-                                - <c:out value="${horario.endTime.hours}:${horario.endTime.minutes}"/><c:if test="${horario.endTime.minutes == 0}">0</c:if>
+                            <td><c:out value="${classTime.startTime.hour}:${classTime.startTime.minute}"/><c:if test="${classTime.startTime.minute  == 0}">0</c:if>
+                                - <c:out value="${classTime.endTime.hour}:${classTime.endTime.minute}"/><c:if test="${classTime.endTime.minute == 0}">0</c:if>
                             </td>
-                            <td><c:out value="${horario.mode}"/></td>
-                            <td><c:out value="${horario.building}"/></td>
-                            <td><c:out value="${horario.classLoc}"/></td>
+                            <td><c:out value="${classTime.mode}"/></td>
+                            <td><c:out value="${classTime.building}"/></td>
+                            <td><c:out value="${classTime.classLoc}"/></td>
                         </tr>
                     </c:forEach>
                 </c:forEach>
@@ -276,13 +278,13 @@
                   </tr>
                   </thead>
                   <tbody>
-                  <c:forEach var="clase" items="${classes}">
+                  <c:forEach var="subjectClass" items="${subject.classes}">
                       <tr>
                       <td>
-                          <c:out value="${clase.idClass}"/>
+                          <c:out value="${subjectClass.classId}"/>
                       </td>
                       <td>
-                          <c:forEach var="prof" items="${clase.professors}">
+                          <c:forEach var="prof" items="${subjectClass.professors}">
                               <sl-badge variant="primary">
                                   <c:out value="${prof.name}"/>
                               </sl-badge>
@@ -310,11 +312,11 @@
 
             <form id="sub-progress" style="margin: 0" >
                 <input type="hidden" name="idSub" id="idSub" value="${subject.id}">
-                <input type="hidden" name="progress" id="progress" value="${subjectProgress}">
+                <input type="hidden" name="progress" id="progress" value="${progress}">
                 <sec:authorize access="isAuthenticated()">
                     <sl-tooltip content="<spring:message code="subject.progress.tooltip"/>">
                         <c:choose>
-                            <c:when test="${subjectProgress == 1}">
+                            <c:when test="${progress == 1}">
                                 <sl-button class="progress-bt" variant="primary" size="large" pill data-form-id="sub-progress" data-form-value="1">
                                     <spring:message code="subject.progress.done"/>
                                 </sl-button>
@@ -412,25 +414,25 @@
     </c:forEach>
       <c:if test="${not empty reviews}">
           <div>
-              <sl-radio-group name="pagination-radio" value="${actualPage}">
-                  <sl-radio-button id="prevPage" value="-1" <c:if test="${actualPage-1 <= 0}">disabled</c:if>>
+              <sl-radio-group name="pagination-radio" value="${currentPage}">
+                  <sl-radio-button id="prevPage" value="-1" <c:if test="${currentPage-1 <= 0}">disabled</c:if>>
                       <sl-icon slot="prefix" name="chevron-left"></sl-icon>
                       <spring:message code="subject.previousPage" />
                   </sl-radio-button>
-                  <c:forEach var="pageNum" begin="1" end="${totalPages+1}">
+                  <c:forEach var="pageNum" begin="1" end="${totalPages}">
                       <c:choose>
-                          <c:when test="${(pageNum > actualPage -2 and pageNum < actualPage + 2) or (pageNum == 1 or pageNum == totalPages+1)}">
+                          <c:when test="${(pageNum > currentPage -2 and pageNum < currentPage + 2) or (pageNum == 1 or pageNum == totalPages)}">
                               <div class="active-pag-buttons">
                                   <sl-radio-button class="pageNumButton" value="${pageNum}">${pageNum}</sl-radio-button>
                               </div>
                           </c:when>
-                          <c:when test="${pageNum < totalPages + 1 and pageNum == actualPage + 2}">
+                          <c:when test="${pageNum < totalPages and pageNum == currentPage + 2}">
                               <div class="active-pag-buttons">
                                   <sl-radio-button class="pageNumButton" value="${pageNum}">${pageNum}</sl-radio-button>
                                   <sl-radio-button value="..." disabled>...</sl-radio-button>
                               </div>
                           </c:when>
-                          <c:when test="${pageNum > 1 and pageNum == actualPage - 2}">
+                          <c:when test="${pageNum > 1 and pageNum == currentPage - 2}">
                               <div class="active-pag-buttons">
                                   <sl-radio-button value="..." disabled>...</sl-radio-button>
                                   <sl-radio-button class="pageNumButton" value="${pageNum}">${pageNum}</sl-radio-button>
@@ -444,7 +446,7 @@
                       </c:choose>
 
                   </c:forEach>
-                  <sl-radio-button id="nextPage" value="0" <c:if test="${actualPage-1 >= totalPages}">disabled</c:if>>
+                  <sl-radio-button id="nextPage" value="0" <c:if test="${currentPage >= totalPages}">disabled</c:if>>
                       <sl-icon slot="suffix" name="chevron-right"></sl-icon>
                       <spring:message code="subject.nextPage" />
                   </sl-radio-button>
@@ -590,7 +592,7 @@
              function(event) {
                  event.preventDefault();
                  let url = window.location.href;
-                 let pageNum = Number(elements[i].value) -1;
+                 let pageNum = Number(elements[i].value);
                  url = addOrUpdateParam(url,"pageNum",pageNum.toString());
                  window.location.href = url;
              });

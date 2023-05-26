@@ -32,23 +32,24 @@ public class UserServiceImpl implements UserService {
     private final UserDao userDao;
     private final RecoveryDao recDao;
     private final ImageDao imageDao;
-
-    private final MailService mailService;
     private final RolesService rolesService;
-
     private final PasswordEncoder passwordEncoder;
 
     private static final int MAX_IMAGE_SIZE = 1024 * 1024 * 5;
     private static final Logger LOGGER = LoggerFactory.getLogger(UserServiceImpl.class);
 
     @Autowired
-    public UserServiceImpl(final UserDao userDao, final RecoveryDao recDao, final ImageDao imageDao, final MailService mailService,
-                           final RolesService rolesService, final PasswordEncoder passwordEncoder) {
+    public UserServiceImpl(
+            final UserDao userDao,
+            final RecoveryDao recDao,
+            final ImageDao imageDao,
+            final RolesService rolesService,
+            final PasswordEncoder passwordEncoder
+    ) {
         this.userDao = userDao;
         this.passwordEncoder = passwordEncoder;
         this.recDao = recDao;
         this.imageDao = imageDao;
-        this.mailService = mailService;
         this.rolesService = rolesService;
     }
 
@@ -89,7 +90,7 @@ public class UserServiceImpl implements UserService {
             throw new IllegalStateException("USER role not found");
         }
         Role role = maybeRole.get();
-        addIdToUserRoles(role.getId(), newUser.getId());
+        addRole(newUser, role);
 
 
         return newUser;
@@ -105,10 +106,10 @@ public class UserServiceImpl implements UserService {
 
     @Transactional
     @Override
-    public String regenerateConfirmToken(final long userId) {
+    public String regenerateConfirmToken(final User user) {
         String newToken = generateConfirmToken();
 
-        userDao.updateConfirmToken(userId, newToken);
+        userDao.updateConfirmToken(user, newToken);
 
         return newToken;
     }
@@ -123,72 +124,61 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Optional<User> getUserWithEmail(final String email) {
-        return userDao.getUserWithEmail(email);
+    public Optional<User> findByEmail(final String email) {
+        return userDao.findByEmail(email);
     }
 
     @Override
-    public Optional<User> getUnconfirmedUserWithEmail(final String email) {
-        return userDao.getUnconfirmedUserWithEmail(email);
-    }
-
-    @Override
-    public Integer getUserSubjectProgress(final Long id, final String idSub) {
-        return userDao.getUserSubjectProgress(id,idSub).orElse(0);
-    }
-
-
-    @Override
-    public Map<String, Integer> getUserAllSubjectProgress(final Long id) {
-        return userDao.getUserAllSubjectProgress(id);
+    public Optional<User> findUnconfirmedByEmail(final String email) {
+        return userDao.findUnconfirmedByEmail(email);
     }
 
     @Transactional
     @Override
-    public Integer deleteUserProgressForSubject(final Long id, final String idSub){
-        return userDao.deleteUserProgressForSubject(id,idSub);
+    public void deleteSubjectProgress(final User user, final String idSub){
+        userDao.deleteSubjectProgress(user, idSub);
     }
 
     @Transactional
     @Override
-    public Integer updateSubjectProgress(final Long id, final String idSub, final User.SubjectProgressEnum newProgress) {
-        int resp;
+    public void updateSubjectProgress(final User user, final String idSub, final User.SubjectProgressEnum newProgress) {
         if(newProgress != User.SubjectProgressEnum.PENDING)
-            resp = userDao.updateSubjectProgress(id, idSub, newProgress.getProgress());
+            userDao.updateSubjectProgress(user, idSub, newProgress.getProgress());
         else
-            resp = userDao.deleteUserProgressForSubject(id, idSub);
-
-        return resp;
+            userDao.deleteSubjectProgress(user, idSub);
     }
 
     @Transactional
     @Override
-    public void changePassword(final Long userId, final String password, final String oldPassword,
-                               final String userOldPassword) throws OldPasswordDoesNotMatchException {
+    public void changePassword(
+            final User user,
+            final String password,
+            final String oldPassword,
+            final String userOldPassword
+    ) throws OldPasswordDoesNotMatchException {
 
         if(!passwordEncoder.matches(oldPassword, userOldPassword)){
             LOGGER.warn("Old password does not match with input. Update failed");
             throw new OldPasswordDoesNotMatchException();
         }
-        userDao.changePassword(userId, passwordEncoder.encode(password));
+        userDao.changePassword(user, passwordEncoder.encode(password));
     }
 
     @Transactional
     @Override
-    public void editProfile(final Long userId, final String username) {
-        userDao.editProfile(userId, username);
+    public void editProfile(final User user, final String username) {
+        userDao.changeUsername(user, username);
     }
 
     @Transactional
     @Override
     public String generateRecoveryToken(final String email){
-        final Optional<User> optUser = getUserWithEmail(email);
+        final Optional<User> optUser = findByEmail(email);
         if(!optUser.isPresent()){
             LOGGER.warn("Generation of recovery token failed. User not found");
             throw new UserEmailNotFoundException();
         }
         final User user = optUser.get();
-
 
         final SecureRandom random = new SecureRandom();
         final byte[] bytes = new byte[20];
@@ -209,14 +199,16 @@ public class UserServiceImpl implements UserService {
     @Transactional
     @Override
     public void recoverPassword(final String token, final String newPassword) throws InvalidTokenException {
-        Optional<Long> optUserId = recDao.findUserIdByToken(token);
+        final Optional<Long> optUserId = recDao.findUserIdByToken(token);
         if(!optUserId.isPresent()){
             LOGGER.info("Invalid token when trying to recover password");
             throw new InvalidTokenException();
         }
-        long userId = optUserId.get();
 
-        userDao.changePassword(userId, passwordEncoder.encode(newPassword));
+        final long userId = optUserId.get();
+        final User user = userDao.findById(userId).orElseThrow(IllegalStateException::new);
+
+        userDao.changePassword(user, passwordEncoder.encode(newPassword));
         recDao.delete(token);
         autoLogin(userId);
     }
@@ -224,21 +216,21 @@ public class UserServiceImpl implements UserService {
     @Transactional
     @Override
     public void confirmUser(final String token) throws InvalidTokenException {
-        Optional<User> optUser = userDao.findUserByConfirmToken(token);
+        final Optional<User> optUser = userDao.findByConfirmToken(token);
         if(!optUser.isPresent()){
             LOGGER.info("Invalid token when trying to confirm user");
             throw new InvalidTokenException();
         }
-        User user = optUser.get();
+        final User user = optUser.get();
 
-        userDao.confirmUser(user.getId());
+        userDao.confirmUser(user);
         autoLogin(user.getId());
     }
 
     @Transactional
     @Override
     public void setLocale(final User user, final Locale locale) {
-        userDao.setLocale(user.getId(), locale);
+        userDao.setLocale(user, locale);
     }
 
     @Async
@@ -269,22 +261,15 @@ public class UserServiceImpl implements UserService {
         return new String(Base64.getUrlEncoder().encode(bytes));
     }
 
-    //-------------------------------- USER ROLES -----------------------------
-    @Override
-    public List<Role> getUserRoles(final Long userId) {
-        return userDao.getUserRoles(userId);
-    }
-
-
     @Transactional
     @Override
-    public Integer addIdToUserRoles(final Long roleId, final Long userId) {
-        return userDao.addIdToUserRoles(roleId, userId);
+    public void addRole(final User user, final Role role) {
+        userDao.addRole(user, role);
     }
 
     @Transactional
     @Override
-    public Integer updateUserRoles(final Long roleId, final Long userId) {
-        return userDao.updateUserRoles(roleId, userId);
+    public void updateRoles(final User user, final Role role) {
+        userDao.updateRoles(user, role);
     }
 }

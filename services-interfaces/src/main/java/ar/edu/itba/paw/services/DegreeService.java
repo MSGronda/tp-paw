@@ -1,11 +1,12 @@
 package ar.edu.itba.paw.services;
 
 import ar.edu.itba.paw.models.Degree;
+import ar.edu.itba.paw.models.Subject;
 
 import java.util.Optional;
 
 
 public interface DegreeService extends BaseService<Long, Degree> {
-    Optional<Degree> getByName(final String name);
-    int getSubjectYearForDegree(final String subId);
+    Optional<Degree> findByName(final String name);
+    int findSubjectYearForDegree(final Subject subject, final Degree degree);
 }

@@ -1,14 +1,15 @@
 package ar.edu.itba.paw.webapp.controller;
 
 import ar.edu.itba.paw.models.*;
+import ar.edu.itba.paw.models.enums.SubjectFilterField;
 import ar.edu.itba.paw.services.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -16,47 +17,53 @@ import java.util.Set;
 @Controller
 public class SearchController {
     private final SubjectService subjectService;
-    private final ProfessorService professorService;
-    private final ReviewService reviewService;
-
-    private final UserService userService;
-
-    private final DegreeService degreeService;
-
     private final AuthUserService authUserService;
 
     @Autowired
-    public SearchController(SubjectService subjectService, ProfessorService professorService, ReviewService reviewService, UserService userService, DegreeService degreeService, AuthUserService authUserService) {
+    public SearchController(SubjectService subjectService, AuthUserService authUserService) {
         this.subjectService = subjectService;
-        this.professorService = professorService;
-        this.userService = userService;
-        this.reviewService = reviewService;
-        this.degreeService = degreeService;
         this.authUserService = authUserService;
     }
 
     @RequestMapping("/search")
     public ModelAndView search(@RequestParam Map<String, String> params) {
-        long userId;
+        final User user;
         if(!authUserService.isAuthenticated())
-            userId = -1;
+            user = null;
         else
-            userId = authUserService.getCurrentUser().getId();
+            user = authUserService.getCurrentUser();
 
-        final List<Subject> subjects = subjectService.getByNameFiltered(params.getOrDefault("q",""), params);
-        final int totalPages = subjectService.getTotalPagesForSubjects(params.getOrDefault("q",""),params);
-        final Map<String, Set<String>> relevantFilters = subjectService.getRelevantFilters(params.getOrDefault("q",""),params);
-        final Map<String, ReviewStats> reviewStats = reviewService.getReviewStatMapBySubjectList(subjects);
-        final Map<String,Integer> subjectProgress = userService.getUserAllSubjectProgress(userId);
+        final String query = params.getOrDefault("q","");
+        final int page = Integer.parseInt(params.getOrDefault("pageNum", "1"));
+        final String orderBy = params.getOrDefault("ob","name");
+        final String dir = params.getOrDefault("dir","asc");
+
+        final Map<String, String> filters = new HashMap<>();
+        for(Map.Entry<String, String> entry : params.entrySet()) {
+            final String key = entry.getKey();
+            if(key.equals("q") || key.equals("pageNum") || key.equals("ob") || key.equals("dir"))
+                continue;
+
+            filters.put(key, entry.getValue());
+        }
+
+        final int totalPages = subjectService.getTotalPagesForSearch(query, params);
+
+        if(page < 1 || page > totalPages)
+            return new ModelAndView("redirect:/404");
+
+        final List<Subject> subjects = subjectService.search(query, page, filters, orderBy, dir);
+        final Map<SubjectFilterField, List<String>> relevantFilters = subjectService.getRelevantFiltersForSearch(query, filters);
+
+        Map<String, Integer> progress = user == null ? null : user.getSubjectProgress();
 
         ModelAndView mav = new ModelAndView("subjects/search");
         mav.addObject("subjects", subjects);
-        mav.addObject("query", params.getOrDefault("q",""));
-        mav.addObject("reviewStats", reviewStats);
-        mav.addObject("subjectProgress", subjectProgress);
+        mav.addObject("query", query);
+        mav.addObject("subjectProgress", progress);
         mav.addObject("relevantFilters", relevantFilters);
-        mav.addObject("totalPages",totalPages);
-        mav.addObject("actualPage",subjectService.checkPageNum(params));
+        mav.addObject("totalPages", totalPages);
+        mav.addObject("currentPage", page);
 
         return mav;
     }

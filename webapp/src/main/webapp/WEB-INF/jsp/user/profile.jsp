@@ -112,7 +112,7 @@
         <div class="title">
             <div class="moderator-tag">
                 <h1><spring:message code="profile.loggeduser" /></h1>
-                <c:if test="${editor}">
+                <c:if test="${user.editor}">
                     <h1 class="editor-text"> <spring:message code="profile.editor" /> </h1>
                 </c:if>
             </div>
@@ -171,25 +171,25 @@
     </c:forEach>
     <c:if test="${not empty reviews}">
         <div class="pag-buttons">
-            <sl-radio-group name="pagination-radio" value="${actualPage}">
-                <sl-radio-button id="prevPage" value="-1" <c:if test="${actualPage-1 <= 0}">disabled</c:if>>
+            <sl-radio-group name="pagination-radio" value="${currentPage}">
+                <sl-radio-button id="prevPage" value="-1" <c:if test="${currentPage-1 <= 0}">disabled</c:if>>
                     <sl-icon slot="prefix" name="chevron-left"></sl-icon>
                     <spring:message code="subject.previousPage" />
                 </sl-radio-button>
                 <c:forEach var="pageNum" begin="1" end="${totalPages+1}">
                     <c:choose>
-                        <c:when test="${(pageNum > actualPage -2 and pageNum < actualPage + 2) or (pageNum == 1 or pageNum == totalPages+1)}">
+                        <c:when test="${(pageNum > currentPage -2 and pageNum < currentPage + 2) or (pageNum == 1 or pageNum == totalPages+1)}">
                             <div class="active-pag-buttons">
                                 <sl-radio-button class="pageNumButton" value="${pageNum}">${pageNum}</sl-radio-button>
                             </div>
                         </c:when>
-                        <c:when test="${pageNum < totalPages + 1 and pageNum == actualPage + 2}">
+                        <c:when test="${pageNum < totalPages + 1 and pageNum == currentPage + 2}">
                             <div class="active-pag-buttons">
                                 <sl-radio-button class="pageNumButton" value="${pageNum}">${pageNum}</sl-radio-button>
                                 <sl-radio-button value="..." disabled>...</sl-radio-button>
                             </div>
                         </c:when>
-                        <c:when test="${pageNum > 1 and pageNum == actualPage - 2}">
+                        <c:when test="${pageNum > 1 and pageNum == currentPage - 2}">
                             <div class="active-pag-buttons">
                                 <sl-radio-button value="..." disabled>...</sl-radio-button>
                                 <sl-radio-button class="pageNumButton" value="${pageNum}">${pageNum}</sl-radio-button>
@@ -203,7 +203,7 @@
                     </c:choose>
 
                 </c:forEach>
-                <sl-radio-button id="nextPage" value="0" <c:if test="${actualPage-1 >= totalPages}">disabled</c:if>>
+                <sl-radio-button id="nextPage" value="0" <c:if test="${currentPage-1 >= totalPages}">disabled</c:if>>
                     <sl-icon slot="suffix" name="chevron-right"></sl-icon>
                     <spring:message code="subject.nextPage" />
                 </sl-radio-button>

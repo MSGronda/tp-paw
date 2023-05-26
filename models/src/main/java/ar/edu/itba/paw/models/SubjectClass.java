@@ -1,29 +1,38 @@
 package ar.edu.itba.paw.models;
 
-import java.sql.Time;
+import javax.persistence.*;
+import java.io.Serializable;
 import java.util.*;
 
+@Entity
+@Table(name = "class")
 public class SubjectClass {
-    private final String idSub;
-    private final String idClass;
-    private final Set<Professor> professors;
-    private final Set<ClassTime> classTimes;
+    @EmbeddedId
+    private Key key;
 
-    public SubjectClass(final String idSub, final String idClass) {
-        this.idSub = idSub;
-        this.idClass = idClass;
-        this.professors = new LinkedHashSet<>();
-        this.classTimes = new LinkedHashSet<>();
-    }
-    public SubjectClass(final String idSub, final String idClass,
-                        final Set<Professor> professors, final Set<ClassTime> classTimes) {
-        this.idSub = idSub;
-        this.idClass = idClass;
-        this.professors = professors;
-        this.classTimes = classTimes;
-    }
+    @ManyToOne
+    @MapsId("idsub")
+    @JoinColumn(name = "idsub")
+    private Subject subject;
 
-    public Set<ClassTime> getClassTimes() {
+    @ManyToMany
+    @JoinTable(
+            name = "classprofessors",
+            joinColumns = {@JoinColumn(name = "idsub"), @JoinColumn(name = "idclass")},
+            inverseJoinColumns = @JoinColumn(name = "idprof")
+    )
+    private Set<Professor> professors;
+
+    @OneToMany
+    @JoinColumns({
+            @JoinColumn(name = "idsub"),
+            @JoinColumn(name = "idclass")
+    })
+    private Set<SubjectClassTime> classTimes;
+
+    SubjectClass() {}
+
+    public Set<SubjectClassTime> getClassTimes() {
         return classTimes;
     }
 
@@ -31,74 +40,12 @@ public class SubjectClass {
         return professors;
     }
 
-    public String getIdClass() {
-        return idClass;
+    public String getClassId() {
+        return key.idclass;
     }
 
-    public String getIdSub() {
-        return idSub;
-    }
-    public void setprofIds(Collection<Professor> professorIds){
-        this.professors.addAll(professorIds);
-    }
-    public void setClassTimes(Collection<ClassTime> classTimes){
-        this.classTimes.addAll(classTimes);
-    }
-
-    public static class ClassTime{
-        private final Integer day;
-        private final Time startTime;
-        private final Time endTime;
-        private final String classLoc;
-        private final String building;
-        private final String mode;
-
-        public ClassTime(final Integer day, final Time startTime, final Time endTime,
-                         final String classLoc, final String building, final String mode) {
-            this.day = day;
-            this.startTime = startTime;
-            this.endTime = endTime;
-            this.classLoc = classLoc;
-            this.building = building;
-            this.mode = mode;
-        }
-
-        public String getBuilding() {
-            return building;
-        }
-
-        public String getClassLoc() {
-            return classLoc;
-        }
-
-        public Integer getDay() {
-            return day;
-        }
-
-        public Time getEndTime() {
-            return endTime;
-        }
-
-        public String getMode() {
-            return mode;
-        }
-
-        public Time getStartTime() {
-            return startTime;
-        }
-
-        @Override
-        public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
-            ClassTime classTime = (ClassTime) o;
-            return Objects.equals(day, classTime.day) && Objects.equals(startTime, classTime.startTime) && Objects.equals(endTime, classTime.endTime) && Objects.equals(classLoc, classTime.classLoc) && Objects.equals(building, classTime.building) && Objects.equals(mode, classTime.mode);
-        }
-
-        @Override
-        public int hashCode() {
-            return Objects.hash(day, startTime, endTime, classLoc, building, mode);
-        }
+    public Subject getSubject() {
+        return subject;
     }
 
     @Override
@@ -106,11 +53,48 @@ public class SubjectClass {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         SubjectClass that = (SubjectClass) o;
-        return Objects.equals(idSub, that.idSub) && Objects.equals(idClass, that.idClass);
+        return Objects.equals(key, that.key);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(idSub, idClass);
+        return Objects.hash(key);
+    }
+
+    @Embeddable
+    public static class Key implements Serializable {
+        @Column(name = "idclass")
+        private String idclass;
+
+        @Column(name = "idsub")
+        private String idsub;
+
+        public Key(final String idClass, final String idSub) {
+            this.idclass = idClass;
+            this.idsub = idSub;
+        }
+
+        Key() {}
+
+        public String getClassId() {
+            return idclass;
+        }
+
+        public String getSubjectId() {
+            return idsub;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+            Key key = (Key) o;
+            return Objects.equals(idclass, key.idclass) && Objects.equals(idsub, key.idsub);
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(idclass, idsub);
+        }
     }
 }

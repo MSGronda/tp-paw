@@ -1,6 +1,7 @@
 package ar.edu.itba.paw.services;
 
 import ar.edu.itba.paw.models.Degree;
+import ar.edu.itba.paw.models.Subject;
 import ar.edu.itba.paw.persistence.dao.DegreeDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -22,13 +23,12 @@ public class DegreeServiceImpl implements DegreeService {
         return degreeDao.findById(id);
     }
     @Override
-    public Optional<Degree> getByName(final String name) {
-        return degreeDao.getByName(name);
+    public Optional<Degree> findByName(final String name) {
+        return degreeDao.findByName(name);
     }
 
-    @Override
-    public int getSubjectYearForDegree(final String subId){
-        Optional<Integer> semester = degreeDao.getSubjectSemesterForDegree(subId);
+    public int findSubjectYearForDegree(final Subject subject, final Degree degree) {
+        Optional<Integer> semester = degreeDao.findSubjectSemesterForDegree(subject, degree);
         int sem = semester.orElse(-1);
         return (int) Math.ceil(sem / 2.0);
     }

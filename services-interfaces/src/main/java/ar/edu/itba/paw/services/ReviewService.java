@@ -18,11 +18,6 @@ public interface ReviewService extends BaseService<Long, Review> {
     List<Review> getAllSubjectReviewsWithUsername(final String subjectId, final Map<String,String> param);
     List<Review> getAllBySubject(final String idsub);
 
-    Optional<ReviewStats> getReviewStatBySubject(final String idSub);
-
-    Map<String, ReviewStats> getReviewStatMapBySubjectList(final List<Subject> subjects);
-    Map<String, ReviewStats> getReviewStatMapBySubjectIdList(final List<String> idSubs);
-    List<ReviewStats> getReviewStatBySubjectIdList(final List<String> idSubs);
     Review create(final Review review) throws SQLException;
 
     Integer deleteReviewVoteByReviewId(final Long idReview);
@@ -31,7 +26,6 @@ public interface ReviewService extends BaseService<Long, Review> {
     Integer voteReview(final Long idUser, final Long idReview, final int vote);
     Map<Long,Integer> userReviewVoteByIdUser(final Long idUser);
     Map<Long,Integer> userReviewVoteByIdSubAndIdUser(final String idSub, final Long idUser);
-    Map<String, ReviewStats> getReviewStatMapByDegreeId(final long id);
 
     Boolean didUserReview(final List<Review> reviews, final User user);
 

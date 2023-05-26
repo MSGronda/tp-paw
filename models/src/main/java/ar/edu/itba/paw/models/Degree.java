@@ -1,20 +1,28 @@
 package ar.edu.itba.paw.models;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
+import javax.persistence.*;
+import java.util.*;
+import java.util.stream.Collectors;
 
-
+@Entity
+@Table(name = "degrees")
 public class Degree {
-    private final long id;
-    private final String name;
-    private final List<Semester> semesters;
+    @Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "degrees_id_seq")
+    @SequenceGenerator(sequenceName = "degrees_id_seq", name = "degrees_id_seq", allocationSize = 1)
+    private long id;
 
-    public Degree(final long id,final String name, final List<Semester> semesters) {
-        this.id = id;
+    @Column(name = "degname")
+    private String name;
+
+    @OneToMany(mappedBy = "degree")
+    private List<DegreeSubject> subjects;
+
+    public Degree(String name) {
         this.name = name;
-        this.semesters = semesters;
     }
+
+    Degree() {}
 
     public long getId() {
         return id;
@@ -24,8 +32,45 @@ public class Degree {
         return name;
     }
 
-    public List<Semester> getSemesters() {
-        return new ArrayList<>(semesters);
+    public List<Subject> getSubjects() {
+        return subjects
+                .stream()
+                .map(DegreeSubject::getSubject)
+                .collect(Collectors.toList());
+    }
+
+    public List<Subject> getElectives() {
+        return subjects.stream()
+                .filter(s -> s.getSemester() == -1)
+                .map(DegreeSubject::getSubject)
+                .collect(Collectors.toList());
+    }
+
+    public List<DegreeSemester> getSemesters() {
+        final Map<Integer, DegreeSemester> map = new HashMap<>();
+        for (DegreeSubject ds : subjects) {
+            if (ds.getSemester() == -1) continue;
+
+            final DegreeSemester s = map.getOrDefault(ds.getSemester(), new DegreeSemester(ds.getSemester(), new ArrayList<>()));
+            s.getSubjects().add(ds.getSubject());
+            map.putIfAbsent(ds.getSemester(), s);
+        }
+
+        return new ArrayList<>(map.values());
+    }
+
+    public List<DegreeYear> getYears() {
+        final List<DegreeSemester> semesters = getSemesters();
+        final Map<Integer, DegreeYear> yearMap = new HashMap<>();
+
+        for(DegreeSemester semester : semesters) {
+            final int yearNum = (semester.getNumber() + 1) / 2;
+            final DegreeYear year = yearMap.getOrDefault(yearNum, new DegreeYear(this, yearNum, new ArrayList<>()));
+            year.getSubjects().addAll(semester.getSubjects());
+            yearMap.putIfAbsent(yearNum, year);
+        }
+
+        return new ArrayList<>(yearMap.values());
     }
 
     @Override
@@ -33,11 +78,11 @@ public class Degree {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Degree degree = (Degree) o;
-        return id == degree.id && Objects.equals(name, degree.name) && Objects.equals(semesters, degree.semesters);
+        return id == degree.id && Objects.equals(name, degree.name);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id);
+        return Objects.hash(id, name);
     }
 }

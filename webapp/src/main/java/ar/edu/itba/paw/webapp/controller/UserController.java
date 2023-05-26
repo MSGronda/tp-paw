@@ -29,33 +29,25 @@ import java.util.*;
 
 @Controller
 public class UserController {
-    private static final int NOT_ALTERED = 0;
-
     private final UserService userService;
     private final ReviewService reviewService;
-    private final SubjectService subjectService;
     private final MailService mailService;
     private final AuthUserService authUserService;
     private final RolesService rolesService;
-    private final UniUserDetailsService uniUserDetailsService;
 
     @Autowired
     public UserController(
             UserService userService,
             ReviewService reviewService,
-            SubjectService subjectService,
             MailService mailService,
             AuthUserService authUserService,
-            RolesService rolesService,
-            UniUserDetailsService uniUserDetailsService
+            RolesService rolesService
     ) {
         this.userService = userService;
         this.reviewService = reviewService;
-        this.subjectService = subjectService;
         this.mailService = mailService;
         this.authUserService = authUserService;
         this.rolesService = rolesService;
-        this.uniUserDetailsService = uniUserDetailsService;
     }
 
     @RequestMapping("/user/{id:\\d+}")
@@ -86,21 +78,19 @@ public class UserController {
         final List<Review> userReviews = reviewService.getAllUserReviewsWithSubjectName(user.getId(),param);
         final int totalPages = reviewService.getTotalPagesFromUserReviews(user.getId());
         final Map<Long, Integer> userVotes = reviewService.userReviewVoteByIdUser(user.getId());
+        final int page = Integer.parseInt(param.getOrDefault("pageNum", "1"));
+        final String order = param.getOrDefault("order", "name");
+        final String dir = param.getOrDefault("dir", "asc");
 
-        boolean isEditor = false;
-        if(user.getPassword() != null) {
-            UserDetails userDetails = uniUserDetailsService.loadUserByUsername(user.getEmail());
-            isEditor = userDetails.getAuthorities().contains(new SimpleGrantedAuthority(String.format("ROLE_%s", Role.RoleEnum.EDITOR.getName())));
-        }
+        if(page > totalPages || page < 1) return new ModelAndView("redirect:/404");
 
-        mav.addObject("editor", isEditor);
         mav.addObject("user", user);
         mav.addObject("reviews", userReviews);
         mav.addObject("totalPages",totalPages);
-        mav.addObject("actualPage",subjectService.checkPageNum(param));
+        mav.addObject("currentPage", page);
         mav.addObject("userVotes",userVotes);
-        mav.addObject("order",subjectService.checkOrder(param));
-        mav.addObject("dir",subjectService.checkDir(param));
+        mav.addObject("order", order);
+        mav.addObject("dir", dir);
 
         return mav;
     }
@@ -144,7 +134,7 @@ public class UserController {
 
     @RequestMapping("/verification")
     public ModelAndView confirmPage(@RequestParam final String email, final HttpServletRequest req, final HttpServletResponse res) {
-        final Optional<User> maybeUser = userService.getUnconfirmedUserWithEmail(email);
+        final Optional<User> maybeUser = userService.findUnconfirmedByEmail(email);
         if(!maybeUser.isPresent()) {
             return new ModelAndView("redirect:/login");
         }
@@ -159,13 +149,13 @@ public class UserController {
 
     @RequestMapping(value = "/verification/resend", method = { RequestMethod.POST })
     public ModelAndView resendConfirmationEmail(@RequestParam final String email, final Locale locale) {
-        final Optional<User> maybeUser = userService.getUnconfirmedUserWithEmail(email);
+        final Optional<User> maybeUser = userService.findUnconfirmedByEmail(email);
         if(!maybeUser.isPresent()) {
             return new ModelAndView("redirect:/verification?error=true&email=" + email);
         }
 
         final User user = maybeUser.get();
-        final String token = userService.regenerateConfirmToken(user.getId());
+        final String token = userService.regenerateConfirmToken(user);
 
         final String baseUrl = Utils.getBaseUrl();
         final String verifUrl = baseUrl + "/verification/confirm?token=" + token;
@@ -200,7 +190,7 @@ public class UserController {
         }
 
         User user = authUserService.getCurrentUser();
-        userService.editProfile(user.getId(), editUserDataForm.getUserName());
+        userService.editProfile(user, editUserDataForm.getUserName());
         return new ModelAndView("redirect:/profile");
     }
     @RequestMapping(value = "/profile/editdata", method = { RequestMethod.GET })
@@ -219,7 +209,7 @@ public class UserController {
 
         User user = authUserService.getCurrentUser();
         try{
-            userService.changePassword(user.getId(), editUserPasswordForm.getEditPassword(), editUserPasswordForm.getOldPassword(), user.getPassword());
+            userService.changePassword(user, editUserPasswordForm.getEditPassword(), editUserPasswordForm.getOldPassword(), user.getPassword());
         }catch (OldPasswordDoesNotMatchException e){
             ModelAndView mav = editPasswordForm(editUserPasswordForm);
             mav.addObject("oldPasswordDoesNotMatch", true);
@@ -234,14 +224,18 @@ public class UserController {
 
     @RequestMapping(value = "user/{id:\\d+}/moderator")
     public ModelAndView makeModerator(@PathVariable long id) {
+        if(!authUserService.isCurrentUserEditor())
+            return new ModelAndView("redirect:/error");
+
         Optional<Role> maybeRole = rolesService.findByName(Role.RoleEnum.EDITOR.getName());
         if(!maybeRole.isPresent()){
             throw new RoleNotFoundException();
         }
         Role role = maybeRole.get();
 
-        if(userService.updateUserRoles(role.getId(), id) == 0 || !authUserService.isCurrentUserEditor())
-            return new ModelAndView("redirect:/error");
+        final User toMakeMod = userService.findById(id).orElseThrow(UserNotFoundException::new);
+        userService.updateRoles(toMakeMod, role);
+
         return new ModelAndView("redirect:/user/" + id);
     }
 
@@ -338,11 +332,8 @@ public class UserController {
         }
         User user = authUserService.getCurrentUser();
 
-        int resp = userService.updateSubjectProgress(user.getId(), progressForm.getIdSub(), User.SubjectProgressEnum.getByInt(progressForm.getProgress()));
+        userService.updateSubjectProgress(user, progressForm.getIdSub(), User.SubjectProgressEnum.getByInt(progressForm.getProgress()));
 
-        if(resp == NOT_ALTERED){
-            return "invalid parameters"; // we do not give any information on the inner workings
-        }
         return "voted";
     }
 }

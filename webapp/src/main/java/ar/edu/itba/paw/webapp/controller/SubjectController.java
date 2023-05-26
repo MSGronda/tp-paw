@@ -2,7 +2,6 @@ package ar.edu.itba.paw.webapp.controller;
 
 import ar.edu.itba.paw.models.*;
 import ar.edu.itba.paw.services.*;
-import ar.edu.itba.paw.webapp.exceptions.DegreeNotFoundException;
 import ar.edu.itba.paw.webapp.exceptions.SubjectNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -16,25 +15,20 @@ import static java.lang.Long.parseLong;
 @Controller
 public class SubjectController {
     private final SubjectService subjectService;
-    private final ProfessorService professorService;
     private final ReviewService reviewService;
     private final DegreeService degreeService;
-    private final SubjectClassService subjectClassService;
-
-    private final UserService userService;
-
     private final AuthUserService authUserService;
 
     @Autowired
-    public SubjectController(SubjectService subjectService, ReviewService reviewService,
-                             ProfessorService professorService, SubjectClassService subjectClassService,
-                             DegreeService degreeService, UserService userService, AuthUserService authUserService ) {
-        this.subjectClassService = subjectClassService;
+    public SubjectController(
+            SubjectService subjectService,
+            ReviewService reviewService,
+            DegreeService degreeService,
+            AuthUserService authUserService
+    ) {
         this.subjectService = subjectService;
         this.reviewService = reviewService;
-        this.professorService = professorService;
         this.degreeService = degreeService;
-        this.userService = userService;
         this.authUserService = authUserService;
     }
 
@@ -54,34 +48,34 @@ public class SubjectController {
             userId = -1;
         }
 
-        final int year = degreeService.getSubjectYearForDegree(id);
-        final ReviewStats stats = reviewService.getReviewStatBySubject(id).orElseGet(() -> new ReviewStats(id));
-        final List<Professor> professors = professorService.getAllBySubject(id);
+        final Subject subject = maybeSubject.get();
         final int totalPages = reviewService.getTotalPagesForReviews(id);
+
+        final int page = Integer.parseInt(param.getOrDefault("pageNum", "1"));
+        if(page < 1 || page > totalPages) return new ModelAndView("redirect:/404");
+
+        final String order = param.getOrDefault("order", "name");
+        final String dir = param.getOrDefault("dir", "desc");
+
+        //TODO: get degree from user
+        final Degree degree = degreeService.findById(1L).orElseThrow(IllegalStateException::new);
+        final Integer progress = user == null ? 0 : user.getSubjectProgress().get(subject.getId());
+        final int year = degreeService.findSubjectYearForDegree(subject, degree);
         final List<Review> reviews = reviewService.getAllSubjectReviewsWithUsername(id,param);
         final Boolean didReview = reviewService.didUserReview(reviews, user);
-        final List<Subject> prereqs = subjectService.findByIds(new ArrayList<>(maybeSubject.get().getPrerequisites()));
-        final List<SubjectClass> classes = subjectClassService.getBySubId(id);
         final Map<Long, Integer> userVotes = reviewService.userReviewVoteByIdSubAndIdUser(id, userId);
-        final Integer subjectProgress = userService.getUserSubjectProgress(userId,id);
 
         ModelAndView mav = new ModelAndView("subjects/subject_info");
+        mav.addObject("subject", subject);
+        mav.addObject("progress", progress);
         mav.addObject("totalPages",totalPages);
         mav.addObject("reviews", reviews);
-        mav.addObject("professors", professors);
-        mav.addObject("time", stats.getTimeDifficulty());
-        mav.addObject("subject", maybeSubject.get());
-        mav.addObject("year",year);
-        mav.addObject("prereqs", prereqs);
-        mav.addObject("difficulty", stats.getDifficulty());
-        mav.addObject("classes", classes);
+        mav.addObject("year", year);
         mav.addObject("didReview", didReview);
         mav.addObject("userVotes", userVotes);
-        mav.addObject("subjectProgress",subjectProgress);
-        mav.addObject("user", user);
-        mav.addObject("actualPage",subjectService.checkPageNum(param));
-        mav.addObject("order",subjectService.checkOrder(param));
-        mav.addObject("dir",subjectService.checkDir(param));
+        mav.addObject("currentPage", page);
+        mav.addObject("order", order);
+        mav.addObject("dir", dir);
 
         return mav;
     }

@@ -279,7 +279,7 @@
         {
             'id': '${sub.id}', 'name': '${sub.name}', 'department': '${sub.department}', 'credits': '${sub.credits}',
             'classes': [
-                <c:forEach var="subClass" items="${sub.subjectClasses.values()}">
+                <c:forEach var="subClass" items="${sub.classesById.values()}">
                 {
                     'idClass': '${subClass.getIdClass()}', 'classTimes': [
                         <c:forEach var="classTime" items="${subClass.getClassTimes()}">

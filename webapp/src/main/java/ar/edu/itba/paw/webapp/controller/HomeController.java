@@ -1,8 +1,7 @@
 package ar.edu.itba.paw.webapp.controller;
 
 import ar.edu.itba.paw.models.Degree;
-import ar.edu.itba.paw.models.ReviewStats;
-import ar.edu.itba.paw.models.Subject;
+import ar.edu.itba.paw.models.User;
 import ar.edu.itba.paw.services.*;
 import ar.edu.itba.paw.webapp.exceptions.DegreeNotFoundException;
 import org.slf4j.Logger;
@@ -14,62 +13,44 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.util.*;
-import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 @Controller
 public class HomeController {
-    private final DegreeService ds;
-    private final SubjectService ss;
-
-    private final ProfessorService ps;
-
-    private final ReviewService rs;
-
-    private final UserService us;
-
-    private final AuthUserService aus;
     private static final Logger LOGGER = LoggerFactory.getLogger(HomeController.class);
 
+    private final DegreeService ds;
+    private final AuthUserService aus;
 
     @Autowired
-    public HomeController(DegreeService ds, SubjectService ss, ProfessorService ps, ReviewService rs, UserService us, AuthUserService aus) {
+    public HomeController(DegreeService ds, AuthUserService aus) {
         this.ds = ds;
-        this.ss = ss;
-        this.ps = ps;
-        this.us = us;
-        this.rs = rs;
         this.aus = aus;
     }
 
     @RequestMapping("/degree/{degreeName}")
     public ModelAndView degree(@PathVariable String degreeName) {
-        final Optional<Degree> degree = ds.getByName(degreeName);
+        final User user;
+        if(!aus.isAuthenticated()) {
+            user = null;
+            LOGGER.info("User is not authenticated");
+        } else {
+            user = aus.getCurrentUser();
+        }
 
-        if( !degree.isPresent() ){
+        final Optional<Degree> maybeDegree = ds.findByName(degreeName);
+
+        if(!maybeDegree.isPresent()) {
             LOGGER.warn("Degree is not present");
             throw new DegreeNotFoundException();
         }
-        long userId;
-        if(!aus.isAuthenticated()) {
-            userId = -1;
-            LOGGER.info("User is not authenticated");
-        } else {
-            userId = aus.getCurrentUser().getId();
-        }
 
-        final Map<Integer, List<Subject>> infSubsByYear = ss.getInfSubsByYear(degree.get().getId());
-        final List<Subject> infElectives = ss.getInfElectives(degree.get().getId());
-        final Map<String, Integer> subjectProgress = us.getUserAllSubjectProgress(userId);
-        final Map<String, ReviewStats> reviewStats = rs.getReviewStatMapByDegreeId(degree.get().getId());
+        final Degree degree = maybeDegree.get();
+        final Map<String, Integer> progress = user == null ? null : user.getSubjectProgress();
 
         ModelAndView mav = new ModelAndView("degree/index");
-        mav.addObject("years", infSubsByYear.keySet());
-        mav.addObject("infSubsByYear", infSubsByYear);
-        mav.addObject("electives", infElectives);
-        mav.addObject("reviewStatistics", reviewStats);
-        mav.addObject("subjectProgress", subjectProgress);
+        mav.addObject("degree", degree);
+        mav.addObject("subjectProgress", progress);
         return mav;
     }
 
@@ -77,5 +58,4 @@ public class HomeController {
     public ModelAndView home() {
         return new ModelAndView("redirect:/degree/Ingenieria en Informatica");
     }
-
 }

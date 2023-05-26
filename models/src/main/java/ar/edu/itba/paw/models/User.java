@@ -41,7 +41,7 @@ public class User {
     @Column(length = 32)
     private Locale locale;
 
-    @OneToMany
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name = "userroles",
             joinColumns = @JoinColumn(name = "userid"),
@@ -63,6 +63,10 @@ public class User {
     }
 
     User() {}
+
+    public boolean isEditor() {
+        return roles.stream().anyMatch(role -> role.getName().equals("EDITOR"));
+    }
 
     public long getImageId(){
         return imageId;

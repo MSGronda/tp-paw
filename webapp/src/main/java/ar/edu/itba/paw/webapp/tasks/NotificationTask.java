@@ -36,12 +36,12 @@ public class NotificationTask {
         this.baseUrl = env.getRequiredProperty("baseUrl");
     }
 
-    @Scheduled(fixedDelay = TASK_DELAY)
+    //@Scheduled(fixedDelay = TASK_DELAY)
     private void notifScheduledTask() {
 
         LOGGER.debug("Running notification task");
 
-        Map<User, Set<Subject>> map = subjectService.getAllUserUnreviewedNotifSubjects();
+        Map<User, Set<Subject>> map = subjectService.getAllUserUnreviewedNotificationSubjects();
 
         if(map.isEmpty()) return;
 
@@ -61,6 +61,6 @@ public class NotificationTask {
 
         LOGGER.info("Notified {} users to review their subjects", map.size());
 
-        subjectService.updateUnreviewedNotIfTime();
+        subjectService.updateUnreviewedNotificationTime();
     }
 }

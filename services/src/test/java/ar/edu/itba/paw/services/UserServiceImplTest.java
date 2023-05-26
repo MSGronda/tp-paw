@@ -134,19 +134,35 @@ public class UserServiceImplTest {
 
     @Test
     public void testChangePassword() throws OldPasswordDoesNotMatchException {
+        final User user = User.builder()
+                .email(EMAIL)
+                .password(PASSWORD_ENCRYPTED)
+                .username(USERNAME)
+                .id(ID)
+                .build();
+
+        when(userDao.findById(eq(ID))).thenReturn(Optional.of(user));
         when(passwordEncoder.matches(eq(PASSWORD), eq(PASSWORD_ENCRYPTED))).thenReturn(true);
         when(passwordEncoder.encode(eq(NEWPASSWORD))).thenReturn(NEWPASSWORDENCRYPTED);
 
-        us.changePassword(ID, NEWPASSWORD, PASSWORD, PASSWORD_ENCRYPTED);
+        us.changePassword(user, NEWPASSWORD, PASSWORD, PASSWORD_ENCRYPTED);
 
         //Funciona como esperado si no larga excepcion
     }
 
     @Test(expected = OldPasswordDoesNotMatchException.class)
     public void testChangePasswordOldPasswordDoesNotMatch() throws OldPasswordDoesNotMatchException {
+        final User user = User.builder()
+                .email(EMAIL)
+                .password(PASSWORD_ENCRYPTED)
+                .username(USERNAME)
+                .id(ID)
+                .build();
+
+        when(userDao.findById(eq(ID))).thenReturn(Optional.of(user));
         when(passwordEncoder.matches(eq(PASSWORD), eq(PASSWORD_ENCRYPTED))).thenReturn(false);
 
-        us.changePassword(ID, NEWPASSWORD, PASSWORD, PASSWORD_ENCRYPTED);
+        us.changePassword(user, NEWPASSWORD, PASSWORD, PASSWORD_ENCRYPTED);
 
         //Funciona como esperado si larga excepcion
     }

@@ -29,6 +29,6 @@ public class AuthUserServiceImpl implements AuthUserService{
 
     @Override
     public User getCurrentUser(){
-        return userService.getUserWithEmail(SecurityContextHolder.getContext().getAuthentication().getName()).orElseThrow(UserEmailNotFoundException::new);
+        return userService.findByEmail(SecurityContextHolder.getContext().getAuthentication().getName()).orElseThrow(UserEmailNotFoundException::new);
     }
 }

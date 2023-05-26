@@ -13,14 +13,13 @@ import static java.lang.Long.parseLong;
 
 @Controller
 public class SemesterBuilderController {
-
-    private final SubjectClassService subjectClassService;
     private final AuthUserService authUserService;
+    private final SubjectService subjectService;
 
     @Autowired
-    public SemesterBuilderController( SubjectClassService subjectClassService, AuthUserService authUserService ) {
-        this.subjectClassService = subjectClassService;
+    public SemesterBuilderController(AuthUserService authUserService, SubjectService subjectService) {
         this.authUserService = authUserService;
+        this.subjectService = subjectService;
     }
 
     @RequestMapping("/builder")
@@ -35,12 +34,10 @@ public class SemesterBuilderController {
 
         ModelAndView mav = new ModelAndView("builder/semester-builder");
 
-        List<Subject> availableSubjects = subjectClassService.getAllSubsWithClassThatUserCanDo(user.getId());
+        List<Subject> availableSubjects = subjectService.findAllThatUserCanDo(user);
 
         mav.addObject("availableSubjects", availableSubjects);
 
         return mav;
     }
-
-
 }

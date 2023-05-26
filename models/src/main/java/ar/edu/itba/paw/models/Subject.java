@@ -1,16 +1,54 @@
 package ar.edu.itba.paw.models;
 
+import javax.persistence.*;
 import java.util.*;
 
+@Entity
+@Table(name = "subjects")
 public class Subject {
-    private final String id;
-    private final String name;
-    private final String department;
-    private final Integer credits;
-    private final Set<String> prerequisites;
-    private final Set<Long> professorIds;
-    private final Set<Long> degreeIds;
-    private final Map<String, SubjectClass> subjectClasses;
+    @Id
+    @Column(length = 100)
+    private String id;
+
+    @Column(name = "subname", length = 100, nullable = false)
+    private String name;
+
+    @Column(length = 100, nullable = false)
+    private String department;
+
+    @Column(nullable = false)
+    private Integer credits;
+
+    @OneToOne
+    @PrimaryKeyJoinColumn(name = "idsub", foreignKey = @ForeignKey(name = "none", value = ConstraintMode.NO_CONSTRAINT))
+    private ReviewStats reviewStats;
+
+    @ManyToMany
+    @JoinTable(
+            name = "prereqsubjects",
+            joinColumns = @JoinColumn(name = "idsub"),
+            inverseJoinColumns = @JoinColumn(name = "idprereq")
+    )
+    private Set<Subject> prerequisites;
+
+    @ManyToMany
+    @JoinTable(
+            name = "professorssubjects",
+            joinColumns = @JoinColumn(name = "idsub"),
+            inverseJoinColumns = @JoinColumn(name = "idprof")
+    )
+    private Set<Professor> professors;
+
+    @ManyToMany
+    @JoinTable(
+            name = "subjectsdegrees",
+            joinColumns = @JoinColumn(name = "idsub"),
+            inverseJoinColumns = @JoinColumn(name = "iddeg")
+    )
+    private Set<Degree> degrees;
+
+    @OneToMany(mappedBy = "subject")
+    private Set<SubjectClass> classes;
 
     private Subject(Builder builder) {
         this.id = builder.id;
@@ -18,13 +56,23 @@ public class Subject {
         this.department = builder.department;
         this.credits = builder.credits;
         this.prerequisites = builder.prerequisites;
-        this.professorIds = builder.professorIds;
-        this.degreeIds = builder.degreeIds;
-        this.subjectClasses = builder.subjectClasses;
+        this.professors = builder.professors;
+        this.degrees = builder.degrees;
+        this.classes = builder.classes;
     }
 
-    public Map<String, SubjectClass> getSubjectClasses() {
-        return subjectClasses;
+    Subject() {}
+
+    public Map<String, SubjectClass> getClassesById() {
+        final Map<String, SubjectClass> res = new LinkedHashMap<>();
+        for(SubjectClass subjectClass : classes) {
+            res.put(subjectClass.getClassId(), subjectClass);
+        }
+        return res;
+    }
+
+    public Set<SubjectClass> getClasses() {
+        return classes;
     }
 
     public String getId() {
@@ -39,20 +87,28 @@ public class Subject {
         return department;
     }
 
-    public Set<String> getPrerequisites() {
+    public Set<Subject> getPrerequisites() {
         return prerequisites;
     }
 
-    public Set<Long> getProfessorIds() {
-        return professorIds;
+    public Set<Professor> getProfessors() {
+        return professors;
     }
 
-    public Set<Long> getDegreeIds() {
-        return degreeIds;
+    public Set<Degree> getDegrees() {
+        return degrees;
     }
 
     public Integer getCredits() {
         return credits;
+    }
+
+    public ReviewStats getReviewStats() {
+        if(reviewStats == null) {
+            reviewStats = new ReviewStats();
+        }
+
+        return reviewStats;
     }
 
     @Override
@@ -60,12 +116,17 @@ public class Subject {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Subject subject = (Subject) o;
-        return Objects.equals(id, subject.getId()) && Objects.equals(name, subject.getName()) && Objects.equals(department, subject.getDepartment()) && Objects.equals(credits, subject.getCredits()) && Objects.equals(prerequisites, subject.getPrerequisites()) && Objects.equals(professorIds, subject.getProfessorIds()) && Objects.equals(degreeIds, subject.getDegreeIds());
+        return Objects.equals(id, subject.id) && Objects.equals(name, subject.name) && Objects.equals(department, subject.department) && Objects.equals(credits, subject.credits);
     }
 
     @Override
     public int hashCode() {
         return Objects.hash(id);
+    }
+
+    @Override
+    public String toString() {
+        return name;
     }
 
     public static Builder builder() {
@@ -82,16 +143,16 @@ public class Subject {
         private String name;
         private String department;
         private Integer credits;
-        private Set<String> prerequisites;
-        private Set<Long> professorIds;
-        private Set<Long> degreeIds;
-        private Map<String, SubjectClass> subjectClasses;
+        private Set<Subject> prerequisites;
+        private Set<Professor> professors;
+        private Set<Degree> degrees;
+        private Set<SubjectClass> classes;
 
         private Builder() {
             this.prerequisites = new LinkedHashSet<>();
-            this.professorIds = new LinkedHashSet<>();
-            this.degreeIds = new LinkedHashSet<>();
-            this.subjectClasses = new LinkedHashMap<>();
+            this.professors = new LinkedHashSet<>();
+            this.degrees = new LinkedHashSet<>();
+            this.classes = new LinkedHashSet<>();
         }
 
         private Builder(Subject subject) {
@@ -100,9 +161,9 @@ public class Subject {
             this.department = subject.department;
             this.credits = subject.credits;
             this.prerequisites = subject.prerequisites;
-            this.professorIds = subject.professorIds;
-            this.degreeIds = subject.degreeIds;
-            this.subjectClasses = subject.subjectClasses;
+            this.professors = subject.professors;
+            this.degrees = subject.degrees;
+            this.classes = subject.classes;
         }
 
         public Builder id(final String id) {
@@ -125,23 +186,23 @@ public class Subject {
             return this;
         }
 
-        public Builder prerequisites(final Set<String> prerequisites) {
+        public Builder prerequisites(final Set<Subject> prerequisites) {
             this.prerequisites = prerequisites;
             return this;
         }
 
-        public Builder professorIds(final Set<Long> professorIds) {
-            this.professorIds = professorIds;
+        public Builder professors(final Set<Professor> professors) {
+            this.professors = professors;
             return this;
         }
 
-        public Builder degreeIds(final Set<Long> degreeIds) {
-            this.degreeIds = degreeIds;
+        public Builder degrees(final Set<Degree> degrees) {
+            this.degrees = degrees;
             return this;
         }
 
-        public Builder subjectClasses(final Map<String, SubjectClass> subjectClasses) {
-            this.subjectClasses = subjectClasses;
+        public Builder classes(final Set<SubjectClass> classes) {
+            this.classes = classes;
             return this;
         }
 

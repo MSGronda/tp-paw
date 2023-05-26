@@ -19,7 +19,7 @@ import java.util.*;
 
 @Repository
 public class ReviewJdbcDao implements ReviewDao {
-    private static final String PAGE_SIZE = "10";
+    private static final int PAGE_SIZE = 10;
     private static final Logger LOGGER = LoggerFactory.getLogger(ReviewJdbcDao.class);
 
 
@@ -146,25 +146,27 @@ public class ReviewJdbcDao implements ReviewDao {
             int averageTimeDemandingCount = rs.getInt("averageTimeDemandingCount");
             int timeDemandingCount = rs.getInt("timeDemandingCount");
 
-            final ReviewStats subClass = reviewStats.getOrDefault(idSub,
-                new ReviewStats(idSub, reviewCount, easyCount, mediumCount, hardCount, notTimeDemandingCount, averageTimeDemandingCount, timeDemandingCount));
+//            final ReviewStats subClass = reviewStats.getOrDefault(idSub,
+//                new ReviewStats(idSub, reviewCount, easyCount, mediumCount, hardCount, notTimeDemandingCount, averageTimeDemandingCount, timeDemandingCount));
 
-            reviewStats.put(idSub, subClass);
+//            reviewStats.put(idSub, subClass);
         }
         return reviewStats;
     }
 
     private static ReviewStats rowMapperReviewStatistic(final ResultSet rs, final int rowNum) throws SQLException {
-        return new ReviewStats(
-            rs.getString("idSub"),
-            rs.getInt("reviewCount"),
-            rs.getInt("easyCount"),
-            rs.getInt("mediumCount"),
-            rs.getInt("hardCount"),
-            rs.getInt("notTimeDemandingCount"),
-            rs.getInt("averageTimeDemandingCount"),
-            rs.getInt("timeDemandingCount")
-        );
+//        return new ReviewStats(
+//            rs.getString("idSub"),
+//            rs.getInt("reviewCount"),
+//            rs.getInt("easyCount"),
+//            rs.getInt("mediumCount"),
+//            rs.getInt("hardCount"),
+//            rs.getInt("notTimeDemandingCount"),
+//            rs.getInt("averageTimeDemandingCount"),
+//            rs.getInt("timeDemandingCount")
+//        );
+
+        return null;
     }
 
 
@@ -296,7 +298,7 @@ public class ReviewJdbcDao implements ReviewDao {
     public List<Review> getAllUserReviewsWithSubjectName(final Long userId,final Map<String, String> params) {
         String orderBy = " ORDER BY " + params.getOrDefault("order", "semester") + " " +
                 params.getOrDefault("dir", "DESC");
-        int offset = Integer.parseInt(params.getOrDefault("pageNum", "0")) * Integer.parseInt(PAGE_SIZE);
+        int offset = Integer.parseInt(params.getOrDefault("pageNum", "0")) * PAGE_SIZE;
         String pageNum = " LIMIT " + PAGE_SIZE + " OFFSET " + offset;
         return jdbcTemplate.query(completeReviewSqlSubjectName("WHERE r.iduser = ?",orderBy,pageNum), ReviewJdbcDao::subjectNameRowMapper, userId);
     }
@@ -304,23 +306,20 @@ public class ReviewJdbcDao implements ReviewDao {
     @Override
     public int getTotalPagesFromUserReviews(final Long userId){
         List<Review> reviews = jdbcTemplate.query(completeReviewSqlSubjectName("WHERE r.iduser = ?"), ReviewJdbcDao::subjectNameRowMapper, userId);
-        int pageSize = Integer.parseInt(PAGE_SIZE);
-        return reviews.size()%pageSize == 0? (reviews.size() / pageSize)-1 : (reviews.size()/pageSize);
+        return Math.max((int)Math.ceil((double)reviews.size() / PAGE_SIZE),1);
     }
 
     @Override
     public int getTotalPagesForReviews(final String subjectId) {
         int amountReviews = jdbcTemplate.queryForObject("SELECT COUNT(*) FROM " + Tables.REVIEWS + " WHERE idsub = " + subjectId + "::text", Integer.class);
-        int pageSize = Integer.parseInt(PAGE_SIZE);
-        return amountReviews%pageSize == 0? (amountReviews / pageSize)-1 : (amountReviews/pageSize);
+        return Math.max((int)Math.ceil((double)amountReviews / PAGE_SIZE),1);
     }
 
     @Override
     public List<Review> getAllSubjectReviewsWithUsername(final String subjectId, final Map<String, String> params) {
-
         String orderBY = " ORDER BY " + params.getOrDefault("order", "easy") + " " +
             params.getOrDefault("dir", "ASC");
-        int offset = Integer.parseInt(params.getOrDefault("pageNum", "0")) * Integer.parseInt(PAGE_SIZE);
+        int offset = Integer.parseInt(params.getOrDefault("pageNum", "0")) * PAGE_SIZE;
         String pageNum = " LIMIT " + PAGE_SIZE + " OFFSET " + offset;
         return jdbcTemplate.query(completeReviewSqlUserName("WHERE r.idSub = ? ", orderBY, pageNum), ReviewJdbcDao::UsernameRowMapper, subjectId);
     }

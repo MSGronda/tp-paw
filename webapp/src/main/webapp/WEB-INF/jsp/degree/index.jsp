@@ -36,23 +36,20 @@
 <jsp:include page="../components/navbar.jsp"/>
 <main>
     <sl-tab-group class="year-group container-70">
-        <c:forEach var="year" items="${years}">
+        <c:forEach var="year" items="${degree.years}">
             <%--          <sl-tab slot="nav" panel="semester-${semester.number}">--%>
-            <sl-tab slot="nav" panel="year-${year}">
-                <spring:message code="home.year" arguments="${year}"/>
+            <sl-tab slot="nav" panel="year-${year.number}">
+                <spring:message code="home.year" arguments="${year.number}"/>
             </sl-tab>
         </c:forEach>
         <sl-tab slot="nav" panel="electives">
             <spring:message code="home.electives"/>
         </sl-tab>
 
-        <c:forEach var="year" items="${years}">
-            <sl-tab-panel class="year-panel" name="year-${year}">
-                <c:forEach var="subject" items="${infSubsByYear[year]}">
+        <c:forEach var="year" items="${degree.years}">
+            <sl-tab-panel class="year-panel" name="year-${year.number}">
+                <c:forEach var="subject" items="${year.subjects}">
                     <c:set var="subject" value="${subject}" scope="request"/>
-                    <c:set var="reviewCount" value="${reviewStatistics[subject.id].reviewCount}" scope="request"/>
-                    <c:set var="difficulty" value="${reviewStatistics[subject.id].difficulty}" scope="request"/>
-                    <c:set var="time" value="${reviewStatistics[subject.id].timeDifficulty}" scope="request"/>
                     <c:set var="progress" value="${subjectProgress.getOrDefault(subject.id, 0)}" scope="request"/>
                     <c:import url="../components/subject_card.jsp"/>
                 </c:forEach>
@@ -60,11 +57,11 @@
             </sl-tab-panel>
         </c:forEach>
         <sl-tab-panel class="year-panel" name="electives">
-            <c:forEach var="elective" items="${electives}">
+            <c:forEach var="elective" items="${degree.electives}">
                 <c:set var="subject" value="${elective}" scope="request"/>
-                <c:set var="reviewCount" value="${reviewStatistics[elective.id].reviewCount}" scope="request"/>
-                <c:set var="difficulty" value="${reviewStatistics[elective.id].difficulty}" scope="request"/>
-                <c:set var="time" value="${reviewStatistics[elective.id].timeDifficulty}" scope="request"/>
+                <c:set var="reviewCount" value="${elective.reviewStats.reviewCount}" scope="request"/>
+                <c:set var="difficulty" value="${elective.reviewStats.difficulty}" scope="request"/>
+                <c:set var="time" value="${elective.reviewStats.timeDemanding}" scope="request"/>
                 <c:set var="progress" value="${subjectProgress.getOrDefault(elective.id, 0)}" scope="request"/>
                 <c:import url="../components/subject_card.jsp"/>
             </c:forEach>

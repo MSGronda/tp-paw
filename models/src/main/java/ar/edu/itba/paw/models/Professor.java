@@ -1,24 +1,34 @@
 package ar.edu.itba.paw.models;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
+import javax.persistence.*;
+import java.util.*;
 
+@Entity
+@Table(name = "professors")
 public class Professor {
-    private final long id;
-    private final String name;
-    private final List<String> subjectIds;
+    @Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "professors_id_seq")
+    @SequenceGenerator(sequenceName = "professors_id_seq", name = "professors_id_seq", allocationSize = 1)
+    private long id;
+
+    @Column(name = "profname", length = 100, nullable = false)
+    private String name;
+
+    @ManyToMany
+    @JoinTable(
+            name = "professorssubjects",
+            joinColumns = @JoinColumn(name = "idprof"),
+            inverseJoinColumns = @JoinColumn(name = "idsub")
+    )
+    private List<Subject> subjects;
 
     public Professor(final long id, final String name){
         this.id = id;
         this.name = name;
-        this.subjectIds = new ArrayList<>();
+        this.subjects = new ArrayList<>();
     }
-    public Professor(final long id, final String name, final List<String> subjectIds) {
-        this.id = id;
-        this.name = name;
-        this.subjectIds = subjectIds;
-    }
+
+    Professor() {}
 
     public long getId() {
         return id;
@@ -28,8 +38,8 @@ public class Professor {
         return name;
     }
 
-    public List<String> getSubjectIds() {
-        return subjectIds;
+    public List<Subject> getSubjects() {
+        return subjects;
     }
 
     @Override

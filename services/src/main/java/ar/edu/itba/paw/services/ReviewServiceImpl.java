@@ -85,49 +85,6 @@ public class ReviewServiceImpl implements ReviewService {
         return reviewDao.getAllBySubject(idsub);
     }
 
-    @Override
-    public Optional<ReviewStats> getReviewStatBySubject(final String idSub) {
-        return reviewDao.getReviewStatBySubject(idSub);
-    }
-
-    @Override
-    public Map<String, ReviewStats> getReviewStatMapByDegreeId(final long id){
-        List<ReviewStats> rs  =  reviewDao.getReviewStatListByDegreeId(id);
-        Map<String, ReviewStats> map = new HashMap<>();
-
-        for(ReviewStats reviewStat : rs){
-            map.put(reviewStat.getIdSub(), reviewStat);
-        }
-
-        return map;
-    }
-
-    public Map<String, ReviewStats> getReviewStatMapBySubjectList(final List<Subject> subjects){
-        List<String> idSubs = new ArrayList<>();
-        for(Subject sub : subjects){
-            idSubs.add(sub.getId());
-        }
-
-        Map<String, ReviewStats> incomplete = reviewDao.getReviewStatMapBySubjectList(idSubs);
-
-        for(String idSub : idSubs){
-            incomplete.putIfAbsent(idSub, new ReviewStats(idSub));
-        }
-
-
-        return incomplete;
-    }
-
-    @Override
-    public Map<String, ReviewStats> getReviewStatMapBySubjectIdList(final List<String> idSubs){
-        return reviewDao.getReviewStatMapBySubjectList(idSubs);
-    }
-
-    @Override
-    public List<ReviewStats> getReviewStatBySubjectIdList(final List<String> idSubs){
-        return reviewDao.getReviewStatBySubjectList(idSubs);
-    }
-
     @Transactional
     @Override
     public Review create(final Review review) throws SQLException {

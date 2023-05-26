@@ -4,37 +4,29 @@ import ar.edu.itba.paw.models.Role;
 import ar.edu.itba.paw.models.User;
 import ar.edu.itba.paw.persistence.exceptions.UserEmailAlreadyTakenPersistenceException;
 
-import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 import java.util.Optional;
 
 public interface UserDao extends RWDao<Long,User> {
     User create(final User user) throws UserEmailAlreadyTakenPersistenceException;
 
-    Optional<User> getUserWithEmail(final String email);
-    Optional<User> getUnconfirmedUserWithEmail(final String email);
+    Optional<User> findByEmail(final String email);
+    Optional<User> findUnconfirmedByEmail(final String email);
 
-    Integer deleteUserProgressForSubject(final Long id, final String idSub);
-    Integer updateSubjectProgress(final Long id, final String idSub, final Integer newProgress);
-    Optional<Integer> getUserSubjectProgress(final Long id, final String idSub);
-    Map<String, Integer> getUserAllSubjectProgress(final Long id);
+    Optional<User> findByConfirmToken(final String token);
 
-    void changePassword(final Long userId, final String password);
+    void deleteSubjectProgress(final User user, final String idSub);
+    void updateSubjectProgress(final User user, final String idSub, final Integer newProgress);
 
-    void editProfile(final Long userId, final String username);
+    void changePassword(final User user, final String password);
+    void changeUsername(final User user, final String username);
 
-    List<Role> getUserRoles(final Long userId);
+    void addRole(final User user, final Role role);
+    void updateRoles(final User user, final Role role);
 
-    Integer addIdToUserRoles(final Long roleId, final Long userId);
+    void confirmUser(final User user);
 
-    Integer updateUserRoles(final Long roleId, final Long userId);
+    void setLocale(final User user, final Locale locale);
 
-    Optional<User> findUserByConfirmToken(final String token);
-
-    void confirmUser(final long userId);
-
-    void setLocale(long userId, Locale locale);
-
-    void updateConfirmToken(long userId, String token);
+    void updateConfirmToken(final User user, final String token);
 }

@@ -105,7 +105,7 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
             final String pass = req.getParameter("password");
             final String baseUrl = req.getContextPath();
 
-            final Optional<User> maybeUser = userService.getUnconfirmedUserWithEmail(email);
+            final Optional<User> maybeUser = userService.findUnconfirmedByEmail(email);
             if(!maybeUser.isPresent() || !passwordEncoder().matches(pass, maybeUser.get().getPassword())){
                 res.sendRedirect(baseUrl + "/login?error=true");
                 return;

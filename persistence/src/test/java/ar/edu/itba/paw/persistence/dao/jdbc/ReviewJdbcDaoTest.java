@@ -3,7 +3,6 @@ package ar.edu.itba.paw.persistence.dao.jdbc;
 import ar.edu.itba.paw.models.Review;
 import ar.edu.itba.paw.models.ReviewStats;
 import ar.edu.itba.paw.persistence.config.TestConfig;
-import ar.edu.itba.paw.persistence.dao.jdbc.ReviewJdbcDao;
 import org.junit.After;
 import ar.edu.itba.paw.persistence.constants.Tables;
 import org.junit.Assert;
@@ -281,8 +280,8 @@ public class ReviewJdbcDaoTest {
 
         List<ReviewStats> list = reviewDao.getReviewStatBySubjectList(idList);
         Assert.assertEquals(2, list.size());
-        Assert.assertEquals(SUBJECTID, list.get(0).getIdSub());
-        Assert.assertEquals(SUBJECTID2, list.get(1).getIdSub());
+        Assert.assertEquals(SUBJECTID, list.get(0).getSubject());
+        Assert.assertEquals(SUBJECTID2, list.get(1).getSubject());
         Assert.assertEquals(1, list.get(0).getEasyCount());
         Assert.assertEquals(0, list.get(0).getMediumCount());
         Assert.assertEquals(1, list.get(1).getHardCount());
@@ -309,8 +308,8 @@ public class ReviewJdbcDaoTest {
 
         Map<String, ReviewStats> map = reviewDao.getReviewStatMapBySubjectList(idList);
         Assert.assertEquals(2, map.size());
-        Assert.assertEquals(SUBJECTID, map.get(SUBJECTID).getIdSub());
-        Assert.assertEquals(SUBJECTID2, map.get(SUBJECTID2).getIdSub());
+        Assert.assertEquals(SUBJECTID, map.get(SUBJECTID).getSubject());
+        Assert.assertEquals(SUBJECTID2, map.get(SUBJECTID2).getSubject());
         Assert.assertEquals(1, map.get(SUBJECTID).getEasyCount());
         Assert.assertEquals(0, map.get(SUBJECTID).getMediumCount());
         Assert.assertEquals(1, map.get(SUBJECTID2).getHardCount());

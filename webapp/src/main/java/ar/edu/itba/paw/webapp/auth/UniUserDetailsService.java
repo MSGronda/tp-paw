@@ -31,10 +31,10 @@ public class UniUserDetailsService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(final String email) throws UsernameNotFoundException {
-        final User user = us.getUserWithEmail(email)
+        final User user = us.findByEmail(email)
                 .orElseThrow(() -> new UsernameNotFoundException("No user for email" + email));
 
-        final List<Role> userRoles = us.getUserRoles(user.getId());
+        final List<Role> userRoles = user.getRoles();
 
         final Collection<GrantedAuthority> authorities = new HashSet<>();
         userRoles.forEach(roles -> authorities.add(new SimpleGrantedAuthority(String.format("ROLE_%s", roles.getName()))));
