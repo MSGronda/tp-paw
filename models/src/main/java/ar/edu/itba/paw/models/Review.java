@@ -1,22 +1,55 @@
 package ar.edu.itba.paw.models;
 
-public class Review {
-    private static final int PREVIEW_SIZE=500;
+import org.hibernate.annotations.Formula;
 
-    private final long id;
-    private final long userId;
-    private final String subjectId;
-    private final int easy;
-    private final int timeDemanding;
-    private final String text;
-    private final String subjectName;
-    private final long upvotes;
-    private final long downvotes;
-    private final String username;
-    private final boolean anonymous;
-    private final String previewText;
-    private final String showMoreText;
-    private final boolean requiresShowMore;
+import javax.persistence.*;
+
+@Entity
+@Table(name = "reviews")
+public class Review {
+    @Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "review_id_seq")
+    @SequenceGenerator(sequenceName = "review_id_seq", name = "review_id_seq", allocationSize = 1)
+    private Long id;
+
+    @ManyToOne
+    @JoinColumn(name = "iduser")
+    @Column(name = "iduser", nullable = false)
+    private Long userId;
+
+    @ManyToOne
+    @JoinColumn(name = "idsub")
+    @Column(name = "idsub",nullable = false)
+    private String subjectId;
+
+    @Column
+    private Integer easy;
+
+    @Column
+    private Integer timeDemanding;
+
+    @Column(name = "revtext", columnDefinition = "TEXT",nullable = false)
+    private String text;
+
+    @Column(name = "useranonymous")
+    private Boolean anonymous;
+
+    @ManyToOne
+    @JoinColumn(name = "subname")
+    private String subjectName;
+
+    @ManyToOne
+    @JoinTable(
+            name = "users",
+            joinColumns = @JoinColumn(name = "iduser")
+    )
+    private String username;
+
+    @Formula("SELECT COUNT(vote) FROM review_vote WHERE id = :id AND vote = 1")
+    private Long upvotes;
+
+    @Formula("SELECT COUNT(vote) FROM review_vote WHERE id = :id AND vote = -1")
+    private Long downvotes;
 
     private Review(Builder builder) {
         this.id = builder.id;
@@ -30,17 +63,9 @@ public class Review {
         this.upvotes = builder.upvotes;
         this.downvotes = builder.downvotes;
         this.username = builder.username;
-
-        if(text.length() > PREVIEW_SIZE){
-            this.requiresShowMore = true;
-            this.previewText = this.text.substring(0,PREVIEW_SIZE);
-            this.showMoreText = this.text.substring(PREVIEW_SIZE);
-        } else {
-            this.requiresShowMore = false;
-            this.previewText = "";
-            this.showMoreText = "";
-        }
     }
+
+    Review() {}
 
     public long getUpvotes(){
         return upvotes;
@@ -85,16 +110,20 @@ public class Review {
         return anonymous;
     }
 
-    public String getPreviewText() {
-        return previewText;
+    public void setEasy(Integer easy) {
+        this.easy = easy;
     }
 
-    public Boolean getRequiresShowMore() {
-        return requiresShowMore;
+    public void setTimeDemanding(Integer timeDemanding) {
+        this.timeDemanding = timeDemanding;
     }
 
-    public String getShowMoreText() {
-        return showMoreText;
+    public void setText(String text) {
+        this.text = text;
+    }
+
+    public void setAnonymous(Boolean anonymous) {
+        this.anonymous = anonymous;
     }
 
     public static Builder builder() {
