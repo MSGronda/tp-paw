@@ -23,7 +23,7 @@ import java.util.Set;
 public class HomeController {
     private final DegreeService ds;
     private final SubjectService ss;
-
+    private final SubjectClassService scs;
     private final ProfessorService ps;
 
     private final ReviewService rs;
@@ -35,13 +35,14 @@ public class HomeController {
 
 
     @Autowired
-    public HomeController(DegreeService ds, SubjectService ss, ProfessorService ps, ReviewService rs, UserService us, AuthUserService aus) {
+    public HomeController(DegreeService ds, SubjectService ss, ProfessorService ps, ReviewService rs, SubjectClassService scs, UserService us, AuthUserService aus) {
         this.ds = ds;
         this.ss = ss;
         this.ps = ps;
         this.us = us;
         this.rs = rs;
         this.aus = aus;
+        this.scs = scs;
     }
 
     @RequestMapping("/degree/{id:\\d+}")
@@ -84,10 +85,49 @@ public class HomeController {
             return new ModelAndView("user/login");
         }
 
-        Map<String, Integer> passedSubjects = us.getUserAllSubjectProgress(user.getId());
+
+        // TODO: replace with real calls
+        final long userDegree = 1;           // User.getDegree
+        final Map<Integer, Integer> creditsPerYear  = new HashMap<>(); // degreeService.getCreditsPerYear(userDegree)
+        final Map<Integer, Integer> creditsDoneByUserPerYear = new HashMap<>(); // userService.getCreditsDoneByUserPerYear
+        final int userCreditsDone = 176;    // creditsDoneByUserPerYear.stream().reduce()
+        final int totalCredits = 244;       // creditsPerYear.stream().reduce()
+        final double userProgressPercentage = Math.floor( ((1.0 * userCreditsDone) / totalCredits) * 100);
+
+        final List<Subject> currentUserSemester = scs.getAllSubsWithClassThatUserCanDo(user.getId());    // userService.getCurrentUserService
+        final List<Subject> subjectsUserCanDo = ss.getByName("z");      // subjectService.getAllSubsWithClassThatUserCanDo
+        final List<Subject> futureSubjects = ss.getByName("t");      // subjectService.getAllSubsUserStillCannotDo
+        final List<Subject> pastSubjects = ss.getByName("b");         // subjectService.getAllSubjectsUserHasDone
 
 
+        // TODO: remove. Moqueo de datos
+        creditsPerYear.put(1,48);
+        creditsPerYear.put(2,50);
+        creditsPerYear.put(3,45);
+        creditsPerYear.put(4,45);
+        creditsPerYear.put(5,20);
+        creditsPerYear.put(-1,27);
+
+        creditsDoneByUserPerYear.put(1,48);
+        creditsDoneByUserPerYear.put(2,50);
+        creditsDoneByUserPerYear.put(3,45);
+        creditsDoneByUserPerYear.put(4,30);
+        creditsDoneByUserPerYear.put(5,0);
+        creditsDoneByUserPerYear.put(-1,5);
+
+        currentUserSemester.removeIf(e->e.getCredits() <= 3);
+
+        // TODO: remove. = = = = = = =
         ModelAndView mav = new ModelAndView("dashboard/dashboard");
+        mav.addObject("userProgressPercentage",userProgressPercentage);
+        mav.addObject("creditsPerYear",creditsPerYear);
+        mav.addObject("creditsDoneByUserPerYear",creditsDoneByUserPerYear);
+        mav.addObject("userCreditsDone",userCreditsDone);
+        mav.addObject("totalCredits",totalCredits);
+        mav.addObject("currentUserSemester",currentUserSemester);
+        mav.addObject("subjectsUserCanDo",subjectsUserCanDo);
+        mav.addObject("futureSubjects",futureSubjects);
+        mav.addObject("pastSubjects",pastSubjects);
         return mav;
     }
 

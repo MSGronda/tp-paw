@@ -73,11 +73,6 @@
                   <sl-icon  name="check2-circle"></sl-icon>
             </sl-tooltip>
           </c:when>
-          <c:otherwise>
-            <sl-tooltip class="progress-icon" content="<spring:message code="card.progress.tooltip.notpassed"/>">
-                  <sl-icon  name="x-square"></sl-icon>
-            </sl-tooltip>
-          </c:otherwise>
         </c:choose>
       </sec:authorize>
     </div>
