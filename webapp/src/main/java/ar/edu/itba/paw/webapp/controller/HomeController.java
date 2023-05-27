@@ -1,9 +1,6 @@
 package ar.edu.itba.paw.webapp.controller;
 
-import ar.edu.itba.paw.models.Degree;
-import ar.edu.itba.paw.models.ReviewStats;
-import ar.edu.itba.paw.models.Subject;
-import ar.edu.itba.paw.models.User;
+import ar.edu.itba.paw.models.*;
 import ar.edu.itba.paw.services.*;
 import ar.edu.itba.paw.webapp.exceptions.DegreeNotFoundException;
 import org.slf4j.Logger;
@@ -94,13 +91,16 @@ public class HomeController {
         final int totalCredits = 244;       // creditsPerYear.stream().reduce()
         final double userProgressPercentage = Math.floor( ((1.0 * userCreditsDone) / totalCredits) * 100);
 
+
+        // TODO: this subject should only contain the class the user is signed up to
         final List<Subject> currentUserSemester = scs.getAllSubsWithClassThatUserCanDo(user.getId());    // userService.getCurrentUserService
+
         final List<Subject> subjectsUserCanDo = ss.getByName("z");      // subjectService.getAllSubsWithClassThatUserCanDo
         final List<Subject> futureSubjects = ss.getByName("t");      // subjectService.getAllSubsUserStillCannotDo
         final List<Subject> pastSubjects = ss.getByName("b");         // subjectService.getAllSubjectsUserHasDone
 
 
-        // TODO: remove. Moqueo de datos
+        // TODO: = = = = = = = remove. Moqueo de datos = = = = = = =
         creditsPerYear.put(1,48);
         creditsPerYear.put(2,50);
         creditsPerYear.put(3,45);
@@ -116,8 +116,15 @@ public class HomeController {
         creditsDoneByUserPerYear.put(-1,5);
 
         currentUserSemester.removeIf(e->e.getCredits() <= 3);
+        for(Subject s : currentUserSemester){
+            Map.Entry<String,SubjectClass> only =  s.getSubjectClasses().entrySet().stream().findFirst().get();
+            s.getSubjectClasses().clear();
+            s.getSubjectClasses().put(only.getKey(), only.getValue());
+        }
 
-        // TODO: remove. = = = = = = =
+        currentUserSemester.clear();
+        // TODO: = = = = = = = remove. = = = = = = =
+
         ModelAndView mav = new ModelAndView("dashboard/dashboard");
         mav.addObject("userProgressPercentage",userProgressPercentage);
         mav.addObject("creditsPerYear",creditsPerYear);

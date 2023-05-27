@@ -2,12 +2,12 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 
-<c:set var="sub" value="${requestScope.subject}"/>
+<c:set var="name" value="${requestScope.name}"/>
 <c:set var="subClass" value="${requestScope.subClass}"/>
 
 <sl-card class="class-card">
     <div class="chooser" slot="header">
-        <h5>${sub.name} - ${subClass.getIdClass()}</h5>
+        <h5 class="class-card-name">${name} - ${subClass.getIdClass()}</h5>
     </div>
     <div class="column">
         <table>
