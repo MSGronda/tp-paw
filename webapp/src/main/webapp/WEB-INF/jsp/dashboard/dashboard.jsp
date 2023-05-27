@@ -143,7 +143,6 @@
             width: 100%;
             display: grid;
             grid-template-columns: repeat(4, 1fr);
-            a
         }
 
 
@@ -170,22 +169,22 @@
         <div class="dashboard-area">
             <div class="choosing-area">
                 <sl-tab-group class="tabs" >
-                    <sl-tab  slot="nav" panel="overview">Overview</sl-tab>
-                    <sl-tab slot="nav" panel="current-semester">Current Semester</sl-tab>
-                    <sl-tab slot="nav" panel="future-subjects">Future Subjects</sl-tab>
-                    <sl-tab slot="nav" panel="past-subjects">Past Subjects</sl-tab>
+                    <sl-tab  slot="nav" panel="overview"><spring:message code="dashboard.overview"/></sl-tab>
+                    <sl-tab slot="nav" panel="current-semester"><spring:message code="dashboard.currentSemester"/></sl-tab>
+                    <sl-tab slot="nav" panel="future-subjects"><spring:message code="dashboard.futureSubjects"/></sl-tab>
+                    <sl-tab slot="nav" panel="past-subjects"><spring:message code="dashboard.pastSubjects"/></sl-tab>
 
 
                     <sl-tab-panel class="tab-panel" name="overview">
                         <div class="overview-area">
                             <sl-card class="general-info-card">
                                 <div class="row">
-                                    <h3>Completed Credits</h3>
+                                    <h3><spring:message code="dashboard.overview.completedCredits"/></h3>
                                     <sl-divider style="height: 1rem" vertical></sl-divider>
                                     <h5>${userCreditsDone}</h5>
                                 </div>
                                 <div class="row">
-                                    <h3>Total Credits In Your Degree</h3>
+                                    <h3><spring:message code="dashboard.overview.totalCredits"/></h3>
                                     <sl-divider style="height: 1rem" vertical></sl-divider>
                                     <h5>${totalCredits}</h5>
                                 </div>
@@ -193,7 +192,7 @@
                             <div class="stat-row">
                                 <sl-card class="progress-card">
                                     <div slot="header">
-                                        <h3>Overall Progress</h3>
+                                        <h3><spring:message code="dashboard.overview.overallProgress"/></h3>
                                     </div>
 
                                     <div class="column-center">
@@ -203,7 +202,7 @@
                                 </sl-card>
                                 <sl-card class="progress-card">
                                     <div slot="header">
-                                        <h3>Completed Credits By Year</h3>
+                                        <h3><spring:message code="dashboard.overview.completedCreditsByYear"/></h3>
                                     </div>
                                     <div style="width: 600px;"><canvas id="progress-by-year"></canvas></div>
                                 </sl-card>
@@ -223,7 +222,7 @@
                                     <sl-card class="current-semester-card">
                                         <div slot="header">
                                             <div class="row-space-between">
-                                                <h4 style="margin: 0.5rem">This semester you are taking</h4>
+                                                <h4 style="margin: 0.5rem"><spring:message code="dashboard.currentSemester.thisSemester"/></h4>
                                             </div>
                                         </div>
                                         <div class="current-semester-subject-info-list">
@@ -241,9 +240,9 @@
                             <c:if test="${currentUserSemester.size() == 0}">
                                 <div class="empty-tab-area">
                                     <h3 class="empty-tab-info">
-                                        It seems like you don't have an active semester. You can build one using the
+                                        <spring:message code="dashboard.currentSemester.emptySemester"/>
                                         <a class="builder-button" href="<c:out value="${pageContext.request.contextPath}/builder"/>" >
-                                            semester builder.
+                                            <spring:message code="dashboard.currentSemester.emptySemesterLink"/>
                                         </a>
                                     </h3>
                                 </div>
@@ -274,7 +273,7 @@
                         <c:if test="${pastSubjects.size() == 0}">
                             <div style="padding-top: 15rem" class="empty-tab-area">
                                 <h3 class="empty-tab-info">
-                                    It seems like you haven't completed any subjects. You have a long journey ahead of you ;)
+                                    <spring:message code="dashboard.pastSubjects.emptySubjects"/>
                                 </h3>
                             </div>
                         </c:if>

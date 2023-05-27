@@ -307,7 +307,7 @@
                   <sl-button id="deselect-subject-${subject.id}" style="display: none; align-self: end" variant="default" size="small" circle>
                     <sl-icon class="icon" name="x-lg" label="Remove subject"></sl-icon>
                   </sl-button>
-                  <span id="selected-${subject.id}" style="display: none; color: #7db6f8; padding-top:0.5rem">Selected</span>
+                  <span id="selected-${subject.id}" style="display: none; color: #7db6f8; padding-top:0.5rem"><spring:message code="builder.selected"/></span>
                 </div>
               </div>
             </sl-card>
@@ -383,9 +383,9 @@
     <sl-card id="time-table" class="time-table">
       <div slot="header">
         <div  class="row-space-between">
-          <h4>Your time table</h4>
+          <h4><spring:message code="builder.timeTable"/></h4>
           <hr>
-          <sl-tooltip content="View subject list">
+          <sl-tooltip content="<spring:message code="builder.selectedListToolTip"/>">
             <sl-icon-button id="switch-to-list-button" name="view-list" label="Switch to list view"></sl-icon-button>
           </sl-tooltip>
 
@@ -414,8 +414,8 @@
       <sl-card class="selected-tab">
         <div slot="header">
           <div class="row-space-between">
-            <h4>Selected classes</h4>
-            <sl-tooltip content="View time table">
+            <h4><spring:message code="builder.selectedList"/></h4>
+            <sl-tooltip content="<spring:message code="builder.timeTableToolTip"/>">
               <sl-icon-button id="switch-to-table-button" name="table" label="Switch to timetable view"></sl-icon-button>
             </sl-tooltip>
           </div>
@@ -429,27 +429,27 @@
       <sl-card class="semester-overview-tab">
         <div slot="header">
           <div class="row-space-between">
-            <h4>Your semester overview</h4>
+            <h4><spring:message code="builder.semesterOverview.title"/></h4>
           </div>
         </div>
         <div class="column">
           <sl-card class="overview-item">
-            <span>Number of credits</span>
+            <span><spring:message code="builder.semesterOverview.credits"/></span>
             <sl-divider vertical style="height: 1rem"></sl-divider>
             <span id="number-of-credits">0</span>
           </sl-card>
           <sl-card  class="overview-item">
-            <span>Time Demand</span>
+            <span><spring:message code="builder.semesterOverview.timeDemand"/></span>
             <sl-divider vertical style="height:  1rem; margin: 0.5rem"></sl-divider>
-            <sl-badge id="time-difficulty-none"  size="medium" variant="neutral" pill>No reviews</sl-badge>
+            <sl-badge id="time-difficulty-none"  size="medium" variant="neutral" pill><spring:message code="builder.semesterOverview.noReviews"/></sl-badge>
             <sl-badge id="time-difficulty-easy" style="display: none;" size="medium" variant="success" pill><spring:message code="form.NotTimeDemanding" /></sl-badge>
             <sl-badge id="time-difficulty-medium" style="display: none;" size="medium" variant="primary" pill><spring:message code="form.averageTimeDemand" /></sl-badge>
             <sl-badge id="time-difficulty-hard" style="display: none;" size="medium" variant="warning" pill><spring:message code="form.timeDemanding" /></sl-badge>
           </sl-card>
           <sl-card  class="overview-item">
-            <span>Overall Difficulty</span>
+            <span><spring:message code="builder.semesterOverview.overallDifficulty"/></span>
             <sl-divider vertical style="height:  1rem; margin: 0.5rem"></sl-divider>
-            <sl-badge id="overall-difficulty-none"  size="medium" variant="neutral" pill>No reviews</sl-badge>
+            <sl-badge id="overall-difficulty-none"  size="medium" variant="neutral" pill><spring:message code="builder.semesterOverview.noReviews"/></sl-badge>
             <sl-badge id="overall-difficulty-easy" style="display: none;" size="medium" variant="success" pill><spring:message code="form.easy"/></sl-badge>
             <sl-badge id="overall-difficulty-medium" style="display: none;" size="medium" variant="primary" pill><spring:message code="form.normal"/></sl-badge>
             <sl-badge id="overall-difficulty-hard" style="display: none;" size="medium" variant="danger" pill><spring:message code="form.hard"/></sl-badge>
