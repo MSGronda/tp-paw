@@ -12,37 +12,10 @@
 <%--<c:set var="time" value="${requestScope.time}"/>--%>
 <%--<c:set var="progress" value="${requestScope.progress}"/>--%>
 
-<style>
-    .class-info{
-        padding-top: 0.75rem;
-    }
-    span{
-        font-size: 11px;
-    }
-    .micro-subject-card{
-        padding: 0.5rem
-    }
-    .micro-subject-card::part(base){
-        max-height: 8rem;
-        width: 15rem;
-    }
-    .micro-subject-card::part(header){
-        padding: 0.5rem;
-    }
-    .micro-subject-card::part(body){
-        padding: 0.5rem;
-    }
-    .card-title{
-        font-size: 0.8rem;
-    }
-
-</style>
-
-
 <a href='<c:out value="${pageContext.request.contextPath}/subject/${subject.id}"/>'>
     <sl-card class="micro-subject-card" >
         <div slot="header">
-            <span class="card-title"><c:out value="${subject.name}" /> - <c:out value="${subject.id}"/></span>
+            <h3 class="card-title"><c:out value="${subject.name}" /> - <c:out value="${subject.id}"/></h3>
         </div>
         <div class="chip-row class-info">
             <sl-badge variant="primary" pill>

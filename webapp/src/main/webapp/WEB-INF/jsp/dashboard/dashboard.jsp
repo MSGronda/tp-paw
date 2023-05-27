@@ -115,18 +115,6 @@
             overflow-y: scroll;
             flex: 1;
         }
-        .no-active-semester-info-area{
-            align-self: center;
-            justify-self: start;
-            justify-content: center ;
-            align-items: center;
-            max-width: 30rem;
-            padding-bottom: 1rem;
-        }
-        .no-active-semester-info{
-            font-weight: normal;
-            font-size: 1.7rem;
-        }
         .builder-button{
             color: #79b2fc;
         }
@@ -148,8 +136,33 @@
             max-height: 25% !important;
             min-height: 25% !important;
         }
+
+        /* Past subjects */
+        .past-subjects-area{
+            height: 100%;
+            width: 100%;
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            a
+        }
+
+
+        /*  Common style */
+        .empty-tab-area{
+            align-self: center;
+            justify-self: center;
+            justify-content: center ;
+            align-items: center;
+            max-width: 30rem;
+            padding-bottom: 1rem;
+        }
+        .empty-tab-info{
+            font-weight: normal;
+            font-size: 1.7rem;
+        }
     </style>
     <jsp:include page="../components/component-style/class_info_card_style.jsp"/>
+    <jsp:include page="../components/component-style/micro_subject_card_style.jsp"/>
 </head>
 <body>
 <jsp:include page="../components/navbar.jsp"/>
@@ -226,8 +239,8 @@
                                 </div>
                             </c:if>
                             <c:if test="${currentUserSemester.size() == 0}">
-                                <div class="no-active-semester-info-area">
-                                    <h3 class="no-active-semester-info">
+                                <div class="empty-tab-area">
+                                    <h3 class="empty-tab-info">
                                         It seems like you don't have an active semester. You can build one using the
                                         <a class="builder-button" href="<c:out value="${pageContext.request.contextPath}/builder"/>" >
                                             semester builder.
@@ -250,7 +263,21 @@
                         </div>
                     </sl-tab-panel>
                     <sl-tab-panel name="past-subjects">
-
+                        <c:if test="${pastSubjects.size() != 0}">
+                            <div class="past-subjects-area">
+                            <c:forEach var="subject" items="${pastSubjects}">
+                                <c:set var="subject" value="${subject}" scope="request"/>
+                                <c:import url="../components/micro_subject_card.jsp"/>
+                            </c:forEach>
+                            </div>
+                        </c:if>
+                        <c:if test="${pastSubjects.size() == 0}">
+                            <div style="padding-top: 15rem" class="empty-tab-area">
+                                <h3 class="empty-tab-info">
+                                    It seems like you haven't completed any subjects. You have a long journey ahead of you ;)
+                                </h3>
+                            </div>
+                        </c:if>
                     </sl-tab-panel>
                 </sl-tab-group>
             </div>

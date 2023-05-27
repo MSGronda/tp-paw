@@ -123,6 +123,7 @@ public class HomeController {
         }
 
         currentUserSemester.clear();
+        pastSubjects.clear();
         // TODO: = = = = = = = remove. = = = = = = =
 
         ModelAndView mav = new ModelAndView("dashboard/dashboard");
