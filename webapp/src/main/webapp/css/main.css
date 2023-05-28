@@ -7,6 +7,12 @@
     flex-direction: row;
     align-items: center;
 }
+.row-space-between{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+}
 
 .column{
     display: flex;
@@ -79,6 +85,16 @@ sl-card.subject-card::part(body) {
     gap: 0.25rem;
 
 }
+.container-90{
+    width: min(max(800px, 90%), 100%);
+    padding-left: 2rem;
+    padding-right: 2rem;
+    align-self: center;
+    justify-self: center;
+    margin: 0 auto;
+}
+
+
 .container-80{
     width: min(max(800px, 80%), 100%);
     padding-left: 2rem;

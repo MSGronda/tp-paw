@@ -30,7 +30,9 @@
         margin: 0;
         width: 40%
     }
-
+    .nav-button::part(base){
+      color: #3d3d3d;
+    }
     .dropdown::part(listbox){
       color: #0369a1;
     }
@@ -52,8 +54,8 @@
 
 
     <sl-button-group label="Alignment">
-      <sl-button variant="text" href="${pageContext.request.contextPath}/search"><spring:message code="navbar.subject"/></sl-button>
-      <sl-button variant="text" href="${pageContext.request.contextPath}/builder"><spring:message code="navbar.builder"/></sl-button>
+      <sl-button class="nav-button" variant="text" href="${pageContext.request.contextPath}/search"><spring:message code="navbar.subject"/></sl-button>
+      <sl-button class="nav-button" variant="text" href="${pageContext.request.contextPath}/builder"><spring:message code="navbar.builder"/></sl-button>
     </sl-button-group>
     <sec:authorize access="!isAuthenticated()">
       <sl-button variant="success" href="<c:url value="/login"/>"><spring:message code="navbar.access"/></sl-button>

@@ -5,7 +5,6 @@
   table {
     border-collapse: collapse;
     width: 100%;
-    margin-bottom: 1rem;
     box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.05);
     background-color: #fff;
     color: #4b4f56;
