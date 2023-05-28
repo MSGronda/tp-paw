@@ -43,8 +43,8 @@ public class SubjectServiceImpl implements SubjectService {
             final String orderBy,
             final String dir
     ) {
-        final OrderDir orderDir = OrderDir.fromString(dir);
-        final SubjectOrderField orderField = SubjectOrderField.fromString(orderBy);
+        final OrderDir orderDir = OrderDir.parse(dir);
+        final SubjectOrderField orderField = SubjectOrderField.parse(orderBy);
 
         return subjectDao.search(name, page, parseFilters(filters), orderField, orderDir);
     }

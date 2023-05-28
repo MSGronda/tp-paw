@@ -126,14 +126,14 @@
           <sl-icon slot="prefix" name="chevron-left"></sl-icon>
           <spring:message code="subject.previousPage" />
         </sl-radio-button>
-        <c:forEach var="pageNum" begin="1" end="${totalPages+1}">
+        <c:forEach var="pageNum" begin="1" end="${totalPages}">
           <c:choose>
-            <c:when test="${(pageNum > currentPage -2 and pageNum < currentPage + 2) or (pageNum == 1 or pageNum == totalPages+1)}">
+            <c:when test="${(pageNum > currentPage -2 and pageNum < currentPage + 2) or (pageNum == 1 or pageNum == totalPages)}">
               <div class="active-pag-buttons">
                 <sl-radio-button class="pageNumButton" value="${pageNum}">${pageNum}</sl-radio-button>
               </div>
             </c:when>
-            <c:when test="${pageNum < totalPages + 1 and pageNum == currentPage + 2}">
+            <c:when test="${pageNum < totalPages and pageNum == currentPage + 2}">
               <div class="active-pag-buttons">
                 <sl-radio-button class="pageNumButton" value="${pageNum}">${pageNum}</sl-radio-button>
                 <sl-radio-button value="..." disabled>...</sl-radio-button>
@@ -153,7 +153,7 @@
           </c:choose>
 
         </c:forEach>
-        <sl-radio-button id="nextPage" value="0" <c:if test="${currentPage-1 >= totalPages}">disabled</c:if>>
+        <sl-radio-button id="nextPage" value="0" <c:if test="${currentPage >= totalPages}">disabled</c:if>>
           <sl-icon slot="suffix" name="chevron-right"></sl-icon>
           <spring:message code="subject.nextPage" />
         </sl-radio-button>
@@ -234,7 +234,7 @@
             function(event) {
               event.preventDefault();
               let url = window.location.href;
-              let pageNum = Number(elements[i].value) -1;
+              let pageNum = Number(elements[i].value);
               url = addOrUpdateParam(url,"pageNum",pageNum.toString());
               window.location.href = url;
             });

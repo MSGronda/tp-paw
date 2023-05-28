@@ -375,10 +375,10 @@
                         <sl-menu-item id="difficulty-order">
                             <div class="order-menu">
                                 <spring:message code="subject.order.difficulty"/>
-                                <section id="diffuclty-down">
+                                <section id="difficulty-down">
                                     <sl-icon slot="suffix" name="arrow-down" ></sl-icon>
                                 </section>
-                                <section id="diffuclty-up">
+                                <section id="difficulty-up">
                                     <sl-icon slot="suffix" name="arrow-up" ></sl-icon>
                                 </section>
                             </div>
@@ -514,7 +514,7 @@
     let dir = urlParams.get('dir');
 
     const orderBtns = [
-        ['difficulty-order','easy','diffuclty-down','diffuclty-up'],
+        ['difficulty-order','difficulty','difficulty-down','difficulty-up'],
         ['timedemand-order','timedemanding','timedemand-down','timedemand-up'],
     ]
     const asc='asc'
@@ -527,7 +527,7 @@
                     event.preventDefault();
                     let url = window.location.href;
                     url = addOrUpdateParam(url,"order",orderBtns[elem][1]);
-                    url = addOrUpdateParam(url,"pageNum","0");
+                    url = addOrUpdateParam(url,"pageNum","1");
                     if(dir !== null && dir === asc){
                         url = addOrUpdateParam(url,"dir",desc);
                     } else {

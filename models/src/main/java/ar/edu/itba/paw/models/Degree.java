@@ -15,7 +15,7 @@ public class Degree {
     @Column(name = "degname")
     private String name;
 
-    @OneToMany(mappedBy = "degree")
+    @OneToMany(mappedBy = "degree", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<DegreeSubject> subjects;
 
     public Degree(String name) {

@@ -25,7 +25,7 @@
 <%--            <form:errors path="easy" cssClass="error" element="p"/>--%>
             <spring:message code="form.label" var="ButtonLabel"/>
             <spring:message code="form.easy.help" var="EasyHelp"/>
-            <sl-radio-group label="${ButtonLabel}" value="${review.easy}" name="easy" help-text="${EasyHelp}">
+            <sl-radio-group label="${ButtonLabel}" value="${review.difficulty.value}" name="difficulty" help-text="${EasyHelp}">
                 <sl-radio-button value="0"><spring:message code="form.easy"/></sl-radio-button>
                 <sl-radio-button value="1"><spring:message code="form.normal"/></sl-radio-button>
                 <sl-radio-button value="2"><spring:message code="form.hard"/></sl-radio-button>
@@ -34,7 +34,7 @@
 
 <%--            <form:errors path="timeDemanding" cssClass="error" element="p"/>--%>
             <spring:message code="form.timeDemanding.help" var="TimeDemandingHelp"/>
-            <sl-radio-group name="timeDemanding" value="${review.timeDemanding}" help-text="${TimeDemandingHelp}">
+            <sl-radio-group name="timeDemanding" value="${review.timeDemanding.value}" help-text="${TimeDemandingHelp}">
                 <sl-radio-button value="0"><spring:message code="form.NotTimeDemanding"/></sl-radio-button>
                 <sl-radio-button value="1"><spring:message code="form.averageTimeDemand"/></sl-radio-button>
                 <sl-radio-button value="2"><spring:message code="form.timeDemanding"/></sl-radio-button>

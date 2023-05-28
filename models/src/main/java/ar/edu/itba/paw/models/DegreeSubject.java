@@ -10,13 +10,13 @@ class DegreeSubject {
     @EmbeddedId
     private Key key;
 
-    @ManyToOne
-    @MapsId("iddeg")
+    @ManyToOne(optional = false)
+    @MapsId("degreeId")
     @JoinColumn(name = "iddeg")
     private Degree degree;
 
     @ManyToOne
-    @MapsId("idsub")
+    @MapsId("subjectId")
     @JoinColumn(name = "idsub")
     private Subject subject;
 
@@ -50,17 +50,20 @@ class DegreeSubject {
 
     @Embeddable
     public static class Key implements Serializable {
-        private long iddeg;
-        private String idsub;
+        @Column(name = "iddeg")
+        private long degreeId;
+
+        @Column(name = "idsub")
+        private String subjectId;
 
         Key() {}
 
         public long getDegreeId() {
-            return iddeg;
+            return degreeId;
         }
 
         public String getSubjectId() {
-            return idsub;
+            return subjectId;
         }
 
         @Override
@@ -68,12 +71,12 @@ class DegreeSubject {
             if (this == o) return true;
             if (o == null || getClass() != o.getClass()) return false;
             Key key = (Key) o;
-            return iddeg == key.iddeg && idsub.equals(key.idsub);
+            return degreeId == key.degreeId && subjectId.equals(key.subjectId);
         }
 
         @Override
         public int hashCode() {
-            return Objects.hash(iddeg, idsub);
+            return Objects.hash(degreeId, subjectId);
         }
     }
 }

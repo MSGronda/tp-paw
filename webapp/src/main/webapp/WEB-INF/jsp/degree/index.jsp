@@ -1,6 +1,7 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%--<%@ taglib prefix="spring" uri="http://java.sun.com/jsp/jstl/fmt" %>--%>
 <%@ page contentType="text/html;charset=UTF-8" %>
+<%@ page import="ar.edu.itba.paw.models.enums.SubjectProgress" %>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
 
 <html lang="en">
@@ -50,7 +51,7 @@
             <sl-tab-panel class="year-panel" name="year-${year.number}">
                 <c:forEach var="subject" items="${year.subjects}">
                     <c:set var="subject" value="${subject}" scope="request"/>
-                    <c:set var="progress" value="${subjectProgress.getOrDefault(subject.id, 0)}" scope="request"/>
+                    <c:set var="progress" value="${subjectProgress.getOrDefault(subject.id, SubjectProgress.PENDING)}" scope="request"/>
                     <c:import url="../components/subject_card.jsp"/>
                 </c:forEach>
 
@@ -62,7 +63,7 @@
                 <c:set var="reviewCount" value="${elective.reviewStats.reviewCount}" scope="request"/>
                 <c:set var="difficulty" value="${elective.reviewStats.difficulty}" scope="request"/>
                 <c:set var="time" value="${elective.reviewStats.timeDemanding}" scope="request"/>
-                <c:set var="progress" value="${subjectProgress.getOrDefault(elective.id, 0)}" scope="request"/>
+                <c:set var="progress" value="${subjectProgress.getOrDefault(elective.id, SubjectProgress.PENDING)}" scope="request"/>
                 <c:import url="../components/subject_card.jsp"/>
             </c:forEach>
         </sl-tab-panel>

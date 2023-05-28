@@ -1,7 +1,7 @@
 package ar.edu.itba.paw.webapp.form;
 
-import org.hibernate.validator.constraints.Email;
-import org.springframework.beans.factory.annotation.Value;
+import ar.edu.itba.paw.models.enums.Difficulty;
+import ar.edu.itba.paw.models.enums.TimeDemanding;
 
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -12,7 +12,7 @@ public class ReviewForm {
     private String text;
 
     @NotNull
-    private Integer easy;
+    private Integer difficulty;
 
     @NotNull
     private Integer timeDemanding;
@@ -28,16 +28,24 @@ public class ReviewForm {
         this.text = text;
     }
 
-    public Integer getEasy() {
-        return easy;
+    public Integer getDifficulty() {
+        return difficulty;
     }
 
-    public void setEasy(Integer easy) {
-        this.easy = easy;
+    public Difficulty getDifficultyEnum() {
+        return Difficulty.parse(difficulty);
+    }
+
+    public void setDifficulty(Integer difficulty) {
+        this.difficulty = difficulty;
     }
 
     public Integer getTimeDemanding() {
         return timeDemanding;
+    }
+
+    public TimeDemanding getTimeDemandingEnum() {
+        return TimeDemanding.parse(timeDemanding);
     }
 
     public void setTimeDemanding(Integer timeDemanding) {

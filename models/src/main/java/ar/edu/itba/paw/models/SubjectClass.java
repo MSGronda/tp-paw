@@ -18,25 +18,24 @@ public class SubjectClass {
     @ManyToMany
     @JoinTable(
             name = "classprofessors",
-            joinColumns = {@JoinColumn(name = "idsub"), @JoinColumn(name = "idclass")},
+            joinColumns = {
+                    @JoinColumn(name = "idsub", referencedColumnName = "idsub"),
+                    @JoinColumn(name = "idclass", referencedColumnName = "idclass")
+            },
             inverseJoinColumns = @JoinColumn(name = "idprof")
     )
-    private Set<Professor> professors;
+    private List<Professor> professors;
 
-    @OneToMany
-    @JoinColumns({
-            @JoinColumn(name = "idsub"),
-            @JoinColumn(name = "idclass")
-    })
-    private Set<SubjectClassTime> classTimes;
+    @OneToMany(mappedBy = "subjectClass", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<SubjectClassTime> classTimes;
 
     SubjectClass() {}
 
-    public Set<SubjectClassTime> getClassTimes() {
+    public List<SubjectClassTime> getClassTimes() {
         return classTimes;
     }
 
-    public Set<Professor> getProfessors() {
+    public List<Professor> getProfessors() {
         return professors;
     }
 

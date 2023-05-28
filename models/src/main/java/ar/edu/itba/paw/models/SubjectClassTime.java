@@ -13,6 +13,13 @@ public class SubjectClassTime {
     @Column(name = "idloctime")
     private long id;
 
+    @ManyToOne
+    @JoinColumns({
+            @JoinColumn(name = "idsub", referencedColumnName = "idsub"),
+            @JoinColumn(name = "idclass", referencedColumnName = "idclass")
+    })
+    private SubjectClass subjectClass;
+
     @Column(nullable = false)
     private int day;
 
@@ -31,20 +38,14 @@ public class SubjectClassTime {
     @Column(length = 100, nullable = false)
     private String mode;
 
-    public SubjectClassTime(final int day, final LocalTime startTime, final LocalTime endTime,
-                            final String classLoc, final String building, final String mode) {
-        this.day = day;
-        this.startTime = startTime;
-        this.endTime = endTime;
-        this.classLoc = classLoc;
-        this.building = building;
-        this.mode = mode;
-    }
-
     SubjectClassTime() {}
 
     public long getId() {
         return id;
+    }
+
+    public SubjectClass getSubjectClass() {
+        return subjectClass;
     }
 
     public String getBuilding() {

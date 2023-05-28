@@ -2,6 +2,7 @@ package ar.edu.itba.paw.webapp.controller;
 
 import ar.edu.itba.paw.models.*;
 import ar.edu.itba.paw.models.enums.SubjectFilterField;
+import ar.edu.itba.paw.models.enums.SubjectProgress;
 import ar.edu.itba.paw.services.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -55,7 +56,7 @@ public class SearchController {
         final List<Subject> subjects = subjectService.search(query, page, filters, orderBy, dir);
         final Map<SubjectFilterField, List<String>> relevantFilters = subjectService.getRelevantFiltersForSearch(query, filters);
 
-        Map<String, Integer> progress = user == null ? null : user.getSubjectProgress();
+        Map<String, SubjectProgress> progress = user == null ? null : user.getSubjectProgress();
 
         ModelAndView mav = new ModelAndView("subjects/search");
         mav.addObject("subjects", subjects);

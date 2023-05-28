@@ -13,7 +13,7 @@ public enum SubjectOrderField {
         this.tableColumn = tableColumn;
     }
 
-    public static SubjectOrderField fromString(String orderBy) {
+    public static SubjectOrderField parse(String orderBy) {
         for (SubjectOrderField field : SubjectOrderField.values()) {
             if (field.name().equalsIgnoreCase(orderBy)) {
                 return field;

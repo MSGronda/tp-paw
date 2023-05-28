@@ -279,18 +279,18 @@
         {
             'id': '${sub.id}', 'name': '${sub.name}', 'department': '${sub.department}', 'credits': '${sub.credits}',
             'classes': [
-                <c:forEach var="subClass" items="${sub.classesById.values()}">
+                <c:forEach var="subClass" items="${sub.classes}">
                 {
-                    'idClass': '${subClass.getIdClass()}', 'classTimes': [
-                        <c:forEach var="classTime" items="${subClass.getClassTimes()}">
+                    'idClass': '${subClass.classId}', 'classTimes': [
+                        <c:forEach var="classTime" items="${subClass.classTimes}">
                         {
 
-                            'day': '${classTime.getDay()}',
-                            'start': '${classTime.getStartTime()}',
-                            'end': '${classTime.getEndTime()}',
-                            'loc': '${classTime.getClassLoc()}',
-                            'building': '${classTime.getBuilding()}',
-                            'mode': '${classTime.getMode()}'
+                            'day': '${classTime.day}',
+                            'start': '${classTime.startTime}',
+                            'end': '${classTime.endTime}',
+                            'loc': '${classTime.classLoc}',
+                            'building': '${classTime.building}',
+                            'mode': '${classTime.mode}'
                         },
                         </c:forEach>
                     ]

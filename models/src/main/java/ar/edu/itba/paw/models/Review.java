@@ -1,71 +1,95 @@
 package ar.edu.itba.paw.models;
 
+import ar.edu.itba.paw.models.enums.Difficulty;
+import ar.edu.itba.paw.models.enums.TimeDemanding;
 import org.hibernate.annotations.Formula;
 
 import javax.persistence.*;
+import java.util.List;
+import java.util.Objects;
 
 @Entity
 @Table(name = "reviews")
 public class Review {
+    private static final int PREVIEW_LENGTH = 500;
+
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "review_id_seq")
-    @SequenceGenerator(sequenceName = "review_id_seq", name = "review_id_seq", allocationSize = 1)
-    private Long id;
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "reviews_id_seq")
+    @SequenceGenerator(sequenceName = "reviews_id_seq", name = "reviews_id_seq", allocationSize = 1)
+    private long id;
 
-    @ManyToOne
+    @ManyToOne(optional = false)
     @JoinColumn(name = "iduser")
-    @Column(name = "iduser", nullable = false)
-    private Long userId;
+    private User user;
 
-    @ManyToOne
+    @ManyToOne(optional = false)
     @JoinColumn(name = "idsub")
-    @Column(name = "idsub",nullable = false)
-    private String subjectId;
+    private Subject subject;
 
-    @Column
-    private Integer easy;
+    @Column(name = "easy")
+    private Difficulty difficulty;
 
-    @Column
-    private Integer timeDemanding;
+    @Column(name = "timedemanding")
+    private TimeDemanding timeDemanding;
 
-    @Column(name = "revtext", columnDefinition = "TEXT",nullable = false)
+    @Column(name = "revtext", columnDefinition = "TEXT", nullable = false)
     private String text;
 
     @Column(name = "useranonymous")
-    private Boolean anonymous;
+    private boolean anonymous;
 
-    @ManyToOne
-    @JoinColumn(name = "subname")
-    private String subjectName;
+    @OneToMany(mappedBy = "review", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<ReviewVote> votes;
 
-    @ManyToOne
-    @JoinTable(
-            name = "users",
-            joinColumns = @JoinColumn(name = "iduser")
-    )
-    private String username;
+    @Formula("(SELECT COUNT(*) FROM reviewvote r WHERE r.idreview = id AND r.vote = 1)")
+    private long upvotes;
 
-    @Formula("SELECT COUNT(vote) FROM review_vote WHERE id = :id AND vote = 1")
-    private Long upvotes;
-
-    @Formula("SELECT COUNT(vote) FROM review_vote WHERE id = :id AND vote = -1")
-    private Long downvotes;
+    @Formula("(SELECT COUNT(*) FROM reviewvote r WHERE r.idreview = id AND r.vote = -1)")
+    private long downvotes;
 
     private Review(Builder builder) {
         this.id = builder.id;
-        this.userId = builder.userId;
-        this.subjectId = builder.subjectId;
-        this.easy = builder.easy;
+        this.user = builder.user;
+        this.subject = builder.subject;
+        this.difficulty = builder.difficulty;
         this.timeDemanding = builder.timeDemanding;
         this.text = builder.text;
         this.anonymous = builder.anonymous;
-        this.subjectName = builder.subjectName;
-        this.upvotes = builder.upvotes;
-        this.downvotes = builder.downvotes;
-        this.username = builder.username;
     }
 
     Review() {}
+
+    public long getId() {
+        return id;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public Subject getSubject() {
+        return subject;
+    }
+
+    public String getText() {
+        return text;
+    }
+
+    public Difficulty getDifficulty(){
+    return difficulty;
+    }
+
+    public TimeDemanding getTimeDemanding(){
+        return timeDemanding;
+    }
+
+    public boolean isAnonymous() {
+        return anonymous;
+    }
+
+    public List<ReviewVote> getVotes() {
+        return votes;
+    }
 
     public long getUpvotes(){
         return upvotes;
@@ -74,47 +98,19 @@ public class Review {
         return downvotes;
     }
 
-    public long getId() {
-        return id;
+    public String getPreviewText() {
+        return this.text.substring(0, PREVIEW_LENGTH);
     }
 
-    public long getUserId() {
-        return userId;
+    public boolean getRequiresShowMore() {
+        return this.text.length() > PREVIEW_LENGTH;
     }
 
-    public String getSubjectId() {
-        return subjectId;
+    public void setDifficulty(Difficulty difficulty) {
+        this.difficulty = difficulty;
     }
 
-    public String getText() {
-        return text;
-    }
-
-    public int getEasy(){
-    return easy;
-    }
-
-    public int getTimeDemanding(){
-        return timeDemanding;
-    }
-
-    public String getSubjectName() {
-        return subjectName;
-    }
-
-    public String getUsername(){
-        return username;
-    }
-
-    public Boolean getAnonymous() {
-        return anonymous;
-    }
-
-    public void setEasy(Integer easy) {
-        this.easy = easy;
-    }
-
-    public void setTimeDemanding(Integer timeDemanding) {
+    public void setTimeDemanding(TimeDemanding timeDemanding) {
         this.timeDemanding = timeDemanding;
     }
 
@@ -134,17 +130,26 @@ public class Review {
         return new Builder(review);
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Review review = (Review) o;
+        return id == review.id && anonymous == review.anonymous && upvotes == review.upvotes && downvotes == review.downvotes && Objects.equals(user, review.user) && Objects.equals(subject, review.subject) && difficulty == review.difficulty && timeDemanding == review.timeDemanding && Objects.equals(text, review.text);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
+    }
+
     public static class Builder {
         private long id;
-        private long userId;
-        private String subjectId;
-        private int easy;
-        private int timeDemanding;
+        private User user;
+        private Subject subject;
+        private Difficulty difficulty;
+        private TimeDemanding timeDemanding;
         private String text;
-        private String subjectName;
-        private long upvotes;
-        private long downvotes;
-        private String username;
         private boolean anonymous;
 
         private Builder() {
@@ -153,15 +158,11 @@ public class Review {
 
         private Builder(Review review) {
             this.id = review.id;
-            this.userId = review.userId;
-            this.subjectId = review.subjectId;
-            this.easy = review.easy;
+            this.user = review.user;
+            this.subject = review.subject;
+            this.difficulty = review.difficulty;
             this.timeDemanding = review.timeDemanding;
             this.text = review.text;
-            this.subjectName = review.subjectName;
-            this.upvotes = review.upvotes;
-            this.downvotes = review.downvotes;
-            this.username = review.username;
             this.anonymous = review.anonymous;
         }
 
@@ -170,48 +171,28 @@ public class Review {
             return this;
         }
 
-        public Builder userId(final long userId) {
-            this.userId = userId;
+        public Builder user(final User user) {
+            this.user = user;
             return this;
         }
 
-        public Builder subjectId(final String subjectId) {
-            this.subjectId = subjectId;
+        public Builder subject(final Subject subject) {
+            this.subject = subject;
             return this;
         }
 
-        public Builder easy(final int easy) {
-            this.easy = easy;
+        public Builder difficulty(final Difficulty difficulty) {
+            this.difficulty = difficulty;
             return this;
         }
 
-        public Builder timeDemanding(final int timeDemanding) {
+        public Builder timeDemanding(final TimeDemanding timeDemanding) {
             this.timeDemanding = timeDemanding;
             return this;
         }
 
         public Builder text(final String text) {
             this.text = text;
-            return this;
-        }
-
-        public Builder subjectName(final String subjectName) {
-            this.subjectName = subjectName;
-            return this;
-        }
-
-        public Builder upvotes(final long upvotes) {
-            this.upvotes = upvotes;
-            return this;
-        }
-
-        public Builder downvotes(final long downvotes) {
-            this.downvotes = downvotes;
-            return this;
-        }
-
-        public Builder username(final String username) {
-            this.username = username;
             return this;
         }
 
@@ -222,29 +203,6 @@ public class Review {
 
         public Review build() {
             return new Review(this);
-        }
-    }
-
-    public enum ReviewVote{
-        UPVOTE(1),
-        DOWNVOTE(-1),
-        DELETE(0);
-
-        private int vote;
-        ReviewVote(int vote){
-            this.vote = vote;
-        }
-
-        public int getVote() {
-            return vote;
-        }
-        public static ReviewVote getVoteByNum(int vote){
-            for(ReviewVote v : ReviewVote.values()){
-                if(v.vote == vote){
-                    return v;
-                }
-            }
-            throw new IllegalArgumentException(String.valueOf(vote));
         }
     }
 }

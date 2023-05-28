@@ -1,5 +1,7 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ page contentType="text/html;charset=UTF-8" %>
+<%@ page import="ar.edu.itba.paw.models.enums.Difficulty" %>
+<%@ page import="ar.edu.itba.paw.models.enums.TimeDemanding" %>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
 <%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 
@@ -78,8 +80,8 @@
   <div slot="header" class="header">
     <c:choose>
       <c:when test="${fromProfile}">
-        <c:url value="/subject/${review.subjectId}" var="subjectUrl"/>
-        <a class="username-redirect" href="${subjectUrl}"><c:out value="${review.subjectId}" /> - <c:out value="${review.subjectName}"/></a>
+        <c:url value="/subject/${review.subject.id}" var="subjectUrl"/>
+        <a class="username-redirect" href="${subjectUrl}"><c:out value="${review.subject.id}" /> - <c:out value="${review.subject.name}"/></a>
       </c:when>
       <c:otherwise>
         <c:choose>
@@ -87,14 +89,14 @@
             <spring:message code="form.anonymous"/>
           </c:when>
           <c:when test="${!review.anonymous}">
-                <a class="username-redirect" href="<c:url value="/user/${review.userId}"/>"><c:out value="${review.username}"/></a>
+                <a class="username-redirect" href="<c:url value="/user/${review.user.id}"/>"><c:out value="${review.user.username}"/></a>
           </c:when>
         </c:choose>
       </c:otherwise>
     </c:choose>
 
     <sec:authorize access="hasRole('EDITOR')">
-      <c:if test="${review.userId != user.id}">
+      <c:if test="${review.user.id != user.id}">
         <div>
           <sl-tooltip trigger="click">
             <div class="clickable" slot="content">
@@ -102,7 +104,7 @@
                 <div class="column-center">
                   <span><spring:message code="review.delete.doyouwish"/></span>
                   <div style="padding-top: 1rem;" class="row">
-                    <sl-button style="padding-right: 1rem " class="delete-button" label="delete" href="<c:url value="/review/${review.subjectId}/delete/${review.id}"/>">
+                    <sl-button style="padding-right: 1rem " class="delete-button" label="delete" href="<c:url value="/review/${review.subject.id}/delete/${review.id}"/>">
                       <spring:message code="review.delete.confirm"/>
                     </sl-button>
                     <sl-button class="delete-button" label="cancel">
@@ -119,9 +121,9 @@
         </div>
       </c:if>
     </sec:authorize>
-    <c:if test="${review.userId == user.id}">
+    <c:if test="${review.user.id == user.id}">
       <div>
-        <sl-icon-button name="pencil-square" label="edit" href="<c:url value="/review/${review.subjectId}/edit/${review.id}"/>"></sl-icon-button>
+        <sl-icon-button name="pencil-square" label="edit" href="<c:url value="/review/${review.subject.id}/edit/${review.id}"/>"></sl-icon-button>
 
         <sl-tooltip trigger="click">
           <div class="clickable" slot="content">
@@ -129,7 +131,7 @@
               <div class="column-center">
                 <span><spring:message code="review.delete.doyouwish"/></span>
                 <div style="padding-top: 1rem;" class="row">
-                  <sl-button style="padding-right: 1rem " class="delete-button" label="delete" href="<c:url value="/review/${review.subjectId}/delete/${review.id}"/>">
+                  <sl-button style="padding-right: 1rem " class="delete-button" label="delete" href="<c:url value="/review/${review.subject.id}/delete/${review.id}"/>">
                     <spring:message code="review.delete.confirm"/>
                   </sl-button>
                   <sl-button class="delete-button" label="cancel">
@@ -149,7 +151,7 @@
 
   <div class="break-text">
     <c:if test="${review.requiresShowMore}">
-      <c:out value="${review.previewText}"/><span id="dots">...</span><span id="more"><c:out value="${review.showMoreText}"/></span>
+      <c:out value="${review.previewText}"/><span id="dots">...</span><span id="more"><c:out value="${review.text}"/></span>
 
       <br />
       <sl-button size="small" class="showMore"><spring:message code="subject.showMore" />  <sl-icon name="chevron-down"></sl-icon></sl-button>
@@ -160,10 +162,10 @@
   </div>
   <div>
     <c:choose>
-      <c:when test="${review.easy == 0}">
+      <c:when test="${review.difficulty == Difficulty.EASY}">
         <sl-badge size="medium" variant="success"><spring:message code="form.easy"/></sl-badge>
       </c:when>
-      <c:when test="${review.easy == 1}">
+      <c:when test="${review.difficulty == Difficulty.MEDIUM}">
         <sl-badge size="medium" variant="primary"><spring:message code="form.normal"/></sl-badge>
       </c:when>
       <c:otherwise>
@@ -172,10 +174,10 @@
     </c:choose>
 
     <c:choose>
-      <c:when test="${review.timeDemanding == 0}">
+      <c:when test="${review.timeDemanding == TimeDemanding.LOW}">
         <sl-badge size="medium" variant="success"><spring:message code="form.NotTimeDemanding"/></sl-badge>
       </c:when>
-      <c:when test="${review.timeDemanding == 1}">
+      <c:when test="${review.timeDemanding == TimeDemanding.MEDIUM}">
         <sl-badge size="medium" variant="primary"><spring:message code="form.averageTimeDemand"/></sl-badge>
       </c:when>
       <c:otherwise>

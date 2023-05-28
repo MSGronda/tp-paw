@@ -1,5 +1,8 @@
 package ar.edu.itba.paw.models;
 
+import ar.edu.itba.paw.models.converter.SubjectProgressConverter;
+import ar.edu.itba.paw.models.enums.SubjectProgress;
+
 import javax.persistence.*;
 import java.util.*;
 
@@ -33,7 +36,7 @@ public class User {
     )
     @MapKeyColumn(name = "idsub")
     @Column(name = "subjectstate")
-    private Map<String, Integer> subjectProgress;
+    private Map<String, SubjectProgress> subjectProgress;
 
     @Column
     private boolean confirmed;
@@ -49,6 +52,12 @@ public class User {
     )
     private List<Role> roles;
 
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Review> reviews;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<ReviewVote> votes;
+
 
     private User(final Builder builder) {
         this.id = builder.id;
@@ -56,7 +65,6 @@ public class User {
         this.password = builder.password;
         this.username = builder.username;
         this.imageId = builder.imageId;
-        this.subjectProgress = builder.subjectProgress;
         this.confirmToken = builder.confirmToken;
         this.locale = builder.locale;
         this.confirmed = builder.confirmed;
@@ -95,7 +103,7 @@ public class User {
         return confirmed;
     }
 
-    public Map<String, Integer> getSubjectProgress() {
+    public Map<String, SubjectProgress> getSubjectProgress() {
         return subjectProgress;
     }
 
@@ -105,6 +113,24 @@ public class User {
 
     public List<Role> getRoles() {
         return roles;
+    }
+
+    public List<Review> getReviews() {
+        return reviews;
+    }
+
+    public List<ReviewVote> getVotes() {
+        return votes;
+    }
+
+    public Map<Review, ReviewVote> getVotesByReview() {
+        final Map<Review, ReviewVote> res = new HashMap<>();
+
+        for(ReviewVote vote : votes) {
+            res.put(vote.getReview(), vote);
+        }
+
+        return res;
     }
 
     public void setEmail(String email) {
@@ -125,10 +151,6 @@ public class User {
 
     public void setImageId(Long imageId) {
         this.imageId = imageId;
-    }
-
-    public void setSubjectProgress(Map<String, Integer> subjectProgress) {
-        this.subjectProgress = subjectProgress;
     }
 
     public void setConfirmed(boolean confirmed) {
@@ -169,7 +191,6 @@ public class User {
         private String email;
         private String password, username;
         private Long imageId;
-        private Map<String, Integer> subjectProgress;
         private String confirmToken;
         private boolean confirmed;
         private Locale locale;
@@ -185,7 +206,6 @@ public class User {
             this.password = user.password;
             this.username = user.username;
             this.imageId = user.imageId;
-            this.subjectProgress = user.subjectProgress;
             this.confirmToken = user.confirmToken;
             this.confirmed = user.confirmed;
             this.locale = user.locale;
@@ -216,11 +236,6 @@ public class User {
             return this;
         }
 
-        public Builder subjectProgress(final Map<String, Integer> subjectProgress){
-            this.subjectProgress = subjectProgress;
-            return this;
-        }
-
         public Builder confirmToken(String token) {
             this.confirmToken = token;
             return this;
@@ -238,31 +253,6 @@ public class User {
 
         public User build() {
             return new User(this);
-        }
-    }
-
-
-    public enum SubjectProgressEnum {
-
-        PENDING(0),
-        DONE(1);
-
-
-        private final int progress;
-
-        SubjectProgressEnum(int progress){
-            this.progress = progress;
-        }
-        public int getProgress() {
-            return progress;
-        }
-        public static SubjectProgressEnum getByInt(int progress){
-            for(SubjectProgressEnum p : SubjectProgressEnum.values()){
-                if(p.progress == progress){
-                    return p;
-                }
-            }
-            throw new IllegalArgumentException(String.valueOf(progress));
         }
     }
 }

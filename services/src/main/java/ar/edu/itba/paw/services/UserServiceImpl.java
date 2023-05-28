@@ -1,7 +1,9 @@
 package ar.edu.itba.paw.services;
 
 import ar.edu.itba.paw.models.Role;
+import ar.edu.itba.paw.models.Subject;
 import ar.edu.itba.paw.models.User;
+import ar.edu.itba.paw.models.enums.SubjectProgress;
 import ar.edu.itba.paw.persistence.dao.ImageDao;
 import ar.edu.itba.paw.persistence.dao.RecoveryDao;
 import ar.edu.itba.paw.persistence.dao.UserDao;
@@ -135,17 +137,17 @@ public class UserServiceImpl implements UserService {
 
     @Transactional
     @Override
-    public void deleteSubjectProgress(final User user, final String idSub){
-        userDao.deleteSubjectProgress(user, idSub);
+    public void deleteSubjectProgress(final User user, final Subject subject){
+        userDao.deleteSubjectProgress(user, subject);
     }
 
     @Transactional
     @Override
-    public void updateSubjectProgress(final User user, final String idSub, final User.SubjectProgressEnum newProgress) {
-        if(newProgress != User.SubjectProgressEnum.PENDING)
-            userDao.updateSubjectProgress(user, idSub, newProgress.getProgress());
+    public void updateSubjectProgress(final User user, final Subject subject, final SubjectProgress progress) {
+        if(progress != SubjectProgress.PENDING)
+            userDao.updateSubjectProgress(user, subject, progress);
         else
-            userDao.deleteSubjectProgress(user, idSub);
+            userDao.deleteSubjectProgress(user, subject);
     }
 
     @Transactional

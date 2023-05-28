@@ -1,6 +1,7 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ page import="ar.edu.itba.paw.models.enums.SubjectFilterField" %>
+<%@ page import="ar.edu.itba.paw.models.enums.SubjectProgress" %>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
 
 <html>
@@ -185,7 +186,7 @@
   </div>
 
   <c:choose>
-  <c:when test="${subjects.isEmpty()}">
+  <c:when test="${ empty subjects }">
     <div class="not-found-area">
       <h3>
         <spring:message code="search.not-found" arguments="${query}"/>
@@ -197,10 +198,7 @@
     <div class="search-area">
     <c:forEach var="subject" items="${subjects}">
       <c:set var="subject" value="${subject}" scope="request"/>
-      <c:set var="reviewCount" value="${reviewStats[subject.id].reviewCount}" scope="request"/>
-      <c:set var="difficulty" value="${reviewStats[subject.id].difficulty}" scope="request"/>
-      <c:set var="time" value="${reviewStats[subject.id].timeDemanding}" scope="request"/>
-      <c:set var="progress" value="${subjectProgress.getOrDefault(subject.id, 0)}" scope="request"/>
+      <c:set var="progress" value="${subjectProgress.getOrDefault(subject.id, SubjectProgress.PENDING)}" scope="request"/>
       <c:import url="../components/subject_card.jsp"/>
     </c:forEach>
     </div>

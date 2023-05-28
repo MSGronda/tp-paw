@@ -1,7 +1,9 @@
 package ar.edu.itba.paw.persistence.dao.jpa;
 
 import ar.edu.itba.paw.models.Role;
+import ar.edu.itba.paw.models.Subject;
 import ar.edu.itba.paw.models.User;
+import ar.edu.itba.paw.models.enums.SubjectProgress;
 import ar.edu.itba.paw.persistence.dao.UserDao;
 import ar.edu.itba.paw.persistence.exceptions.UserEmailAlreadyTakenPersistenceException;
 import org.springframework.stereotype.Repository;
@@ -55,15 +57,15 @@ public class UserJpaDao implements UserDao {
     }
 
     @Override
-    public void deleteSubjectProgress(final User user, final String idSub) {
-        final Map<String, Integer> sp = user.getSubjectProgress();
-        sp.remove(idSub);
+    public void deleteSubjectProgress(final User user, final Subject subject) {
+        final Map<String, SubjectProgress> sp = user.getSubjectProgress();
+        sp.remove(subject.getId());
     }
 
     @Override
-    public void updateSubjectProgress(final User user, final String idSub, final Integer newProgress) {
-        final Map<String, Integer> sp = user.getSubjectProgress();
-        sp.put(idSub, newProgress);
+    public void updateSubjectProgress(final User user, final Subject subject, final SubjectProgress progress) {
+        final Map<String, SubjectProgress> sp = user.getSubjectProgress();
+        sp.put(subject.getId(), progress);
     }
 
     @Override

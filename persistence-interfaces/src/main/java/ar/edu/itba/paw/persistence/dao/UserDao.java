@@ -1,7 +1,9 @@
 package ar.edu.itba.paw.persistence.dao;
 
 import ar.edu.itba.paw.models.Role;
+import ar.edu.itba.paw.models.Subject;
 import ar.edu.itba.paw.models.User;
+import ar.edu.itba.paw.models.enums.SubjectProgress;
 import ar.edu.itba.paw.persistence.exceptions.UserEmailAlreadyTakenPersistenceException;
 
 import java.util.Locale;
@@ -12,11 +14,10 @@ public interface UserDao extends RWDao<Long,User> {
 
     Optional<User> findByEmail(final String email);
     Optional<User> findUnconfirmedByEmail(final String email);
-
     Optional<User> findByConfirmToken(final String token);
 
-    void deleteSubjectProgress(final User user, final String idSub);
-    void updateSubjectProgress(final User user, final String idSub, final Integer newProgress);
+    void deleteSubjectProgress(final User user, final Subject subject);
+    void updateSubjectProgress(final User user, final Subject subject, final SubjectProgress progress);
 
     void changePassword(final User user, final String password);
     void changeUsername(final User user, final String username);

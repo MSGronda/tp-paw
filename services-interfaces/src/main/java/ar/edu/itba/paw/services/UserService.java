@@ -1,7 +1,9 @@
 package ar.edu.itba.paw.services;
 
 import ar.edu.itba.paw.models.Role;
+import ar.edu.itba.paw.models.Subject;
 import ar.edu.itba.paw.models.User;
+import ar.edu.itba.paw.models.enums.SubjectProgress;
 import ar.edu.itba.paw.services.exceptions.InvalidImageSizeException;
 import ar.edu.itba.paw.services.exceptions.InvalidTokenException;
 import ar.edu.itba.paw.services.exceptions.OldPasswordDoesNotMatchException;
@@ -20,8 +22,8 @@ public interface UserService extends BaseService<Long, User> {
 
     String regenerateConfirmToken(final User user);
 
-    void deleteSubjectProgress(final User user, final String idSub);
-    void updateSubjectProgress(final User user, final String idSub, final User.SubjectProgressEnum newProgress);
+    void deleteSubjectProgress(final User user, final Subject subject);
+    void updateSubjectProgress(final User user, final Subject subject, final SubjectProgress progress);
 
     void changePassword(
             final User user,

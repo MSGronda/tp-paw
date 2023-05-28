@@ -1,5 +1,7 @@
 package ar.edu.itba.paw.webapp.form;
 
+import ar.edu.itba.paw.models.enums.ReviewVoteType;
+
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 
@@ -18,8 +20,8 @@ public class ReviewVoteForm {
         this.reviewId = reviewId;
     }
 
-    public int getVote() {
-        return vote;
+    public ReviewVoteType getVote() {
+        return ReviewVoteType.parse(vote);
     }
 
     public void setVote(int vote) {

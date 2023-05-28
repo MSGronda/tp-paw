@@ -2,6 +2,7 @@
 <%@ page contentType="text/html;charset=UTF-8" %>
 <%@ page import="ar.edu.itba.paw.models.enums.Difficulty" %>
 <%@ page import="ar.edu.itba.paw.models.enums.TimeDemanding" %>
+<%@ page import="ar.edu.itba.paw.models.enums.SubjectProgress" %>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
 <%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 
@@ -65,7 +66,7 @@
 
       <sec:authorize access="isAuthenticated()">
         <c:choose>
-          <c:when test="${progress == 1}">
+          <c:when test="${progress == SubjectProgress.DONE}">
             <sl-tooltip class="progress-icon" content="<spring:message code="card.progress.tooltip.passed"/>">
                   <sl-icon  name="check2-circle"></sl-icon>
             </sl-tooltip>

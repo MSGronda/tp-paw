@@ -1,39 +1,30 @@
 package ar.edu.itba.paw.services;
 
 import ar.edu.itba.paw.models.*;
+import ar.edu.itba.paw.models.enums.OrderDir;
+import ar.edu.itba.paw.models.enums.ReviewOrderField;
+import ar.edu.itba.paw.models.enums.ReviewVoteType;
 import ar.edu.itba.paw.services.exceptions.NoGrantedPermissionException;
 
 import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 public interface ReviewService extends BaseService<Long, Review> {
-    Optional<Review> findById(final Long id);
-
-    List<Review> getAll();
-    List<Review> getAllUserReviewsWithSubjectName(final Long userId, final Map<String, String> params);
-    int getTotalPagesFromUserReviews(final Long userId);
-    int getTotalPagesForReviews(final String subjectId);
-    List<Review> getAllSubjectReviewsWithUsername(final String subjectId, final Map<String,String> param);
-    List<Review> getAllBySubject(final String idsub);
-
     Review create(final Review review) throws SQLException;
 
-    Integer deleteReviewVoteByReviewId(final Long idReview);
-    Integer updateReviewVote(final Long idUser, final Long idReview, Review.ReviewVote vote);
-    Integer deleteReviewVote(final Long idUser, final Long idReview);
-    Integer voteReview(final Long idUser, final Long idReview, final int vote);
-    Map<Long,Integer> userReviewVoteByIdUser(final Long idUser);
-    Map<Long,Integer> userReviewVoteByIdSubAndIdUser(final String idSub, final Long idUser);
+    List<Review> getAll();
 
-    Boolean didUserReview(final List<Review> reviews, final User user);
+    List<Review> getAllUserReviews(final User user, final int page, final String orderBy, final String dir);
+    int getTotalPagesForUserReviews(final User user);
 
-    Boolean didUserReviewDB(final String subjectId, final Long userId);
+    List<Review> getAllSubjectReviews(final Subject subject, final int page, final String orderBy, final String dir);
+    int getTotalPagesForSubjectReviews(final Subject subject);
+
+    void voteReview(final User user, final Review review, final ReviewVoteType vote);
+
+    Boolean didUserReview(final Subject subject, final User user);
 
     void update(final Review review) throws NoGrantedPermissionException;
-
-    void delete(final Review review);
-
-    void deleteReview(final Review review, final User user, final Boolean isEditor) throws NoGrantedPermissionException;
+    void delete(final Review review) throws NoGrantedPermissionException;
 }

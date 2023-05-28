@@ -1,7 +1,9 @@
 package ar.edu.itba.paw.webapp.controller;
 
 import ar.edu.itba.paw.models.Degree;
+import ar.edu.itba.paw.models.Subject;
 import ar.edu.itba.paw.models.User;
+import ar.edu.itba.paw.models.enums.SubjectProgress;
 import ar.edu.itba.paw.services.*;
 import ar.edu.itba.paw.webapp.exceptions.DegreeNotFoundException;
 import org.slf4j.Logger;
@@ -46,7 +48,7 @@ public class HomeController {
         }
 
         final Degree degree = maybeDegree.get();
-        final Map<String, Integer> progress = user == null ? null : user.getSubjectProgress();
+        final Map<String, SubjectProgress> progress = user == null ? null : user.getSubjectProgress();
 
         ModelAndView mav = new ModelAndView("degree/index");
         mav.addObject("degree", degree);

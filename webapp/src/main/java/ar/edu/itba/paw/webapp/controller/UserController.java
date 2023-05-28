@@ -1,10 +1,11 @@
 package ar.edu.itba.paw.webapp.controller;
 
 import ar.edu.itba.paw.models.*;
+import ar.edu.itba.paw.models.enums.SubjectProgress;
 import ar.edu.itba.paw.services.*;
 import ar.edu.itba.paw.services.exceptions.*;
-import ar.edu.itba.paw.webapp.auth.UniUserDetailsService;
 import ar.edu.itba.paw.webapp.exceptions.RoleNotFoundException;
+import ar.edu.itba.paw.webapp.exceptions.SubjectNotFoundException;
 import ar.edu.itba.paw.webapp.exceptions.UserNotFoundException;
 import ar.edu.itba.paw.webapp.form.*;
 import ar.edu.itba.paw.webapp.form.EditUserDataForm;
@@ -13,8 +14,6 @@ import ar.edu.itba.paw.webapp.form.RecoverPasswordForm;
 import ar.edu.itba.paw.webapp.form.UserForm;
 import ar.edu.itba.paw.webapp.Utils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
@@ -30,6 +29,7 @@ import java.util.*;
 @Controller
 public class UserController {
     private final UserService userService;
+    private final SubjectService subjectService;
     private final ReviewService reviewService;
     private final MailService mailService;
     private final AuthUserService authUserService;
@@ -38,12 +38,14 @@ public class UserController {
     @Autowired
     public UserController(
             UserService userService,
+            SubjectService subjectService,
             ReviewService reviewService,
             MailService mailService,
             AuthUserService authUserService,
             RolesService rolesService
     ) {
         this.userService = userService;
+        this.subjectService = subjectService;
         this.reviewService = reviewService;
         this.mailService = mailService;
         this.authUserService = authUserService;
@@ -51,7 +53,12 @@ public class UserController {
     }
 
     @RequestMapping("/user/{id:\\d+}")
-    public ModelAndView user(@PathVariable long id,@RequestParam Map<String, String> param) {
+    public ModelAndView user(
+            @PathVariable long id,
+            @RequestParam(required = false, defaultValue = "1") final int page,
+            @RequestParam(required = false, defaultValue = "date") final String orderBy,
+            @RequestParam(required = false, defaultValue = "desc") final String dir
+    ) {
         final Optional<User> maybeUser = userService.findById(id);
         if(!maybeUser.isPresent()) {
             throw new UserNotFoundException();
@@ -64,32 +71,40 @@ public class UserController {
         final User user = maybeUser.get();
         ModelAndView mav = new ModelAndView("user/userProfile");
 
-        return setProfileData(user, mav,param);
+        return setProfileData(mav, user, page, orderBy, dir);
     }
 
     @RequestMapping("/profile")
-    public ModelAndView profile(@RequestParam Map<String, String> param) {
+    public ModelAndView profile(
+            @RequestParam(required = false, defaultValue = "1") final int page,
+            @RequestParam(required = false, defaultValue = "date") final String orderBy,
+            @RequestParam(required = false, defaultValue = "desc") final String dir
+    ) {
         ModelAndView mav = new ModelAndView("/user/profile");
         User user = authUserService.getCurrentUser();
-        return setProfileData(user, mav,param);
+        return setProfileData(mav, user, page, orderBy, dir);
     }
 
-    private ModelAndView setProfileData(User user, ModelAndView mav,Map<String, String> param){
-        final List<Review> userReviews = reviewService.getAllUserReviewsWithSubjectName(user.getId(),param);
-        final int totalPages = reviewService.getTotalPagesFromUserReviews(user.getId());
-        final Map<Long, Integer> userVotes = reviewService.userReviewVoteByIdUser(user.getId());
-        final int page = Integer.parseInt(param.getOrDefault("pageNum", "1"));
-        final String order = param.getOrDefault("order", "name");
-        final String dir = param.getOrDefault("dir", "asc");
+    private ModelAndView setProfileData(
+            final ModelAndView mav,
+            final User user,
+            final int page,
+            final String orderBy,
+            final String dir
+    ){
+        final List<Review> userReviews = reviewService.getAllUserReviews(user, page, orderBy, dir);
+        final int totalPages = reviewService.getTotalPagesForUserReviews(user);
+
+        final Map<Review, ReviewVote> userVotes = user.getVotesByReview();
 
         if(page > totalPages || page < 1) return new ModelAndView("redirect:/404");
 
         mav.addObject("user", user);
         mav.addObject("reviews", userReviews);
-        mav.addObject("totalPages",totalPages);
+        mav.addObject("totalPages", totalPages);
         mav.addObject("currentPage", page);
-        mav.addObject("userVotes",userVotes);
-        mav.addObject("order", order);
+        mav.addObject("userVotes", userVotes);
+        mav.addObject("order", orderBy);
         mav.addObject("dir", dir);
 
         return mav;
@@ -183,8 +198,10 @@ public class UserController {
     }
 
     @RequestMapping(value = "/profile/editdata", method = { RequestMethod.POST })
-    public ModelAndView editProfile(@Valid @ModelAttribute ("EditUserDataForm") final EditUserDataForm editUserDataForm,
-                                    final BindingResult errors) throws SQLException {
+    public ModelAndView editProfile(
+            @Valid @ModelAttribute ("EditUserDataForm") final EditUserDataForm editUserDataForm,
+            final BindingResult errors
+    ) {
         if(errors.hasErrors()){
             return editProfileForm(editUserDataForm);
         }
@@ -193,6 +210,7 @@ public class UserController {
         userService.editProfile(user, editUserDataForm.getUserName());
         return new ModelAndView("redirect:/profile");
     }
+
     @RequestMapping(value = "/profile/editdata", method = { RequestMethod.GET })
     public ModelAndView editProfileForm(@ModelAttribute ("EditUserDataForm") final EditUserDataForm editUserDataForm) {
         ModelAndView mav = new ModelAndView("user/editUserData");
@@ -200,9 +218,12 @@ public class UserController {
         mav.addObject("user", user);
         return mav;
     }
+
     @RequestMapping(value = "/profile/editpassword", method = { RequestMethod.POST })
-    public ModelAndView editPassword(@Valid @ModelAttribute ("EditUserPasswordForm") final EditUserPasswordForm editUserPasswordForm,
-                                    final BindingResult errors) throws SQLException {
+    public ModelAndView editPassword(
+            @Valid @ModelAttribute ("EditUserPasswordForm") final EditUserPasswordForm editUserPasswordForm,
+            final BindingResult errors
+    ) {
         if(errors.hasErrors()){
             return editPasswordForm(editUserPasswordForm);
         }
@@ -240,9 +261,11 @@ public class UserController {
     }
 
     @RequestMapping(value = "/recover", method = { RequestMethod.POST })
-    public ModelAndView sendRecover(@Valid @ModelAttribute ("RecoverPasswordForm") final RecoverPasswordForm recoverPasswordForm,
-                                    final BindingResult errors,
-                                    final Locale locale){
+    public ModelAndView sendRecover(
+            @Valid @ModelAttribute ("RecoverPasswordForm") final RecoverPasswordForm recoverPasswordForm,
+            final BindingResult errors,
+            final Locale locale
+    ){
         if( errors.hasErrors()){
             return recoverPassword(recoverPasswordForm);
         }
@@ -272,8 +295,11 @@ public class UserController {
     }
 
     @RequestMapping(value = "/recover/{token}", method = { RequestMethod.POST })
-    public ModelAndView recoverPasswordEdit(@PathVariable String token, @Valid @ModelAttribute("RecoverPasswordEditForm") final RecoverPasswordEditForm recoverPasswordEditForm,
-                                            final BindingResult errors){
+    public ModelAndView recoverPasswordEdit(
+            @PathVariable String token,
+            @Valid @ModelAttribute("RecoverPasswordEditForm") final RecoverPasswordEditForm recoverPasswordEditForm,
+            final BindingResult errors
+    ){
         if(errors.hasErrors()) {
             return recoverPasswordEditForm(token, recoverPasswordEditForm);
         }
@@ -305,6 +331,7 @@ public class UserController {
         mav.addObject("user", user);
         return mav;
     }
+
     @RequestMapping(value="/profile/editprofilepicture", method = {RequestMethod.POST})
     public ModelAndView editProfilePicture(@ModelAttribute("editProfilePictureForm") final EditProfilePictureForm editProfilePictureForm,
                                            //CommonsMultipartFile profilePicture,
@@ -330,9 +357,11 @@ public class UserController {
         if( !authUserService.isAuthenticated()){
             return "invalid parameters"; // we do not give any information on the inner workings
         }
-        User user = authUserService.getCurrentUser();
 
-        userService.updateSubjectProgress(user, progressForm.getIdSub(), User.SubjectProgressEnum.getByInt(progressForm.getProgress()));
+        final User user = authUserService.getCurrentUser();
+        final Subject subject = subjectService.findById(progressForm.getIdSub()).orElseThrow(SubjectNotFoundException::new);
+
+        userService.updateSubjectProgress(user, subject, SubjectProgress.parse(progressForm.getProgress()));
 
         return "voted";
     }

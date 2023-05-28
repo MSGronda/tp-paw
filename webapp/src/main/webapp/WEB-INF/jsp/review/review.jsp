@@ -28,10 +28,10 @@
             <sl-textarea name="text" label="${TextLabel}" value="${ReviewForm.text}"></sl-textarea>
             <br/>
 
-            <form:errors path="easy" cssClass="error" element="p"/>
+            <form:errors path="difficulty" cssClass="error" element="p"/>
             <spring:message code="form.label" var="ButtonLabel"/>
             <spring:message code="form.easy.help" var="EasyHelp"/>
-            <sl-radio-group label="${ButtonLabel}" value="${ReviewForm.easy}" name="easy" help-text="${EasyHelp}">
+            <sl-radio-group label="${ButtonLabel}" value="${ReviewForm.difficulty}" name="difficulty" help-text="${EasyHelp}">
                 <sl-radio-button value="0"><spring:message code="form.easy"/></sl-radio-button>
                 <sl-radio-button value="1"><spring:message code="form.normal"/></sl-radio-button>
                 <sl-radio-button value="2"><spring:message code="form.hard"/></sl-radio-button>

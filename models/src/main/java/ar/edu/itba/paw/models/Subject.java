@@ -50,6 +50,9 @@ public class Subject {
     @OneToMany(mappedBy = "subject")
     private Set<SubjectClass> classes;
 
+    @OneToMany(mappedBy = "subject", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Review> reviews;
+
     private Subject(Builder builder) {
         this.id = builder.id;
         this.name = builder.name;
@@ -109,6 +112,10 @@ public class Subject {
         }
 
         return reviewStats;
+    }
+
+    public List<Review> getReviews() {
+        return reviews;
     }
 
     @Override

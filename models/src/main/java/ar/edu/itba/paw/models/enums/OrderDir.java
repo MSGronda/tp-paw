@@ -9,7 +9,7 @@ public enum OrderDir {
         this.queryString = queryString;
     }
 
-    public static OrderDir fromString(String dir) {
+    public static OrderDir parse(String dir) {
         if (dir.equals("desc")) {
             return DESCENDING;
         }

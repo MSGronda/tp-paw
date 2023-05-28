@@ -17,7 +17,7 @@ import java.util.stream.Collectors;
 
 @Repository
 public class SubjectJpaDao implements SubjectDao {
-    private static final int PAGE_SIZE = 10;
+    private static final int PAGE_SIZE = 20;
 
     @PersistenceContext
     private EntityManager em;
@@ -30,7 +30,7 @@ public class SubjectJpaDao implements SubjectDao {
     @Override
     public List<Subject> findAllThatUserCanDo(User user) {
         @SuppressWarnings("unchecked") final List<Integer> ids = em.createNativeQuery(
-                        "SELECT id, subname FROM subjects s\n" +
+                        "SELECT id FROM subjects s\n" +
                                 "WHERE NOT EXISTS (\n" +
                                 "    SELECT id FROM prereqsubjects p\n" +
                                 "    WHERE p.idsub = s.id\n" +
@@ -90,11 +90,12 @@ public class SubjectJpaDao implements SubjectDao {
             }
         }
 
-        @SuppressWarnings("unchecked") final List<Integer> ids = nativeQuery
+        @SuppressWarnings("unchecked") final List<String> ids = nativeQuery
                 .setFirstResult((page - 1) * PAGE_SIZE)
                 .setMaxResults(PAGE_SIZE)
                 .getResultList();
 
+        if(ids.isEmpty()) return Collections.emptyList();
 
         final StringBuilder hqlQuerySb = new StringBuilder("from Subject where id in :ids");
         appendOrderHql(hqlQuerySb, orderBy, dir);
@@ -122,7 +123,7 @@ public class SubjectJpaDao implements SubjectDao {
             }
         }
 
-        return (int) Math.ceil(((Number) nativeQuery.getSingleResult()).doubleValue() / PAGE_SIZE);
+        return (int) Math.max(1, Math.ceil(((Number) nativeQuery.getSingleResult()).doubleValue() / PAGE_SIZE));
     }
 
     @Override
