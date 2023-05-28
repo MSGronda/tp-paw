@@ -312,11 +312,11 @@
 
             <form id="sub-progress" style="margin: 0" >
                 <input type="hidden" name="idSub" id="idSub" value="${subject.id}">
-                <input type="hidden" name="progress" id="progress" value="${progress}">
+                <input type="hidden" name="progress" id="progress" value="${progress.value}">
                 <sec:authorize access="isAuthenticated()">
                     <sl-tooltip content="<spring:message code="subject.progress.tooltip"/>">
                         <c:choose>
-                            <c:when test="${progress == 1}">
+                            <c:when test="${progress.value == 1}">
                                 <sl-button class="progress-bt" variant="primary" size="large" pill data-form-id="sub-progress" data-form-value="1">
                                     <spring:message code="subject.progress.done"/>
                                 </sl-button>

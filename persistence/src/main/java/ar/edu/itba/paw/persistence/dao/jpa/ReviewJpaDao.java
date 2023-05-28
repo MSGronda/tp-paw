@@ -105,21 +105,19 @@ public class ReviewJpaDao implements ReviewDao {
         appendOrderSql(nativeQuerySb, orderBy, dir);
 
         @SuppressWarnings("unchecked")
-        final List<Integer> ids = em.createNativeQuery(nativeQuerySb.toString())
+        final List<Long> ids = (List<Long>) em.createNativeQuery(nativeQuerySb.toString())
                 .setParameter(1, subject.getId())
                 .setFirstResult((page - 1) * PAGE_SIZE)
                 .setMaxResults(PAGE_SIZE)
-                .getResultList();
+                .getResultList().stream().map(n -> ((Number)n).longValue()).collect(Collectors.toList());
 
         if(ids.isEmpty()) return Collections.emptyList();
-
-        final List<Long> longIds = ids.stream().map(Integer::longValue).collect(Collectors.toList());
 
         final StringBuilder hqlQuerySb = new StringBuilder("from Review where id in :ids");
         appendOrderHql(hqlQuerySb, orderBy, dir);
 
         return em.createQuery(hqlQuerySb.toString(), Review.class)
-                .setParameter("ids", longIds)
+                .setParameter("ids", ids)
                 .getResultList();
     }
 
@@ -133,21 +131,21 @@ public class ReviewJpaDao implements ReviewDao {
         appendOrderSql(nativeQuerySb, orderBy, dir);
 
         @SuppressWarnings("unchecked")
-        final List<Integer> ids = em.createNativeQuery(nativeQuerySb.toString())
+        final List<Long> ids = (List<Long>) em.createNativeQuery(nativeQuerySb.toString())
                 .setParameter(1, user.getId())
                 .setFirstResult((page - 1) * PAGE_SIZE)
                 .setMaxResults(PAGE_SIZE)
-                .getResultList();
+                .getResultList().stream().map(n -> ((Number)n).longValue()).collect(Collectors.toList());
+
 
         if(ids.isEmpty()) return Collections.emptyList();
 
-        final List<Long> longIds = ids.stream().map(Integer::longValue).collect(Collectors.toList());
 
         final StringBuilder hqlQuerySb = new StringBuilder("from Review where id in :ids");
         appendOrderHql(hqlQuerySb, orderBy, dir);
 
         return em.createQuery(hqlQuerySb.toString(), Review.class)
-                .setParameter("ids", longIds)
+                .setParameter("ids", ids)
                 .getResultList();
     }
 

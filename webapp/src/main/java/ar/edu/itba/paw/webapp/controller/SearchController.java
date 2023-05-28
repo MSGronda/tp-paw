@@ -56,7 +56,7 @@ public class SearchController {
         final List<Subject> subjects = subjectService.search(query, page, filters, orderBy, dir);
         final Map<SubjectFilterField, List<String>> relevantFilters = subjectService.getRelevantFiltersForSearch(query, filters);
 
-        Map<String, SubjectProgress> progress = user == null ? null : user.getSubjectProgress();
+        Map<String, SubjectProgress> progress = user == null ? new HashMap<>() : user.getSubjectProgress();
 
         ModelAndView mav = new ModelAndView("subjects/search");
         mav.addObject("subjects", subjects);

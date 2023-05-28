@@ -58,11 +58,11 @@ public class SubjectController {
         //TODO: get degree from user
         final Degree degree = degreeService.findById(1L).orElseThrow(IllegalStateException::new);
 
-        final SubjectProgress progress = user == null ? null : user.getSubjectProgress().get(subject);
+        final SubjectProgress progress = user == null ? SubjectProgress.PENDING : user.getSubjectProgress().getOrDefault(subject,SubjectProgress.PENDING);
         final int year = degreeService.findSubjectYearForDegree(subject, degree);
         final List<Review> reviews = reviewService.getAllSubjectReviews(subject, pageNum, order, dir);
         final Boolean didReview = reviewService.didUserReview(subject, user);
-        final Map<Review, ReviewVote> userVotes = user == null ? null : user.getVotesByReview();
+        final Map<Review, ReviewVote> userVotes = user == null ? new HashMap<>() : user.getVotesByReview();
 
         ModelAndView mav = new ModelAndView("subjects/subject_info");
         mav.addObject("user", user);

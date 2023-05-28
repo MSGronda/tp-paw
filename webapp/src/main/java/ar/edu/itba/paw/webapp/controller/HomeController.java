@@ -48,7 +48,7 @@ public class HomeController {
         }
 
         final Degree degree = maybeDegree.get();
-        final Map<String, SubjectProgress> progress = user == null ? null : user.getSubjectProgress();
+        final Map<String, SubjectProgress> progress = user == null ? new HashMap<>() : user.getSubjectProgress();
 
         ModelAndView mav = new ModelAndView("degree/index");
         mav.addObject("degree", degree);
