@@ -43,6 +43,10 @@ public class User {
     @Column(length = 32)
     private Locale locale;
 
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "degreeid")
+    private Degree degree;
+
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name = "userroles",
@@ -67,6 +71,7 @@ public class User {
         this.confirmToken = builder.confirmToken;
         this.locale = builder.locale;
         this.confirmed = builder.confirmed;
+        this.degree = builder.degree;
     }
 
     User() {}
@@ -130,6 +135,10 @@ public class User {
         }
 
         return res;
+    }
+
+    public Degree getDegree() {
+        return degree;
     }
 
     public void setEmail(String email) {
@@ -198,6 +207,8 @@ public class User {
         private boolean confirmed;
         private Locale locale;
 
+        private Degree degree;
+
 
         private Builder() {
 
@@ -212,6 +223,7 @@ public class User {
             this.confirmToken = user.confirmToken;
             this.confirmed = user.confirmed;
             this.locale = user.locale;
+            this.degree = user.degree;
         }
 
         public Builder id(final long id) {
@@ -251,6 +263,11 @@ public class User {
 
         public Builder locale(Locale locale) {
             this.locale = locale;
+            return this;
+        }
+
+        public Builder degree(Degree degree){
+            this.degree = degree;
             return this;
         }
 

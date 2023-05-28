@@ -71,6 +71,7 @@
                     </c:forEach>
                 </sl-select>
                 <br/>
+                <input type="hidden" name="degreeId" id="degreeIdHiddenInput"/>
                 <sl-button variant="success" onclick="previousStep()"><spring:message code="register.previous"/></sl-button>
                 <sl-button variant="success" onclick="nextStep()" id="nextButton" disabled><spring:message code="register.next"/></sl-button>
             </div>
@@ -162,6 +163,8 @@
 
         var nextButton = document.getElementById('nextButton');
         nextButton.disabled = false;
+
+        document.getElementById('degreeIdHiddenInput').value = degreeId;
 
         var degreeTitle = document.getElementById("degree-"+degreeId);
         degreeTitle.style.display = "block"

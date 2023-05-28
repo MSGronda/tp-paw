@@ -130,6 +130,7 @@ public class UserController {
                             .email(userForm.getEmail())
                             .password(userForm.getPassword())
                             .username(userForm.getName())
+                            .degree(degreeService.findById(userForm.getDegreeId()).orElseThrow(IllegalStateException::new))
                             .build()
             );
         }catch (UserEmailAlreadyTakenException e){
