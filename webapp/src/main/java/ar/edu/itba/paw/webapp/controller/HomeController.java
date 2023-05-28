@@ -78,20 +78,12 @@ public class HomeController {
         final List<Subject> futureSubjects = ss.findAllThatHasNotDone(user);
         final List<Subject> pastSubjects = ss.findAllThatHasDone(user);
         final double userProgressPercentage = Math.floor( ((1.0 * user.getCreditsDone()) / degree.getTotalCredits()) * 100);
+        final Map<Integer, Double> percentageCompletionByYear = us.getUserProgressionPerYear( degree,  user); // userService.getCreditsDoneByUserPerYear
 
         // TODO: replace with real calls
-        final Map<Integer, Integer> creditsDoneByUserPerYear = new HashMap<>(); // userService.getCreditsDoneByUserPerYear
         // TODO: this subject should only contain the class the user is signed up to
         final List<Subject> currentUserSemester = new ArrayList<>();    // userService.getCurrentUserService
 
-        // TODO: = = = = = = = remove. Moqueo de datos = = = = = = =
-        creditsDoneByUserPerYear.put(1,48);
-        creditsDoneByUserPerYear.put(2,50);
-        creditsDoneByUserPerYear.put(3,45);
-        creditsDoneByUserPerYear.put(4,30);
-        creditsDoneByUserPerYear.put(5,0);
-        creditsDoneByUserPerYear.put(-1,5);
-        // TODO: = = = = = = = remove. = = = = = = =
 
         ModelAndView mav = new ModelAndView("dashboard/dashboard");
         mav.addObject("degree",degree);
@@ -102,7 +94,7 @@ public class HomeController {
 
         mav.addObject("userProgressPercentage",userProgressPercentage);
 
-        mav.addObject("creditsDoneByUserPerYear",creditsDoneByUserPerYear);
+        mav.addObject("percentageCompletionByYear",percentageCompletionByYear);
         mav.addObject("currentUserSemester",currentUserSemester);
         return mav;
     }

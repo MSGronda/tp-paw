@@ -174,7 +174,6 @@
                     <sl-tab slot="nav" panel="future-subjects"><spring:message code="dashboard.futureSubjects"/></sl-tab>
                     <sl-tab slot="nav" panel="past-subjects"><spring:message code="dashboard.pastSubjects"/></sl-tab>
 
-
                     <sl-tab-panel class="tab-panel" name="overview">
                         <div class="overview-area">
                             <sl-card class="general-info-card">
@@ -253,10 +252,6 @@
                         <div class="future-subjects-area">
                             <c:forEach var="subject" items="${futureSubjects}">
                                 <c:set var="subject" value="${subject}" scope="request"/>
-<%--                                <c:set var="reviewCount" value="${reviewStats[subject.id].reviewCount}" scope="request"/>--%>
-<%--                                <c:set var="difficulty" value="${reviewStats[subject.id].difficulty}" scope="request"/>--%>
-<%--                                <c:set var="time" value="${reviewStats[subject.id].timeDifficulty}" scope="request"/>--%>
-<%--                                <c:set var="progress" value="${subjectProgress.getOrDefault(subject.id, 0)}" scope="request"/>--%>
                                 <c:import url="../components/subject_card.jsp"/>
                             </c:forEach>
                         </div>
@@ -288,6 +283,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.3.0/chart.min.js" integrity="sha512-mlz/Fs1VtBou2TrUkGzX4VoGvybkD9nkeXWJm3rle0DPHssYYx4j+8kIS15T78ttGfmOjH0lLaBXGcShaVkdkg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.3.0/chart.umd.js" integrity="sha512-CMF3tQtjOoOJoOKlsS7/2loJlkyctwzSoDK/S40iAB+MqWSaf50uObGQSk5Ny/gfRhRCjNLvoxuCvdnERU4WGg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.3.0/helpers.js" integrity="sha512-BQJ3AP+pvkpSDEexjv6OYwGVCVIFo507d09S8pFPTp63+d7YZDrvjoB+4cSPTThQVfQjP6yybIZ6P29ZQGcPvQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
 <script defer>
 
     const daysOfWeek = [
@@ -320,13 +316,21 @@
         )
         </c:forEach>
     </c:if>
+    <c:if test="${currentUserSemester.size() == 0}">
+        $('document').ready(function(){
+        const tabGroup = document.querySelector('.tabs');
+        tabGroup.show('current-semester');
+    });
+    </c:if>
+
+
     // - - - - - - - Inflate chart - - - - - - -
     const chart = new Chart(document.getElementById('progress-by-year'),
         {type: 'bar', options: {animation: false, plugins: {legend: {display: false}, tooltip: {enabled: false}}},
             data: {
                 labels: [
-                    <c:forEach var="year" items="${creditsDoneByUserPerYear.keySet()}">
-                        <c:if test="${year != -1}">'Year ${year}',</c:if>
+                    <c:forEach var="year" varStatus="status" items="${percentageCompletionByYear.keySet()}">
+                        <c:if test="${!status.last}">'Year ${year}',</c:if>
                     </c:forEach>
                     'Electives'
                 ],
@@ -334,10 +338,9 @@
                     {
                         barThickness: 50,
                         data: [
-                            <c:forEach varStatus="status" var="year" items="${creditsDoneByUserPerYear.values()}">
-                                <c:if test="${!status.first}">${year},</c:if>
+                            <c:forEach varStatus="status" var="year" items="${percentageCompletionByYear.values()}">
+                                ${year},
                             </c:forEach>
-                            ${creditsDoneByUserPerYear.values().stream().findFirst().get()}
                         ]
                     }
                 ]

@@ -1,9 +1,6 @@
 package ar.edu.itba.paw.services;
 
-import ar.edu.itba.paw.models.Image;
-import ar.edu.itba.paw.models.Role;
-import ar.edu.itba.paw.models.Subject;
-import ar.edu.itba.paw.models.User;
+import ar.edu.itba.paw.models.*;
 import ar.edu.itba.paw.models.enums.SubjectProgress;
 import ar.edu.itba.paw.persistence.dao.ImageDao;
 import ar.edu.itba.paw.persistence.dao.RecoveryDao;
@@ -288,6 +285,32 @@ public class UserServiceImpl implements UserService {
         final byte[] bytes = new byte[20];
         random.nextBytes(bytes);
         return new String(Base64.getUrlEncoder().encode(bytes));
+    }
+
+    @Override
+    public Map<Integer, Double> getUserProgressionPerYear(Degree degree, User user){
+        Map<Integer, Double> progress = new LinkedHashMap<>();
+
+        for(DegreeYear year: degree.getYears()){
+            int credits = 0, totalCredits = 0;
+            for(Subject sub : year.getSubjects()){
+                if(user.getSubjectProgress().containsKey(sub.getId())){
+                    credits += sub.getCredits();
+                }
+                totalCredits += sub.getCredits();
+            }
+            progress.put(year.getNumber(), 100.0 * credits / totalCredits);
+        }
+
+        int credits = 0, totalCredits = 0;
+        for(Subject sub : degree.getElectives()){
+            if(user.getSubjectProgress().containsKey(sub.getId())){
+                credits += sub.getCredits();
+            }
+            totalCredits += sub.getCredits();
+        }
+        progress.put(-1, 100.0 * credits / totalCredits);
+        return progress;
     }
 
     @Transactional

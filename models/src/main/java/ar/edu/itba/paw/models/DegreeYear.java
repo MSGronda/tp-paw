@@ -7,21 +7,11 @@ public class DegreeYear {
     private final Degree degree;
     private final int number;
     private final List<Subject> subjects;
-    private final int totalCredits;
 
     public DegreeYear(final Degree degree, final int number, final List<Subject> subjects) {
         this.degree = degree;
         this.number = number;
         this.subjects = subjects;
-        int credits = 0;
-        for(Subject s: subjects){
-            credits += s.getCredits();
-        }
-        this.totalCredits = credits;
-    }
-
-    public int getTotalCredits(){
-        return totalCredits;
     }
 
     public Degree getDegree() {

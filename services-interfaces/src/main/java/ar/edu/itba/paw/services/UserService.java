@@ -1,5 +1,6 @@
 package ar.edu.itba.paw.services;
 
+import ar.edu.itba.paw.models.Degree;
 import ar.edu.itba.paw.models.Role;
 import ar.edu.itba.paw.models.Subject;
 import ar.edu.itba.paw.models.User;
@@ -11,6 +12,7 @@ import ar.edu.itba.paw.services.exceptions.UserEmailAlreadyTakenException;
 
 import java.io.IOException;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Optional;
 
 public interface UserService extends BaseService<Long, User> {
@@ -48,4 +50,6 @@ public interface UserService extends BaseService<Long, User> {
 
     void setLocale(User user, Locale locale);
     void setLocaleAsync(User user, Locale locale);
+
+    Map<Integer, Double> getUserProgressionPerYear(Degree degree, User user);
 }
