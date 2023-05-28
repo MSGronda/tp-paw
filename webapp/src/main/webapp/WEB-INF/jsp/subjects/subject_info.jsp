@@ -1,6 +1,7 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ page import="ar.edu.itba.paw.models.enums.Difficulty" %>
 <%@ page import="ar.edu.itba.paw.models.enums.TimeDemanding" %>
+<%@ page import="ar.edu.itba.paw.models.enums.SubjectProgress" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jstl/core_rt" %>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
@@ -316,7 +317,7 @@
                 <sec:authorize access="isAuthenticated()">
                     <sl-tooltip content="<spring:message code="subject.progress.tooltip"/>">
                         <c:choose>
-                            <c:when test="${progress.value == 1}">
+                            <c:when test="${progress == SubjectProgress.DONE}">
                                 <sl-button class="progress-bt" variant="primary" size="large" pill data-form-id="sub-progress" data-form-value="1">
                                     <spring:message code="subject.progress.done"/>
                                 </sl-button>

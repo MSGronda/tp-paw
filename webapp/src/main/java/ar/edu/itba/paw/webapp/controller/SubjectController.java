@@ -58,7 +58,7 @@ public class SubjectController {
         //TODO: get degree from user
         final Degree degree = degreeService.findById(1L).orElseThrow(IllegalStateException::new);
 
-        final SubjectProgress progress = user == null ? SubjectProgress.PENDING : user.getSubjectProgress().getOrDefault(subject,SubjectProgress.PENDING);
+        final SubjectProgress progress = user == null ? SubjectProgress.PENDING : user.getSubjectProgress().getOrDefault(subject.getId(),SubjectProgress.PENDING);
         final int year = degreeService.findSubjectYearForDegree(subject, degree);
         final List<Review> reviews = reviewService.getAllSubjectReviews(subject, pageNum, order, dir);
         final Boolean didReview = reviewService.didUserReview(subject, user);

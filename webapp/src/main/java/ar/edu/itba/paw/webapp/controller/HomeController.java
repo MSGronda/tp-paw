@@ -52,7 +52,7 @@ public class HomeController {
         final Map<String, SubjectProgress> progress = user == null ? new HashMap<>() : user.getSubjectProgress();
 
         ModelAndView mav = new ModelAndView("degree/index");
-        mav.addObject("degree", degree);
+        mav.addObject("degree", degree.get());
         mav.addObject("subjectProgress", progress);
         return mav;
     }
