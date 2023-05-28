@@ -150,13 +150,13 @@
   </div>
 
   <div class="break-text">
-    <c:if test="${review.requiresShowMore}">
-      <c:out value="${review.previewText}"/><span id="dots">...</span><span id="more"><c:out value="${review.text}"/></span>
+    <c:if test="${review.text.length() > 500}">
+      <c:out value="${review.text.substring(0,500)}"/><span id="dots">...</span><span id="more"><c:out value="${review.text.substring(500)}"/></span>
 
       <br />
       <sl-button size="small" class="showMore"><spring:message code="subject.showMore" />  <sl-icon name="chevron-down"></sl-icon></sl-button>
     </c:if>
-    <c:if test="${!review.requiresShowMore}">
+    <c:if test="${review.text.length() <= 500}">
       <c:out value="${review.text}"/>
     </c:if>
   </div>
