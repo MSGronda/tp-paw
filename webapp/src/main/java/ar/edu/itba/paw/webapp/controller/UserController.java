@@ -4,6 +4,7 @@ import ar.edu.itba.paw.models.*;
 import ar.edu.itba.paw.models.enums.SubjectProgress;
 import ar.edu.itba.paw.services.*;
 import ar.edu.itba.paw.services.exceptions.*;
+import ar.edu.itba.paw.webapp.auth.UniUserDetailsService;
 import ar.edu.itba.paw.webapp.exceptions.RoleNotFoundException;
 import ar.edu.itba.paw.webapp.exceptions.SubjectNotFoundException;
 import ar.edu.itba.paw.webapp.exceptions.UserNotFoundException;
@@ -14,6 +15,8 @@ import ar.edu.itba.paw.webapp.form.RecoverPasswordForm;
 import ar.edu.itba.paw.webapp.form.UserForm;
 import ar.edu.itba.paw.webapp.Utils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
@@ -34,6 +37,7 @@ public class UserController {
     private final MailService mailService;
     private final AuthUserService authUserService;
     private final RolesService rolesService;
+    private final DegreeService degreeService;
 
     @Autowired
     public UserController(
@@ -42,7 +46,8 @@ public class UserController {
             ReviewService reviewService,
             MailService mailService,
             AuthUserService authUserService,
-            RolesService rolesService
+            RolesService rolesService,
+            DegreeService degreeService
     ) {
         this.userService = userService;
         this.subjectService = subjectService;
@@ -50,6 +55,7 @@ public class UserController {
         this.mailService = mailService;
         this.authUserService = authUserService;
         this.rolesService = rolesService;
+        this.degreeService = degreeService;
     }
 
     @RequestMapping("/user/{id:\\d+}")
@@ -139,12 +145,22 @@ public class UserController {
         final String logoUrl = baseUrl + "/img/uni.png";
         mailService.sendVerification(newUser.getEmail(), verifUrl, logoUrl, locale);
 
+        userService.updateSubjectProgressWithSubList(newUser, userForm.getSubjectIds());
+
         return new ModelAndView("redirect:/verification?email=" + newUser.getEmail());
     }
 
     @RequestMapping(value = "/register", method = { RequestMethod.GET })
     public ModelAndView registerForm(@ModelAttribute ("UserForm") final UserForm userForm) {
-        return new ModelAndView("user/register");
+        List<Degree> degreeList = degreeService.getAll();
+//        Map<Long, Map<Integer, List<Subject>>> degreeMapAndYearSubjects = subjectService.getAllGroupedByDegIdAndYear();
+//        Map<Long, List<Subject>> degreeMapAndYearElectives = subjectService.getAllElectivesGroupedByDegId();
+
+        ModelAndView mav = new ModelAndView("user/register");
+        mav.addObject("degrees", degreeList);
+//        mav.addObject("degreeMapAndYearSubjects", degreeMapAndYearSubjects);
+//        mav.addObject("degreeMapAndYearElectives", degreeMapAndYearElectives);
+        return mav;
     }
 
     @RequestMapping("/verification")

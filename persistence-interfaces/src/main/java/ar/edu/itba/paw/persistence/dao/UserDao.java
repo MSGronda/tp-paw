@@ -6,6 +6,7 @@ import ar.edu.itba.paw.models.User;
 import ar.edu.itba.paw.models.enums.SubjectProgress;
 import ar.edu.itba.paw.persistence.exceptions.UserEmailAlreadyTakenPersistenceException;
 
+import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
 
@@ -30,4 +31,6 @@ public interface UserDao extends RWDao<Long,User> {
     void setLocale(final User user, final Locale locale);
 
     void updateConfirmToken(final User user, final String token);
+
+    void updateSubjectProgressList(final User user, final List<String> subjectIdList);
 }

@@ -24,6 +24,7 @@ public interface UserService extends BaseService<Long, User> {
 
     void deleteSubjectProgress(final User user, final Subject subject);
     void updateSubjectProgress(final User user, final Subject subject, final SubjectProgress progress);
+    public void updateSubjectProgressWithSubList( final User user, final String subIds);
 
     void changePassword(
             final User user,

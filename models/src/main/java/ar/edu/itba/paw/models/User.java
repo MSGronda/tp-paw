@@ -164,6 +164,10 @@ public class User {
         this.roles = roles;
     }
 
+    public void setSubjectProgress(Map<String, SubjectProgress> subjectProgress) {
+        this.subjectProgress = subjectProgress;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

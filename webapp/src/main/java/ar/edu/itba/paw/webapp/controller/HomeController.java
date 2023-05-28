@@ -64,7 +64,7 @@ public class HomeController {
             user = aus.getCurrentUser();
         }
         else{
-            return new ModelAndView("user/login");
+            return new ModelAndView("redirect:/landing");
         }
 
 
@@ -124,4 +124,11 @@ public class HomeController {
         mav.addObject("pastSubjects",pastSubjects);
         return mav;
     }
+
+    @RequestMapping("/landing")
+    public ModelAndView landing() {
+        return new ModelAndView("landing");
+    }
+
 }
+

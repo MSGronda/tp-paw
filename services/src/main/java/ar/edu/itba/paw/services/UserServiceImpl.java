@@ -155,6 +155,30 @@ public class UserServiceImpl implements UserService {
 
     @Transactional
     @Override
+    public void updateSubjectProgressWithSubList( final User user, final String subIds){
+        List<String> subjectIdList = parseString(subIds);
+        userDao.updateSubjectProgressList(user, subjectIdList);
+    }
+
+    private List<String> parseString(String stringifyString){
+        String trimmedInput = stringifyString.replace("[", "").replace("]", "");
+        String[] elements = trimmedInput.split(",");
+
+
+
+        List<String> parsedList = new ArrayList<>();
+        for (String element : elements) {
+            // Remove quotes around each element
+            String parsedElement = element.replace("\"", "");
+            parsedList.add(parsedElement);
+        }
+
+        return parsedList;
+
+    }
+
+    @Transactional
+    @Override
     public void changePassword(
             final User user,
             final String password,

@@ -22,7 +22,8 @@ public class UserJpaDao implements UserDao {
     public User create(User user) throws UserEmailAlreadyTakenPersistenceException {
         if (!user.getConfirmToken().isPresent())
             throw new IllegalArgumentException("Confirm token must be present");
-
+        if( findByEmail(user.getEmail()).isPresent() )
+            throw new UserEmailAlreadyTakenPersistenceException();
         em.persist(user);
         return user;
     }
@@ -129,5 +130,16 @@ public class UserJpaDao implements UserDao {
     @Override
     public void update(User user) {
 
+    }
+
+    @Override
+    public void updateSubjectProgressList(final User user, final List<String> subjectIdList){
+        Map<String, SubjectProgress> userSubjectProgress = user.getSubjectProgress();
+        if( userSubjectProgress == null)
+            userSubjectProgress = new HashMap<>();
+        for( String subjectId : subjectIdList){
+            userSubjectProgress.put(subjectId, SubjectProgress.DONE);
+        }
+        user.setSubjectProgress(userSubjectProgress);
     }
 }
