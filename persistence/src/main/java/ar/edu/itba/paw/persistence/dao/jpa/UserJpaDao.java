@@ -40,7 +40,6 @@ public class UserJpaDao implements UserDao {
         final List<User> list = query.getResultList();
         return list.isEmpty() ? Optional.empty() : Optional.of(list.get(0));
     }
-
     @Override
     public Optional<User> findByEmail(String email) {
         return em.createQuery("from User u where u.email = :email and u.confirmed = true", User.class)

@@ -67,61 +67,43 @@ public class HomeController {
             return new ModelAndView("landing");
         }
 
+        final long userDegree = 1;           // User.getDegree
+
+        final Optional<Degree> maybeDegree = ds.findById(userDegree);
+        if(!maybeDegree.isPresent()){
+            throw new DegreeNotFoundException();
+        }
+        Degree degree = maybeDegree.get();
+        final List<Subject> subjectsUserCanDo = ss.findAllThatUserCanDo(user);
+        final List<Subject> futureSubjects = ss.findAllThatHasNotDone(user);
+        final List<Subject> pastSubjects = ss.findAllThatHasDone(user);
+        final double userProgressPercentage = Math.floor( ((1.0 * user.getCreditsDone()) / degree.getTotalCredits()) * 100);
 
         // TODO: replace with real calls
-        final long userDegree = 1;           // User.getDegree
-        final Map<Integer, Integer> creditsPerYear  = new HashMap<>(); // degreeService.getCreditsPerYear(userDegree)
         final Map<Integer, Integer> creditsDoneByUserPerYear = new HashMap<>(); // userService.getCreditsDoneByUserPerYear
-        final int userCreditsDone = 176;    // creditsDoneByUserPerYear.stream().reduce()
-        final int totalCredits = 244;       // creditsPerYear.stream().reduce()
-        final double userProgressPercentage = Math.floor( ((1.0 * userCreditsDone) / totalCredits) * 100);
-
-
         // TODO: this subject should only contain the class the user is signed up to
-        final List<Subject> currentUserSemester = ss.findAllThatUserCanDo(user);    // userService.getCurrentUserService
-
-        final List<Subject> subjectsUserCanDo = ss.search("z",1);      // subjectService.getAllSubsWithClassThatUserCanDo
-        final List<Subject> futureSubjects = ss.search("t",1);      // subjectService.getAllSubsUserStillCannotDo
-        final List<Subject> pastSubjects = ss.search("b",1);         // subjectService.getAllSubjectsUserHasDone
-
+        final List<Subject> currentUserSemester = new ArrayList<>();    // userService.getCurrentUserService
 
         // TODO: = = = = = = = remove. Moqueo de datos = = = = = = =
-        creditsPerYear.put(1,48);
-        creditsPerYear.put(2,50);
-        creditsPerYear.put(3,45);
-        creditsPerYear.put(4,45);
-        creditsPerYear.put(5,20);
-        creditsPerYear.put(-1,27);
-
         creditsDoneByUserPerYear.put(1,48);
         creditsDoneByUserPerYear.put(2,50);
         creditsDoneByUserPerYear.put(3,45);
         creditsDoneByUserPerYear.put(4,30);
         creditsDoneByUserPerYear.put(5,0);
         creditsDoneByUserPerYear.put(-1,5);
-
-        currentUserSemester.removeIf(e->e.getCredits() <= 3);
-        for(Subject s : currentUserSemester){
-
-            SubjectClass only =  s.getClasses().stream().findFirst().get();
-            s.getClasses().clear();
-            s.getClasses().add(only);
-        }
-
-//        currentUserSemester.clear();
-//        pastSubjects.clear();
         // TODO: = = = = = = = remove. = = = = = = =
 
         ModelAndView mav = new ModelAndView("dashboard/dashboard");
-        mav.addObject("userProgressPercentage",userProgressPercentage);
-        mav.addObject("creditsPerYear",creditsPerYear);
-        mav.addObject("creditsDoneByUserPerYear",creditsDoneByUserPerYear);
-        mav.addObject("userCreditsDone",userCreditsDone);
-        mav.addObject("totalCredits",totalCredits);
-        mav.addObject("currentUserSemester",currentUserSemester);
+        mav.addObject("degree",degree);
+        mav.addObject("user",user);
         mav.addObject("subjectsUserCanDo",subjectsUserCanDo);
         mav.addObject("futureSubjects",futureSubjects);
         mav.addObject("pastSubjects",pastSubjects);
+
+        mav.addObject("userProgressPercentage",userProgressPercentage);
+
+        mav.addObject("creditsDoneByUserPerYear",creditsDoneByUserPerYear);
+        mav.addObject("currentUserSemester",currentUserSemester);
         return mav;
     }
 }

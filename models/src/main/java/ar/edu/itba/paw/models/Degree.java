@@ -1,5 +1,7 @@
 package ar.edu.itba.paw.models;
 
+import org.hibernate.annotations.Formula;
+
 import javax.persistence.*;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -18,11 +20,18 @@ public class Degree {
     @OneToMany(mappedBy = "degree", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<DegreeSubject> subjects;
 
+    @Column(name = "totalCredits", nullable = false, columnDefinition = "int default 244")
+    private int totalCredits;
+
     public Degree(String name) {
         this.name = name;
     }
 
     Degree() {}
+
+    public int getTotalCredits(){
+        return totalCredits;
+    }
 
     public long getId() {
         return id;

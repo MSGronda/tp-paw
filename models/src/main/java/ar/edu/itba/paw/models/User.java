@@ -1,6 +1,7 @@
 package ar.edu.itba.paw.models;
 
 import ar.edu.itba.paw.models.enums.SubjectProgress;
+import org.hibernate.annotations.Formula;
 
 import javax.persistence.*;
 import java.util.*;
@@ -61,6 +62,10 @@ public class User {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ReviewVote> votes;
 
+    @Formula("(SELECT COALESCE(SUM(s.credits), 0) " +
+            "FROM subjects s JOIN usersubjectprogress up ON s.id = up.idsub " +
+            "WHERE up.iduser = id AND up.subjectstate = 1)")
+    private int creditsDone;
 
     private User(final Builder builder) {
         this.id = builder.id;
@@ -75,6 +80,10 @@ public class User {
     }
 
     User() {}
+
+    public int getCreditsDone(){
+        return creditsDone;
+    }
 
     public boolean isEditor() {
         return roles.stream().anyMatch(role -> role.getName().equals("EDITOR"));

@@ -181,12 +181,12 @@
                                 <div class="row">
                                     <h3><spring:message code="dashboard.overview.completedCredits"/></h3>
                                     <sl-divider style="height: 1rem" vertical></sl-divider>
-                                    <h5>${userCreditsDone}</h5>
+                                    <h5>${user.creditsDone}</h5>
                                 </div>
                                 <div class="row">
                                     <h3><spring:message code="dashboard.overview.totalCredits"/></h3>
                                     <sl-divider style="height: 1rem" vertical></sl-divider>
-                                    <h5>${totalCredits}</h5>
+                                    <h5>${degree.totalCredits}</h5>
                                 </div>
                             </sl-card>
                             <div class="stat-row">

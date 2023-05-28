@@ -29,23 +29,58 @@ public class SubjectJpaDao implements SubjectDao {
 
     @Override
     public List<Subject> findAllThatUserCanDo(User user) {
-        @SuppressWarnings("unchecked") final List<Integer> ids = em.createNativeQuery(
-                        "SELECT id FROM subjects s\n" +
+        @SuppressWarnings("unchecked") final List<Integer> ids =
+                em.createNativeQuery("SELECT id FROM subjects s\n" +
                                 "WHERE NOT EXISTS (\n" +
                                 "    SELECT id FROM prereqsubjects p\n" +
                                 "    WHERE p.idsub = s.id\n" +
                                 "    AND NOT EXISTS (\n" +
                                 "        SELECT * FROM usersubjectprogress usp\n" +
                                 "        WHERE usp.idsub = p.idprereq\n" +
-                                "        AND usp.iduser = 1\n" +
+                                "        AND usp.iduser = ?\n" +
                                 "    )\n" +
                                 ")\n" +
                                 "AND s.id NOT IN (\n" +
                                 "    SELECT idsub FROM usersubjectprogress usp\n" +
                                 "    WHERE usp.iduser = ?\n" +
-                                ")"
-                ).setParameter(1, user.getId())
+                                ")")
+                .setParameter(1, user.getId())
+                .setParameter(2,user.getId())
                 .getResultList();
+
+        return em.createQuery("from Subject s where s.id in :ids", Subject.class)
+                .setParameter("ids", ids)
+                .getResultList();
+    }
+
+    @Override
+    public List<Subject> findAllThatHasNotDone(User user){
+        @SuppressWarnings("unchecked")
+        final List<Integer> ids =
+                em.createNativeQuery("SELECT id\n" +
+                        "FROM subjects s\n" +
+                        "WHERE NOT EXISTS (\n" +
+                        "    SELECT *\n" +
+                        "\tFROM usersubjectprogress up\n" +
+                        "\tWHERE up.idsub = s.id AND up.subjectstate = 1 AND up.iduser = ?\n" +
+                        ")\n")
+                .setParameter(1, user.getId())
+                .getResultList();
+
+        return em.createQuery("from Subject s where s.id in :ids", Subject.class)
+                .setParameter("ids", ids)
+                .getResultList();
+    }
+
+    @Override
+    public List<Subject> findAllThatHasDone(User user) {
+        @SuppressWarnings("unchecked")
+        final List<Integer> ids =
+                em.createNativeQuery("SELECT up.idsub\n" +
+                                "\tFROM usersubjectprogress up\n" +
+                                "\tWHERE up.subjectstate = 1 AND up.iduser = ?\n")
+                        .setParameter(1, user.getId())
+                        .getResultList();
 
         return em.createQuery("from Subject s where s.id in :ids", Subject.class)
                 .setParameter("ids", ids)

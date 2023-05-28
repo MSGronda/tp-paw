@@ -13,7 +13,9 @@ import java.util.Set;
 
 public interface SubjectDao extends ReadableDao<String, Subject> {
     Optional<Subject> findById(final String id);
-    List<Subject> findAllThatUserCanDo(final User user);
+    List<Subject> findAllThatUserCanDo(User user);
+    List<Subject> findAllThatHasNotDone(User user);
+    List<Subject> findAllThatHasDone(User user);
     List<Subject> getAll();
 
     List<Subject> search(final String name, final int page);

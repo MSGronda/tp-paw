@@ -31,6 +31,16 @@ public class SubjectServiceImpl implements SubjectService {
     }
 
     @Override
+    public List<Subject> findAllThatHasNotDone(User user){
+        return subjectDao.findAllThatHasNotDone(user);
+    }
+
+    @Override
+    public List<Subject> findAllThatHasDone(User user) {
+        return subjectDao.findAllThatHasDone(user);
+    }
+
+    @Override
     public List<Subject> search(final String name, final int page) {
         return subjectDao.search(name, page);
     }
