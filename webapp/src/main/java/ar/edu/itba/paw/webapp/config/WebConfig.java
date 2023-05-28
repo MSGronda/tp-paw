@@ -92,17 +92,17 @@ public class WebConfig extends WebMvcConfigurerAdapter {
         return ds;
     }
 
-//    @Bean
-//    public Flyway flyway() {
-//        Flyway f = Flyway.configure()
-//                .dataSource(dataSource())
-//                .load();
-//
-//        f.repair();
-//        f.migrate();
-//
-//        return f;
-//    }
+    @Bean
+    public Flyway flyway() {
+        Flyway f = Flyway.configure()
+                .dataSource(dataSource())
+                .load();
+
+        f.repair();
+        f.migrate();
+
+        return f;
+    }
 
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
@@ -137,6 +137,7 @@ public class WebConfig extends WebMvcConfigurerAdapter {
     }
 
     @Bean
+    @DependsOn("flyway")
     public LocalContainerEntityManagerFactoryBean entityManagerFactory() {
         final LocalContainerEntityManagerFactoryBean factoryBean = new
                 LocalContainerEntityManagerFactoryBean();
