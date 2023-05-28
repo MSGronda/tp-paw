@@ -194,13 +194,13 @@
                         <th><spring:message code="subject.difficulty"/></th>
                         <td>
                             <c:choose>
-                                <c:when test="${subject.reviewStats.difficulty == Difficulty.EASY}">
+                                <c:when test="${subject.reviewStats.getDifficulty() == Difficulty.EASY}">
                                     <sl-badge size="medium" variant="success"><spring:message code="form.easy"/></sl-badge>
                                 </c:when>
-                                <c:when test="${subject.reviewStats.difficulty == Difficulty.MEDIUM}">
+                                <c:when test="${subject.reviewStats.getDifficulty() == Difficulty.MEDIUM}">
                                     <sl-badge size="medium" variant="primary"><spring:message code="form.normal"/></sl-badge>
                                 </c:when>
-                                <c:when test="${subject.reviewStats.difficulty == Difficulty.HARD}">
+                                <c:when test="${subject.reviewStats.getDifficulty() == Difficulty.HARD}">
                                     <sl-badge size="medium" variant="danger"><spring:message code="form.hard"/></sl-badge>
                                 </c:when>
                                 <c:otherwise>
@@ -213,13 +213,13 @@
                         <th><spring:message code="subject.time" /></th>
                         <td>
                             <c:choose>
-                                <c:when test="${subject.reviewStats.timeDemanding == TimeDemanding.LOW}">
+                                <c:when test="${subject.reviewStats.getTimeDemanding() == TimeDemanding.LOW}">
                                     <sl-badge size="medium" variant="success"><spring:message code="form.NotTimeDemanding" /></sl-badge>
                                 </c:when>
-                                <c:when test="${subject.reviewStats.timeDemanding == TimeDemanding.MEDIUM}">
+                                <c:when test="${subject.reviewStats.getTimeDemanding() == TimeDemanding.MEDIUM}">
                                     <sl-badge size="medium" variant="primary"><spring:message code="form.averageTimeDemand" /></sl-badge>
                                 </c:when>
-                                <c:when test="${subject.reviewStats.timeDemanding == TimeDemanding.HIGH}">
+                                <c:when test="${subject.reviewStats.getTimeDemanding() == TimeDemanding.HIGH}">
                                     <sl-badge size="medium" variant="warning"><spring:message code="form.timeDemanding" /></sl-badge>
                                 </c:when>
                                 <c:otherwise>

@@ -60,9 +60,6 @@
         <sl-tab-panel class="year-panel" name="electives">
             <c:forEach var="elective" items="${degree.electives}">
                 <c:set var="subject" value="${elective}" scope="request"/>
-                <c:set var="reviewCount" value="${elective.reviewStats.reviewCount}" scope="request"/>
-                <c:set var="difficulty" value="${elective.reviewStats.difficulty}" scope="request"/>
-                <c:set var="time" value="${elective.reviewStats.timeDemanding}" scope="request"/>
                 <c:set var="progress" value="${subjectProgress.getOrDefault(elective.id, SubjectProgress.PENDING)}" scope="request"/>
                 <c:import url="../components/subject_card.jsp"/>
             </c:forEach>
