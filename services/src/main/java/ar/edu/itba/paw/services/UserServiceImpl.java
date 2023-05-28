@@ -1,5 +1,6 @@
 package ar.edu.itba.paw.services;
 
+import ar.edu.itba.paw.models.Image;
 import ar.edu.itba.paw.models.Role;
 import ar.edu.itba.paw.models.Subject;
 import ar.edu.itba.paw.models.User;
@@ -69,7 +70,7 @@ public class UserServiceImpl implements UserService {
     @Transactional
     @Override
     public User create(final User user, final byte[] profilePic) throws UserEmailAlreadyTakenException {
-        long imageId = imageDao.insertAndReturnKey(profilePic);
+        final Image image = imageDao.create(profilePic);
 
         final String confirmToken = generateConfirmToken();
 
@@ -79,7 +80,7 @@ public class UserServiceImpl implements UserService {
                     User.builderFrom(user)
                             .password(passwordEncoder.encode(user.getPassword()))
                             .confirmToken(confirmToken)
-                            .imageId(imageId)
+                            .imageId(image.getId())
                             .build()
             );
         } catch (final UserEmailAlreadyTakenPersistenceException e) {
@@ -118,11 +119,13 @@ public class UserServiceImpl implements UserService {
 
     @Transactional
     @Override
-    public void updateProfilePicture(final User user, final byte[] image) throws InvalidImageSizeException {
-        if(image.length > MAX_IMAGE_SIZE || image.length == 0){
+    public void updateProfilePicture(final User user, final byte[] newImage) throws InvalidImageSizeException {
+        if(newImage.length > MAX_IMAGE_SIZE || newImage.length == 0){
             throw new InvalidImageSizeException();
         }
-        imageDao.updateImage(user.getImageId(), image);
+
+        final Image image = imageDao.findById(user.getImageId()).orElseThrow(IllegalStateException::new);
+        imageDao.update(image, newImage);
     }
 
     @Override

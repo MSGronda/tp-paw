@@ -11,9 +11,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import java.io.IOException;
-import java.util.Optional;
-
 @Controller
 public class ImageController {
     private final ImageService imgService;
@@ -27,6 +24,6 @@ public class ImageController {
         produces = {MediaType.IMAGE_JPEG_VALUE, MediaType.IMAGE_PNG_VALUE})
     @ResponseBody
     public byte[] image(@PathVariable final Long id) {
-        return imgService.findById(id).map(Image::getData).orElseThrow(ImageNotFoundException::new);
+        return imgService.findById(id).map(Image::getImage).orElseThrow(ImageNotFoundException::new);
     }
 }

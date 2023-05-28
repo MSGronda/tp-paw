@@ -1,22 +1,35 @@
 package ar.edu.itba.paw.models;
 
+import javax.persistence.*;
 import java.util.Objects;
 
+@Entity
+@Table(name = "images")
 public class Image {
-    private final long id;
-    private final byte[] data;
+    @Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "images_id_seq")
+    @SequenceGenerator(sequenceName = "images_id_seq", name = "images_id_seq", allocationSize = 1)
+    private long id;
 
-    public Image(final long id, final byte[] data) {
-        this.id = id;
-        this.data = data;
+    @Column(nullable = false)
+    private byte[] image;
+
+    public Image(final byte[] image) {
+        this.image = image;
     }
+
+    Image() {}
 
     public long getId() {
         return id;
     }
 
-    public byte[] getData() {
-        return data;
+    public byte[] getImage() {
+        return image;
+    }
+
+    public void setImage(byte[] image) {
+        this.image = image;
     }
 
     @Override

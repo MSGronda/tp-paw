@@ -1,6 +1,5 @@
 package ar.edu.itba.paw.models;
 
-import ar.edu.itba.paw.models.converter.SubjectProgressConverter;
 import ar.edu.itba.paw.models.enums.SubjectProgress;
 
 import javax.persistence.*;
@@ -27,7 +26,7 @@ public class User {
     private String confirmToken;
 
     @Column(name = "image_id")
-    private Long imageId;
+    private long imageId;
 
     @ElementCollection
     @CollectionTable(
@@ -149,7 +148,7 @@ public class User {
         this.confirmToken = confirmToken;
     }
 
-    public void setImageId(Long imageId) {
+    public void setImageId(long imageId) {
         this.imageId = imageId;
     }
 
@@ -190,7 +189,7 @@ public class User {
         private Long id;
         private String email;
         private String password, username;
-        private Long imageId;
+        private long imageId;
         private String confirmToken;
         private boolean confirmed;
         private Locale locale;
