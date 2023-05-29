@@ -54,7 +54,7 @@ public class SubjectJpaDao implements SubjectDao {
     }
 
     @Override
-    public List<Subject> findAllThatHasNotDone(User user){
+    public List<Subject> findAllThatUserHasNotDone(User user){
         @SuppressWarnings("unchecked")
         final List<Integer> ids =
                 em.createNativeQuery("SELECT id\n" +
@@ -73,7 +73,7 @@ public class SubjectJpaDao implements SubjectDao {
     }
 
     @Override
-    public List<Subject> findAllThatHasDone(User user) {
+    public List<Subject> findAllThatUserHasDone(User user) {
         @SuppressWarnings("unchecked")
         final List<Integer> ids =
                 em.createNativeQuery("SELECT up.idsub\n" +
@@ -82,6 +82,72 @@ public class SubjectJpaDao implements SubjectDao {
                         .setParameter(1, user.getId())
                         .getResultList();
 
+        return em.createQuery("from Subject s where s.id in :ids", Subject.class)
+                .setParameter("ids", ids)
+                .getResultList();
+    }
+
+    @Override
+    public List<Subject> findAllThatUserCouldUnlock(User user){
+        @SuppressWarnings("unchecked")
+        final List<Integer> ids = em.createNativeQuery("SELECT DISTINCT s.id\n" +
+                        "FROM subjects s\n" +
+                        "WHERE s.id NOT IN (\n" +
+                        "    SELECT up.idsub\n" +
+                        "    FROM usersubjectprogress up\n" +
+                        "    WHERE up.subjectstate = 1 AND up.iduser = ?\n" +
+                        ")\n" +
+                        "  AND s.id NOT IN  (\n" +
+                        "    SELECT s2.id\n" +
+                        "    FROM subjects s2\n" +
+                        "    WHERE NOT EXISTS (\n" +
+                        "            SELECT id FROM prereqsubjects p2\n" +
+                        "            WHERE p2.idsub = s2.id\n" +
+                        "              AND NOT EXISTS (\n" +
+                        "                    SELECT * FROM usersubjectprogress usp\n" +
+                        "                    WHERE usp.idsub = p2.idprereq\n" +
+                        "                      AND usp.iduser = ?\n" +
+                        "                )\n" +
+                        "        )\n" +
+                        "      AND s2.id NOT IN (\n" +
+                        "        SELECT idsub FROM usersubjectprogress up2\n" +
+                        "        WHERE up2.iduser = ?\n" +
+                        "    )\n" +
+                        ")\n" +
+                        "AND NOT EXISTS (\n" +
+                        "    SELECT *\n" +
+                        "    FROM prereqsubjects p3\n" +
+                        "    WHERE s.id = p3.idsub\n" +
+                        "    AND p3.idprereq NOT IN (\n" +
+                        "        SELECT up3.idsub\n" +
+                        "        FROM usersubjectprogress up3\n" +
+                        "        WHERE up3.subjectstate = 1 AND up3.iduser = ?\n" +
+                        "        )\n" +
+                        "    AND p3.idprereq NOT IN (\n" +
+                        "        SELECT s3.id\n" +
+                        "        FROM subjects s3\n" +
+                        "        WHERE NOT EXISTS (\n" +
+                        "                SELECT id FROM prereqsubjects p4\n" +
+                        "                WHERE p4.idsub = s3.id\n" +
+                        "                  AND NOT EXISTS (\n" +
+                        "                        SELECT * FROM usersubjectprogress up3\n" +
+                        "                        WHERE up3.idsub = p4.idprereq\n" +
+                        "                          AND up3.iduser = ?\n" +
+                        "                    )\n" +
+                        "            )\n" +
+                        "          AND s3.id NOT IN (\n" +
+                        "            SELECT idsub FROM usersubjectprogress up4\n" +
+                        "            WHERE up4.iduser = ?\n" +
+                        "        )\n" +
+                        "        )\n" +
+                        ")")
+                .setParameter(1, user.getId())
+                .setParameter(2, user.getId())
+                .setParameter(3, user.getId())
+                .setParameter(4, user.getId())
+                .setParameter(5, user.getId())
+                .setParameter(6, user.getId())
+                .getResultList();
         return em.createQuery("from Subject s where s.id in :ids", Subject.class)
                 .setParameter("ids", ids)
                 .getResultList();

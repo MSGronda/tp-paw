@@ -162,7 +162,11 @@
     width: 100% !important;
     height: 100%;
   }
-  .semester-overview-tab::part(body), .overview-item::part(body){
+  .semester-overview-tab::part(body){
+    height: 100%;
+    padding: 0.5rem;
+  }
+  .overview-item::part(body){
     padding: 0.5rem;
   }
   .overview-item{
@@ -173,7 +177,19 @@
      padding: 0.5rem;
      display: flex;
      align-items: center;
+     height: 100%;
    }
+   .unlock-card{
+     height: 100%;
+   }
+   .unlock-card::part(base){
+     height: 100%;
+   }
+  .unlockable-list{
+    height: 100%;
+    width: 100%;
+    overflow-y: auto;
+  }
 
   /* Time table */
   table {
@@ -379,6 +395,22 @@
 
             </sl-card>
             </c:forEach>
+
+            <c:if test="${subject.classes.size() == 0}">
+            <sl-card id="class-card-${subject.id}-0" class="class-card">
+              <div class="chooser" slot="header">
+                <h5><c:out value="${subject.name}"/></h5>
+                <sl-button id="select-class-${subject.id}-0" variant="default" size="small" circle>
+                  <sl-icon class="icon" name="check2" label="Select Subject"></sl-icon>
+                </sl-button>
+                <sl-button style="display: none;" id="deselect-class-${subject.id}-0"
+                           variant="default" size="small" circle>
+                  <sl-icon class="icon" name="x-lg" label="Select Subject"></sl-icon>
+                </sl-button>
+              </div>
+            </sl-card>
+            </c:if>
+
           </div>
           </c:forEach>
         </div>
@@ -437,7 +469,7 @@
             <h4><spring:message code="builder.semesterOverview.title"/></h4>
           </div>
         </div>
-        <div class="column">
+        <div style="height: 100%" class="column">
           <sl-card class="overview-item">
             <span><spring:message code="builder.semesterOverview.credits"/></span>
             <sl-divider vertical style="height: 1rem"></sl-divider>
@@ -460,6 +492,20 @@
             <sl-badge id="overall-difficulty-hard" style="display: none;" size="medium" variant="danger" pill><spring:message code="form.hard"/></sl-badge>
           </sl-card>
 
+          <sl-card class="overview-item unlock-card">
+            <div slot="header">
+              <span><spring:message code="builder.semesterOverview.unlock"/></span>
+            </div>
+            <div class="unlockable-list">
+              <c:forEach var="subject" items="${unlockableSubjects}">
+                <sl-button style="display: none" id="unlock-${subject.id}" variant="text" href="${pageContext.request.contextPath}/subject/${subject.id}">
+                  <c:out value="${subject.name}"/>
+                </sl-button>
+              </c:forEach>
+            </div>
+
+          </sl-card>
+
         </div>
       </sl-card>
     </div>
@@ -480,7 +526,6 @@
     const normalBorderColor = '#e0e0e0'
 
     const overviewStats = {'totalCredits': 0, 'overallDifficulty': 0, 'timeDemand': 0}
-
 
     const daysOfWeek = [
         '<spring:message code="subject.classDay1"/>', '<spring:message code="subject.classDay2"/>', '<spring:message code="subject.classDay3"/>',
@@ -523,6 +568,25 @@
         },
         </c:forEach>
     ]
+
+    const unlockables = [
+      <c:forEach var="subject" items="${unlockableSubjects}">
+        {
+          'id': '${subject.id}', 'prereqs':[
+            <c:forEach var="prereq" items="${subject.prerequisites}">
+                  '${prereq.id}',
+            </c:forEach>
+          ]
+        },
+      </c:forEach>
+    ]
+
+    const doneSubjects = [
+      <c:forEach var="subject" items="${doneSubjects}">
+        '<c:out value="${subject.id}"/>',
+      </c:forEach>
+    ]
+
     for (let subjectNum in subjectClasses) {
       document.getElementById('select-'+subjectClasses[subjectNum].id).addEventListener('click',
               createSubjectSelectAction(subjectClasses[subjectNum].id)
@@ -533,6 +597,14 @@
                 createClassSelectionAction(
                         subjectClasses[subjectNum],
                         subjectClasses[subjectNum].classes[classNum]
+                )
+        );
+      }
+      if(subjectClasses[subjectNum].classes.length === 0){
+        document.getElementById('select-class-'+subjectClasses[subjectNum].id + '-' + 0).addEventListener('click',
+                createClassSelectionAction(
+                        subjectClasses[subjectNum],
+                        {'idClass': 0, 'classTimes': []}
                 )
         );
       }

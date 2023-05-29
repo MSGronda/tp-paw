@@ -35,8 +35,12 @@ public class SemesterBuilderController {
         ModelAndView mav = new ModelAndView("builder/semester-builder");
 
         List<Subject> availableSubjects = subjectService.findAllThatUserCanDo(user);
+        List<Subject> unlockableSubjects = subjectService.findAllThatUserCouldUnlock(user);
+        List<Subject> doneSubjects = subjectService.findAllThatUserHasDone(user);
 
         mav.addObject("availableSubjects", availableSubjects);
+        mav.addObject("unlockableSubjects", unlockableSubjects);
+        mav.addObject("doneSubjects", doneSubjects);
 
         return mav;
     }

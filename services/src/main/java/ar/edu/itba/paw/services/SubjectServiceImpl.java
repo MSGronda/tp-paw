@@ -31,13 +31,18 @@ public class SubjectServiceImpl implements SubjectService {
     }
 
     @Override
-    public List<Subject> findAllThatHasNotDone(User user){
-        return subjectDao.findAllThatHasNotDone(user);
+    public List<Subject> findAllThatUserHasNotDone(User user){
+        return subjectDao.findAllThatUserHasNotDone(user);
     }
 
     @Override
-    public List<Subject> findAllThatHasDone(User user) {
-        return subjectDao.findAllThatHasDone(user);
+    public List<Subject> findAllThatUserHasDone(User user) {
+        return subjectDao.findAllThatUserHasDone(user);
+    }
+
+    @Override
+    public List<Subject> findAllThatUserCouldUnlock(User user){
+        return subjectDao.findAllThatUserCouldUnlock(user);
     }
 
     @Override

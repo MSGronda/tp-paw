@@ -75,8 +75,8 @@ public class HomeController {
         }
         Degree degree = maybeDegree.get();
         final List<Subject> subjectsUserCanDo = ss.findAllThatUserCanDo(user);
-        final List<Subject> futureSubjects = ss.findAllThatHasNotDone(user);
-        final List<Subject> pastSubjects = ss.findAllThatHasDone(user);
+        final List<Subject> futureSubjects = ss.findAllThatUserHasNotDone(user);
+        final List<Subject> pastSubjects = ss.findAllThatUserHasDone(user);
         final double userProgressPercentage = Math.floor( ((1.0 * user.getCreditsDone()) / degree.getTotalCredits()) * 100);
         final Map<Integer, Double> percentageCompletionByYear = us.getUserProgressionPerYear( degree,  user); // userService.getCreditsDoneByUserPerYear
 

@@ -122,6 +122,25 @@ function enableCompatibleSubjects(){
     }
 }
 
+function alterUnlockables(){
+    for(let unlockNum in unlockables){
+        let allPrereqs = true;
+
+        for(let prereqUnlocNum in unlockables[unlockNum].prereqs){
+            if(!doneSubjects.includes(unlockables[unlockNum].prereqs[prereqUnlocNum]) && !schedule.signedUpToClass(unlockables[unlockNum].prereqs[prereqUnlocNum])){
+                allPrereqs = false;
+                break;
+            }
+        }
+        if(allPrereqs){
+            document.getElementById('unlock-' + unlockables[unlockNum].id).style.display = 'block';
+        }
+        else{
+            document.getElementById('unlock-' + unlockables[unlockNum].id).style.display = 'none';
+        }
+    }
+}
+
 function createSubjectDeselectAction(subject,idClass){
     return function() {
         // modify schedule table
@@ -129,6 +148,8 @@ function createSubjectDeselectAction(subject,idClass){
 
         // enable subjects that can are now compatible after removing this subject
         enableCompatibleSubjects()
+
+        alterUnlockables()
 
         // unhide subject from subject list
         document.getElementById('subject-card-'+subject.id).style.display = 'block';
@@ -227,6 +248,8 @@ function createClassSelectionAction(subject,classSubject){
 
         // disable all incompatible classes (already signed up to that subject or it doesn't fit in your schedule)
         disableIncompatibleSubjects();
+
+        alterUnlockables();
 
         // hide subject from subject list
         document.getElementById('subject-card-'+subject.id).style.display = 'none';
