@@ -151,7 +151,7 @@ public class WebConfig extends WebMvcConfigurerAdapter {
                 "org.hibernate.dialect.PostgreSQL92Dialect");
 
 
-        boolean show_sql = environment.getProperty("hibernate.show_sql").equals("true");
+        boolean show_sql = environment.getRequiredProperty("hibernate.show_sql").equals("true");
         properties.setProperty("hibernate.show_sql", show_sql ? "true" : "false");
         properties.setProperty("format_sql", show_sql ? "true" : "false");
 

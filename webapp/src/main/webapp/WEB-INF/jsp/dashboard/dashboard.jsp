@@ -11,12 +11,12 @@
             display: flex;
             flex-direction: row;
             align-items: stretch;
-            height: 94vh;
+            min-height: 94vh;
             margin: auto 0;
         }
         .choosing-area{
             width: 100%;
-            padding: 1rem;
+            padding: 0.5rem;
             height: 100%;
         }
         .tabs::part(base){
@@ -35,6 +35,12 @@
             padding:0;
             --padding:0;
             margin: 0;
+        }
+        .tabs::part(nav) {
+            position: sticky;
+            top: 0;
+            background: #efefef;
+            padding-bottom: 0.05rem;
         }
         .tab-panel{
             width: 90%;
@@ -121,28 +127,31 @@
 
        /*  Future subjects  */
         .future-subjects-area {
-            height: 100%;
             width: 100%;
-            /*display: grid;*/
-            /*grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));*/
-            /*overflow-y: scroll;*/
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+
+            padding: 0 1rem 2rem 1rem;
+            gap: 1rem;
         }
-        .subject-card{    /* We overwrite previous attributres */
-            max-width: 30% !important;
-            min-width: 30% !important;
-            padding: 0.5rem;
-        }
-        .subject-card::part(base){
-            max-height: 25% !important;
-            min-height: 25% !important;
-        }
+        /*.subject-card{    !* We overwrite previous attributres *!*/
+        /*    max-width: 30% !important;*/
+        /*    min-width: 30% !important;*/
+        /*    padding: 0.5rem;*/
+        /*}*/
+        /*.subject-card::part(base){*/
+        /*    max-height: 25% !important;*/
+        /*    min-height: 25% !important;*/
+        /*}*/
 
         /* Past subjects */
         .past-subjects-area{
-            height: 100%;
             width: 100%;
             display: grid;
-            grid-template-columns: repeat(4, 1fr);
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+
+            padding: 0 1rem 2rem 1rem;
+            gap: 1rem;
         }
 
 
@@ -256,7 +265,7 @@
                             </c:forEach>
                         </div>
                     </sl-tab-panel>
-                    <sl-tab-panel name="past-subjects">
+                    <sl-tab-panel class="tab-panel" name="past-subjects">
                         <c:if test="${pastSubjects.size() != 0}">
                             <div class="past-subjects-area">
                             <c:forEach var="subject" items="${pastSubjects}">

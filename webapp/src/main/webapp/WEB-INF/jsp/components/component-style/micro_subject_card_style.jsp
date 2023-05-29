@@ -3,9 +3,6 @@
         padding-top: 0.75rem;
     }
 
-    .micro-subject-card{
-        padding: 0.5rem
-    }
     .micro-subject-card::part(base){
         height: 8rem;
         width: 15rem;

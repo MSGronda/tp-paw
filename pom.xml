@@ -272,6 +272,11 @@
         <groupId>org.eclipse.jetty</groupId>
         <artifactId>jetty-maven-plugin</artifactId>
         <version>9.4.8.v20180619</version>
+        <configuration>
+          <webApp>
+            <contextPath>/paw-2023a-06</contextPath>
+          </webApp>
+        </configuration>
       </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
