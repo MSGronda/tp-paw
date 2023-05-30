@@ -10,7 +10,7 @@ class DegreeSubject {
     @EmbeddedId
     private Key key;
 
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     @MapsId("degreeId")
     @JoinColumn(name = "iddeg")
     private Degree degree;

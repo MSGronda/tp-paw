@@ -13,7 +13,7 @@ public class SubjectClassTime {
     @Column(name = "idloctime")
     private long id;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumns({
             @JoinColumn(name = "idsub", referencedColumnName = "idsub"),
             @JoinColumn(name = "idclass", referencedColumnName = "idclass")

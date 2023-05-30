@@ -10,7 +10,7 @@ public class SubjectClass {
     @EmbeddedId
     private Key key;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @MapsId("idsub")
     @JoinColumn(name = "idsub")
     private Subject subject;

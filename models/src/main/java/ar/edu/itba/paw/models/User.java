@@ -44,7 +44,7 @@ public class User {
     @Column(length = 32)
     private Locale locale;
 
-    @ManyToOne(optional = false)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "degreeid")
     private Degree degree;
 
