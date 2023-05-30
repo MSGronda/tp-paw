@@ -28,7 +28,7 @@ public class Professor {
         this.subjects = new ArrayList<>();
     }
 
-    Professor() {}
+    protected Professor() {}
 
     public long getId() {
         return id;

@@ -13,7 +13,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.List;
+import java.util.Set;
 import java.util.regex.Pattern;
 
 @Component
@@ -21,7 +21,7 @@ public class UniUserDetailsService implements UserDetailsService {
     @Autowired
     private final UserService us;
 
-    private final Pattern BCRYPT_PATTERN = Pattern
+    private static final Pattern BCRYPT_PATTERN = Pattern
             .compile("\\A\\$2a?\\$\\d\\d\\$[./0-9A-Za-z]{53}");
 
     @Autowired
@@ -34,7 +34,7 @@ public class UniUserDetailsService implements UserDetailsService {
         final User user = us.findByEmail(email)
                 .orElseThrow(() -> new UsernameNotFoundException("No user for email" + email));
 
-        final List<Role> userRoles = user.getRoles();
+        final Set<Role> userRoles = user.getRoles();
 
         final Collection<GrantedAuthority> authorities = new HashSet<>();
         userRoles.forEach(roles -> authorities.add(new SimpleGrantedAuthority(String.format("ROLE_%s", roles.getName()))));

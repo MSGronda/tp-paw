@@ -64,7 +64,7 @@ public class Subject {
         this.classes = builder.classes;
     }
 
-    Subject() {}
+    protected Subject() {}
 
     public Map<String, SubjectClass> getClassesById() {
         final Map<String, SubjectClass> res = new LinkedHashMap<>();

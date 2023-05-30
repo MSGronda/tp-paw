@@ -80,13 +80,13 @@ public class UserJpaDao implements UserDao {
 
     @Override
     public void addRole(final User user, final Role role) {
-        final List<Role> roles = user.getRoles();
+        final Set<Role> roles = user.getRoles();
         roles.add(role);
     }
 
     @Override
     public void updateRoles(final User user, final Role role) {
-        final List<Role> roles = user.getRoles();
+        final Set<Role> roles = user.getRoles();
 
         roles.clear();
         roles.add(role);

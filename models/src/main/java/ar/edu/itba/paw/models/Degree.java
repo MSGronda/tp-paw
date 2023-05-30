@@ -27,7 +27,7 @@ public class Degree {
         this.name = name;
     }
 
-    Degree() {}
+    protected Degree() {}
 
     public int getTotalCredits(){
         return totalCredits;

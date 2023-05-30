@@ -29,7 +29,7 @@ public class SubjectClass {
     @OneToMany(mappedBy = "subjectClass", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<SubjectClassTime> classTimes;
 
-    SubjectClass() {}
+    protected SubjectClass() {}
 
     public List<SubjectClassTime> getClassTimes() {
         return classTimes;
@@ -73,7 +73,7 @@ public class SubjectClass {
             this.idsub = idSub;
         }
 
-        Key() {}
+        protected Key() {}
 
         public String getClassId() {
             return idclass;

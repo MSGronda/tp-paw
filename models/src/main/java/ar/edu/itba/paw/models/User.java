@@ -54,7 +54,7 @@ public class User {
             joinColumns = @JoinColumn(name = "userid"),
             inverseJoinColumns = @JoinColumn(name = "roleid")
     )
-    private List<Role> roles;
+    private Set<Role> roles;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Review> reviews;
@@ -77,9 +77,13 @@ public class User {
         this.locale = builder.locale;
         this.confirmed = builder.confirmed;
         this.degree = builder.degree;
+        this.roles = new HashSet<>();
+        this.reviews = new ArrayList<>();
+        this.votes = new ArrayList<>();
+        this.subjectProgress = new HashMap<>();
     }
 
-    User() {}
+    protected User() {}
 
     public int getCreditsDone(){
         return creditsDone;
@@ -124,7 +128,7 @@ public class User {
         return Optional.ofNullable(locale);
     }
 
-    public List<Role> getRoles() {
+    public Set<Role> getRoles() {
         return roles;
     }
 

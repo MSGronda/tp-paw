@@ -25,7 +25,7 @@ public class ReviewVote {
     @Column(nullable = false)
     private ReviewVoteType vote;
 
-    ReviewVote() {}
+    protected ReviewVote() {}
 
     public ReviewVote(final User user, final Review review, final ReviewVoteType vote) {
         this.user = user;

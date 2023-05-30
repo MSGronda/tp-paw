@@ -18,7 +18,7 @@ public class Image {
         this.image = image;
     }
 
-    Image() {}
+    protected Image() {}
 
     public long getId() {
         return id;

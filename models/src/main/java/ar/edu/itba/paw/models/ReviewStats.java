@@ -41,7 +41,7 @@ public class ReviewStats {
     @Column(name = "timedemandingcount")
     private int timeDemandingCount;
 
-    ReviewStats() {}
+    protected ReviewStats() {}
 
     public Difficulty getDifficulty(){
         // -1 no data,  0 is easy, 1 is medium, 2 is hard

@@ -38,7 +38,7 @@ public class SubjectClassTime {
     @Column(length = 100, nullable = false)
     private String mode;
 
-    SubjectClassTime() {}
+    protected SubjectClassTime() {}
 
     public long getId() {
         return id;

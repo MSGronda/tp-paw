@@ -23,6 +23,8 @@ class DegreeSubject {
     @Column
     private int semester;
 
+    protected DegreeSubject() {}
+
     public Degree getDegree() {
         return degree;
     }
@@ -56,7 +58,7 @@ class DegreeSubject {
         @Column(name = "idsub")
         private String subjectId;
 
-        Key() {}
+        protected Key() {}
 
         public long getDegreeId() {
             return degreeId;

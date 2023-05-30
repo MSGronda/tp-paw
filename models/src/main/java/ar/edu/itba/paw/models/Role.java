@@ -19,7 +19,7 @@ public class Role {
         this.name = name;
     }
 
-    Role() {}
+    protected Role() {}
 
     public Long getId() {
         return id;

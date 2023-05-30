@@ -57,7 +57,7 @@ public class Review {
         this.anonymous = builder.anonymous;
     }
 
-    Review() {}
+    protected Review() {}
 
     public long getId() {
         return id;
