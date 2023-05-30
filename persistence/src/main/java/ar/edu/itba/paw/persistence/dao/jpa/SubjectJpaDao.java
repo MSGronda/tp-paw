@@ -48,6 +48,8 @@ public class SubjectJpaDao implements SubjectDao {
                 .setParameter(2,user.getId())
                 .getResultList();
 
+        if(ids.isEmpty()) return Collections.emptyList();
+
         return em.createQuery("from Subject s where s.id in :ids", Subject.class)
                 .setParameter("ids", ids)
                 .getResultList();
@@ -67,6 +69,8 @@ public class SubjectJpaDao implements SubjectDao {
                 .setParameter(1, user.getId())
                 .getResultList();
 
+        if(ids.isEmpty()) return Collections.emptyList();
+
         return em.createQuery("from Subject s where s.id in :ids", Subject.class)
                 .setParameter("ids", ids)
                 .getResultList();
@@ -81,6 +85,8 @@ public class SubjectJpaDao implements SubjectDao {
                                 "\tWHERE up.subjectstate = 1 AND up.iduser = ?\n")
                         .setParameter(1, user.getId())
                         .getResultList();
+
+        if(ids.isEmpty()) return Collections.emptyList();
 
         return em.createQuery("from Subject s where s.id in :ids", Subject.class)
                 .setParameter("ids", ids)
@@ -148,6 +154,9 @@ public class SubjectJpaDao implements SubjectDao {
                 .setParameter(5, user.getId())
                 .setParameter(6, user.getId())
                 .getResultList();
+
+        if(ids.isEmpty()) return Collections.emptyList();
+
         return em.createQuery("from Subject s where s.id in :ids", Subject.class)
                 .setParameter("ids", ids)
                 .getResultList();
