@@ -178,10 +178,6 @@ public class User {
         this.locale = locale;
     }
 
-    public void setRoles(List<Role> roles) {
-        this.roles = roles;
-    }
-
     public void setSubjectProgress(Map<String, SubjectProgress> subjectProgress) {
         this.subjectProgress = subjectProgress;
     }
