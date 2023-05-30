@@ -63,7 +63,7 @@
           display: flex;
           flex-direction: column;
           justify-content: center;
-          gap: 10px;
+          gap: 1rem;
           min-height: 100%;
           margin: auto;
       }
@@ -72,7 +72,7 @@
           flex: 1 0 auto;
           display: flex;
           flex-direction: row;
-          gap: 10px;
+          gap: 1rem;
       }
 
       .general-info-card {
@@ -161,7 +161,6 @@
 
       /*  Future subjects  */
       .future-subjects-area {
-          width: 100%;
           display: grid;
           grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
 
@@ -181,7 +180,6 @@
 
       /* Past subjects */
       .past-subjects-area {
-          width: 100%;
           display: grid;
           grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
 
@@ -295,7 +293,7 @@
           </div>
         </sl-tab-panel>
         <sl-tab-panel name="future-subjects">
-          <div class="future-subjects-area">
+          <div class="future-subjects-area container-90">
             <c:forEach var="subject" items="${futureSubjects}">
               <c:set var="subject" value="${subject}" scope="request"/>
               <c:import url="../components/subject_card.jsp"/>
@@ -304,7 +302,7 @@
         </sl-tab-panel>
         <sl-tab-panel name="past-subjects">
           <c:if test="${pastSubjects.size() != 0}">
-            <div class="past-subjects-area">
+            <div class="past-subjects-area container-90">
               <c:forEach var="subject" items="${pastSubjects}">
                 <c:set var="subject" value="${subject}" scope="request"/>
                 <c:import url="../components/micro_subject_card.jsp"/>
