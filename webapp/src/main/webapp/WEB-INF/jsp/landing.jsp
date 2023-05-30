@@ -1,6 +1,7 @@
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 
 <html>
 <head>
@@ -35,23 +36,6 @@
             /*background-color: #0369a1;*/
             height: 100%;
         }
-
-        .nav-bar {
-            background-color: white;
-            width: 100%;
-            min-height: 3.5rem;
-            display: flex;
-            justify-content: center;
-            align-items: center
-        }
-
-        .nav-bar-area {
-            width: 85%;
-            display: flex;
-            justify-content: left;
-            align-items: center;
-            padding-left: 2.5rem;
-        }
         .fullHeight{
             width: 100%;
             height: 100%;
@@ -76,14 +60,9 @@
     </style>
 </head>
 <body>
-<div class="nav-bar">
-    <div class="nav-bar-area">
-
-        <a href="${pageContext.request.contextPath}/">
-            <img height="50px" src="${pageContext.request.contextPath}/img/uni.jpg" alt="UNI"/>
-        </a>
-    </div>
-</div>
+<sec:authorize access="!isAuthenticated()">
+    <jsp:include page="components/default_navbar.jsp"/>
+</sec:authorize>
 <div class="background ">
     <main class="container-50 fullHeight">
         <div class="landing-row">

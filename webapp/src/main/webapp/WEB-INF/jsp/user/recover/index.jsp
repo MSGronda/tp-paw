@@ -28,7 +28,7 @@
     </style>
 </head>
 <body>
-<jsp:include page="../../components/navbar.jsp" />
+<jsp:include page="../../components/default_navbar.jsp" />
 
 <main>
     <div class="container-small">
