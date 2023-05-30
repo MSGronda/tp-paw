@@ -2,37 +2,34 @@
     box-sizing: border-box;
 }
 
-.row{
+.row {
     display: flex;
     flex-direction: row;
     align-items: center;
 }
-.row-space-between{
+.row-space-between {
     display: flex;
     flex-direction: row;
     align-items: center;
     justify-content: space-between;
 }
 
-.column{
+.column {
     display: flex;
     flex-direction: column;
 }
-.column-center{
+.column-center {
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
-
 }
-
 html, body {
     min-height: 100%;
     width: 100%;
     margin: 0;
     font-family: var(--sl-font-sans);
 }
-
 body {
     height: 100%;
     display: flex;

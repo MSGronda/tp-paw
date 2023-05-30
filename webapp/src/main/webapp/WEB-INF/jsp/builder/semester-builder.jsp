@@ -270,6 +270,9 @@
       align-items: center;
       justify-content: start;
   }
+  .clickable{
+    pointer-events: all !important;
+  }
 </style>
 
 <body>
@@ -467,6 +470,23 @@
         <div slot="header">
           <div class="row-space-between">
             <h4><spring:message code="builder.semesterOverview.title"/></h4>
+            <sl-tooltip trigger="click">
+              <div class="clickable" slot="content">
+                <sl-card>
+                  <div class="column-center">
+                    <h4 style="color: black;"><spring:message code="builder.help1"/></h4>
+                    <p style="color: black;">
+                      &#x2022; <spring:message code="builder.help2"/>
+                      <br/>
+                      &#x2022; <spring:message code="builder.help3"/>
+                      <br/>
+                      &#x2022; <spring:message code="builder.help4"/>
+                    </p>
+                  </div>
+                </sl-card>
+              </div>
+              <sl-icon-button name="info-circle" label="info"></sl-icon-button>
+            </sl-tooltip>
           </div>
         </div>
         <div style="height: 100%" class="column">
@@ -475,23 +495,26 @@
             <sl-divider vertical style="height: 1rem"></sl-divider>
             <span id="number-of-credits">0</span>
           </sl-card>
-          <sl-card  class="overview-item">
-            <span><spring:message code="builder.semesterOverview.timeDemand"/></span>
-            <sl-divider vertical style="height:  1rem; margin: 0.5rem"></sl-divider>
-            <sl-badge id="time-difficulty-none"  size="medium" variant="neutral" pill><spring:message code="builder.semesterOverview.noReviews"/></sl-badge>
-            <sl-badge id="time-difficulty-easy" style="display: none;" size="medium" variant="success" pill><spring:message code="form.NotTimeDemanding" /></sl-badge>
-            <sl-badge id="time-difficulty-medium" style="display: none;" size="medium" variant="primary" pill><spring:message code="form.averageTimeDemand" /></sl-badge>
-            <sl-badge id="time-difficulty-hard" style="display: none;" size="medium" variant="warning" pill><spring:message code="form.timeDemanding" /></sl-badge>
-          </sl-card>
-          <sl-card  class="overview-item">
-            <span><spring:message code="builder.semesterOverview.overallDifficulty"/></span>
-            <sl-divider vertical style="height:  1rem; margin: 0.5rem"></sl-divider>
-            <sl-badge id="overall-difficulty-none"  size="medium" variant="neutral" pill><spring:message code="builder.semesterOverview.noReviews"/></sl-badge>
-            <sl-badge id="overall-difficulty-easy" style="display: none;" size="medium" variant="success" pill><spring:message code="form.easy"/></sl-badge>
-            <sl-badge id="overall-difficulty-medium" style="display: none;" size="medium" variant="primary" pill><spring:message code="form.normal"/></sl-badge>
-            <sl-badge id="overall-difficulty-hard" style="display: none;" size="medium" variant="danger" pill><spring:message code="form.hard"/></sl-badge>
-          </sl-card>
-
+          <sl-tooltip content="<spring:message code="builder.timeDemanding"/>">
+            <sl-card  class="overview-item">
+              <span><spring:message code="builder.semesterOverview.timeDemand"/></span>
+              <sl-divider vertical style="height:  1rem; margin: 0.5rem"></sl-divider>
+              <sl-badge id="time-difficulty-none"  size="medium" variant="neutral" pill><spring:message code="builder.semesterOverview.noReviews"/></sl-badge>
+              <sl-badge id="time-difficulty-easy" style="display: none;" size="medium" variant="success" pill><spring:message code="form.NotTimeDemanding" /></sl-badge>
+              <sl-badge id="time-difficulty-medium" style="display: none;" size="medium" variant="primary" pill><spring:message code="form.averageTimeDemand" /></sl-badge>
+              <sl-badge id="time-difficulty-hard" style="display: none;" size="medium" variant="warning" pill><spring:message code="form.timeDemanding" /></sl-badge>
+            </sl-card>
+          </sl-tooltip>
+          <sl-tooltip  content="<spring:message code="builder.difficulty"/>">
+            <sl-card  class="overview-item">
+              <span><spring:message code="builder.semesterOverview.overallDifficulty"/></span>
+              <sl-divider vertical style="height:  1rem; margin: 0.5rem"></sl-divider>
+              <sl-badge id="overall-difficulty-none"  size="medium" variant="neutral" pill><spring:message code="builder.semesterOverview.noReviews"/></sl-badge>
+              <sl-badge id="overall-difficulty-easy" style="display: none;" size="medium" variant="success" pill><spring:message code="form.easy"/></sl-badge>
+              <sl-badge id="overall-difficulty-medium" style="display: none;" size="medium" variant="primary" pill><spring:message code="form.normal"/></sl-badge>
+              <sl-badge id="overall-difficulty-hard" style="display: none;" size="medium" variant="danger" pill><spring:message code="form.hard"/></sl-badge>
+            </sl-card>
+          </sl-tooltip>
           <sl-card class="overview-item unlock-card">
             <div slot="header">
               <span><spring:message code="builder.semesterOverview.unlock"/></span>
