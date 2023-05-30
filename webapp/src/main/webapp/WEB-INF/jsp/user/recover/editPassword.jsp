@@ -34,7 +34,7 @@
       }
   </style>
 </head>
-<jsp:include page="../../components/navbar.jsp" />
+<jsp:include page="../../components/default_navbar.jsp" />
 
 <body>
 

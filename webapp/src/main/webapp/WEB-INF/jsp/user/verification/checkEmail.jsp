@@ -59,7 +59,7 @@
   </script>
 </head>
 <body>
-<jsp:include page="../../components/navbar.jsp"/>
+<jsp:include page="../../components/default_navbar.jsp"/>
 
 <main class="container-50">
   <div class="title container-small">
