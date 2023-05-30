@@ -91,7 +91,7 @@
       <sec:authorize access="hasRole('EDITOR')">
         <div class="moderator-tag">
           <c:if test="${!user.editor}">
-            <sl-button variant="primary" outline href="<c:out value="/user/${user.id}/moderator"/>"><spring:message code="profile.make_moderator" /> </sl-button>
+            <sl-button variant="primary" outline href="<c:url value="/user/${user.id}/moderator"/>"><spring:message code="profile.make_moderator" /> </sl-button>
           </c:if>
         </div>
       </sec:authorize>
