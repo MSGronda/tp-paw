@@ -14,10 +14,10 @@
 
 <a href='<c:out value="${pageContext.request.contextPath}/subject/${subject.id}"/>'>
     <sl-card class="micro-subject-card" >
-        <div slot="header">
+        <div>
             <h3 class="card-title"><c:out value="${subject.name}" /> - <c:out value="${subject.id}"/></h3>
         </div>
-        <div class="chip-row class-info">
+        <div slot="footer" class="chip-row">
             <sl-badge variant="primary" pill>
                 <c:choose>
                     <c:when test="${subject.credits != 1}">
