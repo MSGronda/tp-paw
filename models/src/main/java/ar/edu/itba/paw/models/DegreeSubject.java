@@ -15,7 +15,7 @@ class DegreeSubject {
     @JoinColumn(name = "iddeg")
     private Degree degree;
 
-    @ManyToOne
+    @ManyToOne(optional = false)
     @MapsId("subjectId")
     @JoinColumn(name = "idsub")
     private Subject subject;
