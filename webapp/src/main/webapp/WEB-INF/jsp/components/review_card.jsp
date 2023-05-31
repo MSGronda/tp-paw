@@ -47,29 +47,29 @@
   .showMore::part(base):active {
     background: rgba(255, 99, 71, 0);
   }
-  .delete-button{
+  .delete-button {
     color: red;
   }
-  .vote-button{
+  .vote-button {
     padding: 0;
   }
   sl-button.vote-button::part(base){
     border-color: white;
   }
-  .vote-button-icon{
+  .vote-button-icon {
     font-size: 20px;
     padding-top: 0.3rem;
   }
-  .clickable{
+  .clickable {
     pointer-events: all !important;
   }
-  sl-tooltip::part(body){
+  sl-tooltip::part(body) {
     color: black;
     background-color: white;
     margin: 0;
     padding: 0;
   }
-  sl-tooltip::part(base__arrow){
+  sl-tooltip::part(base__arrow) {
     background-color: white;
   }
 </style>

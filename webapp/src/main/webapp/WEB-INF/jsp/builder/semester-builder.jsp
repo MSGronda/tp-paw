@@ -246,13 +246,22 @@
     padding: 0;
     height: 2rem;
   }
-
-
-
   .order-menu {
       display: flex;
       flex-direction: row;
       justify-content: space-around;
+  }
+  .clickable {
+    pointer-events: all !important;
+  }
+  sl-tooltip::part(body) {
+    color: black;
+    background-color: white;
+    margin: 0;
+    padding: 0;
+  }
+  sl-tooltip::part(base__arrow) {
+    background-color: white;
   }
 
 
@@ -306,35 +315,105 @@
         </div>
         <div id="subject-list" class="subject-list">
           <c:forEach var="subject" items="${availableSubjects}">
-            <sl-card id="subject-card-${subject.id}" class="subject-info-card">
-              <div class="chooser">
-                <div class="subject-info-card-details">
-                  <h5><c:out value="${subject.name}"/></h5>
-                  <spring:message code="subject.credits"/> <c:out value="${subject.credits}"/>
-                  <c:choose>
-                    <c:when test="${subject.reviewStats.getDifficulty() == Difficulty.EASY}">
-                      <sl-badge size="medium" variant="success" pill><spring:message code="form.easy"/></sl-badge>
-                    </c:when>
-                    <c:when test="${subject.reviewStats.getDifficulty() == Difficulty.MEDIUM}">
-                      <sl-badge size="medium" variant="primary" pill><spring:message code="form.normal"/></sl-badge>
-                    </c:when>
-                    <c:when test="${subject.reviewStats.getDifficulty() == Difficulty.HARD}">
-                      <sl-badge size="medium" variant="danger" pill><spring:message code="form.hard"/></sl-badge>
-                    </c:when>
-                    <c:otherwise><sl-badge size="medium" variant="neutral" pill><spring:message code="form.noDif"/></sl-badge></c:otherwise>
-                  </c:choose>
-                </div>
-                <div class="column">
-                  <sl-button id="select-${subject.id}" variant="default" size="small" circle>
-                    <sl-icon class="icon" name="check2" label="Select Subject"></sl-icon>
-                  </sl-button>
-                  <sl-button id="deselect-subject-${subject.id}" style="display: none; align-self: end" variant="default" size="small" circle>
-                    <sl-icon class="icon" name="x-lg" label="Remove subject"></sl-icon>
-                  </sl-button>
-                  <span id="selected-${subject.id}" style="display: none; color: #7db6f8; padding-top:0.5rem"><spring:message code="builder.selected"/></span>
-                </div>
+            <sl-tooltip trigger="click" placement="right" style="--max-width: 50rem; width: 40rem">
+              <div class="clickable" slot="content">
+                <sl-card>
+                    <table>
+                      <thead>
+                        <tr>
+                          <th colspan="2"><h2><c:out value="${subject.name}"/> - <c:out value="${subject.id}"/></h2></th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                      <tr>
+                        <td><h3><spring:message code="subject.department"/></h3></td>
+                        <td><p><c:out value="${subject.department}"/></p></td>
+                      </tr>
+                      <tr>
+                        <th><spring:message code="subject.prerequisites"/></th>
+                        <td>
+                          <c:if test="${empty subject.prerequisites}">
+                            <spring:message code="subject.prerequisites?"/>
+                          </c:if>
+                          <c:forEach var="prereq" items="${subject.prerequisites}" varStatus="status">
+                            <a href='<c:url value="/subject/${prereq.id}"/>'><c:out value="${prereq.name}"/></a>
+                            <c:if test="${not status.last}">
+                              ,
+                            </c:if>
+                          </c:forEach>
+                        </td>
+                      </tr>
+                      <tr>
+                        <th><spring:message code="subject.professors"/></th>
+                        <td>
+                          <c:forEach var="professor" items="${subject.professors}" varStatus="status">
+                            <sl-badge variant="primary">
+                              <c:out value="${professor.name}"/>
+                            </sl-badge>
+
+                          </c:forEach>
+                        </td>
+                      </tr>
+                      <tr>
+                        <th><spring:message code="subject.time" /></th>
+                        <td>
+                          <c:choose>
+                            <c:when test="${subject.reviewStats.getTimeDemanding() == TimeDemanding.LOW}">
+                              <sl-badge size="medium" variant="success"><spring:message code="form.NotTimeDemanding" /></sl-badge>
+                            </c:when>
+                            <c:when test="${subject.reviewStats.getTimeDemanding() == TimeDemanding.MEDIUM}">
+                              <sl-badge size="medium" variant="primary"><spring:message code="form.averageTimeDemand" /></sl-badge>
+                            </c:when>
+                            <c:when test="${subject.reviewStats.getTimeDemanding() == TimeDemanding.HIGH}">
+                              <sl-badge size="medium" variant="warning"><spring:message code="form.timeDemanding" /></sl-badge>
+                            </c:when>
+                            <c:otherwise>
+                              <sl-badge size="medium" variant="neutral"><spring:message code="form.noDif" /></sl-badge>
+                            </c:otherwise>
+                          </c:choose>
+                        </td>
+                      </tr>
+                      </tbody>
+                    </table>
+                  <div class="column-center">
+                    <div style="padding-top: 1rem;">
+                      <sl-button href="<c:url value="/subject/${subject.id}"/>" target="_blank">
+                        <spring:message code="builder.fullSubject"/>
+                      </sl-button>
+                    </div>
+                  </div>
+                </sl-card>
               </div>
-            </sl-card>
+              <sl-card id="subject-card-${subject.id}" class="subject-info-card">
+                <div class="chooser">
+                  <div class="subject-info-card-details">
+                    <h5><c:out value="${subject.name}"/></h5>
+                    <spring:message code="subject.credits"/> <c:out value="${subject.credits}"/>
+                    <c:choose>
+                      <c:when test="${subject.reviewStats.getDifficulty() == Difficulty.EASY}">
+                        <sl-badge size="medium" variant="success" pill><spring:message code="form.easy"/></sl-badge>
+                      </c:when>
+                      <c:when test="${subject.reviewStats.getDifficulty() == Difficulty.MEDIUM}">
+                        <sl-badge size="medium" variant="primary" pill><spring:message code="form.normal"/></sl-badge>
+                      </c:when>
+                      <c:when test="${subject.reviewStats.getDifficulty() == Difficulty.HARD}">
+                        <sl-badge size="medium" variant="danger" pill><spring:message code="form.hard"/></sl-badge>
+                      </c:when>
+                      <c:otherwise><sl-badge size="medium" variant="neutral" pill><spring:message code="form.noDif"/></sl-badge></c:otherwise>
+                    </c:choose>
+                  </div>
+                  <div class="column">
+                    <sl-button id="select-${subject.id}" variant="default" size="small" circle>
+                      <sl-icon class="icon" name="check2" label="Select Subject"></sl-icon>
+                    </sl-button>
+                    <sl-button id="deselect-subject-${subject.id}" style="display: none; align-self: end" variant="default" size="small" circle>
+                      <sl-icon class="icon" name="x-lg" label="Remove subject"></sl-icon>
+                    </sl-button>
+                    <span id="selected-${subject.id}" style="display: none; color: #7db6f8; padding-top:0.5rem"><spring:message code="builder.selected"/></span>
+                  </div>
+                </div>
+              </sl-card>
+            </sl-tooltip>
           </c:forEach>
         </div>
       </sl-card>
@@ -474,8 +553,8 @@
               <div class="clickable" slot="content">
                 <sl-card>
                   <div class="column-center">
-                    <h4 style="color: black;"><spring:message code="builder.help1"/></h4>
-                    <p style="color: black;">
+                    <h4><spring:message code="builder.help1"/></h4>
+                    <p>
                       &#x2022; <spring:message code="builder.help2"/>
                       <br/>
                       &#x2022; <spring:message code="builder.help3"/>
