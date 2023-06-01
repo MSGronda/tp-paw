@@ -257,7 +257,7 @@
 
         <sl-tab-panel name="current-semester">
           <div class="current-semester-area">
-            <c:if test="${currentUserSemester.size() != 0}">
+            <c:if test="${user.userSemester.size() != 0}">
               <div class="time-table-area">
                 <jsp:include page="../components/time_table.jsp"/>
               </div>
@@ -269,10 +269,10 @@
                     </div>
                   </div>
                   <div class="current-semester-subject-info-list">
-                    <c:forEach var="subject" items="${currentUserSemester}">
-                      <c:set var="name" value="${subject.name}" scope="request"/>
-                      <c:set var="subClass" value="${subject.classes.stream().findFirst().get()}" scope="request"/>
-                      <a href='<c:out value="${pageContext.request.contextPath}/subject/${subject.id}"/>'>
+                    <c:forEach var="subjectClass" items="${user.userSemester}">
+                      <c:set var="name" value="${subjectClass.subject.name}" scope="request"/>
+                      <c:set var="subClass" value="${subjectClass}" scope="request"/>
+                      <a href='<c:out value="${pageContext.request.contextPath}/subject/${subjectClass.subject.id}"/>'>
                         <jsp:include page="../components/class_info_card.jsp"/>
                       </a>
                     </c:forEach>
@@ -280,7 +280,7 @@
                 </sl-card>
               </div>
             </c:if>
-            <c:if test="${currentUserSemester.size() == 0}">
+            <c:if test="${user.userSemester.size() == 0}">
               <div class="empty-tab-area">
                 <h3 class="empty-tab-info">
                   <spring:message code="dashboard.currentSemester.emptySemester"/>
@@ -341,36 +341,34 @@
         '<spring:message code="subject.classDay4"/>', '<spring:message code="subject.classDay5"/>', '<spring:message code="subject.classDay6"/>'
     ]
 
-    <c:if test="${currentUserSemester.size() != 0}">
-    //  - - - - - - - Create time table - - - - - - -
-    const schedule = new Schedule(29, 7);
+    <c:if test="${user.userSemester.size() != 0}">
+      //  - - - - - - - Create time table - - - - - - -
+      const schedule = new Schedule(29, 7);
 
-    //  - - - - - - - Inflate time table - - - - - - -
-    <c:forEach var="subject" items="${currentUserSemester}">
-    <c:forEach var="subClass" items="${subject.classes}">
-    schedule.addClass('${subject.id}', '${subject.name}',
-        [
-            <c:forEach var="classTime" items="${subClass.classTimes}">
-            {
-
-                'day': '${classTime.day}',
-                'start': '${classTime.startTime}',
-                'end': '${classTime.endTime}',
-                'loc': '${classTime.classLoc}',
-                'building': '${classTime.building}',
-                'mode': '${classTime.mode}'
-            },
-            </c:forEach>
-        ],
+      //  - - - - - - - Inflate time table - - - - - - -
+      <c:forEach var="subClass" items="${user.userSemester}">
+        schedule.addClass('${subClass.subject.id}', '${subClass.subject.name}',
+            [
+                <c:forEach var="classTime" items="${subClass.classTimes}">
+                {
+                    'day': '${classTime.day}',
+                    'start': '${classTime.startTime}',
+                    'end': '${classTime.endTime}',
+                    'loc': '${classTime.classLoc}',
+                    'building': '${classTime.building}',
+                    'mode': '${classTime.mode}'
+                },
+                </c:forEach>
+            ],
+        )
         </c:forEach>
-    )
-    </c:forEach>
     </c:if>
-    <c:if test="${currentUserSemester.size() == 0}">
-    $('document').ready(function () {
-        const tabGroup = document.querySelector('.tabs');
-        tabGroup.show('current-semester');
-    });
+
+    <c:if test="${user.userSemester.size() == 0}">
+      $('document').ready(function () {
+          const tabGroup = document.querySelector('.tabs');
+          tabGroup.show('current-semester');
+      });
     </c:if>
 
 
