@@ -313,6 +313,16 @@ public class UserServiceImpl implements UserService {
         return progress;
     }
 
+    @Override
+    public void addToCurrentSemester(User user, SubjectClass subjectClass) {
+        userDao.addToCurrentSemester(user,subjectClass);
+    }
+
+    @Override
+    public void removeFromCurrentSemester(User user, SubjectClass subjectClass) {
+        userDao.removeFromCurrentSemester(user,subjectClass);
+    }
+
     @Transactional
     @Override
     public void addRole(final User user, final Role role) {

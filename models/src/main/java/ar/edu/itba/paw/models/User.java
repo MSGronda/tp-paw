@@ -62,7 +62,7 @@ public class User {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ReviewVote> votes;
 
-    @ManyToMany
+    @ManyToMany(cascade = CascadeType.ALL)
     @JoinTable(
             name = "userSemester",
             joinColumns = @JoinColumn(name = "iduser"),
@@ -71,7 +71,7 @@ public class User {
                     @JoinColumn(name = "idsub")
             }
     )
-    private List<SubjectClass> userSemester;
+    private Set<SubjectClass> userSemester;
 
     @Formula("(SELECT COALESCE(SUM(s.credits), 0) " +
             "FROM subjects s JOIN usersubjectprogress up ON s.id = up.idsub " +
@@ -92,12 +92,12 @@ public class User {
         this.reviews = new ArrayList<>();
         this.votes = new ArrayList<>();
         this.subjectProgress = new HashMap<>();
-        this.userSemester = new ArrayList<>();
+        this.userSemester = new HashSet<>();
     }
 
     protected User() {}
 
-    public List<SubjectClass> getUserSemester() {
+    public Set<SubjectClass> getUserSemester() {
         return userSemester;
     }
 

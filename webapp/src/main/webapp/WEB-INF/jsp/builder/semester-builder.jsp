@@ -436,9 +436,14 @@
             <sl-card id="class-card-${subject.id}-${subClass.classId}" class="class-card">
               <div class="chooser" slot="header">
                 <h5>${subClass.classId}</h5>
-                <sl-button id="select-class-${subject.id}-${subClass.classId}" variant="default" size="small" circle>
-                  <sl-icon class="icon" name="check2" label="Select Subject"></sl-icon>
-                </sl-button>
+                <form method="post" action="${pageContext.request.contextPath}/builder/add">
+                  <input type="hidden" id="idSub" name="idSub" value="${subject.id}">
+                  <input type="hidden" id="idClass" name="idClass" value="${subClass.classId}">
+
+                  <sl-button type="submit" id="select-class-${subject.id}-${subClass.classId}" variant="default" size="small" circle>
+                    <sl-icon class="icon" name="check2" label="Select Subject"></sl-icon>
+                  </sl-button>
+                </form>
                 <sl-button style="display: none;" id="deselect-class-${subject.id}-${subClass.classId}"
                            variant="default" size="small" circle>
                   <sl-icon class="icon" name="x-lg" label="Select Subject"></sl-icon>
@@ -671,6 +676,20 @@
         </c:forEach>
     ]
 
+    <c:if test="${user.userSemester.size() != 0}">
+      <c:forEach var="subClass" varStatus="status" items="${user.userSemester}">
+          const sub_${status.index} = subjectClasses.find(elem => elem.id === '${subClass.subject.name}')
+          const sub_${status.index}_class = sub_${status.index}.classes.find(elem => elem.idClass === '${subClass.classId}');
+
+          addSelectedClassToList(sub_${status.index}, sub_${status.index}_class);
+          schedule.addClass(sub_${status.index}.id, sub_${status.index}.name, sub_${status.index}_class.classTimes);
+          document.getElementById('subject-card-'+sub_${status.index}.id).style.display = 'none';
+          updateCreditCounter(sub_${status.index}.credits)
+          updateTimeDemand((sub_${status.index}.timeDemand+1))
+          updateOverallDifficulty((sub_${status.index}.difficulty+1))
+      </c:forEach>
+    </c:if>
+
     const unlockables = [
       <c:forEach var="subject" items="${unlockableSubjects}">
         {
@@ -725,6 +744,8 @@
     document.getElementById('switch-to-list-button').addEventListener('click',switchToListView);
 
 
+    disableIncompatibleSubjects();
+    alterUnlockables();
 </script>
 
 </html>
