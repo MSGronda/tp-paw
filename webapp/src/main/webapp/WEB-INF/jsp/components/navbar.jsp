@@ -54,8 +54,9 @@
 
 
     <sl-button-group label="Alignment">
-      <sl-button class="nav-button" variant="text" href="${pageContext.request.contextPath}/search"><spring:message code="navbar.subject"/></sl-button>
+      <sl-button class="nav-button" variant="text" href="${pageContext.request.contextPath}/degree/${user.degree.id}"><spring:message code="navbar.curriculum"/></sl-button>
       <sl-button class="nav-button" variant="text" href="${pageContext.request.contextPath}/builder"><spring:message code="navbar.builder"/></sl-button>
+      <sl-button class="nav-button" variant="text" href="${pageContext.request.contextPath}/search"><spring:message code="navbar.subject"/></sl-button>
     </sl-button-group>
     <sec:authorize access="!isAuthenticated()">
       <sl-button variant="success" href="<c:url value="/login"/>"><spring:message code="navbar.access"/></sl-button>

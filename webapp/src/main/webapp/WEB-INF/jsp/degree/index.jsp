@@ -30,13 +30,17 @@
         sl-tab-group::part(base) {
             overflow: hidden;
         }
+        .title{
+            font-weight: normal;
+        }
     </style>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
 </head>
 <body>
 <jsp:include page="../components/navbar.jsp"/>
-<main>
-    <sl-tab-group class="year-group container-70">
+<main class="container-70">
+    <h1 class="title"><c:out value="${degree.name}"/></h1>
+    <sl-tab-group class="year-group ">
         <c:forEach var="year" items="${degree.years}">
             <%--          <sl-tab slot="nav" panel="semester-${semester.number}">--%>
             <sl-tab slot="nav" panel="year-${year.number}">
