@@ -117,40 +117,35 @@
           flex-direction: row;
           justify-content: center;
           align-items: center;
-          height: 100%;
+          height: 90vh;
           width: 100%;
       }
 
       .time-table-area {
           height: 100%;
           width: 100%;
+          overflow-y: scroll;
       }
-
       .current-semester-class-area {
           padding: 0.5rem 0.2rem;
           width: 45%;
           height: 100%;
       }
-
       .current-semester-card {
           width: 100%;
       }
-
       .current-semester-card::part(header) {
           padding-top: 0;
           padding-bottom: 0;
       }
-
       .current-semester-card::part(base), .current-semester-card::part(body) {
           height: 100%;
       }
-
       .current-semester-card::part(body) {
           padding: 0.5rem;
       }
-
       .current-semester-subject-info-list {
-          height: 100%;
+          height: 95%;
           overflow-y: scroll;
           flex: 1;
       }
@@ -292,6 +287,8 @@
             </c:if>
           </div>
         </sl-tab-panel>
+
+
         <sl-tab-panel name="future-subjects">
           <div class="future-subjects-area container-90">
             <c:forEach var="subject" items="${futureSubjects}">
