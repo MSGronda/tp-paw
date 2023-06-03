@@ -143,6 +143,10 @@
      padding: 0.5rem;
      overflow-y: auto;
    }
+  form{
+    margin-block-end: 0;
+  }
+
 
   /* Semester overview */
   .semester-overview-tab-area{
@@ -436,13 +440,24 @@
             <sl-card id="class-card-${subject.id}-${subClass.classId}" class="class-card">
               <div class="chooser" slot="header">
                 <h5>${subClass.classId}</h5>
-                <sl-button id="select-class-${subject.id}-${subClass.classId}" variant="default" size="small" circle>
-                  <sl-icon class="icon" name="check2" label="Select Subject"></sl-icon>
-                </sl-button>
-                <sl-button style="display: none;" id="deselect-class-${subject.id}-${subClass.classId}"
+                <form id="form-select-class-${subject.id}-${subClass.classId}" method="post" action="${pageContext.request.contextPath}/builder/add">
+                  <input type="hidden" id="idSub-add" name="idSub" value="${subject.id}">
+                  <input type="hidden" id="idClass-add" name="idClass" value="${subClass.classId}">
+
+                  <sl-button type="submit" id="select-class-${subject.id}-${subClass.classId}" variant="default" size="small" circle>
+                    <sl-icon class="icon" name="check2" label="Select Subject"></sl-icon>
+                  </sl-button>
+                </form>
+
+                <form style="display: none" id="form-deselect-class-${subject.id}-${subClass.classId}" method="post" action="${pageContext.request.contextPath}/builder/remove">
+                  <input type="hidden" id="idSub-remove" name="idSub" value="${subject.id}">
+                  <input type="hidden" id="idClass-remove" name="idClass" value="${subClass.classId}">
+
+                <sl-button  type="submit" id="deselect-class-${subject.id}-${subClass.classId}"
                            variant="default" size="small" circle>
                   <sl-icon class="icon" name="x-lg" label="Select Subject"></sl-icon>
                 </sl-button>
+                </form>
               </div>
               <div class="column">
                   <table>
@@ -671,6 +686,20 @@
         </c:forEach>
     ]
 
+    <c:if test="${user.userSemester.size() != 0}">
+      <c:forEach var="subClass" varStatus="status" items="${user.userSemester}">
+          const sub_${status.index} = subjectClasses.find(elem => elem.id === '${subClass.subject.id}')
+          const sub_${status.index}_class = sub_${status.index}.classes.find(elem => elem.idClass === '${subClass.classId}');
+
+          addSelectedClassToList(sub_${status.index}, sub_${status.index}_class);
+          schedule.addClass(sub_${status.index}.id, sub_${status.index}.name, sub_${status.index}_class.classTimes);
+          document.getElementById('subject-card-'+sub_${status.index}.id).style.display = 'none';
+          updateCreditCounter(sub_${status.index}.credits)
+          updateTimeDemand((sub_${status.index}.timeDemand+1))
+          updateOverallDifficulty((sub_${status.index}.difficulty+1))
+      </c:forEach>
+    </c:if>
+
     const unlockables = [
       <c:forEach var="subject" items="${unlockableSubjects}">
         {
@@ -725,6 +754,8 @@
     document.getElementById('switch-to-list-button').addEventListener('click',switchToListView);
 
 
+    disableIncompatibleSubjects();
+    alterUnlockables();
 </script>
 
 </html>

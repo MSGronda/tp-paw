@@ -62,6 +62,17 @@ public class User {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ReviewVote> votes;
 
+    @ManyToMany(cascade = CascadeType.ALL)
+    @JoinTable(
+            name = "userSemester",
+            joinColumns = @JoinColumn(name = "iduser"),
+            inverseJoinColumns = {
+                    @JoinColumn(name = "idclass"),
+                    @JoinColumn(name = "idsub")
+            }
+    )
+    private Set<SubjectClass> userSemester;
+
     @Formula("(SELECT COALESCE(SUM(s.credits), 0) " +
             "FROM subjects s JOIN usersubjectprogress up ON s.id = up.idsub " +
             "WHERE up.iduser = id AND up.subjectstate = 1)")
@@ -81,9 +92,14 @@ public class User {
         this.reviews = new ArrayList<>();
         this.votes = new ArrayList<>();
         this.subjectProgress = new HashMap<>();
+        this.userSemester = new HashSet<>();
     }
 
     protected User() {}
+
+    public Set<SubjectClass> getUserSemester() {
+        return userSemester;
+    }
 
     public int getCreditsDone(){
         return creditsDone;
@@ -116,6 +132,7 @@ public class User {
     public Optional<String> getConfirmToken() {
         return Optional.ofNullable(confirmToken);
     }
+
     public boolean isConfirmed() {
         return confirmed;
     }

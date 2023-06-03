@@ -2,6 +2,7 @@ package ar.edu.itba.paw.persistence.dao;
 
 import ar.edu.itba.paw.models.Role;
 import ar.edu.itba.paw.models.Subject;
+import ar.edu.itba.paw.models.SubjectClass;
 import ar.edu.itba.paw.models.User;
 import ar.edu.itba.paw.models.enums.SubjectProgress;
 import ar.edu.itba.paw.persistence.exceptions.UserEmailAlreadyTakenPersistenceException;
@@ -33,4 +34,7 @@ public interface UserDao extends RWDao<Long,User> {
     void updateConfirmToken(final User user, final String token);
 
     void updateSubjectProgressList(final User user, final List<String> subjectIdList);
+
+    void addToCurrentSemester(final User user, final SubjectClass subjectClass);
+    void removeFromCurrentSemester(final User user, final SubjectClass subjectClass);
 }
