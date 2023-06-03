@@ -678,7 +678,7 @@
 
     <c:if test="${user.userSemester.size() != 0}">
       <c:forEach var="subClass" varStatus="status" items="${user.userSemester}">
-          const sub_${status.index} = subjectClasses.find(elem => elem.id === '${subClass.subject.name}')
+          const sub_${status.index} = subjectClasses.find(elem => elem.id === '${subClass.subject.id}')
           const sub_${status.index}_class = sub_${status.index}.classes.find(elem => elem.idClass === '${subClass.classId}');
 
           addSelectedClassToList(sub_${status.index}, sub_${status.index}_class);

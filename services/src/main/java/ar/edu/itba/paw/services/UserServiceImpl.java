@@ -313,11 +313,13 @@ public class UserServiceImpl implements UserService {
         return progress;
     }
 
+    @Transactional
     @Override
     public void addToCurrentSemester(User user, SubjectClass subjectClass) {
         userDao.addToCurrentSemester(user,subjectClass);
     }
 
+    @Transactional
     @Override
     public void removeFromCurrentSemester(User user, SubjectClass subjectClass) {
         userDao.removeFromCurrentSemester(user,subjectClass);
