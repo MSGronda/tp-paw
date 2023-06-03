@@ -221,15 +221,16 @@ function createSubjectSelectAction(subId){
     }
 }
 function addSelectedClassToList(subject,classSubject){
+    // change visibility of buttons and behaviour before cloning
+    document.getElementById('form-select-class-' +subject.id + '-'+classSubject.idClass).style.display = 'none'
+    document.getElementById('form-deselect-class-' +subject.id + '-'+classSubject.idClass).style.display = 'flex'
+    document.getElementById('deselect-class-' +subject.id + '-'+classSubject.idClass)
+        .addEventListener('click', createSubjectDeselectAction(subject, classSubject.idClass));
+
     const selected = document.getElementById('selected-subject-info-list');
     const selectedSubjectClass = document.getElementById('class-card-' +subject.id + '-'+classSubject.idClass).cloneNode(true);
     selectedSubjectClass.id = 'selected-class-card-' +subject.id + '-'+classSubject.idClass
     selectedSubjectClass.firstElementChild.firstElementChild.textContent = subject.name + ' - ' + classSubject.idClass
-
-    selectedSubjectClass.firstElementChild.children[1].style.display= 'none'
-    selectedSubjectClass.firstElementChild.children[2].style.display= 'flex'
-
-    selectedSubjectClass.firstElementChild.children[2].addEventListener('click', createSubjectDeselectAction(subject, classSubject.idClass));
 
     selected.appendChild(selectedSubjectClass)
 }

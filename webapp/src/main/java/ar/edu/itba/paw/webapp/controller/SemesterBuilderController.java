@@ -91,4 +91,42 @@ public class SemesterBuilderController {
 
         return new ModelAndView("redirect:/builder/");
     }
+
+    // Justificacion: codigo repetido que no vale modularizar al tener que retornar MAV y SubjecClass
+    @RequestMapping(value = "/builder/remove", method = RequestMethod.POST)
+    public ModelAndView removeSubjectToSemester(@Valid @ModelAttribute("ReviewForm") final UserSemesterForm semesterForm, final BindingResult errors){
+        User user;
+        if(authUserService.isAuthenticated()) {
+            user = authUserService.getCurrentUser();
+        }
+        else{
+            LOGGER.info("User is not logged in");
+            return new ModelAndView("user/login");
+        }
+        if(errors.hasErrors()){
+            LOGGER.warn("Subject builder adding form has errors");
+            return new ModelAndView("redirect:/builder/");
+        }
+
+        final Optional<Subject> maybeSubject = subjectService.findById(semesterForm.getIdSub());
+
+        if(!maybeSubject.isPresent()){
+            LOGGER.warn("No subject for id {}", semesterForm.getIdSub());
+            return new ModelAndView("redirect:/builder/");
+        }
+
+        final Map<String, SubjectClass> classes = maybeSubject.get().getClassesById();
+
+        if(!classes.containsKey(semesterForm.getIdClass())){
+            LOGGER.warn("No class in subject {} for id {}", semesterForm.getIdSub(), semesterForm.getIdClass());
+            return new ModelAndView("redirect:/builder/");
+        }
+        final SubjectClass subjectClass = classes.get(semesterForm.getIdClass());
+
+        LOGGER.info("User {} removed to its current semester the subject: {}, class: {}", user.getId(), subjectClass.getSubject().getName(), subjectClass.getClassId());
+
+        userService.removeFromCurrentSemester(user, subjectClass);
+
+        return new ModelAndView("redirect:/builder/");
+    }
 }

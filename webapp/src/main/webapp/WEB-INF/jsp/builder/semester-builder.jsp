@@ -143,6 +143,10 @@
      padding: 0.5rem;
      overflow-y: auto;
    }
+  form{
+    margin-block-end: 0;
+  }
+
 
   /* Semester overview */
   .semester-overview-tab-area{
@@ -436,18 +440,24 @@
             <sl-card id="class-card-${subject.id}-${subClass.classId}" class="class-card">
               <div class="chooser" slot="header">
                 <h5>${subClass.classId}</h5>
-                <form method="post" action="${pageContext.request.contextPath}/builder/add">
-                  <input type="hidden" id="idSub" name="idSub" value="${subject.id}">
-                  <input type="hidden" id="idClass" name="idClass" value="${subClass.classId}">
+                <form id="form-select-class-${subject.id}-${subClass.classId}" method="post" action="${pageContext.request.contextPath}/builder/add">
+                  <input type="hidden" id="idSub-add" name="idSub" value="${subject.id}">
+                  <input type="hidden" id="idClass-add" name="idClass" value="${subClass.classId}">
 
                   <sl-button type="submit" id="select-class-${subject.id}-${subClass.classId}" variant="default" size="small" circle>
                     <sl-icon class="icon" name="check2" label="Select Subject"></sl-icon>
                   </sl-button>
                 </form>
-                <sl-button style="display: none;" id="deselect-class-${subject.id}-${subClass.classId}"
+
+                <form style="display: none" id="form-deselect-class-${subject.id}-${subClass.classId}" method="post" action="${pageContext.request.contextPath}/builder/remove">
+                  <input type="hidden" id="idSub-remove" name="idSub" value="${subject.id}">
+                  <input type="hidden" id="idClass-remove" name="idClass" value="${subClass.classId}">
+
+                <sl-button  type="submit" id="deselect-class-${subject.id}-${subClass.classId}"
                            variant="default" size="small" circle>
                   <sl-icon class="icon" name="x-lg" label="Select Subject"></sl-icon>
                 </sl-button>
+                </form>
               </div>
               <div class="column">
                   <table>
