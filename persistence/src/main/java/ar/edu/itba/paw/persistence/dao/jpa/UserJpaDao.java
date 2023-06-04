@@ -156,4 +156,11 @@ public class UserJpaDao implements UserDao {
 
         semester.remove(subjectClass);
     }
+
+    @Override
+    public void clearSemester(final User user){
+        final Set<SubjectClass> semester =  user.getUserSemester();
+
+        semester.clear();
+    }
 }

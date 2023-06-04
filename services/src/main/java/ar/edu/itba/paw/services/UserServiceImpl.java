@@ -327,6 +327,12 @@ public class UserServiceImpl implements UserService {
 
     @Transactional
     @Override
+    public void clearSemester(final User user) {
+        userDao.clearSemester(user);
+    }
+
+    @Transactional
+    @Override
     public void addRole(final User user, final Role role) {
         userDao.addRole(user, role);
     }

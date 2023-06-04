@@ -37,4 +37,5 @@ public interface UserDao extends RWDao<Long,User> {
 
     void addToCurrentSemester(final User user, final SubjectClass subjectClass);
     void removeFromCurrentSemester(final User user, final SubjectClass subjectClass);
+    void clearSemester(final User user);
 }

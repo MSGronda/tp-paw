@@ -2,7 +2,7 @@ package ar.edu.itba.paw.webapp.controller;
 
 import ar.edu.itba.paw.models.*;
 import ar.edu.itba.paw.services.*;
-import ar.edu.itba.paw.webapp.form.ReviewForm;
+import ar.edu.itba.paw.webapp.form.UserSemesterFinishForm;
 import ar.edu.itba.paw.webapp.form.UserSemesterForm;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -54,9 +54,44 @@ public class SemesterBuilderController {
 
         return mav;
     }
+    @RequestMapping(value ="/builder/finish", method = RequestMethod.GET)
+    public ModelAndView finishSemester(@Valid @ModelAttribute("UserSemesterFinishForm") final UserSemesterFinishForm semesterForm){
+        User user;
+        if(authUserService.isAuthenticated()) {
+            user = authUserService.getCurrentUser();
+        }
+        else{
+            LOGGER.info("User is not logged in");
+            return new ModelAndView("user/login");
+        }
+
+        final ModelAndView mav = new ModelAndView("builder/finish-semester");
+        mav.addObject("user",user);
+        return mav;
+    }
+
+    @RequestMapping(value ="/builder/finish", method = RequestMethod.POST)
+    public ModelAndView finishSemesterSubmit(@Valid @ModelAttribute("UserSemesterFinishForm") final UserSemesterFinishForm semesterForm, final BindingResult errors){
+        User user;
+        if(authUserService.isAuthenticated()) {
+            user = authUserService.getCurrentUser();
+        }
+        else{
+            LOGGER.info("User is not logged in");
+            return new ModelAndView("user/login");
+        }
+        if(errors.hasErrors()){
+            return finishSemester(semesterForm);
+        }
+
+        userService.updateSubjectProgressWithSubList(user,semesterForm.getSubjectIds());
+        userService.clearSemester(user);
+
+        return new ModelAndView("redirect:/");
+    }
 
     @RequestMapping(value = "/builder/add", method = RequestMethod.POST)
-    public ModelAndView addSubjectToSemester(@Valid @ModelAttribute("ReviewForm") final UserSemesterForm semesterForm, final BindingResult errors){
+    public ModelAndView addSubjectToSemester(@Valid @ModelAttribute("UserSemesterForm") final UserSemesterForm semesterForm, final BindingResult errors){
         User user;
         if(authUserService.isAuthenticated()) {
             user = authUserService.getCurrentUser();
@@ -94,7 +129,7 @@ public class SemesterBuilderController {
 
     // Justificacion: codigo repetido que no vale modularizar al tener que retornar MAV y SubjecClass
     @RequestMapping(value = "/builder/remove", method = RequestMethod.POST)
-    public ModelAndView removeSubjectToSemester(@Valid @ModelAttribute("ReviewForm") final UserSemesterForm semesterForm, final BindingResult errors){
+    public ModelAndView removeSubjectToSemester(@Valid @ModelAttribute("UserSemesterForm") final UserSemesterForm semesterForm, final BindingResult errors){
         User user;
         if(authUserService.isAuthenticated()) {
             user = authUserService.getCurrentUser();
