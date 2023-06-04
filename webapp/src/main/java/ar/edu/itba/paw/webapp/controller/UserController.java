@@ -62,7 +62,7 @@ public class UserController {
     public ModelAndView user(
             @PathVariable long id,
             @RequestParam(required = false, defaultValue = "1") final int page,
-            @RequestParam(required = false, defaultValue = "date") final String orderBy,
+            @RequestParam(required = false, defaultValue = "easy") final String order,
             @RequestParam(required = false, defaultValue = "desc") final String dir
     ) {
         final Optional<User> maybeUser = userService.findById(id);
@@ -77,18 +77,18 @@ public class UserController {
         final User user = maybeUser.get();
         ModelAndView mav = new ModelAndView("user/userProfile");
 
-        return setProfileData(mav, user, page, orderBy, dir);
+        return setProfileData(mav, user, page, order, dir);
     }
 
     @RequestMapping("/profile")
     public ModelAndView profile(
             @RequestParam(required = false, defaultValue = "1") final int page,
-            @RequestParam(required = false, defaultValue = "date") final String orderBy,
+            @RequestParam(required = false, defaultValue = "easy") final String order,
             @RequestParam(required = false, defaultValue = "desc") final String dir
     ) {
         ModelAndView mav = new ModelAndView("/user/profile");
         User user = authUserService.getCurrentUser();
-        return setProfileData(mav, user, page, orderBy, dir);
+        return setProfileData(mav, user, page, order, dir);
     }
 
     private ModelAndView setProfileData(
