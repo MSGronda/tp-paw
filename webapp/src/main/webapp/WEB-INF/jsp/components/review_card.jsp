@@ -5,7 +5,6 @@
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
 <%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 
-
 <%--Params--%>
 <c:set var="review" value="${requestScope.review}"/>
 <c:set var="fromProfile" value="${requestScope.fromProfile}"/>
@@ -31,7 +30,7 @@
     overflow-wrap: break-word;
     margin-bottom: 2%;
   }
-  #more {
+  .more {
     display: none;
   }
 
@@ -151,7 +150,7 @@
 
   <div class="break-text">
     <c:if test="${review.text.length() > 500}">
-      <c:out value="${review.text.substring(0,500)}"/><span id="dots">...</span><span id="more"><c:out value="${review.text.substring(500)}"/></span>
+      <c:out value="${review.text.substring(0,500)}"/><span class="dots">...</span><span class="more"><c:out value="${review.text.substring(500)}"/></span>
 
       <br />
       <sl-button size="small" class="showMore"><spring:message code="subject.showMore" />  <sl-icon name="chevron-down"></sl-icon></sl-button>
