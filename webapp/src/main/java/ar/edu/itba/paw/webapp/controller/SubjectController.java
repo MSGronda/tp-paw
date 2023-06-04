@@ -79,4 +79,13 @@ public class SubjectController {
 
         return mav;
     }
+
+    @RequestMapping("/create-subject")
+    public ModelAndView createSubject() {
+        return new ModelAndView("moderator-tools/createSubject");
+    }
+    @RequestMapping("/edit-subject")
+    public ModelAndView editSubject() {
+        return new ModelAndView("moderator-tools/editSubject");
+    }
 }

@@ -33,6 +33,13 @@
         .title{
             font-weight: normal;
         }
+        .add-button {
+            position: absolute;
+            right: 0;
+            top: 0;
+            margin: 11rem;
+            font-size: 2rem;
+        }
     </style>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
 </head>
@@ -50,7 +57,9 @@
         <sl-tab slot="nav" panel="electives">
             <spring:message code="home.electives"/>
         </sl-tab>
-
+        <sl-tooltip content="<spring:message code="subject.create"/>">
+        <sl-icon-button class="add-button" name="plus" label="edit" href="<c:url value="/create-subject"/>"></sl-icon-button>
+        </sl-tooltip>
         <c:forEach var="year" items="${degree.years}">
             <sl-tab-panel class="year-panel" name="year-${year.number}">
                 <c:forEach var="subject" items="${year.subjects}">
