@@ -760,14 +760,7 @@
 
     // set switch to table view
     document.getElementById('switch-to-list-button').addEventListener('click',switchToListView);
-
-    const tooltip = document.querySelectorAll('.manual-tooltip');
-    const toggle = tooltip.lastElementChild;
-    const close = tooltip.firstElementChild;
-
-    toggle.addEventListener('click', () => (tooltip.open = !tooltip.open));
-    close.addEventListener('click', () => (tooltip.close = !tooltip.close));
-
+    
     disableIncompatibleSubjects();
     alterUnlockables();
 </script>
