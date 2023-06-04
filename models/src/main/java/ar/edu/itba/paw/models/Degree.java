@@ -1,7 +1,5 @@
 package ar.edu.itba.paw.models;
 
-import org.hibernate.annotations.Formula;
-
 import javax.persistence.*;
 import java.util.*;
 import java.util.stream.Collectors;

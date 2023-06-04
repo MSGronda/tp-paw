@@ -760,7 +760,7 @@
 
     // set switch to table view
     document.getElementById('switch-to-list-button').addEventListener('click',switchToListView);
-    
+
     disableIncompatibleSubjects();
     alterUnlockables();
 </script>

@@ -11,27 +11,30 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 
 @ControllerAdvice
 public class ExceptionControllerAdvice {
+
+    private static final String ERROR_PAGE = "error/page_not_found";
+
     @ResponseStatus(HttpStatus.NOT_FOUND)
     @ExceptionHandler(UserNotFoundException.class)
     public String handleUserNotFoundException(UserNotFoundException e) {
-        return "error/page_not_found";
+        return ERROR_PAGE;
     }
 
     @ResponseStatus(HttpStatus.NOT_FOUND)
     @ExceptionHandler(SubjectNotFoundException.class)
     public String handleSubjectNotFoundException(SubjectNotFoundException e) {
-        return "error/page_not_found";
+        return ERROR_PAGE;
     }
 
     @ResponseStatus(HttpStatus.NOT_FOUND)
     @ExceptionHandler(DegreeNotFoundException.class)
     public String handleDegreeNotFoundException(DegreeNotFoundException e) {
-        return "error/page_not_found";
+        return ERROR_PAGE;
     }
 
     @ResponseStatus(HttpStatus.NOT_FOUND)
     @ExceptionHandler(ImageNotFoundException.class)
     public String handleImageNotFoundException(ImageNotFoundException e) {
-        return "error/page_not_found";
+        return ERROR_PAGE;
     }
 }
