@@ -76,12 +76,12 @@ public class SubjectClassTime {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        SubjectClassTime classTime = (SubjectClassTime) o;
-        return Objects.equals(day, classTime.day) && Objects.equals(startTime, classTime.startTime) && Objects.equals(endTime, classTime.endTime) && Objects.equals(classLoc, classTime.classLoc) && Objects.equals(building, classTime.building) && Objects.equals(mode, classTime.mode);
+        SubjectClassTime that = (SubjectClassTime) o;
+        return getId() == that.getId();
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(day, startTime, endTime, classLoc, building, mode);
+        return Objects.hash(getId());
     }
 }

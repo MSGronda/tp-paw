@@ -85,11 +85,11 @@ public class Degree {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Degree degree = (Degree) o;
-        return id == degree.id && Objects.equals(name, degree.name);
+        return getId() == degree.getId();
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, name);
+        return Objects.hash(getId());
     }
 }

@@ -65,7 +65,7 @@ public class ReviewVote {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         ReviewVote that = (ReviewVote) o;
-        return Objects.equals(key, that.key) && vote == that.vote;
+        return Objects.equals(key, that.key);
     }
 
     @Override

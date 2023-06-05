@@ -135,12 +135,12 @@ public class Review {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Review review = (Review) o;
-        return id == review.id && anonymous == review.anonymous && upvotes == review.upvotes && downvotes == review.downvotes && Objects.equals(user, review.user) && Objects.equals(subject, review.subject) && difficulty == review.difficulty && timeDemanding == review.timeDemanding && Objects.equals(text, review.text);
+        return getId() == review.getId();
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id);
+        return Objects.hash(getId());
     }
 
     public static class Builder {

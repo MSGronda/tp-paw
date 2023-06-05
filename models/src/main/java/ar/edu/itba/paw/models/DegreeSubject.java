@@ -42,12 +42,12 @@ class DegreeSubject {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         DegreeSubject that = (DegreeSubject) o;
-        return semester == that.semester && Objects.equals(key, that.key);
+        return Objects.equals(key, that.key);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(key, semester);
+        return Objects.hash(key);
     }
 
     @Embeddable
@@ -73,12 +73,12 @@ class DegreeSubject {
             if (this == o) return true;
             if (o == null || getClass() != o.getClass()) return false;
             Key key = (Key) o;
-            return degreeId == key.degreeId && subjectId.equals(key.subjectId);
+            return getDegreeId() == key.getDegreeId() && Objects.equals(getSubjectId(), key.getSubjectId());
         }
 
         @Override
         public int hashCode() {
-            return Objects.hash(degreeId, subjectId);
+            return Objects.hash(getDegreeId(), getSubjectId());
         }
     }
 }
