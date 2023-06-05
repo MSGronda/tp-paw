@@ -119,17 +119,17 @@ public class UserJpaDao implements UserDao {
 
     @Override
     public void insert(User user) {
-
+        //do nothing
     }
 
     @Override
     public void delete(Long aLong) {
-
+        //do nothing
     }
 
     @Override
     public void update(User user) {
-
+        //do nothing
     }
 
     @Override
