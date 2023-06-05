@@ -1,7 +1,5 @@
 package ar.edu.itba.paw.persistence.dao;
 
-import ar.edu.itba.paw.models.User;
-
 import java.util.Optional;
 
 public interface RecoveryDao {

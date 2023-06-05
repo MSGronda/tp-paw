@@ -2,7 +2,6 @@ package ar.edu.itba.paw.webapp.controller;
 
 import ar.edu.itba.paw.models.*;
 import ar.edu.itba.paw.services.*;
-import ar.edu.itba.paw.webapp.form.ReviewForm;
 import ar.edu.itba.paw.webapp.form.UserSemesterForm;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,13 +14,14 @@ import org.springframework.web.servlet.ModelAndView;
 import javax.validation.Valid;
 import java.util.*;
 
-import static java.lang.Long.parseLong;
 
 @Controller
 public class SemesterBuilderController {
     private final AuthUserService authUserService;
     private final SubjectService subjectService;
     private final UserService userService;
+    private static final String LOGIN = "user/login";
+    private static final String REDIRECT_BUILDER = "redirect:/builder";
     private static final Logger LOGGER = LoggerFactory.getLogger(SemesterBuilderController.class);
 
     @Autowired
@@ -38,7 +38,7 @@ public class SemesterBuilderController {
            user = authUserService.getCurrentUser();
         }
         else{
-            return new ModelAndView("user/login");
+            return new ModelAndView(LOGIN);
         }
 
         ModelAndView mav = new ModelAndView("builder/semester-builder");
@@ -63,25 +63,25 @@ public class SemesterBuilderController {
         }
         else{
             LOGGER.info("User is not logged in");
-            return new ModelAndView("user/login");
+            return new ModelAndView(LOGIN);
         }
         if(errors.hasErrors()){
             LOGGER.warn("Subject builder adding form has errors");
-            return new ModelAndView("redirect:/builder/");
+            return new ModelAndView(REDIRECT_BUILDER);
         }
 
         final Optional<Subject> maybeSubject = subjectService.findById(semesterForm.getIdSub());
 
         if(!maybeSubject.isPresent()){
             LOGGER.warn("No subject for id {}", semesterForm.getIdSub());
-            return new ModelAndView("redirect:/builder/");
+            return new ModelAndView(REDIRECT_BUILDER);
         }
 
         final Map<String, SubjectClass> classes = maybeSubject.get().getClassesById();
 
         if(!classes.containsKey(semesterForm.getIdClass())){
             LOGGER.warn("No class in subject {} for id {}", semesterForm.getIdSub(), semesterForm.getIdClass());
-            return new ModelAndView("redirect:/builder/");
+            return new ModelAndView(REDIRECT_BUILDER);
         }
         final SubjectClass subjectClass = classes.get(semesterForm.getIdClass());
 
@@ -89,7 +89,7 @@ public class SemesterBuilderController {
 
         userService.addToCurrentSemester(user, subjectClass);
 
-        return new ModelAndView("redirect:/builder/");
+        return new ModelAndView(REDIRECT_BUILDER);
     }
 
     // Justificacion: codigo repetido que no vale modularizar al tener que retornar MAV y SubjecClass
@@ -101,25 +101,25 @@ public class SemesterBuilderController {
         }
         else{
             LOGGER.info("User is not logged in");
-            return new ModelAndView("user/login");
+            return new ModelAndView(LOGIN);
         }
         if(errors.hasErrors()){
             LOGGER.warn("Subject builder adding form has errors");
-            return new ModelAndView("redirect:/builder/");
+            return new ModelAndView(REDIRECT_BUILDER);
         }
 
         final Optional<Subject> maybeSubject = subjectService.findById(semesterForm.getIdSub());
 
         if(!maybeSubject.isPresent()){
             LOGGER.warn("No subject for id {}", semesterForm.getIdSub());
-            return new ModelAndView("redirect:/builder/");
+            return new ModelAndView(REDIRECT_BUILDER);
         }
 
         final Map<String, SubjectClass> classes = maybeSubject.get().getClassesById();
 
         if(!classes.containsKey(semesterForm.getIdClass())){
             LOGGER.warn("No class in subject {} for id {}", semesterForm.getIdSub(), semesterForm.getIdClass());
-            return new ModelAndView("redirect:/builder/");
+            return new ModelAndView(REDIRECT_BUILDER);
         }
         final SubjectClass subjectClass = classes.get(semesterForm.getIdClass());
 
@@ -127,6 +127,6 @@ public class SemesterBuilderController {
 
         userService.removeFromCurrentSemester(user, subjectClass);
 
-        return new ModelAndView("redirect:/builder/");
+        return new ModelAndView(REDIRECT_BUILDER);
     }
 }

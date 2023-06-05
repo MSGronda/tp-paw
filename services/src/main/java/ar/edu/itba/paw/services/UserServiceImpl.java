@@ -292,23 +292,28 @@ public class UserServiceImpl implements UserService {
         Map<Integer, Double> progress = new LinkedHashMap<>();
 
         for(DegreeYear year: degree.getYears()){
-            int credits = 0, totalCredits = 0;
+            int credits = 0;
+            int totalCredits = 0;
             for(Subject sub : year.getSubjects()){
                 if(user.getSubjectProgress().containsKey(sub.getId())){
                     credits += sub.getCredits();
                 }
                 totalCredits += sub.getCredits();
             }
+            if (totalCredits == 0) totalCredits = 1;
             progress.put(year.getNumber(), 100.0 * credits / totalCredits);
         }
 
-        int credits = 0, totalCredits = 0;
+        int credits = 0;
+        int totalCredits = 0;
         for(Subject sub : degree.getElectives()){
             if(user.getSubjectProgress().containsKey(sub.getId())){
                 credits += sub.getCredits();
             }
             totalCredits += sub.getCredits();
         }
+        if(totalCredits == 0) totalCredits = 1;
+
         progress.put(-1, 100.0 * credits / totalCredits);
         return progress;
     }

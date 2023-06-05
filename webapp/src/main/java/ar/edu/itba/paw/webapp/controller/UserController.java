@@ -4,7 +4,6 @@ import ar.edu.itba.paw.models.*;
 import ar.edu.itba.paw.models.enums.SubjectProgress;
 import ar.edu.itba.paw.services.*;
 import ar.edu.itba.paw.services.exceptions.*;
-import ar.edu.itba.paw.webapp.auth.UniUserDetailsService;
 import ar.edu.itba.paw.webapp.exceptions.RoleNotFoundException;
 import ar.edu.itba.paw.webapp.exceptions.SubjectNotFoundException;
 import ar.edu.itba.paw.webapp.exceptions.UserNotFoundException;
@@ -15,8 +14,6 @@ import ar.edu.itba.paw.webapp.form.RecoverPasswordForm;
 import ar.edu.itba.paw.webapp.form.UserForm;
 import ar.edu.itba.paw.webapp.Utils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
@@ -38,6 +35,9 @@ public class UserController {
     private final AuthUserService authUserService;
     private final RolesService rolesService;
     private final DegreeService degreeService;
+
+    private static final String REDIRECT_PROFILE= "redirect:/profile";
+    private static final String UNI_IMAGE = "/img/uni.png";
 
     @Autowired
     public UserController(
@@ -71,7 +71,7 @@ public class UserController {
         }
 
         if( authUserService.isAuthenticated() && authUserService.getCurrentUser().getId() == id){
-            return new ModelAndView("redirect:/profile");
+            return new ModelAndView(REDIRECT_PROFILE);
         }
 
         final User user = maybeUser.get();
@@ -143,7 +143,7 @@ public class UserController {
 
         final String baseUrl = Utils.getBaseUrl();
         final String verifUrl = baseUrl + "/verification/confirm?token=" + token;
-        final String logoUrl = baseUrl + "/img/uni.png";
+        final String logoUrl = baseUrl + UNI_IMAGE;
         mailService.sendVerification(newUser.getEmail(), verifUrl, logoUrl, locale);
 
         userService.updateSubjectProgressWithSubList(newUser, userForm.getSubjectIds());
@@ -191,7 +191,7 @@ public class UserController {
 
         final String baseUrl = Utils.getBaseUrl();
         final String verifUrl = baseUrl + "/verification/confirm?token=" + token;
-        final String logoUrl = baseUrl + "/img/uni.png";
+        final String logoUrl = baseUrl + UNI_IMAGE;
         mailService.sendVerification(user.getEmail(), verifUrl, logoUrl, locale);
 
         return new ModelAndView("redirect:/verification?resent=true&email=" + email);
@@ -225,7 +225,7 @@ public class UserController {
 
         User user = authUserService.getCurrentUser();
         userService.editProfile(user, editUserDataForm.getUserName());
-        return new ModelAndView("redirect:/profile");
+        return new ModelAndView(REDIRECT_PROFILE);
     }
 
     @RequestMapping(value = "/profile/editdata", method = { RequestMethod.GET })
@@ -253,7 +253,7 @@ public class UserController {
             mav.addObject("oldPasswordDoesNotMatch", true);
             return mav;
         }
-        return new ModelAndView("redirect:/profile");
+        return new ModelAndView(REDIRECT_PROFILE);
     }
     @RequestMapping(value = "/profile/editpassword", method = { RequestMethod.GET })
     public ModelAndView editPasswordForm(@ModelAttribute ("EditUserPasswordForm") final EditUserPasswordForm editUserPasswordForm) {
@@ -262,7 +262,7 @@ public class UserController {
 
     @RequestMapping(value = "user/{id:\\d+}/moderator")
     public ModelAndView makeModerator(@PathVariable long id) {
-        if(!authUserService.isCurrentUserEditor())
+        if(Boolean.FALSE.equals(authUserService.isCurrentUserEditor())) //NULL safe check
             return new ModelAndView("redirect:/error");
 
         Optional<Role> maybeRole = rolesService.findByName(Role.RoleEnum.EDITOR.getName());
@@ -299,7 +299,7 @@ public class UserController {
         }
 
         final String baseUrl = Utils.getBaseUrl();
-        final String logoUrl = baseUrl + "/img/uni.png";
+        final String logoUrl = baseUrl + UNI_IMAGE;
         final String recoverUrl = baseUrl + "/recover/" + token;
         mailService.sendRecover(email, recoverUrl, logoUrl, locale);
 
@@ -352,7 +352,7 @@ public class UserController {
     @RequestMapping(value="/profile/editprofilepicture", method = {RequestMethod.POST})
     public ModelAndView editProfilePicture(@ModelAttribute("editProfilePictureForm") final EditProfilePictureForm editProfilePictureForm,
                                            //CommonsMultipartFile profilePicture,
-                                           final BindingResult errors) throws SQLException, IOException {
+                                           final BindingResult errors) throws IOException {
         if(errors.hasErrors()) {
             return editProfilePictureForm(editProfilePictureForm);
         }
@@ -364,7 +364,7 @@ public class UserController {
             mav.addObject("invalidImageSize", true);
             return mav;
         }
-        return new ModelAndView("redirect:/profile");
+        return new ModelAndView(REDIRECT_PROFILE);
     }
 
     @RequestMapping(value = "/subjectProgress", method = RequestMethod.POST)

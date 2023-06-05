@@ -10,7 +10,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.MessageSource;
 import org.springframework.core.env.Environment;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
@@ -21,7 +20,7 @@ import java.util.Set;
 @Component
 public class NotificationTask {
 
-    private static final long TASK_DELAY = 10 * 60 * 1000; // 10 minutes
+    private static final long TASK_DELAY = 10 * 60 * 1000L; // 10 minutes
 
     private static final Logger LOGGER = LoggerFactory.getLogger(NotificationTask.class);
 

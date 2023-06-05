@@ -1,14 +1,10 @@
 package ar.edu.itba.paw.services;
 
 import ar.edu.itba.paw.models.*;
-import ar.edu.itba.paw.models.enums.OrderDir;
-import ar.edu.itba.paw.models.enums.ReviewOrderField;
 import ar.edu.itba.paw.models.enums.ReviewVoteType;
 import ar.edu.itba.paw.services.exceptions.NoGrantedPermissionException;
-
 import java.sql.SQLException;
 import java.util.List;
-import java.util.Map;
 
 public interface ReviewService extends BaseService<Long, Review> {
     Review create(final Review review) throws SQLException;

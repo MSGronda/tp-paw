@@ -227,7 +227,8 @@ public class User {
     public static class Builder {
         private Long id;
         private String email;
-        private String password, username;
+        private String password;
+        private String username;
         private long imageId;
         private String confirmToken;
         private boolean confirmed;

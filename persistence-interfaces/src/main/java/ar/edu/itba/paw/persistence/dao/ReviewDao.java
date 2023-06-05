@@ -6,8 +6,6 @@ import ar.edu.itba.paw.models.User;
 import ar.edu.itba.paw.models.enums.OrderDir;
 import ar.edu.itba.paw.models.enums.ReviewOrderField;
 import ar.edu.itba.paw.models.enums.ReviewVoteType;
-
-import java.sql.SQLException;
 import java.util.List;
 
 public interface ReviewDao extends ReadableDao<Long,Review> {

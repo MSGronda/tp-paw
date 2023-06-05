@@ -7,17 +7,10 @@ import ar.edu.itba.paw.models.User;
 import ar.edu.itba.paw.models.enums.OrderDir;
 import ar.edu.itba.paw.models.enums.ReviewOrderField;
 import ar.edu.itba.paw.models.enums.ReviewVoteType;
-import ar.edu.itba.paw.models.enums.SubjectOrderField;
-import ar.edu.itba.paw.persistence.constants.Tables;
 import ar.edu.itba.paw.persistence.dao.ReviewDao;
 import org.springframework.stereotype.Repository;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
-
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
-import javax.persistence.TypedQuery;
-import java.sql.SQLException;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -82,17 +75,17 @@ public class ReviewJpaDao implements ReviewDao {
     }
 
     public boolean didUserVote(final User user, final Review review) {
-        return em.createQuery("from ReviewVote where user = :user and review = :review", ReviewVote.class)
+        return !em.createQuery("from ReviewVote where user = :user and review = :review", ReviewVote.class)
                 .setParameter("user", user)
                 .setParameter("review", review)
-                .getResultList().size() > 0;
+                .getResultList().isEmpty();
     }
 
     public boolean didUserReview(final Subject subject, final User user) {
-        return em.createQuery("from Review where subject = :subject and user = :user", Review.class)
+        return !em.createQuery("from Review where subject = :subject and user = :user", Review.class)
                 .setParameter("subject", subject)
                 .setParameter("user", user)
-                .getResultList().size() > 0;
+                .getResultList().isEmpty();
     }
 
     public List<Review> getAllSubjectReviews(
