@@ -149,9 +149,17 @@
           overflow-y: scroll;
           flex: 1;
       }
-
       .builder-button {
           color: #79b2fc;
+      }
+      .finish-button{
+        position: fixed;
+        bottom: 1.5rem;
+        right: 1.5rem;
+      }
+      .finish-button-icon{
+        font-size: 3rem;
+        padding-top: 0.15rem;
       }
 
       /*  Future subjects  */
@@ -285,7 +293,14 @@
                 </h3>
               </div>
             </c:if>
-          </div>
+          </div
+            <c:if test="${user.userSemester.size() != 0}">
+              <sl-tooltip content="Click to complete this semester">
+                <sl-button href="${pageContext.request.contextPath}/builder/finish" variant="success" size="large" circle class="finish-button">
+                  <sl-icon class="finish-button-icon" name="check"></sl-icon>
+                </sl-button>
+              </sl-tooltip>
+            </c:if>
         </sl-tab-panel>
 
 

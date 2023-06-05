@@ -68,7 +68,7 @@
 
                 <div slot="footer">
                     <div class="submit-area">
-                        <sl-button>Cancel</sl-button>
+                        <sl-button href="${pageContext.request.contextPath}/">Cancel</sl-button>
                         <sl-button variant="success" onclick="submit()" type="submit">Submit</sl-button>
                     </div>
                 </div>
