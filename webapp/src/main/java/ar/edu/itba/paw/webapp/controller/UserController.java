@@ -6,6 +6,7 @@ import ar.edu.itba.paw.services.*;
 import ar.edu.itba.paw.services.exceptions.*;
 import ar.edu.itba.paw.webapp.exceptions.RoleNotFoundException;
 import ar.edu.itba.paw.webapp.exceptions.SubjectNotFoundException;
+import ar.edu.itba.paw.webapp.exceptions.UnauthorizedException;
 import ar.edu.itba.paw.webapp.exceptions.UserNotFoundException;
 import ar.edu.itba.paw.webapp.form.*;
 import ar.edu.itba.paw.webapp.form.EditUserDataForm;
@@ -262,14 +263,14 @@ public class UserController {
 
     @RequestMapping(value = "user/{id:\\d+}/moderator")
     public ModelAndView makeModerator(@PathVariable long id) {
-        if(Boolean.FALSE.equals(authUserService.isCurrentUserEditor())) //NULL safe check
-            return new ModelAndView("redirect:/error");
+        if(!authUserService.isAuthenticated() || !authUserService.isCurrentUserEditor())
+            throw new UnauthorizedException();
 
-        Optional<Role> maybeRole = rolesService.findByName(Role.RoleEnum.EDITOR.getName());
+        final Optional<Role> maybeRole = rolesService.findByName(Role.RoleEnum.EDITOR.getName());
         if(!maybeRole.isPresent()){
             throw new RoleNotFoundException();
         }
-        Role role = maybeRole.get();
+        final Role role = maybeRole.get();
 
         final User toMakeMod = userService.findById(id).orElseThrow(UserNotFoundException::new);
         userService.updateRoles(toMakeMod, role);
@@ -336,15 +337,15 @@ public class UserController {
             return new ModelAndView("user/recover/invalidToken");
         }
 
-        ModelAndView mav = new ModelAndView("user/recover/editPassword");
+        final ModelAndView mav = new ModelAndView("user/recover/editPassword");
         mav.addObject("token", token);
         return mav;
     }
 
     @RequestMapping(value = "/profile/editprofilepicture", method = { RequestMethod.GET })
     public ModelAndView editProfilePictureForm(@ModelAttribute ("editProfilePictureForm") final EditProfilePictureForm editProfilePictureForm) {
-        ModelAndView mav = new ModelAndView("user/editProfilePicture");
-        User user = authUserService.getCurrentUser();
+        final ModelAndView mav = new ModelAndView("user/editProfilePicture");
+        final User user = authUserService.getCurrentUser();
         mav.addObject("user", user);
         return mav;
     }
@@ -356,11 +357,11 @@ public class UserController {
         if(errors.hasErrors()) {
             return editProfilePictureForm(editProfilePictureForm);
         }
-        User user = authUserService.getCurrentUser();
+        final User user = authUserService.getCurrentUser();
         try {
             userService.updateProfilePicture(user, editProfilePictureForm.getProfilePicture().getBytes());
         }catch (InvalidImageSizeException e) {
-            ModelAndView mav = editProfilePictureForm(editProfilePictureForm);
+            final ModelAndView mav = editProfilePictureForm(editProfilePictureForm);
             mav.addObject("invalidImageSize", true);
             return mav;
         }
