@@ -87,7 +87,7 @@ public class HomeController {
         final double userProgressPercentage = Math.floor( ((1.0 * user.getCreditsDone()) / degree.getTotalCredits()) * 100);
         final Map<Integer, Double> percentageCompletionByYear = us.getUserProgressionPerYear( degree,  user); // userService.getCreditsDoneByUserPerYear
 
-        System.out.println(user.getUserSemester().size());
+        System.out.println(user.getUserSemester().size()); //TODO borrar
 
         ModelAndView mav = new ModelAndView("dashboard/dashboard");
         mav.addObject("degree",degree);

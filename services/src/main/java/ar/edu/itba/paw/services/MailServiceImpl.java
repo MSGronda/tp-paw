@@ -28,6 +28,8 @@ public class MailServiceImpl implements MailService {
     private final MessageSource mailMessages;
     private static final Logger LOGGER = LoggerFactory.getLogger(MailServiceImpl.class);
 
+    private static final String LOGO_URL = "logoUrl";
+
     @Autowired
     public MailServiceImpl(
             final JavaMailSender mailSender,
@@ -41,11 +43,11 @@ public class MailServiceImpl implements MailService {
         this.mailMessages = mailMessages;
     }
 
-
+    /*
     private void sendMail(final String to, final String subject, final String body) {
         sendMail(to, subject, body, false);
     }
-
+    */
 
     private void sendMail(final String to, final String subject, final String template,
                          final Map<String, Object> model, final Locale locale) throws MailException {
@@ -63,7 +65,7 @@ public class MailServiceImpl implements MailService {
         final String subject = mailMessages.getMessage("confirmation.subject", null, locale);
 
         Map<String, Object> mailModel = new HashMap<>();
-        mailModel.put("logoUrl", logoUrl);
+        mailModel.put(LOGO_URL, logoUrl);
         mailModel.put("url", verificationUrl);
         sendMail(to, subject, "verification", mailModel, locale);
     }
@@ -74,7 +76,7 @@ public class MailServiceImpl implements MailService {
         final String subject = mailMessages.getMessage("recovery.subject", null, locale);
 
         Map<String,Object> mailModel = new HashMap<>();
-        mailModel.put("logoUrl", logoUrl);
+        mailModel.put(LOGO_URL, logoUrl);
         mailModel.put("url", recoverUrl);
         sendMail(to, subject, "recovery", mailModel, locale);
     }
@@ -91,7 +93,7 @@ public class MailServiceImpl implements MailService {
         final String subject = mailMessages.getMessage("reviewnotif.subject", null, locale);
 
         final Map<String,Object> mailModel = new HashMap<>();
-        mailModel.put("logoUrl", logoUrl);
+        mailModel.put(LOGO_URL, logoUrl);
         mailModel.put("subjects", subjects);
         mailModel.put("subjectUrls", subjectUrls);
         sendMail(to, subject, "reviewnotif", mailModel, locale);

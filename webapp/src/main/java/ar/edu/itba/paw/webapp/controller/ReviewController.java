@@ -25,6 +25,7 @@ public class ReviewController {
     private final SubjectService subjectService;
     private final ReviewService reviewService;
     private final AuthUserService authUserService;
+    private static final String REDIRECT_SUBJECT = "redirect:/subject/";
 
     @Autowired
     public ReviewController(SubjectService subjectService, ReviewService reviewService, AuthUserService authUserService) {
@@ -57,7 +58,7 @@ public class ReviewController {
                 .build()
         );
 
-        return new ModelAndView("redirect:/subject/" + subjectId);
+        return new ModelAndView(REDIRECT_SUBJECT + subjectId);
     }
     @RequestMapping(value = "/review/{subjectId:\\d+\\.\\d+}", method = RequestMethod.GET)
     public ModelAndView reviewForm(
@@ -71,8 +72,8 @@ public class ReviewController {
 
         if( maybeSubject.isPresent()){
             Subject subject = maybeSubject.get();
-            if(reviewService.didUserReview(subject, authUserService.getCurrentUser())){
-                return new ModelAndView("redirect:/subject/" + subjectId);
+            if(Boolean.TRUE.equals(reviewService.didUserReview(subject, authUserService.getCurrentUser()))){ //NULL safe check
+                return new ModelAndView(REDIRECT_SUBJECT + subjectId);
             }
             mav.addObject("subject", subject );
             return mav;
@@ -134,7 +135,7 @@ public class ReviewController {
             return new ModelAndView("redirect:/error/unauthorized");
         }
 
-        return new ModelAndView("redirect:/subject/" + subjectId);
+        return new ModelAndView(REDIRECT_SUBJECT + subjectId);
     }
 
     @RequestMapping(value = "/review/{subjectId:\\d+\\.\\d+}/edit/{reviewId:\\d+}", method = RequestMethod.GET)
@@ -153,7 +154,7 @@ public class ReviewController {
         Optional<Review> review = reviewService.findById(reviewId);
 
         if(!review.isPresent() || !authUserService.getCurrentUser().equals(review.get().getUser())){
-            return new ModelAndView("redirect:/subject/" + subjectId);
+            return new ModelAndView(REDIRECT_SUBJECT + subjectId);
         }
 
         mav.addObject("subject", subject.get());
