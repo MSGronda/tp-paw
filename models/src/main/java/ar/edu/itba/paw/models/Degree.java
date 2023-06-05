@@ -83,7 +83,7 @@ public class Degree {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (!(o instanceof Degree)) return false;
         Degree degree = (Degree) o;
         return getId() == degree.getId();
     }

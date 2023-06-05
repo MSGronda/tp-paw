@@ -40,7 +40,7 @@ class DegreeSubject {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (!(o instanceof DegreeSubject)) return false;
         DegreeSubject that = (DegreeSubject) o;
         return Objects.equals(key, that.key);
     }

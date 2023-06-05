@@ -133,7 +133,7 @@ public class Review {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (!(o instanceof Review)) return false;
         Review review = (Review) o;
         return getId() == review.getId();
     }

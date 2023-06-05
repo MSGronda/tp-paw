@@ -108,7 +108,7 @@ public class ReviewStats {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (!(o instanceof ReviewStats)) return false;
         ReviewStats that = (ReviewStats) o;
         return Objects.equals(subjectId, that.subjectId);
     }

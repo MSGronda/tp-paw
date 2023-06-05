@@ -35,7 +35,7 @@ public class Image {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (!(o instanceof Image)) return false;
         Image image = (Image) o;
         return getId() == image.getId();
     }

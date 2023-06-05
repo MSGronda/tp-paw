@@ -75,7 +75,7 @@ public class SubjectClassTime {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (!(o instanceof SubjectClassTime)) return false;
         SubjectClassTime that = (SubjectClassTime) o;
         return getId() == that.getId();
     }
