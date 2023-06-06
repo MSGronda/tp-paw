@@ -62,8 +62,6 @@ function alterSubjectCard(subjectId,color,colorBorder, disabled, subject){
     card.style.color = color
     card.style.setProperty('--border-color', colorBorder)
 
-
-
     const disabledCard = card.cloneNode( true)
 
     if(card.parentElement.nodeName.toLowerCase() !== 'sl-tooltip'){
@@ -82,10 +80,27 @@ function alterSubjectCard(subjectId,color,colorBorder, disabled, subject){
     const select = document.getElementById('select-'+subjectId);
     select.disabled = disabled;
 }
-function alterClassCard(subjectId, classId, color,colorBorder, disabled){
+function alterClassCard(subjectId, classId, color,colorBorder, disabled, subject){
     const card = document.getElementById('class-card-'+subjectId+'-'+classId);
     card.style.color = color
     card.style.setProperty('--border-color', colorBorder)
+
+    const disabledClass = card.cloneNode( true)
+
+    if( card.parentElement.nodeName.toLowerCase() !== 'sl-tooltip'){
+        const tooltip = document.createElement('sl-tooltip');
+        tooltip.setAttribute('content', subject.name + ' is incompatible with your current timetable')
+        tooltip.appendChild(disabledClass)
+
+        card.replaceWith(tooltip)
+    }else{
+        const tooltip = card.parentElement;
+        let text = tooltip.getAttribute('content')
+        text = subject.name + ', ' + text;
+        tooltip.setAttribute('content', text)
+    }
+
+
     const select = document.getElementById('select-class-'+subjectId+'-'+classId);
     select.disabled = disabled;
 }
@@ -103,7 +118,7 @@ function disableIncompatibleSubjects(subject){
 
             if(classCompatibility === false){
                 // class isn't compatible with timetable
-                alterClassCard( subjectClasses[subNum].id,subjectClasses[subNum].classes[clNum].idClass, incompatibleColor,normalBorderColor,true)
+                alterClassCard( subjectClasses[subNum].id,subjectClasses[subNum].classes[clNum].idClass, incompatibleColor,normalBorderColor,true, subject)
             }
             anyClassCompatible = anyClassCompatible || classCompatibility;
         }
