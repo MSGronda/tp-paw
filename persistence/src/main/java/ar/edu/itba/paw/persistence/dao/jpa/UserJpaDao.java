@@ -2,6 +2,7 @@ package ar.edu.itba.paw.persistence.dao.jpa;
 
 import ar.edu.itba.paw.models.Role;
 import ar.edu.itba.paw.models.Subject;
+import ar.edu.itba.paw.models.SubjectClass;
 import ar.edu.itba.paw.models.User;
 import ar.edu.itba.paw.models.enums.SubjectProgress;
 import ar.edu.itba.paw.persistence.dao.UserDao;
@@ -118,17 +119,17 @@ public class UserJpaDao implements UserDao {
 
     @Override
     public void insert(User user) {
-
+        //do nothing
     }
 
     @Override
     public void delete(Long aLong) {
-
+        //do nothing
     }
 
     @Override
     public void update(User user) {
-
+        //do nothing
     }
 
     @Override
@@ -140,5 +141,19 @@ public class UserJpaDao implements UserDao {
             userSubjectProgress.put(subjectId, SubjectProgress.DONE);
         }
         user.setSubjectProgress(userSubjectProgress);
+    }
+
+    @Override
+    public void addToCurrentSemester(final User user, final SubjectClass subjectClass){
+        final Set<SubjectClass> semester =  user.getUserSemester();
+
+        semester.add(subjectClass);
+    }
+
+    @Override
+    public void removeFromCurrentSemester(final User user, final SubjectClass subjectClass){
+        final Set<SubjectClass> semester =  user.getUserSemester();
+
+        semester.remove(subjectClass);
     }
 }

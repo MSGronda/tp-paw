@@ -50,7 +50,7 @@ public class SubjectClass {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (!(o instanceof SubjectClass)) return false;
         SubjectClass that = (SubjectClass) o;
         return Objects.equals(key, that.key);
     }

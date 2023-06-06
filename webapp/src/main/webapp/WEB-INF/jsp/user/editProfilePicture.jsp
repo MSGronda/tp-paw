@@ -99,7 +99,7 @@
                     <spring:message code="profile.new_image" />
                     <br/>
                     <br/>
-                    <img id="imagePreview" src="<c:url value="/image/${user.imageId}"/>" class="profile-image">
+                    <img id="imagePreview" src="<c:url value="/image/${user.imageId}"/>" class="profile-image" alt="<spring:message code="user.image"/>">
                 </div>
             </div>
 

@@ -167,24 +167,6 @@
 <script src="${pageContext.request.contextPath}/js/url-param-utils.js"></script>
 <script src="${pageContext.request.contextPath}/js/review_card.js"></script>
 <script>
-  const showMore = document.querySelector('.showMore');
-
-  if(showMore !== null){
-    showMore.addEventListener('click',() => {
-      const dots = document.getElementById("dots");
-      const moreText = document.getElementById("more");
-
-      if (dots.style.display === "none") {
-        dots.style.display = "inline";
-        showMore.innerHTML = "<spring:message code="subject.showMore" /><sl-icon name=\"chevron-down\"></sl-icon>";
-        moreText.style.display = "none";
-      } else {
-        dots.style.display = "none";
-        showMore.innerHTML = "<spring:message code="subject.showLess" /><sl-icon name=\"chevron-up\"></sl-icon>";
-        moreText.style.display = "inline";
-      }
-    });
-  }
   $(document).ready(function() {
     $('.vote-button').click(function() {
       const formId = $(this).data('form-id');
@@ -247,7 +229,22 @@
   for (let i = 0, len = hiddenPaginationButtons.length; i < len; i++) {
     hiddenPaginationButtons[i].style.display = 'none';
   }
-
+  const showMoreElems = document.querySelectorAll('.showMore');
+  showMoreElems.forEach(item => item.addEventListener('click',() => {
+    const dots = item.parentElement.querySelector(".dots");
+    const moreText = item.parentElement.querySelector(".more");
+    if(dots !== null && moreText !== null){
+      if (dots.style.display === "none") {
+        dots.style.display = "inline";
+        item.innerHTML = "<spring:message code="subject.showMore" /><sl-icon name=\"chevron-down\"></sl-icon>";
+        moreText.style.display = "none";
+      } else {
+        dots.style.display = "none";
+        item.innerHTML = "<spring:message code="subject.showLess" /><sl-icon name=\"chevron-up\"></sl-icon>";
+        moreText.style.display = "inline";
+      }
+    }
+  }))
 </script>
 </body>
 </html>

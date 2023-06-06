@@ -4,6 +4,7 @@ import ar.edu.itba.paw.services.*;
 import ar.edu.itba.paw.services.exceptions.NoGrantedPermissionException;
 import ar.edu.itba.paw.webapp.exceptions.ReviewNotFoundException;
 import ar.edu.itba.paw.webapp.exceptions.SubjectNotFoundException;
+import ar.edu.itba.paw.webapp.exceptions.UnauthorizedException;
 import ar.edu.itba.paw.webapp.form.ReviewForm;
 import ar.edu.itba.paw.webapp.form.ReviewVoteForm;
 import org.slf4j.Logger;
@@ -25,6 +26,7 @@ public class ReviewController {
     private final SubjectService subjectService;
     private final ReviewService reviewService;
     private final AuthUserService authUserService;
+    private static final String REDIRECT_SUBJECT = "redirect:/subject/";
 
     @Autowired
     public ReviewController(SubjectService subjectService, ReviewService reviewService, AuthUserService authUserService) {
@@ -57,7 +59,7 @@ public class ReviewController {
                 .build()
         );
 
-        return new ModelAndView("redirect:/subject/" + subjectId);
+        return new ModelAndView(REDIRECT_SUBJECT + subjectId);
     }
     @RequestMapping(value = "/review/{subjectId:\\d+\\.\\d+}", method = RequestMethod.GET)
     public ModelAndView reviewForm(
@@ -71,8 +73,8 @@ public class ReviewController {
 
         if( maybeSubject.isPresent()){
             Subject subject = maybeSubject.get();
-            if(reviewService.didUserReview(subject, authUserService.getCurrentUser())){
-                return new ModelAndView("redirect:/subject/" + subjectId);
+            if(Boolean.TRUE.equals(reviewService.didUserReview(subject, authUserService.getCurrentUser()))){ //NULL safe check
+                return new ModelAndView(REDIRECT_SUBJECT + subjectId);
             }
             mav.addObject("subject", subject );
             return mav;
@@ -86,12 +88,11 @@ public class ReviewController {
             @PathVariable final String subjectId,
             @PathVariable final Long reviewId
     ) {
-        Optional<Review> maybeReview = reviewService.findById(reviewId);
+        final Optional<Review> maybeReview = reviewService.findById(reviewId);
         if(!maybeReview.isPresent()){
-
             throw new ReviewNotFoundException();
         }
-        Review review = maybeReview.get();
+        final Review review = maybeReview.get();
 
         try {
             reviewService.delete(review);
@@ -131,10 +132,10 @@ public class ReviewController {
         try {
             reviewService.update(updatedRev);
         } catch(NoGrantedPermissionException e) {
-            return new ModelAndView("redirect:/error/unauthorized");
+            throw new UnauthorizedException();
         }
 
-        return new ModelAndView("redirect:/subject/" + subjectId);
+        return new ModelAndView(REDIRECT_SUBJECT + subjectId);
     }
 
     @RequestMapping(value = "/review/{subjectId:\\d+\\.\\d+}/edit/{reviewId:\\d+}", method = RequestMethod.GET)
@@ -142,22 +143,28 @@ public class ReviewController {
             @PathVariable final String subjectId,
             @PathVariable final Long reviewId,
             @ModelAttribute("ReviewForm") final ReviewForm reviewForm
-    ){
-        ModelAndView mav = new ModelAndView("review/edit");
+    ) {
+        final ModelAndView mav = new ModelAndView("review/edit");
 
-        Optional<Subject> subject = subjectService.findById(subjectId);
-        if(!subject.isPresent()){
+        final Optional<Subject> maybeSubject = subjectService.findById(subjectId);
+        if(!maybeSubject.isPresent()){
             throw new SubjectNotFoundException();
         }
+        final Subject subject = maybeSubject.get();
 
-        Optional<Review> review = reviewService.findById(reviewId);
+        Optional<Review> maybeReview = reviewService.findById(reviewId);
+        if(!maybeReview.isPresent()){
+            throw new ReviewNotFoundException();
+        }
+        final Review review = maybeReview.get();
 
-        if(!review.isPresent() || !authUserService.getCurrentUser().equals(review.get().getUser())){
-            return new ModelAndView("redirect:/subject/" + subjectId);
+        final User currentUser = authUserService.getCurrentUser();
+        if(!currentUser.equals(review.getUser())){
+            throw new UnauthorizedException();
         }
 
-        mav.addObject("subject", subject.get());
-        mav.addObject("review", review.get());
+        mav.addObject("subject", subject);
+        mav.addObject("review", review);
         return mav;
     }
 

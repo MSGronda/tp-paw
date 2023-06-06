@@ -63,9 +63,9 @@ public class ReviewVote {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (!(o instanceof ReviewVote)) return false;
         ReviewVote that = (ReviewVote) o;
-        return Objects.equals(key, that.key) && vote == that.vote;
+        return Objects.equals(key, that.key);
     }
 
     @Override

@@ -33,6 +33,13 @@ public class HomeController {
         this.us = us;
     }
 
+    //esta mapping es por los casos en donde la pagina no tiene una instancia del current user
+    @RequestMapping("/degree")
+    public ModelAndView degree() {
+        long id = aus.getCurrentUser().getDegree().getId();
+        return new ModelAndView("redirect:/degree/" + id);
+    }
+
     @RequestMapping("/degree/{id:\\d+}")
     public ModelAndView degree(@PathVariable Long id) {
         final Optional<Degree> degree = ds.findById(id);
@@ -80,10 +87,7 @@ public class HomeController {
         final double userProgressPercentage = Math.floor( ((1.0 * user.getCreditsDone()) / degree.getTotalCredits()) * 100);
         final Map<Integer, Double> percentageCompletionByYear = us.getUserProgressionPerYear( degree,  user); // userService.getCreditsDoneByUserPerYear
 
-        // TODO: replace with real calls
-        // TODO: this subject should only contain the class the user is signed up to
-        final List<Subject> currentUserSemester = new ArrayList<>();    // userService.getCurrentUserService
-
+        System.out.println(user.getUserSemester().size()); //TODO borrar
 
         ModelAndView mav = new ModelAndView("dashboard/dashboard");
         mav.addObject("degree",degree);
@@ -95,7 +99,6 @@ public class HomeController {
         mav.addObject("userProgressPercentage",userProgressPercentage);
 
         mav.addObject("percentageCompletionByYear",percentageCompletionByYear);
-        mav.addObject("currentUserSemester",currentUserSemester);
         return mav;
     }
 }

@@ -143,6 +143,10 @@
      padding: 0.5rem;
      overflow-y: auto;
    }
+  form{
+    margin-block-end: 0;
+  }
+
 
   /* Semester overview */
   .semester-overview-tab-area{
@@ -246,15 +250,32 @@
     padding: 0;
     height: 2rem;
   }
-
-
-
   .order-menu {
       display: flex;
       flex-direction: row;
       justify-content: space-around;
   }
+  .clickable {
+    pointer-events: all !important;
+  }
+  sl-tooltip::part(body) {
+    color: black;
+    background-color: white;
+    margin: 0;
+    padding: 0;
+  }
+  sl-tooltip::part(base__arrow) {
+    background-color: white;
+  }
+  h5:hover {
+    cursor: pointer;
+  }
 
+  .close-button {
+    display: flex;
+    flex-direction: row-reverse;
+    font-size: 1rem;
+  }
 
   /* Unused */
   .class-selection {
@@ -269,6 +290,26 @@
       display: flex;
       align-items: center;
       justify-content: start;
+  }
+  .clickable{
+    pointer-events: all !important;
+  }
+
+  sl-tooltip::part(body) {
+    padding: 0.25rem 0.5rem;
+    background-color: black;
+    color: white;
+  }
+
+  .subject-info-card-details sl-tooltip::part(body) {
+    padding: 0;
+    background-color: transparent;
+  }
+
+  .row-space-between sl-tooltip::part(body) {
+    padding: 0;
+    background-color: transparent;
+    color: black;
   }
 </style>
 
@@ -306,7 +347,78 @@
             <sl-card id="subject-card-${subject.id}" class="subject-info-card">
               <div class="chooser">
                 <div class="subject-info-card-details">
-                  <h5><c:out value="${subject.name}"/></h5>
+                  <sl-tooltip trigger="click" placement="right" style="--max-width: 50rem; width: 40rem">
+                    <div class="clickable" slot="content">
+                      <sl-card>
+                        <sl-icon-button class="close-button" name="x-lg" label="Return"></sl-icon-button>
+                        <table>
+                          <thead>
+                          <tr>
+                            <th colspan="2"><h2><c:out value="${subject.name}"/> - <c:out value="${subject.id}"/></h2></th>
+                          </tr>
+                          </thead>
+                          <tbody>
+                          <tr>
+                            <td><h3><spring:message code="subject.department"/></h3></td>
+                            <td><p><c:out value="${subject.department}"/></p></td>
+                          </tr>
+                          <tr>
+                            <th><spring:message code="subject.prerequisites"/></th>
+                            <td>
+                              <c:if test="${empty subject.prerequisites}">
+                                <spring:message code="subject.prerequisites?"/>
+                              </c:if>
+                              <c:forEach var="prereq" items="${subject.prerequisites}" varStatus="status">
+                                <a href='<c:url value="/subject/${prereq.id}"/>'><c:out value="${prereq.name}"/></a>
+                                <c:if test="${not status.last}">
+                                  ,
+                                </c:if>
+                              </c:forEach>
+                            </td>
+                          </tr>
+                          <tr>
+                            <th><spring:message code="subject.professors"/></th>
+                            <td>
+                              <c:forEach var="professor" items="${subject.professors}" varStatus="status">
+                                <sl-badge variant="primary">
+                                  <c:out value="${professor.name}"/>
+                                </sl-badge>
+
+                              </c:forEach>
+                            </td>
+                          </tr>
+                          <tr>
+                            <th><spring:message code="subject.time" /></th>
+                            <td>
+                              <c:choose>
+                                <c:when test="${subject.reviewStats.getTimeDemanding() == TimeDemanding.LOW}">
+                                  <sl-badge size="medium" variant="success"><spring:message code="form.NotTimeDemanding" /></sl-badge>
+                                </c:when>
+                                <c:when test="${subject.reviewStats.getTimeDemanding() == TimeDemanding.MEDIUM}">
+                                  <sl-badge size="medium" variant="primary"><spring:message code="form.averageTimeDemand" /></sl-badge>
+                                </c:when>
+                                <c:when test="${subject.reviewStats.getTimeDemanding() == TimeDemanding.HIGH}">
+                                  <sl-badge size="medium" variant="warning"><spring:message code="form.timeDemanding" /></sl-badge>
+                                </c:when>
+                                <c:otherwise>
+                                  <sl-badge size="medium" variant="neutral"><spring:message code="form.noDif" /></sl-badge>
+                                </c:otherwise>
+                              </c:choose>
+                            </td>
+                          </tr>
+                          </tbody>
+                        </table>
+                        <div class="column-center">
+                          <div style="padding-top: 1rem;">
+                            <sl-button href="<c:url value="/subject/${subject.id}"/>" target="_blank">
+                              <spring:message code="builder.fullSubject"/>
+                            </sl-button>
+                          </div>
+                        </div>
+                      </sl-card>
+                    </div>
+                    <h5><c:out value="${subject.name}"/></h5>
+                  </sl-tooltip>
                   <spring:message code="subject.credits"/> <c:out value="${subject.credits}"/>
                   <c:choose>
                     <c:when test="${subject.reviewStats.getDifficulty() == Difficulty.EASY}">
@@ -354,13 +466,24 @@
             <sl-card id="class-card-${subject.id}-${subClass.classId}" class="class-card">
               <div class="chooser" slot="header">
                 <h5>${subClass.classId}</h5>
-                <sl-button id="select-class-${subject.id}-${subClass.classId}" variant="default" size="small" circle>
-                  <sl-icon class="icon" name="check2" label="Select Subject"></sl-icon>
-                </sl-button>
-                <sl-button style="display: none;" id="deselect-class-${subject.id}-${subClass.classId}"
+                <form id="form-select-class-${subject.id}-${subClass.classId}" method="post" action="${pageContext.request.contextPath}/builder/add">
+                  <input type="hidden" id="idSub-add" name="idSub" value="${subject.id}">
+                  <input type="hidden" id="idClass-add" name="idClass" value="${subClass.classId}">
+
+                  <sl-button type="submit" id="select-class-${subject.id}-${subClass.classId}" variant="default" size="small" circle>
+                    <sl-icon class="icon" name="check2" label="Select Subject"></sl-icon>
+                  </sl-button>
+                </form>
+
+                <form style="display: none" id="form-deselect-class-${subject.id}-${subClass.classId}" method="post" action="${pageContext.request.contextPath}/builder/remove">
+                  <input type="hidden" id="idSub-remove" name="idSub" value="${subject.id}">
+                  <input type="hidden" id="idClass-remove" name="idClass" value="${subClass.classId}">
+
+                <sl-button  type="submit" id="deselect-class-${subject.id}-${subClass.classId}"
                            variant="default" size="small" circle>
                   <sl-icon class="icon" name="x-lg" label="Select Subject"></sl-icon>
                 </sl-button>
+                </form>
               </div>
               <div class="column">
                   <table>
@@ -425,7 +548,6 @@
           <sl-tooltip content="<spring:message code="builder.selectedListToolTip"/>">
             <sl-icon-button id="switch-to-list-button" name="view-list" label="Switch to list view"></sl-icon-button>
           </sl-tooltip>
-
         </div>
       </div>
       <div class="table-scroll">
@@ -467,6 +589,23 @@
         <div slot="header">
           <div class="row-space-between">
             <h4><spring:message code="builder.semesterOverview.title"/></h4>
+            <sl-tooltip trigger="click">
+              <div class="clickable" slot="content">
+                <sl-card>
+                  <div class="column-center">
+                    <h4><spring:message code="builder.help1"/></h4>
+                    <p>
+                      &#x2022; <spring:message code="builder.help2"/>
+                      <br/>
+                      &#x2022; <spring:message code="builder.help3"/>
+                      <br/>
+                      &#x2022; <spring:message code="builder.help4"/>
+                    </p>
+                  </div>
+                </sl-card>
+              </div>
+              <sl-icon-button name="info-circle" label="info"></sl-icon-button>
+            </sl-tooltip>
           </div>
         </div>
         <div style="height: 100%" class="column">
@@ -475,23 +614,26 @@
             <sl-divider vertical style="height: 1rem"></sl-divider>
             <span id="number-of-credits">0</span>
           </sl-card>
-          <sl-card  class="overview-item">
-            <span><spring:message code="builder.semesterOverview.timeDemand"/></span>
-            <sl-divider vertical style="height:  1rem; margin: 0.5rem"></sl-divider>
-            <sl-badge id="time-difficulty-none"  size="medium" variant="neutral" pill><spring:message code="builder.semesterOverview.noReviews"/></sl-badge>
-            <sl-badge id="time-difficulty-easy" style="display: none;" size="medium" variant="success" pill><spring:message code="form.NotTimeDemanding" /></sl-badge>
-            <sl-badge id="time-difficulty-medium" style="display: none;" size="medium" variant="primary" pill><spring:message code="form.averageTimeDemand" /></sl-badge>
-            <sl-badge id="time-difficulty-hard" style="display: none;" size="medium" variant="warning" pill><spring:message code="form.timeDemanding" /></sl-badge>
-          </sl-card>
-          <sl-card  class="overview-item">
-            <span><spring:message code="builder.semesterOverview.overallDifficulty"/></span>
-            <sl-divider vertical style="height:  1rem; margin: 0.5rem"></sl-divider>
-            <sl-badge id="overall-difficulty-none"  size="medium" variant="neutral" pill><spring:message code="builder.semesterOverview.noReviews"/></sl-badge>
-            <sl-badge id="overall-difficulty-easy" style="display: none;" size="medium" variant="success" pill><spring:message code="form.easy"/></sl-badge>
-            <sl-badge id="overall-difficulty-medium" style="display: none;" size="medium" variant="primary" pill><spring:message code="form.normal"/></sl-badge>
-            <sl-badge id="overall-difficulty-hard" style="display: none;" size="medium" variant="danger" pill><spring:message code="form.hard"/></sl-badge>
-          </sl-card>
-
+          <sl-tooltip content="<spring:message code="builder.timeDemanding"/>">
+            <sl-card  class="overview-item">
+              <span><spring:message code="builder.semesterOverview.timeDemand"/></span>
+              <sl-divider vertical style="height:  1rem; margin: 0.5rem"></sl-divider>
+              <sl-badge id="time-difficulty-none"  size="medium" variant="neutral" pill><spring:message code="builder.semesterOverview.noReviews"/></sl-badge>
+              <sl-badge id="time-difficulty-easy" style="display: none;" size="medium" variant="success" pill><spring:message code="form.NotTimeDemanding" /></sl-badge>
+              <sl-badge id="time-difficulty-medium" style="display: none;" size="medium" variant="primary" pill><spring:message code="form.averageTimeDemand" /></sl-badge>
+              <sl-badge id="time-difficulty-hard" style="display: none;" size="medium" variant="warning" pill><spring:message code="form.timeDemanding" /></sl-badge>
+            </sl-card>
+          </sl-tooltip>
+          <sl-tooltip  content="<spring:message code="builder.difficulty"/>">
+            <sl-card  class="overview-item">
+              <span><spring:message code="builder.semesterOverview.overallDifficulty"/></span>
+              <sl-divider vertical style="height:  1rem; margin: 0.5rem"></sl-divider>
+              <sl-badge id="overall-difficulty-none"  size="medium" variant="neutral" pill><spring:message code="builder.semesterOverview.noReviews"/></sl-badge>
+              <sl-badge id="overall-difficulty-easy" style="display: none;" size="medium" variant="success" pill><spring:message code="form.easy"/></sl-badge>
+              <sl-badge id="overall-difficulty-medium" style="display: none;" size="medium" variant="primary" pill><spring:message code="form.normal"/></sl-badge>
+              <sl-badge id="overall-difficulty-hard" style="display: none;" size="medium" variant="danger" pill><spring:message code="form.hard"/></sl-badge>
+            </sl-card>
+          </sl-tooltip>
           <sl-card class="overview-item unlock-card">
             <div slot="header">
               <span><spring:message code="builder.semesterOverview.unlock"/></span>
@@ -569,6 +711,21 @@
         </c:forEach>
     ]
 
+    <c:if test="${user.userSemester.size() != 0}">
+      <c:forEach var="subClass" varStatus="status" items="${user.userSemester}">
+          const sub_${status.index} = subjectClasses.find(elem => elem.id === '${subClass.subject.id}')
+          const sub_${status.index}_class = sub_${status.index}.classes.find(elem => elem.idClass === '${subClass.classId}');
+
+          addSelectedClassToList(sub_${status.index}, sub_${status.index}_class);
+          schedule.addClass(sub_${status.index}.id, sub_${status.index}.name, sub_${status.index}_class.classTimes);
+          document.getElementById('subject-card-'+sub_${status.index}.id).style.display = 'none';
+          updateCreditCounter(sub_${status.index}.credits)
+          updateTimeDemand((sub_${status.index}.timeDemand+1))
+          updateOverallDifficulty((sub_${status.index}.difficulty+1))
+          disableIncompatibleSubjects(sub_${status.index});
+      </c:forEach>
+    </c:if>
+
     const unlockables = [
       <c:forEach var="subject" items="${unlockableSubjects}">
         {
@@ -623,6 +780,7 @@
     document.getElementById('switch-to-list-button').addEventListener('click',switchToListView);
 
 
+    alterUnlockables();
 </script>
 
 </html>

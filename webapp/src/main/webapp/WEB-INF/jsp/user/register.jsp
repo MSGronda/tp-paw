@@ -16,9 +16,20 @@
         .YearItem {
             display: flex;
             flex-direction: row;
-            justify-content: space-between;
             width: 100%;
-            align-items: center;
+        }
+
+        .checkbox-label{
+           margin-top: 1.4rem;
+        }
+
+        .tree{
+            width: 100%;
+        }
+
+        .elective-tree{
+            margin-left: 1.65rem;
+            width: 100%;
         }
     </style>
 </head>
@@ -84,7 +95,10 @@
                     <sl-tree id="tree-${degree.id}" style="display: none">
                         <c:forEach var="year" items="${degree.years}">
                             <div class="YearItem">
-                                <sl-tree-item>
+                                <div class="checkbox-label">
+                                    <sl-checkbox id="degree-${degree.id}-year-checkbox-${year.number}" class="degree-${degree.id}-year-checkbox"></sl-checkbox>
+                                </div>
+                                <sl-tree-item class="tree">
                                     <h3 ><spring:message code="subject.year" arguments="${year.number}"/></h3>
                                     <c:forEach var="subject" items="${year.subjects}">
                                         <sl-tree-item>
@@ -94,12 +108,11 @@
                                         </sl-tree-item>
                                     </c:forEach>
                                 </sl-tree-item>
-                                <sl-checkbox id="degree-${degree.id}-year-checkbox-${year.number}" class="degree-${degree.id}-year-checkbox"></sl-checkbox>
                             </div>
                         </c:forEach>
                         <div id="elective-tree-${degree.id}" style="display:none;">
                             <div class="YearItem">
-                                <sl-tree-item>
+                                <sl-tree-item class="elective-tree">
                                     <h3><spring:message code="home.electives"/></h3>
                                     <c:forEach var="elective" items="${degree.electives}">
                                         <sl-tree-item>

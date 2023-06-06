@@ -57,25 +57,58 @@ function hideAllClasses(){
     }
 }
 
-function alterSubjectCard(subjectId,color,colorBorder, disabled){
+function alterSubjectCard(subjectId,color,colorBorder, disabled, subject){
     const card = document.getElementById('subject-card-'+subjectId);
     card.style.color = color
     card.style.setProperty('--border-color', colorBorder)
+
+    const disabledCard = card.cloneNode( true)
+
+    if(card.parentElement.nodeName.toLowerCase() !== 'sl-tooltip'){
+        const tooltip = document.createElement('sl-tooltip');
+        tooltip.setAttribute('content', subject.name + ' is incompatible with your current timetable')
+        tooltip.appendChild(disabledCard)
+
+        card.replaceWith(tooltip)
+    }else{
+        const tooltip = card.parentElement;
+        let text = tooltip.getAttribute('content')
+        text = subject.name + ', ' + text;
+        tooltip.setAttribute('content', text)
+    }
+
     const select = document.getElementById('select-'+subjectId);
     select.disabled = disabled;
 }
-function alterClassCard(subjectId, classId, color,colorBorder, disabled){
+function alterClassCard(subjectId, classId, color,colorBorder, disabled, subject){
     const card = document.getElementById('class-card-'+subjectId+'-'+classId);
     card.style.color = color
     card.style.setProperty('--border-color', colorBorder)
+
+    const disabledClass = card.cloneNode( true)
+
+    if( card.parentElement.nodeName.toLowerCase() !== 'sl-tooltip'){
+        const tooltip = document.createElement('sl-tooltip');
+        tooltip.setAttribute('content', subject.name + ' is incompatible with your current timetable')
+        tooltip.appendChild(disabledClass)
+
+        card.replaceWith(tooltip)
+    }else{
+        const tooltip = card.parentElement;
+        let text = tooltip.getAttribute('content')
+        text = subject.name + ', ' + text;
+        tooltip.setAttribute('content', text)
+    }
+
+
     const select = document.getElementById('select-class-'+subjectId+'-'+classId);
     select.disabled = disabled;
 }
 
-function disableIncompatibleSubjects(){
+function disableIncompatibleSubjects(subject){
     for(let subNum in subjectClasses){
         if(schedule.signedUpToClass(subjectClasses[subNum].id)){
-            alterSubjectCard(subjectClasses[subNum].id,selectedColor, selectedColor,true);
+            alterSubjectCard(subjectClasses[subNum].id,selectedColor, selectedColor,true, subject);
             continue;
         }
 
@@ -85,7 +118,7 @@ function disableIncompatibleSubjects(){
 
             if(classCompatibility === false){
                 // class isn't compatible with timetable
-                alterClassCard( subjectClasses[subNum].id,subjectClasses[subNum].classes[clNum].idClass, incompatibleColor,normalBorderColor,true)
+                alterClassCard( subjectClasses[subNum].id,subjectClasses[subNum].classes[clNum].idClass, incompatibleColor,normalBorderColor,true, subject)
             }
             anyClassCompatible = anyClassCompatible || classCompatibility;
         }
@@ -93,7 +126,7 @@ function disableIncompatibleSubjects(){
         // none of the classes are compatible with timetable => disable subject as well
         // if subject doesnt have any classes (special cases only), it can be taken by all
         if(!anyClassCompatible && subjectClasses[subNum].classes.length !== 0){
-            alterSubjectCard(subjectClasses[subNum].id,incompatibleColor,normalBorderColor,true);
+            alterSubjectCard(subjectClasses[subNum].id,incompatibleColor,normalBorderColor,true, subject);
         }
     }
 }
@@ -221,15 +254,16 @@ function createSubjectSelectAction(subId){
     }
 }
 function addSelectedClassToList(subject,classSubject){
+    // change visibility of buttons and behaviour before cloning
+    document.getElementById('form-select-class-' +subject.id + '-'+classSubject.idClass).style.display = 'none'
+    document.getElementById('form-deselect-class-' +subject.id + '-'+classSubject.idClass).style.display = 'flex'
+    document.getElementById('deselect-class-' +subject.id + '-'+classSubject.idClass)
+        .addEventListener('click', createSubjectDeselectAction(subject, classSubject.idClass));
+
     const selected = document.getElementById('selected-subject-info-list');
     const selectedSubjectClass = document.getElementById('class-card-' +subject.id + '-'+classSubject.idClass).cloneNode(true);
     selectedSubjectClass.id = 'selected-class-card-' +subject.id + '-'+classSubject.idClass
     selectedSubjectClass.firstElementChild.firstElementChild.textContent = subject.name + ' - ' + classSubject.idClass
-
-    selectedSubjectClass.firstElementChild.children[1].style.display= 'none'
-    selectedSubjectClass.firstElementChild.children[2].style.display= 'flex'
-
-    selectedSubjectClass.firstElementChild.children[2].addEventListener('click', createSubjectDeselectAction(subject, classSubject.idClass));
 
     selected.appendChild(selectedSubjectClass)
 }
@@ -247,7 +281,7 @@ function createClassSelectionAction(subject,classSubject){
         schedule.addClass(subject.id, subject.name, classSubject.classTimes);
 
         // disable all incompatible classes (already signed up to that subject or it doesn't fit in your schedule)
-        disableIncompatibleSubjects();
+        disableIncompatibleSubjects(subject);
 
         alterUnlockables();
 

@@ -2,7 +2,7 @@ package ar.edu.itba.paw.models.enums;
 
 public enum ReviewOrderField {
     DIFFICULTY("easy", "difficulty"),
-    TIMEDEMANDING("timedemanding", "timeDemanding");
+    TIMEDEMANDING("timedemanding", "timedemanding");
 
     private String tableColumn;
     private String fieldName;

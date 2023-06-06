@@ -32,14 +32,14 @@ public class Role {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Role roles = (Role) o;
-        return Objects.equals(id, roles.id) && Objects.equals(name, roles.name);
+        if (!(o instanceof Role)) return false;
+        Role role = (Role) o;
+        return Objects.equals(getId(), role.getId());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, name);
+        return Objects.hash(getId());
     }
 
     public enum RoleEnum {

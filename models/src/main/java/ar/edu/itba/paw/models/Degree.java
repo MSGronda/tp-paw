@@ -1,7 +1,5 @@
 package ar.edu.itba.paw.models;
 
-import org.hibernate.annotations.Formula;
-
 import javax.persistence.*;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -85,13 +83,13 @@ public class Degree {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (!(o instanceof Degree)) return false;
         Degree degree = (Degree) o;
-        return id == degree.id && Objects.equals(name, degree.name);
+        return getId() == degree.getId();
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, name);
+        return Objects.hash(getId());
     }
 }

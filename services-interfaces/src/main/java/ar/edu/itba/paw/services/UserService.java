@@ -1,9 +1,6 @@
 package ar.edu.itba.paw.services;
 
-import ar.edu.itba.paw.models.Degree;
-import ar.edu.itba.paw.models.Role;
-import ar.edu.itba.paw.models.Subject;
-import ar.edu.itba.paw.models.User;
+import ar.edu.itba.paw.models.*;
 import ar.edu.itba.paw.models.enums.SubjectProgress;
 import ar.edu.itba.paw.services.exceptions.InvalidImageSizeException;
 import ar.edu.itba.paw.services.exceptions.InvalidTokenException;
@@ -52,4 +49,7 @@ public interface UserService extends BaseService<Long, User> {
     void setLocaleAsync(User user, Locale locale);
 
     Map<Integer, Double> getUserProgressionPerYear(Degree degree, User user);
+
+    void addToCurrentSemester(final User user, final SubjectClass subjectClass);
+    void removeFromCurrentSemester(final User user, final SubjectClass subjectClass);
 }
