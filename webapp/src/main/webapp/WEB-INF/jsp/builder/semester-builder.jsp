@@ -294,6 +294,17 @@
   .clickable{
     pointer-events: all !important;
   }
+
+  sl-tooltip::part(body) {
+    padding: 0.25rem 0.5rem;
+    background-color: black;
+    color: white;
+  }
+
+  .subject-info-card-details sl-tooltip::part(body) {
+    padding: 0;
+    background-color: transparent;
+  }
 </style>
 
 <body>
@@ -330,7 +341,7 @@
             <sl-card id="subject-card-${subject.id}" class="subject-info-card">
               <div class="chooser">
                 <div class="subject-info-card-details">
-                  <sl-tooltip trigger="click" placement="right" class="manual-tooltip" style="--max-width: 50rem; width: 40rem">
+                  <sl-tooltip trigger="click" placement="right" style="--max-width: 50rem; width: 40rem">
                     <div class="clickable" slot="content">
                       <sl-card>
                         <sl-icon-button class="close-button" name="x-lg" label="Return"></sl-icon-button>
@@ -705,6 +716,7 @@
           updateCreditCounter(sub_${status.index}.credits)
           updateTimeDemand((sub_${status.index}.timeDemand+1))
           updateOverallDifficulty((sub_${status.index}.difficulty+1))
+          disableIncompatibleSubjects(sub_${status.index});
       </c:forEach>
     </c:if>
 
@@ -761,7 +773,7 @@
     // set switch to table view
     document.getElementById('switch-to-list-button').addEventListener('click',switchToListView);
 
-    disableIncompatibleSubjects();
+
     alterUnlockables();
 </script>
 

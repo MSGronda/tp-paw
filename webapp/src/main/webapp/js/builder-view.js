@@ -57,10 +57,28 @@ function hideAllClasses(){
     }
 }
 
-function alterSubjectCard(subjectId,color,colorBorder, disabled){
+function alterSubjectCard(subjectId,color,colorBorder, disabled, subject){
     const card = document.getElementById('subject-card-'+subjectId);
     card.style.color = color
     card.style.setProperty('--border-color', colorBorder)
+
+
+
+    const disabledCard = card.cloneNode( true)
+
+    if(card.parentElement.nodeName.toLowerCase() !== 'sl-tooltip'){
+        const tooltip = document.createElement('sl-tooltip');
+        tooltip.setAttribute('content', subject.name + ' is incompatible with your current timetable')
+        tooltip.appendChild(disabledCard)
+
+        card.replaceWith(tooltip)
+    }else{
+        const tooltip = card.parentElement;
+        let text = tooltip.getAttribute('content')
+        text = subject.name + ', ' + text;
+        tooltip.setAttribute('content', text)
+    }
+
     const select = document.getElementById('select-'+subjectId);
     select.disabled = disabled;
 }
@@ -72,10 +90,10 @@ function alterClassCard(subjectId, classId, color,colorBorder, disabled){
     select.disabled = disabled;
 }
 
-function disableIncompatibleSubjects(){
+function disableIncompatibleSubjects(subject){
     for(let subNum in subjectClasses){
         if(schedule.signedUpToClass(subjectClasses[subNum].id)){
-            alterSubjectCard(subjectClasses[subNum].id,selectedColor, selectedColor,true);
+            alterSubjectCard(subjectClasses[subNum].id,selectedColor, selectedColor,true, subject);
             continue;
         }
 
@@ -93,7 +111,7 @@ function disableIncompatibleSubjects(){
         // none of the classes are compatible with timetable => disable subject as well
         // if subject doesnt have any classes (special cases only), it can be taken by all
         if(!anyClassCompatible && subjectClasses[subNum].classes.length !== 0){
-            alterSubjectCard(subjectClasses[subNum].id,incompatibleColor,normalBorderColor,true);
+            alterSubjectCard(subjectClasses[subNum].id,incompatibleColor,normalBorderColor,true, subject);
         }
     }
 }
@@ -248,7 +266,7 @@ function createClassSelectionAction(subject,classSubject){
         schedule.addClass(subject.id, subject.name, classSubject.classTimes);
 
         // disable all incompatible classes (already signed up to that subject or it doesn't fit in your schedule)
-        disableIncompatibleSubjects();
+        disableIncompatibleSubjects(subject);
 
         alterUnlockables();
 
