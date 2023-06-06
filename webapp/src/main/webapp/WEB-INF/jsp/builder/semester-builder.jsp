@@ -305,6 +305,12 @@
     padding: 0;
     background-color: transparent;
   }
+
+  .row-space-between sl-tooltip::part(body) {
+    padding: 0;
+    background-color: transparent;
+    color: black;
+  }
 </style>
 
 <body>
