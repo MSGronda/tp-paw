@@ -154,6 +154,9 @@ public class UserServiceImpl implements UserService {
     @Override
     public void updateSubjectProgressWithSubList( final User user, final String subIds){
         List<String> subjectIdList = parseString(subIds);
+        if(subjectIdList.isEmpty()){
+            return;
+        }
         userDao.updateSubjectProgressList(user, subjectIdList);
     }
 
@@ -161,9 +164,10 @@ public class UserServiceImpl implements UserService {
         String trimmedInput = stringifyString.replace("[", "").replace("]", "");
         String[] elements = trimmedInput.split(",");
 
-
-
         List<String> parsedList = new ArrayList<>();
+        if(elements[0].equals("")){
+            return parsedList;
+        }
         for (String element : elements) {
             // Remove quotes around each element
             String parsedElement = element.replace("\"", "");

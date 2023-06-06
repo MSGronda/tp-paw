@@ -49,9 +49,9 @@
 <body>
     <main class="container-small">
         <div class="confirm-area">
-            <c:url var="registerUrl" value="/builder/finish"/>
-            <form:form id="subject-form" modelAttribute="UserSemesterFinishForm" action="${registerUrl}" method="post" >
-            <sl-card class="confirm-card">
+            <c:url var="userSemester" value="/builder/finish"/>
+            <form:form id="subject-form" modelAttribute="UserSemesterFinishForm" action="${userSemester}" method="post" >
+            <sl-card id="check-card" class="confirm-card">
                 <div slot="header">
                     <h3 style="margin: 0.4rem 0">Select the subjects you passed</h3>
                 </div>
@@ -69,6 +69,30 @@
                 <div slot="footer">
                     <div class="submit-area">
                         <sl-button href="${pageContext.request.contextPath}/">Cancel</sl-button>
+                        <sl-button variant="success" onclick="next()">Next</sl-button>
+                    </div>
+                </div>
+            </sl-card>
+
+
+            <sl-card id="review-card" class="confirm-card" style="display: none;">
+                <div slot="header">
+                    <h3>Please consider reviews the subjects you passed:</h3>
+                </div>
+                <div class="subject-list">
+                    <c:forEach varStatus="status" var="subjectClass" items="${user.userSemester}">
+                        <div style="display: none" id="review-${subjectClass.subject.id}" class="subject-item">
+                            <sl-button href="${pageContext.request.contextPath}/review/${subjectClass.subject.id}"
+                           target="_blank" variant="text" size="medium">
+                                <c:out value="${subjectClass.subject.name}"/> - <c:out value="${subjectClass.subject.id}"/>
+                            </sl-button>
+                        </div>
+                        <c:if test="${!status.last}"><sl-divider></sl-divider></c:if>
+                    </c:forEach>
+                </div>
+                <div slot="footer">
+                    <div class="submit-area">
+                        <sl-button onclick="prev()">Back</sl-button>
                         <sl-button variant="success" onclick="submit()" type="submit">Submit</sl-button>
                     </div>
                 </div>
@@ -78,7 +102,25 @@
     </main>
 <jsp:include page="../components/body_scripts.jsp"/>
 <script>
-
+    function prev(){
+        document.getElementById("check-card").style.display = 'block'
+        document.getElementById("review-card").style.display = 'none'
+    }
+    function next(){
+        const checkboxes = document.querySelectorAll('[id^="subject-check-"]')
+        let counter = 0;
+        for(let checkNum in checkboxes){
+            if(checkboxes[checkNum].checked){
+                document.getElementById("review-" + checkboxes[checkNum].getAttribute("name")).style.display = 'block';
+                counter++;
+            }
+        }
+        if(counter === 0){
+            submit();
+        }
+        document.getElementById("check-card").style.display = 'none'
+        document.getElementById("review-card").style.display = 'block'
+    }
 
     function submit(){
         const subjectList = []

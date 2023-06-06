@@ -262,7 +262,7 @@
     color: black;
     background-color: white;
     margin: 0;
-    padding: 0;
+    padding: 1rem;
   }
   sl-tooltip::part(base__arrow) {
     background-color: white;
