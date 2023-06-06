@@ -1,8 +1,5 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ page contentType="text/html;charset=UTF-8" %>
-<%@ page import="ar.edu.itba.paw.models.enums.Difficulty" %>
-<%@ page import="ar.edu.itba.paw.models.enums.TimeDemanding" %>
-<%@ page import="ar.edu.itba.paw.models.enums.SubjectProgress" %>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
 <%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 
@@ -66,7 +63,7 @@
 
       <sec:authorize access="isAuthenticated()">
         <c:choose>
-          <c:when test="${progress == SubjectProgress.DONE}">
+          <c:when test="${progress eq 'DONE'}">
             <sl-tooltip class="progress-icon" content="<spring:message code="card.progress.tooltip.passed"/>">
                   <sl-icon  name="check2-circle"></sl-icon>
             </sl-tooltip>
@@ -77,25 +74,25 @@
   </div>
     <div slot="footer" class="chip-row ">
       <c:choose>
-        <c:when test="${subject.reviewStats.getDifficulty() == Difficulty.EASY}">
+        <c:when test="${subject.reviewStats.difficulty eq 'EASY'}">
           <sl-badge size="medium" variant="success" pill><spring:message code="form.easy"/></sl-badge>
         </c:when>
-        <c:when test="${subject.reviewStats.getDifficulty() == Difficulty.MEDIUM}">
+        <c:when test="${subject.reviewStats.difficulty eq 'MEDIUM'}">
           <sl-badge size="medium" variant="primary" pill><spring:message code="form.normal"/></sl-badge>
         </c:when>
-        <c:when test="${subject.reviewStats.getDifficulty() == Difficulty.HARD}">
+        <c:when test="${subject.reviewStats.difficulty eq 'HARD'}">
           <sl-badge size="medium" variant="danger" pill><spring:message code="form.hard"/></sl-badge>
         </c:when>
       </c:choose>
 
       <c:choose>
-        <c:when test="${subject.reviewStats.getTimeDemanding() == TimeDemanding.LOW}">
+        <c:when test="${subject.reviewStats.timeDemanding eq 'LOW'}">
           <sl-badge size="medium" variant="success" pill><spring:message code="form.NotTimeDemanding" /></sl-badge>
         </c:when>
-        <c:when test="${subject.reviewStats.getTimeDemanding() == TimeDemanding.MEDIUM}">
+        <c:when test="${subject.reviewStats.timeDemanding eq 'MEDIUM'}">
           <sl-badge size="medium" variant="primary" pill><spring:message code="form.averageTimeDemand" /></sl-badge>
         </c:when>
-        <c:when test="${subject.reviewStats.getTimeDemanding() == TimeDemanding.HIGH}">
+        <c:when test="${subject.reviewStats.timeDemanding eq 'HIGH'}">
           <sl-badge size="medium" variant="warning" pill><spring:message code="form.timeDemanding" /></sl-badge>
         </c:when>
       </c:choose>

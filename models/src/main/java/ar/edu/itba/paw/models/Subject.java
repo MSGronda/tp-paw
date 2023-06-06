@@ -19,8 +19,8 @@ public class Subject {
     @Column(nullable = false)
     private Integer credits;
 
-    @OneToOne
-    @PrimaryKeyJoinColumn(name = "idsub", foreignKey = @ForeignKey(name = "none", value = ConstraintMode.NO_CONSTRAINT))
+    @OneToOne(mappedBy = "subject")
+    @PrimaryKeyJoinColumn(foreignKey = @ForeignKey(value = ConstraintMode.NO_CONSTRAINT))
     private ReviewStats reviewStats;
 
     @ManyToMany
