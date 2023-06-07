@@ -4,8 +4,10 @@ import ar.edu.itba.paw.models.*;
 import ar.edu.itba.paw.models.enums.SubjectProgress;
 import ar.edu.itba.paw.services.*;
 import ar.edu.itba.paw.webapp.exceptions.SubjectNotFoundException;
+import ar.edu.itba.paw.webapp.form.SubjectForm;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -80,10 +82,48 @@ public class SubjectController {
         return mav;
     }
 
-    @RequestMapping("/create-subject")
-    public ModelAndView createSubject() {
-        return new ModelAndView("moderator-tools/createSubject");
+    @RequestMapping(value = "/create-subject", method = {RequestMethod.GET} )
+    public ModelAndView createSubjectForm(@ModelAttribute("subjectForm") final SubjectForm subjectForm) {
+
+        ModelAndView mav = new ModelAndView("moderator-tools/createSubject");
+        List<Subject> subjects = subjectService.getAll();
+        mav.addObject("subjects", subjects);
+        return mav;
     }
+    @RequestMapping(value = "/create-subject", method = {RequestMethod.POST} )
+    public ModelAndView createSubject(@ModelAttribute("subjectForm") final SubjectForm subjectForm,
+                                      final BindingResult errors) {
+        if(errors.hasErrors()) {
+            return createSubjectForm(subjectForm);
+        }
+        return new ModelAndView("redirect:/subject/{subjectId:\\d+\\.\\d+}/addProfessor");
+    }
+    @RequestMapping(value = "/subject/{subjectId:\\d+\\.\\d+}/add-professors", method = {RequestMethod.GET} )
+    public ModelAndView addProfessorToSubjectForm() {
+        return new ModelAndView("moderator-tools/addProfessors");
+    }
+    @RequestMapping(value = "/subject/{subjectId:\\d+\\.\\d+}/add-professors", method = {RequestMethod.POST} )
+    public ModelAndView addProfessorToSubject() {
+        return new ModelAndView("redirect:/subject/{subjectId:\\d+\\.\\d+}/addClasses");
+    }
+    @RequestMapping(value = "/create-professor", method = {RequestMethod.GET} )
+    public ModelAndView createProfessorForm() {
+        return new ModelAndView("moderator-tools/createProfessor");
+    }
+    @RequestMapping(value = "/create-professor", method = {RequestMethod.POST} )
+    public ModelAndView createProfessor() {
+        return new ModelAndView("redirect:/subject/{subjectId:\\d+\\.\\d+}/addProfessor");
+    }
+    @RequestMapping(value = "/subject/{subjectId:\\d+\\.\\d+}/add-classes", method = {RequestMethod.GET} )
+    public ModelAndView addClassesToSubjectForm() {
+        return new ModelAndView("moderator-tools/addClasses");
+    }
+    @RequestMapping(value = "/subject/{subjectId:\\d+\\.\\d+}/add-classes", method = {RequestMethod.POST} )
+    public ModelAndView addClassesToSubject() {
+        return new ModelAndView("redirect:/subject/{subjectId:\\d+\\.\\d+}");
+    }
+
+
     @RequestMapping("/edit-subject")
     public ModelAndView editSubject() {
         return new ModelAndView("moderator-tools/editSubject");

@@ -377,7 +377,7 @@
                     </table>
                   <div class="column-center">
                     <div style="padding-top: 1rem;">
-                      <sl-button href="<c:url value="/subject/${subject.id}"/>" target="_blank">
+                      <sl-button href="<c:url value="/subject/${subject.id}"/>" target="_blank" rel="noopener noreferrer">
                         <spring:message code="builder.fullSubject"/>
                       </sl-button>
                     </div>

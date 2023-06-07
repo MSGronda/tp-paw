@@ -36,6 +36,7 @@ public class HomeController {
     //esta mapping es por los casos en donde la pagina no tiene una instancia del current user
     @RequestMapping("/degree")
     public ModelAndView degree() {
+
         long id = aus.getCurrentUser().getDegree().getId();
         return new ModelAndView("redirect:/degree/" + id);
     }

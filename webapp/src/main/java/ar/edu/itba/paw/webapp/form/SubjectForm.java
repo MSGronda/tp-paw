@@ -15,8 +15,8 @@ public class SubjectForm {
     private Integer credits;
     @NotNull
     private Integer semester;
-    private List<Integer> professorIds;
-    private List<Integer>degreeIds;
+    private String degreeIds;
+    private String requirementIds;
 
     public Long getId() {
         return id;
@@ -58,19 +58,19 @@ public class SubjectForm {
         this.semester = semester;
     }
 
-    public List<Integer> getProfessorIds() {
-        return professorIds;
-    }
-
-    public void setProfessorIds(List<Integer> professorIds) {
-        this.professorIds = professorIds;
-    }
-
-    public List<Integer> getDegreeIds() {
+    public String getDegreeIds() {
         return degreeIds;
     }
 
-    public void setDegreeIds(List<Integer> degreeIds) {
+    public void setDegreeIds(String degreeIds) {
         this.degreeIds = degreeIds;
+    }
+
+    public String getRequirementIds() {
+        return requirementIds;
+    }
+
+    public void setRequirementIds(String requirementIds) {
+        this.requirementIds = requirementIds;
     }
 }
