@@ -23,7 +23,7 @@ public interface UserService extends BaseService<Long, User> {
 
     void deleteSubjectProgress(final User user, final Subject subject);
     void updateSubjectProgress(final User user, final Subject subject, final SubjectProgress progress);
-    public void updateSubjectProgressWithSubList( final User user, final String subIds);
+    void updateSubjectProgressWithSubList( final User user, final String subIds);
 
     void changePassword(
             final User user,
@@ -53,4 +53,6 @@ public interface UserService extends BaseService<Long, User> {
     void addToCurrentSemester(final User user, final SubjectClass subjectClass);
     void removeFromCurrentSemester(final User user, final SubjectClass subjectClass);
     void clearSemester(final User user);
+    boolean canReviewGivenSubjectList(final String subjectIds);
+    String generateSemesterReviewUrl(final String subjectIds);
 }

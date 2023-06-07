@@ -175,7 +175,6 @@ public class UserServiceImpl implements UserService {
         }
 
         return parsedList;
-
     }
 
     @Transactional
@@ -333,6 +332,30 @@ public class UserServiceImpl implements UserService {
     @Override
     public void clearSemester(final User user) {
         userDao.clearSemester(user);
+    }
+
+    @Override
+    public boolean canReviewGivenSubjectList(final String subjectIds){
+        return !subjectIds.equals("[]");
+    }
+
+    @Override
+    public String generateSemesterReviewUrl(final String subjectIds){
+        List<String> subjectIdList = parseString(subjectIds);
+
+        StringBuilder sb = new StringBuilder("?r=");
+        int i=0;
+        for(String subIds : subjectIdList){
+            sb.append(subIds);
+            if(i + 1 < subjectIdList.size()){
+                sb.append(" ");
+            }
+            i++;
+        }
+        sb.append("&current=0");
+        sb.append("&total=").append(i);
+
+        return sb.toString();
     }
 
     @Transactional

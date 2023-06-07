@@ -22,13 +22,15 @@ public class SemesterBuilderController {
     private final AuthUserService authUserService;
     private final SubjectService subjectService;
     private final UserService userService;
+    private final ReviewService reviewService;
     private static final Logger LOGGER = LoggerFactory.getLogger(SemesterBuilderController.class);
 
     @Autowired
-    public SemesterBuilderController(AuthUserService authUserService, SubjectService subjectService, UserService userService) {
+    public SemesterBuilderController(AuthUserService authUserService, SubjectService subjectService, UserService userService, ReviewService reviewService) {
         this.authUserService = authUserService;
         this.subjectService = subjectService;
         this.userService = userService;
+        this.reviewService = reviewService;
     }
 
     @RequestMapping("/builder")
@@ -83,11 +85,21 @@ public class SemesterBuilderController {
         if(errors.hasErrors()){
             return finishSemester(semesterForm);
         }
+        ModelAndView mav;
 
+        final boolean canReview = userService.canReviewGivenSubjectList(semesterForm.getSubjectIds());
+
+        if(canReview){
+            final String url = userService.generateSemesterReviewUrl(semesterForm.getSubjectIds());
+            mav = new ModelAndView("redirect:/many-reviews"+ url);
+        }
+        else{
+            mav = new ModelAndView("redirect:/");
+        }
         userService.updateSubjectProgressWithSubList(user,semesterForm.getSubjectIds());
         userService.clearSemester(user);
 
-        return new ModelAndView("redirect:/");
+        return mav;
     }
 
     @RequestMapping(value = "/builder/add", method = RequestMethod.POST)

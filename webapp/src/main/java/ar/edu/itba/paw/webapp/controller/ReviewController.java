@@ -10,12 +10,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.validation.Valid;
 import java.sql.SQLException;
+import java.util.Map;
 import java.util.Optional;
 
 @Controller
@@ -79,6 +81,76 @@ public class ReviewController {
         }
         LOGGER.warn("No subject for id {}",subjectId);
         throw new SubjectNotFoundException();
+    }
+
+    @RequestMapping(value = "/many-reviews", method = RequestMethod.GET)
+    public ModelAndView manyReviews(
+            @RequestParam Map<String, String> params,
+            @ModelAttribute("ReviewForm") final ReviewForm reviewForm
+    ){
+        if(!params.containsKey("r") || !params.containsKey("total") || !params.containsKey("current")){
+            return new ModelAndView("redirect:/");
+        }
+
+        final String subjectId = reviewService.getFirstSubjectIdFromReviewList(params.get("r"));
+        final Optional<Subject> maybeSubject = subjectService.findById(subjectId);
+
+        if( !maybeSubject.isPresent()){
+            LOGGER.warn("No subject for id {}",subjectId);
+            throw new SubjectNotFoundException();
+        }
+        final Subject subject = maybeSubject.get();
+
+        if(reviewService.didUserReview(subject, authUserService.getCurrentUser())){
+            return new ModelAndView("redirect:/");
+        }
+
+        ModelAndView mav =  new ModelAndView("review/many-reviews");
+        mav.addObject("subject", subject);
+        mav.addObject("current", Integer.parseInt(params.get("current")));
+        mav.addObject("total", Integer.parseInt(params.get("total")));
+        mav.addObject("paramString", "?r=" +params.get("r") + "&current=" +
+                params.get("current") + "&total=" + params.get("total"));
+
+        return mav;
+    }
+
+    @RequestMapping(value = "/many-reviews", method = RequestMethod.POST)
+    public ModelAndView manyReviewsForm(
+            @RequestParam Map<String, String> params,
+            @Valid @ModelAttribute("ReviewForm") final ReviewForm reviewForm,
+            final BindingResult errors
+    ) throws SQLException {
+        if(!params.containsKey("r") || !params.containsKey("total") || !params.containsKey("current")){
+            return new ModelAndView("redirect:/");
+        }
+        if(errors.hasErrors()){
+            LOGGER.warn("Review form has errors");
+            return manyReviews(params, reviewForm);
+        }
+
+        final String subjectId = reviewService.getFirstSubjectIdFromReviewList(params.get("r"));
+        final Subject subject = subjectService.findById(subjectId).orElseThrow(SubjectNotFoundException::new);
+        params.put("r", reviewService.removeFirstSubjectIdFromReviewList(params.get("r")));
+        params.put("current", Integer.toString(Integer.parseInt(params.get("current") + 1 )));
+
+        if(!reviewService.didUserReview(subject, authUserService.getCurrentUser())){
+            reviewService.create(
+                    Review.builder()
+                            .anonymous(reviewForm.getAnonymous())
+                            .difficulty(reviewForm.getDifficultyEnum())
+                            .timeDemanding(reviewForm.getTimeDemandingEnum())
+                            .text(reviewForm.getText())
+                            .subject(subject)
+                            .user(authUserService.getCurrentUser())
+                            .build()
+            );
+        }
+
+        if(!reviewService.canContinueReviewing(params.get("r"))){
+            return new ModelAndView("redirect:/");
+        }
+        return new ModelAndView("redirect:/many-reviews?r="+params.get("r") + "&current=" + params.get("current")+"&total="+  params.get("total"));
     }
 
     @RequestMapping("review/{subjectId:\\d+\\.\\d+}/delete/{reviewId:\\d+}")

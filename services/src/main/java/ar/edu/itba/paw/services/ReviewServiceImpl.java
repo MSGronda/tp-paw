@@ -71,6 +71,30 @@ public class ReviewServiceImpl implements ReviewService {
         return reviewDao.didUserReview(subject, user);
     }
 
+    @Override
+    public String getFirstSubjectIdFromReviewList(String param) {
+        final String[] array = param.split(" ");
+        return array[0];
+    }
+    @Override
+    public String removeFirstSubjectIdFromReviewList(String param) {
+        final String[] array = param.split(" ");
+        final StringBuilder sb = new StringBuilder();
+        for(int i=1;  i < array.length ; i++){
+            sb.append(array[i]);
+            if(i+1< array.length){
+                sb.append(" ");
+            }
+        }
+        return sb.toString();
+    }
+
+
+    @Override
+    public boolean canContinueReviewing(String param){
+        return !param.equals("");
+    }
+
     @Transactional
     @Override
     public void update(final Review review) throws NoGrantedPermissionException {
