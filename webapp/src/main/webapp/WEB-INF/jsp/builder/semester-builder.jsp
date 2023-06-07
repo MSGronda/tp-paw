@@ -315,6 +315,12 @@
   .subject-name-title{
     display: none;
   }
+  .dialog-header-actions {
+    --width: 45rem;
+  }
+  .column-center {
+    margin-top: 1rem;
+  }
 </style>
 
 <body>
@@ -348,81 +354,68 @@
         </div>
         <div id="subject-list" class="subject-list">
           <c:forEach var="subject" items="${availableSubjects}">
+            <sl-dialog label="${subject.id}-${subject.name}" id="dialogue-${subject.id}" class="dialog-header-actions">
+
+              <table>
+                <tbody>
+                <tr>
+                  <td><h3><spring:message code="subject.department"/></h3></td>
+                  <td><p><c:out value="${subject.department}"/></p></td>
+                </tr>
+                <tr>
+                  <th><spring:message code="subject.prerequisites"/></th>
+                  <td>
+                    <c:if test="${empty subject.prerequisites}">
+                      <spring:message code="subject.prerequisites?"/>
+                    </c:if>
+                    <c:forEach var="prereq" items="${subject.prerequisites}" varStatus="status">
+                      <a href='<c:url value="/subject/${prereq.id}"/>'><c:out value="${prereq.name}"/></a>
+                      <c:if test="${not status.last}">
+                        ,
+                      </c:if>
+                    </c:forEach>
+                  </td>
+                </tr>
+                <tr>
+                  <th><spring:message code="subject.professors"/></th>
+                  <td>
+                    <c:forEach var="professor" items="${subject.professors}" varStatus="status">
+                      <sl-badge variant="primary">
+                        <c:out value="${professor.name}"/>
+                      </sl-badge>
+
+                    </c:forEach>
+                  </td>
+                </tr>
+                <tr>
+                  <th><spring:message code="subject.time" /></th>
+                  <td>
+                    <c:choose>
+                      <c:when test="${subject.reviewStats.timeDemanding eq 'LOW'}">
+                        <sl-badge size="medium" variant="success"><spring:message code="form.NotTimeDemanding" /></sl-badge>
+                      </c:when>
+                      <c:when test="${subject.reviewStats.timeDemanding eq 'MEDIUM'}">
+                        <sl-badge size="medium" variant="primary"><spring:message code="form.averageTimeDemand" /></sl-badge>
+                      </c:when>
+                      <c:when test="${subject.reviewStats.timeDemanding eq 'HIGH'}">
+                        <sl-badge size="medium" variant="warning"><spring:message code="form.timeDemanding" /></sl-badge>
+                      </c:when>
+                      <c:otherwise>
+                        <sl-badge size="medium" variant="neutral"><spring:message code="form.noDif" /></sl-badge>
+                      </c:otherwise>
+                    </c:choose>
+                  </td>
+                </tr>
+                </tbody>
+              </table>
+              <div class="column-center">
+                <sl-button variant="primary" outline href="<c:url value="/subject/${subject.id}"/>" target="_blank" rel="noopener noreferrer"><spring:message code="builder.fullSubject"/></sl-button>
+              </div>
+            </sl-dialog>
             <sl-card id="subject-card-${subject.id}" class="subject-info-card">
               <div class="chooser">
                 <div class="subject-info-card-details">
-                  <sl-tooltip trigger="click" placement="right" style="--max-width: 50rem; width: 40rem">
-                    <div class="clickable" slot="content">
-                      <sl-card>
-                        <sl-icon-button class="close-button" name="x-lg" label="Return"></sl-icon-button>
-                        <table>
-                          <thead>
-                          <tr>
-                            <th colspan="2"><h2><c:out value="${subject.name}"/> - <c:out value="${subject.id}"/></h2></th>
-                          </tr>
-                          </thead>
-                          <tbody>
-                          <tr>
-                            <td><h3><spring:message code="subject.department"/></h3></td>
-                            <td><p><c:out value="${subject.department}"/></p></td>
-                          </tr>
-                          <tr>
-                            <th><spring:message code="subject.prerequisites"/></th>
-                            <td>
-                              <c:if test="${empty subject.prerequisites}">
-                                <spring:message code="subject.prerequisites?"/>
-                              </c:if>
-                              <c:forEach var="prereq" items="${subject.prerequisites}" varStatus="status">
-                                <a href='<c:url value="/subject/${prereq.id}"/>'><c:out value="${prereq.name}"/></a>
-                                <c:if test="${not status.last}">
-                                  ,
-                                </c:if>
-                              </c:forEach>
-                            </td>
-                          </tr>
-                          <tr>
-                            <th><spring:message code="subject.professors"/></th>
-                            <td>
-                              <c:forEach var="professor" items="${subject.professors}" varStatus="status">
-                                <sl-badge variant="primary">
-                                  <c:out value="${professor.name}"/>
-                                </sl-badge>
-
-                              </c:forEach>
-                            </td>
-                          </tr>
-                          <tr>
-                            <th><spring:message code="subject.time" /></th>
-                            <td>
-                              <c:choose>
-                                <c:when test="${subject.reviewStats.getTimeDemanding() == TimeDemanding.LOW}">
-                                  <sl-badge size="medium" variant="success"><spring:message code="form.NotTimeDemanding" /></sl-badge>
-                                </c:when>
-                                <c:when test="${subject.reviewStats.getTimeDemanding() == TimeDemanding.MEDIUM}">
-                                  <sl-badge size="medium" variant="primary"><spring:message code="form.averageTimeDemand" /></sl-badge>
-                                </c:when>
-                                <c:when test="${subject.reviewStats.getTimeDemanding() == TimeDemanding.HIGH}">
-                                  <sl-badge size="medium" variant="warning"><spring:message code="form.timeDemanding" /></sl-badge>
-                                </c:when>
-                                <c:otherwise>
-                                  <sl-badge size="medium" variant="neutral"><spring:message code="form.noDif" /></sl-badge>
-                                </c:otherwise>
-                              </c:choose>
-                            </td>
-                          </tr>
-                          </tbody>
-                        </table>
-                        <div class="column-center">
-                          <div style="padding-top: 1rem;">
-                            <sl-button href="<c:url value="/subject/${subject.id}"/>" target="_blank">
-                              <spring:message code="builder.fullSubject"/>
-                            </sl-button>
-                          </div>
-                        </div>
-                      </sl-card>
-                    </div>
-                    <h5><c:out value="${subject.name}"/></h5>
-                  </sl-tooltip>
+                  <h5 id="open-button-${subject.id}" class="open-button"><c:out value="${subject.name}"/></h5>
                   <spring:message code="subject.credits"/> <c:out value="${subject.credits}"/>
                   <c:choose>
                     <c:when test="${subject.reviewStats.getDifficulty() == Difficulty.EASY}">
@@ -790,6 +783,21 @@
 
 
     alterUnlockables();
+
+    const buttons = document.querySelectorAll('.open-button');
+    buttons.forEach(button => {
+        button.addEventListener('click', () => {
+            const id = button.id.split('-')[2];
+            const dialog = document.getElementById('dialogue-'+id);
+            dialog.show();
+        });
+    });
+
+    const dialog = document.querySelector('.dialog-header-actions');
+    const openButton = document.querySelector('open-button-');
+    const closeButton = dialog.querySelector('sl-button[slot="footer"]');
+
+
 </script>
 
 </html>
