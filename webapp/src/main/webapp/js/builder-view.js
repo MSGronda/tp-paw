@@ -66,7 +66,7 @@ function alterSubjectCard(subjectId,color,colorBorder, disabled, subject){
 
     if(card.parentElement.nodeName.toLowerCase() !== 'sl-tooltip'){
         const tooltip = document.createElement('sl-tooltip');
-        tooltip.setAttribute('content', subject.name + ' is incompatible with your current timetable')
+        tooltip.setAttribute('content', subject.name + ' makes this subject incompatible with your current timetable')
         tooltip.appendChild(disabledCard)
 
         card.replaceWith(tooltip)
@@ -89,7 +89,7 @@ function alterClassCard(subjectId, classId, color,colorBorder, disabled, subject
 
     if( card.parentElement.nodeName.toLowerCase() !== 'sl-tooltip'){
         const tooltip = document.createElement('sl-tooltip');
-        tooltip.setAttribute('content', subject.name + ' is incompatible with your current timetable')
+        tooltip.setAttribute('content', subject.name + ' makes this class incompatible with your current timetable')
         tooltip.appendChild(disabledClass)
 
         card.replaceWith(tooltip)
@@ -251,6 +251,8 @@ function createSubjectSelectAction(subId){
         // go to class selection
         switchSelector('flex','none')
         document.getElementById('classes-' + subId).style.display = 'flex';
+
+        document.getElementById('subject-name-title-' + subId).style.display='block';
     }
 }
 function addSelectedClassToList(subject,classSubject){
@@ -288,6 +290,8 @@ function createClassSelectionAction(subject,classSubject){
         // hide subject from subject list
         document.getElementById('subject-card-'+subject.id).style.display = 'none';
 
+        document.getElementById('subject-name-title-' + subject.id).style.display='none';
+
         // update
         updateCreditCounter(subject.credits)
         updateTimeDemand((subject.timeDemand+1))
@@ -299,6 +303,11 @@ function exitClassSelectionAction(){
     // go to class selection
     switchSelector('none','flex')
     hideAllClasses();
+
+    const titles = document.querySelectorAll('.subject-name-title');
+    titles.forEach((title) => {
+        title.style.display = 'none';
+    });
 }
 
 function switchToTableView(){

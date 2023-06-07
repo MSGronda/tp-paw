@@ -311,6 +311,10 @@
     background-color: transparent;
     color: black;
   }
+
+  .subject-name-title{
+    display: none;
+  }
 </style>
 
 <body>
@@ -450,7 +454,12 @@
       <sl-card id="choose-class" class="class-chooser-tab-area">
         <div slot="header">
           <div class="row-space-between">
-            <h4><spring:message code="builder.selectClass"/></h4>
+            <div>
+              <h4><spring:message code="builder.selectClass"/></h4>
+              <c:forEach var="subject" items="${availableSubjects}">
+                <h4 class="subject-name-title" id="subject-name-title-${subject.id}"><c:out value="${subject.name}"/></h4>
+              </c:forEach>
+            </div>
             <sl-button style="" id="exit-class-selector" variant="default"
                        size="small" circle>
               <sl-icon name="x-lg" label="Exit" class="icon"></sl-icon>
