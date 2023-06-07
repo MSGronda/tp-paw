@@ -6,4 +6,5 @@ import java.util.List;
 import java.util.Map;
 
 public interface ProfessorDao extends ReadableDao<Long, Professor> {
+    void create(Professor professor);
 }

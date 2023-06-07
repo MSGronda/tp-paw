@@ -4,6 +4,7 @@ import ar.edu.itba.paw.models.*;
 import ar.edu.itba.paw.models.enums.SubjectProgress;
 import ar.edu.itba.paw.services.*;
 import ar.edu.itba.paw.webapp.exceptions.SubjectNotFoundException;
+import ar.edu.itba.paw.webapp.form.ProfessorForm;
 import ar.edu.itba.paw.webapp.form.SubjectForm;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -19,18 +20,21 @@ public class SubjectController {
     private final ReviewService reviewService;
     private final DegreeService degreeService;
     private final AuthUserService authUserService;
+    private final ProfessorService professorService;
 
     @Autowired
     public SubjectController(
             SubjectService subjectService,
             ReviewService reviewService,
             DegreeService degreeService,
-            AuthUserService authUserService
+            AuthUserService authUserService,
+            ProfessorService professorService
     ) {
         this.subjectService = subjectService;
         this.reviewService = reviewService;
         this.degreeService = degreeService;
         this.authUserService = authUserService;
+        this.professorService = professorService;
     }
 
     @RequestMapping("/subject/{id:\\d+\\.\\d+}")
@@ -107,11 +111,18 @@ public class SubjectController {
         return new ModelAndView("redirect:/subject/{subjectId:\\d+\\.\\d+}/addClasses");
     }
     @RequestMapping(value = "/create-professor", method = {RequestMethod.GET} )
-    public ModelAndView createProfessorForm() {
+    public ModelAndView createProfessorForm(@ModelAttribute("professorForm") final ProfessorForm professorForm) {
         return new ModelAndView("moderator-tools/createProfessor");
     }
     @RequestMapping(value = "/create-professor", method = {RequestMethod.POST} )
-    public ModelAndView createProfessor() {
+    public ModelAndView createProfessor(@ModelAttribute("professorForm") final ProfessorForm professorForm,
+                                        final BindingResult errors) {
+        if(errors.hasErrors()) {
+            return createProfessorForm(professorForm);
+        }
+
+        professorService.create(new Professor(professorForm.getName()));
+
         return new ModelAndView("redirect:/subject/{subjectId:\\d+\\.\\d+}/addProfessor");
     }
     @RequestMapping(value = "/subject/{subjectId:\\d+\\.\\d+}/add-classes", method = {RequestMethod.GET} )

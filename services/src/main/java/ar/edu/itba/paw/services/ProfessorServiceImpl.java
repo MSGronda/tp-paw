@@ -4,6 +4,7 @@ import ar.edu.itba.paw.models.Professor;
 import ar.edu.itba.paw.persistence.dao.ProfessorDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Map;
@@ -26,5 +27,11 @@ public class ProfessorServiceImpl implements ProfessorService {
     @Override
     public List<Professor> getAll() {
         return professorDao.getAll();
+    }
+
+    @Transactional
+    @Override
+    public void create(Professor professor){
+        professorDao.create(professor);
     }
 }
