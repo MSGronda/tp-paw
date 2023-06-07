@@ -76,8 +76,8 @@ public class ReviewServiceImpl implements ReviewService {
         final String[] array = param.split(" ");
         return array[0];
     }
-    @Override
-    public String removeFirstSubjectIdFromReviewList(String param) {
+
+    private String removeFirstSubjectIdFromReviewList(String param) {
         final String[] array = param.split(" ");
         final StringBuilder sb = new StringBuilder();
         for(int i=1;  i < array.length ; i++){
@@ -88,11 +88,25 @@ public class ReviewServiceImpl implements ReviewService {
         }
         return sb.toString();
     }
-
+    @Override
+    public boolean validReviewParam(final Map<String, String> params){
+        return params.containsKey("r") && !params.get("r").equals("") && params.containsKey("total") && params.containsKey("current");
+    }
 
     @Override
-    public boolean canContinueReviewing(String param){
-        return !param.equals("");
+    public boolean nextReviewInList(final Map<String, String> params){
+        if(!validReviewParam(params)){
+            return false;
+        }
+        params.put("r", removeFirstSubjectIdFromReviewList(params.get("r")));
+
+        params.put("current", Integer.toString(Integer.parseInt(params.get("current")) + 1));
+
+        return validReviewParam(params);
+    }
+    @Override
+    public String regenerateManyReviewParams(final Map<String, String> params){
+        return "?r=" + params.getOrDefault("r","") + "&current=" + params.getOrDefault("current", "") + "&total=" + params.getOrDefault("total", "");
     }
 
     @Transactional

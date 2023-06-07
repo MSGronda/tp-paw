@@ -70,13 +70,14 @@
                 </sl-radio-group>
             </div>
             <br />
-            <sl-button>Skip</sl-button>
+            <sl-button onclick="skip()">Skip</sl-button>
             <sl-button type="submit" variant="success" onclick="this.disabled = true"><spring:message code="form.submit"/></sl-button>
         </div>
     </form:form>
 </main>
 <jsp:include page="../components/body_scripts.jsp"/>
 <script src="${pageContext.request.contextPath}/js/progress-step-bar.js"></script>
+<script src="${pageContext.request.contextPath}/js/url-param-utils.js"></script>
 <script>
     const current = ${current};
     const total = ${total};
@@ -93,8 +94,17 @@
         'progress-bar-wrapper'
     );
 
-    function generateNextLink(){
+    function skip(){
+        const params = new URLSearchParams(window.location.search);
+        const r = params.get("r");
 
+        const subs =  r.split(" ");
+        subs.shift()
+        const newSubs = subs.join(" ")
+
+        const newCount =  "" + (parseInt(params.get("current")) + 1)
+
+        window.location.href = addOrUpdateParam(addOrUpdateParam(window.location.href, "r", newSubs), "current", newCount)
     }
 </script>
 </body>

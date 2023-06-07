@@ -88,7 +88,7 @@ public class ReviewController {
             @RequestParam Map<String, String> params,
             @ModelAttribute("ReviewForm") final ReviewForm reviewForm
     ){
-        if(!params.containsKey("r") || !params.containsKey("total") || !params.containsKey("current")){
+        if(!reviewService.validReviewParam(params)){
             return new ModelAndView("redirect:/");
         }
 
@@ -102,6 +102,10 @@ public class ReviewController {
         final Subject subject = maybeSubject.get();
 
         if(reviewService.didUserReview(subject, authUserService.getCurrentUser())){
+            final boolean canContinue = reviewService.nextReviewInList(params);
+            if(canContinue){
+                return new ModelAndView("redirect:/many-reviews" + reviewService.regenerateManyReviewParams(params));
+            }
             return new ModelAndView("redirect:/");
         }
 
@@ -109,8 +113,7 @@ public class ReviewController {
         mav.addObject("subject", subject);
         mav.addObject("current", Integer.parseInt(params.get("current")));
         mav.addObject("total", Integer.parseInt(params.get("total")));
-        mav.addObject("paramString", "?r=" +params.get("r") + "&current=" +
-                params.get("current") + "&total=" + params.get("total"));
+        mav.addObject("paramString", reviewService.regenerateManyReviewParams(params));
 
         return mav;
     }
@@ -121,7 +124,7 @@ public class ReviewController {
             @Valid @ModelAttribute("ReviewForm") final ReviewForm reviewForm,
             final BindingResult errors
     ) throws SQLException {
-        if(!params.containsKey("r") || !params.containsKey("total") || !params.containsKey("current")){
+        if(!reviewService.validReviewParam(params)){
             return new ModelAndView("redirect:/");
         }
         if(errors.hasErrors()){
@@ -131,8 +134,6 @@ public class ReviewController {
 
         final String subjectId = reviewService.getFirstSubjectIdFromReviewList(params.get("r"));
         final Subject subject = subjectService.findById(subjectId).orElseThrow(SubjectNotFoundException::new);
-        params.put("r", reviewService.removeFirstSubjectIdFromReviewList(params.get("r")));
-        params.put("current", Integer.toString(Integer.parseInt(params.get("current") + 1 )));
 
         if(!reviewService.didUserReview(subject, authUserService.getCurrentUser())){
             reviewService.create(
@@ -147,10 +148,11 @@ public class ReviewController {
             );
         }
 
-        if(!reviewService.canContinueReviewing(params.get("r"))){
+        final boolean canContinue = reviewService.nextReviewInList(params);
+        if(!canContinue){
             return new ModelAndView("redirect:/");
         }
-        return new ModelAndView("redirect:/many-reviews?r="+params.get("r") + "&current=" + params.get("current")+"&total="+  params.get("total"));
+        return new ModelAndView("redirect:/many-reviews" + reviewService.regenerateManyReviewParams(params));
     }
 
     @RequestMapping("review/{subjectId:\\d+\\.\\d+}/delete/{reviewId:\\d+}")

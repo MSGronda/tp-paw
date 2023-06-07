@@ -25,8 +25,11 @@ public interface ReviewService extends BaseService<Long, Review> {
 
     Boolean didUserReview(final Subject subject, final User user);
     String getFirstSubjectIdFromReviewList(String param);
-    String removeFirstSubjectIdFromReviewList(String param);
-    boolean canContinueReviewing(String param);
+    boolean nextReviewInList(final Map<String, String> params);
+    String regenerateManyReviewParams(final Map<String, String> params);
+
+    boolean validReviewParam(final Map<String, String> params);
+
 
 
     void update(final Review review) throws NoGrantedPermissionException;
