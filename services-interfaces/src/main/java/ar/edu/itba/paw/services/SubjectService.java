@@ -27,8 +27,8 @@ public interface SubjectService extends BaseService<String, Subject> {
     );
     int getTotalPagesForSearch(final String name);
     int getTotalPagesForSearch(final String name, final Map<String, String> filters);
-    Map<SubjectFilterField, List<String>> getRelevantFiltersForSearch(final String name);
-    Map<SubjectFilterField, List<String>> getRelevantFiltersForSearch(final String name, final Map<String,String> filters);
+    Map<String, List<String>> getRelevantFiltersForSearch(final String name);
+    Map<String, List<String>> getRelevantFiltersForSearch(final String name, final Map<String,String> filters);
 
     Map<User,Set<Subject>> getAllUserUnreviewedNotificationSubjects();
     void updateUnreviewedNotificationTime();

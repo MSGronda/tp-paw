@@ -1,7 +1,6 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ page import="ar.edu.itba.paw.models.enums.SubjectFilterField" %>
-<%@ page import="ar.edu.itba.paw.models.enums.SubjectProgress" %>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
 
 <html>
@@ -99,7 +98,7 @@
         <div class="filter-option">
           <h5><spring:message code="search.dpt"/></h5>
 
-          <c:forEach var="dptName" items="${relevantFilters.get(SubjectFilterField.DEPARTMENT)}">
+          <c:forEach var="dptName" items="${relevantFilters['DEPARTMENT']}">
             <sl-button-group>
               <sl-button id="${dptName.hashCode()}" class="filter-button" size="small" variant="default" pill>
                   <c:out value="${dptName}"/>
@@ -119,7 +118,7 @@
         <div class="filter-option">
           <h5><spring:message code="search.credits"/></h5>
 
-          <c:forEach var="creditsName" items="${relevantFilters.get(SubjectFilterField.CREDITS)}">
+          <c:forEach var="creditsName" items="${relevantFilters['CREDITS']}">
             <sl-button-group>
               <sl-button id="credits-${creditsName}" class="filter-button" size="small" variant="default" pill>
                 <spring:message code="search.credits.number" arguments="${creditsName}"/>
@@ -198,7 +197,7 @@
     <div class="search-area">
     <c:forEach var="subject" items="${subjects}">
       <c:set var="subject" value="${subject}" scope="request"/>
-      <c:set var="progress" value="${subjectProgress.getOrDefault(subject.id, SubjectProgress.PENDING)}" scope="request"/>
+      <c:set var="progress" value="${subjectProgress.getOrDefault(subject.id, 'PENDING')}" scope="request"/>
       <c:import url="../components/subject_card.jsp"/>
     </c:forEach>
     </div>
@@ -264,7 +263,7 @@
   let dpt = params.get("department")
 
   const dptFilterBtns = [
-    <c:forEach var="dpt" items="${relevantFilters[SubjectFilterField.DEPARTMENT]}">
+    <c:forEach var="dpt" items="${relevantFilters['DEPARTMENT']}">
     [ "${dpt.hashCode()}",  "${dpt}" , "remove-${dpt.hashCode()}", "remove-section-${dpt.hashCode()}"],
     </c:forEach>
   ]
@@ -299,7 +298,7 @@
   console.log(credits)
 
   const creditFilterBtns = [
-    <c:forEach var="credit" items="${relevantFilters[SubjectFilterField.CREDITS]}">
+    <c:forEach var="credit" items="${relevantFilters['CREDITS']}">
     ["credits-${credit}", "${credit}", "remove-${credit}", "remove-section-${credit}"],
     </c:forEach>
   ]

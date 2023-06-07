@@ -53,7 +53,7 @@ public class SearchController {
             return new ModelAndView("redirect:/404");
 
         final List<Subject> subjects = subjectService.search(query, page, filters, orderBy, dir);
-        final Map<SubjectFilterField, List<String>> relevantFilters = subjectService.getRelevantFiltersForSearch(query, filters);
+        final Map<String, List<String>> relevantFilters = subjectService.getRelevantFiltersForSearch(query, filters);
 
         Map<String, SubjectProgress> progress = user == null ? new HashMap<>() : user.getSubjectProgress();
 

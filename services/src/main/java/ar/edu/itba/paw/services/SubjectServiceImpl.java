@@ -10,6 +10,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @Service
 public class SubjectServiceImpl implements SubjectService {
@@ -75,13 +77,25 @@ public class SubjectServiceImpl implements SubjectService {
     }
 
     @Override
-    public Map<SubjectFilterField, List<String>> getRelevantFiltersForSearch(final String name) {
-        return subjectDao.getRelevantFiltersForSearch(name, null);
+    public Map<String, List<String>> getRelevantFiltersForSearch(final String name) {
+        return subjectDao.getRelevantFiltersForSearch(name, null)
+                .entrySet()
+                .stream()
+                .collect(Collectors.toMap(
+                        e -> e.getKey().name(),
+                        Map.Entry::getValue
+                ));
     }
 
     @Override
-    public Map<SubjectFilterField, List<String>> getRelevantFiltersForSearch(final String name, final Map<String,String> filters) {
-        return subjectDao.getRelevantFiltersForSearch(name, parseFilters(filters));
+    public Map<String, List<String>> getRelevantFiltersForSearch(final String name, final Map<String,String> filters) {
+        return subjectDao.getRelevantFiltersForSearch(name, parseFilters(filters))
+                .entrySet()
+                .stream()
+                .collect(Collectors.toMap(
+                        e -> e.getKey().name(),
+                        Map.Entry::getValue
+                ));
     }
 
     @Override
