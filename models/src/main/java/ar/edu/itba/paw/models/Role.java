@@ -7,8 +7,6 @@ import java.util.Objects;
 @Table(name = "roles")
 public class Role {
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "roles_id_seq")
-    @SequenceGenerator(sequenceName = "roles_id_seq", name = "roles_id_seq", allocationSize = 1)
     private Long id;
 
     @Column(length = 100, nullable = false, unique = true)

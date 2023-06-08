@@ -5,7 +5,7 @@ import ar.edu.itba.paw.models.enums.SubjectProgress;
 import ar.edu.itba.paw.persistence.dao.ImageDao;
 import ar.edu.itba.paw.persistence.dao.RecoveryDao;
 import ar.edu.itba.paw.persistence.dao.UserDao;
-import ar.edu.itba.paw.persistence.exceptions.UserEmailAlreadyTakenPersistenceException;
+import ar.edu.itba.paw.persistence.exceptions.EmailAlreadyTakenException;
 import ar.edu.itba.paw.services.exceptions.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -67,7 +67,7 @@ public class UserServiceImpl implements UserService {
 
     @Transactional
     @Override
-    public User create(final User user, final byte[] profilePic) throws UserEmailAlreadyTakenException {
+    public User create(final User user, final byte[] profilePic) throws ar.edu.itba.paw.services.exceptions.UserEmailAlreadyTakenException {
         final Image image = imageDao.create(profilePic);
 
         final String confirmToken = generateConfirmToken();
@@ -81,9 +81,9 @@ public class UserServiceImpl implements UserService {
                             .imageId(image.getId())
                             .build()
             );
-        } catch (final UserEmailAlreadyTakenPersistenceException e) {
+        } catch (final EmailAlreadyTakenException e) {
             LOGGER.info("User {} failed to create", user.getEmail());
-            throw new UserEmailAlreadyTakenException();
+            throw new ar.edu.itba.paw.services.exceptions.UserEmailAlreadyTakenException();
         }
 
         Optional<Role> maybeRole = rolesService.findByName("USER");
@@ -99,7 +99,7 @@ public class UserServiceImpl implements UserService {
 
     @Transactional
     @Override
-    public User create(final User user) throws UserEmailAlreadyTakenException, IOException {
+    public User create(final User user) throws ar.edu.itba.paw.services.exceptions.UserEmailAlreadyTakenException, IOException {
         File file = ResourceUtils.getFile("classpath:images/default_user.png");
         byte[] defaultImg = Files.readAllBytes(file.toPath());
         return create(user, defaultImg);

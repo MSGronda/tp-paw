@@ -5,14 +5,14 @@ import ar.edu.itba.paw.models.Subject;
 import ar.edu.itba.paw.models.SubjectClass;
 import ar.edu.itba.paw.models.User;
 import ar.edu.itba.paw.models.enums.SubjectProgress;
-import ar.edu.itba.paw.persistence.exceptions.UserEmailAlreadyTakenPersistenceException;
+import ar.edu.itba.paw.persistence.exceptions.EmailAlreadyTakenException;
 
 import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
 
 public interface UserDao extends RWDao<Long,User> {
-    User create(final User user) throws UserEmailAlreadyTakenPersistenceException;
+    User create(final User user) throws EmailAlreadyTakenException;
 
     Optional<User> findByEmail(final String email);
     Optional<User> findUnconfirmedByEmail(final String email);

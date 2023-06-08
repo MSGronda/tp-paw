@@ -10,7 +10,7 @@ public class RecoveryToken {
     private String token;
 
     @OneToOne(optional = false)
-    @PrimaryKeyJoinColumn(name = "userid")
+    @JoinColumn(name = "userid")
     private User user;
 
     @Column(name = "created", nullable = false)

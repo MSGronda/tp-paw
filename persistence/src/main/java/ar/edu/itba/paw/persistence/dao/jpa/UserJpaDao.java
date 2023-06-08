@@ -6,7 +6,7 @@ import ar.edu.itba.paw.models.SubjectClass;
 import ar.edu.itba.paw.models.User;
 import ar.edu.itba.paw.models.enums.SubjectProgress;
 import ar.edu.itba.paw.persistence.dao.UserDao;
-import ar.edu.itba.paw.persistence.exceptions.UserEmailAlreadyTakenPersistenceException;
+import ar.edu.itba.paw.persistence.exceptions.EmailAlreadyTakenException;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
@@ -20,11 +20,11 @@ public class UserJpaDao implements UserDao {
     private EntityManager em;
 
     @Override
-    public User create(User user) throws UserEmailAlreadyTakenPersistenceException {
+    public User create(User user) throws EmailAlreadyTakenException {
         if (!user.getConfirmToken().isPresent())
             throw new IllegalArgumentException("Confirm token must be present");
-        if( findByEmail(user.getEmail()).isPresent() )
-            throw new UserEmailAlreadyTakenPersistenceException();
+        if( findByEmail(user.getEmail()).isPresent() || findUnconfirmedByEmail(user.getEmail()).isPresent() )
+            throw new EmailAlreadyTakenException();
         em.persist(user);
         return user;
     }

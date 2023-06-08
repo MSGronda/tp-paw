@@ -3,6 +3,7 @@ package ar.edu.itba.paw.models;
 import ar.edu.itba.paw.models.enums.Difficulty;
 import ar.edu.itba.paw.models.enums.TimeDemanding;
 import org.hibernate.annotations.Formula;
+import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
 import java.util.List;
@@ -32,7 +33,9 @@ public class Review {
     @Column(name = "timedemanding")
     private TimeDemanding timeDemanding;
 
-    @Column(name = "revtext", columnDefinition = "TEXT", nullable = false)
+    @Lob
+    @Type(type = "org.hibernate.type.TextType")
+    @Column(name = "revtext", nullable = false)
     private String text;
 
     @Column(name = "useranonymous")
