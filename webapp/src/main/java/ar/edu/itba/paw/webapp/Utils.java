@@ -1,8 +1,13 @@
 package ar.edu.itba.paw.webapp;
 
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+import org.springframework.web.util.UrlPathHelper;
+
+import javax.servlet.http.HttpServletRequest;
 
 public class Utils {
+    private static final UrlPathHelper urlPathHelper = new UrlPathHelper();
+
     private Utils(){}
 
     public static String getBaseUrl() {

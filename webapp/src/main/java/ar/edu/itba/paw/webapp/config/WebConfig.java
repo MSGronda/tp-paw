@@ -1,5 +1,6 @@
 package ar.edu.itba.paw.webapp.config;
 
+import ar.edu.itba.paw.webapp.interceptors.DegreeSelectInterceptor;
 import ar.edu.itba.paw.webapp.interceptors.LocaleInterceptor;
 import org.flywaydb.core.Flyway;
 import org.slf4j.Logger;
@@ -59,6 +60,10 @@ public class WebConfig extends WebMvcConfigurerAdapter {
     @Lazy
     @Autowired
     private LocaleInterceptor localeInterceptor;
+
+    @Lazy
+    @Autowired
+    private DegreeSelectInterceptor degreeSelectInterceptor;
 
     @Bean
     ViewResolver viewResolver() {
@@ -153,6 +158,7 @@ public class WebConfig extends WebMvcConfigurerAdapter {
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         super.addInterceptors(registry);
+        registry.addInterceptor(degreeSelectInterceptor);
         registry.addInterceptor(localeInterceptor);
     }
 }
