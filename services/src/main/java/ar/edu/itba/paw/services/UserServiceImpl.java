@@ -26,6 +26,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.security.SecureRandom;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -212,31 +213,30 @@ public class UserServiceImpl implements UserService {
 
         final String token = new String(Base64.getUrlEncoder().encode(bytes));
 
-        recDao.create(token, user.getId());
+        recDao.create(token, user);
 
         return token;
     }
 
     @Override
     public boolean isValidRecoveryToken(final String token) {
-        return recDao.findUserIdByToken(token).isPresent();
+        return recDao.findUserByToken(token).isPresent();
     }
 
     @Transactional
     @Override
     public void recoverPassword(final String token, final String newPassword) throws InvalidTokenException {
-        final Optional<Long> optUserId = recDao.findUserIdByToken(token);
-        if(!optUserId.isPresent()){
+        final Optional<User> maybeUser = recDao.findUserByToken(token);
+        if(!maybeUser.isPresent()){
             LOGGER.info("Invalid token when trying to recover password");
             throw new InvalidTokenException();
         }
 
-        final long userId = optUserId.get();
-        final User user = userDao.findById(userId).orElseThrow(IllegalStateException::new);
+        final User user = maybeUser.get();
 
         userDao.changePassword(user, passwordEncoder.encode(newPassword));
-        recDao.delete(token);
-        autoLogin(userId);
+        recDao.delete(user.getRecoveryToken());
+        autoLogin(user);
     }
 
     @Transactional
@@ -250,7 +250,7 @@ public class UserServiceImpl implements UserService {
         final User user = optUser.get();
 
         userDao.confirmUser(user);
-        autoLogin(user.getId());
+        autoLogin(user);
     }
 
     @Transactional
@@ -264,27 +264,6 @@ public class UserServiceImpl implements UserService {
     @Override
     public void setLocaleAsync(final User user, final Locale locale) {
         setLocale(user, locale);
-    }
-
-    private void autoLogin(final long userId) {
-        final Optional<User> maybeUser = findById(userId);
-        if(!maybeUser.isPresent()){
-            LOGGER.info("No registered user with id {}", userId);
-            throw new UserEmailNotFoundException();
-        }
-        User user = maybeUser.get();
-        final Collection<GrantedAuthority> authorities = new HashSet<>();
-        authorities.add(new SimpleGrantedAuthority(String.format("ROLE_%s", Role.RoleEnum.USER.getName())));
-        Authentication auth = new UsernamePasswordAuthenticationToken(user.getEmail(), user.getPassword(), authorities);
-        SecurityContextHolder.getContext().setAuthentication(auth);
-        LOGGER.info("Auto login for user {}", userId);
-    }
-
-    private String generateConfirmToken() {
-        final SecureRandom random = new SecureRandom();
-        final byte[] bytes = new byte[20];
-        random.nextBytes(bytes);
-        return new String(Base64.getUrlEncoder().encode(bytes));
     }
 
     @Override
@@ -340,5 +319,22 @@ public class UserServiceImpl implements UserService {
     @Override
     public void updateRoles(final User user, final Role role) {
         userDao.updateRoles(user, role);
+    }
+
+    private void autoLogin(final User user) {
+        final Collection<GrantedAuthority> authorities = user.getRoles().stream()
+                .map(role -> new SimpleGrantedAuthority(String.format("ROLE_%s", role.getName())))
+                .collect(Collectors.toSet());
+
+        Authentication auth = new UsernamePasswordAuthenticationToken(user.getEmail(), user.getPassword(), authorities);
+        SecurityContextHolder.getContext().setAuthentication(auth);
+        LOGGER.info("Auto login for user {}", user.getId());
+    }
+
+    private String generateConfirmToken() {
+        final SecureRandom random = new SecureRandom();
+        final byte[] bytes = new byte[20];
+        random.nextBytes(bytes);
+        return new String(Base64.getUrlEncoder().encode(bytes));
     }
 }

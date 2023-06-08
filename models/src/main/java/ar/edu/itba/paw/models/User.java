@@ -73,6 +73,9 @@ public class User {
     )
     private Set<SubjectClass> userSemester;
 
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private RecoveryToken recoveryToken;
+
     @Formula("(SELECT COALESCE(SUM(s.credits), 0) " +
             "FROM subjects s JOIN usersubjectprogress up ON s.id = up.idsub " +
             "WHERE up.iduser = id AND up.subjectstate = 1)")
@@ -165,6 +168,10 @@ public class User {
 
     public Degree getDegree() {
         return degree;
+    }
+
+    public RecoveryToken getRecoveryToken() {
+        return recoveryToken;
     }
 
     public void setEmail(String email) {
