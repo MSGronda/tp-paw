@@ -17,7 +17,7 @@ public class DegreeJpaDao implements DegreeDao {
     private EntityManager em;
 
     @Override
-    public Degree create(String name) throws SQLException {
+    public Degree create(String name) {
         final Degree deg = new Degree(name);
         em.persist(deg);
         return deg;

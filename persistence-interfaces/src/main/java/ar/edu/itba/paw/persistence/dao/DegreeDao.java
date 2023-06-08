@@ -7,7 +7,7 @@ import java.sql.SQLException;
 import java.util.Optional;
 
 public interface DegreeDao extends ReadableDao<Long, Degree> {
-    Degree create(final String name) throws SQLException;
+    Degree create(final String name);
     Optional<Degree> findByName(final String name);
 
     Optional<Integer> findSubjectSemesterForDegree(final Subject subject, final Degree degree);

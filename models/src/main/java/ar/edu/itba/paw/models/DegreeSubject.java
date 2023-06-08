@@ -6,7 +6,7 @@ import java.util.Objects;
 
 @Entity
 @Table(name = "subjectsdegrees")
-class DegreeSubject {
+public class DegreeSubject {
     @EmbeddedId
     private Key key;
 
@@ -20,10 +20,17 @@ class DegreeSubject {
     @JoinColumn(name = "idsub")
     private Subject subject;
 
-    @Column
+    @Column(nullable = false)
     private int semester;
 
     protected DegreeSubject() {}
+
+    public DegreeSubject(final Degree degree, final Subject subject, final int semester) {
+        this.degree = degree;
+        this.subject = subject;
+        this.semester = semester;
+        this.key = new Key(degree.getId(), subject.getId());
+    }
 
     public Degree getDegree() {
         return degree;
@@ -59,6 +66,11 @@ class DegreeSubject {
         private String subjectId;
 
         protected Key() {}
+
+        protected Key(final long degreeId, final String subjectId) {
+            this.degreeId = degreeId;
+            this.subjectId = subjectId;
+        }
 
         public long getDegreeId() {
             return degreeId;
