@@ -38,13 +38,13 @@ public class TestConfig {
         return ds;
     }
 
-    @Bean(initMethod = "migrate")
-    @DependsOn("dataSourceInitializer")
-    public Flyway flyway() {
-        return Flyway.configure()
-                .dataSource(dataSource())
-                .load();
-    }
+//    @Bean(initMethod = "migrate")
+//    @DependsOn("dataSourceInitializer")
+//    public Flyway flyway() {
+//        return Flyway.configure()
+//                .dataSource(dataSource())
+//                .load();
+//    }
 
     @Bean
     public DataSourceInitializer dataSourceInitializer(final DataSource ds) {
@@ -68,7 +68,7 @@ public class TestConfig {
     }
 
     @Bean
-    @DependsOn("flyway")
+//    @DependsOn("flyway")
     public LocalContainerEntityManagerFactoryBean entityManagerFactory() {
         final LocalContainerEntityManagerFactoryBean factoryBean = new
                 LocalContainerEntityManagerFactoryBean();

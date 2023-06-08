@@ -31,6 +31,13 @@ public class SubjectClass {
 
     protected SubjectClass() {}
 
+    public SubjectClass(final String classId, final Subject subject) {
+        this.key = new Key(classId, subject.getId());
+        this.subject = subject;
+        this.professors = new ArrayList<>();
+        this.classTimes = new ArrayList<>();
+    }
+
     public List<SubjectClassTime> getClassTimes() {
         return classTimes;
     }
