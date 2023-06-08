@@ -341,4 +341,24 @@ public class UserServiceImpl implements UserService {
     public void updateRoles(final User user, final Role role) {
         userDao.updateRoles(user, role);
     }
+
+    @Transactional
+    @Override
+    public void updateUserDegree(final User user, final Degree degree){
+        userDao.updateUserDegree(user, degree);
+
+    }
+
+    @Transactional
+    @Override
+    public void setAllSubjectProgress(final User user, final String subjectIdsStringify){
+        List<String> subjectIds = parseString(subjectIdsStringify);
+        Map<String, SubjectProgress> progressMap = new HashMap<>();
+
+        for(String subjectId : subjectIds){
+            progressMap.put(subjectId, SubjectProgress.DONE);
+        }
+
+        userDao.setAllSubjectProgress(user, progressMap);
+    }
 }

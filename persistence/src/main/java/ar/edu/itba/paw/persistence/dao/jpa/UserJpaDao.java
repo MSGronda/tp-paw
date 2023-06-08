@@ -1,9 +1,6 @@
 package ar.edu.itba.paw.persistence.dao.jpa;
 
-import ar.edu.itba.paw.models.Role;
-import ar.edu.itba.paw.models.Subject;
-import ar.edu.itba.paw.models.SubjectClass;
-import ar.edu.itba.paw.models.User;
+import ar.edu.itba.paw.models.*;
 import ar.edu.itba.paw.models.enums.SubjectProgress;
 import ar.edu.itba.paw.persistence.dao.UserDao;
 import ar.edu.itba.paw.persistence.exceptions.UserEmailAlreadyTakenPersistenceException;
@@ -74,6 +71,11 @@ public class UserJpaDao implements UserDao {
         final Map<String, SubjectProgress> sp = user.getSubjectProgress();
         sp.clear();
         sp.putAll(progressMap);
+    }
+
+    @Override
+    public void updateUserDegree(final User user, final Degree degree){
+        user.setDegree(degree);
     }
 
     @Override

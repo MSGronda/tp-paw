@@ -14,6 +14,7 @@ import ar.edu.itba.paw.webapp.form.EditUserPasswordForm;
 import ar.edu.itba.paw.webapp.form.RecoverPasswordForm;
 import ar.edu.itba.paw.webapp.form.UserForm;
 import ar.edu.itba.paw.webapp.Utils;
+import org.hibernate.sql.Update;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
@@ -382,5 +383,33 @@ public class UserController {
         userService.updateSubjectProgress(user, subject, SubjectProgress.parse(progressForm.getProgress()));
 
         return "voted";
+    }
+
+    @RequestMapping(value = "/select-degree", method = RequestMethod.POST )
+    public ModelAndView selectDegreeSubmit(@Valid @ModelAttribute ("UpdateDegreeForm") final UpdateDegreeForm updateDegreeForm,
+                                           final BindingResult errors){
+        if(errors.hasErrors()){
+            return selectDegree(updateDegreeForm);
+        }
+
+        User user = authUserService.getCurrentUser();
+
+        userService.updateUserDegree(user, degreeService.findById(updateDegreeForm.getDegreeId()).orElseThrow(IllegalStateException::new));
+
+        userService.setAllSubjectProgress(user, updateDegreeForm.getSubjectIds() );
+
+        return new ModelAndView("redirect:/");
+    }
+
+    @RequestMapping(value = "/select-degree", method = RequestMethod.GET )
+    public ModelAndView selectDegree(@ModelAttribute ("UpdateDegreeForm") final UpdateDegreeForm updateDegreeForm){
+        List<Degree> degreeList = degreeService.getAll();
+        User user = authUserService.getCurrentUser();
+
+        ModelAndView mav = new ModelAndView("user/onboarding");
+        mav.addObject("degrees", degreeList);
+        mav.addObject("user", user);
+
+        return mav;
     }
 }

@@ -1,9 +1,6 @@
 package ar.edu.itba.paw.persistence.dao;
 
-import ar.edu.itba.paw.models.Role;
-import ar.edu.itba.paw.models.Subject;
-import ar.edu.itba.paw.models.SubjectClass;
-import ar.edu.itba.paw.models.User;
+import ar.edu.itba.paw.models.*;
 import ar.edu.itba.paw.models.enums.SubjectProgress;
 import ar.edu.itba.paw.persistence.exceptions.UserEmailAlreadyTakenPersistenceException;
 
@@ -22,6 +19,8 @@ public interface UserDao extends RWDao<Long,User> {
     void deleteSubjectProgress(final User user, final Subject subject);
     void updateSubjectProgress(final User user, final Subject subject, final SubjectProgress progress);
     void setAllSubjectProgress(final User user, final Map<String, SubjectProgress> progressMap);
+
+    void updateUserDegree(final User user, final Degree degree);
 
     void changePassword(final User user, final String password);
     void changeUsername(final User user, final String username);
