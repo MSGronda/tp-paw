@@ -119,7 +119,7 @@ public class UserJpaDaoTest {
 
         em.persist(user);
 
-        assertEquals(userJpaDao.findByEmail(EMAIL).get(), user);
+        assertEquals(user, userJpaDao.findByEmail(EMAIL).get());
     }
 
     @Test
@@ -147,7 +147,7 @@ public class UserJpaDaoTest {
 
         em.persist(user);
 
-        assertEquals(userJpaDao.findUnconfirmedByEmail(EMAIL).get(), user);
+        assertEquals(user, userJpaDao.findUnconfirmedByEmail(EMAIL).get());
     }
 
     @Test
@@ -162,10 +162,10 @@ public class UserJpaDaoTest {
         em.persist(user);
 
         assertEquals(
-                userJpaDao.findByConfirmToken(CONFIRM_TOKEN).get(),
                 em.createQuery("from User where confirmToken = :confirmToken", User.class)
                         .setParameter("confirmToken", CONFIRM_TOKEN)
-                        .getSingleResult()
+                        .getSingleResult(),
+                userJpaDao.findByConfirmToken(CONFIRM_TOKEN).get()
         );
     }
 
@@ -216,10 +216,10 @@ public class UserJpaDaoTest {
         em.persist(user);
 
         userJpaDao.updateSubjectProgress(user, subject, SubjectProgress.DONE);
-        assertEquals(user.getSubjectProgress().get(subject.getId()), SubjectProgress.DONE);
+        assertEquals(SubjectProgress.DONE, user.getSubjectProgress().get(subject.getId()));
 
         userJpaDao.updateSubjectProgress(user, subject, SubjectProgress.PENDING);
-        assertEquals(user.getSubjectProgress().get(subject.getId()), SubjectProgress.PENDING);
+        assertEquals(SubjectProgress.PENDING, user.getSubjectProgress().get(subject.getId()));
     }
 
     @Test
@@ -234,7 +234,7 @@ public class UserJpaDaoTest {
         em.persist(user);
 
         userJpaDao.changePassword(user, PASSWORD2);
-        assertEquals(user.getPassword(), PASSWORD2);
+        assertEquals(PASSWORD2, user.getPassword());
     }
 
     @Test
@@ -249,7 +249,7 @@ public class UserJpaDaoTest {
         em.persist(user);
 
         userJpaDao.changeUsername(user, USERNAME2);
-        assertEquals(user.getUsername(), USERNAME2);
+        assertEquals(USERNAME2, user.getUsername());
     }
 
     @Test
@@ -278,7 +278,7 @@ public class UserJpaDaoTest {
         em.persist(user);
 
         userJpaDao.setLocale(user, Locale.ENGLISH);
-        assertEquals(user.getLocale().get(), Locale.ENGLISH);
+        assertEquals(Locale.ENGLISH, user.getLocale().get());
     }
 
     @Test
@@ -337,7 +337,7 @@ public class UserJpaDaoTest {
         em.persist(user);
 
         userJpaDao.updateConfirmToken(user, CONFIRM_TOKEN2);
-        assertEquals(user.getConfirmToken().get(), CONFIRM_TOKEN2);
+        assertEquals(CONFIRM_TOKEN2, user.getConfirmToken().get());
     }
 
     @Test
