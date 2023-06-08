@@ -70,6 +70,13 @@ public class UserJpaDao implements UserDao {
     }
 
     @Override
+    public void setAllSubjectProgress(final User user, final Map<String, SubjectProgress> progressMap) {
+        final Map<String, SubjectProgress> sp = user.getSubjectProgress();
+        sp.clear();
+        sp.putAll(progressMap);
+    }
+
+    @Override
     public void changePassword(final User user, final String password) {
         user.setPassword(password);
     }

@@ -9,6 +9,7 @@ import ar.edu.itba.paw.persistence.exceptions.UserEmailAlreadyTakenPersistenceEx
 
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Optional;
 
 public interface UserDao extends RWDao<Long,User> {
@@ -20,6 +21,7 @@ public interface UserDao extends RWDao<Long,User> {
 
     void deleteSubjectProgress(final User user, final Subject subject);
     void updateSubjectProgress(final User user, final Subject subject, final SubjectProgress progress);
+    void setAllSubjectProgress(final User user, final Map<String, SubjectProgress> progressMap);
 
     void changePassword(final User user, final String password);
     void changeUsername(final User user, final String username);
