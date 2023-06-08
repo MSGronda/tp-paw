@@ -23,6 +23,7 @@ public class Degree {
 
     public Degree(String name) {
         this.name = name;
+        this.subjects = new ArrayList<>();
     }
 
     protected Degree() {}

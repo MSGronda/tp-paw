@@ -149,10 +149,6 @@ public class User {
         return roles;
     }
 
-    public List<Review> getReviews() {
-        return reviews;
-    }
-
     public List<ReviewVote> getVotes() {
         return votes;
     }
