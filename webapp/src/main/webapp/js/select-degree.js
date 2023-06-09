@@ -134,10 +134,10 @@ function updateDegreeSelection() {
 
     // Attach event listeners to each year checkbox
     electiveCheckboxes.forEach((checkbox) => {
-        if( subjectProgress && subjectProgress[checkbox.id.split('-')[5]] != null ){
+        if( subjectProgress && subjectProgress[checkbox.id.split('-')[3]] != null ){
             checkbox.checked = true;
-            if( subjectList.findIndex(element => element === checkbox.id.split('-')[5]) === -1 ){
-                subjectList.push(checkbox.id.split('-')[5])
+            if( subjectList.findIndex(element => element === checkbox.id.split('-')[3]) === -1 ){
+                subjectList.push(checkbox.id.split('-')[3])
                 document.getElementById('hiddenInput').value = JSON.stringify(subjectList);
             }
         }
