@@ -12,25 +12,6 @@
         .select-button{
             margin-bottom: 1rem;
         }
-
-        .YearItem {
-            display: flex;
-            flex-direction: row;
-            width: 100%;
-        }
-
-        .checkbox-label{
-           margin-top: 1.4rem;
-        }
-
-        .tree{
-            width: 100%;
-        }
-
-        .elective-tree{
-            margin-left: 1.65rem;
-            width: 100%;
-        }
     </style>
 </head>
 <body>
@@ -87,45 +68,8 @@
                 <sl-button variant="success" onclick="nextStep()" id="nextButton" disabled><spring:message code="register.next"/></sl-button>
             </div>
             <div id="step3" style="display: none">
-                <c:forEach var="degree" items="${degrees}">
-                    <h1 id="degree-${degree.id}" style="display: none"><c:out value="${degree.name}"/></h1>
-                </c:forEach>
-                <h3 style="font-weight: normal"><spring:message code="register.selectSubjects"/></h3>
-                <c:forEach var="degree" items="${degrees}">
-                    <sl-tree id="tree-${degree.id}" style="display: none">
-                        <c:forEach var="year" items="${degree.years}">
-                            <div class="YearItem">
-                                <div class="checkbox-label">
-                                    <sl-checkbox id="degree-${degree.id}-year-checkbox-${year.number}" class="degree-${degree.id}-year-checkbox"></sl-checkbox>
-                                </div>
-                                <sl-tree-item class="tree">
-                                    <h3 ><spring:message code="subject.year" arguments="${year.number}"/></h3>
-                                    <c:forEach var="subject" items="${year.subjects}">
-                                        <sl-tree-item>
-                                            <sl-checkbox id="degree-${degree.id}-year-${year.number}-subject-${subject.id}" class="degree-${degree.id}-year-${year.number}-subject">
-                                                <c:out value="${subject.name}"/>
-                                            </sl-checkbox>
-                                        </sl-tree-item>
-                                    </c:forEach>
-                                </sl-tree-item>
-                            </div>
-                        </c:forEach>
-                        <div id="elective-tree-${degree.id}" style="display:none;">
-                            <div class="YearItem">
-                                <sl-tree-item class="elective-tree">
-                                    <h3><spring:message code="home.electives"/></h3>
-                                    <c:forEach var="elective" items="${degree.electives}">
-                                        <sl-tree-item>
-                                            <sl-checkbox id="elective-${degree.id}-subject-${elective.id}" class="elective-${degree.id}-subject">
-                                                <c:out value="${elective.name}"/>
-                                            </sl-checkbox>
-                                        </sl-tree-item>
-                                    </c:forEach>
-                                </sl-tree-item>
-                            </div>
-                        </div>
-                    </sl-tree>
-                </c:forEach>
+                <c:set var="degrees" value="${degrees}" scope="request"/>
+                <c:import url="../components/degrees_tree.jsp"/>
                 <br/>
                 <input name="subjectIds" type="hidden" id="hiddenInput"/>
                 <sl-button variant="success" onclick="previousStep()"><spring:message code="register.previous"/></sl-button>
@@ -274,7 +218,6 @@
 
 
 </script>
-<script type="module" src="https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.4.0/dist/components/tree/tree.js"></script>
 
 </body>
 </html>

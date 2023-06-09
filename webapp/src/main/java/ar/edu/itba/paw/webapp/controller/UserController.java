@@ -406,6 +406,10 @@ public class UserController {
         List<Degree> degreeList = degreeService.getAll();
         User user = authUserService.getCurrentUser();
 
+        if(user.getDegree() != null){
+            return new ModelAndView("redirect:/" );
+        }
+
         ModelAndView mav = new ModelAndView("user/onboarding");
         mav.addObject("degrees", degreeList);
         mav.addObject("user", user);
