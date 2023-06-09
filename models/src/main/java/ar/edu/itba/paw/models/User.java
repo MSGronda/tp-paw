@@ -190,6 +190,10 @@ public class User {
         this.confirmToken = confirmToken;
     }
 
+    public void setDegree(Degree degree) {
+        this.degree = degree;
+    }
+
     public void setImageId(long imageId) {
         this.imageId = imageId;
     }

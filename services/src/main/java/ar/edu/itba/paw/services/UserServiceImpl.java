@@ -337,4 +337,24 @@ public class UserServiceImpl implements UserService {
         random.nextBytes(bytes);
         return new String(Base64.getUrlEncoder().encode(bytes));
     }
+
+    @Transactional
+    @Override
+    public void updateUserDegree(final User user, final Degree degree){
+        userDao.updateUserDegree(user, degree);
+
+    }
+
+    @Transactional
+    @Override
+    public void setAllSubjectProgress(final User user, final String subjectIdsStringify){
+        List<String> subjectIds = parseString(subjectIdsStringify);
+        Map<String, SubjectProgress> progressMap = new HashMap<>();
+
+        for(String subjectId : subjectIds){
+            progressMap.put(subjectId, SubjectProgress.DONE);
+        }
+
+        userDao.setAllSubjectProgress(user, progressMap);
+    }
 }
