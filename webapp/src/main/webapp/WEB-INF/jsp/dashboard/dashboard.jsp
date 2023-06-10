@@ -152,14 +152,19 @@
       .builder-button {
           color: #79b2fc;
       }
-      .finish-button{
+      .semester-edit-area{
         position: fixed;
         bottom: 1.5rem;
         right: 1.5rem;
+        display: flex;
+        flex-direction: column;
       }
       .finish-button-icon{
-        font-size: 3rem;
+        font-size: 2rem;
         padding-top: 0.15rem;
+      }
+      .semester-edit-button{
+        padding: 0.2rem;
       }
 
       /*  Future subjects  */
@@ -295,11 +300,16 @@
             </c:if>
           </div>
             <c:if test="${user.userSemester.size() != 0}">
-              <sl-tooltip content="Click to complete this semester">
-                <sl-button href="${pageContext.request.contextPath}/builder/finish" variant="success" size="large" circle class="finish-button">
-                  <sl-icon class="finish-button-icon" name="check"></sl-icon>
+              <div class="semester-edit-area">
+                <sl-button href="${pageContext.request.contextPath}/builder/finish" variant="success" size="large" class="semester-edit-button">
+                  <spring:message code="dashboard.currentSemester.finish"/>
+                  <sl-icon slot="suffix" class="finish-button-icon" name="check"></sl-icon>
                 </sl-button>
-              </sl-tooltip>
+                <sl-button href="${pageContext.request.contextPath}/builder" size="large" class="semester-edit-button">
+                  <spring:message code="dashboard.currentSemester.edit"/>
+                  <sl-icon slot="suffix" class="finish-button-icon" style="font-size: 1.2rem" name="pencil"></sl-icon>
+                </sl-button>
+              </div>
             </c:if>
         </sl-tab-panel>
 
