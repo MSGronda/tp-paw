@@ -5,6 +5,7 @@ import ar.edu.itba.paw.models.enums.ReviewVoteType;
 import ar.edu.itba.paw.services.exceptions.NoGrantedPermissionException;
 import java.sql.SQLException;
 import java.util.List;
+import java.util.Map;
 
 public interface ReviewService extends BaseService<Long, Review> {
     Review create(final Review review) throws SQLException;
@@ -20,6 +21,13 @@ public interface ReviewService extends BaseService<Long, Review> {
     void voteReview(final User user, final Review review, final ReviewVoteType vote);
 
     Boolean didUserReview(final Subject subject, final User user);
+    String getFirstSubjectIdFromReviewList(String param);
+    boolean nextReviewInList(final Map<String, String> params);
+    String regenerateManyReviewParams(final Map<String, String> params);
+
+    boolean validReviewParam(final Map<String, String> params);
+
+
 
     void update(final Review review) throws NoGrantedPermissionException;
     void delete(final Review review) throws NoGrantedPermissionException;

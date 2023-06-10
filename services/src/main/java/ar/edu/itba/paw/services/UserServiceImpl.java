@@ -155,6 +155,9 @@ public class UserServiceImpl implements UserService {
     @Override
     public void updateSubjectProgressWithSubList( final User user, final String subIds){
         List<String> subjectIdList = parseString(subIds);
+        if(subjectIdList.isEmpty()){
+            return;
+        }
         userDao.updateSubjectProgressList(user, subjectIdList);
     }
 
@@ -162,9 +165,10 @@ public class UserServiceImpl implements UserService {
         String trimmedInput = stringifyString.replace("[", "").replace("]", "");
         String[] elements = trimmedInput.split(",");
 
-
-
         List<String> parsedList = new ArrayList<>();
+        if(elements[0].equals("")){
+            return parsedList;
+        }
         for (String element : elements) {
             // Remove quotes around each element
             String parsedElement = element.replace("\"", "");
@@ -172,7 +176,6 @@ public class UserServiceImpl implements UserService {
         }
 
         return parsedList;
-
     }
 
     @Transactional
@@ -307,6 +310,36 @@ public class UserServiceImpl implements UserService {
     @Override
     public void removeFromCurrentSemester(User user, SubjectClass subjectClass) {
         userDao.removeFromCurrentSemester(user,subjectClass);
+    }
+
+    @Transactional
+    @Override
+    public void clearSemester(final User user) {
+        userDao.clearSemester(user);
+    }
+
+    @Override
+    public boolean canReviewGivenSubjectList(final String subjectIds){
+        return !subjectIds.equals("[]");
+    }
+
+    @Override
+    public String generateSemesterReviewUrl(final String subjectIds){
+        List<String> subjectIdList = parseString(subjectIds);
+
+        StringBuilder sb = new StringBuilder("?r=");
+        int i=0;
+        for(String subIds : subjectIdList){
+            sb.append(subIds);
+            if(i + 1 < subjectIdList.size()){
+                sb.append(" ");
+            }
+            i++;
+        }
+        sb.append("&current=0");
+        sb.append("&total=").append(i);
+
+        return sb.toString();
     }
 
     @Transactional

@@ -262,7 +262,7 @@
     color: black;
     background-color: white;
     margin: 0;
-    padding: 0;
+    padding: 1rem;
   }
   sl-tooltip::part(base__arrow) {
     background-color: white;
@@ -463,14 +463,13 @@
 
           <c:forEach var="subject" items="${availableSubjects}">
           <div class="class-subject-list" id="classes-${subject.id}">
-
             <c:forEach var="subClass" items="${subject.classes}">
             <sl-card id="class-card-${subject.id}-${subClass.classId}" class="class-card">
               <div class="chooser" slot="header">
                 <h5>${subClass.classId}</h5>
                 <form id="form-select-class-${subject.id}-${subClass.classId}" method="post" action="${pageContext.request.contextPath}/builder/add">
-                  <input type="hidden" id="idSub-add" name="idSub" value="${subject.id}">
-                  <input type="hidden" id="idClass-add" name="idClass" value="${subClass.classId}">
+                  <input type="hidden" id="idSub-add-${subject.id}" name="idSub" value="${subject.id}">
+                  <input type="hidden" id="idClass-add-${subject.id}" name="idClass" value="${subClass.classId}">
 
                   <sl-button type="submit" id="select-class-${subject.id}-${subClass.classId}" variant="default" size="small" circle>
                     <sl-icon class="icon" name="check2" label="Select Subject"></sl-icon>
@@ -478,8 +477,8 @@
                 </form>
 
                 <form style="display: none" id="form-deselect-class-${subject.id}-${subClass.classId}" method="post" action="${pageContext.request.contextPath}/builder/remove">
-                  <input type="hidden" id="idSub-remove" name="idSub" value="${subject.id}">
-                  <input type="hidden" id="idClass-remove" name="idClass" value="${subClass.classId}">
+                  <input type="hidden" id="idSub-remove-${subject.id}" name="idSub" value="${subject.id}">
+                  <input type="hidden" id="idClass-remove-${subject.id}" name="idClass" value="${subClass.classId}">
 
                 <sl-button  type="submit" id="deselect-class-${subject.id}-${subClass.classId}"
                            variant="default" size="small" circle>
@@ -515,9 +514,7 @@
                     </c:forEach>
                     </tbody>
                   </table>
-
               </div>
-
             </sl-card>
             </c:forEach>
 
@@ -525,13 +522,22 @@
             <sl-card id="class-card-${subject.id}-0" class="class-card">
               <div class="chooser" slot="header">
                 <h5><c:out value="${subject.name}"/></h5>
-                <sl-button id="select-class-${subject.id}-0" variant="default" size="small" circle>
-                  <sl-icon class="icon" name="check2" label="Select Subject"></sl-icon>
-                </sl-button>
-                <sl-button style="display: none;" id="deselect-class-${subject.id}-0"
-                           variant="default" size="small" circle>
-                  <sl-icon class="icon" name="x-lg" label="Select Subject"></sl-icon>
-                </sl-button>
+                <form id="form-select-class-${subject.id}-${0}" method="post" action="${pageContext.request.contextPath}/builder/add">
+                    <input type="hidden" id="idSub-add-${subject.id}" name="idSub" value="${subject.id}">
+                    <input type="hidden" id="idClass-add-${subject.id}" name="idClass" value="${0}">
+                  <sl-button id="select-class-${subject.id}-0" variant="default" size="small" type="submit" circle>
+                    <sl-icon class="icon" name="check2" label="Select Subject"></sl-icon>
+                  </sl-button>
+                </form>
+
+                <form style="display: none" id="form-deselect-class-${subject.id}-${0}" method="post" action="${pageContext.request.contextPath}/builder/remove">
+                  <input type="hidden" id="idSub-remove-${subject.id}" name="idSub" value="${subject.id}">
+                  <input type="hidden" id="idClass-remove-${subject.id}" name="idClass" value="${0}">
+                  <sl-button style="display: none;" id="deselect-class-${subject.id}-0"
+                             variant="default" size="small" circle>
+                    <sl-icon class="icon" name="x-lg" label="Select Subject"></sl-icon>
+                  </sl-button>
+                </form>
               </div>
             </sl-card>
             </c:if>
@@ -781,8 +787,11 @@
     // set switch to table view
     document.getElementById('switch-to-list-button').addEventListener('click',switchToListView);
 
+    const tooltip = document.querySelectorAll('.manual-tooltip');
+    const toggle = tooltip.lastElementChild;
+    const close = tooltip.firstElementChild;
 
-    alterUnlockables();
+
 
     const buttons = document.querySelectorAll('.open-button');
     buttons.forEach(button => {
@@ -798,6 +807,8 @@
     const closeButton = dialog.querySelector('sl-button[slot="footer"]');
 
 
+    disableIncompatibleSubjects();
+    alterUnlockables();
 </script>
 
 </html>
