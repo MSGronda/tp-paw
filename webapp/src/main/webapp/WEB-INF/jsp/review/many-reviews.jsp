@@ -5,7 +5,7 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html>
 <head>
-    <title>${subject.name} - Review</title>
+    <title><c:out value="${subject.name}"/> - <spring:message code="review.many.title"/></title>
     <jsp:include page="../components/head_shared.jsp"/>
     <style>
         .row{
@@ -70,7 +70,7 @@
                 </sl-radio-group>
             </div>
             <br />
-            <sl-button onclick="skip()">Skip</sl-button>
+            <sl-button onclick="skip()"><spring:message code="review.many.skip"/></sl-button>
             <sl-button type="submit" variant="success" onclick="this.disabled = true"><spring:message code="form.submit"/></sl-button>
         </div>
     </form:form>
