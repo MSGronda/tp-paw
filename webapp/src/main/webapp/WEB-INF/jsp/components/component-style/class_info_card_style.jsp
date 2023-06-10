@@ -1,6 +1,7 @@
 <style>
     .class-card{
         padding-top: 0.5rem;
+        width: 100%;
     }
     .class-card::part(base){
         width: 100%;

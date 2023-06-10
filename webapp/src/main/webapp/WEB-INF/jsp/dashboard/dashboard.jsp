@@ -293,7 +293,7 @@
                 </h3>
               </div>
             </c:if>
-          </div
+          </div>
             <c:if test="${user.userSemester.size() != 0}">
               <sl-tooltip content="Click to complete this semester">
                 <sl-button href="${pageContext.request.contextPath}/builder/finish" variant="success" size="large" circle class="finish-button">
