@@ -53,7 +53,7 @@
             <form:form id="subject-form" modelAttribute="UserSemesterFinishForm" action="${userSemester}" method="post" >
             <sl-card id="check-card" class="confirm-card">
                 <div slot="header">
-                    <h3 style="margin: 0.4rem 0">Select the subjects you passed</h3>
+                    <h3 style="margin: 0.4rem 0"><spring:message code="builder.finish.selectPassed"/></h3>
                 </div>
                 <div class="subject-list">
                     <input name="subjectIds" type="hidden" id="hiddenInput"/>
@@ -68,8 +68,8 @@
 
                 <div slot="footer">
                     <div class="submit-area">
-                        <sl-button href="${pageContext.request.contextPath}/">Cancel</sl-button>
-                        <sl-button variant="success" onclick="submit()" type="submit">Submit</sl-button>
+                        <sl-button href="${pageContext.request.contextPath}/"><spring:message code="builder.finish.cancel"/></sl-button>
+                        <sl-button variant="success" onclick="submit()" type="submit"><spring:message code="builder.finish.submit"/></sl-button>
                     </div>
                 </div>
             </sl-card>
