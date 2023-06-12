@@ -73,7 +73,9 @@ function alterSubjectCard(subjectId,color,colorBorder, disabled, subject){
     }else{
         const tooltip = card.parentElement;
         let text = tooltip.getAttribute('content')
-        text = subject.name + ', ' + text;
+        if(subject !== undefined){
+            text = subject.name + ', ' + text;
+        }
         tooltip.setAttribute('content', text)
     }
 
@@ -96,7 +98,9 @@ function alterClassCard(subjectId, classId, color,colorBorder, disabled, subject
     }else{
         const tooltip = card.parentElement;
         let text = tooltip.getAttribute('content')
-        text = subject.name + ', ' + text;
+        if(subject !== undefined){
+            text = subject.name + ', ' + text;
+        }
         tooltip.setAttribute('content', text)
     }
 
@@ -332,7 +336,7 @@ function switchToView(a,b){
 function downloadTable(csvName) {
     const csv_data = schedule.generateCsv();
 
-     const CSVFile = new Blob([csv_data], {
+    const CSVFile = new Blob([csv_data], {
         type: "text/csv"
     });
 

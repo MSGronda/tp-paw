@@ -150,7 +150,7 @@
   /* Semester overview */
   .semester-overview-tab-area{
     padding: 0.5rem 0.2rem;
-    width: 25%;
+    width: 30%;
     height: 100%;
   }
   .semester-overview-tab{
@@ -176,18 +176,21 @@
     padding-top: 0.5rem;
     padding-bottom: 0.5rem;
   }
-   .overview-item::part(body){
-     padding: 0.5rem;
-     display: flex;
-     align-items: center;
-     height: 100%;
-   }
-   .unlock-card{
-     height: 100%;
-   }
-   .unlock-card::part(base){
-     height: 100%;
-   }
+  .overview-item::part(body){
+    padding: 0.5rem;
+    display: flex;
+    align-items: center;
+    height: 100%;
+  }
+  .unlock-card{
+    height: 100%;
+  }
+  .unlock-card::part(base){
+    height: 70%;
+  }
+  .unlock-card::part(body){
+    height: 90%;
+  }
   .unlockable-list{
     height: 100%;
     width: 100%;
@@ -325,7 +328,7 @@
 <body>
 </body>
 <jsp:include page="../components/navbar.jsp"/>
-<main class="no-padding container-90">
+<main class="no-padding container-95">
   <div class="builder-area">
 
     <div id="choosing-tab" class="column chooser-tab">
@@ -353,6 +356,7 @@
         </div>
         <div id="subject-list" class="subject-list">
           <c:forEach var="subject" items="${availableSubjects}">
+            <c:if test="${subject.credits != 0}">
             <sl-dialog label="${subject.id}-${subject.name}" id="dialogue-${subject.id}" class="dialog-header-actions">
 
               <table>
@@ -440,6 +444,7 @@
                 </div>
               </div>
             </sl-card>
+            </c:if>
           </c:forEach>
         </div>
       </sl-card>
@@ -690,32 +695,34 @@
     let currentOrder = 'none'
 
     const subjectClasses = [
-        <c:forEach var="sub" items="${availableSubjects}">
-        {
-            'id': '${sub.id}', 'name': '${sub.name}', 'department': '${sub.department}', 'credits': ${sub.credits},
-            'classes': [
-                <c:forEach var="subClass" items="${sub.classes}">
-                {
-                    'idClass': '${subClass.classId}', 'classTimes': [
-                        <c:forEach var="classTime" items="${subClass.classTimes}">
-                        {
+      <c:forEach var="sub" items="${availableSubjects}">
+      <c:if test="${sub.credits != 0}">
+      {
+        'id': '${sub.id}', 'name': '${sub.name}', 'department': '${sub.department}', 'credits': ${sub.credits},
+        'classes': [
+          <c:forEach var="subClass" items="${sub.classes}">
+          {
+            'idClass': '${subClass.classId}', 'classTimes': [
+              <c:forEach var="classTime" items="${subClass.classTimes}">
+              {
 
-                            'day': '${classTime.day}',
-                            'start': '${classTime.startTime}',
-                            'end': '${classTime.endTime}',
-                            'loc': '${classTime.classLoc}',
-                            'building': '${classTime.building}',
-                            'mode': '${classTime.mode}'
-                        },
-                        </c:forEach>
-                    ]
-                },
-                </c:forEach>
-            ],
-          'difficulty': ${sub.reviewStats.difficulty.value},
-          'timeDemand': ${sub.reviewStats.timeDemanding.value}
-        },
-        </c:forEach>
+                'day': '${classTime.day}',
+                'start': '${classTime.startTime}',
+                'end': '${classTime.endTime}',
+                'loc': '${classTime.classLoc}',
+                'building': '${classTime.building}',
+                'mode': '${classTime.mode}'
+              },
+              </c:forEach>
+            ]
+          },
+          </c:forEach>
+        ],
+        'difficulty': ${sub.reviewStats.getDifficulty().value},
+        'timeDemand': ${sub.reviewStats.getTimeDemanding().value}
+      },
+      </c:if>
+      </c:forEach>
     ]
 
     <c:if test="${user.userSemester.size() != 0}">
@@ -806,7 +813,6 @@
     const closeButton = dialog.querySelector('sl-button[slot="footer"]');
 
 
-    disableIncompatibleSubjects();
     alterUnlockables();
 </script>
 

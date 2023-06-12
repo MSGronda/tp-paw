@@ -90,6 +90,15 @@ sl-card.subject-card::part(body) {
     justify-self: center;
     margin: 0 auto;
 }
+.container-95{
+    width: min(max(800px, 90%), 100%);
+    padding-left: 2rem;
+    padding-right: 2rem;
+    align-self: center;
+    justify-self: center;
+    margin: 0 auto;
+}
+
 
 
 .container-80{
