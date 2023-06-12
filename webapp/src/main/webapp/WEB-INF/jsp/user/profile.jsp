@@ -254,7 +254,7 @@
         function(event) {
             event.preventDefault();
             let url = window.location.href;
-            let pageNum = Number(urlParams.get('pageNum')) -1;
+            let pageNum = ${currentPage} -1;
             if(pageNum >= 0){
                 url = addOrUpdateParam(url,"pageNum",pageNum.toString());
             } else {
@@ -267,7 +267,7 @@
         function(event) {
             event.preventDefault();
             let url = window.location.href;
-            let pageNum = Number(urlParams.get('pageNum')) +1;
+            let pageNum = ${currentPage} +1;
             if(pageNum >= 0){
                 url = addOrUpdateParam(url,"pageNum",pageNum.toString());
             } else {

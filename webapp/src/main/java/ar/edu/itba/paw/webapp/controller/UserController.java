@@ -63,7 +63,7 @@ public class UserController {
     @RequestMapping("/user/{id:\\d+}")
     public ModelAndView user(
             @PathVariable long id,
-            @RequestParam(required = false, defaultValue = "1") final int page,
+            @RequestParam(required = false, defaultValue = "1") final int pageNum,
             @RequestParam(required = false, defaultValue = "easy") final String order,
             @RequestParam(required = false, defaultValue = "desc") final String dir
     ) {
@@ -79,7 +79,7 @@ public class UserController {
         final User user = maybeUser.get();
         ModelAndView mav = new ModelAndView("user/userProfile");
 
-        return setProfileData(mav, user, page, order, dir);
+        return setProfileData(mav, user, pageNum, order, dir);
     }
 
     @RequestMapping("/profile")
