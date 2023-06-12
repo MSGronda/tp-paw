@@ -42,7 +42,7 @@
             <c:url var="editProfile" value="/profile/editdata"/>
             <form:form modelAttribute="EditUserDataForm" action="${editProfile}" method="post" >
                 <sl-card class="card-basic">
-                    <spring:message code="profile.editing.username" arguments="${user.username}" argumentSeparator="${null}"/>
+                    <spring:message code="profile.editing.username" arguments="${user.username}" argumentSeparator=""/>
                     <br/>
                     <br />
                     <form:errors path="userName" cssClass="error" element="p"/>
