@@ -34,7 +34,6 @@
             font-weight: normal;
         }
     </style>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
 </head>
 <body>
 <jsp:include page="../components/navbar.jsp"/>
@@ -76,7 +75,7 @@
 </html>
 
 <script>
-    $('document').ready(function(){
+    window.onload = function(){
         const urlParams = new URLSearchParams(window.location.search);
         const tab = urlParams.get('tab')
         const tabGroup = document.querySelector('.year-group');
@@ -87,6 +86,6 @@
         else if(tab ==='electives'){
             tabGroup.show('electives');
         }
-    });
+    };
 
 </script>

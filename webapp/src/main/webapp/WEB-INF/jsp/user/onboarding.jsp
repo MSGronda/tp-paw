@@ -51,7 +51,7 @@
 <script>
     const subjectProgress = {
     <c:forEach var="entry" items="${user.subjectProgress}">
-        ${entry.key}: 1,
+        <c:out value="${entry.key}"/>: 1,
     </c:forEach>
     }
 </script>
