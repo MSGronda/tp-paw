@@ -1,18 +1,22 @@
 package ar.edu.itba.paw.services;
 
-import ar.edu.itba.paw.models.*;
+import ar.edu.itba.paw.models.Review;
+import ar.edu.itba.paw.models.ReviewVote;
+import ar.edu.itba.paw.models.Subject;
+import ar.edu.itba.paw.models.User;
 import ar.edu.itba.paw.models.enums.OrderDir;
 import ar.edu.itba.paw.models.enums.ReviewOrderField;
 import ar.edu.itba.paw.models.enums.ReviewVoteType;
 import ar.edu.itba.paw.persistence.dao.ReviewDao;
 import ar.edu.itba.paw.services.exceptions.NoGrantedPermissionException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.SQLException;
-import java.util.*;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 @Service
 public class ReviewServiceImpl implements ReviewService {
@@ -72,15 +76,14 @@ public class ReviewServiceImpl implements ReviewService {
     public void voteReview(final User user, final Review review, ReviewVoteType vote) {
         final Optional<ReviewVote> maybeVote = reviewDao.voteReview(user, review, vote);
 
-        // TODO: Discuss this
-//        if(!user.equals(review.getUser()) && maybeVote.isPresent()){
-//            mailService.sendVoteNotification(
-//                    review.getUser(),
-//                    maybeVote.get(),
-//                    review,
-//                    review.getSubject()
-//            );
-//        }
+        if(!user.equals(review.getUser()) && maybeVote.isPresent()){
+            mailService.sendVoteNotification(
+                    review.getUser(),
+                    maybeVote.get(),
+                    review,
+                    review.getSubject()
+            );
+        }
     }
 
     @Override
