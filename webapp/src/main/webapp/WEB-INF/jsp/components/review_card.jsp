@@ -1,7 +1,5 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ page contentType="text/html;charset=UTF-8" %>
-<%@ page import="ar.edu.itba.paw.models.enums.Difficulty" %>
-<%@ page import="ar.edu.itba.paw.models.enums.TimeDemanding" %>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
 <%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 
@@ -161,10 +159,10 @@
   </div>
   <div>
     <c:choose>
-      <c:when test="${review.difficulty == Difficulty.EASY}">
+      <c:when test="${review.difficulty eq 'EASY'}">
         <sl-badge size="medium" variant="success"><spring:message code="form.easy"/></sl-badge>
       </c:when>
-      <c:when test="${review.difficulty == Difficulty.MEDIUM}">
+      <c:when test="${review.difficulty eq 'MEDIUM'}">
         <sl-badge size="medium" variant="primary"><spring:message code="form.normal"/></sl-badge>
       </c:when>
       <c:otherwise>
@@ -173,10 +171,10 @@
     </c:choose>
 
     <c:choose>
-      <c:when test="${review.timeDemanding == TimeDemanding.LOW}">
+      <c:when test="${review.timeDemanding eq 'LOW'}">
         <sl-badge size="medium" variant="success"><spring:message code="form.NotTimeDemanding"/></sl-badge>
       </c:when>
-      <c:when test="${review.timeDemanding == TimeDemanding.MEDIUM}">
+      <c:when test="${review.timeDemanding eq 'MEDIUM'}">
         <sl-badge size="medium" variant="primary"><spring:message code="form.averageTimeDemand"/></sl-badge>
       </c:when>
       <c:otherwise>
