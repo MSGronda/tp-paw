@@ -188,7 +188,7 @@
   <c:when test="${ empty subjects }">
     <div class="not-found-area">
       <h3>
-        <spring:message code="search.not-found" arguments="${query}"/>
+        <spring:message code="search.not-found" arguments="${query}" argumentSeparator="${null}"/>
       </h3>
 
     </div>

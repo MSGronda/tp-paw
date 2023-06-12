@@ -5,7 +5,7 @@
 
 <html>
 <head>
-    <title>${subject.name} - Review</title>
+    <title><c:out value="${subject.name}" /> - Review</title>
     <jsp:include page="../components/head_shared.jsp"/>
     <style>
         .row{
@@ -17,7 +17,7 @@
 <jsp:include page="../components/navbar.jsp"/>
 <main class="container-50">
     <div class="row">
-        <h1><spring:message code="review.header" arguments="${subject.name}"/></h1>
+        <h1><spring:message code="review.header" arguments="${subject.name}" argumentSeparator="${null}"/></h1>
     </div>
     <c:url var="CreateReview" value="/review/${subject.id}"/>
     <form:form modelAttribute="ReviewForm" class="col s12" method="post" action="${CreateReview}">
