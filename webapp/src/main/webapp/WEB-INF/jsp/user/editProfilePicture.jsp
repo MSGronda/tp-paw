@@ -92,7 +92,7 @@
                     <spring:message code="profile.editing.picture" />
                     <br/>
                     <br/>
-                    <spring:message code="profile.picture.alt" var="pic" arguments="${user.username}" argumentSeparator=""/>
+                    <spring:message code="profile.picture.alt" var="pic" arguments="${user.username}" argumentSeparator="\0"/>
                     <img class="profile-image" src="<c:url value="/image/${user.imageId}"/>" alt="${pic}" >
                 </div>
                 <div class="tower-picture">

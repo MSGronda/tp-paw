@@ -103,7 +103,7 @@
 <main class="container-50 pusher container-account">
     <div class="header">
         <div class="image-container">
-            <spring:message code="profile.picture.alt" var="pic" arguments="${user.username}" argumentSeparator=""/>
+            <spring:message code="profile.picture.alt" var="pic" arguments="${user.username}" argumentSeparator="\0"/>
             <img class="profile-image" src="<c:url value="/image/${user.imageId}"/>" alt="${pic}" >
             <sl-button class="edit-picture" variant="primary" size="small" href="<c:url value="/profile/editprofilepicture"/>">
                 <sl-icon name="pen" label="Edit"></sl-icon>

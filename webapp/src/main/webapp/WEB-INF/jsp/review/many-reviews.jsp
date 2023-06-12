@@ -34,7 +34,7 @@
         <div class="progress-bar-wrapper"></div>
     </div>
     <div class="row">
-        <h1><spring:message code="review.header" arguments="${subject.name}" argumentSeparator=""/></h1>
+        <h1><spring:message code="review.header" arguments="${subject.name}" argumentSeparator="\0"/></h1>
     </div>
     <c:url var="CreateReview" value="/many-reviews${paramString}"/>
     <form:form modelAttribute="ReviewForm" class="col s12" method="post" action="${CreateReview}">

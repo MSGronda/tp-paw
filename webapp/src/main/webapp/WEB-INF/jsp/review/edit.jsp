@@ -12,7 +12,7 @@
 <jsp:include page="../components/navbar.jsp"/>
 <main class="container-50">
     <div class="row">
-        <h1><spring:message code="review.edit.header" arguments="${subject.name}" argumentSeparator=""/></h1>
+        <h1><spring:message code="review.edit.header" arguments="${subject.name}" argumentSeparator="\0"/></h1>
     </div>
     <c:url var="EditReview" value="/review/${subject.id}/edit/${review.id}"/>
     <form:form modelAttribute="ReviewForm" class="col s12" method="post" action="${EditReview}">
