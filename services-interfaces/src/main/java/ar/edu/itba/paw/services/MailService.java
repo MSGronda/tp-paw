@@ -1,16 +1,23 @@
 package ar.edu.itba.paw.services;
 
+import ar.edu.itba.paw.models.Review;
+import ar.edu.itba.paw.models.ReviewVote;
 import ar.edu.itba.paw.models.Subject;
-import java.util.Locale;
-import java.util.Map;
+import ar.edu.itba.paw.models.User;
+
 import java.util.Set;
 
 public interface MailService {
-    void sendVerification(String to, String verificationUrl, String logoUrl, Locale locale);
-    void sendRecover(String to, String recoverUrl, String logoUrl, Locale locale);
-    void sendReviewNotification(String to,
-                                Set<Subject> subjects,
-                                Map<String,String> subjectUrls,
-                                String logoUrl,
-                                Locale locale);
+    void sendVerification(final User to, final String verificationToken);
+    void sendRecover(final User to, final String recoveryToken);
+    void sendReviewNotification(
+            final User to,
+            final Set<Subject> subjects
+    );
+    void sendVoteNotification(
+            final User to,
+            final ReviewVote vote,
+            final Review review,
+            final Subject subject
+    );
 }

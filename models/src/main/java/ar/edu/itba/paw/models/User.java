@@ -144,8 +144,8 @@ public class User {
         return subjectProgress;
     }
 
-    public Optional<Locale> getLocale(){
-        return Optional.ofNullable(locale);
+    public Locale getLocale(){
+        return locale == null ? Locale.getDefault() : locale;
     }
 
     public Set<Role> getRoles() {

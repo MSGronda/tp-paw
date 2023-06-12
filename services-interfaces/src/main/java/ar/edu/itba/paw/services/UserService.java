@@ -35,7 +35,7 @@ public interface UserService extends BaseService<Long, User> {
     void editProfile(final User user, final String username);
     void updateProfilePicture(final User user, final byte[] image) throws InvalidImageSizeException;
 
-    String generateRecoveryToken(final String email);
+    String generateRecoveryToken(final User user);
 
     boolean isValidRecoveryToken(final String token);
     void recoverPassword(final String token, final String newPassword) throws InvalidTokenException;

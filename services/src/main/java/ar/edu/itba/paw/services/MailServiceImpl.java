@@ -1,6 +1,9 @@
 package ar.edu.itba.paw.services;
 
+import ar.edu.itba.paw.models.Review;
+import ar.edu.itba.paw.models.ReviewVote;
 import ar.edu.itba.paw.models.Subject;
+import ar.edu.itba.paw.models.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,6 +15,9 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 import org.thymeleaf.context.Context;
 import org.thymeleaf.spring4.SpringTemplateEngine;
 
@@ -20,15 +26,17 @@ import javax.mail.internet.MimeMessage;
 import java.io.UnsupportedEncodingException;
 import java.util.*;
 
-@Component
+@Service
 public class MailServiceImpl implements MailService {
+    private static final Logger LOGGER = LoggerFactory.getLogger(MailServiceImpl.class);
+
     private final Environment env;
     private final JavaMailSender mailSender;
     private final SpringTemplateEngine templateEngine;
     private final MessageSource mailMessages;
-    private static final Logger LOGGER = LoggerFactory.getLogger(MailServiceImpl.class);
 
-    private static final String LOGO_URL = "logoUrl";
+    private final String baseUrl;
+    private final String logoUrl;
 
     @Autowired
     public MailServiceImpl(
@@ -41,67 +49,56 @@ public class MailServiceImpl implements MailService {
         this.templateEngine = templateEngine;
         this.env = env;
         this.mailMessages = mailMessages;
-    }
 
-    /*
-    private void sendMail(final String to, final String subject, final String body) {
-        sendMail(to, subject, body, false);
-    }
-    */
-
-    private void sendMail(final String to, final String subject, final String template,
-                         final Map<String, Object> model, final Locale locale) throws MailException {
-        final Context ctx = new Context(locale);
-        ctx.setVariables(model);
-
-        final String body = templateEngine.process(template, ctx);
-
-        sendMail(to, subject, body, true);
+        baseUrl = env.getRequiredProperty("baseUrl");
+        logoUrl = baseUrl + "/img/uni.png";
     }
 
     @Async
     @Override
-    public void sendVerification(String to, String verificationUrl, String logoUrl, Locale locale) {
-        final String subject = mailMessages.getMessage("confirmation.subject", null, locale);
-
-        Map<String, Object> mailModel = new HashMap<>();
-        mailModel.put(LOGO_URL, logoUrl);
-        mailModel.put("url", verificationUrl);
-        sendMail(to, subject, "verification", mailModel, locale);
+    public void sendVerification(final User to, final String verificationToken) {
+        final Map<String, Object> mailModel = new HashMap<>();
+        mailModel.put("url", baseUrl + "/verification/confirm?token=" + verificationToken);
+        sendMail(to, "verification", mailModel);
     }
 
     @Async
     @Override
-    public void sendRecover(String to, String recoverUrl, String logoUrl, Locale locale) {
-        final String subject = mailMessages.getMessage("recovery.subject", null, locale);
-
-        Map<String,Object> mailModel = new HashMap<>();
-        mailModel.put(LOGO_URL, logoUrl);
-        mailModel.put("url", recoverUrl);
-        sendMail(to, subject, "recovery", mailModel, locale);
+    public void sendRecover(final User to, final String recoveryToken) {
+        final Map<String,Object> mailModel = new HashMap<>();
+        mailModel.put("url", baseUrl + "/recover/" + recoveryToken);
+        sendMail(to, "recovery", mailModel);
     }
 
     @Async
     @Override
     public void sendReviewNotification(
-            String to,
-            Set<Subject> subjects,
-            Map<String,String> subjectUrls,
-            String logoUrl,
-            Locale locale
+            final User to,
+            final Set<Subject> subjects
     ) {
-        final String subject = mailMessages.getMessage("reviewnotif.subject", null, locale);
-
         final Map<String,Object> mailModel = new HashMap<>();
-        mailModel.put(LOGO_URL, logoUrl);
         mailModel.put("subjects", subjects);
-        mailModel.put("subjectUrls", subjectUrls);
-        sendMail(to, subject, "reviewnotif", mailModel, locale);
+        sendMail(to, "reviewnotif", mailModel);
+    }
+
+    @Async
+    @Override
+    public void sendVoteNotification(
+            final User to,
+            final ReviewVote vote,
+            final Review review,
+            final Subject subject
+    ) {
+        final Map<String,Object> mailModel = new HashMap<>();
+        mailModel.put("vote", vote);
+        mailModel.put("review", review);
+        mailModel.put("subjectUrl", baseUrl + "/subject/" + subject.getId());
+        sendMail(to, "votenotif", mailModel);
     }
 
     private void sendMail(final String to, final String subject, final String body, final boolean html) {
-        MimeMessage mimeMsg = mailSender.createMimeMessage();
-        MimeMessageHelper helper = new MimeMessageHelper(mimeMsg, "UTF-8");
+        final MimeMessage mimeMsg = mailSender.createMimeMessage();
+        final MimeMessageHelper helper = new MimeMessageHelper(mimeMsg, "UTF-8");
 
         try {
             helper.setFrom(env.getRequiredProperty("mail.username"), env.getRequiredProperty("mail.displayname"));
@@ -115,5 +112,22 @@ public class MailServiceImpl implements MailService {
 
         mailSender.send(mimeMsg);
         LOGGER.info("Mail sent to {} successfully", to);
+    }
+
+    private void sendMail(
+            final User to,
+            final String template,
+            final Map<String, Object> model
+    ) throws MailException {
+        model.put("baseUrl", baseUrl);
+        model.put("logoUrl", logoUrl);
+
+        final Context ctx = new Context(to.getLocale());
+        ctx.setVariables(model);
+
+        final String subject = mailMessages.getMessage(template + ".subject", null, to.getLocale());
+        final String body = templateEngine.process(template, ctx);
+
+        sendMail(to.getEmail(), subject, body, true);
     }
 }

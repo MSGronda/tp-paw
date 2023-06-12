@@ -19,7 +19,6 @@ import java.util.Set;
 
 @Component
 public class NotificationTask {
-
     private static final long TASK_DELAY = 10 * 60 * 1000L; // 10 minutes
 
     private static final Logger LOGGER = LoggerFactory.getLogger(NotificationTask.class);
@@ -29,7 +28,7 @@ public class NotificationTask {
     private final String baseUrl;
 
     @Autowired
-    NotificationTask(MailService mailService, @Qualifier("mailMessageSource")MessageSource mailMessages, SubjectService subjectService, Environment env) {
+    NotificationTask(final MailService mailService, final SubjectService subjectService, final Environment env) {
         this.mailService = mailService;
         this.subjectService = subjectService;
         this.baseUrl = env.getRequiredProperty("baseUrl");
@@ -37,25 +36,13 @@ public class NotificationTask {
 
     //@Scheduled(fixedDelay = TASK_DELAY)
     private void notifScheduledTask() {
-
         LOGGER.debug("Running notification task");
 
-        Map<User, Set<Subject>> map = subjectService.getAllUserUnreviewedNotificationSubjects();
-
+        final Map<User, Set<Subject>> map = subjectService.getAllUserUnreviewedNotificationSubjects();
         if(map.isEmpty()) return;
 
         for(Map.Entry<User,Set<Subject>> mapEntry : map.entrySet()) {
-            final User user = mapEntry.getKey();
-            final Locale locale = user.getLocale().orElse(Locale.getDefault());
-            final Set<Subject> subjects = mapEntry.getValue();
-
-            final String logoUrl = baseUrl + "/img/uni.png";
-            final Map<String,String> subjectUrls = new HashMap<>();
-            for(Subject s : subjects) {
-                subjectUrls.put(s.getId(), baseUrl + "/subject/" + s.getId());
-            }
-
-            mailService.sendReviewNotification(user.getEmail(), subjects, subjectUrls, logoUrl, locale);
+            mailService.sendReviewNotification(mapEntry.getKey(), mapEntry.getValue());
         }
 
         LOGGER.info("Notified {} users to review their subjects", map.size());

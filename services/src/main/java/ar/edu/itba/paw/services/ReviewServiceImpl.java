@@ -7,6 +7,7 @@ import ar.edu.itba.paw.models.enums.ReviewVoteType;
 import ar.edu.itba.paw.persistence.dao.ReviewDao;
 import ar.edu.itba.paw.services.exceptions.NoGrantedPermissionException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,11 +18,17 @@ import java.util.*;
 public class ReviewServiceImpl implements ReviewService {
     private final ReviewDao reviewDao;
     private final AuthUserService authUserService;
+    private final MailService mailService;
 
     @Autowired
-    public ReviewServiceImpl(final ReviewDao reviewDao, final AuthUserService authUserService) {
+    public ReviewServiceImpl(
+            final ReviewDao reviewDao,
+            final AuthUserService authUserService,
+            final MailService mailService
+    ) {
         this.reviewDao = reviewDao;
         this.authUserService = authUserService;
+        this.mailService = mailService;
     }
 
     @Transactional
@@ -63,7 +70,17 @@ public class ReviewServiceImpl implements ReviewService {
     @Transactional
     @Override
     public void voteReview(final User user, final Review review, ReviewVoteType vote) {
-        reviewDao.voteReview(user, review, vote);
+        final Optional<ReviewVote> maybeVote = reviewDao.voteReview(user, review, vote);
+
+        // TODO: Discuss this
+//        if(!user.equals(review.getUser()) && maybeVote.isPresent()){
+//            mailService.sendVoteNotification(
+//                    review.getUser(),
+//                    maybeVote.get(),
+//                    review,
+//                    review.getSubject()
+//            );
+//        }
     }
 
     @Override

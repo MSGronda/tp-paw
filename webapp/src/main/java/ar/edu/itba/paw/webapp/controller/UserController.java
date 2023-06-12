@@ -125,7 +125,7 @@ public class UserController {
             return registerForm(userForm);
         }
 
-        User newUser;
+        final User newUser;
         try {
             newUser = userService.create(
                     User.builder()
@@ -133,6 +133,7 @@ public class UserController {
                             .password(userForm.getPassword())
                             .username(userForm.getName())
                             .degree(degreeService.findById(userForm.getDegreeId()).orElseThrow(IllegalStateException::new))
+                            .locale(locale)
                             .build()
             );
         }catch (UserEmailAlreadyTakenException e){
@@ -142,11 +143,7 @@ public class UserController {
         }
 
         final String token = newUser.getConfirmToken().orElseThrow(IllegalStateException::new);
-
-        final String baseUrl = Utils.getBaseUrl();
-        final String verifUrl = baseUrl + "/verification/confirm?token=" + token;
-        final String logoUrl = baseUrl + UNI_IMAGE;
-        mailService.sendVerification(newUser.getEmail(), verifUrl, logoUrl, locale);
+        mailService.sendVerification(newUser, token);
 
         userService.updateSubjectProgressWithSubList(newUser, userForm.getSubjectIds());
 
@@ -155,14 +152,8 @@ public class UserController {
 
     @RequestMapping(value = "/register", method = { RequestMethod.GET })
     public ModelAndView registerForm(@ModelAttribute ("UserForm") final UserForm userForm) {
-        List<Degree> degreeList = degreeService.getAll();
-//        Map<Long, Map<Integer, List<Subject>>> degreeMapAndYearSubjects = subjectService.getAllGroupedByDegIdAndYear();
-//        Map<Long, List<Subject>> degreeMapAndYearElectives = subjectService.getAllElectivesGroupedByDegId();
-
-        ModelAndView mav = new ModelAndView("user/register");
-        mav.addObject("degrees", degreeList);
-//        mav.addObject("degreeMapAndYearSubjects", degreeMapAndYearSubjects);
-//        mav.addObject("degreeMapAndYearElectives", degreeMapAndYearElectives);
+        final ModelAndView mav = new ModelAndView("user/register");
+        mav.addObject("degrees", degreeService.getAll());
         return mav;
     }
 
@@ -177,12 +168,11 @@ public class UserController {
 
         final ModelAndView mav = new ModelAndView("user/verification/checkEmail");
         mav.addObject("user", user);
-
         return mav;
     }
 
     @RequestMapping(value = "/verification/resend", method = { RequestMethod.POST })
-    public ModelAndView resendConfirmationEmail(@RequestParam final String email, final Locale locale) {
+    public ModelAndView resendConfirmationEmail(@RequestParam final String email) {
         final Optional<User> maybeUser = userService.findUnconfirmedByEmail(email);
         if(!maybeUser.isPresent()) {
             return new ModelAndView("redirect:/verification?error=true&email=" + email);
@@ -190,11 +180,7 @@ public class UserController {
 
         final User user = maybeUser.get();
         final String token = userService.regenerateConfirmToken(user);
-
-        final String baseUrl = Utils.getBaseUrl();
-        final String verifUrl = baseUrl + "/verification/confirm?token=" + token;
-        final String logoUrl = baseUrl + UNI_IMAGE;
-        mailService.sendVerification(user.getEmail(), verifUrl, logoUrl, locale);
+        mailService.sendVerification(user, token);
 
         return new ModelAndView("redirect:/verification?resent=true&email=" + email);
     }
@@ -225,15 +211,15 @@ public class UserController {
             return editProfileForm(editUserDataForm);
         }
 
-        User user = authUserService.getCurrentUser();
+        final User user = authUserService.getCurrentUser();
         userService.editProfile(user, editUserDataForm.getUserName());
         return new ModelAndView(REDIRECT_PROFILE);
     }
 
     @RequestMapping(value = "/profile/editdata", method = { RequestMethod.GET })
     public ModelAndView editProfileForm(@ModelAttribute ("EditUserDataForm") final EditUserDataForm editUserDataForm) {
-        ModelAndView mav = new ModelAndView("user/editUserData");
-        User user = authUserService.getCurrentUser();
+        final ModelAndView mav = new ModelAndView("user/editUserData");
+        final User user = authUserService.getCurrentUser();
         mav.addObject("user", user);
         return mav;
     }
@@ -247,7 +233,7 @@ public class UserController {
             return editPasswordForm(editUserPasswordForm);
         }
 
-        User user = authUserService.getCurrentUser();
+        final User user = authUserService.getCurrentUser();
         try{
             userService.changePassword(user, editUserPasswordForm.getEditPassword(), editUserPasswordForm.getOldPassword(), user.getPassword());
         }catch (OldPasswordDoesNotMatchException e){
@@ -282,8 +268,7 @@ public class UserController {
     @RequestMapping(value = "/recover", method = { RequestMethod.POST })
     public ModelAndView sendRecover(
             @Valid @ModelAttribute ("RecoverPasswordForm") final RecoverPasswordForm recoverPasswordForm,
-            final BindingResult errors,
-            final Locale locale
+            final BindingResult errors
     ){
         if( errors.hasErrors()){
             return recoverPassword(recoverPasswordForm);
@@ -291,19 +276,16 @@ public class UserController {
 
         final String email = recoverPasswordForm.getEmail();
 
-        String token;
-        try {
-            token = userService.generateRecoveryToken(email);
-        } catch (UserEmailNotFoundException e) {
+        final Optional<User> maybeUser = userService.findByEmail(email);
+        if(!maybeUser.isPresent()) {
             ModelAndView mav = recoverPassword(recoverPasswordForm);
             mav.addObject("emailNotFound", true);
             return mav;
         }
+        final User user = maybeUser.get();
 
-        final String baseUrl = Utils.getBaseUrl();
-        final String logoUrl = baseUrl + UNI_IMAGE;
-        final String recoverUrl = baseUrl + "/recover/" + token;
-        mailService.sendRecover(email, recoverUrl, logoUrl, locale);
+        final String token = userService.generateRecoveryToken(user);
+        mailService.sendRecover(user, token);
 
         return new ModelAndView("user/recover/emailSent");
     }

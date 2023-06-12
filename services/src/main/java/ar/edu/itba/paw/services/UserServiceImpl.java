@@ -202,14 +202,7 @@ public class UserServiceImpl implements UserService {
 
     @Transactional
     @Override
-    public String generateRecoveryToken(final String email){
-        final Optional<User> optUser = findByEmail(email);
-        if(!optUser.isPresent()){
-            LOGGER.warn("Generation of recovery token failed. User not found");
-            throw new UserEmailNotFoundException();
-        }
-        final User user = optUser.get();
-
+    public String generateRecoveryToken(final User user){
         final SecureRandom random = new SecureRandom();
         final byte[] bytes = new byte[20];
         random.nextBytes(bytes);

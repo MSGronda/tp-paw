@@ -40,7 +40,7 @@
       }
 
       .content {
-          padding: 5rem 2rem;
+          padding: 3rem 2rem;
       }
 
       .button {
@@ -50,6 +50,10 @@
           color: white !important;
           text-decoration: none;
           border-radius: 5px;
+          font-size: 20px;
+      }
+
+      .message {
           font-size: 20px;
       }
   </style>
@@ -62,10 +66,8 @@
 </div>
 <div class="content">
   <div class="container">
-    <h1 th:text="#{verification.title}"></h1>
-  </div>
-  <div class="container">
-    <a class="button" th:text="#{verification.button}" th:href="${url}"></a>
+    <p class="message" th:text="#{votenotif.message(${review.subject.name},${vote.user.username})}"></p>
+    <a class="button" th:text="#{votenotif.button(${review.subject.name})}" th:href="${subjectUrl}"></a>
   </div>
 </div>
 </body>

@@ -43,16 +43,6 @@
           padding: 3rem 2rem;
       }
 
-      .button {
-          display: inline-block;
-          padding: 10px 20px;
-          background-color: #1a73e8;
-          color: white !important;
-          text-decoration: none;
-          border-radius: 5px;
-          font-size: 20px;
-      }
-
       .subject-list {
           list-style-type: none;
           padding: 0;
@@ -74,7 +64,7 @@
     <p class="message" th:text="#{reviewnotif.message}"></p>
     <ul class="subject-list">
       <li th:each="subject : ${subjects}">
-        <a th:text="${subject.name}" th:href="${subjectUrls.get(subject.id)}"></a>
+        <a th:text="${subject.name}" th:href="${baseUrl + '/subject/' + subject.id}"></a>
       </li>
     </ul>
     <p class="message" th:text="#{reviewnotif.message2}"></p>

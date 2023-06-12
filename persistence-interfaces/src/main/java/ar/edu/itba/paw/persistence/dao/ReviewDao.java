@@ -1,19 +1,21 @@
 package ar.edu.itba.paw.persistence.dao;
 
 import ar.edu.itba.paw.models.Review;
+import ar.edu.itba.paw.models.ReviewVote;
 import ar.edu.itba.paw.models.Subject;
 import ar.edu.itba.paw.models.User;
 import ar.edu.itba.paw.models.enums.OrderDir;
 import ar.edu.itba.paw.models.enums.ReviewOrderField;
 import ar.edu.itba.paw.models.enums.ReviewVoteType;
 import java.util.List;
+import java.util.Optional;
 
 public interface ReviewDao extends ReadableDao<Long,Review> {
     Review create(final Review review);
     Review update(final Review review);
     void delete(final Review review);
 
-    void voteReview(final User user, final Review review, final ReviewVoteType vote);
+    Optional<ReviewVote> voteReview(final User user, final Review review, final ReviewVoteType vote);
     boolean didUserVote(final User user, final Review review);
 
     boolean didUserReview(final Subject subject, final User user);

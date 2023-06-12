@@ -53,7 +53,7 @@ public class ReviewJpaDao implements ReviewDao {
                 .getResultList();
     }
 
-    public void voteReview(final User user, final Review review, final ReviewVoteType vote){
+    public Optional<ReviewVote> voteReview(final User user, final Review review, final ReviewVoteType vote){
         Optional<ReviewVote> maybeReviewVote = em.createQuery("from ReviewVote where user = :user and review = :review", ReviewVote.class)
                 .setParameter("user", user)
                 .setParameter("review", review)
@@ -62,16 +62,19 @@ public class ReviewJpaDao implements ReviewDao {
 
         if(vote == null) {
             maybeReviewVote.ifPresent(reviewVote -> em.remove(reviewVote));
-            return;
+            return Optional.empty();
         }
 
         if(maybeReviewVote.isPresent()) {
-            maybeReviewVote.get().setVote(vote);
-            return;
+            final ReviewVote reviewVote = maybeReviewVote.get();
+            reviewVote.setVote(vote);
+            return Optional.of(reviewVote);
         }
 
-        ReviewVote reviewVote = new ReviewVote(user, review, vote);
+        final ReviewVote reviewVote = new ReviewVote(user, review, vote);
         em.persist(reviewVote);
+
+        return Optional.of(reviewVote);
     }
 
     public boolean didUserVote(final User user, final Review review) {

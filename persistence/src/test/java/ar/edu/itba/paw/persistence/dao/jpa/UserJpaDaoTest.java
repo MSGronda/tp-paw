@@ -278,7 +278,7 @@ public class UserJpaDaoTest {
         em.persist(user);
 
         userJpaDao.setLocale(user, Locale.ENGLISH);
-        assertEquals(Locale.ENGLISH, user.getLocale().get());
+        assertEquals(Locale.ENGLISH, user.getLocale());
     }
 
     @Test
