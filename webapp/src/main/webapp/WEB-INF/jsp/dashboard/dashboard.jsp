@@ -402,9 +402,9 @@
             data: {
                 labels: [
                     <c:forEach var="year" varStatus="status" items="${percentageCompletionByYear.keySet()}">
-                    <c:if test="${!status.last}">'Year ${year}', </c:if>
+                    <c:if test="${!status.last}">'<spring:message code="home.year" arguments="${year}" htmlEscape="false" javaScriptEscape="true"/>', </c:if>
                     </c:forEach>
-                    'Electives'
+                    '<spring:message code="home.electives"/>'
                 ],
                 datasets: [
                     {
