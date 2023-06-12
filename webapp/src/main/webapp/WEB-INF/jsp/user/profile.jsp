@@ -169,7 +169,7 @@
         <c:set var="user" value="${user}" scope="request"/>
         <c:import url="../components/review_card.jsp"/>
     </c:forEach>
-    <c:if test="${not empty reviews}">
+    <c:if test="${totalPages > 1}">
         <div class="pag-buttons">
             <sl-radio-group name="pagination-radio" value="${currentPage}">
                 <sl-radio-button id="prevPage" value="-1" <c:if test="${currentPage-1 <= 0}">disabled</c:if>>
@@ -258,7 +258,7 @@
             if(pageNum >= 0){
                 url = addOrUpdateParam(url,"pageNum",pageNum.toString());
             } else {
-                url = addOrUpdateParam(url,"pageNum","0");
+                url = addOrUpdateParam(url,"pageNum","1");
             }
             window.location.href = url;
         });
@@ -271,7 +271,7 @@
             if(pageNum >= 0){
                 url = addOrUpdateParam(url,"pageNum",pageNum.toString());
             } else {
-                url = addOrUpdateParam(url,"pageNum","0");
+                url = addOrUpdateParam(url,"pageNum","1");
             }
             window.location.href = url;
         });

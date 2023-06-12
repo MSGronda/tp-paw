@@ -84,13 +84,13 @@ public class UserController {
 
     @RequestMapping("/profile")
     public ModelAndView profile(
-            @RequestParam(required = false, defaultValue = "1") final int page,
+            @RequestParam(required = false, defaultValue = "1") final int pageNum,
             @RequestParam(required = false, defaultValue = "easy") final String order,
             @RequestParam(required = false, defaultValue = "desc") final String dir
     ) {
         ModelAndView mav = new ModelAndView("/user/profile");
         User user = authUserService.getCurrentUser();
-        return setProfileData(mav, user, page, order, dir);
+        return setProfileData(mav, user, pageNum, order, dir);
     }
 
     private ModelAndView setProfileData(
@@ -100,12 +100,11 @@ public class UserController {
             final String orderBy,
             final String dir
     ){
-        final List<Review> userReviews = reviewService.getAllUserReviews(user, page, orderBy, dir);
         final int totalPages = reviewService.getTotalPagesForUserReviews(user);
-
-        final Map<Review, ReviewVote> userVotes = user.getVotesByReview();
-
         if(page > totalPages || page < 1) return new ModelAndView("redirect:/404");
+
+        final List<Review> userReviews = reviewService.getAllUserReviews(user, page, orderBy, dir);
+        final Map<Review, ReviewVote> userVotes = user.getVotesByReview();
 
         mav.addObject("user", user);
         mav.addObject("reviews", userReviews);

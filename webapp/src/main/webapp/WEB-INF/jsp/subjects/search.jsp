@@ -1,7 +1,7 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ page import="ar.edu.itba.paw.models.enums.SubjectFilterField" %>
-<%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
+<%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 
 <html>
 <head>
@@ -17,12 +17,13 @@
           padding: 0 1rem 2rem 1rem;
           gap: 1rem;
       }
-      .not-found-area{
-        display: flex;
-        flex-direction: row;
-        justify-content: center;
-        width: 100%;
-        padding-top: 5rem;
+
+      .not-found-area {
+          display: flex;
+          flex-direction: row;
+          justify-content: center;
+          width: 100%;
+          padding-top: 5rem;
       }
 
       .filter-area {
@@ -32,9 +33,10 @@
           align-items: center;
           padding-top: 1rem;
       }
-      h3{
-        font-weight: 500;
-        font-size: 25px;
+
+      h3 {
+          font-weight: 500;
+          font-size: 25px;
       }
 
       .filter {
@@ -66,13 +68,16 @@
       sl-button.filter-button::part(base):hover {
           background-color: #efefef;
       }
+
       sl-button.filter-button::part(base) {
-         background-color: #efefef;
-       }
+          background-color: #efefef;
+      }
+
       .vert-divider {
           height: 11.5rem;
       }
-      .pagination-button{
+
+      .pagination-button {
           display: flex;
           flex-direction: column;
           justify-content: space-around;
@@ -101,7 +106,7 @@
           <c:forEach var="dptName" items="${relevantFilters['DEPARTMENT']}">
             <sl-button-group>
               <sl-button id="${dptName.hashCode()}" class="filter-button" size="small" variant="default" pill>
-                  <c:out value="${dptName}"/>
+                <c:out value="${dptName}"/>
               </sl-button>
               <section id="remove-section-${dptName.hashCode()}">
                 <sl-button id="remove-${dptName.hashCode()}" class="filter-button" variant="default" size="small" pill>
@@ -137,13 +142,13 @@
         <div class="filter-option">
           <h5><spring:message code="search.sort"/></h5>
           <sl-button-group>
-              <sl-button class="filter-button" size="small" variant="default" id="order-by-name">
-                <spring:message code="search.sort.alphabetically"/>
-              </sl-button>
+            <sl-button class="filter-button" size="small" variant="default" id="order-by-name">
+              <spring:message code="search.sort.alphabetically"/>
+            </sl-button>
 
-              <sl-button class="filter-button" id="direction-name-up" variant="default" size="small" pill>
-                <sl-icon class="filter-action" name="arrow-up" label="Direction"></sl-icon>
-              </sl-button>
+            <sl-button class="filter-button" id="direction-name-up" variant="default" size="small" pill>
+              <sl-icon class="filter-action" name="arrow-up" label="Direction"></sl-icon>
+            </sl-button>
 
             <sl-button class="filter-button" id="direction-name-down" variant="default" size="small" pill>
               <sl-icon class="filter-action" name="arrow-down" label="Direction"></sl-icon>
@@ -152,29 +157,29 @@
           </sl-button-group>
 
           <sl-button-group>
-                <sl-button class="filter-button" size="small" variant="default" id="order-by-credits">
-                  <spring:message code="search.sort.credits"/>
-                </sl-button>
+            <sl-button class="filter-button" size="small" variant="default" id="order-by-credits">
+              <spring:message code="search.sort.credits"/>
+            </sl-button>
 
-                <sl-button class="filter-button" id="direction-credits-up" variant="default" size="small" pill>
-                  <sl-icon class="filter-action" name="arrow-up" label="Direction"></sl-icon>
-                </sl-button>
+            <sl-button class="filter-button" id="direction-credits-up" variant="default" size="small" pill>
+              <sl-icon class="filter-action" name="arrow-up" label="Direction"></sl-icon>
+            </sl-button>
             <sl-button class="filter-button" id="direction-credits-down" variant="default" size="small" pill>
               <sl-icon class="filter-action" name="arrow-down" label="Direction"></sl-icon>
             </sl-button>
           </sl-button-group>
 
           <sl-button-group>
-                <sl-button class="filter-button" size="small" variant="default" id="order-by-id">
-                  <spring:message code="search.sort.id"/>
-                </sl-button>
+            <sl-button class="filter-button" size="small" variant="default" id="order-by-id">
+              <spring:message code="search.sort.id"/>
+            </sl-button>
 
-                <sl-button class="filter-button" id="direction-id-up" variant="default" size="small" pill>
-                  <sl-icon class="filter-action" name="arrow-up" label="Direction"></sl-icon>
-                </sl-button>
-              <sl-button class="filter-button" id="direction-id-down" variant="default" size="small" pill>
-                <sl-icon class="filter-action" name="arrow-down" label="Direction"></sl-icon>
-              </sl-button>
+            <sl-button class="filter-button" id="direction-id-up" variant="default" size="small" pill>
+              <sl-icon class="filter-action" name="arrow-up" label="Direction"></sl-icon>
+            </sl-button>
+            <sl-button class="filter-button" id="direction-id-down" variant="default" size="small" pill>
+              <sl-icon class="filter-action" name="arrow-down" label="Direction"></sl-icon>
+            </sl-button>
           </sl-button-group>
         </div>
       </section>
@@ -185,62 +190,65 @@
   </div>
 
   <c:choose>
-  <c:when test="${ empty subjects }">
-    <div class="not-found-area">
-      <h3>
-        <spring:message code="search.not-found" arguments="${query}" argumentSeparator="\0"/>
-      </h3>
+    <c:when test="${ empty subjects }">
+      <div class="not-found-area">
+        <h3>
+          <spring:message code="search.not-found" arguments="${query}" argumentSeparator="\0"/>
+        </h3>
 
-    </div>
-  </c:when>
-  <c:otherwise>
-    <div class="search-area">
-    <c:forEach var="subject" items="${subjects}">
-      <c:set var="subject" value="${subject}" scope="request"/>
-      <c:set var="progress" value="${subjectProgress.getOrDefault(subject.id, 'PENDING')}" scope="request"/>
-      <c:import url="../components/subject_card.jsp"/>
-    </c:forEach>
-    </div>
-    <div class="pagination-button">
-      <sl-radio-group name="pagination-radio" value="${currentPage}">
-        <sl-radio-button id="prevPage" value="-1" <c:if test="${currentPage-1 <= 0}">disabled</c:if>>
-          <sl-icon slot="prefix" name="chevron-left"></sl-icon>
-          <spring:message code="subject.previousPage" />
-        </sl-radio-button>
-        <c:forEach var="pageNum" begin="1" end="${totalPages}">
-          <c:choose>
-            <c:when test="${(pageNum > currentPage -2 and pageNum < currentPage + 2) or (pageNum == 1 or pageNum == totalPages)}">
-              <div class="active-pag-buttons">
-                <sl-radio-button class="pageNumButton" value="${pageNum}">${pageNum}</sl-radio-button>
-              </div>
-            </c:when>
-            <c:when test="${pageNum < totalPages and pageNum == currentPage + 2}">
-              <div class="active-pag-buttons">
-                <sl-radio-button class="pageNumButton" value="${pageNum}">${pageNum}</sl-radio-button>
-                <sl-radio-button value="..." disabled>...</sl-radio-button>
-              </div>
-            </c:when>
-            <c:when test="${pageNum > 1 and pageNum == currentPage - 2}">
-              <div class="active-pag-buttons">
-                <sl-radio-button value="..." disabled>...</sl-radio-button>
-                <sl-radio-button class="pageNumButton" value="${pageNum}">${pageNum}</sl-radio-button>
-              </div>
-            </c:when>
-            <c:otherwise>
-              <div class="hidden-pag-buttons">
-                <sl-radio-button class="pageNumButton" value="${pageNum}">${pageNum}</sl-radio-button>
-              </div>
-            </c:otherwise>
-          </c:choose>
-
+      </div>
+    </c:when>
+    <c:otherwise>
+      <div class="search-area">
+        <c:forEach var="subject" items="${subjects}">
+          <c:set var="subject" value="${subject}" scope="request"/>
+          <c:set var="progress" value="${subjectProgress.getOrDefault(subject.id, 'PENDING')}" scope="request"/>
+          <c:import url="../components/subject_card.jsp"/>
         </c:forEach>
-        <sl-radio-button id="nextPage" value="0" <c:if test="${currentPage >= totalPages}">disabled</c:if>>
-          <sl-icon slot="suffix" name="chevron-right"></sl-icon>
-          <spring:message code="subject.nextPage" />
-        </sl-radio-button>
-      </sl-radio-group>
-    </div>
-  </c:otherwise>
+      </div>
+      <c:if test="${totalPages > 1}">
+        <div class="pagination-button">
+          <sl-radio-group name="pagination-radio" value="${currentPage}">
+            <sl-radio-button id="prevPage" value="-1" <c:if test="${currentPage-1 <= 0}">disabled</c:if>>
+              <sl-icon slot="prefix" name="chevron-left"></sl-icon>
+              <spring:message code="subject.previousPage"/>
+            </sl-radio-button>
+            <c:forEach var="pageNum" begin="1" end="${totalPages}">
+              <c:choose>
+                <c:when
+                  test="${(pageNum > currentPage -2 and pageNum < currentPage + 2) or (pageNum == 1 or pageNum == totalPages)}">
+                  <div class="active-pag-buttons">
+                    <sl-radio-button class="pageNumButton" value="${pageNum}">${pageNum}</sl-radio-button>
+                  </div>
+                </c:when>
+                <c:when test="${pageNum < totalPages and pageNum == currentPage + 2}">
+                  <div class="active-pag-buttons">
+                    <sl-radio-button class="pageNumButton" value="${pageNum}">${pageNum}</sl-radio-button>
+                    <sl-radio-button value="..." disabled>...</sl-radio-button>
+                  </div>
+                </c:when>
+                <c:when test="${pageNum > 1 and pageNum == currentPage - 2}">
+                  <div class="active-pag-buttons">
+                    <sl-radio-button value="..." disabled>...</sl-radio-button>
+                    <sl-radio-button class="pageNumButton" value="${pageNum}">${pageNum}</sl-radio-button>
+                  </div>
+                </c:when>
+                <c:otherwise>
+                  <div class="hidden-pag-buttons">
+                    <sl-radio-button class="pageNumButton" value="${pageNum}">${pageNum}</sl-radio-button>
+                  </div>
+                </c:otherwise>
+              </c:choose>
+
+            </c:forEach>
+            <sl-radio-button id="nextPage" value="0" <c:if test="${currentPage >= totalPages}">disabled</c:if>>
+              <sl-icon slot="suffix" name="chevron-right"></sl-icon>
+              <spring:message code="subject.nextPage"/>
+            </sl-radio-button>
+          </sl-radio-group>
+        </div>
+      </c:if>
+    </c:otherwise>
   </c:choose>
 
 </main>
@@ -249,177 +257,177 @@
 <jsp:include page="../components/body_scripts.jsp"/>
 <script src="${pageContext.request.contextPath}/js/url-param-utils.js"></script>
 <script>
-  let params = new URLSearchParams(window.location.search);
+    let params = new URLSearchParams(window.location.search);
 
-  const filterSection = document.getElementById('filter-section');
-  const keys = params.keys();
-  if(!keys.next().done && keys.next().done) // no tiene parametros aparte de q
-    filterSection.style.display = "none"
-  else
-    filterSection.style.display = "flex"
-
-
-  // Department filters
-  let dpt = params.get("department")
-
-  const dptFilterBtns = [
-    <c:forEach var="dpt" items="${relevantFilters['DEPARTMENT']}">
-    [ "${dpt.hashCode()}",  "${dpt}" , "remove-${dpt.hashCode()}", "remove-section-${dpt.hashCode()}"],
-    </c:forEach>
-  ]
-
-  for(let elem in dptFilterBtns){
-    // Comportamiento de boton de aplicar filtro
-    document.getElementById(dptFilterBtns[elem][0]).addEventListener('click',
-            function() {
-      // debemos remover el pageNum tambien
-      window.location.href = removeURLParam(addOrUpdateParam(window.location.href,"department",dptFilterBtns[elem][1]), 'pageNum')
-
-    });
-
-    // Comportamiento de boton de eliminar filtro
-    document.getElementById(dptFilterBtns[elem][2]).addEventListener('click',
-            // debemos remover el pageNum tambien
-            function() { window.location.href = removeURLParam(removeURLParam(window.location.href,"department"), 'pageNum')});
-
-    // Visibiliad de boton de eliminar filtro
-    const section = document.getElementById(dptFilterBtns[elem][3])
-    console.log(dptFilterBtns[elem][3])
-    if(dpt === dptFilterBtns[elem][1])
-      section.style.display = "block";
+    const filterSection = document.getElementById('filter-section');
+    const keys = params.keys();
+    if (!keys.next().done && keys.next().done) // no tiene parametros aparte de q
+        filterSection.style.display = "none"
     else
-      section.style.display = "none"
-  }
+        filterSection.style.display = "flex"
 
 
+    // Department filters
+    let dpt = params.get("department")
 
-  // Credit filters
-  let credits = params.get("credits")
-  console.log(credits)
+    const dptFilterBtns = [
+        <c:forEach var="dpt" items="${relevantFilters['DEPARTMENT']}">
+        ["${dpt.hashCode()}", "${dpt}", "remove-${dpt.hashCode()}", "remove-section-${dpt.hashCode()}"],
+        </c:forEach>
+    ]
 
-  const creditFilterBtns = [
-    <c:forEach var="credit" items="${relevantFilters['CREDITS']}">
-    ["credits-${credit}", "${credit}", "remove-${credit}", "remove-section-${credit}"],
-    </c:forEach>
-  ]
-  for(let elem in creditFilterBtns)
-  {
-    document.getElementById(creditFilterBtns[elem][0]).addEventListener('click',
-            function() {
-              // debemos remover el pageNum tambien
-      window.location.href = removeURLParam(addOrUpdateParam(window.location.href,"credits",creditFilterBtns[elem][1]), 'pageNum');
-    });
-    document.getElementById(creditFilterBtns[elem][2]).addEventListener('click',
-            // debemos remover el pageNum tambien
-            function() {
-      window.location.href = removeURLParam(removeURLParam(window.location.href,"credits"),'pageNum');
-    });
-    const section = document.getElementById(creditFilterBtns[elem][3])
-    if(credits === creditFilterBtns[elem][1])
-      section.style.display = "block";
-    else
-      section.style.display = "none"
-  }
+    for (let elem in dptFilterBtns) {
+        // Comportamiento de boton de aplicar filtro
+        document.getElementById(dptFilterBtns[elem][0]).addEventListener('click',
+            function () {
+                // debemos remover el pageNum tambien
+                window.location.href = removeURLParam(addOrUpdateParam(window.location.href, "department", dptFilterBtns[elem][1]), 'pageNum')
 
-
-
-  // Filter section
-  const toggleBtn = document.getElementById('toggle-filters');
-
-  toggleBtn.addEventListener('click', function() {
-    if(filterSection.style.display === 'none')
-      filterSection.style.display = 'flex';
-    else
-      filterSection.style.display = 'none';
-  });
-
-
-  const ob = params.get("ob")
-  const dir = params.get("dir")
-
-  // Order by btns
-  const addOrderByBtns = [
-    ['order-by-name', "name", "direction-name-up","direction-name-down"],
-    ['order-by-credits', "credits", "direction-credits-up","direction-credits-down"],
-    ['order-by-id', "id", "direction-id-up", "direction-id-down"]
-  ]
-  for(let elem in addOrderByBtns)
-  {
-    document.getElementById(addOrderByBtns[elem][0]).addEventListener('click',
-            function() {
-              // debemos remover el pageNum tambien
-              window.location.href = removeURLParam(addOrUpdateParam(addOrUpdateParam(window.location.href,"ob",addOrderByBtns[elem][1]), "dir", "asc"), 'pageNum') ;
             });
-    const sectionUp = document.getElementById(addOrderByBtns[elem][2])
-    const sectionDown = document.getElementById(addOrderByBtns[elem][3])
 
-    sectionUp.addEventListener('click', function() { window.location.href = removeURLParam(addOrUpdateParam(window.location.href,"dir", "desc"),'pageNum');})
-    sectionDown.addEventListener('click', function() { window.location.href = removeURLParam(addOrUpdateParam(window.location.href,"dir", "asc"),'pageNum');})
+        // Comportamiento de boton de eliminar filtro
+        document.getElementById(dptFilterBtns[elem][2]).addEventListener('click',
+            // debemos remover el pageNum tambien
+            function () {
+                window.location.href = removeURLParam(removeURLParam(window.location.href, "department"), 'pageNum')
+            });
 
-    if(ob === addOrderByBtns[elem][1]){
-      if(dir === "asc"){
-        sectionUp.style.display = 'block';
-        sectionDown.style.display = 'none'
-      }
-      else{
-        sectionUp.style.display = 'none';
-        sectionDown.style.display = 'block';
-      }
+        // Visibiliad de boton de eliminar filtro
+        const section = document.getElementById(dptFilterBtns[elem][3])
+        console.log(dptFilterBtns[elem][3])
+        if (dpt === dptFilterBtns[elem][1])
+            section.style.display = "block";
+        else
+            section.style.display = "none"
     }
-    else{
-      sectionUp.style.display = 'none';
-      sectionDown.style.display = 'none';
-    }
-  }
 
-  //Pagination buttons
-  let prevButton = document.getElementById("prevPage");
-  prevButton.addEventListener('click',
-          function(event) {
+
+    // Credit filters
+    let credits = params.get("credits")
+    console.log(credits)
+
+    const creditFilterBtns = [
+        <c:forEach var="credit" items="${relevantFilters['CREDITS']}">
+        ["credits-${credit}", "${credit}", "remove-${credit}", "remove-section-${credit}"],
+        </c:forEach>
+    ]
+    for (let elem in creditFilterBtns) {
+        document.getElementById(creditFilterBtns[elem][0]).addEventListener('click',
+            function () {
+                // debemos remover el pageNum tambien
+                window.location.href = removeURLParam(addOrUpdateParam(window.location.href, "credits", creditFilterBtns[elem][1]), 'pageNum');
+            });
+        document.getElementById(creditFilterBtns[elem][2]).addEventListener('click',
+            // debemos remover el pageNum tambien
+            function () {
+                window.location.href = removeURLParam(removeURLParam(window.location.href, "credits"), 'pageNum');
+            });
+        const section = document.getElementById(creditFilterBtns[elem][3])
+        if (credits === creditFilterBtns[elem][1])
+            section.style.display = "block";
+        else
+            section.style.display = "none"
+    }
+
+
+    // Filter section
+    const toggleBtn = document.getElementById('toggle-filters');
+
+    toggleBtn.addEventListener('click', function () {
+        if (filterSection.style.display === 'none')
+            filterSection.style.display = 'flex';
+        else
+            filterSection.style.display = 'none';
+    });
+
+
+    const ob = params.get("ob")
+    const dir = params.get("dir")
+
+    // Order by btns
+    const addOrderByBtns = [
+        ['order-by-name', "name", "direction-name-up", "direction-name-down"],
+        ['order-by-credits', "credits", "direction-credits-up", "direction-credits-down"],
+        ['order-by-id', "id", "direction-id-up", "direction-id-down"]
+    ]
+    for (let elem in addOrderByBtns) {
+        document.getElementById(addOrderByBtns[elem][0]).addEventListener('click',
+            function () {
+                // debemos remover el pageNum tambien
+                window.location.href = removeURLParam(addOrUpdateParam(addOrUpdateParam(window.location.href, "ob", addOrderByBtns[elem][1]), "dir", "asc"), 'pageNum');
+            });
+        const sectionUp = document.getElementById(addOrderByBtns[elem][2])
+        const sectionDown = document.getElementById(addOrderByBtns[elem][3])
+
+        sectionUp.addEventListener('click', function () {
+            window.location.href = removeURLParam(addOrUpdateParam(window.location.href, "dir", "desc"), 'pageNum');
+        })
+        sectionDown.addEventListener('click', function () {
+            window.location.href = removeURLParam(addOrUpdateParam(window.location.href, "dir", "asc"), 'pageNum');
+        })
+
+        if (ob === addOrderByBtns[elem][1]) {
+            if (dir === "asc") {
+                sectionUp.style.display = 'block';
+                sectionDown.style.display = 'none'
+            } else {
+                sectionUp.style.display = 'none';
+                sectionDown.style.display = 'block';
+            }
+        } else {
+            sectionUp.style.display = 'none';
+            sectionDown.style.display = 'none';
+        }
+    }
+
+    //Pagination buttons
+    let prevButton = document.getElementById("prevPage");
+    prevButton.addEventListener('click',
+        function (event) {
             event.preventDefault();
             let url = window.location.href;
             console.log(">>>> pageNum:" + params.get('pageNum'));
-            let pageNum = Number(params.get('pageNum')) -1;
-            if(pageNum >= 0){
-              url = addOrUpdateParam(url,"pageNum",pageNum.toString());
+            let pageNum = Number(params.get('pageNum')) - 1;
+            if (pageNum >= 0) {
+                url = addOrUpdateParam(url, "pageNum", pageNum.toString());
             } else {
-              url = addOrUpdateParam(url,"pageNum","0");
+                url = addOrUpdateParam(url, "pageNum", "0");
             }
             window.location.href = url;
-          });
-  let nextButton = document.getElementById("nextPage");
-  nextButton.addEventListener('click',
-          function(event) {
+        });
+    let nextButton = document.getElementById("nextPage");
+    nextButton.addEventListener('click',
+        function (event) {
             event.preventDefault();
             let url = window.location.href;
-            let pageNum = Number(params.get('pageNum')) +1;
-            if(pageNum >= 0){
-              url = addOrUpdateParam(url,"pageNum",pageNum.toString());
+            let pageNum = Number(params.get('pageNum')) + 1;
+            if (pageNum >= 0) {
+                url = addOrUpdateParam(url, "pageNum", pageNum.toString());
             } else {
-              url = addOrUpdateParam(url,"pageNum","0");
+                url = addOrUpdateParam(url, "pageNum", "0");
             }
             window.location.href = url;
-          });
+        });
 
-  let elements = document.getElementsByClassName("pageNumButton");
-  for (let i = 0, len = elements.length; i < len; i++) {
-    elements[i].addEventListener('click',
-            function(event) {
-              event.preventDefault();
-              let url = window.location.href;
-              let pageNum = Number(elements[i].value);
-              url = addOrUpdateParam(url,"pageNum",pageNum.toString());
-              window.location.href = url;
+    let elements = document.getElementsByClassName("pageNumButton");
+    for (let i = 0, len = elements.length; i < len; i++) {
+        elements[i].addEventListener('click',
+            function (event) {
+                event.preventDefault();
+                let url = window.location.href;
+                let pageNum = Number(elements[i].value);
+                url = addOrUpdateParam(url, "pageNum", pageNum.toString());
+                window.location.href = url;
             });
-  }
-  let activePaginationButtons = document.getElementsByClassName("active-pag-buttons");
-  for (let i = 0, len = activePaginationButtons.length; i < len; i++) {
-    activePaginationButtons[i].style.display = 'block';
-  }
-  let hiddenPaginationButtons = document.getElementsByClassName("hidden-pag-buttons");
-  for (let i = 0, len = hiddenPaginationButtons.length; i < len; i++) {
-    hiddenPaginationButtons[i].style.display = 'none';
-  }
+    }
+    let activePaginationButtons = document.getElementsByClassName("active-pag-buttons");
+    for (let i = 0, len = activePaginationButtons.length; i < len; i++) {
+        activePaginationButtons[i].style.display = 'block';
+    }
+    let hiddenPaginationButtons = document.getElementsByClassName("hidden-pag-buttons");
+    for (let i = 0, len = hiddenPaginationButtons.length; i < len; i++) {
+        hiddenPaginationButtons[i].style.display = 'none';
+    }
 </script>
 </body>
 </html>
