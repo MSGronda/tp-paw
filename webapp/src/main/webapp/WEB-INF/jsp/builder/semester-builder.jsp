@@ -3,7 +3,6 @@
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 <%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
-<%@ page import="ar.edu.itba.paw.models.enums.Difficulty" %>
 
 <html>
 <head>
@@ -418,13 +417,13 @@
                   <h5 id="open-button-${subject.id}" class="open-button"><c:out value="${subject.name}"/></h5>
                   <spring:message code="subject.credits"/> <c:out value="${subject.credits}"/>
                   <c:choose>
-                    <c:when test="${subject.reviewStats.getDifficulty() == Difficulty.EASY}">
+                    <c:when test="${subject.reviewStats.difficulty eq 'EASY'}">
                       <sl-badge size="medium" variant="success" pill><spring:message code="form.easy"/></sl-badge>
                     </c:when>
-                    <c:when test="${subject.reviewStats.getDifficulty() == Difficulty.MEDIUM}">
+                    <c:when test="${subject.reviewStats.difficulty eq 'MEDIUM'}">
                       <sl-badge size="medium" variant="primary" pill><spring:message code="form.normal"/></sl-badge>
                     </c:when>
-                    <c:when test="${subject.reviewStats.getDifficulty() == Difficulty.HARD}">
+                    <c:when test="${subject.reviewStats.difficulty eq 'HARD'}">
                       <sl-badge size="medium" variant="danger" pill><spring:message code="form.hard"/></sl-badge>
                     </c:when>
                     <c:otherwise><sl-badge size="medium" variant="neutral" pill><spring:message code="form.noDif"/></sl-badge></c:otherwise>
@@ -713,8 +712,8 @@
                 },
                 </c:forEach>
             ],
-          'difficulty': ${sub.reviewStats.getDifficulty().value},
-          'timeDemand': ${sub.reviewStats.getTimeDemanding().value}
+          'difficulty': ${sub.reviewStats.difficulty.value},
+          'timeDemand': ${sub.reviewStats.timeDemanding.value}
         },
         </c:forEach>
     ]

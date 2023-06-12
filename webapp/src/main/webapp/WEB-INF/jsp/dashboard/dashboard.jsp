@@ -124,7 +124,7 @@
       .time-table-area {
           height: 100%;
           width: 100%;
-          overflow-y: scroll;
+          overflow-y: auto;
       }
       .current-semester-class-area {
           padding: 0.5rem 0.2rem;
@@ -146,7 +146,7 @@
       }
       .current-semester-subject-info-list {
           height: 95%;
-          overflow-y: scroll;
+          overflow-y: auto;
           flex: 1;
       }
       .builder-button {
