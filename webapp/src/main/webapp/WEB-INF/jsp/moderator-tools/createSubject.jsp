@@ -38,15 +38,64 @@
 <body>
     <jsp:include page="../components/navbar.jsp" />
 
-    <sl-dialog label="<spring:message code="subject.prerequisites.add"/>" class="dialog-header-actions">
-        <sl-icon-button href="<c:url value="/create-professor"/>" target="_blank" rel="noopener noreferrer" slot="header-actions" name="plus-lg"></sl-icon-button>
-        <input id="requirement" list="requirements" class="selection">
-        <datalist id="requirements">
-            <c:forEach items="${subjects}" var="subject">
-                <option value="${subject.id} - ${subject.name}" id="${subject.id}"></option>
-            </c:forEach>
-        </datalist>
-        <sl-button slot="footer" variant="primary" onclick="addRequirement()"><spring:message code="subject.prerequisites.add.short"/></sl-button>
+    <sl-dialog label="<spring:message code="subject.create.professor"/>" class="dialog-header-actions" style="--width: 40rem">
+        <div class="table">
+            <table>
+                <tbody>
+                <tr class="table-row">
+                    <td><spring:message code="professor.name"/></td>
+                    <td>
+                        <form:errors path="name" cssClass="error" element="p"/>
+                        <sl-input name="name" path="name" value="${professorForm.name}" help-text="<spring:message code="professor.name.help" />"></sl-input>
+                    </td>
+                </tr>
+            </table>
+        </div>
+        <sl-button slot="footer" variant="success"><spring:message code="subject.create"/></sl-button>
+    </sl-dialog>
+
+    <sl-dialog label="<spring:message code="subject.create.class"/>" class="dialog-header-actions2" style="--width: 40rem">
+        <div class="table">
+            <table>
+                <tbody>
+                <tr>
+                    <td><spring:message code="subject.classCode"/></td>
+                    <td><sl-input name="code"></sl-input></td>
+                </tr>
+                <tr>
+                    <td><spring:message code="subject.classDay"/></td>
+                    <td>
+                        <sl-select>
+                            <sl-option value="1"><spring:message code="subject.classDay1"/></sl-option>
+                            <sl-option value="2"><spring:message code="subject.classDay2"/></sl-option>
+                            <sl-option value="3"><spring:message code="subject.classDay3"/></sl-option>
+                            <sl-option value="4"><spring:message code="subject.classDay4"/></sl-option>
+                            <sl-option value="5"><spring:message code="subject.classDay5"/></sl-option>
+                            <sl-option value="6"><spring:message code="subject.classDay6"/></sl-option>
+                            <sl-option value="7"><spring:message code="subject.classDay7"/></sl-option>
+                        </sl-select>
+                    </td>
+                </tr>
+                <tr>
+                    <td><spring:message code="subject.classTimes"/></td>
+                    <td><sl-input name="time"></sl-input></td>
+                </tr>
+                <tr>
+                    <td><spring:message code="subject.classMode"/></td>
+                    <td><sl-input name="class"></sl-input></td>
+                </tr>
+                <tr>
+                    <td><spring:message code="subject.classBuilding"/></td>
+                    <td><sl-input name="building"></sl-input></td>
+                </tr>
+                <tr>
+                    <td><spring:message code="subject.classNumber"/></td>
+                    <td><sl-input name="room"></sl-input></td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+        <sl-button slot="footer" variant="success"><spring:message code="subject.prerequisites.add.short"/></sl-button>
     </sl-dialog>
 
     <main class="container-50">
@@ -76,10 +125,38 @@
                 </tr>
                 <tr>
                     <td><spring:message code="subject.prerequisites"/></td>
-                    <td>
-                        <sl-button id="open-button">Agregar materias</sl-button>
+                    <td style="display: flex; flex-direction: row">
+                        <input id="requirement" list="requirements" class="selection">
+                        <datalist id="requirements">
+                            <c:forEach items="${subjects}" var="subject">
+                                <option value="${subject.id} - ${subject.name}" id="${subject.id}"></option>
+                            </c:forEach>
+                        </datalist>
+                        <sl-icon-button name="plus-lg" onclick="addRequirement()"></sl-icon-button>
                     </td>
                     <input type="hidden" name="requirementIds" id="hiddenInput"/>
+                </tr>
+                <tr>
+                    <td><spring:message code="subject.professors"/></td>
+                    <td style="display: flex; flex-direction: row">
+                        <input id="professor" list="professors" class="selection">
+                        <datalist id="professors">
+                            <c:forEach items="${professors}" var="professor">
+                                <option value="${professor.name}" id="${professor.id}"></option>
+                            </c:forEach>
+                        </datalist>
+                        <sl-icon-button name="plus-lg" onclick="addProfessor()"></sl-icon-button>
+                    </td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td>
+                        <sl-button id="open-button"><spring:message code="subject.create.professor"/></sl-button>
+                    </td>
+                </tr>
+                <tr>
+                    <td><spring:message code="subject.class"/></td>
+                    <td><sl-button id="open-button2"><spring:message code="subject.create.class"/></sl-button></td>
                 </tr>
                 </tbody>
             </table>
@@ -94,6 +171,7 @@
 </body>
 
 <script>
+
     const dialog = document.querySelector('.dialog-header-actions');
     const openButton = document.querySelector('#open-button')
     const closeButton = dialog.querySelector('sl-button[slot="footer"]');
@@ -102,15 +180,26 @@
     openButton.addEventListener('click', () => dialog.show());
     closeButton.addEventListener('click', () => dialog.hide());
 
-    var requirementList = [];
+    const dialog2 = document.querySelector('.dialog-header-actions2');
+    const openButton2 = document.querySelector('#open-button2');
+    const closeButton2 = dialog2.querySelector('sl-button[slot="footer"]');
+
+    openButton2.addEventListener('click', () => dialog2.show());
+    closeButton2.addEventListener('click', () => dialog2.hide());
+
 
     dialog.addEventListener('click', (event) => {
         event.stopPropagation();
     });
 
+    var requirementList = [];
+
     function addRequirement() {
         const requirement = document.getElementById("requirement");
         const id = requirement.value.split(" - ")[0];
+        if(id === "" || id === "Error materia ya agregada") {
+            return;
+        }
         if(!requirementList.includes(id)) {
             requirementList.push(id);
             document.getElementById('hiddenInput').value = JSON.stringify(requirementList);
@@ -120,6 +209,24 @@
         }
 
         console.log(requirementList);
+    }
+
+    var professorList = [];
+
+    function addProfessor() {
+        const professor = document.getElementById("professor");
+        const id = professor.value;
+        if(id === "" ){
+            return;
+        }
+        if(!professorList.includes(id)) {
+            professorList.push(id);
+            //document.getElementById(); stringify
+            professor.value = "";
+        } else {
+            professor.value = "Error profesor ya agregado"
+        }
+        console.log(professorList);
     }
 
 
