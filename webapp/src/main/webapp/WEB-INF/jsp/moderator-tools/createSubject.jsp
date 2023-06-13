@@ -137,6 +137,12 @@
                     <input type="hidden" name="requirementIds" id="hiddenInput"/>
                 </tr>
                 <tr>
+                    <td></td>
+                    <td>
+                        <ul id="prerequisiteItems"></ul>
+                    </td>
+                </tr>
+                <tr>
                     <td><spring:message code="subject.professors"/></td>
                     <td style="display: flex; flex-direction: row">
                         <input id="professor" list="professors" class="selection">
@@ -146,6 +152,12 @@
                             </c:forEach>
                         </datalist>
                         <sl-icon-button name="plus-lg" onclick="addProfessor()"></sl-icon-button>
+                    </td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td>
+                        <ul id="professorItems"></ul>
                     </td>
                 </tr>
                 <tr>
@@ -192,22 +204,25 @@
         event.stopPropagation();
     });
 
-    var requirementList = [];
+    let requirementList = [];
+    let reqNameList = [];
 
     function addRequirement() {
         const requirement = document.getElementById("requirement");
         const id = requirement.value.split(" - ")[0];
+        const name = requirement.value;
         if(id === "" || id === "Error materia ya agregada") {
             return;
         }
         if(!requirementList.includes(id)) {
             requirementList.push(id);
+            reqNameList.push(name);
             document.getElementById('hiddenInput').value = JSON.stringify(requirementList);
             requirement.value = "";
         } else {
             requirement.value = "Error materia ya agregada";
         }
-
+        updatePrerequisiteItems();
         console.log(requirementList);
     }
 
@@ -226,9 +241,50 @@
         } else {
             professor.value = "Error profesor ya agregado"
         }
+        updateProfessorItems();
         console.log(professorList);
     }
 
+
+    function updatePrerequisiteItems() {
+        let selectedPrequisitesItems = document.getElementById('prerequisiteItems');
+        selectedPrequisitesItems.innerHTML = '';
+        reqNameList.forEach((item) => {
+            let prereqItem = document.createElement('li');
+            prereqItem.textContent = item;
+
+            let removeBtn = document.createElement('sl-icon-button');
+            removeBtn.name = "x-lg";
+            removeBtn.addEventListener('click', () => {
+                let index = reqNameList.indexOf(item);
+                reqNameList.splice(index, 1);
+                requirementList.splice(index, 1);
+                updatePrerequisiteItems();
+                document.getElementById('hiddenInput').value = JSON.stringify(requirementList);
+            });
+            selectedPrequisitesItems.appendChild(prereqItem);
+            selectedPrequisitesItems.appendChild(removeBtn);
+        });
+    }
+
+    function updateProfessorItems() {
+        let selectedProfItems = document.getElementById('professorItems');
+        selectedProfItems.innerHTML = '';
+        professorList.forEach((item) => {
+            let profItem = document.createElement('li');
+            let removeBtn = document.createElement('sl-icon-button');
+            removeBtn.name = "x-lg";
+            removeBtn.addEventListener('click', () => {
+                let index = professorList.indexOf(item);
+                professorList.splice(index, 1);
+                updateProfessorItems();
+                document.getElementById('hiddenInput').value = JSON.stringify(requirementList);
+            });
+            profItem.textContent = item;
+            selectedProfItems.appendChild(profItem);
+            selectedProfItems.appendChild(removeBtn);
+        });
+    }
 
 </script>
 </html>
