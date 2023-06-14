@@ -391,6 +391,25 @@
                   </td>
                 </tr>
                 <tr>
+                  <th><spring:message code="subject.difficulty" /></th>
+                  <td>
+                    <c:choose>
+                      <c:when test="${subject.reviewStats.difficulty eq 'EASY'}">
+                        <sl-badge size="medium" variant="success"><spring:message code="form.easy" /></sl-badge>
+                      </c:when>
+                      <c:when test="${subject.reviewStats.difficulty eq 'MEDIUM'}">
+                        <sl-badge size="medium" variant="primary"><spring:message code="form.average" /></sl-badge>
+                      </c:when>
+                      <c:when test="${subject.reviewStats.difficulty eq 'HARD'}">
+                        <sl-badge size="medium" variant="warning"><spring:message code="form.difficult" /></sl-badge>
+                      </c:when>
+                      <c:otherwise>
+                        <sl-badge size="medium" variant="neutral"><spring:message code="form.noDif" /></sl-badge>
+                      </c:otherwise>
+                    </c:choose>
+                  </td>
+                </tr>
+                <tr>
                   <th><spring:message code="subject.time" /></th>
                   <td>
                     <c:choose>
