@@ -6,7 +6,7 @@ import java.util.List;
 
 public class SubjectForm {
     @NotNull
-    private Long id;
+    private String id;
     @Size(max=30)
     private String name;
     @Size(max=40)
@@ -18,11 +18,11 @@ public class SubjectForm {
     private String degreeIds;
     private String requirementIds;
 
-    public Long getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(String id) {
         this.id = id;
     }
 

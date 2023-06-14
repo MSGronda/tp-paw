@@ -3,6 +3,7 @@ package ar.edu.itba.paw.webapp.controller;
 import ar.edu.itba.paw.models.*;
 import ar.edu.itba.paw.models.enums.SubjectProgress;
 import ar.edu.itba.paw.services.*;
+import ar.edu.itba.paw.services.exceptions.SubjectIdAlreadyExistsException;
 import ar.edu.itba.paw.webapp.exceptions.SubjectNotFoundException;
 import ar.edu.itba.paw.webapp.form.ProfessorForm;
 import ar.edu.itba.paw.webapp.form.SubjectForm;
@@ -102,11 +103,40 @@ public class SubjectController {
         if(errors.hasErrors()) {
             return createSubjectForm(subjectForm);
         }
+        Subject newSub;
+        try{
+            newSub = subjectService.create(Subject.builder()
+                    .id(subjectForm.getId())
+                    .name(subjectForm.getName())
+                    .department(subjectForm.getDepartment())
+                    .credits(subjectForm.getCredits())
+                    .build()
+            );
+        } catch (SubjectIdAlreadyExistsException e) {
+            //ToDo indicar que el id ya que existe en el form
+        }
+
+
         return new ModelAndView("redirect:/subject/{subjectId:\\d+\\.\\d+}/addProfessor");
     }
     @RequestMapping(value = "/subject/{subjectId:\\d+\\.\\d+}/add-professors", method = {RequestMethod.GET} )
-    public ModelAndView addProfessorToSubjectForm() {
-        return new ModelAndView("moderator-tools/addProfessors");
+    public ModelAndView addProfessorToSubjectForm(@PathVariable final String subjectId,
+                                                  @ModelAttribute("professorForm") final SubjectForm subjectForm,
+                                                  final BindingResult errors) {
+
+        if(errors.hasErrors()) {
+            return createSubjectForm(subjectForm);
+        }
+
+        ModelAndView mav = new ModelAndView("moderator-tools/addProfessors");
+
+        final Optional<Subject> maybeSubject = subjectService.findById(subjectId);
+        if(!maybeSubject.isPresent()) {
+            throw new SubjectNotFoundException("No subject with given id");
+        }
+        mav.addObject("subject",maybeSubject.get());
+        mav.addObject("professors",professorService.getAll());
+        return mav;
     }
     @RequestMapping(value = "/subject/{subjectId:\\d+\\.\\d+}/add-professors", method = {RequestMethod.POST} )
     public ModelAndView addProfessorToSubject() {

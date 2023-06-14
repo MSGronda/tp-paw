@@ -5,6 +5,7 @@ import ar.edu.itba.paw.models.User;
 import ar.edu.itba.paw.models.enums.OrderDir;
 import ar.edu.itba.paw.models.enums.SubjectFilterField;
 import ar.edu.itba.paw.models.enums.SubjectOrderField;
+import ar.edu.itba.paw.persistence.exceptions.SubjectIdAlreadyExistsPersistenceException;
 
 import java.util.List;
 import java.util.Map;
@@ -12,6 +13,7 @@ import java.util.Optional;
 import java.util.Set;
 
 public interface SubjectDao extends ReadableDao<String, Subject> {
+    Subject create(Subject subject) throws SubjectIdAlreadyExistsPersistenceException;
     Optional<Subject> findById(final String id);
     List<Subject> findAllThatUserCanDo(User user);
     List<Subject> findAllThatUserHasNotDone(User user);
