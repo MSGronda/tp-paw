@@ -323,6 +323,16 @@
   .column-center {
     margin-top: 1rem;
   }
+  .done-fab-button {
+    position: fixed;
+    bottom: 1.5rem;
+    right: 1.5rem;
+    display:flex;
+    align-items: baseline;
+  }
+  .done-check {
+    font-size: 1.5rem;
+  }
 </style>
 
 <body>
@@ -398,10 +408,10 @@
                         <sl-badge size="medium" variant="success"><spring:message code="form.easy" /></sl-badge>
                       </c:when>
                       <c:when test="${subject.reviewStats.difficulty eq 'MEDIUM'}">
-                        <sl-badge size="medium" variant="primary"><spring:message code="form.average" /></sl-badge>
+                        <sl-badge size="medium" variant="primary"><spring:message code="form.normal" /></sl-badge>
                       </c:when>
                       <c:when test="${subject.reviewStats.difficulty eq 'HARD'}">
-                        <sl-badge size="medium" variant="warning"><spring:message code="form.difficult" /></sl-badge>
+                        <sl-badge size="medium" variant="warning"><spring:message code="form.hard" /></sl-badge>
                       </c:when>
                       <c:otherwise>
                         <sl-badge size="medium" variant="neutral"><spring:message code="form.noDif" /></sl-badge>
@@ -684,6 +694,10 @@
     </div>
 
   </div>
+  <sl-button href="<c:url value="/?tab=current-semester"/>" variant="success" size="large" class="done-fab-button">
+    <spring:message code="builder.done"/>
+    <sl-icon slot="suffix" class="done-check" name="check-lg"></sl-icon>
+  </sl-button>
 </main>
 <jsp:include page="../components/footer.jsp"/>
 <jsp:include page="../components/body_scripts.jsp"/>

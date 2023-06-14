@@ -356,7 +356,19 @@
         integrity="sha512-BQJ3AP+pvkpSDEexjv6OYwGVCVIFo507d09S8pFPTp63+d7YZDrvjoB+4cSPTThQVfQjP6yybIZ6P29ZQGcPvQ=="
         crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+<script>
+  window.onload = function(){
+    const urlParams = new URLSearchParams(window.location.search);
+    const tab = urlParams.get('tab');
+    const tabGroup = document.querySelector('.tabs');
+    if(tab === 'current-semester') {
+      tabGroup.show='current-semester';
+    }
+  };
+</script>
 <script defer>
+
+
 
     const daysOfWeek = [
         '<spring:message code="subject.classDay1"/>', '<spring:message code="subject.classDay2"/>', '<spring:message code="subject.classDay3"/>',
