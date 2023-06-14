@@ -37,6 +37,18 @@ document.getElementById('select-degree').addEventListener('sl-change', updateDeg
 function updateDegreeSelection() {
     degreeId = document.getElementById('select-degree').value;
 
+    //es necesario no mostrar todos los otros arboles
+    const degreeTitles = document.querySelectorAll('.degree-title');
+    degreeTitles.forEach((title) => {
+        title.style.display = "none";
+    });
+    const degreeTrees = document.querySelectorAll('.degree-tree');
+    degreeTrees.forEach((tree) => {
+        tree.style.display = "none";
+    });
+    //reiniciar el subjectList
+    subjectList = [];
+
     var nextButton = document.getElementById('nextButton');
     nextButton.disabled = false;
 
@@ -76,7 +88,6 @@ function updateDegreeSelection() {
                 checkbox.checked = allSelected;
             }
             subjectCheckbox.addEventListener('sl-change', function () {
-                console.log(subjectList);
                 const checked = document.getElementById(subjectCheckbox.id).checked;
                 const subjectID = subjectCheckbox.id.split('-')[5];
                 if( !checked ){

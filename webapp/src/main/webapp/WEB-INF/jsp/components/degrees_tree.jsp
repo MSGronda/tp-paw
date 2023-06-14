@@ -27,11 +27,11 @@
 <c:set var="degrees" value="${requestScope.degrees}"/>
 
 <c:forEach var="degree" items="${degrees}">
-  <h1 id="degree-${degree.id}" style="display: none"><c:out value="${degree.name}"/></h1>
+  <h1 id="degree-${degree.id}" style="display: none" class="degree-title"><c:out value="${degree.name}"/></h1>
 </c:forEach>
 <h3 style="font-weight: normal"><spring:message code="register.selectSubjects"/></h3>
 <c:forEach var="degree" items="${degrees}">
-  <sl-tree id="tree-${degree.id}" style="display: none">
+  <sl-tree id="tree-${degree.id}" style="display: none" class="degree-tree">
     <c:forEach var="year" items="${degree.years}">
       <div class="YearItem">
         <div class="checkbox-label">
