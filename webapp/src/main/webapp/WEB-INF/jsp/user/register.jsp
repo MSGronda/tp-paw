@@ -28,34 +28,36 @@
                     <p class="error"><spring:message code="register.emailAlreadyUsed"/></p>
                 </c:if>
                 <spring:message code="reviewForm.email.placeholder" var="EmailPlaceHolder"/>
-                <sl-input name="email" path="email" placeholder="${EmailPlaceHolder}" value="${UserForm.email}"></sl-input>
+                <sl-input name="email" path="email" id="email_input" placeholder="${EmailPlaceHolder}" value="${UserForm.email}" onkeydown="return event.key !== 'Enter';"></sl-input>
 
                 <br/>
 
                 <form:errors path="name" cssClass="error" element="p"/>
                 <spring:message code="userform.name" var="NamePlaceholder"/>
-                <sl-input name="name" path="name" placeholder="${NamePlaceholder}" value="${UserForm.name}"></sl-input>
+                <spring:message code="userform.name.help" var="NameHelp"/>
+                <sl-input name="name" path="name" id="username_input" placeholder="${NamePlaceholder}" help-text="${NameHelp}" value="${UserForm.name}" onkeydown="return event.key !== 'Enter';"></sl-input>
 
                 <br/>
 
                 <form:errors path="password" cssClass="error" element="p"/>
                 <spring:message code="userform.password" var="PasswordPlaceholder"/>
-                <sl-input name="password" type="password" path="password" placeholder="${PasswordPlaceholder}" value="${UserForm.password}" password-toggle></sl-input>
+                <spring:message code="userform.password.help" var="PasswordHelp"/>
+                <sl-input name="password" type="password" id="password_input" path="password" placeholder="${PasswordPlaceholder}" help-text="${PasswordHelp}" value="${UserForm.password}" password-toggle onkeydown="return event.key !== 'Enter';"></sl-input>
 
                 <br/>
 
                 <form:errors path="passwordConfirmation" cssClass="error" element="p"/>
                 <spring:message code="userform.passwordConfirmation" var="PasswordConfirmationPlaceholder"/>
-                <sl-input name="passwordConfirmation" type="password" path="passwordConfirmation" placeholder="${PasswordConfirmationPlaceholder}" value="${UserForm.passwordConfirmation}" password-toggle></sl-input>
+                <sl-input name="passwordConfirmation" type="password" id="passwordConfirmation_input" path="passwordConfirmation" placeholder="${PasswordConfirmationPlaceholder}" value="${UserForm.passwordConfirmation}" password-toggle onkeydown="return event.key !== 'Enter';"></sl-input>
 
                 <br/>
 
-    <%--            <sl-button type="submit" variant="success" onclick="this.disabled = true"><spring:message code="userform.submit"/></sl-button>--%>
-                <sl-button variant="success" onclick="nextStep()"><spring:message code="register.next"/></sl-button>
+                <sl-button variant="success" onclick="nextStep()" id="nextStep1" disabled><spring:message code="register.next"/></sl-button>
             </div>
             <div id="step2" style="display: none">
                 <h1><spring:message code="register.whatAreYouStudying"/></h1>
 
+                <form:errors path="degreeId" cssClass="error" element="p"/>
                 <spring:message code="register.selectOne" var="SelectPlaceHolder"/>
                 <sl-select id="select-degree" placeholder="${SelectPlaceHolder}" class="select-button">
                     <c:forEach var="degree" items="${degrees}">
@@ -83,6 +85,30 @@
     <c:forEach var="entry" items="${user.subjectProgress}">
         <c:out value="${entry.key}"/>: 1,
     </c:forEach>
+    }
+    window.onload = function (){
+        checkCorrectForm();
+    };
+
+    document.getElementById('email_input').addEventListener('sl-input', checkCorrectForm);
+    document.getElementById('username_input').addEventListener('sl-input', checkCorrectForm);
+    document.getElementById('password_input').addEventListener('sl-input', checkCorrectForm);
+    document.getElementById('passwordConfirmation_input').addEventListener('sl-input', checkCorrectForm);
+
+    function checkCorrectForm(){
+        var emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        const email = document.getElementById('email_input').value;
+
+        var usernamePattern = /^[A-Za-z][A-Za-z_]*$/;
+        const username = document.getElementById('username_input').value;
+        const password = document.getElementById('password_input').value;
+        const passwordConfirmation = document.getElementById('passwordConfirmation_input').value;
+
+        if(emailPattern.test(email) && username.length >= 3 && usernamePattern.test(username) && password.length >= 8 && passwordConfirmation.length >= 8 && password === passwordConfirmation){
+            document.getElementById('nextStep1').disabled = false;
+        }else{
+            document.getElementById('nextStep1').disabled = true;
+        }
     }
 </script>
 <script src="${pageContext.request.contextPath}/js/select-degree.js"></script>

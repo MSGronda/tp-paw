@@ -5,6 +5,8 @@ import org.hibernate.validator.constraints.Email;
 import org.hibernate.validator.constraints.NotBlank;
 
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
+import javax.validation.constraints.Positive;
 import javax.validation.constraints.Size;
 
 public class UserForm {
@@ -16,7 +18,8 @@ public class UserForm {
     private String password;
 
     @NotBlank
-    @Size(max = 50)
+    @Size(min = 3, max = 50)
+    @Pattern(regexp = "^[A-Za-z][A-Za-z_]*$")
     private String name;
 
     @NotNull
