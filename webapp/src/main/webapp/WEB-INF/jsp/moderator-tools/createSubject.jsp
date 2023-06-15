@@ -33,6 +33,18 @@
             justify-content: center;
             align-items: center;
         }
+        li {
+            list-style-type: none;
+            font-size: 0.9rem;
+        }
+        .list-rm {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            border: 0;
+            padding: 0;
+            margin: 0;
+        }
     </style>
 </head>
 <body>
@@ -45,27 +57,36 @@
                 <tr class="table-row">
                     <td><spring:message code="professor.name"/></td>
                     <td>
-                        <form:errors path="name" cssClass="error" element="p"/>
-                        <sl-input name="name" path="name" value="${professorForm.name}" help-text="<spring:message code="professor.name.help" />"></sl-input>
+                        <sl-input autofocus id="new-prof" help-text="<spring:message code="professor.name.help" />"></sl-input>
                     </td>
                 </tr>
             </table>
         </div>
-        <sl-button slot="footer" variant="success"><spring:message code="subject.create"/></sl-button>
+        <sl-button slot="footer" variant="success" onclick="createProfessor()"><spring:message code="subject.create"/></sl-button>
     </sl-dialog>
 
-    <sl-dialog label="<spring:message code="subject.create.class"/>" class="dialog-header-actions2" style="--width: 40rem">
+    <sl-dialog label="<spring:message code="subject.create.class"/>" class="dialog-header-actions2" style="--width: 45rem">
         <div class="table">
             <table>
                 <tbody>
                 <tr>
                     <td><spring:message code="subject.classCode"/></td>
-                    <td><sl-input name="code"></sl-input></td>
+                    <td><sl-input autofocus name="code"></sl-input></td>
+                </tr>
+                <tr>
+                    <td>
+                        <spring:message code="subject.professors"/>
+                    </td>
+                    <td>
+                        <sl-select multiple clearable id="class-professors">
+
+                        </sl-select>
+                    </td>
                 </tr>
                 <tr>
                     <td><spring:message code="subject.classDay"/></td>
                     <td>
-                        <sl-select>
+                        <sl-select id="class-day">
                             <sl-option value="1"><spring:message code="subject.classDay1"/></sl-option>
                             <sl-option value="2"><spring:message code="subject.classDay2"/></sl-option>
                             <sl-option value="3"><spring:message code="subject.classDay3"/></sl-option>
@@ -190,7 +211,7 @@
     //const newWindowButton = dialog.querySelector('.new-window');
 
     openButton.addEventListener('click', () => dialog.show());
-    closeButton.addEventListener('click', () => dialog.hide());
+    //closeButton.addEventListener('click', () => dialog.hide());
 
     const dialog2 = document.querySelector('.dialog-header-actions2');
     const openButton2 = document.querySelector('#open-button2');
@@ -231,7 +252,7 @@
     function addProfessor() {
         const professor = document.getElementById("professor");
         const id = professor.value;
-        if(id === "" ){
+        if(id === "" || id === "Error profesor ya agregado"){
             return;
         }
         if(!professorList.includes(id)) {
@@ -250,11 +271,13 @@
         let selectedPrequisitesItems = document.getElementById('prerequisiteItems');
         selectedPrequisitesItems.innerHTML = '';
         reqNameList.forEach((item) => {
+            let div = document.createElement('div');
+            div.className = 'list-rm';
             let prereqItem = document.createElement('li');
             prereqItem.textContent = item;
 
             let removeBtn = document.createElement('sl-icon-button');
-            removeBtn.name = "x-lg";
+            removeBtn.name = "x";
             removeBtn.addEventListener('click', () => {
                 let index = reqNameList.indexOf(item);
                 reqNameList.splice(index, 1);
@@ -262,18 +285,23 @@
                 updatePrerequisiteItems();
                 document.getElementById('hiddenInput').value = JSON.stringify(requirementList);
             });
-            selectedPrequisitesItems.appendChild(prereqItem);
-            selectedPrequisitesItems.appendChild(removeBtn);
+            div.appendChild(prereqItem);
+            div.appendChild(removeBtn);
+            selectedPrequisitesItems.appendChild(div);
         });
     }
 
     function updateProfessorItems() {
         let selectedProfItems = document.getElementById('professorItems');
+        let classProfessors = document.getElementById('class-professors');
         selectedProfItems.innerHTML = '';
+        classProfessors.innerHTML = '';
         professorList.forEach((item) => {
+            let div = document.createElement('div');
+            div.className = 'list-rm';
             let profItem = document.createElement('li');
             let removeBtn = document.createElement('sl-icon-button');
-            removeBtn.name = "x-lg";
+            removeBtn.name = "x";
             removeBtn.addEventListener('click', () => {
                 let index = professorList.indexOf(item);
                 professorList.splice(index, 1);
@@ -281,9 +309,42 @@
                 document.getElementById('hiddenInput').value = JSON.stringify(requirementList);
             });
             profItem.textContent = item;
-            selectedProfItems.appendChild(profItem);
-            selectedProfItems.appendChild(removeBtn);
+            selectedProfItems.appendChild(div);
+            div.appendChild(profItem);
+            div.appendChild(removeBtn);
+            let classProf = document.createElement('sl-option');
+            classProf.value=item;
+            classProf.textContent=item;
+            classProfessors.appendChild(classProf);
         });
+    }
+
+    function createProfessor(){
+        const professor = document.getElementById("new-prof");
+        const professorName = professor.value;
+        if(professorName === "") {
+            dialog.hide();
+            return;
+        }
+        if(professorName === "Error profesor ya agregado"){
+            return;
+        }
+        if(professorList.includes(professorName)){
+            professor.value = "Error profesor ya agregado";
+            return;
+        }
+        professorList.push(professorName);
+        professor.value = "";
+        updateProfessorItems();
+        dialog.hide();
+    }
+
+    let classList = [];
+
+    function createClass() {
+        const classCode = document.getElementById("code");
+        const classProf = document.getElementById("class-professors");
+        const classDay = document.getElementById("class-day");
     }
 
 </script>

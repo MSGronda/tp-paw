@@ -57,7 +57,7 @@
         <sl-tab slot="nav" panel="electives">
             <spring:message code="home.electives"/>
         </sl-tab>
-        <sl-tooltip content="<spring:message code="subject.create"/>">
+        <sl-tooltip content="<spring:message code="subject.create.new"/>">
         <sl-icon-button class="add-button" name="plus" label="edit" href="<c:url value="/create-subject"/>"></sl-icon-button>
         </sl-tooltip>
         <c:forEach var="year" items="${degree.years}">
