@@ -362,7 +362,7 @@
     const tab = urlParams.get('tab');
     const tabGroup = document.querySelector('.tabs');
     if(tab === 'current-semester') {
-      tabGroup.show='current-semester';
+      tabGroup.show('current-semester');
     }
   };
 </script>

@@ -80,12 +80,11 @@
         const tab = urlParams.get('tab')
         const tabGroup = document.querySelector('.year-group');
 
-        if(tab ==='1' ||tab ==='2' ||tab ==='3' ||tab ==='4' ||tab ==='5'){
+        if(tab >= '1' && tab <= '5'){
             tabGroup.show('year-'+tab);
         }
         else if(tab ==='electives'){
             tabGroup.show('electives');
         }
     };
-
 </script>
