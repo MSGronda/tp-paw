@@ -1,7 +1,5 @@
 package ar.edu.itba.paw.services;
 
-import ar.edu.itba.paw.models.Review;
-import ar.edu.itba.paw.models.ReviewVote;
 import ar.edu.itba.paw.models.Subject;
 import ar.edu.itba.paw.models.User;
 
@@ -13,11 +11,5 @@ public interface MailService {
     void sendReviewNotification(
             final User to,
             final Set<Subject> subjects
-    );
-    void sendVoteNotification(
-            final User to,
-            final ReviewVote vote,
-            final Review review,
-            final Subject subject
     );
 }

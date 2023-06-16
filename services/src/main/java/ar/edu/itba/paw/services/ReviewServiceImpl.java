@@ -75,15 +75,6 @@ public class ReviewServiceImpl implements ReviewService {
     @Override
     public void voteReview(final User user, final Review review, ReviewVoteType vote) {
         final Optional<ReviewVote> maybeVote = reviewDao.voteReview(user, review, vote);
-
-        if(!user.equals(review.getUser()) && maybeVote.isPresent()){
-            mailService.sendVoteNotification(
-                    review.getUser(),
-                    maybeVote.get(),
-                    review,
-                    review.getSubject()
-            );
-        }
     }
 
     @Override

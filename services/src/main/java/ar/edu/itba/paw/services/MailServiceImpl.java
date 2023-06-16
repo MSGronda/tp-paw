@@ -1,7 +1,5 @@
 package ar.edu.itba.paw.services;
 
-import ar.edu.itba.paw.models.Review;
-import ar.edu.itba.paw.models.ReviewVote;
 import ar.edu.itba.paw.models.Subject;
 import ar.edu.itba.paw.models.User;
 import org.slf4j.Logger;
@@ -14,17 +12,16 @@ import org.springframework.mail.MailException;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.scheduling.annotation.Async;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
 import org.thymeleaf.context.Context;
 import org.thymeleaf.spring4.SpringTemplateEngine;
 
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
 import java.io.UnsupportedEncodingException;
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
 
 @Service
 public class MailServiceImpl implements MailService {
@@ -79,21 +76,6 @@ public class MailServiceImpl implements MailService {
         final Map<String,Object> mailModel = new HashMap<>();
         mailModel.put("subjects", subjects);
         sendMail(to, "reviewnotif", mailModel);
-    }
-
-    @Async
-    @Override
-    public void sendVoteNotification(
-            final User to,
-            final ReviewVote vote,
-            final Review review,
-            final Subject subject
-    ) {
-        final Map<String,Object> mailModel = new HashMap<>();
-        mailModel.put("vote", vote);
-        mailModel.put("review", review);
-        mailModel.put("subjectUrl", baseUrl + "/subject/" + subject.getId());
-        sendMail(to, "votenotif", mailModel);
     }
 
     private void sendMail(final String to, final String subject, final String body, final boolean html) {
