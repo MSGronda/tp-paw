@@ -410,7 +410,7 @@
         <c:import url="../components/review_card.jsp"/>
 
     </c:forEach>
-      <c:if test="${not empty reviews}">
+      <c:if test="${totalPages > 1}">
           <div>
               <sl-radio-group name="pagination-radio" value="${currentPage}">
                   <sl-radio-button id="prevPage" value="-1" <c:if test="${currentPage-1 <= 0}">disabled</c:if>>
