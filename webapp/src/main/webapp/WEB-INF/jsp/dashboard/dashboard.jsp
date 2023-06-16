@@ -1,4 +1,4 @@
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ page contentType="text/html;charset=UTF-8" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 <html>
@@ -413,8 +413,8 @@
             type: 'bar', options: {responsive: true, maintainAspectRatio: false, animation: false, plugins: {legend: {display: false}, tooltip: {enabled: false}}},
             data: {
                 labels: [
-                    <c:forEach var="year" varStatus="status" items="${percentageCompletionByYear.keySet()}">
-                    <c:if test="${!status.last}">'<spring:message code="home.year" arguments="${year}" htmlEscape="false" javaScriptEscape="true"/>', </c:if>
+                    <c:forEach var="year" varStatus="status" items="${user.totalProgressPercentagePerYear.keySet()}">
+                    '<spring:message code="home.year" arguments="${year}" htmlEscape="false" javaScriptEscape="true"/>',
                     </c:forEach>
                     '<spring:message code="home.electives"/>'
                 ],
@@ -422,9 +422,10 @@
                     {
                         barThickness: 50,
                         data: [
-                            <c:forEach varStatus="status" var="year" items="${percentageCompletionByYear.values()}">
+                            <c:forEach varStatus="status" var="year" items="${user.totalProgressPercentagePerYear.values()}">
                             ${year},
                             </c:forEach>
+                            ${user.electiveProgressPercentage}
                         ]
                     }
                 ]

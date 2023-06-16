@@ -18,7 +18,7 @@
   <h1><spring:message code="page_not_found"/></h1>
   <p><spring:message code="page_not_found.info"/></p>
   <br>
-  <sl-button href="${pageContext.request.contextPath}/" variant="primary"><spring:message code="internal_error.return"/></sl-button>
+  <sl-button href="${pageContext.request.contextPath}/" variant="primary"><spring:message code="error.return"/></sl-button>
 </main>
 <jsp:include page="../components/footer.jsp" />
 <jsp:include page="../components/body_scripts.jsp"/>

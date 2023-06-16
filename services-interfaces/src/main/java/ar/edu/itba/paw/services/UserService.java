@@ -2,61 +2,52 @@ package ar.edu.itba.paw.services;
 
 import ar.edu.itba.paw.models.*;
 import ar.edu.itba.paw.models.enums.SubjectProgress;
-import ar.edu.itba.paw.services.exceptions.InvalidImageSizeException;
-import ar.edu.itba.paw.services.exceptions.InvalidTokenException;
-import ar.edu.itba.paw.services.exceptions.OldPasswordDoesNotMatchException;
-import ar.edu.itba.paw.services.exceptions.UserEmailAlreadyTakenException;
+import ar.edu.itba.paw.models.exceptions.*;
 
-import java.io.IOException;
+import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 import java.util.Optional;
 
 public interface UserService extends BaseService<Long, User> {
-    User create(final User user, final byte[] profilePic) throws UserEmailAlreadyTakenException;
-    User create(final User user) throws UserEmailAlreadyTakenException, IOException;
+    User create(final long degreeId, final String completedSubjectIds, final User user, final byte[] profilePic) throws EmailAlreadyTakenException;
+    User create(final long degreeId, final String completedSubjectIds, final User user) throws EmailAlreadyTakenException;
 
     Optional<User> findByEmail(final String email);
     Optional<User> findUnconfirmedByEmail(final String email);
 
-    String regenerateConfirmToken(final User user);
+    void resendVerificationEmail(final String email) throws UserNotFoundException;
 
-    void deleteSubjectProgress(final User user, final Subject subject);
     void updateSubjectProgress(final User user, final Subject subject, final SubjectProgress progress);
-    void updateSubjectProgressWithSubList( final User user, final String subIds);
+    void updateSubjectProgress(final User user, final List<String> subIds, final SubjectProgress progress);
+    void updateSubjectProgress(final User user, final String subIds, final SubjectProgress progress);
 
     void changePassword(
             final User user,
-            final String password,
-            final String oldPassword,
-            final String userOldPassword
+            final String newPassword,
+            final String oldPasswordInput
     ) throws OldPasswordDoesNotMatchException;
 
     void editProfile(final User user, final String username);
     void updateProfilePicture(final User user, final byte[] image) throws InvalidImageSizeException;
 
-    String generateRecoveryToken(final User user);
-
     boolean isValidRecoveryToken(final String token);
     void recoverPassword(final String token, final String newPassword) throws InvalidTokenException;
+    void sendPasswordRecoveryEmail(final String email) throws UserNotFoundException;
 
     void addRole(final User user, final Role role);
-    void updateRoles(final User user, final Role role);
+    void makeModerator(final User requesterUser, final long toMakeModeratorId) throws UserNotFoundException, UnauthorizedException;
 
     void confirmUser(final String token) throws InvalidTokenException;
 
-    void setLocale(User user, Locale locale);
-    void setLocaleAsync(User user, Locale locale);
+    void setLocale(final User user, final Locale locale);
+    void setLocaleAsync(final User user, final Locale locale);
 
-    Map<Integer, Double> getUserProgressionPerYear(Degree degree, User user);
-
-    void addToCurrentSemester(final User user, final SubjectClass subjectClass);
-    void removeFromCurrentSemester(final User user, final SubjectClass subjectClass);
+    void addToCurrentSemester(final User user, final String subjectId, final String classId)
+            throws SubjectNotFoundException, SubjectClassNotFoundException;
+    void removeFromCurrentSemester(final User user, final String subjectId, final String classId);
     void clearSemester(final User user);
-    boolean canReviewGivenSubjectList(final String subjectIds);
-    String generateSemesterReviewUrl(final String subjectIds);
+    String getSemesterSubmitRedirectUrl(final String subjectIds);
+    void finishSemester(final User user);
 
-   void updateUserDegree(final User user, final Degree degree);
-
-    void setAllSubjectProgress(final User user, final String subjectIdsStringify);
+   void updateUserDegreeAndSubjectProgress(final User user, final Degree degree, final String subjectIds);
 }

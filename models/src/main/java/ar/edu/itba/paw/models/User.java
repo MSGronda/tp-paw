@@ -24,7 +24,7 @@ public class User {
     private String username;
 
     @Column(length = 100, name = "confirmtoken")
-    private String confirmToken;
+    private String verificationToken;
 
     @Column(name = "image_id")
     private long imageId;
@@ -36,10 +36,10 @@ public class User {
     )
     @MapKeyColumn(name = "idsub")
     @Column(name = "subjectstate")
-    private Map<String, SubjectProgress> subjectProgress;
+    private Map<String, SubjectProgress> allSubjectProgress;
 
-    @Column
-    private boolean confirmed;
+    @Column(name = "confirmed")
+    private boolean verified;
 
     @Column(length = 32)
     private Locale locale;
@@ -87,14 +87,14 @@ public class User {
         this.password = builder.password;
         this.username = builder.username;
         this.imageId = builder.imageId;
-        this.confirmToken = builder.confirmToken;
+        this.verificationToken = builder.confirmToken;
         this.locale = builder.locale;
-        this.confirmed = builder.confirmed;
+        this.verified = builder.confirmed;
         this.degree = builder.degree;
         this.roles = new HashSet<>();
         this.reviews = new ArrayList<>();
         this.votes = new ArrayList<>();
-        this.subjectProgress = new HashMap<>();
+        this.allSubjectProgress = new HashMap<>();
         this.userSemester = new HashSet<>();
     }
 
@@ -132,16 +132,21 @@ public class User {
         return username;
     }
 
-    public Optional<String> getConfirmToken() {
-        return Optional.ofNullable(confirmToken);
+    public Optional<String> getVerificationToken() {
+        return Optional.ofNullable(verificationToken);
     }
 
-    public boolean isConfirmed() {
-        return confirmed;
+    public boolean isVerified() {
+        return verified;
     }
 
-    public Map<String, SubjectProgress> getSubjectProgress() {
-        return subjectProgress;
+    public Map<String, SubjectProgress> getAllSubjectProgress() {
+        return allSubjectProgress;
+    }
+
+    public SubjectProgress getSubjectProgress(final Subject subject) {
+        final SubjectProgress progress = allSubjectProgress.get(subject.getId());
+        return progress == null ? SubjectProgress.PENDING : progress;
     }
 
     public Locale getLocale(){
@@ -174,6 +179,43 @@ public class User {
         return recoveryToken;
     }
 
+    public double getTotalProgressPercentage() {
+        return Math.floor( ((1.0 * getCreditsDone()) / degree.getTotalCredits()) * 100);
+    }
+
+    public Map<Integer, Double> getTotalProgressPercentagePerYear() {
+        final Map<Integer, Double> progress = new LinkedHashMap<>();
+
+        for(DegreeYear year: degree.getYears()){
+            int credits = 0;
+            int totalCredits = 0;
+            for(Subject sub : year.getSubjects()){
+                if(allSubjectProgress.containsKey(sub.getId())){
+                    credits += sub.getCredits();
+                }
+                totalCredits += sub.getCredits();
+            }
+            if (totalCredits == 0) totalCredits = 1;
+            progress.put(year.getNumber(), 100.0 * credits / totalCredits);
+        }
+
+        return progress;
+    }
+
+    public double getElectiveProgressPercentage() {
+        int credits = 0;
+        int totalCredits = 0;
+        for(Subject sub : degree.getElectives()){
+            if(allSubjectProgress.containsKey(sub.getId())){
+                credits += sub.getCredits();
+            }
+            totalCredits += sub.getCredits();
+        }
+        if(totalCredits == 0) totalCredits = 1;
+
+        return 100.0 * credits / totalCredits;
+    }
+
     public void setEmail(String email) {
         this.email = email;
     }
@@ -186,8 +228,8 @@ public class User {
         this.username = username;
     }
 
-    public void setConfirmToken(String confirmToken) {
-        this.confirmToken = confirmToken;
+    public void setVerificationToken(String confirmToken) {
+        this.verificationToken = confirmToken;
     }
 
     public void setDegree(Degree degree) {
@@ -198,16 +240,16 @@ public class User {
         this.imageId = imageId;
     }
 
-    public void setConfirmed(boolean confirmed) {
-        this.confirmed = confirmed;
+    public void setVerified(boolean confirmed) {
+        this.verified = confirmed;
     }
 
     public void setLocale(Locale locale) {
         this.locale = locale;
     }
 
-    public void setSubjectProgress(Map<String, SubjectProgress> subjectProgress) {
-        this.subjectProgress = subjectProgress;
+    public void setAllSubjectProgress(Map<String, SubjectProgress> subjectProgress) {
+        this.allSubjectProgress = subjectProgress;
     }
 
     @Override
@@ -254,8 +296,8 @@ public class User {
             this.password = user.password;
             this.username = user.username;
             this.imageId = user.imageId;
-            this.confirmToken = user.confirmToken;
-            this.confirmed = user.confirmed;
+            this.confirmToken = user.verificationToken;
+            this.confirmed = user.verified;
             this.locale = user.locale;
             this.degree = user.degree;
         }
@@ -285,7 +327,7 @@ public class User {
             return this;
         }
 
-        public Builder confirmToken(String token) {
+        public Builder verificationToken(String token) {
             this.confirmToken = token;
             return this;
         }

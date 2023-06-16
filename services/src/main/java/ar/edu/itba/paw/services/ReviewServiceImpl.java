@@ -7,38 +7,44 @@ import ar.edu.itba.paw.models.User;
 import ar.edu.itba.paw.models.enums.OrderDir;
 import ar.edu.itba.paw.models.enums.ReviewOrderField;
 import ar.edu.itba.paw.models.enums.ReviewVoteType;
+import ar.edu.itba.paw.models.exceptions.InvalidPageNumberException;
+import ar.edu.itba.paw.models.exceptions.ReviewNotFoundException;
+import ar.edu.itba.paw.models.exceptions.SubjectNotFoundException;
+import ar.edu.itba.paw.models.exceptions.UnauthorizedException;
 import ar.edu.itba.paw.persistence.dao.ReviewDao;
-import ar.edu.itba.paw.services.exceptions.NoGrantedPermissionException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.sql.SQLException;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 @Service
 public class ReviewServiceImpl implements ReviewService {
     private final ReviewDao reviewDao;
     private final AuthUserService authUserService;
-    private final MailService mailService;
+    private final SubjectService subjectService;
 
     @Autowired
     public ReviewServiceImpl(
             final ReviewDao reviewDao,
             final AuthUserService authUserService,
-            final MailService mailService
+            final SubjectService subjectService
     ) {
         this.reviewDao = reviewDao;
         this.authUserService = authUserService;
-        this.mailService = mailService;
+        this.subjectService = subjectService;
     }
 
     @Transactional
     @Override
-    public Review create(final Review review) throws SQLException {
-        return reviewDao.create(review);
+    public Review create(final String subjectId, final Review review) {
+        final Subject subject = subjectService.findById(subjectId).orElseThrow(SubjectNotFoundException::new);
+        return reviewDao.create(
+                Review.builderFrom(review)
+                        .subject(subject)
+                        .build()
+        );
     }
 
     @Override
@@ -53,6 +59,7 @@ public class ReviewServiceImpl implements ReviewService {
 
     @Override
     public List<Review> getAllUserReviews(final User user, final int page, final String orderBy, final String dir) {
+        if(page > getTotalPagesForUserReviews(user) || page < 1) throw new InvalidPageNumberException();
         return reviewDao.getAllUserReviews(user, page, ReviewOrderField.parse(orderBy), OrderDir.parse(dir));
     }
 
@@ -63,6 +70,7 @@ public class ReviewServiceImpl implements ReviewService {
 
     @Override
     public List<Review> getAllSubjectReviews(final Subject subject, final int page, final String orderBy, final String dir){
+        if(page < 1 || page > getTotalPagesForSubjectReviews(subject)) throw new InvalidPageNumberException();
         return reviewDao.getAllSubjectReviews(subject, page, ReviewOrderField.parse(orderBy), OrderDir.parse(dir));
     }
 
@@ -73,70 +81,86 @@ public class ReviewServiceImpl implements ReviewService {
 
     @Transactional
     @Override
-    public void voteReview(final User user, final Review review, ReviewVoteType vote) {
-        final Optional<ReviewVote> maybeVote = reviewDao.voteReview(user, review, vote);
+    public void voteReview(final long reviewId, final ReviewVoteType vote) throws ReviewNotFoundException {
+        final Review review = findById(reviewId).orElseThrow(ReviewNotFoundException::new);
+        reviewDao.voteReview(authUserService.getCurrentUser(), review, vote);
     }
 
     @Override
-    public Boolean didUserReview(final Subject subject, final User user){
+    public boolean didUserReview(final Subject subject, final User user){
         return reviewDao.didUserReview(subject, user);
     }
 
     @Override
-    public String getFirstSubjectIdFromReviewList(String param) {
-        final String[] array = param.split(" ");
-        return array[0];
+    public boolean canUserEditReview(final User user, final Review review) {
+        return user.equals(review.getUser());
     }
 
-    private String removeFirstSubjectIdFromReviewList(String param) {
-        final String[] array = param.split(" ");
+    @Override
+    public Subject manyReviewsGetFirstSubject(String subjectIds) {
+        final String[] array = subjectIds.split(" ");
+        return subjectService.findById(array[0]).orElseThrow(SubjectNotFoundException::new);
+    }
+
+    @Override
+    @Transactional
+    public void manyReviewsSubmit(final String subjectIds, final Review review) {
+        final Subject subject = manyReviewsGetFirstSubject(subjectIds);
+
+        if(didUserReview(subject, authUserService.getCurrentUser())) return;
+
+        create(
+                subject.getId(),
+                Review.builderFrom(review)
+                    .subject(subject)
+                    .build()
+        );
+    }
+
+    @Override
+    public String manyReviewsNextUrl(final String subjectIds, final int current, final int total){
+        // Remove first subject id from list
+        final String[] idArray = subjectIds.split(" ");
         final StringBuilder sb = new StringBuilder();
-        for(int i=1;  i < array.length ; i++){
-            sb.append(array[i]);
-            if(i+1< array.length){
+        for(int i=1;  i < idArray.length ; i++){
+            sb.append(idArray[i]);
+            if(i+1< idArray.length){
                 sb.append(" ");
             }
         }
-        return sb.toString();
-    }
-    @Override
-    public boolean validReviewParam(final Map<String, String> params){
-        return params.containsKey("r") && !params.get("r").equals("") && params.containsKey("total") && params.containsKey("current");
-    }
+        final String nextSubjectIds = sb.toString();
 
-    @Override
-    public boolean nextReviewInList(final Map<String, String> params){
-        if(!validReviewParam(params)){
-            return false;
+        if(!nextSubjectIds.isEmpty() && current < total){
+            return "/many-reviews?r=" + nextSubjectIds + "&current=" + (current + 1) + "&total=" + total;
         }
-        params.put("r", removeFirstSubjectIdFromReviewList(params.get("r")));
 
-        params.put("current", Integer.toString(Integer.parseInt(params.get("current")) + 1));
-
-        return validReviewParam(params);
-    }
-    @Override
-    public String regenerateManyReviewParams(final Map<String, String> params){
-        return "?r=" + params.getOrDefault("r","") + "&current=" + params.getOrDefault("current", "") + "&total=" + params.getOrDefault("total", "");
+        return "/";
     }
 
     @Transactional
     @Override
-    public void update(final Review review) throws NoGrantedPermissionException {
+    public void update(final Review review) throws UnauthorizedException {
         final User user = authUserService.getCurrentUser();
         if(!user.isEditor() && !review.getUser().equals(user))
-            throw new NoGrantedPermissionException();
+            throw new UnauthorizedException();
 
         reviewDao.update(review);
     }
 
     @Transactional
     @Override
-    public void delete(final Review review) throws NoGrantedPermissionException {
+    public void delete(final Review review) throws UnauthorizedException {
         final User user = authUserService.getCurrentUser();
         if(!user.isEditor() && !review.getUser().equals(user))
-            throw new NoGrantedPermissionException();
+            throw new UnauthorizedException();
 
         reviewDao.delete(review);
+    }
+
+    @Transactional
+    @Override
+    public void delete(long reviewId) throws UnauthorizedException, ReviewNotFoundException {
+        final Review review = findById(reviewId).orElseThrow(ReviewNotFoundException::new);
+        delete(review);
     }
 }

@@ -1,125 +1,94 @@
 package ar.edu.itba.paw.webapp.controller;
 
-import ar.edu.itba.paw.models.*;
+import ar.edu.itba.paw.models.User;
 import ar.edu.itba.paw.models.enums.SubjectProgress;
-import ar.edu.itba.paw.services.*;
-import ar.edu.itba.paw.services.exceptions.*;
-import ar.edu.itba.paw.webapp.exceptions.RoleNotFoundException;
-import ar.edu.itba.paw.webapp.exceptions.SubjectNotFoundException;
-import ar.edu.itba.paw.webapp.exceptions.UnauthorizedException;
-import ar.edu.itba.paw.webapp.exceptions.UserNotFoundException;
+import ar.edu.itba.paw.models.exceptions.*;
+import ar.edu.itba.paw.services.AuthUserService;
+import ar.edu.itba.paw.services.DegreeService;
+import ar.edu.itba.paw.services.ReviewService;
+import ar.edu.itba.paw.services.UserService;
 import ar.edu.itba.paw.webapp.form.*;
-import ar.edu.itba.paw.webapp.form.EditUserDataForm;
-import ar.edu.itba.paw.webapp.form.EditUserPasswordForm;
-import ar.edu.itba.paw.webapp.form.RecoverPasswordForm;
-import ar.edu.itba.paw.webapp.form.UserForm;
-import ar.edu.itba.paw.webapp.Utils;
-import org.hibernate.sql.Update;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
-import java.io.*;
-import java.sql.SQLException;
-import java.util.*;
+import java.io.IOException;
+import java.util.Locale;
+import java.util.Optional;
 
 @Controller
 public class UserController {
     private final UserService userService;
-    private final SubjectService subjectService;
     private final ReviewService reviewService;
-    private final MailService mailService;
     private final AuthUserService authUserService;
-    private final RolesService rolesService;
     private final DegreeService degreeService;
-
-    private static final String REDIRECT_PROFILE= "redirect:/profile";
-    private static final String UNI_IMAGE = "/img/uni.png";
 
     @Autowired
     public UserController(
             UserService userService,
-            SubjectService subjectService,
             ReviewService reviewService,
-            MailService mailService,
             AuthUserService authUserService,
-            RolesService rolesService,
             DegreeService degreeService
     ) {
         this.userService = userService;
-        this.subjectService = subjectService;
         this.reviewService = reviewService;
-        this.mailService = mailService;
         this.authUserService = authUserService;
-        this.rolesService = rolesService;
         this.degreeService = degreeService;
     }
 
     @RequestMapping("/user/{id:\\d+}")
     public ModelAndView user(
             @PathVariable long id,
-            @RequestParam(required = false, defaultValue = "1") final int pageNum,
-            @RequestParam(required = false, defaultValue = "easy") final String order,
-            @RequestParam(required = false, defaultValue = "desc") final String dir
+            @RequestParam(defaultValue = "1") final int pageNum,
+            @RequestParam(defaultValue = "easy") final String order,
+            @RequestParam(defaultValue = "desc") final String dir
     ) {
-        final Optional<User> maybeUser = userService.findById(id);
-        if(!maybeUser.isPresent()) {
-            throw new UserNotFoundException();
+        final User user = userService.findById(id).orElseThrow(UserNotFoundException::new);
+
+        if(authUserService.getCurrentUser().getId() == id){
+            return new ModelAndView("redirect:/profile");
         }
 
-        if( authUserService.isAuthenticated() && authUserService.getCurrentUser().getId() == id){
-            return new ModelAndView(REDIRECT_PROFILE);
-        }
-
-        final User user = maybeUser.get();
-        ModelAndView mav = new ModelAndView("user/userProfile");
-
-        return setProfileData(mav, user, pageNum, order, dir);
+        final ModelAndView mav = new ModelAndView("user/userProfile");
+        return setProfileViewAttributes(mav, user, pageNum, order, dir);
     }
 
     @RequestMapping("/profile")
     public ModelAndView profile(
-            @RequestParam(required = false, defaultValue = "1") final int pageNum,
-            @RequestParam(required = false, defaultValue = "easy") final String order,
-            @RequestParam(required = false, defaultValue = "desc") final String dir
+            @RequestParam(defaultValue = "1") final int pageNum,
+            @RequestParam(defaultValue = "difficulty") final String order,
+            @RequestParam(defaultValue = "desc") final String dir
     ) {
-        ModelAndView mav = new ModelAndView("/user/profile");
-        User user = authUserService.getCurrentUser();
-        return setProfileData(mav, user, pageNum, order, dir);
+        final ModelAndView mav = new ModelAndView("/user/profile");
+        return setProfileViewAttributes(mav, authUserService.getCurrentUser(), pageNum, order, dir);
     }
 
-    private ModelAndView setProfileData(
+    private ModelAndView setProfileViewAttributes(
             final ModelAndView mav,
             final User user,
             final int page,
             final String orderBy,
             final String dir
     ){
-        final int totalPages = reviewService.getTotalPagesForUserReviews(user);
-        if(page > totalPages || page < 1) return new ModelAndView("redirect:/404");
-
-        final List<Review> userReviews = reviewService.getAllUserReviews(user, page, orderBy, dir);
-        final Map<Review, ReviewVote> userVotes = user.getVotesByReview();
-
+        mav.addObject("reviews", reviewService.getAllUserReviews(user, page, orderBy, dir));
+        mav.addObject("totalPages", reviewService.getTotalPagesForUserReviews(user));
+        mav.addObject("userVotes", user.getVotesByReview());
         mav.addObject("user", user);
-        mav.addObject("reviews", userReviews);
-        mav.addObject("totalPages", totalPages);
         mav.addObject("currentPage", page);
-        mav.addObject("userVotes", userVotes);
         mav.addObject("order", orderBy);
         mav.addObject("dir", dir);
 
         return mav;
     }
 
-    @RequestMapping(value = "/register", method = { RequestMethod.POST })
-    public ModelAndView register(@Valid @ModelAttribute ("UserForm") final UserForm userForm,
-                                 final BindingResult errors, final Locale locale) throws IOException {
+    @RequestMapping(value = "/register", method = RequestMethod.POST)
+    public ModelAndView register(
+            @Valid @ModelAttribute ("UserForm") final UserForm userForm,
+            final BindingResult errors, final Locale locale
+    ) {
         if(errors.hasErrors()){
             return registerForm(userForm);
         }
@@ -127,29 +96,27 @@ public class UserController {
         final User newUser;
         try {
             newUser = userService.create(
+                    userForm.getDegreeId(),
+                    userForm.getSubjectIds(),
                     User.builder()
                             .email(userForm.getEmail())
                             .password(userForm.getPassword())
                             .username(userForm.getName())
-                            .degree(degreeService.findById(userForm.getDegreeId()).orElseThrow(IllegalStateException::new))
                             .locale(locale)
                             .build()
             );
-        }catch (UserEmailAlreadyTakenException e){
-            ModelAndView mav = registerForm(userForm);
+        } catch (EmailAlreadyTakenException e){
+            final ModelAndView mav = registerForm(userForm);
             mav.addObject("EmailAlreadyUsed", true);
             return mav;
+        } catch (DegreeNotFoundException e) {
+            throw new InvalidFormException(e);
         }
-
-        final String token = newUser.getConfirmToken().orElseThrow(IllegalStateException::new);
-        mailService.sendVerification(newUser, token);
-
-        userService.updateSubjectProgressWithSubList(newUser, userForm.getSubjectIds());
 
         return new ModelAndView("redirect:/verification?email=" + newUser.getEmail());
     }
 
-    @RequestMapping(value = "/register", method = { RequestMethod.GET })
+    @RequestMapping(value = "/register", method = RequestMethod.GET)
     public ModelAndView registerForm(@ModelAttribute ("UserForm") final UserForm userForm) {
         final ModelAndView mav = new ModelAndView("user/register");
         mav.addObject("degrees", degreeService.getAll());
@@ -157,29 +124,24 @@ public class UserController {
     }
 
     @RequestMapping("/verification")
-    public ModelAndView confirmPage(@RequestParam final String email, final HttpServletRequest req, final HttpServletResponse res) {
+    public ModelAndView confirmPage(@RequestParam final String email) {
         final Optional<User> maybeUser = userService.findUnconfirmedByEmail(email);
         if(!maybeUser.isPresent()) {
             return new ModelAndView("redirect:/login");
         }
 
-        final User user = maybeUser.get();
-
         final ModelAndView mav = new ModelAndView("user/verification/checkEmail");
-        mav.addObject("user", user);
+        mav.addObject("user", maybeUser.get());
         return mav;
     }
 
-    @RequestMapping(value = "/verification/resend", method = { RequestMethod.POST })
+    @RequestMapping(value = "/verification/resend", method = RequestMethod.POST)
     public ModelAndView resendConfirmationEmail(@RequestParam final String email) {
-        final Optional<User> maybeUser = userService.findUnconfirmedByEmail(email);
-        if(!maybeUser.isPresent()) {
+        try {
+            userService.resendVerificationEmail(email);
+        } catch (UserNotFoundException e) {
             return new ModelAndView("redirect:/verification?error=true&email=" + email);
         }
-
-        final User user = maybeUser.get();
-        final String token = userService.regenerateConfirmToken(user);
-        mailService.sendVerification(user, token);
 
         return new ModelAndView("redirect:/verification?resent=true&email=" + email);
     }
@@ -194,14 +156,14 @@ public class UserController {
         return "user/verification/success";
     }
 
-    @RequestMapping(value = "/login", method = { RequestMethod.GET })
-    public ModelAndView login(@RequestParam (value="error", required = false) String error) {
-        ModelAndView mav = new ModelAndView("user/login");
-        mav.addObject("error", error != null);
+    @RequestMapping(value = "/login", method = RequestMethod.GET)
+    public ModelAndView login(@RequestParam (value="error", defaultValue = "false") boolean error) {
+        final ModelAndView mav = new ModelAndView("user/login");
+        mav.addObject("error", error);
         return mav;
     }
 
-    @RequestMapping(value = "/profile/editdata", method = { RequestMethod.POST })
+    @RequestMapping(value = "/profile/editdata", method = RequestMethod.POST)
     public ModelAndView editProfile(
             @Valid @ModelAttribute ("EditUserDataForm") final EditUserDataForm editUserDataForm,
             final BindingResult errors
@@ -210,20 +172,19 @@ public class UserController {
             return editProfileForm(editUserDataForm);
         }
 
-        final User user = authUserService.getCurrentUser();
-        userService.editProfile(user, editUserDataForm.getUserName());
-        return new ModelAndView(REDIRECT_PROFILE);
+        userService.editProfile(authUserService.getCurrentUser(), editUserDataForm.getUserName());
+
+        return new ModelAndView("redirect:/profile");
     }
 
-    @RequestMapping(value = "/profile/editdata", method = { RequestMethod.GET })
+    @RequestMapping(value = "/profile/editdata", method = RequestMethod.GET)
     public ModelAndView editProfileForm(@ModelAttribute ("EditUserDataForm") final EditUserDataForm editUserDataForm) {
         final ModelAndView mav = new ModelAndView("user/editUserData");
-        final User user = authUserService.getCurrentUser();
-        mav.addObject("user", user);
+        mav.addObject("user", authUserService.getCurrentUser());
         return mav;
     }
 
-    @RequestMapping(value = "/profile/editpassword", method = { RequestMethod.POST })
+    @RequestMapping(value = "/profile/editpassword", method = RequestMethod.POST)
     public ModelAndView editPassword(
             @Valid @ModelAttribute ("EditUserPasswordForm") final EditUserPasswordForm editUserPasswordForm,
             final BindingResult errors
@@ -232,34 +193,25 @@ public class UserController {
             return editPasswordForm(editUserPasswordForm);
         }
 
-        final User user = authUserService.getCurrentUser();
         try{
-            userService.changePassword(user, editUserPasswordForm.getEditPassword(), editUserPasswordForm.getOldPassword(), user.getPassword());
+            userService.changePassword(authUserService.getCurrentUser(), editUserPasswordForm.getEditPassword(), editUserPasswordForm.getOldPassword());
         }catch (OldPasswordDoesNotMatchException e){
             ModelAndView mav = editPasswordForm(editUserPasswordForm);
             mav.addObject("oldPasswordDoesNotMatch", true);
             return mav;
         }
-        return new ModelAndView(REDIRECT_PROFILE);
+
+        return new ModelAndView("redirect:/profile");
     }
-    @RequestMapping(value = "/profile/editpassword", method = { RequestMethod.GET })
+
+    @RequestMapping(value = "/profile/editpassword", method = RequestMethod.GET)
     public ModelAndView editPasswordForm(@ModelAttribute ("EditUserPasswordForm") final EditUserPasswordForm editUserPasswordForm) {
         return new ModelAndView("user/editUserPassword");
     }
 
     @RequestMapping(value = "user/{id:\\d+}/moderator")
     public ModelAndView makeModerator(@PathVariable long id) {
-        if(!authUserService.isAuthenticated() || !authUserService.isCurrentUserEditor())
-            throw new UnauthorizedException();
-
-        final Optional<Role> maybeRole = rolesService.findByName(Role.RoleEnum.EDITOR.getName());
-        if(!maybeRole.isPresent()){
-            throw new RoleNotFoundException();
-        }
-        final Role role = maybeRole.get();
-
-        final User toMakeMod = userService.findById(id).orElseThrow(UserNotFoundException::new);
-        userService.updateRoles(toMakeMod, role);
+        userService.makeModerator(authUserService.getCurrentUser(), id);
 
         return new ModelAndView("redirect:/user/" + id);
     }
@@ -273,18 +225,13 @@ public class UserController {
             return recoverPassword(recoverPasswordForm);
         }
 
-        final String email = recoverPasswordForm.getEmail();
-
-        final Optional<User> maybeUser = userService.findByEmail(email);
-        if(!maybeUser.isPresent()) {
-            ModelAndView mav = recoverPassword(recoverPasswordForm);
+        try {
+            userService.sendPasswordRecoveryEmail(recoverPasswordForm.getEmail());
+        } catch (UserNotFoundException e) {
+            final ModelAndView mav = recoverPassword(recoverPasswordForm);
             mav.addObject("emailNotFound", true);
             return mav;
         }
-        final User user = maybeUser.get();
-
-        final String token = userService.generateRecoveryToken(user);
-        mailService.sendRecover(user, token);
 
         return new ModelAndView("user/recover/emailSent");
     }
@@ -327,72 +274,78 @@ public class UserController {
     @RequestMapping(value = "/profile/editprofilepicture", method = { RequestMethod.GET })
     public ModelAndView editProfilePictureForm(@ModelAttribute ("editProfilePictureForm") final EditProfilePictureForm editProfilePictureForm) {
         final ModelAndView mav = new ModelAndView("user/editProfilePicture");
-        final User user = authUserService.getCurrentUser();
-        mav.addObject("user", user);
+        mav.addObject("user", authUserService.getCurrentUser());
         return mav;
     }
 
     @RequestMapping(value="/profile/editprofilepicture", method = {RequestMethod.POST})
-    public ModelAndView editProfilePicture(@ModelAttribute("editProfilePictureForm") final EditProfilePictureForm editProfilePictureForm,
-                                           //CommonsMultipartFile profilePicture,
-                                           final BindingResult errors) throws IOException {
+    public ModelAndView editProfilePicture(
+            @ModelAttribute("editProfilePictureForm") final EditProfilePictureForm editProfilePictureForm,
+            final BindingResult errors
+    ) {
         if(errors.hasErrors()) {
             return editProfilePictureForm(editProfilePictureForm);
         }
-        final User user = authUserService.getCurrentUser();
+
         try {
-            userService.updateProfilePicture(user, editProfilePictureForm.getProfilePicture().getBytes());
-        }catch (InvalidImageSizeException e) {
+            userService.updateProfilePicture(
+                    authUserService.getCurrentUser(),
+                    editProfilePictureForm.getProfilePicture().getBytes()
+            );
+        } catch (InvalidImageSizeException e) {
             final ModelAndView mav = editProfilePictureForm(editProfilePictureForm);
             mav.addObject("invalidImageSize", true);
             return mav;
+        } catch (IOException e) {
+            final ModelAndView mav = editProfilePictureForm(editProfilePictureForm);
+            mav.addObject("invalidImage", true);
+            return mav;
         }
-        return new ModelAndView(REDIRECT_PROFILE);
+
+        return new ModelAndView("redirect:/profile");
     }
 
     @RequestMapping(value = "/subjectProgress", method = RequestMethod.POST)
     @ResponseBody
-    public String subjectProgress(@Valid @ModelAttribute("SubjectProgressForm") final SubjectProgressForm progressForm
-    ) {
-        if( !authUserService.isAuthenticated()){
-            return "invalid parameters"; // we do not give any information on the inner workings
-        }
-
-        final User user = authUserService.getCurrentUser();
-        final Subject subject = subjectService.findById(progressForm.getIdSub()).orElseThrow(SubjectNotFoundException::new);
-
-        userService.updateSubjectProgress(user, subject, SubjectProgress.parse(progressForm.getProgress()));
+    public String subjectProgress(
+            @Valid @ModelAttribute("SubjectProgressForm") final SubjectProgressForm progressForm
+    ) throws SubjectNotFoundException {
+        userService.updateSubjectProgress(
+                authUserService.getCurrentUser(),
+                progressForm.getIdSub(),
+                SubjectProgress.parse(progressForm.getProgress())
+        );
 
         return "voted";
     }
 
     @RequestMapping(value = "/select-degree", method = RequestMethod.POST )
-    public ModelAndView selectDegreeSubmit(@Valid @ModelAttribute ("UpdateDegreeForm") final UpdateDegreeForm updateDegreeForm,
-                                           final BindingResult errors){
+    public ModelAndView selectDegreeSubmit(
+            @Valid @ModelAttribute ("UpdateDegreeForm") final UpdateDegreeForm updateDegreeForm,
+            final BindingResult errors
+    ){
         if(errors.hasErrors()){
             return selectDegree(updateDegreeForm);
         }
 
-        User user = authUserService.getCurrentUser();
-
-        userService.updateUserDegree(user, degreeService.findById(updateDegreeForm.getDegreeId()).orElseThrow(IllegalStateException::new));
-
-        userService.setAllSubjectProgress(user, updateDegreeForm.getSubjectIds() );
+        userService.updateUserDegreeAndSubjectProgress(
+                authUserService.getCurrentUser(),
+                degreeService.findById(updateDegreeForm.getDegreeId()).orElseThrow(IllegalStateException::new),
+                updateDegreeForm.getSubjectIds()
+        );
 
         return new ModelAndView("redirect:/");
     }
 
     @RequestMapping(value = "/select-degree", method = RequestMethod.GET )
     public ModelAndView selectDegree(@ModelAttribute ("UpdateDegreeForm") final UpdateDegreeForm updateDegreeForm){
-        List<Degree> degreeList = degreeService.getAll();
-        User user = authUserService.getCurrentUser();
-
+        final User user = authUserService.getCurrentUser();
         if(user.getDegree() != null){
             return new ModelAndView("redirect:/" );
         }
 
         ModelAndView mav = new ModelAndView("user/onboarding");
-        mav.addObject("degrees", degreeList);
+        mav.addObject("degrees", degreeService.getAll());
         mav.addObject("user", user);
 
         return mav;

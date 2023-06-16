@@ -1,5 +1,5 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ page contentType="text/html;charset=UTF-8" %>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
 <html>
@@ -12,9 +12,9 @@
 <jsp:include page="../components/navbar.jsp"/>
 <main class="container-50">
     <div class="row">
-        <h1><spring:message code="review.edit.header" arguments="${subject.name}" argumentSeparator="\0"/></h1>
+        <h1><spring:message code="review.edit.header" arguments="${review.subject.name}" argumentSeparator="\0"/></h1>
     </div>
-    <c:url var="EditReview" value="/review/${subject.id}/edit/${review.id}"/>
+    <c:url var="EditReview" value="/review/${review.subject.id}/edit/${review.id}"/>
     <form:form modelAttribute="ReviewForm" class="col s12" method="post" action="${EditReview}">
         <div class="tags-removable">
 <%--            <form:errors path="text" cssClass="error" element="p"/>--%>

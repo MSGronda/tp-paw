@@ -36,7 +36,7 @@
     <div class="row">
         <h1><spring:message code="review.header" arguments="${subject.name}" argumentSeparator="\0"/></h1>
     </div>
-    <c:url var="CreateReview" value="/many-reviews${paramString}"/>
+    <c:url var="CreateReview" value="/many-reviews?${requestScope['javax.servlet.forward.query_string']}"/>
     <form:form modelAttribute="ReviewForm" class="col s12" method="post" action="${CreateReview}">
         <div class="tags-removable">
             <form:errors path="text" cssClass="error" element="p"/>

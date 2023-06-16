@@ -1,7 +1,13 @@
 package ar.edu.itba.paw.webapp.controller;
 
-import ar.edu.itba.paw.models.*;
-import ar.edu.itba.paw.services.*;
+import ar.edu.itba.paw.models.Subject;
+import ar.edu.itba.paw.models.User;
+import ar.edu.itba.paw.models.exceptions.InvalidFormException;
+import ar.edu.itba.paw.models.exceptions.SubjectClassNotFoundException;
+import ar.edu.itba.paw.models.exceptions.SubjectNotFoundException;
+import ar.edu.itba.paw.services.AuthUserService;
+import ar.edu.itba.paw.services.SubjectService;
+import ar.edu.itba.paw.services.UserService;
 import ar.edu.itba.paw.webapp.form.UserSemesterFinishForm;
 import ar.edu.itba.paw.webapp.form.UserSemesterForm;
 import org.slf4j.Logger;
@@ -9,47 +15,38 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.validation.Valid;
-import java.util.*;
+import java.util.List;
 
 
 @Controller
 public class SemesterBuilderController {
+    private static final Logger LOGGER = LoggerFactory.getLogger(SemesterBuilderController.class);
+
     private final AuthUserService authUserService;
     private final SubjectService subjectService;
     private final UserService userService;
-    private final ReviewService reviewService;
-    private static final String LOGIN = "user/login";
-    private static final String REDIRECT_BUILDER = "redirect:/builder";
-    private static final Logger LOGGER = LoggerFactory.getLogger(SemesterBuilderController.class);
 
     @Autowired
-    public SemesterBuilderController(AuthUserService authUserService, SubjectService subjectService, UserService userService, ReviewService reviewService) {
+    public SemesterBuilderController(AuthUserService authUserService, SubjectService subjectService, UserService userService) {
         this.authUserService = authUserService;
         this.subjectService = subjectService;
         this.userService = userService;
-        this.reviewService = reviewService;
     }
 
     @RequestMapping("/builder")
     public ModelAndView subjectInfo() {
-        User user;
-        if(authUserService.isAuthenticated()) {
-           user = authUserService.getCurrentUser();
-        }
-        else{
-            return new ModelAndView(LOGIN);
-        }
+        final User user = authUserService.getCurrentUser();;
+        final List<Subject> availableSubjects = subjectService.findAllThatUserCanDo(user);
+        final List<Subject> unlockableSubjects = subjectService.findAllThatUserCouldUnlock(user);
+        final List<Subject> doneSubjects = subjectService.findAllThatUserHasDone(user);
 
-        ModelAndView mav = new ModelAndView("builder/semester-builder");
-
-        List<Subject> availableSubjects = subjectService.findAllThatUserCanDo(user);
-        List<Subject> unlockableSubjects = subjectService.findAllThatUserCouldUnlock(user);
-        List<Subject> doneSubjects = subjectService.findAllThatUserHasDone(user);
-
+        final ModelAndView mav = new ModelAndView("builder/semester-builder");
         mav.addObject("user", user);
         mav.addObject("availableSubjects", availableSubjects);
         mav.addObject("unlockableSubjects", unlockableSubjects);
@@ -57,124 +54,59 @@ public class SemesterBuilderController {
 
         return mav;
     }
+
     @RequestMapping(value ="/builder/finish", method = RequestMethod.GET)
     public ModelAndView finishSemester(@Valid @ModelAttribute("UserSemesterFinishForm") final UserSemesterFinishForm semesterForm){
-        User user;
-        if(authUserService.isAuthenticated()) {
-            user = authUserService.getCurrentUser();
-        }
-        else{
-            LOGGER.info("User is not logged in");
-            return new ModelAndView("user/login");
-        }
-
         final ModelAndView mav = new ModelAndView("builder/finish-semester");
-        mav.addObject("user",user);
+        mav.addObject("user", authUserService.getCurrentUser());
         return mav;
     }
 
     @RequestMapping(value ="/builder/finish", method = RequestMethod.POST)
-    public ModelAndView finishSemesterSubmit(@Valid @ModelAttribute("UserSemesterFinishForm") final UserSemesterFinishForm semesterForm, final BindingResult errors){
-        User user;
-        if(authUserService.isAuthenticated()) {
-            user = authUserService.getCurrentUser();
-        }
-        else{
-            LOGGER.info("User is not logged in");
-            return new ModelAndView("user/login");
-        }
+    public ModelAndView finishSemesterSubmit(
+            @Valid @ModelAttribute("UserSemesterFinishForm") final UserSemesterFinishForm semesterForm,
+            final BindingResult errors
+    ){
         if(errors.hasErrors()){
             return finishSemester(semesterForm);
         }
-        ModelAndView mav;
 
-        final boolean canReview = userService.canReviewGivenSubjectList(semesterForm.getSubjectIds());
+        userService.finishSemester(authUserService.getCurrentUser());
 
-        if(canReview){
-            final String url = userService.generateSemesterReviewUrl(semesterForm.getSubjectIds());
-            mav = new ModelAndView("redirect:/many-reviews"+ url);
-        }
-        else{
-            mav = new ModelAndView("redirect:/");
-        }
-        userService.updateSubjectProgressWithSubList(user,semesterForm.getSubjectIds());
-        userService.clearSemester(user);
-
-        return mav;
+        return new ModelAndView("redirect:" + userService.getSemesterSubmitRedirectUrl(semesterForm.getSubjectIds()));
     }
 
     @RequestMapping(value = "/builder/add", method = RequestMethod.POST)
     public ModelAndView addSubjectToSemester(@Valid @ModelAttribute("UserSemesterForm") final UserSemesterForm semesterForm, final BindingResult errors){
-        User user;
-        if(authUserService.isAuthenticated()) {
-            user = authUserService.getCurrentUser();
-        }
-        else{
-            LOGGER.info("User is not logged in");
-            return new ModelAndView(LOGIN);
-        }
         if(errors.hasErrors()){
-            LOGGER.warn("Subject builder adding form has errors");
-            return new ModelAndView(REDIRECT_BUILDER);
+            LOGGER.debug("Subject builder adding form has errors");
+            throw new InvalidFormException();
         }
 
-        final Optional<Subject> maybeSubject = subjectService.findById(semesterForm.getIdSub());
-
-        if(!maybeSubject.isPresent()){
-            LOGGER.warn("No subject for id {}", semesterForm.getIdSub());
-            return new ModelAndView(REDIRECT_BUILDER);
+        try {
+            userService.addToCurrentSemester(authUserService.getCurrentUser(), semesterForm.getIdSub(), semesterForm.getIdClass());
+        } catch (SubjectNotFoundException | SubjectClassNotFoundException e) {
+            LOGGER.debug("form has invalid subject or class");
+            throw new InvalidFormException(e);
         }
 
-        final Map<String, SubjectClass> classes = maybeSubject.get().getClassesById();
-
-        if(!classes.containsKey(semesterForm.getIdClass())){
-            LOGGER.warn("No class in subject {} for id {}", semesterForm.getIdSub(), semesterForm.getIdClass());
-            return new ModelAndView(REDIRECT_BUILDER);
-        }
-        final SubjectClass subjectClass = classes.get(semesterForm.getIdClass());
-
-        LOGGER.info("User {} added to its current semester the subject: {}, class: {}", user.getId(), subjectClass.getSubject().getName(), subjectClass.getClassId());
-
-        userService.addToCurrentSemester(user, subjectClass);
-
-        return new ModelAndView(REDIRECT_BUILDER);
+        return new ModelAndView("redirect:/builder");
     }
 
-    // Justificacion: codigo repetido que no vale modularizar al tener que retornar MAV y SubjecClass
     @RequestMapping(value = "/builder/remove", method = RequestMethod.POST)
     public ModelAndView removeSubjectToSemester(@Valid @ModelAttribute("UserSemesterForm") final UserSemesterForm semesterForm, final BindingResult errors){
-        User user;
-        if(authUserService.isAuthenticated()) {
-            user = authUserService.getCurrentUser();
-        }
-        else{
-            LOGGER.info("User is not logged in");
-            return new ModelAndView(LOGIN);
-        }
         if(errors.hasErrors()){
-            LOGGER.warn("Subject builder adding form has errors");
-            return new ModelAndView(REDIRECT_BUILDER);
+            LOGGER.debug("Subject builder adding form has errors");
+            throw new InvalidFormException();
         }
 
-        final Optional<Subject> maybeSubject = subjectService.findById(semesterForm.getIdSub());
-
-        if(!maybeSubject.isPresent()){
-            LOGGER.warn("No subject for id {}", semesterForm.getIdSub());
-            return new ModelAndView(REDIRECT_BUILDER);
+        try {
+            userService.removeFromCurrentSemester(authUserService.getCurrentUser(), semesterForm.getIdSub(), semesterForm.getIdClass());
+        } catch (SubjectNotFoundException | SubjectClassNotFoundException e) {
+            LOGGER.debug("form has invalid subject or class");
+            throw new InvalidFormException();
         }
 
-        final Map<String, SubjectClass> classes = maybeSubject.get().getClassesById();
-
-        if(!classes.containsKey(semesterForm.getIdClass())){
-            LOGGER.warn("No class in subject {} for id {}", semesterForm.getIdSub(), semesterForm.getIdClass());
-            return new ModelAndView(REDIRECT_BUILDER);
-        }
-        final SubjectClass subjectClass = classes.get(semesterForm.getIdClass());
-
-        LOGGER.info("User {} removed to its current semester the subject: {}, class: {}", user.getId(), subjectClass.getSubject().getName(), subjectClass.getClassId());
-
-        userService.removeFromCurrentSemester(user, subjectClass);
-
-        return new ModelAndView(REDIRECT_BUILDER);
+        return new ModelAndView("redirect:/builder");
     }
 }

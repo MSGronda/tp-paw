@@ -4,7 +4,7 @@
 //import ar.edu.itba.paw.models.constants.Difficulty;
 //import ar.edu.itba.paw.models.constants.TimeDemanding;
 //import ar.edu.itba.paw.persistence.dao.ReviewDao;
-//import ar.edu.itba.paw.services.exceptions.NoGrantedPermissionException;
+//import ar.edu.itba.paw.models.exceptions.NoGrantedPermissionException;
 //import org.junit.Assert;
 //import org.junit.Test;
 //import org.junit.runner.RunWith;

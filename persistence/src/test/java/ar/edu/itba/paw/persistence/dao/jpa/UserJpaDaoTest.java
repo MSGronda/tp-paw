@@ -6,7 +6,7 @@ import ar.edu.itba.paw.models.SubjectClass;
 import ar.edu.itba.paw.models.User;
 import ar.edu.itba.paw.models.enums.SubjectProgress;
 import ar.edu.itba.paw.persistence.config.TestConfig;
-import ar.edu.itba.paw.persistence.exceptions.EmailAlreadyTakenException;
+import ar.edu.itba.paw.models.exceptions.EmailAlreadyTakenException;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -31,7 +31,7 @@ public class UserJpaDaoTest {
     private final static String USERNAME = "username";
     private final static String PASSWORD = "password";
     private final static String EMAIL = "e@mail.com";
-    private final static String CONFIRM_TOKEN = "token";
+    private final static String VERIFICATION_TOKEN = "token";
 
     private final static String USERNAME2 = "username2";
     private final static String PASSWORD2 = "password2";
@@ -67,7 +67,7 @@ public class UserJpaDaoTest {
                         .email(EMAIL)
                         .username(USERNAME)
                         .password(PASSWORD)
-                        .confirmToken(CONFIRM_TOKEN)
+                        .verificationToken(VERIFICATION_TOKEN)
                         .build()
         );
 
@@ -103,7 +103,7 @@ public class UserJpaDaoTest {
                         .email(EMAIL)
                         .username(USERNAME2)
                         .password(PASSWORD2)
-                        .confirmToken(CONFIRM_TOKEN2)
+                        .verificationToken(CONFIRM_TOKEN2)
                         .build()
         );
     }
@@ -129,7 +129,7 @@ public class UserJpaDaoTest {
                         .email(EMAIL)
                         .username(USERNAME)
                         .password(PASSWORD)
-                        .confirmToken(CONFIRM_TOKEN)
+                        .verificationToken(VERIFICATION_TOKEN)
                         .build()
         );
 
@@ -142,12 +142,12 @@ public class UserJpaDaoTest {
                 .email(EMAIL)
                 .username(USERNAME)
                 .password(PASSWORD)
-                .confirmToken(CONFIRM_TOKEN)
+                .verificationToken(VERIFICATION_TOKEN)
                 .build();
 
         em.persist(user);
 
-        assertEquals(user, userJpaDao.findUnconfirmedByEmail(EMAIL).get());
+        assertEquals(user, userJpaDao.findUnverifiedByEmail(EMAIL).get());
     }
 
     @Test
@@ -156,45 +156,17 @@ public class UserJpaDaoTest {
                 .email(EMAIL)
                 .username(USERNAME)
                 .password(PASSWORD)
-                .confirmToken(CONFIRM_TOKEN)
+                .verificationToken(VERIFICATION_TOKEN)
                 .build();
 
         em.persist(user);
 
         assertEquals(
-                em.createQuery("from User where confirmToken = :confirmToken", User.class)
-                        .setParameter("confirmToken", CONFIRM_TOKEN)
+                em.createQuery("from User where verificationToken = :verificationToken", User.class)
+                        .setParameter("verificationToken", VERIFICATION_TOKEN)
                         .getSingleResult(),
-                userJpaDao.findByConfirmToken(CONFIRM_TOKEN).get()
+                userJpaDao.findByConfirmToken(VERIFICATION_TOKEN).get()
         );
-    }
-
-    @Test
-    public void deleteSubjectProgress() {
-        final Subject subject = Subject.builder()
-                .id(SUBJECT_ID)
-                .name(SUBJECT_NAME)
-                .credits(SUBJECT_CREDITS)
-                .department(SUBJECT_DEPARTMENT)
-                .build();
-
-        em.persist(subject);
-
-        final User user = User.builder()
-                .email(EMAIL)
-                .username(USERNAME)
-                .password(PASSWORD)
-                .build();
-
-        Map<String, SubjectProgress> subjectProgress = user.getSubjectProgress();
-        subjectProgress.put(subject.getId(), SubjectProgress.DONE);
-        user.setSubjectProgress(subjectProgress);
-
-        em.persist(user);
-
-        userJpaDao.deleteSubjectProgress(user, subject);
-
-        assertFalse(user.getSubjectProgress().containsKey(subject.getId()));
     }
 
     @Test
@@ -216,10 +188,10 @@ public class UserJpaDaoTest {
         em.persist(user);
 
         userJpaDao.updateSubjectProgress(user, subject, SubjectProgress.DONE);
-        assertEquals(SubjectProgress.DONE, user.getSubjectProgress().get(subject.getId()));
+        assertEquals(SubjectProgress.DONE, user.getAllSubjectProgress().get(subject.getId()));
 
         userJpaDao.updateSubjectProgress(user, subject, SubjectProgress.PENDING);
-        assertEquals(SubjectProgress.PENDING, user.getSubjectProgress().get(subject.getId()));
+        assertEquals(SubjectProgress.PENDING, user.getSubjectProgress(subject));
     }
 
     @Test
@@ -258,13 +230,13 @@ public class UserJpaDaoTest {
                 .email(EMAIL)
                 .username(USERNAME)
                 .password(PASSWORD)
-                .confirmToken(CONFIRM_TOKEN)
+                .verificationToken(VERIFICATION_TOKEN)
                 .build();
 
         em.persist(user);
 
         userJpaDao.confirmUser(user);
-        assertTrue(user.isConfirmed());
+        assertTrue(user.isVerified());
     }
 
     @Test
@@ -300,44 +272,18 @@ public class UserJpaDaoTest {
     }
 
     @Test
-    public void updateRoles() {
-        final Role.RoleEnum userRoleEnum = Role.RoleEnum.USER;
-        final Role userRole = new Role(userRoleEnum.getId(), userRoleEnum.getName());
-        em.persist(userRole);
-
-        final Role.RoleEnum editorRoleEnum = Role.RoleEnum.EDITOR;
-        final Role editorRole = new Role(editorRoleEnum.getId(), editorRoleEnum.getName());
-        em.persist(editorRole);
-
-        final User user = User.builder()
-                .email(EMAIL)
-                .username(USERNAME)
-                .password(PASSWORD)
-                .build();
-
-        user.getRoles().add(userRole);
-
-        em.persist(user);
-
-        userJpaDao.updateRoles(user, editorRole);
-
-        assertTrue(user.getRoles().contains(editorRole));
-        assertFalse(user.getRoles().contains(userRole));
-    }
-
-    @Test
     public void updateConfirmToken() {
         final User user = User.builder()
                 .email(EMAIL)
                 .username(USERNAME)
                 .password(PASSWORD)
-                .confirmToken(CONFIRM_TOKEN)
+                .verificationToken(VERIFICATION_TOKEN)
                 .build();
 
         em.persist(user);
 
-        userJpaDao.updateConfirmToken(user, CONFIRM_TOKEN2);
-        assertEquals(CONFIRM_TOKEN2, user.getConfirmToken().get());
+        userJpaDao.updateVerificationToken(user, CONFIRM_TOKEN2);
+        assertEquals(CONFIRM_TOKEN2, user.getVerificationToken().get());
     }
 
     @Test

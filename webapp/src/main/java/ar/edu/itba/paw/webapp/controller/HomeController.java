@@ -1,102 +1,61 @@
 package ar.edu.itba.paw.webapp.controller;
 
-import ar.edu.itba.paw.models.*;
-import ar.edu.itba.paw.models.enums.SubjectProgress;
-import ar.edu.itba.paw.services.*;
-import ar.edu.itba.paw.webapp.exceptions.DegreeNotFoundException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import ar.edu.itba.paw.models.Degree;
+import ar.edu.itba.paw.models.User;
+import ar.edu.itba.paw.services.AuthUserService;
+import ar.edu.itba.paw.services.DegreeService;
+import ar.edu.itba.paw.services.SubjectService;
+import ar.edu.itba.paw.models.exceptions.DegreeNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
 
-import java.util.*;
-import java.util.Map;
+import java.util.HashMap;
 
 @Controller
 public class HomeController {
-    private final DegreeService ds;
-    private final SubjectService ss;
-
-    private final UserService us;
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(HomeController.class);
-    private final AuthUserService aus;
+    private final DegreeService degreeService;
+    private final SubjectService subjectService;
+    private final AuthUserService authUserService;
 
     @Autowired
-    public HomeController(DegreeService ds, SubjectService ss, ProfessorService ps, UserService us, AuthUserService aus) {
-        this.ds = ds;
-        this.aus = aus;
-        this.ss = ss;
-        this.us = us;
+    public HomeController(DegreeService degreeService, SubjectService subjectService, AuthUserService authUserService) {
+        this.degreeService = degreeService;
+        this.authUserService = authUserService;
+        this.subjectService = subjectService;
     }
 
-    //esta mapping es por los casos en donde la pagina no tiene una instancia del current user
     @RequestMapping("/degree")
     public ModelAndView degree() {
-        long id = aus.getCurrentUser().getDegree().getId();
-        return new ModelAndView("redirect:/degree/" + id);
+        return new ModelAndView("redirect:/degree/" + authUserService.getCurrentUser().getDegree().getId());
     }
 
     @RequestMapping("/degree/{id:\\d+}")
     public ModelAndView degree(@PathVariable Long id) {
-        final Optional<Degree> degree = ds.findById(id);
+        final Degree degree = degreeService.findById(id).orElseThrow(DegreeNotFoundException::new);
 
-        if( !degree.isPresent() ){
-            LOGGER.warn("Degree is not present");
-            throw new DegreeNotFoundException();
-        }
-        User user;
-        if(!aus.isAuthenticated()) {
-            user = null;
-            LOGGER.info("User is not authenticated");
-        } else {
-            user = aus.getCurrentUser();
-        }
-
-        final Map<String, SubjectProgress> progress = user == null ? new HashMap<>() : user.getSubjectProgress();
-
-        ModelAndView mav = new ModelAndView("degree/index");
-        mav.addObject("degree", degree.get());
-        mav.addObject("subjectProgress", progress);
+        final ModelAndView mav = new ModelAndView("degree/index");
+        mav.addObject("degree", degree);
+        mav.addObject("subjectProgress", authUserService.getCurrentUser().getAllSubjectProgress());
         return mav;
     }
 
     @RequestMapping("/")
     public ModelAndView dashboard() {
-        User user;
-        if(aus.isAuthenticated()) {
-            user = aus.getCurrentUser();
-        }
-        else{
-            return new ModelAndView("landing");
-        }
+        if (!authUserService.isAuthenticated()) return new ModelAndView("landing");
 
-        final long userDegree = 1;           // User.getDegree
-
-        final Optional<Degree> maybeDegree = ds.findById(userDegree);
-        if(!maybeDegree.isPresent()){
-            throw new DegreeNotFoundException();
-        }
-        Degree degree = maybeDegree.get();
-        final List<Subject> subjectsUserCanDo = ss.findAllThatUserCanDo(user);
-        final List<Subject> futureSubjects = ss.findAllThatUserHasNotDone(user);
-        final List<Subject> pastSubjects = ss.findAllThatUserHasDone(user);
-        final double userProgressPercentage = Math.floor( ((1.0 * user.getCreditsDone()) / degree.getTotalCredits()) * 100);
-        final Map<Integer, Double> percentageCompletionByYear = us.getUserProgressionPerYear( degree,  user); // userService.getCreditsDoneByUserPerYear
+        final User user = authUserService.getCurrentUser();
+        final Degree degree = user.getDegree();
 
         ModelAndView mav = new ModelAndView("dashboard/dashboard");
-        mav.addObject("degree",degree);
-        mav.addObject("user",user);
-        mav.addObject("subjectsUserCanDo",subjectsUserCanDo);
-        mav.addObject("futureSubjects",futureSubjects);
-        mav.addObject("pastSubjects",pastSubjects);
-
-        mav.addObject("userProgressPercentage",userProgressPercentage);
-
-        mav.addObject("percentageCompletionByYear",percentageCompletionByYear);
+        mav.addObject("degree", degree);
+        mav.addObject("user", user);
+        mav.addObject("subjectsUserCanDo", subjectService.findAllThatUserCanDo(user));
+        mav.addObject("futureSubjects", subjectService.findAllThatUserHasNotDone(user));
+        mav.addObject("pastSubjects", subjectService.findAllThatUserHasDone(user));
+        mav.addObject("userProgressPercentage", user.getTotalProgressPercentage());
         return mav;
     }
 }

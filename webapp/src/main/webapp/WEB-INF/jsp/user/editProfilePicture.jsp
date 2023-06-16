@@ -8,9 +8,9 @@
     <jsp:include page="../components/head_shared.jsp"/>
     <script>
         function previewImage(event) {
-            var reader = new FileReader();
+            let reader = new FileReader();
             reader.onload = function () {
-                var output = document.getElementById('imagePreview');
+                let output = document.getElementById('imagePreview');
                 output.src = reader.result;
             }
             reader.readAsDataURL(event.target.files[0]);
@@ -84,7 +84,7 @@
     </div>
     <div class="container-50" >
         <sl-card class="card-basic">
-            <c:if test="${invalidImageSize}">
+            <c:if test="${invalidImageSize or invalidImage}">
                 <h5><spring:message code="profile.editing.picture.error"/></h5>
             </c:if>
             <div class="images">

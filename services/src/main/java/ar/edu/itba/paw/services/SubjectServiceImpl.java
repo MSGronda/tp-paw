@@ -5,12 +5,12 @@ import ar.edu.itba.paw.models.User;
 import ar.edu.itba.paw.models.enums.OrderDir;
 import ar.edu.itba.paw.models.enums.SubjectFilterField;
 import ar.edu.itba.paw.models.enums.SubjectOrderField;
+import ar.edu.itba.paw.models.exceptions.InvalidPageNumberException;
 import ar.edu.itba.paw.persistence.dao.SubjectDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Service
@@ -56,14 +56,17 @@ public class SubjectServiceImpl implements SubjectService {
     public List<Subject> search(
             final String name,
             final int page,
-            final Map<String,String> filters,
             final String orderBy,
-            final String dir
+            final String dir,
+            final Integer credits,
+            final String department
     ) {
+        if(page < 1 || page > getTotalPagesForSearch(name, credits, department)) throw new InvalidPageNumberException();
+
         final OrderDir orderDir = OrderDir.parse(dir);
         final SubjectOrderField orderField = SubjectOrderField.parse(orderBy);
 
-        return subjectDao.search(name, page, parseFilters(filters), orderField, orderDir);
+        return subjectDao.search(name, page, getFilterMap(credits, department), orderField, orderDir);
     }
 
     @Override
@@ -72,8 +75,8 @@ public class SubjectServiceImpl implements SubjectService {
     }
 
     @Override
-    public int getTotalPagesForSearch(final String name, final Map<String,String> filters){
-        return subjectDao.getTotalPagesForSearch(name, parseFilters(filters));
+    public int getTotalPagesForSearch(final String name, final Integer credits, final String department){
+        return subjectDao.getTotalPagesForSearch(name, getFilterMap(credits, department));
     }
 
     @Override
@@ -88,8 +91,8 @@ public class SubjectServiceImpl implements SubjectService {
     }
 
     @Override
-    public Map<String, List<String>> getRelevantFiltersForSearch(final String name, final Map<String,String> filters) {
-        return subjectDao.getRelevantFiltersForSearch(name, parseFilters(filters))
+    public Map<String, List<String>> getRelevantFiltersForSearch(final String name, final Integer credits, final String department) {
+        return subjectDao.getRelevantFiltersForSearch(name, getFilterMap(credits, department))
                 .entrySet()
                 .stream()
                 .collect(Collectors.toMap(
@@ -113,19 +116,10 @@ public class SubjectServiceImpl implements SubjectService {
         subjectDao.updateUnreviewedNotificationTime();
     }
 
-    private Map<SubjectFilterField, String> parseFilters(Map<String, String> filters) {
-        if (filters == null) {
-            return null;
-        }
-
-        Map<SubjectFilterField, String> parsedFilters = new HashMap<>();
-        for (Map.Entry<String, String> entry : filters.entrySet()) {
-            SubjectFilterField filterField = SubjectFilterField.fromString(entry.getKey());
-            if (filterField != null) {
-                parsedFilters.put(filterField, entry.getValue());
-            }
-        }
-
-        return parsedFilters;
+    private Map<SubjectFilterField, String> getFilterMap(final Integer credits, final String department) {
+        final Map<SubjectFilterField, String> filters = new HashMap<>();
+        if(credits != null) filters.put(SubjectFilterField.CREDITS, credits.toString());
+        if(department != null && !department.isEmpty()) filters.put(SubjectFilterField.DEPARTMENT, department);
+        return filters;
     }
 }

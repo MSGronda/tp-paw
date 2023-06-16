@@ -1,15 +1,19 @@
 package ar.edu.itba.paw.webapp.controller;
 
 import ar.edu.itba.paw.models.*;
-import ar.edu.itba.paw.models.enums.SubjectProgress;
-import ar.edu.itba.paw.services.*;
-import ar.edu.itba.paw.webapp.exceptions.SubjectNotFoundException;
+import ar.edu.itba.paw.models.exceptions.SubjectNotFoundException;
+import ar.edu.itba.paw.services.AuthUserService;
+import ar.edu.itba.paw.services.DegreeService;
+import ar.edu.itba.paw.services.ReviewService;
+import ar.edu.itba.paw.services.SubjectService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
-import java.util.*;
+import java.util.Map;
 
 @Controller
 public class SubjectController {
@@ -34,46 +38,26 @@ public class SubjectController {
     @RequestMapping("/subject/{id:\\d+\\.\\d+}")
     public ModelAndView subjectInfo(
             @PathVariable final String id,
-            @RequestParam(required = false, defaultValue = "1") final int pageNum,
-            @RequestParam(required = false, defaultValue = "name") final String order,
-            @RequestParam(required = false, defaultValue = "asc") final String dir
+            @RequestParam(name = "pageNum", defaultValue = "1") final int page,
+            @RequestParam(defaultValue = "name") final String order,
+            @RequestParam(defaultValue = "asc") final String dir
     ) {
-        final Optional<Subject> maybeSubject = subjectService.findById(id);
-        if(!maybeSubject.isPresent()) {
-            throw new SubjectNotFoundException("No subject with given id");
-        }
+        final Subject subject = subjectService.findById(id).orElseThrow(SubjectNotFoundException::new);
+        final User user = authUserService.getCurrentUser();
 
-        final User user;
-        if( authUserService.isAuthenticated()){
-            user = authUserService.getCurrentUser();
-        } else {
-            user = null;
-        }
+        //Todo?: find votes for current subject and page only
+        final Map<Review, ReviewVote> userVotes = user.getVotesByReview();
 
-        final Subject subject = maybeSubject.get();
-        final int totalPages = reviewService.getTotalPagesForSubjectReviews(subject);
-
-        if(pageNum < 1 || pageNum > totalPages) return new ModelAndView("redirect:/404");
-
-        //TODO: get degree from user
-        final Degree degree = degreeService.findById(1L).orElseThrow(IllegalStateException::new);
-
-        final SubjectProgress progress = user == null ? SubjectProgress.PENDING : user.getSubjectProgress().getOrDefault(subject.getId(),SubjectProgress.PENDING);
-        final int year = degreeService.findSubjectYearForDegree(subject, degree);
-        final List<Review> reviews = reviewService.getAllSubjectReviews(subject, pageNum, order, dir);
-        final Boolean didReview = reviewService.didUserReview(subject, user);
-        final Map<Review, ReviewVote> userVotes = user == null ? new HashMap<>() : user.getVotesByReview();
-
-        ModelAndView mav = new ModelAndView("subjects/subject_info");
+        final ModelAndView mav = new ModelAndView("subjects/subject_info");
+        mav.addObject("totalPages", reviewService.getTotalPagesForSubjectReviews(subject));
+        mav.addObject("reviews", reviewService.getAllSubjectReviews(subject, page, order, dir));
+        mav.addObject("year", degreeService.findSubjectYearForDegree(subject, user.getDegree()));
+        mav.addObject("didReview", reviewService.didUserReview(subject, user));
+        mav.addObject("progress", user.getSubjectProgress(subject));
         mav.addObject("user", user);
         mav.addObject("subject", subject);
-        mav.addObject("progress", progress);
-        mav.addObject("totalPages",totalPages);
-        mav.addObject("reviews", reviews);
-        mav.addObject("year", year);
-        mav.addObject("didReview", didReview);
         mav.addObject("userVotes", userVotes);
-        mav.addObject("currentPage", pageNum);
+        mav.addObject("currentPage", page);
         mav.addObject("order", order);
         mav.addObject("dir", dir);
 

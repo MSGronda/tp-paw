@@ -1,4 +1,4 @@
-package ar.edu.itba.paw.webapp.exceptions;
+package ar.edu.itba.paw.models.exceptions;
 
 public class RoleNotFoundException extends RuntimeException{
     public RoleNotFoundException() {

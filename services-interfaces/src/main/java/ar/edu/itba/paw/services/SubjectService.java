@@ -21,14 +21,15 @@ public interface SubjectService extends BaseService<String, Subject> {
     List<Subject> search(
             final String name,
             final int page,
-            final Map<String,String> filters,
             final String orderBy,
-            final String dir
+            final String dir,
+            final Integer credits,
+            final String department
     );
     int getTotalPagesForSearch(final String name);
-    int getTotalPagesForSearch(final String name, final Map<String, String> filters);
+    int getTotalPagesForSearch(final String name, final Integer credits, final String department);
     Map<String, List<String>> getRelevantFiltersForSearch(final String name);
-    Map<String, List<String>> getRelevantFiltersForSearch(final String name, final Map<String,String> filters);
+    Map<String, List<String>> getRelevantFiltersForSearch(final String name, final Integer credits, final String department);
 
     Map<User,Set<Subject>> getAllUserUnreviewedNotificationSubjects();
     void updateUnreviewedNotificationTime();

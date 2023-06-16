@@ -50,7 +50,7 @@
 <jsp:include page="../components/footer.jsp"/>
 <script>
     const subjectProgress = {
-    <c:forEach var="entry" items="${user.subjectProgress}">
+    <c:forEach var="entry" items="${user.allSubjectProgress}">
         <c:out value="${entry.key}"/>: 1,
     </c:forEach>
     }

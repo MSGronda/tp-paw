@@ -5,9 +5,9 @@
 //import ar.edu.itba.paw.persistence.dao.ImageDao;
 //import ar.edu.itba.paw.persistence.dao.UserDao;
 //import ar.edu.itba.paw.persistence.exceptions.UserEmailAlreadyTakenPersistenceException;
-//import ar.edu.itba.paw.services.exceptions.InvalidImageSizeException;
-//import ar.edu.itba.paw.services.exceptions.OldPasswordDoesNotMatchException;
-//import ar.edu.itba.paw.services.exceptions.UserEmailAlreadyTakenException;
+//import ar.edu.itba.paw.models.exceptions.InvalidImageSizeException;
+//import ar.edu.itba.paw.models.exceptions.OldPasswordDoesNotMatchException;
+//import ar.edu.itba.paw.models.exceptions.UserEmailAlreadyTakenException;
 //import org.junit.Assert;
 //import org.junit.Test;
 //import org.junit.runner.RunWith;

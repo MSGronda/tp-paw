@@ -3,7 +3,7 @@ package ar.edu.itba.paw.persistence.dao.jpa;
 import ar.edu.itba.paw.models.*;
 import ar.edu.itba.paw.models.enums.SubjectProgress;
 import ar.edu.itba.paw.persistence.dao.UserDao;
-import ar.edu.itba.paw.persistence.exceptions.EmailAlreadyTakenException;
+import ar.edu.itba.paw.models.exceptions.EmailAlreadyTakenException;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
@@ -17,60 +17,52 @@ public class UserJpaDao implements UserDao {
     private EntityManager em;
 
     @Override
-    public User create(User user) throws EmailAlreadyTakenException {
-        if (!user.getConfirmToken().isPresent())
+    public User create(final User user) throws EmailAlreadyTakenException {
+        if (!user.getVerificationToken().isPresent())
             throw new IllegalArgumentException("Confirm token must be present");
-        if( findByEmail(user.getEmail()).isPresent() || findUnconfirmedByEmail(user.getEmail()).isPresent() )
+        if(findByEmail(user.getEmail()).isPresent() || findUnverifiedByEmail(user.getEmail()).isPresent())
             throw new EmailAlreadyTakenException();
+
         em.persist(user);
         return user;
     }
 
     @Override
     public List<User> getAll() {
-        return em.createQuery("from User u where u.confirmed = true", User.class).getResultList();
+        return em.createQuery("from User u where u.verified = true", User.class).getResultList();
     }
 
     @Override
     public Optional<User> findById(Long id) {
-        TypedQuery<User> query = em.createQuery("from User u where u.id = :id and u.confirmed = true", User.class);
+        TypedQuery<User> query = em.createQuery("from User u where u.id = :id and u.verified = true", User.class);
         query.setParameter("id", id);
         final List<User> list = query.getResultList();
         return list.isEmpty() ? Optional.empty() : Optional.of(list.get(0));
     }
     @Override
     public Optional<User> findByEmail(String email) {
-        return em.createQuery("from User u where u.email = :email and u.confirmed = true", User.class)
+        return em.createQuery("from User u where u.email = :email and u.verified = true", User.class)
                 .setParameter("email", email)
                 .getResultList()
                 .stream().findFirst();
     }
 
     @Override
-    public Optional<User> findUnconfirmedByEmail(String email) {
-        return em.createQuery("from User u where u.email = :email and u.confirmed = false", User.class)
+    public Optional<User> findUnverifiedByEmail(String email) {
+        return em.createQuery("from User u where u.email = :email and u.verified = false", User.class)
                 .setParameter("email", email)
                 .getResultList()
                 .stream().findFirst();
-    }
-
-    @Override
-    public void deleteSubjectProgress(final User user, final Subject subject) {
-        final Map<String, SubjectProgress> sp = user.getSubjectProgress();
-        sp.remove(subject.getId());
     }
 
     @Override
     public void updateSubjectProgress(final User user, final Subject subject, final SubjectProgress progress) {
-        final Map<String, SubjectProgress> sp = user.getSubjectProgress();
-        sp.put(subject.getId(), progress);
-    }
-
-    @Override
-    public void setAllSubjectProgress(final User user, final Map<String, SubjectProgress> progressMap) {
-        final Map<String, SubjectProgress> sp = user.getSubjectProgress();
-        sp.clear();
-        sp.putAll(progressMap);
+        final Map<String, SubjectProgress> sp = user.getAllSubjectProgress();
+        if(progress == SubjectProgress.DONE) {
+            sp.put(subject.getId(), progress);
+        } else {
+            sp.remove(subject.getId());
+        }
     }
 
     @Override
@@ -95,16 +87,8 @@ public class UserJpaDao implements UserDao {
     }
 
     @Override
-    public void updateRoles(final User user, final Role role) {
-        final Set<Role> roles = user.getRoles();
-
-        roles.clear();
-        roles.add(role);
-    }
-
-    @Override
     public Optional<User> findByConfirmToken(String token) {
-        return em.createQuery("from User u where u.confirmToken = :token", User.class)
+        return em.createQuery("from User u where u.verificationToken = :token", User.class)
                 .setParameter("token", token)
                 .getResultList()
                 .stream()
@@ -113,7 +97,7 @@ public class UserJpaDao implements UserDao {
 
     @Override
     public void confirmUser(final User user) {
-        user.setConfirmed(true);
+        user.setVerified(true);
     }
 
     @Override
@@ -122,8 +106,8 @@ public class UserJpaDao implements UserDao {
     }
 
     @Override
-    public void updateConfirmToken(final User user, final String token) {
-        user.setConfirmToken(token);
+    public void updateVerificationToken(final User user, final String token) {
+        user.setVerificationToken(token);
     }
 
     @Override
@@ -142,14 +126,18 @@ public class UserJpaDao implements UserDao {
     }
 
     @Override
-    public void updateSubjectProgressList(final User user, final List<String> subjectIdList){
-        Map<String, SubjectProgress> userSubjectProgress = user.getSubjectProgress();
+    public void updateSubjectProgressList(final User user, final List<String> subjectIdList, final SubjectProgress progress){
+        Map<String, SubjectProgress> userSubjectProgress = user.getAllSubjectProgress();
         if( userSubjectProgress == null)
             userSubjectProgress = new HashMap<>();
         for( String subjectId : subjectIdList){
-            userSubjectProgress.put(subjectId, SubjectProgress.DONE);
+            if (progress == SubjectProgress.DONE) {
+                userSubjectProgress.put(subjectId, progress);
+            } else {
+                userSubjectProgress.remove(subjectId);
+            }
         }
-        user.setSubjectProgress(userSubjectProgress);
+        user.setAllSubjectProgress(userSubjectProgress);
     }
 
     @Override

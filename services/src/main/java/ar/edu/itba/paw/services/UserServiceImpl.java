@@ -2,11 +2,10 @@ package ar.edu.itba.paw.services;
 
 import ar.edu.itba.paw.models.*;
 import ar.edu.itba.paw.models.enums.SubjectProgress;
+import ar.edu.itba.paw.models.exceptions.*;
 import ar.edu.itba.paw.persistence.dao.ImageDao;
 import ar.edu.itba.paw.persistence.dao.RecoveryDao;
 import ar.edu.itba.paw.persistence.dao.UserDao;
-import ar.edu.itba.paw.persistence.exceptions.EmailAlreadyTakenException;
-import ar.edu.itba.paw.services.exceptions.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,7 +32,12 @@ public class UserServiceImpl implements UserService {
     private final UserDao userDao;
     private final RecoveryDao recDao;
     private final ImageDao imageDao;
+
     private final RolesService rolesService;
+    private final SubjectService subjectService;
+    private final DegreeService degreeService;
+    private final MailService mailService;
+
     private final PasswordEncoder passwordEncoder;
 
     private static final int MAX_IMAGE_SIZE = 1024 * 1024 * 5;
@@ -45,13 +49,19 @@ public class UserServiceImpl implements UserService {
             final RecoveryDao recDao,
             final ImageDao imageDao,
             final RolesService rolesService,
+            final SubjectService subjectService,
+            final DegreeService degreeService,
+            final MailService mailService,
             final PasswordEncoder passwordEncoder
     ) {
         this.userDao = userDao;
-        this.passwordEncoder = passwordEncoder;
         this.recDao = recDao;
         this.imageDao = imageDao;
         this.rolesService = rolesService;
+        this.subjectService = subjectService;
+        this.degreeService = degreeService;
+        this.mailService = mailService;
+        this.passwordEncoder = passwordEncoder;
     }
 
 
@@ -67,58 +77,69 @@ public class UserServiceImpl implements UserService {
 
     @Transactional
     @Override
-    public User create(final User user, final byte[] profilePic) throws ar.edu.itba.paw.services.exceptions.UserEmailAlreadyTakenException {
-        final Image image = imageDao.create(profilePic);
+    public User create(final long degreeId, final String completedSubjectIds, final User user, final byte[] profilePic)
+            throws EmailAlreadyTakenException, DegreeNotFoundException {
 
+        final Image image = imageDao.create(profilePic);
         final String confirmToken = generateConfirmToken();
 
-        User newUser;
+        final User newUser;
         try {
             newUser = userDao.create(
                     User.builderFrom(user)
+                            .degree(degreeService.findById(degreeId).orElseThrow(DegreeNotFoundException::new))
                             .password(passwordEncoder.encode(user.getPassword()))
-                            .confirmToken(confirmToken)
+                            .verificationToken(confirmToken)
                             .imageId(image.getId())
                             .build()
             );
         } catch (final EmailAlreadyTakenException e) {
-            LOGGER.info("User {} failed to create", user.getEmail());
-            throw new ar.edu.itba.paw.services.exceptions.UserEmailAlreadyTakenException();
+            LOGGER.debug("User email {} already taken", user.getEmail());
+            throw e;
         }
 
-        Optional<Role> maybeRole = rolesService.findByName("USER");
-        if(!maybeRole.isPresent()){
-            throw new IllegalStateException("USER role not found");
-        }
-        Role role = maybeRole.get();
+        final Role role = rolesService.findByName("USER").orElseThrow(IllegalStateException::new);
         addRole(newUser, role);
 
+        updateSubjectProgress(newUser, completedSubjectIds, SubjectProgress.DONE);
+
+        mailService.sendVerification(newUser, confirmToken);
 
         return newUser;
     }
 
     @Transactional
     @Override
-    public User create(final User user) throws ar.edu.itba.paw.services.exceptions.UserEmailAlreadyTakenException, IOException {
-        File file = ResourceUtils.getFile("classpath:images/default_user.png");
-        byte[] defaultImg = Files.readAllBytes(file.toPath());
-        return create(user, defaultImg);
+    public User create(final long degreeId, final String completedSubjectIds, final User user)
+            throws EmailAlreadyTakenException, DegreeNotFoundException {
+
+        final byte[] defaultImg;
+        try {
+            final File file = ResourceUtils.getFile("classpath:images/default_user.png");
+            defaultImg = Files.readAllBytes(file.toPath());
+        } catch (IOException e) {
+            LOGGER.error("Failed to read default image");
+            throw new IllegalStateException("Failed to read default image");
+        }
+
+        return create(degreeId, completedSubjectIds, user, defaultImg);
     }
 
     @Transactional
     @Override
-    public String regenerateConfirmToken(final User user) {
-        String newToken = generateConfirmToken();
+    public void resendVerificationEmail(String email) throws UserNotFoundException {
+        final User user = userDao.findUnverifiedByEmail(email).orElseThrow(UserNotFoundException::new);
 
-        userDao.updateConfirmToken(user, newToken);
+        final String newToken = generateConfirmToken();
+        userDao.updateVerificationToken(user, newToken);
 
-        return newToken;
+        mailService.sendVerification(user, newToken);
     }
 
     @Transactional
     @Override
     public void updateProfilePicture(final User user, final byte[] newImage) throws InvalidImageSizeException {
-        if(newImage.length > MAX_IMAGE_SIZE || newImage.length == 0){
+        if (newImage.length > MAX_IMAGE_SIZE || newImage.length == 0) {
             throw new InvalidImageSizeException();
         }
 
@@ -133,49 +154,27 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public Optional<User> findUnconfirmedByEmail(final String email) {
-        return userDao.findUnconfirmedByEmail(email);
-    }
-
-    @Transactional
-    @Override
-    public void deleteSubjectProgress(final User user, final Subject subject){
-        userDao.deleteSubjectProgress(user, subject);
+        return userDao.findUnverifiedByEmail(email);
     }
 
     @Transactional
     @Override
     public void updateSubjectProgress(final User user, final Subject subject, final SubjectProgress progress) {
-        if(progress != SubjectProgress.PENDING)
-            userDao.updateSubjectProgress(user, subject, progress);
-        else
-            userDao.deleteSubjectProgress(user, subject);
+        userDao.updateSubjectProgress(user, subject, progress);
+    }
+
+    @Override
+    public void updateSubjectProgress(final User user, final List<String> subIds, final SubjectProgress progress) {
+        if (subIds.isEmpty()) {
+            return;
+        }
+        userDao.updateSubjectProgressList(user, subIds, progress);
     }
 
     @Transactional
     @Override
-    public void updateSubjectProgressWithSubList( final User user, final String subIds){
-        List<String> subjectIdList = parseString(subIds);
-        if(subjectIdList.isEmpty()){
-            return;
-        }
-        userDao.updateSubjectProgressList(user, subjectIdList);
-    }
-
-    private List<String> parseString(String stringifyString){
-        String trimmedInput = stringifyString.replace("[", "").replace("]", "");
-        String[] elements = trimmedInput.split(",");
-
-        List<String> parsedList = new ArrayList<>();
-        if(elements[0].equals("")){
-            return parsedList;
-        }
-        for (String element : elements) {
-            // Remove quotes around each element
-            String parsedElement = element.replace("\"", "");
-            parsedList.add(parsedElement);
-        }
-
-        return parsedList;
+    public void updateSubjectProgress(final User user, final String subIds, final SubjectProgress progress) {
+        updateSubjectProgress(user, parseJsonList(subIds), progress);
     }
 
     @Transactional
@@ -183,14 +182,13 @@ public class UserServiceImpl implements UserService {
     public void changePassword(
             final User user,
             final String password,
-            final String oldPassword,
-            final String userOldPassword
+            final String oldPasswordInput
     ) throws OldPasswordDoesNotMatchException {
-
-        if(!passwordEncoder.matches(oldPassword, userOldPassword)){
-            LOGGER.warn("Old password does not match with input. Update failed");
+        if (!passwordEncoder.matches(oldPasswordInput, user.getPassword())) {
+            LOGGER.debug("Old password does not match with input");
             throw new OldPasswordDoesNotMatchException();
         }
+
         userDao.changePassword(user, passwordEncoder.encode(password));
     }
 
@@ -198,20 +196,6 @@ public class UserServiceImpl implements UserService {
     @Override
     public void editProfile(final User user, final String username) {
         userDao.changeUsername(user, username);
-    }
-
-    @Transactional
-    @Override
-    public String generateRecoveryToken(final User user){
-        final SecureRandom random = new SecureRandom();
-        final byte[] bytes = new byte[20];
-        random.nextBytes(bytes);
-
-        final String token = new String(Base64.getUrlEncoder().encode(bytes));
-
-        recDao.create(token, user);
-
-        return token;
     }
 
     @Override
@@ -223,7 +207,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public void recoverPassword(final String token, final String newPassword) throws InvalidTokenException {
         final Optional<User> maybeUser = recDao.findUserByToken(token);
-        if(!maybeUser.isPresent()){
+        if (!maybeUser.isPresent()) {
             LOGGER.info("Invalid token when trying to recover password");
             throw new InvalidTokenException();
         }
@@ -237,9 +221,16 @@ public class UserServiceImpl implements UserService {
 
     @Transactional
     @Override
+    public void sendPasswordRecoveryEmail(String email) throws UserNotFoundException {
+        final User user = userDao.findByEmail(email).orElseThrow(UserNotFoundException::new);
+        mailService.sendRecover(user, createRecoveryToken(user));
+    }
+
+    @Transactional
+    @Override
     public void confirmUser(final String token) throws InvalidTokenException {
         final Optional<User> optUser = userDao.findByConfirmToken(token);
-        if(!optUser.isPresent()){
+        if (!optUser.isPresent()) {
             LOGGER.info("Invalid token when trying to confirm user");
             throw new InvalidTokenException();
         }
@@ -262,47 +253,37 @@ public class UserServiceImpl implements UserService {
         setLocale(user, locale);
     }
 
+    @Transactional
     @Override
-    public Map<Integer, Double> getUserProgressionPerYear(Degree degree, User user){
-        Map<Integer, Double> progress = new LinkedHashMap<>();
+    public void addToCurrentSemester(final User user, final String subjectId, final String classId) {
+        final Subject subject = subjectService.findById(subjectId).orElseThrow(SubjectNotFoundException::new);
 
-        for(DegreeYear year: degree.getYears()){
-            int credits = 0;
-            int totalCredits = 0;
-            for(Subject sub : year.getSubjects()){
-                if(user.getSubjectProgress().containsKey(sub.getId())){
-                    credits += sub.getCredits();
-                }
-                totalCredits += sub.getCredits();
-            }
-            if (totalCredits == 0) totalCredits = 1;
-            progress.put(year.getNumber(), 100.0 * credits / totalCredits);
+        final Map<String, SubjectClass> classes = subject.getClassesById();
+        if (!classes.containsKey(classId)) {
+            LOGGER.debug("No class in subject {} for id {}", subjectId, classId);
+            throw new SubjectClassNotFoundException();
         }
+        final SubjectClass subjectClass = classes.get(classId);
 
-        int credits = 0;
-        int totalCredits = 0;
-        for(Subject sub : degree.getElectives()){
-            if(user.getSubjectProgress().containsKey(sub.getId())){
-                credits += sub.getCredits();
-            }
-            totalCredits += sub.getCredits();
-        }
-        if(totalCredits == 0) totalCredits = 1;
-
-        progress.put(-1, 100.0 * credits / totalCredits);
-        return progress;
+        userDao.addToCurrentSemester(user, subjectClass);
+        LOGGER.info("User {} added to its current semester the subject: {}, class: {}", user.getId(), subjectClass.getSubject().getName(), subjectClass.getClassId());
     }
 
     @Transactional
     @Override
-    public void addToCurrentSemester(User user, SubjectClass subjectClass) {
-        userDao.addToCurrentSemester(user,subjectClass);
-    }
+    public void removeFromCurrentSemester(final User user, final String subjectId, final String classId) throws SubjectNotFoundException, SubjectClassNotFoundException {
+        final Subject subject = subjectService.findById(subjectId).orElseThrow(SubjectNotFoundException::new);
 
-    @Transactional
-    @Override
-    public void removeFromCurrentSemester(User user, SubjectClass subjectClass) {
-        userDao.removeFromCurrentSemester(user,subjectClass);
+        final Map<String, SubjectClass> classes = subject.getClassesById();
+        if(!classes.containsKey(classId)){
+            LOGGER.warn("No class in subject {} for id {}", subjectId, classId);
+            throw new SubjectClassNotFoundException();
+        }
+        final SubjectClass subjectClass = classes.get(classId);
+
+        userDao.removeFromCurrentSemester(user, subjectClass);
+
+        LOGGER.info("User {} removed from its current semester the subject: {}, class: {}", user.getId(), subjectClass.getSubject().getName(), subjectClass.getClassId());
     }
 
     @Transactional
@@ -312,19 +293,18 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public boolean canReviewGivenSubjectList(final String subjectIds){
-        return !subjectIds.equals("[]");
-    }
+    public String getSemesterSubmitRedirectUrl(final String subjectIds) {
+        final List<String> subjectIdList = parseJsonList(subjectIds);
 
-    @Override
-    public String generateSemesterReviewUrl(final String subjectIds){
-        List<String> subjectIdList = parseString(subjectIds);
+        if (subjectIdList.isEmpty()) {
+            return "/";
+        }
 
-        StringBuilder sb = new StringBuilder("?r=");
-        int i=0;
-        for(String subIds : subjectIdList){
+        final StringBuilder sb = new StringBuilder("/many-reviews?r=");
+        int i = 0;
+        for (String subIds : subjectIdList) {
             sb.append(subIds);
-            if(i + 1 < subjectIdList.size()){
+            if (i + 1 < subjectIdList.size()) {
                 sb.append(" ");
             }
             i++;
@@ -337,14 +317,36 @@ public class UserServiceImpl implements UserService {
 
     @Transactional
     @Override
-    public void addRole(final User user, final Role role) {
-        userDao.addRole(user, role);
+    public void finishSemester(final User user) {
+        final List<String> userSemesterSubjectIds = user.getUserSemester().stream()
+                .map(SubjectClass::getSubject)
+                .map(Subject::getId)
+                .collect(Collectors.toList());
+
+        updateSubjectProgress(user, userSemesterSubjectIds, SubjectProgress.DONE);
+        clearSemester(user);
     }
 
     @Transactional
     @Override
-    public void updateRoles(final User user, final Role role) {
-        userDao.updateRoles(user, role);
+    public void addRole(final User user, final Role role) {
+        userDao.addRole(user, role);
+    }
+
+    @Override
+    public void makeModerator(final User requesterUser, final long toMakeModeratorId) throws UserNotFoundException, UnauthorizedException {
+        if(!requesterUser.isEditor()) throw new UnauthorizedException();
+
+        final User toMakeModerator = userDao.findById(toMakeModeratorId).orElseThrow(UserNotFoundException::new);
+        final Role role = rolesService.findByName(Role.RoleEnum.EDITOR.getName()).orElseThrow(IllegalStateException::new);
+        userDao.addRole(toMakeModerator, role);
+    }
+
+    @Transactional
+    @Override
+    public void updateUserDegreeAndSubjectProgress(final User user, final Degree degree, final String subjectIds) {
+        userDao.updateUserDegree(user, degree);
+        updateSubjectProgress(user, parseJsonList(subjectIds), SubjectProgress.DONE);
     }
 
     private void autoLogin(final User user) {
@@ -364,23 +366,32 @@ public class UserServiceImpl implements UserService {
         return new String(Base64.getUrlEncoder().encode(bytes));
     }
 
-    @Transactional
-    @Override
-    public void updateUserDegree(final User user, final Degree degree){
-        userDao.updateUserDegree(user, degree);
+    private String createRecoveryToken(final User user) {
+        final SecureRandom random = new SecureRandom();
+        final byte[] bytes = new byte[20];
+        random.nextBytes(bytes);
 
+        final String token = new String(Base64.getUrlEncoder().encode(bytes));
+
+        recDao.create(token, user);
+
+        return token;
     }
 
-    @Transactional
-    @Override
-    public void setAllSubjectProgress(final User user, final String subjectIdsStringify){
-        List<String> subjectIds = parseString(subjectIdsStringify);
-        Map<String, SubjectProgress> progressMap = new HashMap<>();
+    private List<String> parseJsonList(String stringifyString) {
+        String trimmedInput = stringifyString.replace("[", "").replace("]", "");
+        String[] elements = trimmedInput.split(",");
 
-        for(String subjectId : subjectIds){
-            progressMap.put(subjectId, SubjectProgress.DONE);
+        List<String> parsedList = new ArrayList<>();
+        if (elements[0].equals("")) {
+            return parsedList;
+        }
+        for (String element : elements) {
+            // Remove quotes around each element
+            String parsedElement = element.replace("\"", "");
+            parsedList.add(parsedElement);
         }
 
-        userDao.setAllSubjectProgress(user, progressMap);
+        return parsedList;
     }
 }

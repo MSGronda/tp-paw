@@ -1,9 +1,5 @@
-package ar.edu.itba.paw.webapp.exceptions;
+package ar.edu.itba.paw.models.exceptions;
 
-import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.ResponseStatus;
-
-@ResponseStatus(HttpStatus.NOT_FOUND)
 public class SubjectNotFoundException extends RuntimeException {
     public SubjectNotFoundException() {
         super();

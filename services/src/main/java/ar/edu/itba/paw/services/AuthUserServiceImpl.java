@@ -2,7 +2,7 @@ package ar.edu.itba.paw.services;
 
 import ar.edu.itba.paw.models.Role;
 import ar.edu.itba.paw.models.User;
-import ar.edu.itba.paw.services.exceptions.UserEmailNotFoundException;
+import ar.edu.itba.paw.models.exceptions.UserNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -10,7 +10,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 @Service
-public class AuthUserServiceImpl implements AuthUserService{
+public class AuthUserServiceImpl implements AuthUserService {
 
     @Autowired
     private UserService userService;
@@ -28,7 +28,9 @@ public class AuthUserServiceImpl implements AuthUserService{
     }
 
     @Override
-    public User getCurrentUser(){
-        return userService.findByEmail(SecurityContextHolder.getContext().getAuthentication().getName()).orElseThrow(UserEmailNotFoundException::new);
+    public User getCurrentUser() throws UserNotFoundException {
+        if(!isAuthenticated()) return null;
+
+        return userService.findByEmail(SecurityContextHolder.getContext().getAuthentication().getName()).orElseThrow(UserNotFoundException::new);
     }
 }

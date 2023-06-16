@@ -1,14 +1,16 @@
 package ar.edu.itba.paw.services;
 
-import ar.edu.itba.paw.models.*;
+import ar.edu.itba.paw.models.Review;
+import ar.edu.itba.paw.models.Subject;
+import ar.edu.itba.paw.models.User;
 import ar.edu.itba.paw.models.enums.ReviewVoteType;
-import ar.edu.itba.paw.services.exceptions.NoGrantedPermissionException;
-import java.sql.SQLException;
+import ar.edu.itba.paw.models.exceptions.ReviewNotFoundException;
+import ar.edu.itba.paw.models.exceptions.UnauthorizedException;
+
 import java.util.List;
-import java.util.Map;
 
 public interface ReviewService extends BaseService<Long, Review> {
-    Review create(final Review review) throws SQLException;
+    Review create(final String subjectId, final Review review);
 
     List<Review> getAll();
 
@@ -18,17 +20,16 @@ public interface ReviewService extends BaseService<Long, Review> {
     List<Review> getAllSubjectReviews(final Subject subject, final int page, final String orderBy, final String dir);
     int getTotalPagesForSubjectReviews(final Subject subject);
 
-    void voteReview(final User user, final Review review, final ReviewVoteType vote);
+    void voteReview(final long reviewId, final ReviewVoteType vote) throws ReviewNotFoundException;
 
-    Boolean didUserReview(final Subject subject, final User user);
-    String getFirstSubjectIdFromReviewList(String param);
-    boolean nextReviewInList(final Map<String, String> params);
-    String regenerateManyReviewParams(final Map<String, String> params);
+    boolean didUserReview(final Subject subject, final User user);
+    boolean canUserEditReview(final User user, final Review review);
 
-    boolean validReviewParam(final Map<String, String> params);
+    Subject manyReviewsGetFirstSubject(String subjectIds);
+    void manyReviewsSubmit(final String subjectIds, final Review review);
+    String manyReviewsNextUrl(final String subjectIds, final int current, final int total);
 
-
-
-    void update(final Review review) throws NoGrantedPermissionException;
-    void delete(final Review review) throws NoGrantedPermissionException;
+    void update(final Review review) throws UnauthorizedException;
+    void delete(final Review review) throws UnauthorizedException;
+    void delete(final long reviewId) throws UnauthorizedException, ReviewNotFoundException;
 }
