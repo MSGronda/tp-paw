@@ -186,14 +186,21 @@
     <form style="margin: 0" id="form-${review.id}">
       <input type="hidden" name="reviewId" id="reviewId" value="${review.id}">
 
-      <input type="hidden" name="vote" id="vote" value="${userVotes.getOrDefault(review.id, 0)}">
+      <c:choose>
+        <c:when test="${userVotes.containsKey(review)}">
+          <input type="hidden" name="vote" id="vote" value="${userVotes[review].vote.intValue}">
+        </c:when>
+        <c:otherwise>
+          <input type="hidden" name="vote" id="vote" value="0">
+        </c:otherwise>
+      </c:choose>
 
       <sec:authorize access="isAuthenticated()">
         <sl-button class="vote-button" variant="default" size="small" circle
                    data-form-id="form-${review.id}" data-form-value="1">
           <sl-icon id="like-icon-form-${review.id}" class="vote-button-icon" name="hand-thumbs-up" label="Upvote"
                   <c:choose>
-                    <c:when test="${ userVotes[review.id] == 1}">
+                    <c:when test="${userVotes.containsKey(review) and userVotes[review].vote eq 'UPVOTE'}">
                       style="color: #f5a623;"
                     </c:when>
                     <c:otherwise>
@@ -219,7 +226,7 @@
                  data-form-id="form-${review.id}" data-form-value="-1">
         <sl-icon id="dislike-icon-form-${review.id}" class="vote-button-icon" name="hand-thumbs-down" label="Downvote"
                 <c:choose>
-                  <c:when test="${ userVotes[review.id] == -1}">
+                  <c:when test="${userVotes.containsKey(review) and userVotes[review].vote eq 'DOWNVOTE'}">
                     style="color: #f5a623;"
                   </c:when>
                   <c:otherwise>
@@ -234,7 +241,7 @@
       <sl-button class="vote-button" variant="default" size="small" circle href="${pageContext.request.contextPath}/login">
         <sl-icon  class="vote-button-icon" name="hand-thumbs-down" label="Downvote"
                 <c:choose>
-                  <c:when test="${ userVotes[review.id] == -1}">
+                  <c:when test="${userVotes.containsKey(review) and userVotes[review].vote eq 'DOWNVOTE'}">
                     style="color: #f5a623;"
                   </c:when>
                   <c:otherwise>

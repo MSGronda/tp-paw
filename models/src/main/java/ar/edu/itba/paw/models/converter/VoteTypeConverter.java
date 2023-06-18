@@ -10,7 +10,7 @@ public class VoteTypeConverter implements AttributeConverter<ReviewVoteType, Lon
 
     @Override
     public Long convertToDatabaseColumn(ReviewVoteType reviewVoteType) {
-        return reviewVoteType.getVote();
+        return reviewVoteType.getIntValue();
     }
 
     @Override

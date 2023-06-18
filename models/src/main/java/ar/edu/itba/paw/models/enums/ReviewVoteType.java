@@ -10,7 +10,7 @@ public enum ReviewVoteType {
         this.vote = vote;
     }
 
-    public long getVote() {
+    public long getIntValue() {
         return vote;
     }
 
