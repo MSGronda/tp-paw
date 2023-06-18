@@ -16,7 +16,7 @@ function submitReviewVoteForm(url,formId, prevVote ,newVote) {
         url: url,
         type: 'POST',
         data: $('#'+formId).serialize(),
-        success: function(response) {
+        success: function(_response) {
 
             const like = $('#like-icon-'+formId)
             const dislike = $('#dislike-icon-'+formId)

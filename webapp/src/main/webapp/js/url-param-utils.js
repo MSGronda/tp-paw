@@ -1,6 +1,6 @@
 function addOrUpdateParam(url, param, value) {
-    var regex = new RegExp("([?&])" + param + "=.*?(&|$)", "i");
-    var separator = url.indexOf('?') !== -1 ? "&" : "?";
+    const regex = new RegExp("([?&])" + param + "=.*?(&|$)", "i");
+    const separator = url.indexOf('?') !== -1 ? "&" : "?";
     if (url.match(regex)) {
         return url.replace(regex, '$1' + param + "=" + value + '$2');
     }
@@ -9,13 +9,13 @@ function addOrUpdateParam(url, param, value) {
 }
 
 function removeURLParam(url, param) {
-    var urlsections = url.split('?');
+    const urlsections = url.split('?');
 
     if (urlsections.length >= 2) {
-        var prefix = encodeURIComponent(param) + '=';
-        var params = urlsections[1].split(/[&;]/g);
+        const prefix = encodeURIComponent(param) + '=';
+        const params = urlsections[1].split(/[&;]/g);
 
-        for (var i = params.length - 1; i >= 0; i--) {
+        for (let i = params.length - 1; i >= 0; i--) {
             if (decodeURIComponent(params[i]).lastIndexOf(prefix, 0) !== -1) {
                 params.splice(i, 1);
             }

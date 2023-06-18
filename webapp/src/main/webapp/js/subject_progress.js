@@ -22,7 +22,7 @@ function submitSubjectProgressForm(url, formId, newProgress, newProgresText) {
         url: url,
         type: 'POST',
         data: $('#'+formId).serialize(),
-        success: function(response) {
+        success: function(_response) {
             if(newProgress === 1){
                 modifyProgressButton(newProgresText, "#0284c7", "#ffffff")
             }

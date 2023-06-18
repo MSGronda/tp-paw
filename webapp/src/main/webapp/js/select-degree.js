@@ -1,31 +1,31 @@
-var degreeId;
+let degreeId;
 
-var subjectList = [];
+let subjectList = [];
 
 function nextStep() {
-    var currentStepValue = getCurrentStep();
-    var currentStep = document.getElementById("step" + currentStepValue);
+    const currentStepValue = getCurrentStep();
+    const currentStep = document.getElementById("step" + currentStepValue);
     currentStep.style.display = "none";
 
-    var nextStep = document.getElementById("step" + ( currentStepValue + 1));
+    const nextStep = document.getElementById("step" + (currentStepValue + 1));
     nextStep.style.display = "block";
 }
 
 function previousStep() {
-    var currentStepValue = getCurrentStep();
+    const currentStepValue = getCurrentStep();
     // Hide the current step
-    var currentStep = document.getElementById("step" + currentStepValue);
+    const currentStep = document.getElementById("step" + currentStepValue);
     currentStep.style.display = "none";
 
     // Show the previous step
-    var previousStep = document.getElementById("step" + (currentStepValue - 1));
+    const previousStep = document.getElementById("step" + (currentStepValue - 1));
     previousStep.style.display = "block";
 }
 
 function getCurrentStep() {
     // Determine the current step based on the displayed component
-    for (var i = 1; i <= 3; i++) {
-        var step = document.getElementById("step" + i);
+    for (let i = 1; i <= 3; i++) {
+        const step = document.getElementById("step" + i);
         if (step.style.display !== "none") {
             return i;
         }
@@ -49,16 +49,16 @@ function updateDegreeSelection() {
     //reiniciar el subjectList
     subjectList = [];
 
-    var nextButton = document.getElementById('nextButton');
+    const nextButton = document.getElementById('nextButton');
     nextButton.disabled = false;
 
     document.getElementById('degreeIdHiddenInput').value = degreeId;
 
-    var degreeTitle = document.getElementById("degree-"+degreeId);
+    const degreeTitle = document.getElementById("degree-" + degreeId);
     degreeTitle.style.display = "block"
-    var degreeTree = document.getElementById("tree-" + degreeId);
+    const degreeTree = document.getElementById("tree-" + degreeId);
     degreeTree.style.display = "block";
-    var electiveTree = document.getElementById("elective-tree-"+degreeId);
+    const electiveTree = document.getElementById("elective-tree-" + degreeId);
     electiveTree.style.display = "block";
 
 
