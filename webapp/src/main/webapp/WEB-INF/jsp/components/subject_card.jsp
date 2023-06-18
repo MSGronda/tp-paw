@@ -25,7 +25,7 @@
 
 
 <a href='<c:url value="/subject/${subject.id}"/>'>
-<sl-card class="card-header subject-card" >
+<sl-card class="review-card subject-card" >
   <div>
     <b class="class-info"><c:out value="${subject.name}" /> - <c:out value="${subject.id}"/></b>
     <div class="chip-row class-info">
@@ -41,31 +41,31 @@
 
         <%--      <c:out value="${subject.credits}"/> Credit<c:if test="${subject.credits != 1}">s</c:if>--%>
       </sl-badge>
-      <c:if test="${subject.prerequisites.isEmpty()}">
+      <c:if test="${not empty subject.prerequisites}">
         <sl-badge variant="warning" pill>
           <spring:message code="card.noPrerequisites"/>
         </sl-badge>
       </c:if>
-      <c:if test="${!subject.prerequisites.isEmpty()}">
-      <sl-tooltip content="<c:out value="${subject.prerequisites.toString()}" />">
-        <sl-badge variant="warning" pill>
-          <c:choose>
-            <c:when test="${subject.prerequisites.size() != 1}">
-              <spring:message code="card.prerequisites" arguments="${subject.prerequisites.size()}"/>
-            </c:when>
-            <c:otherwise>
-              <spring:message code="card.onePrerequisite" arguments="${subject.prerequisites.size()}"/>
-            </c:otherwise>
-          </c:choose>
-        </sl-badge>
-      </sl-tooltip>
+      <c:if test="${not empty subject.prerequisites}">
+        <sl-tooltip content="<c:out value="${subject.prerequisites.toString()}" />">
+          <sl-badge variant="warning" pill>
+            <c:choose>
+              <c:when test="${subject.prerequisites.size() > 1}">
+                <spring:message code="card.prerequisites" arguments="${subject.prerequisites.size()}"/>
+              </c:when>
+              <c:otherwise>
+                <spring:message code="card.onePrerequisite" arguments="${subject.prerequisites.size()}"/>
+              </c:otherwise>
+            </c:choose>
+          </sl-badge>
+        </sl-tooltip>
       </c:if>
 
       <sec:authorize access="isAuthenticated()">
         <c:choose>
           <c:when test="${progress eq 'DONE'}">
             <sl-tooltip class="progress-icon" content="<spring:message code="card.progress.tooltip.passed"/>">
-                  <sl-icon  name="check2-circle"></sl-icon>
+                  <sl-icon name="check2-circle"></sl-icon>
             </sl-tooltip>
           </c:when>
         </c:choose>

@@ -9,10 +9,6 @@
 <c:set var="user" value="${requestScope.user}"/>
 
 <style>
-  .card-header {
-    width: 100%;
-    margin: 1rem;
-  }
   .header{
     display: flex;
     justify-content: space-between;
@@ -71,9 +67,7 @@
   }
 </style>
 
-
-
-<sl-card class="card-header">
+<sl-card>
   <div slot="header" class="header">
     <c:choose>
       <c:when test="${fromProfile}">
@@ -187,8 +181,8 @@
       <input type="hidden" name="reviewId" id="reviewId" value="${review.id}">
 
       <c:choose>
-        <c:when test="${userVotes.containsKey(review)}">
-          <input type="hidden" name="vote" id="vote" value="${userVotes[review].vote.intValue}">
+        <c:when test="${user.votesByReview.containsKey(review)}">
+          <input type="hidden" name="vote" id="vote" value="${user.votesByReview[review].vote.intValue}">
         </c:when>
         <c:otherwise>
           <input type="hidden" name="vote" id="vote" value="0">
@@ -200,7 +194,7 @@
                    data-form-id="form-${review.id}" data-form-value="1">
           <sl-icon id="like-icon-form-${review.id}" class="vote-button-icon" name="hand-thumbs-up" label="Upvote"
                   <c:choose>
-                    <c:when test="${userVotes.containsKey(review) and userVotes[review].vote eq 'UPVOTE'}">
+                    <c:when test="${user.votesByReview.containsKey(review) and user.votesByReview[review].vote eq 'UPVOTE'}">
                       style="color: #f5a623;"
                     </c:when>
                     <c:otherwise>
@@ -226,7 +220,7 @@
                  data-form-id="form-${review.id}" data-form-value="-1">
         <sl-icon id="dislike-icon-form-${review.id}" class="vote-button-icon" name="hand-thumbs-down" label="Downvote"
                 <c:choose>
-                  <c:when test="${userVotes.containsKey(review) and userVotes[review].vote eq 'DOWNVOTE'}">
+                  <c:when test="${user.votesByReview.containsKey(review) and user.votesByReview[review].vote eq 'DOWNVOTE'}">
                     style="color: #f5a623;"
                   </c:when>
                   <c:otherwise>
@@ -241,7 +235,7 @@
       <sl-button class="vote-button" variant="default" size="small" circle href="${pageContext.request.contextPath}/login">
         <sl-icon  class="vote-button-icon" name="hand-thumbs-down" label="Downvote"
                 <c:choose>
-                  <c:when test="${userVotes.containsKey(review) and userVotes[review].vote eq 'DOWNVOTE'}">
+                  <c:when test="${user.votesByReview.containsKey(review) and user.votesByReview[review].vote eq 'DOWNVOTE'}">
                     style="color: #f5a623;"
                   </c:when>
                   <c:otherwise>

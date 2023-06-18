@@ -3,7 +3,6 @@
 <%@ page contentType="text/html;charset=UTF-8" %>
 <%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 
-
 <style>
     .nav-bar {
         background-color: white;
@@ -52,16 +51,15 @@
       </sl-input>
     </form>
 
-
-    <sl-button-group label="Alignment">
-      <sl-button class="nav-button" variant="text" href="${pageContext.request.contextPath}/degree/${user.degree.id}"><spring:message code="navbar.curriculum"/></sl-button>
-      <sl-button class="nav-button" variant="text" href="${pageContext.request.contextPath}/builder"><spring:message code="navbar.builder"/></sl-button>
-      <sl-button class="nav-button" variant="text" href="${pageContext.request.contextPath}/search"><spring:message code="navbar.subject"/></sl-button>
-    </sl-button-group>
     <sec:authorize access="!isAuthenticated()">
       <sl-button variant="success" href="<c:url value="/login"/>"><spring:message code="navbar.access"/></sl-button>
     </sec:authorize>
     <sec:authorize access="isAuthenticated()">
+      <sl-button-group label="Alignment">
+        <sl-button class="nav-button" variant="text" href="${pageContext.request.contextPath}/degree"><spring:message code="navbar.curriculum"/></sl-button>
+        <sl-button class="nav-button" variant="text" href="${pageContext.request.contextPath}/builder"><spring:message code="navbar.builder"/></sl-button>
+        <sl-button class="nav-button" variant="text" href="${pageContext.request.contextPath}/search"><spring:message code="navbar.subject"/></sl-button>
+      </sl-button-group>
       <sl-button variant="primary" href="<c:url value="/profile"/>"><spring:message code="navbar.profile"/></sl-button>
     </sec:authorize>
   </div>

@@ -1,5 +1,10 @@
 * {
     box-sizing: border-box;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol';
+}
+
+.pusher {
+    padding-top: 3rem;
 }
 
 .row {
@@ -132,7 +137,6 @@ sl-card.subject-card::part(body) {
     flex: 1 0 auto;
     display: flex;
     flex-direction: column;
-    padding: 0.5rem;
 }
 
 .container-small {

@@ -12,7 +12,7 @@ public enum TimeDemanding {
         this.value = value;
     }
 
-    public long getValue() {
+    public long getIntValue() {
         return value;
     }
 

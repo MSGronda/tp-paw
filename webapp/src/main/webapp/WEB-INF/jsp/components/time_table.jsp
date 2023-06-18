@@ -1,4 +1,4 @@
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ page contentType="text/html;charset=UTF-8" %>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 <style>
   /* Time table */
@@ -31,7 +31,7 @@
     top: 0
   }
 </style>
-<jsp:include page="../components/table_style.jsp"/>
+<jsp:include page="../components/component-style/table_style.jsp"/>
 <div id="time-table" class="time-table">
   <table>
     <thead>

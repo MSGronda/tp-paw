@@ -1,5 +1,5 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ page contentType="text/html;charset=UTF-8" %>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 <%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
@@ -9,7 +9,7 @@
   <title><spring:message code="builder.title"/></title>
   <jsp:include page="../components/head_shared.jsp"/>
 </head>
-<jsp:include page="../components/table_style.jsp"/>
+<jsp:include page="../components/component-style/table_style.jsp"/>
 <style>
   <%-- DO NOT REMOVE "UNUSED" CSS --%>
   body {
@@ -319,9 +319,6 @@
   }
   .dialog-header-actions {
     --width: 45rem;
-  }
-  .column-center {
-    margin-top: 1rem;
   }
   .done-fab-button {
     position: fixed;
@@ -751,8 +748,8 @@
           },
           </c:forEach>
         ],
-        'difficulty': ${sub.reviewStats.getDifficulty().value},
-        'timeDemand': ${sub.reviewStats.getTimeDemanding().value}
+        'difficulty': ${sub.reviewStats.difficulty.value},
+        'timeDemand': ${sub.reviewStats.timeDemanding.intValue}
       },
       </c:if>
       </c:forEach>

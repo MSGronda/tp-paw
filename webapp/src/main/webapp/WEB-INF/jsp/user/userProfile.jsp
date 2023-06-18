@@ -11,7 +11,6 @@
   <jsp:include page="../components/head_shared.jsp"/>
 
   <style>
-
     hr {
       width: 40rem;
     }
@@ -34,6 +33,14 @@
 
     #more {
       display: none;
+    }
+
+    .review-container {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        gap: 2rem;
+        padding: 1.5rem 0 1.5rem 0;
     }
 
     .profile-image {
@@ -70,7 +77,7 @@
       align-items: center;
       padding-bottom: 3rem;
     }
-    <jsp:include page="../components/table_style.jsp"/>
+    <jsp:include page="../components/component-style/table_style.jsp"/>
   </style>
 </head>
 <body>
@@ -110,15 +117,16 @@
   <c:if test="${empty reviews}">
     <h4><spring:message code="subject.noreviews"/></h4>
   </c:if>
-  <c:forEach var="review" items="${reviews}">
-    <c:if test="${!review.anonymous}">
-      <c:set var="review" value="${review}" scope="request"/>
-      <c:set var="fromProfile" value="${true}" scope="request"/>
-      <c:set var="userVotes" value="${userVotes}" scope="request"/>
-      <c:set var="user" value="${null}" scope="request"/>
-      <c:import url="../components/review_card.jsp"/>
-    </c:if>
-  </c:forEach>
+  <div class="review-container">
+    <c:forEach var="review" items="${reviews}">
+      <c:if test="${!review.anonymous}">
+        <c:set var="review" value="${review}" scope="request"/>
+        <c:set var="fromProfile" value="${true}" scope="request"/>
+        <c:set var="user" value="${null}" scope="request"/>
+        <c:import url="../components/review_card.jsp"/>
+      </c:if>
+    </c:forEach>
+  </div>
   <c:if test="${totalPages > 1}">
     <div class="pag-buttons">
       <sl-radio-group name="pagination-radio" value="${currentPage}">

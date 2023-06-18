@@ -1,6 +1,6 @@
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ page contentType="text/html;charset=UTF-8" %>
 <html>
 <head>
   <title><spring:message code="user.confirm.checkEmail.title"/></title>
@@ -44,9 +44,9 @@
             document.getElementById('resendButton').disabled = false;
         }, 10000);
 
-        var timeleft = 9;
-        var timer = setInterval(() => {
-            if(timeleft <= 0) {
+        let timeleft = 9;
+        const timer = setInterval(() => {
+            if (timeleft <= 0) {
                 document.getElementById('timer').innerHTML = "";
                 clearInterval(timer);
                 return;

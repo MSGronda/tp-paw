@@ -1,5 +1,5 @@
+<%@ page contentType="text/html;charset=UTF-8" %>
 
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html>
 <style>
   table {
@@ -9,6 +9,7 @@
     background-color: #fff;
     color: #4b4f56;
     border-radius: 0.25rem;
+    min-height: 100%;
   }
 
   thead {
@@ -23,7 +24,7 @@
   tbody th{
     text-align: left;
     font-weight: 600;
-    padding: 0.6rem;
+    padding: 0.15rem 0.6rem;
     border-bottom: 1px solid #e9ecef;
   }
   tbody tr {

@@ -10,7 +10,16 @@
     <jsp:include page="../components/head_shared.jsp"/>
 
     <style>
-
+        .review-container {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            gap: 2rem;
+            padding: 1rem 0 1.5rem;
+        }
+        table {
+            width: 100% !important;
+        }
         hr {
             width: 40rem;
         }
@@ -95,7 +104,7 @@
             align-items: center;
             padding-bottom: 3rem;
         }
-        <jsp:include page="../components/table_style.jsp"/>
+        <jsp:include page="../components/component-style/table_style.jsp"/>
     </style>
 </head>
 <body>
@@ -124,7 +133,7 @@
         </div>
         <sl-card class="card-basic">
             <div class="table-area">
-                <table width="100% !important">
+                <table>
                     <tbody>
                     <tr>
                         <th><spring:message code="profile.username" /></th>
@@ -162,13 +171,14 @@
     <c:if test="${empty reviews}">
         <h4><spring:message code="subject.noreviews"/></h4>
     </c:if>
-    <c:forEach var="review" items="${reviews}">
-        <c:set var="review" value="${review}" scope="request"/>
-        <c:set var="fromProfile" value="${true}" scope="request"/>
-        <c:set var="userVotes" value="${userVotes}" scope="request"/>
-        <c:set var="user" value="${user}" scope="request"/>
-        <c:import url="../components/review_card.jsp"/>
-    </c:forEach>
+    <div class="review-container">
+        <c:forEach var="review" items="${reviews}">
+            <c:set var="review" value="${review}" scope="request"/>
+            <c:set var="fromProfile" value="${true}" scope="request"/>
+            <c:set var="user" value="${user}" scope="request"/>
+            <c:import url="../components/review_card.jsp"/>
+        </c:forEach>
+    </div>
     <c:if test="${totalPages > 1}">
         <div class="pag-buttons">
             <sl-radio-group name="pagination-radio" value="${currentPage}">

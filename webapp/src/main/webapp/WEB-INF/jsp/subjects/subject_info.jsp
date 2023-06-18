@@ -1,4 +1,4 @@
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ page contentType="text/html;charset=UTF-8" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jstl/core_rt" %>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
@@ -68,16 +68,16 @@
           display: flex;
           flex-direction: column;
           justify-content: space-around;
-          align-items: center;
-          padding-bottom: 3rem;
+          padding: 1rem 2rem 3rem;
+          gap: 1rem;
       }
 
-      .card-header [slot='header'] {
+      .review-card [slot='header'] {
           display: flex;
           align-items: center;
           justify-content: space-between;
       }
-      .card-header h3 {
+      .review-card h3 {
           margin: 0;
       }
 
@@ -118,7 +118,7 @@
           flex-direction: column;
       }
 
-      <jsp:include page="../components/table_style.jsp"/>
+      <jsp:include page="../components/component-style/table_style.jsp"/>
 
   </style>
 
@@ -405,7 +405,6 @@
     <c:forEach  var="review" items="${reviews}">
         <c:set var="review" value="${review}" scope="request"/>
         <c:set var="fromProfile" value="${false}" scope="request"/>
-        <c:set var="userVotes" value="${userVotes}" scope="request"/>
         <c:set var="user" value="${user}" scope="request"/>
         <c:import url="../components/review_card.jsp"/>
 

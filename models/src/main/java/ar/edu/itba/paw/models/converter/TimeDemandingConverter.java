@@ -9,7 +9,7 @@ import javax.persistence.Converter;
 public class TimeDemandingConverter implements AttributeConverter<TimeDemanding, Long> {
     @Override
     public Long convertToDatabaseColumn(TimeDemanding timeDemanding) {
-        return timeDemanding.getValue();
+        return timeDemanding.getIntValue();
     }
 
     @Override

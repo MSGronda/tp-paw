@@ -28,12 +28,11 @@
       }
 
       .tabs::part(base) {
-          height: 100%;
+          min-height: 100%;
       }
 
       .tabs::part(body) {
-          width: 100%;
-          height: 100%;
+          min-height: 100%;
           display: flex;
           flex-direction: column;
           justify-content: start;
@@ -49,6 +48,7 @@
 
       .tabs::part(nav) {
           position: sticky;
+          z-index: 10;
           top: 0;
           background: #efefef;
           padding-bottom: 0.05rem;
@@ -64,7 +64,7 @@
           flex-direction: column;
           justify-content: center;
           gap: 1rem;
-          min-height: 100%;
+          min-height: 70vh;
           margin: auto;
       }
 
@@ -117,7 +117,7 @@
           flex-direction: row;
           justify-content: center;
           align-items: center;
-          height: 90vh;
+          height: 80vh;
           width: 100%;
       }
 
@@ -175,16 +175,6 @@
           padding: 0 1rem 2rem 1rem;
           gap: 1rem;
       }
-
-      /*.subject-card{    !* We overwrite previous attributres *!*/
-      /*    max-width: 30% !important;*/
-      /*    min-width: 30% !important;*/
-      /*    padding: 0.5rem;*/
-      /*}*/
-      /*.subject-card::part(base){*/
-      /*    max-height: 25% !important;*/
-      /*    min-height: 25% !important;*/
-      /*}*/
 
       /* Past subjects */
       .past-subjects-area {

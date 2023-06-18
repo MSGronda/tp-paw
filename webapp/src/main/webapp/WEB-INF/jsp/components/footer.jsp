@@ -1,4 +1,4 @@
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ page contentType="text/html;charset=UTF-8" %>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
 
 
@@ -24,7 +24,4 @@
             <h6 class="text-type"><spring:message code="footer.rights"/></h6>
         </div>
     </div>
-
-    </div>
 </div>
-

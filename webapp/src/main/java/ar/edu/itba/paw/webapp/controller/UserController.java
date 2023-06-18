@@ -75,7 +75,6 @@ public class UserController {
     ){
         mav.addObject("reviews", reviewService.getAllUserReviews(user, page, orderBy, dir));
         mav.addObject("totalPages", reviewService.getTotalPagesForUserReviews(user));
-        mav.addObject("userVotes", user.getVotesByReview());
         mav.addObject("user", user);
         mav.addObject("currentPage", page);
         mav.addObject("order", orderBy);

@@ -45,9 +45,6 @@ public class SubjectController {
         final Subject subject = subjectService.findById(id).orElseThrow(SubjectNotFoundException::new);
         final User user = authUserService.getCurrentUser();
 
-        //Todo?: find votes for current subject and page only
-        final Map<Review, ReviewVote> userVotes = user.getVotesByReview();
-
         final ModelAndView mav = new ModelAndView("subjects/subject_info");
         mav.addObject("totalPages", reviewService.getTotalPagesForSubjectReviews(subject));
         mav.addObject("reviews", reviewService.getAllSubjectReviews(subject, page, order, dir));
@@ -56,7 +53,6 @@ public class SubjectController {
         mav.addObject("progress", user.getSubjectProgress(subject));
         mav.addObject("user", user);
         mav.addObject("subject", subject);
-        mav.addObject("userVotes", userVotes);
         mav.addObject("currentPage", page);
         mav.addObject("order", order);
         mav.addObject("dir", dir);

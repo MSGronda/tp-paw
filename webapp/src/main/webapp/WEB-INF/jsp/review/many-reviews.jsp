@@ -1,8 +1,8 @@
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ page contentType="text/html;charset=UTF-8" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+
 <html>
 <head>
     <title><c:out value="${subject.name}"/> - <spring:message code="review.many.title"/></title>
@@ -79,18 +79,15 @@
 <script src="${pageContext.request.contextPath}/js/progress-step-bar.js"></script>
 <script src="${pageContext.request.contextPath}/js/url-param-utils.js"></script>
 <script>
-    const current = ${current};
-    const total = ${total};
-
     const items = []
-    for(let i=0; i<total; i++){
+    for(let i=0; i<${total}; i++){
         items.push(""+i);
     }
 
     ProgressBar.init(
         items
         ,
-        ""+current,
+        ""+${current},
         'progress-bar-wrapper'
     );
 

@@ -7,13 +7,13 @@
     <title><spring:message code="profile.editing" /></title>
     <jsp:include page="../components/head_shared.jsp"/>
     <script>
-        function previewImage(event) {
+        function previewImage(file) {
             let reader = new FileReader();
             reader.onload = function () {
                 let output = document.getElementById('imagePreview');
                 output.src = reader.result;
             }
-            reader.readAsDataURL(event.target.files[0]);
+            reader.readAsDataURL(file);
         }
     </script>
     <style>
@@ -109,7 +109,7 @@
                 <form:errors path="profilePicture" cssClass="error" element="p"/>
                 <spring:message code="profile.upload.placeholder" var="uploadPlaceholder"/>
                 <span class="upload-button">
-                    <input type="file" name="profilePicture" placeholder="${uploadPlaceholder}" accept="image/gif, image/png, image/jpeg" onchange="previewImage(event)"/>
+                    <input type="file" name="profilePicture" placeholder="${uploadPlaceholder}" accept="image/gif, image/png, image/jpeg" onchange="previewImage(this.target.files[0])"/>
                 </span>
                 <br />
                 <span class="submit-button">

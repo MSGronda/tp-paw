@@ -1,7 +1,7 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ page contentType="text/html;charset=UTF-8" %>
 
 <html>
 <head>
@@ -35,7 +35,10 @@
     </div>
     <br />
     <div>
-      <label><sl-checkbox name="rememberMe" id="rememberMe" type="checkbox" /><spring:message code="userform.rememberme" /></label>
+      <label>
+        <sl-checkbox name="rememberMe" id="rememberMe" type="checkbox"></sl-checkbox>
+        <spring:message code="userform.rememberme" />
+      </label>
     </div>
     <br />
     <div>
