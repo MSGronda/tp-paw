@@ -6,7 +6,6 @@ import ar.edu.itba.paw.models.exceptions.EmailAlreadyTakenException;
 
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 import java.util.Optional;
 
 public interface UserDao extends RWDao<Long,User> {

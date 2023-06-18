@@ -5,6 +5,6 @@ import ar.edu.itba.paw.models.exceptions.UserNotFoundException;
 
 public interface AuthUserService {
     boolean isAuthenticated();
-    Boolean isCurrentUserEditor();
+    boolean isCurrentUserEditor();
     User getCurrentUser() throws UserNotFoundException;
 }

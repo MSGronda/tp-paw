@@ -2,15 +2,12 @@ package ar.edu.itba.paw.services;
 
 import ar.edu.itba.paw.models.Subject;
 import ar.edu.itba.paw.models.User;
-import ar.edu.itba.paw.models.enums.SubjectFilterField;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.Set;
 
 public interface SubjectService extends BaseService<String, Subject> {
-    Optional<Subject> findById(final String id);
     List<Subject> findAllThatUserCanDo(final User user);
     List<Subject> findAllThatUserHasNotDone(User user);
     List<Subject> findAllThatUserHasDone(User user);

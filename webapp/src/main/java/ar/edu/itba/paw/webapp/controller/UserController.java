@@ -308,12 +308,16 @@ public class UserController {
     @ResponseBody
     public String subjectProgress(
             @Valid @ModelAttribute("SubjectProgressForm") final SubjectProgressForm progressForm
-    ) throws SubjectNotFoundException {
-        userService.updateSubjectProgress(
-                authUserService.getCurrentUser(),
-                progressForm.getIdSub(),
-                SubjectProgress.parse(progressForm.getProgress())
-        );
+    ) {
+        try {
+            userService.updateSubjectProgress(
+                    authUserService.getCurrentUser(),
+                    progressForm.getIdSub(),
+                    SubjectProgress.parse(progressForm.getProgress())
+            );
+        } catch (SubjectNotFoundException e) {
+            throw new InvalidFormException(e);
+        }
 
         return "voted";
     }
@@ -329,7 +333,7 @@ public class UserController {
 
         userService.updateUserDegreeAndSubjectProgress(
                 authUserService.getCurrentUser(),
-                degreeService.findById(updateDegreeForm.getDegreeId()).orElseThrow(IllegalStateException::new),
+                degreeService.findById(updateDegreeForm.getDegreeId()).orElseThrow(InvalidFormException::new),
                 updateDegreeForm.getSubjectIds()
         );
 

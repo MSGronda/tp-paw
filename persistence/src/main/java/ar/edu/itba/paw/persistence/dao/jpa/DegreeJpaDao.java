@@ -9,6 +9,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.util.List;
 import java.util.Optional;
+import java.util.OptionalInt;
 
 @Repository
 public class DegreeJpaDao implements DegreeDao {
@@ -42,14 +43,14 @@ public class DegreeJpaDao implements DegreeDao {
     }
 
     @Override
-    public Optional<Integer> findSubjectSemesterForDegree(final Subject subject, final Degree degree) {
+    public OptionalInt findSubjectSemesterForDegree(final Subject subject, final Degree degree) {
         @SuppressWarnings("unchecked")
-        Optional<Integer> res = em.createNativeQuery("SELECT semester FROM subjectsdegrees WHERE idsub = ? AND iddeg = ?")
+        final Optional<Integer> res = em.createNativeQuery("SELECT semester FROM subjectsdegrees WHERE idsub = ? AND iddeg = ?")
                 .setParameter(1, subject.getId())
                 .setParameter(2, degree.getId())
                 .getResultList()
                 .stream().findFirst();
 
-        return res;
+        return res.map(OptionalInt::of).orElseGet(OptionalInt::empty);
     }
 }

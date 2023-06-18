@@ -41,17 +41,13 @@ public class SemesterBuilderController {
 
     @RequestMapping("/builder")
     public ModelAndView subjectInfo() {
-        final User user = authUserService.getCurrentUser();;
-        final List<Subject> availableSubjects = subjectService.findAllThatUserCanDo(user);
-        final List<Subject> unlockableSubjects = subjectService.findAllThatUserCouldUnlock(user);
-        final List<Subject> doneSubjects = subjectService.findAllThatUserHasDone(user);
+        final User user = authUserService.getCurrentUser();
 
         final ModelAndView mav = new ModelAndView("builder/semester-builder");
         mav.addObject("user", user);
-        mav.addObject("availableSubjects", availableSubjects);
-        mav.addObject("unlockableSubjects", unlockableSubjects);
-        mav.addObject("doneSubjects", doneSubjects);
-
+        mav.addObject("availableSubjects", subjectService.findAllThatUserCanDo(user));
+        mav.addObject("unlockableSubjects", subjectService.findAllThatUserCouldUnlock(user));
+        mav.addObject("doneSubjects", subjectService.findAllThatUserHasDone(user));
         return mav;
     }
 

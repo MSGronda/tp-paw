@@ -4,8 +4,8 @@ public enum ReviewOrderField {
     DIFFICULTY("easy", "difficulty"),
     TIMEDEMANDING("timedemanding", "timedemanding");
 
-    private String tableColumn;
-    private String fieldName;
+    private final String tableColumn;
+    private final String fieldName;
 
     ReviewOrderField(String tableColumn, String fieldName) {
         this.tableColumn = tableColumn;

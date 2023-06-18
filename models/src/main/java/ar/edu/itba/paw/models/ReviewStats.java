@@ -44,7 +44,6 @@ public class ReviewStats {
     protected ReviewStats() {}
 
     public Difficulty getDifficulty(){
-        // -1 no data,  0 is easy, 1 is medium, 2 is hard
         if(easyCount == 0 && mediumCount == 0 && hardCount == 0){
             return Difficulty.NO_DATA;
         }
@@ -59,7 +58,6 @@ public class ReviewStats {
         return Difficulty.HARD;
     }
     public TimeDemanding getTimeDemanding(){
-        // -1 no data, 0 not time demanding, 1 is average time demanding, 2 is very time demanding
         if(notTimeDemandingCount == 0 && timeDemandingCount == 0 && averageTimeDemandingCount == 0){
             return TimeDemanding.NO_DATA;
         }

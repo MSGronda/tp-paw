@@ -333,13 +333,14 @@ public class UserServiceImpl implements UserService {
         userDao.addRole(user, role);
     }
 
+    @Transactional
     @Override
     public void makeModerator(final User requesterUser, final long toMakeModeratorId) throws UserNotFoundException, UnauthorizedException {
         if(!requesterUser.isEditor()) throw new UnauthorizedException();
 
         final User toMakeModerator = userDao.findById(toMakeModeratorId).orElseThrow(UserNotFoundException::new);
         final Role role = rolesService.findByName(Role.RoleEnum.EDITOR.getName()).orElseThrow(IllegalStateException::new);
-        userDao.addRole(toMakeModerator, role);
+        addRole(toMakeModerator, role);
     }
 
     @Transactional
@@ -354,7 +355,7 @@ public class UserServiceImpl implements UserService {
                 .map(role -> new SimpleGrantedAuthority(String.format("ROLE_%s", role.getName())))
                 .collect(Collectors.toSet());
 
-        Authentication auth = new UsernamePasswordAuthenticationToken(user.getEmail(), user.getPassword(), authorities);
+        final Authentication auth = new UsernamePasswordAuthenticationToken(user.getEmail(), user.getPassword(), authorities);
         SecurityContextHolder.getContext().setAuthentication(auth);
         LOGGER.info("Auto login for user {}", user.getId());
     }

@@ -40,7 +40,6 @@ import java.util.concurrent.TimeUnit;
 @ComponentScan({
         "ar.edu.itba.paw.webapp.controller",
         "ar.edu.itba.paw.webapp.interceptors",
-        "ar.edu.itba.paw.webapp.tasks",
         "ar.edu.itba.paw.services",
         "ar.edu.itba.paw.persistence",
 })
@@ -51,7 +50,8 @@ import java.util.concurrent.TimeUnit;
 @Configuration
 public class WebConfig extends WebMvcConfigurerAdapter {
 
-    private static final long MAX_SIZE = 1024 * 1024 * 100L;
+    private static final long MAX_UPLOAD_SIZE = 1024 * 1024 * 100L;
+
     private static final Logger LOGGER = LoggerFactory.getLogger(WebConfig.class);
 
     @Autowired
@@ -67,7 +67,7 @@ public class WebConfig extends WebMvcConfigurerAdapter {
 
     @Bean
     ViewResolver viewResolver() {
-        InternalResourceViewResolver vr = new InternalResourceViewResolver();
+        final InternalResourceViewResolver vr = new InternalResourceViewResolver();
         vr.setViewClass(JstlView.class);
         vr.setPrefix("/WEB-INF/jsp/");
         vr.setSuffix(".jsp");
@@ -90,7 +90,7 @@ public class WebConfig extends WebMvcConfigurerAdapter {
 
     @Bean
     public Flyway flyway() {
-        Flyway f = Flyway.configure()
+        final Flyway f = Flyway.configure()
                 .dataSource(dataSource())
                 .load();
 
@@ -121,9 +121,9 @@ public class WebConfig extends WebMvcConfigurerAdapter {
 
     @Bean(name = "multipartResolver")
     public CommonsMultipartResolver mutipartResolver() {
-        CommonsMultipartResolver resolver = new CommonsMultipartResolver();
+        final CommonsMultipartResolver resolver = new CommonsMultipartResolver();
         resolver.setDefaultEncoding(StandardCharsets.UTF_8.name());
-        resolver.setMaxUploadSize(MAX_SIZE); //50mb
+        resolver.setMaxUploadSize(MAX_UPLOAD_SIZE); //50mb
         return resolver;
     }
 

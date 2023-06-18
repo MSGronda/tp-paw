@@ -6,10 +6,8 @@ import ar.edu.itba.paw.models.Subject;
 import ar.edu.itba.paw.persistence.dao.DegreeDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+
+import java.util.*;
 
 @Service
 public class DegreeServiceImpl implements DegreeService {
@@ -29,22 +27,12 @@ public class DegreeServiceImpl implements DegreeService {
         return degreeDao.findByName(name);
     }
 
-    public int findSubjectYearForDegree(final Subject subject, final Degree degree) {
-        Optional<Integer> semester = degreeDao.findSubjectSemesterForDegree(subject, degree);
-        int sem = semester.orElse(-1);
-        return (int) Math.ceil(sem / 2.0);
-    }
+    @Override
+    public OptionalInt findSubjectYearForDegree(final Subject subject, final Degree degree) {
+        final OptionalInt semester = degreeDao.findSubjectSemesterForDegree(subject, degree);
+        if(!semester.isPresent()) return OptionalInt.empty();
 
-    public Map<Integer, Integer> getTotalCreditsPerYear(final Degree degree){
-        Map<Integer, Integer> resp = new HashMap<>();
-        for(DegreeYear year : degree.getYears()){
-            int total = 0;
-            for(Subject s : year.getSubjects()){
-                total += s.getCredits();
-            }
-            resp.put(year.getNumber(), total);
-        }
-        return resp;
+        return OptionalInt.of((int)Math.ceil(semester.getAsInt() / 2.0));
     }
 
     @Override

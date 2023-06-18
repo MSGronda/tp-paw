@@ -89,13 +89,13 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
     }
 
     @Override
-    public void configure(WebSecurity web) throws Exception {
+    public void configure(WebSecurity web) {
         web.ignoring().antMatchers("/css/**", "/js/**", "/img/**", "favicon.ico");
     }
 
     private class AuthFailureHandler implements AuthenticationFailureHandler {
         @Override
-        public void onAuthenticationFailure(HttpServletRequest req, HttpServletResponse res, AuthenticationException e) throws IOException, ServletException {
+        public void onAuthenticationFailure(HttpServletRequest req, HttpServletResponse res, AuthenticationException e) throws IOException {
             final String email = req.getParameter("email");
             final String pass = req.getParameter("password");
             final String baseUrl = req.getContextPath();

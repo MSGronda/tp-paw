@@ -2,7 +2,6 @@ package ar.edu.itba.paw.webapp.interceptors;
 
 import ar.edu.itba.paw.models.User;
 import ar.edu.itba.paw.services.AuthUserService;
-import ar.edu.itba.paw.webapp.Utils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,12 +48,12 @@ public class DegreeSelectInterceptor implements HandlerInterceptor {
     }
 
     @Override
-    public void postHandle(HttpServletRequest request, HttpServletResponse response, Object o, ModelAndView mav) throws Exception {
+    public void postHandle(HttpServletRequest request, HttpServletResponse response, Object o, ModelAndView mav) {
         // Do nothing
     }
 
     @Override
-    public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object o, Exception e) throws Exception {
+    public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object o, Exception e) {
         // Do nothing
     }
 }

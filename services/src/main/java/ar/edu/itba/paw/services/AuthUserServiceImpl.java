@@ -23,7 +23,7 @@ public class AuthUserServiceImpl implements AuthUserService {
     }
 
     @Override
-    public Boolean isCurrentUserEditor(){
+    public boolean isCurrentUserEditor(){
         return SecurityContextHolder.getContext().getAuthentication().getAuthorities().contains(new SimpleGrantedAuthority(String.format("ROLE_%s", Role.RoleEnum.EDITOR.getName())));
     }
 
