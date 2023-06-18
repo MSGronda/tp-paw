@@ -116,7 +116,7 @@
                 </tbody>
             </table>
         </div>
-        <sl-button slot="footer" variant="success"><spring:message code="subject.prerequisites.add.short"/></sl-button>
+        <sl-button slot="footer" variant="success"><spring:message code="subject.add.short"/></sl-button>
     </sl-dialog>
 
     <sl-dialog label="<spring:message code="subject.add.degree"/>" class="dialog-header-actions3" >
@@ -153,8 +153,8 @@
                 </tr>
 
             </table>
-            <sl-button slot="footer" variant="success" onclick="addDegreeSemester()"><spring:message code="subject.create"/></sl-button>
         </div>
+        <sl-button slot="footer" variant="success" onclick="addDegreeSemester()"><spring:message code="subject.add.short"/></sl-button>
     </sl-dialog>
 
     <main class="container-50">
@@ -412,6 +412,8 @@
         const semester = document.getElementById("select-semester");
 
         if( degreeArray.includes(degree.value)){
+            degree.value = "";
+            semester.value = "";
             return;
         }
 
