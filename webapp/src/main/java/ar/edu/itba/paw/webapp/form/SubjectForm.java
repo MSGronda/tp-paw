@@ -1,11 +1,14 @@
 package ar.edu.itba.paw.webapp.form;
 
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 import java.util.List;
+import java.util.Map;
 
 public class SubjectForm {
     @NotNull
+    @Pattern(regexp = "[0-9]2\\.[0-9]2")
     private String id;
     @Size(max=30)
     private String name;

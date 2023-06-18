@@ -93,8 +93,10 @@ public class SubjectController {
         ModelAndView mav = new ModelAndView("moderator-tools/createSubject");
         List<Subject> subjects = subjectService.getAll();
         List<Professor> professors = professorService.getAll();
+        List<Degree> degrees = degreeService.getAll();
         mav.addObject("subjects", subjects);
         mav.addObject("professors", professors);
+        mav.addObject("degrees", degrees);
         return mav;
     }
     @RequestMapping(value = "/create-subject", method = {RequestMethod.POST} )

@@ -119,6 +119,44 @@
         <sl-button slot="footer" variant="success"><spring:message code="subject.prerequisites.add.short"/></sl-button>
     </sl-dialog>
 
+    <sl-dialog label="<spring:message code="subject.add.degree"/>" class="dialog-header-actions3" >
+        <div class="table degree-dialog">
+            <table>
+                <tbody>
+                <tr class="table-row">
+                    <td><spring:message code="degree"/></td>
+                    <td>
+                        <sl-select id="select-degree" class="select-degree">
+                            <c:forEach var="degree" items="${degrees}">
+                                <sl-option value="${degree.id}"><c:out value="${degree.name}"/></sl-option>
+                            </c:forEach>
+                        </sl-select>
+                    </td>
+                </tr>
+                <tr>
+                    <td><spring:message code="subject.semester"/></td>
+                    <td>
+                        <sl-select id="select-semester" class="select-semester">
+                            <sl-option value="<c:out value="1"/>"><spring:message code="semester" arguments="1"/></sl-option>
+                            <sl-option value="<c:out value="2"/>"><spring:message code="semester" arguments="2"/></sl-option>
+                            <sl-option value="<c:out value="3"/>"><spring:message code="semester" arguments="3"/></sl-option>
+                            <sl-option value="<c:out value="4"/>"><spring:message code="semester" arguments="4"/></sl-option>
+                            <sl-option value="<c:out value="5"/>"><spring:message code="semester" arguments="5"/></sl-option>
+                            <sl-option value="<c:out value="6"/>"><spring:message code="semester" arguments="6"/></sl-option>
+                            <sl-option value="<c:out value="7"/>"><spring:message code="semester" arguments="7"/></sl-option>
+                            <sl-option value="<c:out value="8"/>"><spring:message code="semester" arguments="8"/></sl-option>
+                            <sl-option value="<c:out value="9"/>"><spring:message code="semester" arguments="9"/></sl-option>
+                            <sl-option value="<c:out value="10"/>"><spring:message code="semester" arguments="10"/></sl-option>
+                            <sl-option value="<c:out value="-1"/>"><spring:message code="elective"/></sl-option>
+                        </sl-select>
+                    </td>
+                </tr>
+
+            </table>
+            <sl-button slot="footer" variant="success" onclick="addDegreeSemester()"><spring:message code="subject.create"/></sl-button>
+        </div>
+    </sl-dialog>
+
     <main class="container-50">
     <form:form modelAttribute="subjectForm" class="col s12" method="post" action="${CreateSubject}">
         <div class="table">
@@ -191,6 +229,18 @@
                     <td><spring:message code="subject.class"/></td>
                     <td><sl-button id="open-button2"><spring:message code="subject.create.class"/></sl-button></td>
                 </tr>
+                <tr>
+                    <td><spring:message code="subject.degrees"/></td>
+                    <td>
+                        <sl-button id="open-button3"><spring:message code="subject.add.degree"/></sl-button>
+                    </td>
+                </tr>
+                <tr>
+                    <td/>
+                    <td>
+                        <ul id="degreeSemesters"></ul>
+                    </td>
+                </tr>
                 </tbody>
             </table>
         </div>
@@ -219,6 +269,13 @@
 
     openButton2.addEventListener('click', () => dialog2.show());
     closeButton2.addEventListener('click', () => dialog2.hide());
+
+    const dialog3 = document.querySelector('.dialog-header-actions3');
+    const openButton3 = document.querySelector('#open-button3');
+    const closeButton3 = dialog3.querySelector('sl-button[slot="footer"]');
+
+    openButton3.addEventListener('click', () => dialog3.show());
+    closeButton3.addEventListener('click', () => dialog3.hide());
 
 
     dialog.addEventListener('click', (event) => {
@@ -345,6 +402,68 @@
         const classCode = document.getElementById("code");
         const classProf = document.getElementById("class-professors");
         const classDay = document.getElementById("class-day");
+    }
+
+    let degreeArray = [];
+    let semesterArray = [];
+
+    function addDegreeSemester(){
+        const degree = document.getElementById("select-degree");
+        const semester = document.getElementById("select-semester");
+
+        if( degreeArray.includes(degree.value)){
+            return;
+        }
+
+        degreeArray.push(degree.value);
+        semesterArray.push(semester.value);
+        updateDegreeSemesterItems();
+        degree.value = "";
+        semester.value = "";
+        dialog3.hide();
+
+    }
+
+    let degreeMap = {
+        <c:forEach var="degree" items="${degrees}">
+            "${degree.id}":"${degree.name}",
+        </c:forEach>
+    }
+
+    let semesterMap = {
+            "1":"<spring:message code="semester" arguments="1"/>",
+            "2":"<spring:message code="semester" arguments="2"/>",
+            "3":"<spring:message code="semester" arguments="3"/>",
+            "4":"<spring:message code="semester" arguments="4"/>",
+            "5":"<spring:message code="semester" arguments="5"/>",
+            "6":"<spring:message code="semester" arguments="6"/>",
+            "7":"<spring:message code="semester" arguments="7"/>",
+            "8":"<spring:message code="semester" arguments="8"/>",
+            "9":"<spring:message code="semester" arguments="9"/>",
+            "10":"<spring:message code="semester" arguments="10"/>",
+            "-1":"<spring:message code="elective"/>",
+    }
+
+    function updateDegreeSemesterItems(){
+            let selectedDegreeSemester = document.getElementById('degreeSemesters');
+            selectedDegreeSemester.innerHTML = '';
+            degreeArray.forEach((degreeId) => {
+                let div = document.createElement('div');
+                div.className = 'list-rm';
+                let degreeItem = document.createElement('li');
+                let removeBtn = document.createElement('sl-icon-button');
+                removeBtn.name = "x";
+                removeBtn.addEventListener('click', () => {
+                    let index = degreeArray.indexOf(degreeId);
+                    degreeArray.splice(index, 1);
+                    semesterArray.splice(index, 1);
+                    updateDegreeSemesterItems();
+                });
+                degreeItem.textContent = degreeMap[degreeId] + " - " + semesterMap[semesterArray[degreeArray.indexOf(degreeId)]]
+                selectedDegreeSemester.appendChild(div);
+                div.appendChild(degreeItem);
+                div.appendChild(removeBtn);
+            });
     }
 
 </script>
