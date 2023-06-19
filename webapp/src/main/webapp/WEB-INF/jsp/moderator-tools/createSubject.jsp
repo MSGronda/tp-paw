@@ -190,7 +190,7 @@
                 </tr>
                 <tr>
                     <td><spring:message code="subject.credits"/></td>
-                    <td><sl-input name="credit" path="credit" value="${SubjectForm.credits}"></sl-input></td>
+                    <td><sl-input name="credit" path="credit" value="${SubjectForm.credits}" type="number"></sl-input></td>
                 </tr>
                 <tr>
                     <td><spring:message code="subject.prerequisites"/></td>

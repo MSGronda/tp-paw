@@ -1,8 +1,9 @@
 package ar.edu.itba.paw.webapp.form;
 
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Pattern;
-import javax.validation.constraints.Size;
+import org.springframework.beans.factory.annotation.Value;
+
+import javax.validation.Valid;
+import javax.validation.constraints.*;
 import java.util.List;
 import java.util.Map;
 
@@ -10,15 +11,16 @@ public class SubjectForm {
     @NotNull
     @Pattern(regexp = "[0-9]2\\.[0-9]2")
     private String id;
-    @Size(max=30)
+    @Size(max=50)
     private String name;
     @Size(max=40)
     private String department;
     @NotNull
+    @Max(12)
+    @Min(1)
     private Integer credits;
-    @NotNull
-    private Integer semester;
     private String degreeIds;
+    private String semesters;
     private String requirementIds;
 
     public String getId() {
@@ -53,12 +55,12 @@ public class SubjectForm {
         this.credits = credits;
     }
 
-    public Integer getSemester() {
-        return semester;
+    public String getSemesters() {
+        return semesters;
     }
 
-    public void setSemester(Integer semester) {
-        this.semester = semester;
+    public void setSemesters(String semesters) {
+        this.semesters = semesters;
     }
 
     public String getDegreeIds() {
