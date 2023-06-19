@@ -18,7 +18,7 @@ public class UserForm {
     private String password;
 
     @NotBlank
-    @Size(min = 3, max = 50)
+    @Size(min = 3, max = 20)
     @Pattern(regexp = "^[A-Za-z][A-Za-z_]*$")
     private String name;
 
