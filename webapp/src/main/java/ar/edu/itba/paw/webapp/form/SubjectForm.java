@@ -23,6 +23,17 @@ public class SubjectForm {
     private String semesters;
     private String requirementIds;
 
+    private String professors;
+
+    private String classCodes;
+    private String classProfessors;
+    private String classDays;
+    private String classStartTimes;
+    private String classEndTimes;
+    private String classBuildings;
+    private String classRooms;
+    private String classModes;
+
     public String getId() {
         return id;
     }
@@ -77,5 +88,61 @@ public class SubjectForm {
 
     public void setRequirementIds(String requirementIds) {
         this.requirementIds = requirementIds;
+    }
+
+    public String getProfessors() {
+        return professors;
+    }
+
+    public void setProfessors(String professors) {
+        this.professors = professors;
+    }
+
+    public String getClassCodes() {
+        return classCodes;
+    }
+
+    public void setClassCodes(String classCodes) {
+        this.classCodes = classCodes;
+    }
+
+    public String getClassProfessors() {
+        return classProfessors;
+    }
+
+    public void setClassProfessors(String classProfessors) {
+        this.classProfessors = classProfessors;
+    }
+
+    public String getClassDays() {
+        return classDays;
+    }
+
+    public void setClassDays(String classDays) {
+        this.classDays = classDays;
+    }
+
+    public String getClassBuildings() {
+        return classBuildings;
+    }
+
+    public void setClassBuildings(String classBuildings) {
+        this.classBuildings = classBuildings;
+    }
+
+    public String getClassRooms() {
+        return classRooms;
+    }
+
+    public void setClassRooms(String classRooms) {
+        this.classRooms = classRooms;
+    }
+
+    public String getClassModes() {
+        return classModes;
+    }
+
+    public void setClassModes(String classModes) {
+        this.classModes = classModes;
     }
 }
