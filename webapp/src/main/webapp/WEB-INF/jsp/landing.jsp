@@ -60,9 +60,7 @@
     </style>
 </head>
 <body>
-<sec:authorize access="!isAuthenticated()">
-    <jsp:include page="components/default_navbar.jsp"/>
-</sec:authorize>
+<jsp:include page="components/default_navbar.jsp"/>
 <div class="background ">
     <main class="container-50 fullHeight">
         <div class="landing-row">

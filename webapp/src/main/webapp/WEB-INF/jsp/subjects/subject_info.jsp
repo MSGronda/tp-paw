@@ -347,7 +347,7 @@
             <form id="sub-progress" style="margin: 0" >
                 <input type="hidden" name="idSub" id="idSub" value="${subject.id}">
                 <input type="hidden" name="progress" id="progress" value="${progress.value}">
-                <sec:authorize access="isAuthenticated()">
+
                     <sl-tooltip content="<spring:message code="subject.progress.tooltip"/>">
                         <c:choose>
                             <c:when test="${progress == SubjectProgress.DONE}">
@@ -362,7 +362,7 @@
                             </c:otherwise>
                         </c:choose>
                     </sl-tooltip>
-                </sec:authorize>
+
             </form>
         </div>
         <br/>
@@ -529,7 +529,7 @@
                 submitReviewVoteForm('${pageContext.request.contextPath}/voteReview',formId, prevVote ,0);
         })
 
-        <sec:authorize access="isAuthenticated()">
+
         $('.progress-bt').click(function() {
             const formId = $(this).data('form-id');
             const prevProgress = parseInt($('#' + formId + ' input[name=progress]').val())
@@ -539,7 +539,7 @@
             else
                 submitSubjectProgressForm('${pageContext.request.contextPath}/subjectProgress', formId, 1 - prevProgress, "<spring:message code="subject.progress.done"/>");
         })
-        </sec:authorize>
+
     });
 
 </script>

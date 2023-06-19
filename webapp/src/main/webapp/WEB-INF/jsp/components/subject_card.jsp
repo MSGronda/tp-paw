@@ -64,7 +64,7 @@
       </sl-tooltip>
       </c:if>
 
-      <sec:authorize access="isAuthenticated()">
+
         <c:choose>
           <c:when test="${progress == SubjectProgress.DONE}">
             <sl-tooltip class="progress-icon" content="<spring:message code="card.progress.tooltip.passed"/>">
@@ -72,7 +72,7 @@
             </sl-tooltip>
           </c:when>
         </c:choose>
-      </sec:authorize>
+
     </div>
   </div>
     <div slot="footer" class="chip-row ">

@@ -57,13 +57,15 @@
       <sl-button class="nav-button" variant="text" href="${pageContext.request.contextPath}/degree/${user.degree.id}"><spring:message code="navbar.curriculum"/></sl-button>
       <sl-button class="nav-button" variant="text" href="${pageContext.request.contextPath}/builder"><spring:message code="navbar.builder"/></sl-button>
       <sl-button class="nav-button" variant="text" href="${pageContext.request.contextPath}/search"><spring:message code="navbar.subject"/></sl-button>
+      <sec:authorize access="hasRole('EDITOR')">
+        <sl-button class="nav-button" variant="text" href="<c:url value="/create-subject"/>"><spring:message code="subject.create.new"/></sl-button>
+      </sec:authorize>
     </sl-button-group>
-    <sec:authorize access="!isAuthenticated()">
-      <sl-button variant="success" href="<c:url value="/login"/>"><spring:message code="navbar.access"/></sl-button>
-    </sec:authorize>
-    <sec:authorize access="isAuthenticated()">
-      <sl-button variant="primary" href="<c:url value="/profile"/>"><spring:message code="navbar.profile"/></sl-button>
-    </sec:authorize>
+
+
+
+    <sl-button variant="primary" href="<c:url value="/profile"/>"><spring:message code="navbar.profile"/></sl-button>
+
   </div>
 
 </div>
