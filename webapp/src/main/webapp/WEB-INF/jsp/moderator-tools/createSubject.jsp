@@ -176,7 +176,17 @@
                 </tr>
                 <tr>
                     <td><spring:message code="subject.department"/></td>
-                    <td><sl-input name="department" path="department" value="${SubjectForm.department}"></sl-input></td>
+<%--                    <td><sl-input name="department" path="department" value="${SubjectForm.department}"></sl-input></td>--%>
+                    <td>
+                        <sl-select path="department" value="${SubjectForm.department}">
+                            <sl-option value="<c:out value="Ambiente y Movilidad"/>"><c:out value="Ambiente y Movilidad"/></sl-option>
+                            <sl-option value="<c:out value="Ciencias Exactas y Naturales"/>"><c:out value="Ciencias Exactas y Naturales"/></sl-option>
+                            <sl-option value="<c:out value="Ciencias de la Vida"/>"><c:out value="Ciencias de la Vida"/></sl-option>
+                            <sl-option value="<c:out value="Economia y Negocios"/>"><c:out value="Economia y Negocios"/></sl-option>
+                            <sl-option value="<c:out value="Sistemas Complejos y Energía"/>"><c:out value="Sistemas Complejos y Energía"/></sl-option>
+                            <sl-option value="<c:out value="Sistemas Digitales y Datos"/>"><c:out value="Sistemas Digitales y Datos"/></sl-option>
+                        </sl-select>
+                    </td>
                 </tr>
                 <tr>
                     <td><spring:message code="subject.credits"/></td>
