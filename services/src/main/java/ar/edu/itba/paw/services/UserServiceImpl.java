@@ -163,6 +163,7 @@ public class UserServiceImpl implements UserService {
         userDao.updateSubjectProgress(user, subject, progress);
     }
 
+    @Transactional
     @Override
     public void updateSubjectProgress(final User user, final List<String> subIds, final SubjectProgress progress) {
         if (subIds.isEmpty()) {

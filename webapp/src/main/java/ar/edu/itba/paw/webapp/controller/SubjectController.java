@@ -22,10 +22,10 @@ public class SubjectController {
 
     @Autowired
     public SubjectController(
-            SubjectService subjectService,
-            ReviewService reviewService,
-            DegreeService degreeService,
-            AuthUserService authUserService
+            final SubjectService subjectService,
+            final ReviewService reviewService,
+            final DegreeService degreeService,
+            final AuthUserService authUserService
     ) {
         this.subjectService = subjectService;
         this.reviewService = reviewService;

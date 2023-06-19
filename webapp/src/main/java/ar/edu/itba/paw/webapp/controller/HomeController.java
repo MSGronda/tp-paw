@@ -19,7 +19,11 @@ public class HomeController {
     private final AuthUserService authUserService;
 
     @Autowired
-    public HomeController(DegreeService degreeService, SubjectService subjectService, AuthUserService authUserService) {
+    public HomeController(
+            final DegreeService degreeService,
+            final SubjectService subjectService,
+            final AuthUserService authUserService
+    ) {
         this.degreeService = degreeService;
         this.authUserService = authUserService;
         this.subjectService = subjectService;
@@ -31,7 +35,7 @@ public class HomeController {
     }
 
     @RequestMapping("/degree/{id:\\d+}")
-    public ModelAndView degree(@PathVariable Long id) {
+    public ModelAndView degree(@PathVariable final long id) {
         final Degree degree = degreeService.findById(id).orElseThrow(DegreeNotFoundException::new);
 
         final ModelAndView mav = new ModelAndView("degree/index");

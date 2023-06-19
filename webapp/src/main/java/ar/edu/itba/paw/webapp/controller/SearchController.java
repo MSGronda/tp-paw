@@ -21,12 +21,12 @@ public class SearchController {
 
     @RequestMapping("/search")
     public ModelAndView search(
-            @RequestParam(name = "q", defaultValue = "") String query,
-            @RequestParam(name = "pageNum", defaultValue = "1") int page,
-            @RequestParam(name = "ob", defaultValue = "name") String orderBy,
-            @RequestParam(name = "dir", defaultValue = "asc") String dir,
-            @RequestParam(name = "credits", required = false) Integer credits,
-            @RequestParam(name = "department", required = false) String department
+            @RequestParam(name = "q", defaultValue = "") final String query,
+            @RequestParam(name = "pageNum", defaultValue = "1") final int page,
+            @RequestParam(name = "ob", defaultValue = "name") final String orderBy,
+            @RequestParam(name = "dir", defaultValue = "asc") final String dir,
+            @RequestParam(name = "credits", required = false) final Integer credits,
+            @RequestParam(name = "department", required = false) final String department
     ) {
         final ModelAndView mav = new ModelAndView("subjects/search");
         mav.addObject("subjects", subjectService.search(query, page, orderBy, dir, credits, department));

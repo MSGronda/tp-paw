@@ -33,7 +33,11 @@ public class SemesterBuilderController {
     private final UserService userService;
 
     @Autowired
-    public SemesterBuilderController(AuthUserService authUserService, SubjectService subjectService, UserService userService) {
+    public SemesterBuilderController(
+            final AuthUserService authUserService,
+            final SubjectService subjectService,
+            final UserService userService
+    ) {
         this.authUserService = authUserService;
         this.subjectService = subjectService;
         this.userService = userService;
@@ -52,7 +56,9 @@ public class SemesterBuilderController {
     }
 
     @RequestMapping(value ="/builder/finish", method = RequestMethod.GET)
-    public ModelAndView finishSemester(@Valid @ModelAttribute("UserSemesterFinishForm") final UserSemesterFinishForm semesterForm){
+    public ModelAndView finishSemester(
+            @Valid @ModelAttribute("UserSemesterFinishForm") final UserSemesterFinishForm semesterForm
+    ){
         final ModelAndView mav = new ModelAndView("builder/finish-semester");
         mav.addObject("user", authUserService.getCurrentUser());
         return mav;
@@ -69,11 +75,16 @@ public class SemesterBuilderController {
 
         userService.finishSemester(authUserService.getCurrentUser());
 
-        return new ModelAndView("redirect:" + userService.getSemesterSubmitRedirectUrl(semesterForm.getSubjectIds()));
+        return new ModelAndView(
+                "redirect:" + userService.getSemesterSubmitRedirectUrl(semesterForm.getSubjectIds())
+        );
     }
 
     @RequestMapping(value = "/builder/add", method = RequestMethod.POST)
-    public ModelAndView addSubjectToSemester(@Valid @ModelAttribute("UserSemesterForm") final UserSemesterForm semesterForm, final BindingResult errors){
+    public ModelAndView addSubjectToSemester(
+            @Valid @ModelAttribute("UserSemesterForm") final UserSemesterForm semesterForm,
+            final BindingResult errors
+    ){
         if(errors.hasErrors()){
             LOGGER.debug("Subject builder adding form has errors");
             throw new InvalidFormException();
@@ -90,7 +101,10 @@ public class SemesterBuilderController {
     }
 
     @RequestMapping(value = "/builder/remove", method = RequestMethod.POST)
-    public ModelAndView removeSubjectToSemester(@Valid @ModelAttribute("UserSemesterForm") final UserSemesterForm semesterForm, final BindingResult errors){
+    public ModelAndView removeSubjectToSemester(
+            @Valid @ModelAttribute("UserSemesterForm") final UserSemesterForm semesterForm,
+            final BindingResult errors
+    ){
         if(errors.hasErrors()){
             LOGGER.debug("Subject builder adding form has errors");
             throw new InvalidFormException();

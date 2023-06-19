@@ -100,6 +100,6 @@ public class DegreeJpaDaoTest {
         final DegreeSubject degSub = new DegreeSubject(deg, sub, 1);
         em.persist(degSub);
 
-        assertEquals(Optional.of(1), degreeJpaDao.findSubjectSemesterForDegree(sub, deg));
+        assertEquals(OptionalInt.of(1), degreeJpaDao.findSubjectSemesterForDegree(sub, deg));
     }
 }

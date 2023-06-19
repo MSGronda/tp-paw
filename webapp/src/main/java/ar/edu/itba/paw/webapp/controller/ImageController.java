@@ -16,7 +16,7 @@ public class ImageController {
     private final ImageService imgService;
 
     @Autowired
-    public ImageController(ImageService imgService) {
+    public ImageController(final ImageService imgService) {
         this.imgService = imgService;
     }
 
@@ -25,7 +25,7 @@ public class ImageController {
             produces = {MediaType.IMAGE_JPEG_VALUE, MediaType.IMAGE_PNG_VALUE}
     )
     @ResponseBody
-    public byte[] image(@PathVariable final Long id) {
+    public byte[] image(@PathVariable final long id) {
         return imgService.findById(id).map(Image::getImage).orElseThrow(ImageNotFoundException::new);
     }
 }

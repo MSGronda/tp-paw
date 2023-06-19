@@ -41,7 +41,7 @@ public class UserController {
 
     @RequestMapping("/user/{id:\\d+}")
     public ModelAndView user(
-            @PathVariable long id,
+            @PathVariable final long id,
             @RequestParam(defaultValue = "1") final int pageNum,
             @RequestParam(defaultValue = "easy") final String order,
             @RequestParam(defaultValue = "desc") final String dir
@@ -86,7 +86,8 @@ public class UserController {
     @RequestMapping(value = "/register", method = RequestMethod.POST)
     public ModelAndView register(
             @Valid @ModelAttribute ("UserForm") final UserForm userForm,
-            final BindingResult errors, final Locale locale
+            final BindingResult errors,
+            final Locale locale
     ) {
         if(errors.hasErrors()){
             return registerForm(userForm);
@@ -204,12 +205,14 @@ public class UserController {
     }
 
     @RequestMapping(value = "/profile/editpassword", method = RequestMethod.GET)
-    public ModelAndView editPasswordForm(@ModelAttribute ("EditUserPasswordForm") final EditUserPasswordForm editUserPasswordForm) {
+    public ModelAndView editPasswordForm(
+            @ModelAttribute ("EditUserPasswordForm") final EditUserPasswordForm editUserPasswordForm
+    ) {
         return new ModelAndView("user/editUserPassword");
     }
 
     @RequestMapping(value = "user/{id:\\d+}/moderator")
-    public ModelAndView makeModerator(@PathVariable long id) {
+    public ModelAndView makeModerator(@PathVariable final long id) {
         userService.makeModerator(authUserService.getCurrentUser(), id);
 
         return new ModelAndView("redirect:/user/" + id);
@@ -236,13 +239,15 @@ public class UserController {
     }
 
     @RequestMapping(value = "/recover", method = { RequestMethod.GET })
-    public ModelAndView recoverPassword(@ModelAttribute ("RecoverPasswordForm") final RecoverPasswordForm recoverPasswordForm){
+    public ModelAndView recoverPassword(
+            @ModelAttribute ("RecoverPasswordForm") final RecoverPasswordForm recoverPasswordForm
+    ){
         return new ModelAndView("user/recover/index");
     }
 
     @RequestMapping(value = "/recover/{token}", method = { RequestMethod.POST })
     public ModelAndView recoverPasswordEdit(
-            @PathVariable String token,
+            @PathVariable final String token,
             @Valid @ModelAttribute("RecoverPasswordEditForm") final RecoverPasswordEditForm recoverPasswordEditForm,
             final BindingResult errors
     ){
@@ -260,7 +265,10 @@ public class UserController {
     }
 
     @RequestMapping(value = "/recover/{token}", method = { RequestMethod.GET })
-    public ModelAndView recoverPasswordEditForm(@PathVariable String token, @ModelAttribute("RecoverPasswordEditForm") final RecoverPasswordEditForm form){
+    public ModelAndView recoverPasswordEditForm(
+            @PathVariable final String token,
+            @ModelAttribute("RecoverPasswordEditForm") final RecoverPasswordEditForm form
+    ){
         if(!userService.isValidRecoveryToken(token)){
             return new ModelAndView("user/recover/invalidToken");
         }
@@ -271,7 +279,9 @@ public class UserController {
     }
 
     @RequestMapping(value = "/profile/editprofilepicture", method = { RequestMethod.GET })
-    public ModelAndView editProfilePictureForm(@ModelAttribute ("editProfilePictureForm") final EditProfilePictureForm editProfilePictureForm) {
+    public ModelAndView editProfilePictureForm(
+            @ModelAttribute ("editProfilePictureForm") final EditProfilePictureForm editProfilePictureForm
+    ) {
         final ModelAndView mav = new ModelAndView("user/editProfilePicture");
         mav.addObject("user", authUserService.getCurrentUser());
         return mav;
@@ -347,7 +357,7 @@ public class UserController {
             return new ModelAndView("redirect:/" );
         }
 
-        ModelAndView mav = new ModelAndView("user/onboarding");
+        final ModelAndView mav = new ModelAndView("user/onboarding");
         mav.addObject("degrees", degreeService.getAll());
         mav.addObject("user", user);
 

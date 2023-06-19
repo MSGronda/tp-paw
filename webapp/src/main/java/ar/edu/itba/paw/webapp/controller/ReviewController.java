@@ -29,7 +29,11 @@ public class ReviewController {
     private final AuthUserService authUserService;
 
     @Autowired
-    public ReviewController(SubjectService subjectService, ReviewService reviewService, AuthUserService authUserService) {
+    public ReviewController(
+            final SubjectService subjectService,
+            final ReviewService reviewService,
+            final AuthUserService authUserService
+    ) {
         this.subjectService = subjectService;
         this.reviewService = reviewService;
         this.authUserService = authUserService;
@@ -78,9 +82,9 @@ public class ReviewController {
 
     @RequestMapping(value = "/many-reviews", method = RequestMethod.GET)
     public ModelAndView manyReviews(
-            @RequestParam(name = "r") String subjectIds,
-            @RequestParam(name = "total") int total,
-            @RequestParam(name = "current") int current,
+            @RequestParam(name = "r") final String subjectIds,
+            @RequestParam(name = "total") final int total,
+            @RequestParam(name = "current") final int current,
             @ModelAttribute("ReviewForm") final ReviewForm reviewForm
     ) {
         final Subject subject = reviewService.manyReviewsGetFirstSubject(subjectIds);
@@ -98,9 +102,9 @@ public class ReviewController {
 
     @RequestMapping(value = "/many-reviews", method = RequestMethod.POST)
     public ModelAndView manyReviewsForm(
-            @RequestParam(name = "r") String subjectIds,
-            @RequestParam(name = "total") int total,
-            @RequestParam(name = "current") int current,
+            @RequestParam(name = "r") final String subjectIds,
+            @RequestParam(name = "total") final int total,
+            @RequestParam(name = "current") final int current,
             @Valid @ModelAttribute("ReviewForm") final ReviewForm reviewForm,
             final BindingResult errors
     ) {
@@ -126,7 +130,7 @@ public class ReviewController {
     @RequestMapping("review/{subjectId:\\d+\\.\\d+}/delete/{reviewId:\\d+}")
     public ModelAndView deleteReview(
             @PathVariable final String subjectId,
-            @PathVariable final Long reviewId
+            @PathVariable final long reviewId
     ) throws UnauthorizedException, ReviewNotFoundException {
         reviewService.delete(reviewId);
         return new ModelAndView("redirect:/review/" + subjectId + "/deletion/true");
@@ -135,7 +139,7 @@ public class ReviewController {
     @RequestMapping(value = "/review/{subjectId:\\d+\\.\\d+}/edit/{reviewId:\\d+}", method = RequestMethod.POST)
     public ModelAndView editReviewPost(
             @PathVariable final String subjectId,
-            @PathVariable final Long reviewId,
+            @PathVariable final long reviewId,
             @ModelAttribute("ReviewForm") final ReviewForm reviewForm,
             final BindingResult errors
     ) throws UnauthorizedException, ReviewNotFoundException {
@@ -160,7 +164,7 @@ public class ReviewController {
     @RequestMapping(value = "/review/{subjectId:\\d+\\.\\d+}/edit/{reviewId:\\d+}", method = RequestMethod.GET)
     public ModelAndView editReview(
             @PathVariable final String subjectId,
-            @PathVariable final Long reviewId,
+            @PathVariable final long reviewId,
             @ModelAttribute("ReviewForm") final ReviewForm reviewForm
     ) {
         final Review review = reviewService.findById(reviewId).orElseThrow(ReviewNotFoundException::new);
