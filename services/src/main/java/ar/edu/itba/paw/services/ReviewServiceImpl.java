@@ -47,7 +47,7 @@ public class ReviewServiceImpl implements ReviewService {
     }
 
     @Override
-    public Optional<Review> findById(final Long id) {
+    public Optional<Review> findById(final long id) {
         return reviewDao.findById(id);
     }
 

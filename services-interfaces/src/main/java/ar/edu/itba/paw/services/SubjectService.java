@@ -5,14 +5,13 @@ import ar.edu.itba.paw.models.User;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 
-public interface SubjectService extends BaseService<String, Subject> {
-    List<Subject> findAllThatUserCanDo(final User user);
-    List<Subject> findAllThatUserHasNotDone(User user);
-    List<Subject> findAllThatUserHasDone(User user);
-    List<Subject> findAllThatUserCouldUnlock(User user);
+public interface SubjectService {
     List<Subject> getAll();
+
+    Optional<Subject> findById(final String id);
 
     List<Subject> search(final String name, final int page);
     List<Subject> search(
@@ -30,4 +29,9 @@ public interface SubjectService extends BaseService<String, Subject> {
 
     Map<User,Set<Subject>> getAllUserUnreviewedNotificationSubjects();
     void updateUnreviewedNotificationTime();
+
+    List<Subject> findAllThatUserCanDo(final User user);
+    List<Subject> findAllThatUserHasNotDone(User user);
+    List<Subject> findAllThatUserHasDone(User user);
+    List<Subject> findAllThatUserCouldUnlock(User user);
 }

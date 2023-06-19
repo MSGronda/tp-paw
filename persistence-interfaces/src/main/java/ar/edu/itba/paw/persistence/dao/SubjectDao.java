@@ -11,12 +11,8 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
-public interface SubjectDao extends ReadableDao<String, Subject> {
+public interface SubjectDao {
     Optional<Subject> findById(final String id);
-    List<Subject> findAllThatUserCanDo(User user);
-    List<Subject> findAllThatUserHasNotDone(User user);
-    List<Subject> findAllThatUserHasDone(User user);
-    List<Subject> findAllThatUserCouldUnlock(User user);
     List<Subject> getAll();
 
     List<Subject> search(final String name, final int page);
@@ -31,4 +27,9 @@ public interface SubjectDao extends ReadableDao<String, Subject> {
 
     Map<User,Set<Subject>> getAllUserUnreviewedNotificationSubjects();
     void updateUnreviewedNotificationTime();
+
+    List<Subject> findAllThatUserCanDo(User user);
+    List<Subject> findAllThatUserHasNotDone(User user);
+    List<Subject> findAllThatUserHasDone(User user);
+    List<Subject> findAllThatUserCouldUnlock(User user);
 }

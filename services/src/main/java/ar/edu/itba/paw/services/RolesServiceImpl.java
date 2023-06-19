@@ -19,7 +19,7 @@ public class RolesServiceImpl implements RolesService{
     }
 
     @Override
-    public Optional<Role> findById(final Long id) {
+    public Optional<Role> findById(final long id) {
         return rolesDao.findById(id);
     }
 

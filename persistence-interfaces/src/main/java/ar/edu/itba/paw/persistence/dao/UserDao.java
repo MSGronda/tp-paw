@@ -8,12 +8,15 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
 
-public interface UserDao extends RWDao<Long,User> {
+public interface UserDao {
     User create(final User user) throws EmailAlreadyTakenException;
 
+    Optional<User> findById(final long id);
     Optional<User> findByEmail(final String email);
     Optional<User> findUnverifiedByEmail(final String email);
     Optional<User> findByConfirmToken(final String token);
+
+    List<User> getAll();
 
     void updateSubjectProgress(final User user, final Subject subject, final SubjectProgress progress);
 

@@ -15,7 +15,7 @@ public class ProfessorJpaDao implements ProfessorDao {
     private EntityManager em;
 
     @Override
-    public Optional<Professor> findById(Long id) {
+    public Optional<Professor> findById(final long id) {
         return Optional.ofNullable(em.find(Professor.class, id));
     }
 

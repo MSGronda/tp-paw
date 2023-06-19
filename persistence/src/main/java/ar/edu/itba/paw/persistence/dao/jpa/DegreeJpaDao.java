@@ -17,19 +17,19 @@ public class DegreeJpaDao implements DegreeDao {
     private EntityManager em;
 
     @Override
-    public Degree create(String name) {
+    public Degree create(final String name) {
         final Degree deg = new Degree(name);
         em.persist(deg);
         return deg;
     }
 
     @Override
-    public Optional<Degree> findById(Long id) {
+    public Optional<Degree> findById(final long id) {
         return Optional.ofNullable(em.find(Degree.class, id));
     }
 
     @Override
-    public Optional<Degree> findByName(String name) {
+    public Optional<Degree> findByName(final String name) {
         return em.createQuery("from Degree d where d.name = :name", Degree.class)
                 .setParameter("name", name)
                 .getResultList()

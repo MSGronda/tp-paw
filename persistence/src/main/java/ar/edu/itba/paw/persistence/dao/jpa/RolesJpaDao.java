@@ -15,7 +15,7 @@ public class RolesJpaDao implements RolesDao {
     private EntityManager em;
 
     @Override
-    public Optional<Role> findById(final Long id) {
+    public Optional<Role> findById(final long id) {
         return Optional.ofNullable(em.find(Role.class, id));
     }
 

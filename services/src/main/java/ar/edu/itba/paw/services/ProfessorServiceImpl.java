@@ -17,7 +17,7 @@ public class ProfessorServiceImpl implements ProfessorService {
     }
 
     @Override
-    public Optional<Professor> findById(final Long id) {
+    public Optional<Professor> findById(final long id) {
         return professorDao.findById(id);
     }
 

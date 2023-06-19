@@ -8,9 +8,12 @@ import ar.edu.itba.paw.models.exceptions.ReviewNotFoundException;
 import ar.edu.itba.paw.models.exceptions.UnauthorizedException;
 
 import java.util.List;
+import java.util.Optional;
 
-public interface ReviewService extends BaseService<Long, Review> {
+public interface ReviewService {
     Review create(final String subjectId, final Review review);
+
+    Optional<Review> findById(final long id);
 
     List<Review> getAll();
 

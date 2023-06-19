@@ -1,13 +1,14 @@
 package ar.edu.itba.paw.services;
 
 import ar.edu.itba.paw.models.Degree;
-import ar.edu.itba.paw.models.DegreeYear;
 import ar.edu.itba.paw.models.Subject;
 import ar.edu.itba.paw.persistence.dao.DegreeDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
+import java.util.List;
+import java.util.Optional;
+import java.util.OptionalInt;
 
 @Service
 public class DegreeServiceImpl implements DegreeService {
@@ -19,9 +20,10 @@ public class DegreeServiceImpl implements DegreeService {
     }
 
     @Override
-    public Optional<Degree> findById(final Long id) {
+    public Optional<Degree> findById(final long id) {
         return degreeDao.findById(id);
     }
+
     @Override
     public Optional<Degree> findByName(final String name) {
         return degreeDao.findByName(name);

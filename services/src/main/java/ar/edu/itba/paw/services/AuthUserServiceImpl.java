@@ -28,9 +28,10 @@ public class AuthUserServiceImpl implements AuthUserService {
     }
 
     @Override
-    public User getCurrentUser() throws UserNotFoundException {
+    public User getCurrentUser() {
         if(!isAuthenticated()) return null;
 
-        return userService.findByEmail(SecurityContextHolder.getContext().getAuthentication().getName()).orElseThrow(UserNotFoundException::new);
+        return userService.findByEmail(SecurityContextHolder.getContext().getAuthentication().getName())
+                .orElseThrow(IllegalStateException::new);
     }
 }

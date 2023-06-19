@@ -33,14 +33,14 @@ public class UserJpaDao implements UserDao {
     }
 
     @Override
-    public Optional<User> findById(Long id) {
+    public Optional<User> findById(final long id) {
         TypedQuery<User> query = em.createQuery("from User u where u.id = :id and u.verified = true", User.class);
         query.setParameter("id", id);
         final List<User> list = query.getResultList();
         return list.isEmpty() ? Optional.empty() : Optional.of(list.get(0));
     }
     @Override
-    public Optional<User> findByEmail(String email) {
+    public Optional<User> findByEmail(final String email) {
         return em.createQuery("from User u where u.email = :email and u.verified = true", User.class)
                 .setParameter("email", email)
                 .getResultList()
@@ -48,7 +48,7 @@ public class UserJpaDao implements UserDao {
     }
 
     @Override
-    public Optional<User> findUnverifiedByEmail(String email) {
+    public Optional<User> findUnverifiedByEmail(final String email) {
         return em.createQuery("from User u where u.email = :email and u.verified = false", User.class)
                 .setParameter("email", email)
                 .getResultList()
@@ -87,7 +87,7 @@ public class UserJpaDao implements UserDao {
     }
 
     @Override
-    public Optional<User> findByConfirmToken(String token) {
+    public Optional<User> findByConfirmToken(final String token) {
         return em.createQuery("from User u where u.verificationToken = :token", User.class)
                 .setParameter("token", token)
                 .getResultList()
@@ -108,21 +108,6 @@ public class UserJpaDao implements UserDao {
     @Override
     public void updateVerificationToken(final User user, final String token) {
         user.setVerificationToken(token);
-    }
-
-    @Override
-    public void insert(User user) {
-        //do nothing
-    }
-
-    @Override
-    public void delete(Long aLong) {
-        //do nothing
-    }
-
-    @Override
-    public void update(User user) {
-        //do nothing
     }
 
     @Override

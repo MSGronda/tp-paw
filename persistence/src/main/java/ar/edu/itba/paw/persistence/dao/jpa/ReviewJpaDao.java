@@ -43,7 +43,7 @@ public class ReviewJpaDao implements ReviewDao {
     }
 
     @Override
-    public Optional<Review> findById(Long id) {
+    public Optional<Review> findById(final long id) {
         return Optional.ofNullable(em.find(Review.class, id));
     }
 
