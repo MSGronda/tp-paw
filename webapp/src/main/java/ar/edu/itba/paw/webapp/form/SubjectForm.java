@@ -9,29 +9,45 @@ import java.util.Map;
 
 public class SubjectForm {
     @NotNull
-    @Pattern(regexp = "[0-9]2\\.[0-9]2")
+    @Pattern(regexp = "[0-9]{2}\\.[0-9]{2}")
     private String id;
     @Size(max=50)
     private String name;
     @Size(max=40)
     private String department;
     @NotNull
-    @Max(12)
-    @Min(1)
-    private Integer credits;
+    private String credits;
+
+    @NotNull
     private String degreeIds;
+    @NotNull
     private String semesters;
     private String requirementIds;
 
+    @NotNull
     private String professors;
 
+    @NotNull
     private String classCodes;
+
+    @NotNull
     private String classProfessors;
+
+    @NotNull
     private String classDays;
+
+    @NotNull
     private String classStartTimes;
+
+    @NotNull
     private String classEndTimes;
+
+    @NotNull
     private String classBuildings;
+
+    @NotNull
     private String classRooms;
+    @NotNull
     private String classModes;
 
     public String getId() {
@@ -58,11 +74,11 @@ public class SubjectForm {
         this.department = deparment;
     }
 
-    public Integer getCredits() {
+    public String getCredits() {
         return credits;
     }
 
-    public void setCredits(Integer credits) {
+    public void setCredits(String credits) {
         this.credits = credits;
     }
 

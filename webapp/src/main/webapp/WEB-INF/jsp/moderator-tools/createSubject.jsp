@@ -214,15 +214,16 @@
                     <tr>
                         <form:errors path="id" cssClass="error" element="p"/>
                         <td><spring:message code="subject.id"/></td>
-                        <td><sl-input name="id" path="id" value="${SubjectForm.id}" id="subject-id" onkeydown="return event.key !== 'Enter';"></sl-input></td>
+                        <td><sl-input name="id" path="id" value="${subjectForm.id}" id="subject-id" onkeydown="return event.key !== 'Enter';"></sl-input></td>
                     </tr>
                     <tr>
+                        <form:errors path="name" cssClass="error" element="p"/>
                         <td><spring:message code="subject.name"/></td>
-                        <td><sl-input name="name" path="name" value="${SubjectForm.name}" id="subject-name" onkeydown="return event.key !== 'Enter';"></sl-input></td>
+                        <td><sl-input name="name" path="name" value="${subjectForm.name}" id="subject-name" onkeydown="return event.key !== 'Enter';"></sl-input></td>
                     </tr>
                     <tr>
+                        <form:errors path="department" cssClass="error" element="p"/>
                         <td><spring:message code="subject.department"/></td>
-                            <%--                    <td><sl-input name="department" path="department" value="${SubjectForm.department}"></sl-input></td>--%>
                         <td>
                             <sl-select id="department-select">
                                 <sl-option id="department-select-1" value="<c:out value="1"/>"><c:out value="Ambiente y Movilidad"/></sl-option>
@@ -236,8 +237,9 @@
                         </td>
                     </tr>
                     <tr>
+                        <form:errors path="credits" cssClass="error" element="p"/>
                         <td><spring:message code="subject.credits"/></td>
-                        <td><sl-input name="credit" path="credit" value="${SubjectForm.credits}" type="number" id="subject-credits" onkeydown="return event.key !== 'Enter';"></sl-input></td>
+                        <td><sl-input name="credits" path="credits" value="${subjectForm.credits}" type="number" id="subject-credits" onkeydown="return event.key !== 'Enter';"></sl-input></td>
                     </tr>
                     <tr>
                         <td>
@@ -247,6 +249,7 @@
                             </div>
                         </td>
                         <td style="display: flex; flex-direction: row">
+                            <form:errors path="requirementIds" cssClass="error" element="p"/>
                             <input id="requirement" list="requirements" class="selection">
                             <datalist id="requirements">
                                 <c:forEach items="${subjects}" var="subject">
@@ -266,6 +269,7 @@
                     <tr>
                         <td><spring:message code="subject.professors"/></td>
                         <td style="display: flex; flex-direction: row">
+                            <form:errors path="professors" cssClass="error" element="p"/>
                             <input id="professor" list="professors" class="selection">
                             <datalist id="professors">
                                 <c:forEach items="${professors}" var="professor">
@@ -291,6 +295,8 @@
                     <tr>
                         <td><spring:message code="subject.degrees"/></td>
                         <td>
+                            <form:errors path="degreeIds" cssClass="error" element="p"/>
+                            <form:errors path="semesters" cssClass="error" element="p"/>
                             <sl-button id="open-button3"><spring:message code="subject.add.degree"/></sl-button>
                             <input name="degreeIds" type="hidden" id="degreeIds-hiddenInput"/>
                             <input name="semesters" type="hidden" id="semesters-hiddenInput"/>
@@ -328,6 +334,14 @@
                     <table>
                         <thead>
                         <tr>
+                            <form:errors path="classCodes" cssClass="error" element="p"/>
+                            <form:errors path="classProfessors" cssClass="error" element="p"/>
+                            <form:errors path="classDays" cssClass="error" element="p"/>
+                            <form:errors path="classStartTimes" cssClass="error" element="p"/>
+                            <form:errors path="classEndTimes" cssClass="error" element="p"/>
+                            <form:errors path="classBuildings" cssClass="error" element="p"/>
+                            <form:errors path="classRooms" cssClass="error" element="p"/>
+                            <form:errors path="classModes" cssClass="error" element="p"/>
                             <th><spring:message code="builder.class"/></th>
                             <th><spring:message code="subject.add.professors"/></th>
                             <th><spring:message code="subject.classDay"/></th>
@@ -594,7 +608,7 @@
         classDayList.push(dayMap[classDay.value]);
         classStartTimeList.push(classStartTime.value);
         classEndTimeList.push(classEndTime.value);
-        classBuildingList.push(modeMap[classBuilding.value]);
+        classBuildingList.push(buildingMap[classBuilding.value]);
         classRoomList.push(classRoom.value);
         classModeList.push(modeMap[classMode.value]);
 

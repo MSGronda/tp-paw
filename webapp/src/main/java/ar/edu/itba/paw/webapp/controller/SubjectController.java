@@ -13,6 +13,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
+import javax.validation.Valid;
 import java.util.*;
 
 @Controller
@@ -100,26 +101,45 @@ public class SubjectController {
         return mav;
     }
     @RequestMapping(value = "/create-subject", method = {RequestMethod.POST} )
-    public ModelAndView createSubject(@ModelAttribute("subjectForm") final SubjectForm subjectForm,
+    public ModelAndView createSubject(@Valid @ModelAttribute("subjectForm") final SubjectForm subjectForm,
                                       final BindingResult errors) {
+        System.out.println("ID " + subjectForm.getId() + "\n");
+        System.out.println("Name " + subjectForm.getName() + "\n");
+        System.out.println("Department " + subjectForm.getDepartment() + "\n");
+        System.out.println("credits " + subjectForm.getCredits() + "\n");
+        System.out.println("Degrees " + subjectForm.getDegreeIds() + "\n");
+        System.out.println("semesters " + subjectForm.getSemesters() + "\n");
+        System.out.println("requirements " + subjectForm.getRequirementIds() + "\n");
+        System.out.println("Professors " + subjectForm.getProfessors() + "\n");
+        System.out.println("Class Codes " + subjectForm.getClassCodes() + "\n");
+        System.out.println("Class Professors " + subjectForm.getClassProfessors() + "\n");
+        System.out.println("Class days " + subjectForm.getClassDays() + "\n");
+        System.out.println("Class start times " + subjectForm.getClassStartTimes() + "\n");
+        System.out.println("Class End TImes " + subjectForm.getClassEndTimes() + "\n");
+        System.out.println("class buildings " + subjectForm.getClassBuildings() + "\n");
+        System.out.println("class rooms " + subjectForm.getClassRooms() + "\n");
+        System.out.println("class modes " + subjectForm.getClassModes() + "\n");
+
+
         if(errors.hasErrors()) {
             return createSubjectForm(subjectForm);
         }
         Subject newSub;
-        try{
-            newSub = subjectService.create(Subject.builder()
-                    .id(subjectForm.getId())
-                    .name(subjectForm.getName())
-                    .department(subjectForm.getDepartment())
-                    .credits(subjectForm.getCredits())
-                    .build()
-            );
-        } catch (SubjectIdAlreadyExistsException e) {
-            //ToDo indicar que el id ya que existe en el form
-        }
-
-
-        return new ModelAndView("redirect:/subject/{subjectId:\\d+\\.\\d+}/addProfessor");
+//        try{
+//            newSub = subjectService.create(Subject.builder()
+//                    .id(subjectForm.getId())
+//                    .name(subjectForm.getName())
+//                    .department(subjectForm.getDepartment())
+//                    .credits(subjectForm.getCredits())
+//                    .build()
+//            );
+//        } catch (SubjectIdAlreadyExistsException e) {
+//            //ToDo indicar que el id ya que existe en el form
+//        }
+//
+//
+//        return new ModelAndView("redirect:/subject/{subjectId:\\d+\\.\\d+}/addProfessor");
+        return new ModelAndView("redirect:/");
     }
     @RequestMapping(value = "/subject/{subjectId:\\d+\\.\\d+}/add-professors", method = {RequestMethod.GET} )
     public ModelAndView addProfessorToSubjectForm(@PathVariable final String subjectId,
