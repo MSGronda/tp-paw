@@ -49,8 +49,9 @@
             color: red;
         }
         .professors-cell-width {
-            width:2rem;
+            max-width:20rem;
             overflow: hidden;
+            white-space: normal;
             word-wrap: break-word;
             max-height:5rem;
         }
@@ -61,6 +62,10 @@
         .correlatives-div{
             display: flex;
             flex-direction: column;
+        }
+        .bottom-buttons{
+            margin-left: 0.5rem;
+            margin-right: 0.5rem;
         }
     </style>
 </head>
@@ -350,8 +355,8 @@
             </div>
 
             <div class="add-button">
-                <sl-button variant="success" onclick="previousStep()"><spring:message code="register.previous"/></sl-button>
-                <sl-button type="submit" variant="success"><spring:message code="subject.create"/></sl-button>
+                <sl-button variant="success" onclick="previousStep()" class="bottom-buttons"><spring:message code="register.previous"/></sl-button>
+                <sl-button type="submit" variant="success" class="bottom-buttons" id="submit-button"><spring:message code="subject.create"/></sl-button>
             </div>
         </div>
         </div>
@@ -604,6 +609,7 @@
         document.getElementById('classModes-hiddenInput').value = JSON.stringify(classModeList);
 
         updateClassItems();
+        checkCompleteFieldsForSubmit();
 
         classCode.value = "";
         classProf.value = "";
@@ -670,6 +676,7 @@
                 document.getElementById('classModes-hiddenInput').value = JSON.stringify(classModeList);
 
                 updateClassItems();
+                checkCompleteFieldsForSubmit();
             });
             classTitle.textContent = item;
             classProf.textContent= classProfList[index] ;
@@ -780,6 +787,7 @@
     //que aparezca disabled el boton de next si no estan los campos completos
     window.onload = function() {
         checkCompleteFields();
+        checkCompleteFieldsForSubmit();
     };
 
     function checkCompleteFields(){
@@ -800,6 +808,14 @@
             professors.length > 2 &&
             degrees.length > 2
         );
+    }
+
+    function checkCompleteFieldsForSubmit(){
+        const ClassCode = document.getElementById('classCodes-hiddenInput').value;
+        console.log(ClassCode);
+        document.getElementById('submit-button').disabled = !(
+            ClassCode.length > 2
+        )
     }
 
 </script>
