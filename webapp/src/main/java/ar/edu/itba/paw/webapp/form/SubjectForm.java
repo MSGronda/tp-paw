@@ -16,7 +16,7 @@ public class SubjectForm {
     @Size(max=40)
     private String department;
     @NotNull
-    private String credits;
+    private Integer credits;
 
     @NotNull
     private String degreeIds;
@@ -74,11 +74,11 @@ public class SubjectForm {
         this.department = deparment;
     }
 
-    public String getCredits() {
+    public Integer getCredits() {
         return credits;
     }
 
-    public void setCredits(String credits) {
+    public void setCredits(Integer credits) {
         this.credits = credits;
     }
 
