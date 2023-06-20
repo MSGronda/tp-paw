@@ -7,19 +7,19 @@ import java.util.Objects;
 @Table(name = "roles")
 public class Role {
     @Id
-    private Long id;
+    private long id;
 
     @Column(length = 100, nullable = false, unique = true)
     private String name;
 
-    public Role(final Long id, final String name) {
+    public Role(final long id, final String name) {
         this.id = id;
         this.name = name;
     }
 
     protected Role() {}
 
-    public Long getId() {
+    public long getId() {
         return id;
     }
 

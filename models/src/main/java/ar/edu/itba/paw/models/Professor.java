@@ -9,7 +9,7 @@ public class Professor {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "professors_id_seq")
     @SequenceGenerator(sequenceName = "professors_id_seq", name = "professors_id_seq", allocationSize = 1)
-    private long id;
+    private Long id;
 
     @Column(name = "profname", length = 100, nullable = false)
     private String name;
@@ -22,8 +22,7 @@ public class Professor {
     )
     private List<Subject> subjects;
 
-    public Professor(final long id, final String name){
-        this.id = id;
+    public Professor(final String name){
         this.name = name;
         this.subjects = new ArrayList<>();
     }

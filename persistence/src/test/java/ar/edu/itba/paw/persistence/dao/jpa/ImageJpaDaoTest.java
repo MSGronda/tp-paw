@@ -63,6 +63,8 @@ public class ImageJpaDaoTest {
         final Image image = new Image(IMAGE);
         em.persist(image);
 
-        assertEquals(image, imageJpaDao.findById(image.getId()).get());
+        final Image actual = imageJpaDao.findById(image.getId()).get();
+        assertEquals(image.getId(), actual.getId());
+        assertEquals(image.getImage(), actual.getImage());
     }
 }

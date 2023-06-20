@@ -6,6 +6,7 @@ import org.hibernate.annotations.Formula;
 import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -17,7 +18,7 @@ public class Review {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "reviews_id_seq")
     @SequenceGenerator(sequenceName = "reviews_id_seq", name = "reviews_id_seq", allocationSize = 1)
-    private long id;
+    private Long id;
 
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     @JoinColumn(name = "iduser")
@@ -58,6 +59,7 @@ public class Review {
         this.timeDemanding = builder.timeDemanding;
         this.text = builder.text;
         this.anonymous = builder.anonymous;
+        this.votes = new ArrayList<>();
     }
 
     protected Review() {}
@@ -147,7 +149,7 @@ public class Review {
     }
 
     public static class Builder {
-        private long id;
+        private Long id;
         private User user;
         private Subject subject;
         private Difficulty difficulty;

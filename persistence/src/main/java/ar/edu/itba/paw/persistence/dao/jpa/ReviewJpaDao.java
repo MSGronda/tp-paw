@@ -55,8 +55,9 @@ public class ReviewJpaDao implements ReviewDao {
                 .getResultList();
     }
 
+    @Override
     public Optional<ReviewVote> voteReview(final User user, final Review review, final ReviewVoteType vote){
-        Optional<ReviewVote> maybeReviewVote = em.createQuery("from ReviewVote where user = :user and review = :review", ReviewVote.class)
+        final Optional<ReviewVote> maybeReviewVote = em.createQuery("from ReviewVote where user = :user and review = :review", ReviewVote.class)
                 .setParameter("user", user)
                 .setParameter("review", review)
                 .getResultList()
@@ -79,6 +80,7 @@ public class ReviewJpaDao implements ReviewDao {
         return Optional.of(reviewVote);
     }
 
+    @Override
     public boolean didUserVote(final User user, final Review review) {
         return !em.createQuery("from ReviewVote where user = :user and review = :review", ReviewVote.class)
                 .setParameter("user", user)
@@ -86,6 +88,7 @@ public class ReviewJpaDao implements ReviewDao {
                 .getResultList().isEmpty();
     }
 
+    @Override
     public boolean didUserReview(final Subject subject, final User user) {
         return !em.createQuery("from Review where subject = :subject and user = :user", Review.class)
                 .setParameter("subject", subject)
@@ -93,6 +96,7 @@ public class ReviewJpaDao implements ReviewDao {
                 .getResultList().isEmpty();
     }
 
+    @Override
     public List<Review> getAllSubjectReviews(
             final Subject subject,
             final int page,
@@ -119,6 +123,7 @@ public class ReviewJpaDao implements ReviewDao {
                 .getResultList();
     }
 
+    @Override
     public List<Review> getAllUserReviews(
             final User user,
             final int page,
@@ -147,6 +152,7 @@ public class ReviewJpaDao implements ReviewDao {
                 .getResultList();
     }
 
+    @Override
     public int getTotalPagesForUserReviews(final User user) {
         final int totalReviews = ((Number) em.createQuery("select count(*) from Review where user = :user")
                 .setParameter("user", user)
@@ -155,6 +161,7 @@ public class ReviewJpaDao implements ReviewDao {
         return (int) Math.max(1, Math.ceil((double) totalReviews / PAGE_SIZE));
     }
 
+    @Override
     public int getTotalPagesForSubjectReviews(final Subject subject) {
         final int totalReviews = ((Number) em.createQuery("select count(*) from Review where subject = :subject")
                 .setParameter("subject", subject)
