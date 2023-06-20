@@ -456,7 +456,11 @@
         updatePrerequisiteItems();
     }
 
-    var professorList = [];
+    let professorList = [];
+    let professorMap = {
+
+    }
+    let index = 0;
 
     function addProfessor() {
         const professor = document.getElementById("professor");
@@ -466,8 +470,11 @@
         }
         if(!professorList.includes(id)) {
             professorList.push(id);
+            professorMap[index] = id;
+
             document.getElementById('professors-hiddenInput').value = JSON.stringify(professorList);
             professor.value = "";
+            index++;
         } else {
             professor.value = "<spring:message code="subject.create.professor.error1"/>";
         }
@@ -500,7 +507,10 @@
         });
     }
 
+
+
     function updateProfessorItems() {
+        let options = 0;
         let selectedProfItems = document.getElementById('professorItems');
         let classProfessors = document.getElementById('class-professors');
         selectedProfItems.innerHTML = '';
@@ -523,7 +533,8 @@
             div.appendChild(profItem);
             div.appendChild(removeBtn);
             let classProf = document.createElement('sl-option');
-            classProf.value=item;
+
+            classProf.value=options++;
             classProf.textContent=item;
             classProfessors.appendChild(classProf);
         });
@@ -545,6 +556,9 @@
         }
         professorList.push(professorName);
         document.getElementById('professors-hiddenInput').value = JSON.stringify(professorList);
+        professorMap[index] = professorName;
+
+        index++;
         checkCompleteFields();
         professor.value = "";
         updateProfessorItems();
@@ -593,19 +607,29 @@
         const classRoom = document.getElementById("classroom");
         const classMode = document.getElementById("class-mode");
 
-        if(classCode.value === "" || classProf.value.length === 0 || classDay.value === "" || classStartTime.value === "" || classEndTime.value === "" || classBuilding.value === "" || classRoom.value === "" || classMode.value === "") {
+        if (classCode.value === "" || classProf.value.length === 0 || classDay.value === "" || classStartTime.value === "" || classEndTime.value === "" || classBuilding.value === "" || classRoom.value === "" || classMode.value === "") {
             updateErrorMessage(2)
             return;
         }
-        if(classCodeList.includes(classCode.value) && classProfList.includes(classProf.value) && classDayList.includes(dayMap[classDay.value]) && classStartTimeList.includes(classStartTime.value) && classEndTimeList.includes(classEndTime.value) && classBuildingList.includes(buildingMap[classBuilding.value]) && classRoomList.includes(classRoom.value) && classModeList.includes(modeMap[classMode.value])){
+        if (classCodeList.includes(classCode.value) && classProfList.includes(classProf.value) && classDayList.includes(dayMap[classDay.value]) && classStartTimeList.includes(classStartTime.value) && classEndTimeList.includes(classEndTime.value) && classBuildingList.includes(buildingMap[classBuilding.value]) && classRoomList.includes(classRoom.value) && classModeList.includes(modeMap[classMode.value])) {
             classCode.value = "<spring:message code="subject.create.class.error1"/>";
             updateErrorMessage(1)
             return;
         }
 
         classCodeList.push(classCode.value);
-        classProfList.push(classProf.value);
-        classDayList.push(dayMap[classDay.value]);
+        let profIndex = 0;
+        let professors = [];
+        if (classProf.value.length > 1){
+            while (profIndex < classProf.value.length) {
+                professors.push(professorMap[classProf.value[profIndex++]]);
+            }
+        }
+        else {
+            professors.push(professorMap[classProf.value]);
+        }
+        classProfList.push(professors);
+        classDayList.push(classDay.value);
         classStartTimeList.push(classStartTime.value);
         classEndTimeList.push(classEndTime.value);
         classBuildingList.push(buildingMap[classBuilding.value]);
@@ -637,6 +661,7 @@
         let errorMessage = document.getElementById('error-message');
         errorMessage.innerHTML = "";
 
+
         dialog2.hide();
     }
 
@@ -657,6 +682,7 @@
         selectedClassItems.innerHTML = '';
 
         classCodeList.forEach((item, index) => {
+            let breakLine = document.createElement('br');
             let tableRow = document.createElement('tr');
             let classTitle = document.createElement('td');
             let classProf = document.createElement('td');
@@ -694,7 +720,7 @@
             });
             classTitle.textContent = item;
             classProf.textContent= classProfList[index] ;
-            classDay.textContent= classDayList[index] ;
+            classDay.textContent= dayMap[classDayList[index]] ;
             classStartTime.textContent= classStartTimeList[index] ;
             classEndTime.textContent= classEndTimeList[index] ;
             classMode.textContent= classModeList[index] ;
@@ -712,6 +738,7 @@
             tableRow.appendChild(classRoom);
             tableRow.appendChild(classRemove);
             selectedClassItems.appendChild(tableRow);
+            selectedClassItems.appendChild(breakLine);
         });
     }
 
@@ -826,7 +853,6 @@
 
     function checkCompleteFieldsForSubmit(){
         const ClassCode = document.getElementById('classCodes-hiddenInput').value;
-        console.log(ClassCode);
         document.getElementById('submit-button').disabled = !(
             ClassCode.length > 2
         )
