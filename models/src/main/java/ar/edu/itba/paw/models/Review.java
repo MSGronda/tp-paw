@@ -12,7 +12,6 @@ import java.util.Objects;
 @Entity
 @Table(name = "reviews")
 public class Review {
-    private static final int PREVIEW_LENGTH = 500;
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "reviews_id_seq")
@@ -99,14 +98,6 @@ public class Review {
     }
     public long getDownvotes(){
         return downvotes;
-    }
-
-    public String getPreviewText() {
-        return this.text.substring(0, PREVIEW_LENGTH);
-    }
-
-    public boolean getRequiresShowMore() {
-        return this.text.length() > PREVIEW_LENGTH;
     }
 
     public void setDifficulty(Difficulty difficulty) {

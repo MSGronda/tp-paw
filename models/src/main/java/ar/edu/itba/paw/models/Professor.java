@@ -22,8 +22,7 @@ public class Professor {
     )
     private List<Subject> subjects;
 
-    public Professor(final long id, final String name){
-        this.id = id;
+    public Professor(final String name){
         this.name = name;
         this.subjects = new ArrayList<>();
     }

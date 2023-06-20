@@ -8,4 +8,5 @@ import java.util.Optional;
 public interface ProfessorService {
     Optional<Professor> findById(final long id);
     List<Professor> getAll();
+    void create(Professor professor);
 }

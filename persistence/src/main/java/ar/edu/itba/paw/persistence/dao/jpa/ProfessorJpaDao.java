@@ -24,4 +24,9 @@ public class ProfessorJpaDao implements ProfessorDao {
         return em.createQuery("from Professor", Professor.class)
                 .getResultList();
     }
+
+    @Override
+    public void create(Professor professor) {
+        em.persist(professor);
+    }
 }

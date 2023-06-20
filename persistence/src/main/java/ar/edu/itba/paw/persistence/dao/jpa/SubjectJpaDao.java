@@ -6,6 +6,7 @@ import ar.edu.itba.paw.models.enums.OrderDir;
 import ar.edu.itba.paw.models.enums.SubjectFilterField;
 import ar.edu.itba.paw.models.enums.SubjectOrderField;
 import ar.edu.itba.paw.persistence.dao.SubjectDao;
+import ar.edu.itba.paw.persistence.exceptions.SubjectIdAlreadyExistsPersistenceException;
 import org.springframework.stereotype.Repository;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
@@ -21,6 +22,14 @@ public class SubjectJpaDao implements SubjectDao {
 
     @PersistenceContext
     private EntityManager em;
+
+    @Override
+    public Subject create(final Subject subject) throws SubjectIdAlreadyExistsPersistenceException {
+        if(findById(subject.getId()).isPresent())
+            throw new SubjectIdAlreadyExistsPersistenceException();
+        em.persist(subject);
+        return subject;
+    }
 
     @Override
     public Optional<Subject> findById(final String id) {

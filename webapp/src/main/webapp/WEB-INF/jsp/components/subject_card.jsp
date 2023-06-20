@@ -41,7 +41,7 @@
 
         <%--      <c:out value="${subject.credits}"/> Credit<c:if test="${subject.credits != 1}">s</c:if>--%>
       </sl-badge>
-      <c:if test="${not empty subject.prerequisites}">
+      <c:if test="${empty subject.prerequisites}">
         <sl-badge variant="warning" pill>
           <spring:message code="card.noPrerequisites"/>
         </sl-badge>
@@ -61,7 +61,7 @@
         </sl-tooltip>
       </c:if>
 
-      <sec:authorize access="isAuthenticated()">
+
         <c:choose>
           <c:when test="${progress eq 'DONE'}">
             <sl-tooltip class="progress-icon" content="<spring:message code="card.progress.tooltip.passed"/>">
@@ -69,7 +69,7 @@
             </sl-tooltip>
           </c:when>
         </c:choose>
-      </sec:authorize>
+
     </div>
   </div>
     <div slot="footer" class="chip-row ">

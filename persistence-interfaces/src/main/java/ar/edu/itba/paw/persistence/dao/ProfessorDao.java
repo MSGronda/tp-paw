@@ -8,4 +8,5 @@ import java.util.Optional;
 public interface ProfessorDao {
     List<Professor> getAll();
     Optional<Professor> findById(final long id);
+    void create(Professor professor);
 }

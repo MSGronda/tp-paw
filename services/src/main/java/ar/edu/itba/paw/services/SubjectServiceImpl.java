@@ -7,8 +7,11 @@ import ar.edu.itba.paw.models.enums.SubjectFilterField;
 import ar.edu.itba.paw.models.enums.SubjectOrderField;
 import ar.edu.itba.paw.models.exceptions.InvalidPageNumberException;
 import ar.edu.itba.paw.persistence.dao.SubjectDao;
+import ar.edu.itba.paw.persistence.exceptions.SubjectIdAlreadyExistsPersistenceException;
+import ar.edu.itba.paw.services.exceptions.SubjectIdAlreadyExistsException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -16,6 +19,18 @@ import java.util.stream.Collectors;
 @Service
 public class SubjectServiceImpl implements SubjectService {
     private final SubjectDao subjectDao;
+
+    @Transactional
+    @Override
+    public Subject create(final Subject subject) throws SubjectIdAlreadyExistsException {
+        Subject sub;
+        try{
+            sub = subjectDao.create(subject);
+        } catch (final SubjectIdAlreadyExistsPersistenceException e){
+            throw new SubjectIdAlreadyExistsException();
+        }
+         return sub;
+    }
 
     @Autowired
     public SubjectServiceImpl(final SubjectDao subjectDao) {
