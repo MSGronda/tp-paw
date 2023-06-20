@@ -11,43 +11,45 @@ public class SubjectForm {
     @NotNull
     @Pattern(regexp = "[0-9]{2}\\.[0-9]{2}")
     private String id;
-    @Size(max=50)
+    @Size(min=1, max=50)
     private String name;
-    @Size(max=40)
+    @Size(min=1, max=40)
     private String department;
     @NotNull
+    @Min(1)
+    @Max(12)
     private Integer credits;
 
-    @NotNull
+    @Size(min=3)
     private String degreeIds;
-    @NotNull
+    @Size(min=3)
     private String semesters;
     private String requirementIds;
 
-    @NotNull
+    @Size(min=3)
     private String professors;
 
-    @NotNull
+    @Size(min=3)
     private String classCodes;
 
-    @NotNull
+    @Size(min=3)
     private String classProfessors;
 
-    @NotNull
+    @Size(min=3)
     private String classDays;
 
-    @NotNull
+    @Size(min=3)
     private String classStartTimes;
 
-    @NotNull
+    @Size(min=3)
     private String classEndTimes;
 
-    @NotNull
+    @Size(min=3)
     private String classBuildings;
 
-    @NotNull
+    @Size(min=3)
     private String classRooms;
-    @NotNull
+    @Size(min=3)
     private String classModes;
 
     public String getId() {
