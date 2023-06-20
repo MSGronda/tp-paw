@@ -104,17 +104,28 @@ public class SubjectController {
             return createSubjectForm(subjectForm);
         }
         Subject newSub;
-//        try{
-//            newSub = subjectService.create(Subject.builder()
-//                    .id(subjectForm.getId())
-//                    .name(subjectForm.getName())
-//                    .department(subjectForm.getDepartment())
-//                    .credits(subjectForm.getCredits())
-//                    .build()
-//            );
-//        } catch (SubjectIdAlreadyExistsException e) {
-//            //ToDo indicar que el id ya que existe en el form
-//        }
+        try{
+            newSub = subjectService.create(Subject.builder()
+                    .id(subjectForm.getId())
+                    .name(subjectForm.getName())
+                    .department(subjectForm.getDepartment())
+                    .credits(subjectForm.getCredits()),
+                    subjectForm.getDegreeIds(),
+                    subjectForm.getSemesters(),
+                    subjectForm.getRequirementIds(),
+                    subjectForm.getProfessors(),
+                    subjectForm.getClassCodes(),
+                    subjectForm.getClassProfessors(),
+                    subjectForm.getClassDays(),
+                    subjectForm.getClassStartTimes(),
+                    subjectForm.getClassEndTimes(),
+                    subjectForm.getClassBuildings(),
+                    subjectForm.getClassRooms(),
+                    subjectForm.getClassModes()
+            );
+        } catch (SubjectIdAlreadyExistsException e) {
+            //ToDo indicar que el id ya que existe en el form
+        }
 //
 //
 //        return new ModelAndView("redirect:/subject/{subjectId:\\d+\\.\\d+}/addProfessor");

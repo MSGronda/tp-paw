@@ -5,6 +5,7 @@ import ar.edu.itba.paw.models.Subject;
 import ar.edu.itba.paw.persistence.dao.DegreeDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -41,4 +42,11 @@ public class DegreeServiceImpl implements DegreeService {
     public List<Degree> getAll() {
         return degreeDao.getAll();
     }
+
+    @Transactional
+    @Override
+    public void addDegreesToSubject(Subject subject, List<Long> degreeIds, List<Integer> semesters) {
+        degreeDao.addSubjectToDegrees(subject, degreeIds, semesters);
+    }
+
 }

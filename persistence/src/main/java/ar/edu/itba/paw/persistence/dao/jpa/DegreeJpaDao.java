@@ -1,6 +1,8 @@
 package ar.edu.itba.paw.persistence.dao.jpa;
 
 import ar.edu.itba.paw.models.Degree;
+import ar.edu.itba.paw.models.DegreeSemester;
+import ar.edu.itba.paw.models.DegreeSubject;
 import ar.edu.itba.paw.models.Subject;
 import ar.edu.itba.paw.persistence.dao.DegreeDao;
 import org.springframework.stereotype.Repository;
@@ -52,5 +54,13 @@ public class DegreeJpaDao implements DegreeDao {
                 .stream().findFirst();
 
         return res.map(OptionalInt::of).orElseGet(OptionalInt::empty);
+    }
+
+    @Override
+    public void addSubjectToDegrees(Subject subject, List<Long> degreeIds, List<Integer> semesters){
+        for( int i = 0 ; i < degreeIds.size() ; i++ ){
+            Degree degree = em.find(Degree.class, degreeIds.get(i));
+            degree.getDegreeSubjects().add(new DegreeSubject(degree, subject, semesters.get(i)));
+        }
     }
 }

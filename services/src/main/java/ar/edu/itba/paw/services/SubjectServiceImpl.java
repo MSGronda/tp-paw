@@ -20,21 +20,61 @@ import java.util.stream.Collectors;
 public class SubjectServiceImpl implements SubjectService {
     private final SubjectDao subjectDao;
 
+    private final DegreeService degreeService;
+
+    @Autowired
+    public SubjectServiceImpl(final SubjectDao subjectDao, DegreeService degreeService) {
+        this.subjectDao = subjectDao;
+        this.degreeService = degreeService;
+    }
+
     @Transactional
     @Override
-    public Subject create(final Subject subject) throws SubjectIdAlreadyExistsException {
+    public Subject create(final Subject.Builder builder,
+                          final String degreeIds,
+                          final String semesters,
+                          final String requirementIds,
+                          final String professors,
+                          final String classCodes,
+                          final String classProfessors,
+                          final String classDays,
+                          final String classStartTimes,
+                          final String classEndTime,
+                          final String classBuildings,
+                          final String classRooms,
+                          final String classModes) throws SubjectIdAlreadyExistsException {
         Subject sub;
         try{
-            sub = subjectDao.create(subject);
+            sub = subjectDao.create(builder.build());
         } catch (final SubjectIdAlreadyExistsPersistenceException e){
             throw new SubjectIdAlreadyExistsException();
         }
-         return sub;
+        // parsear y llamar a los demas services
+        List<String> degreeIdsList = parseJsonList(degreeIds);
+        List<String> semestersList = parseJsonList(semesters);
+        degreeService.addSubjectToDegrees(
+                sub,
+                degreeIdsList.stream().map(Long::parseLong).collect(java.util.stream.Collectors.toList()),
+                semestersList.stream().map(Integer::parseInt).collect(java.util.stream.Collectors.toList()));
+
+        return sub;
     }
 
-    @Autowired
-    public SubjectServiceImpl(final SubjectDao subjectDao) {
-        this.subjectDao = subjectDao;
+    private List<String> parseJsonList(String stringifyString) {
+        String trimmedInput = stringifyString.replace("[", "").replace("]", "");
+        String[] elements = trimmedInput.split(",");
+
+        List<String> parsedList = new ArrayList<>();
+        if (elements[0].equals("")) {
+            return parsedList;
+        }
+        for (String element : elements) {
+            // Remove quotes around each element
+            String parsedElement = element.replace("\"", "");
+            parsedList.add(parsedElement);
+        }
+
+        return parsedList;
     }
 
     @Override

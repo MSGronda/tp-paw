@@ -81,6 +81,10 @@ public class Degree {
         return new ArrayList<>(yearMap.values());
     }
 
+    public List<DegreeSubject> getDegreeSubjects() {
+        return subjects;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

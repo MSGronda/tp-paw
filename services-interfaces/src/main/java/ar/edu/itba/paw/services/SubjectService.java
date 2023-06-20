@@ -11,7 +11,19 @@ import java.util.Optional;
 import java.util.Set;
 
 public interface SubjectService {
-    Subject create(final Subject subject) throws SubjectIdAlreadyExistsException;
+    Subject create(final Subject.Builder builder,
+                   final String degreeIds,
+                   final String semesters,
+                   final String requirementIds,
+                   final String professors,
+                   final String classCodes,
+                   final String classProfessors,
+                   final String classDays,
+                   final String classStartTimes,
+                   final String classEndTime,
+                   final String classBuildings,
+                   final String classRooms,
+                   final String classModes) throws SubjectIdAlreadyExistsException;
     List<Subject> getAll();
 
     Optional<Subject> findById(final String id);

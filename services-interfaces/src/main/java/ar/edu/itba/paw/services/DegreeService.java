@@ -13,4 +13,6 @@ public interface DegreeService {
     Optional<Degree> findById(final long id);
     Optional<Degree> findByName(final String name);
     OptionalInt findSubjectYearForDegree(final Subject subject, final Degree degree);
+
+    void addSubjectToDegrees(Subject subject, List<Long> degreeIds, List<Integer> semesters);
 }
