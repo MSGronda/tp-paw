@@ -145,4 +145,20 @@ public class SubjectForm {
     public void setClassModes(String classModes) {
         this.classModes = classModes;
     }
+
+    public String getClassStartTimes() {
+        return classStartTimes;
+    }
+
+    public void setClassStartTimes(String classStartTimes) {
+        this.classStartTimes = classStartTimes;
+    }
+
+    public String getClassEndTimes() {
+        return classEndTimes;
+    }
+
+    public void setClassEndTimes(String classEndTimes) {
+        this.classEndTimes = classEndTimes;
+    }
 }
