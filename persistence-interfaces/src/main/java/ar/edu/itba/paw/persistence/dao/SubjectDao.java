@@ -34,4 +34,6 @@ public interface SubjectDao {
     List<Subject> findAllThatUserHasNotDone(User user);
     List<Subject> findAllThatUserHasDone(User user);
     List<Subject> findAllThatUserCouldUnlock(User user);
+
+    void addProfessorsToSubject(Subject subject, List<String> professors);
 }

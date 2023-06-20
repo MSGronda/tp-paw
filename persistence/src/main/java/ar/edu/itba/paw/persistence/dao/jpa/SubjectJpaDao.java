@@ -1,5 +1,6 @@
 package ar.edu.itba.paw.persistence.dao.jpa;
 
+import ar.edu.itba.paw.models.Professor;
 import ar.edu.itba.paw.models.Subject;
 import ar.edu.itba.paw.models.User;
 import ar.edu.itba.paw.models.enums.OrderDir;
@@ -8,6 +9,7 @@ import ar.edu.itba.paw.models.enums.SubjectOrderField;
 import ar.edu.itba.paw.persistence.dao.SubjectDao;
 import ar.edu.itba.paw.persistence.exceptions.SubjectIdAlreadyExistsPersistenceException;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import javax.persistence.EntityManager;
@@ -345,5 +347,16 @@ public class SubjectJpaDao implements SubjectDao {
                 .append(orderBy.getFieldName())
                 .append(" ")
                 .append(dirToUse.getQueryString());
+    }
+
+    @Transactional
+    @Override
+    public void addProfessorsToSubject(Subject subject, List<String> professors){
+        for(String professor : professors){
+            if( em.find(Professor.class, professor) == null){
+                em.persist(new Professor(professor));
+            }
+
+        }
     }
 }

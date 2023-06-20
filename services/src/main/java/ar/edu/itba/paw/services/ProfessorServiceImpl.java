@@ -1,6 +1,7 @@
 package ar.edu.itba.paw.services;
 
 import ar.edu.itba.paw.models.Professor;
+import ar.edu.itba.paw.models.Subject;
 import ar.edu.itba.paw.persistence.dao.ProfessorDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -32,5 +33,11 @@ public class ProfessorServiceImpl implements ProfessorService {
     @Override
     public void create(Professor professor){
         professorDao.create(professor);
+    }
+
+    @Transactional
+    @Override
+    public void addSubjectToProfessors(Subject subject, List<String> professors){
+        professorDao.addSubjectToProfessors(subject, professors);
     }
 }

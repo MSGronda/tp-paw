@@ -22,10 +22,13 @@ public class SubjectServiceImpl implements SubjectService {
 
     private final DegreeService degreeService;
 
+    private final ProfessorService professorService;
+
     @Autowired
-    public SubjectServiceImpl(final SubjectDao subjectDao, DegreeService degreeService) {
+    public SubjectServiceImpl(final SubjectDao subjectDao, DegreeService degreeService, ProfessorService professorService) {
         this.subjectDao = subjectDao;
         this.degreeService = degreeService;
+        this.professorService = professorService;
     }
 
     @Transactional
@@ -50,17 +53,28 @@ public class SubjectServiceImpl implements SubjectService {
             throw new SubjectIdAlreadyExistsException();
         }
         // parsear y llamar a los demas services
-        List<String> degreeIdsList = parseJsonList(degreeIds);
-        List<String> semestersList = parseJsonList(semesters);
+
+        //se agrega a subjectDegrees
+        List<String> degreeIdsList = parseJsonList(degreeIds, false);
+        List<String> semestersList = parseJsonList(semesters, false);
         degreeService.addSubjectToDegrees(
                 sub,
                 degreeIdsList.stream().map(Long::parseLong).collect(java.util.stream.Collectors.toList()),
-                semestersList.stream().map(Integer::parseInt).collect(java.util.stream.Collectors.toList()));
+                semestersList.stream().map(Integer::parseInt).collect(java.util.stream.Collectors.toList())
+        );
+
+        //se agregan profesores a professorSubjects
+        List<String> professorsList = parseJsonList(professors, true);
+        professorService.addSubjectToProfessors(
+                sub,
+                professorsList
+        );
+
 
         return sub;
     }
 
-    private List<String> parseJsonList(String stringifyString) {
+    private List<String> parseJsonList(String stringifyString, boolean everySecondComma) {
         String trimmedInput = stringifyString.replace("[", "").replace("]", "");
         String[] elements = trimmedInput.split(",");
 
@@ -68,11 +82,22 @@ public class SubjectServiceImpl implements SubjectService {
         if (elements[0].equals("")) {
             return parsedList;
         }
-        for (String element : elements) {
-            // Remove quotes around each element
-            String parsedElement = element.replace("\"", "");
-            parsedList.add(parsedElement);
+        if( !everySecondComma){
+            for (String element : elements) {
+                // Remove quotes around each element
+                String parsedElement = element.replace("\"", "");
+                parsedList.add(parsedElement);
+            }
+        }else{
+            for (int i = 0; i < elements.length; i+=2) {
+                // Remove quotes around each element
+                String parsedElement = elements[i].replace("\"", "");
+                String parsedElement2 = elements[i+1].replace("\"", "");
+                parsedElement += "," + parsedElement2;
+                parsedList.add(parsedElement);
+            }
         }
+
 
         return parsedList;
     }
