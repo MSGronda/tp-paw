@@ -13,6 +13,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Repository
@@ -277,14 +278,56 @@ public class SubjectJpaDao implements SubjectDao {
 
     @Override
     public Map<User, Set<Subject>> getAllUserUnreviewedNotificationSubjects() {
-        //TODO
-        throw new NotImplementedException();
+        @SuppressWarnings("unchecked")
+        final List<Object[]> rows =
+                em.createNativeQuery("SELECT s.id idsubject, u.id iduser FROM subjects s, users u\n" +
+                                "WHERE NOT EXISTS(\n" +
+                                "    SELECT * FROM reviews r\n" +
+                                "    WHERE r.idsub = s.id\n" +
+                                "        AND r.iduser = u.id\n" +
+                                ") AND EXISTS(\n" +
+                                "    SELECT * FROM usersubjectprogress usp\n" +
+                                "    WHERE usp.idsub = s.id\n" +
+                                "        AND usp.iduser = u.id\n" +
+                                "        AND usp.subjectstate = 1\n" +
+                                "        AND usp.notiftime IS NULL\n" +
+                                ")")
+                        .getResultList();
+
+        if(rows.isEmpty()) return Collections.emptyMap();
+
+        final List<String> subjectIds = rows.stream().map(row -> (String)row[0]).collect(Collectors.toList());
+        final List<Long> userIds = rows.stream().map(row -> ((Number)row[1]).longValue()).collect(Collectors.toList());
+
+        final Map<Long,User> users = em.createQuery("from User where id in :ids", User.class)
+                .setParameter("ids", userIds)
+                .getResultList()
+                .stream()
+                .collect(Collectors.toMap(User::getId, Function.identity()));
+
+        final Map<String,Subject> subjects = em.createQuery("from Subject where id in :ids", Subject.class)
+                .setParameter("ids", subjectIds)
+                .getResultList()
+                .stream()
+                .collect(Collectors.toMap(Subject::getId, Function.identity()));
+
+        final Map<User, Set<Subject>> result = new HashMap<>();
+        for(final Object[] row : rows) {
+            final User user = users.get(((Number) row[1]).longValue());
+            final Subject subject = subjects.get((String) row[0]);
+
+            final Set<Subject> userSubjects = result.getOrDefault(user, new HashSet<>());
+            userSubjects.add(subject);
+            result.putIfAbsent(user, userSubjects);
+        }
+
+        return result;
     }
 
     @Override
     public void updateUnreviewedNotificationTime() {
-        //TODO
-        throw new NotImplementedException();
+        em.createNativeQuery("UPDATE usersubjectprogress SET notiftime = now() WHERE subjectstate = 1 AND notiftime IS NULL")
+                .executeUpdate();
     }
 
     private String sanitizeWildcards(final String s) {

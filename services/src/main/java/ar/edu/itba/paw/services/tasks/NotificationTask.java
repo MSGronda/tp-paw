@@ -7,8 +7,9 @@ import ar.edu.itba.paw.services.SubjectService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.env.Environment;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Map;
 import java.util.Set;
@@ -22,13 +23,14 @@ public class NotificationTask {
     private final SubjectService subjectService;
 
     @Autowired
-    NotificationTask(final MailService mailService, final SubjectService subjectService, final Environment env) {
+    NotificationTask(final MailService mailService, final SubjectService subjectService) {
         this.mailService = mailService;
         this.subjectService = subjectService;
     }
 
-    //@Scheduled(fixedDelay = TASK_DELAY)
-    private void notifScheduledTask() {
+    @Transactional
+    @Scheduled(fixedDelay = TASK_DELAY)
+    public void notifScheduledTask() {
         LOGGER.debug("Running notification task");
 
         final Map<User, Set<Subject>> map = subjectService.getAllUserUnreviewedNotificationSubjects();
