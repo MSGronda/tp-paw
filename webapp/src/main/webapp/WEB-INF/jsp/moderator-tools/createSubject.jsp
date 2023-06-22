@@ -261,6 +261,24 @@
                     </tr>
                     <tr>
                         <td>
+                            <form:errors path="degreeIds" cssClass="error" element="p"/>
+                            <form:errors path="semesters" cssClass="error" element="p"/>
+                            <spring:message code="subject.degrees"/>
+                        </td>
+                        <td>
+                            <sl-button id="open-button3"><spring:message code="subject.add.degree"/></sl-button>
+                            <input name="degreeIds" type="hidden" id="degreeIds-hiddenInput"/>
+                            <input name="semesters" type="hidden" id="semesters-hiddenInput"/>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td/>
+                        <td>
+                            <ul id="degreeSemesters"></ul>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
                             <div class="correlatives-div">
                                 <form:errors path="requirementIds" cssClass="error" element="p"/>
                                 <spring:message code="subject.prerequisites"/>
@@ -311,24 +329,6 @@
                         <td></td>
                         <td>
                             <sl-button id="open-button"><spring:message code="subject.create.professor"/></sl-button>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <form:errors path="degreeIds" cssClass="error" element="p"/>
-                            <form:errors path="semesters" cssClass="error" element="p"/>
-                            <spring:message code="subject.degrees"/>
-                        </td>
-                        <td>
-                            <sl-button id="open-button3"><spring:message code="subject.add.degree"/></sl-button>
-                            <input name="degreeIds" type="hidden" id="degreeIds-hiddenInput"/>
-                            <input name="semesters" type="hidden" id="semesters-hiddenInput"/>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td/>
-                        <td>
-                            <ul id="degreeSemesters"></ul>
                         </td>
                     </tr>
                     </tbody>
@@ -542,6 +542,14 @@
             });
             div.appendChild(prereqItem);
             div.appendChild(removeBtn);
+            degreeArray.forEach((degreeID) => {
+                if( !degreesSubjectMap[degreeID].includes(requirementList[reqNameList.indexOf(item)])){
+                    let warning = document.createElement('li');
+                    warning.textContent = "<spring:message code="subject.create.notInDegree"/>";
+                    warning.style.color = "red";
+                    div.appendChild(warning);
+                }
+            });
             selectedPrequisitesItems.appendChild(div);
         });
     }
@@ -798,8 +806,8 @@
         semesterArray.push(semester.value);
         document.getElementById('degreeIds-hiddenInput').value = JSON.stringify(degreeArray);
         document.getElementById('semesters-hiddenInput').value = JSON.stringify(semesterArray);
-        checkCompleteFields()
-
+        checkCompleteFields();
+        checkForCorrelatives();
         updateDegreeSemesterItems();
         degree.value = "";
         semester.value = "";
@@ -845,6 +853,7 @@
 
                 updateDegreeSemesterItems();
                 checkCompleteFields();
+                checkForCorrelatives();
             });
             degreeItem.textContent = degreeMap[degreeId] + " - " + semesterMap[semesterArray[degreeArray.indexOf(degreeId)]]
             selectedDegreeSemester.appendChild(div);
@@ -868,6 +877,7 @@
     window.onload = function() {
         checkCompleteFields();
         checkCompleteFieldsForSubmit();
+        checkForCorrelatives();
     };
 
     function checkCompleteFields(){
@@ -896,6 +906,28 @@
             ClassCode.length > 2
         )
     }
+
+    const degreesSubjectMap = {
+        <c:forEach var="degree" items="${degrees}">
+        "${degree.id}":[
+            <c:forEach var="subject" items="${degree.subjects}">
+                "${subject.id}",
+            </c:forEach>
+        ],
+        </c:forEach>
+    }
+
+    function checkForCorrelatives(){
+        const requirementInput = document.getElementById('requirement');
+
+        const degrees = document.getElementById('degreeIds-hiddenInput').value;
+        requirementInput.disabled = !(
+            degrees.length > 2
+        )
+
+    }
+
+
 
 </script>
 </html>
