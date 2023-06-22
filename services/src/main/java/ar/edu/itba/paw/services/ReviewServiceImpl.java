@@ -42,7 +42,6 @@ public class ReviewServiceImpl implements ReviewService {
         return reviewDao.create(
                 Review.builderFrom(review)
                         .subject(subject)
-                        .build()
         );
     }
 
@@ -138,12 +137,12 @@ public class ReviewServiceImpl implements ReviewService {
 
     @Transactional
     @Override
-    public void update(final Review review) throws UnauthorizedException {
+    public void update(final Review.Builder reviewBuilder) throws UnauthorizedException {
         final User user = authUserService.getCurrentUser();
-        if(!user.isEditor() && !review.getUser().equals(user))
+        if(!user.isEditor() && !reviewBuilder.getUser().equals(user))
             throw new UnauthorizedException();
 
-        reviewDao.update(review);
+        reviewDao.update(reviewBuilder);
     }
 
     @Transactional

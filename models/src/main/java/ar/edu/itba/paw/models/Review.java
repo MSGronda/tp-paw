@@ -207,5 +207,33 @@ public class Review {
         public Review build() {
             return new Review(this);
         }
+
+        public long getId() {
+            return id;
+        }
+
+        public User getUser() {
+            return user;
+        }
+
+        public Subject getSubject() {
+            return subject;
+        }
+
+        public Difficulty getDifficulty() {
+            return difficulty;
+        }
+
+        public TimeDemanding getTimeDemanding() {
+            return timeDemanding;
+        }
+
+        public String getText() {
+            return text;
+        }
+
+        public boolean isAnonymous() {
+            return anonymous;
+        }
     }
 }

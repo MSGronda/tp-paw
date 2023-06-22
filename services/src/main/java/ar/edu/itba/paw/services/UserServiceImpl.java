@@ -91,7 +91,6 @@ public class UserServiceImpl implements UserService {
                             .password(passwordEncoder.encode(user.getPassword()))
                             .verificationToken(confirmToken)
                             .imageId(image.getId())
-                            .build()
             );
         } catch (final EmailAlreadyTakenException e) {
             LOGGER.debug("User email {} already taken", user.getEmail());

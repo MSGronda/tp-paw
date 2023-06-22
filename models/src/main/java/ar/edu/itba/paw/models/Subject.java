@@ -212,5 +212,37 @@ public class Subject {
         public Subject build() {
             return new Subject(this);
         }
+
+        public String getId() {
+            return id;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public String getDepartment() {
+            return department;
+        }
+
+        public Integer getCredits() {
+            return credits;
+        }
+
+        public Set<Subject> getPrerequisites() {
+            return prerequisites;
+        }
+
+        public Set<Professor> getProfessors() {
+            return professors;
+        }
+
+        public Set<Degree> getDegrees() {
+            return degrees;
+        }
+
+        public Set<SubjectClass> getClasses() {
+            return classes;
+        }
     }
 }

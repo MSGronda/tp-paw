@@ -68,7 +68,6 @@ public class UserJpaDaoTest {
                         .username(USERNAME)
                         .password(PASSWORD)
                         .verificationToken(VERIFICATION_TOKEN)
-                        .build()
         );
 
         assertNotNull(user);
@@ -82,7 +81,6 @@ public class UserJpaDaoTest {
                         .email(EMAIL)
                         .username(USERNAME)
                         .password(PASSWORD)
-                        .build()
         );
     }
 
@@ -104,7 +102,6 @@ public class UserJpaDaoTest {
                         .username(USERNAME2)
                         .password(PASSWORD2)
                         .verificationToken(CONFIRM_TOKEN2)
-                        .build()
         );
     }
 

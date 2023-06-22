@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface ReviewService {
-    Review create(final String subjectId, final Review review);
+    Review create(final String subjectId, final Review.Builder review);
 
     Optional<Review> findById(final long id);
 
@@ -32,7 +32,7 @@ public interface ReviewService {
     void manyReviewsSubmit(final String subjectIds, final Review review);
     String manyReviewsNextUrl(final String subjectIds, final int current, final int total);
 
-    void update(final Review review) throws UnauthorizedException;
+    void update(final Review.Builder review) throws UnauthorizedException;
     void delete(final Review review) throws UnauthorizedException;
     void delete(final long reviewId) throws UnauthorizedException, ReviewNotFoundException;
 }

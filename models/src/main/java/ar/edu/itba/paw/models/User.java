@@ -350,5 +350,41 @@ public class User {
         public User build() {
             return new User(this);
         }
+
+        public Long getId() {
+            return id;
+        }
+
+        public String getEmail() {
+            return email;
+        }
+
+        public String getPassword() {
+            return password;
+        }
+
+        public String getUsername() {
+            return username;
+        }
+
+        public long getImageId() {
+            return imageId;
+        }
+
+        public String getConfirmToken() {
+            return confirmToken;
+        }
+
+        public boolean isConfirmed() {
+            return confirmed;
+        }
+
+        public Locale getLocale() {
+            return locale;
+        }
+
+        public Degree getDegree() {
+            return degree;
+        }
     }
 }

@@ -22,18 +22,20 @@ public class ReviewJpaDao implements ReviewDao {
     private EntityManager em;
 
     @Override
-    public Review create(final Review review) {
+    public Review create(final Review.Builder reviewBuilder) {
+        final Review review = reviewBuilder.build();
         em.persist(review);
         return review;
     }
 
     @Override
-    public Review update(final Review review) {
-        final Review r = em.find(Review.class, review.getId());
-        r.setAnonymous(review.isAnonymous());
-        r.setText(review.getText());
-        r.setDifficulty(review.getDifficulty());
-        r.setTimeDemanding(review.getTimeDemanding());
+    public Review update(final Review.Builder reviewBuilder) {
+        final Review updated = reviewBuilder.build();
+        final Review r = em.find(Review.class, updated.getId());
+        r.setAnonymous(updated.isAnonymous());
+        r.setText(updated.getText());
+        r.setDifficulty(updated.getDifficulty());
+        r.setTimeDemanding(updated.getTimeDemanding());
         return r;
     }
 

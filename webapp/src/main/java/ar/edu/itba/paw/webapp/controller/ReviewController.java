@@ -151,11 +151,10 @@ public class ReviewController {
 
         reviewService.update(
                 Review.builderFrom(review)
-                .text(reviewForm.getText())
-                .difficulty(reviewForm.getDifficultyEnum())
-                .timeDemanding(reviewForm.getTimeDemandingEnum())
-                .anonymous(reviewForm.getAnonymous())
-                .build()
+                    .text(reviewForm.getText())
+                    .difficulty(reviewForm.getDifficultyEnum())
+                    .timeDemanding(reviewForm.getTimeDemandingEnum())
+                    .anonymous(reviewForm.getAnonymous())
         );
 
         return new ModelAndView("redirect:/subject/" + subjectId);

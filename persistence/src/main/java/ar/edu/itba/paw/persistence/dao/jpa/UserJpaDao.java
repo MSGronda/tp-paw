@@ -17,7 +17,9 @@ public class UserJpaDao implements UserDao {
     private EntityManager em;
 
     @Override
-    public User create(final User user) throws EmailAlreadyTakenException {
+    public User create(final User.Builder userBuilder) throws EmailAlreadyTakenException {
+        final User user = userBuilder.build();
+
         if (!user.getVerificationToken().isPresent())
             throw new IllegalArgumentException("Confirm token must be present");
         if(findByEmail(user.getEmail()).isPresent() || findUnverifiedByEmail(user.getEmail()).isPresent())

@@ -14,8 +14,8 @@ public interface ReviewDao {
     List<Review> getAll();
     Optional<Review> findById(final long id);
 
-    Review create(final Review review);
-    Review update(final Review review);
+    Review create(final Review.Builder review);
+    Review update(final Review.Builder review);
     void delete(final Review review);
 
     Optional<ReviewVote> voteReview(final User user, final Review review, final ReviewVoteType vote);
