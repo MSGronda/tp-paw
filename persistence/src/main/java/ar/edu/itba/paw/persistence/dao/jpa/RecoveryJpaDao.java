@@ -28,6 +28,10 @@ public class RecoveryJpaDao implements RecoveryDao {
 
     @Override
     public void delete(final RecoveryToken token) {
+        if(token == null) {
+            throw new IllegalArgumentException("Token can't be null");
+        }
+
         em.remove(token);
     }
 }

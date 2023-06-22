@@ -1,7 +1,8 @@
 package ar.edu.itba.paw.models;
 
 import javax.persistence.*;
-import java.time.LocalTime;
+import java.time.Instant;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "recoverytoken")
@@ -14,14 +15,14 @@ public class RecoveryToken {
     private User user;
 
     @Column(name = "created", nullable = false)
-    private LocalTime creationTime;
+    private Instant creationTime;
 
     protected RecoveryToken() {}
 
     public RecoveryToken(final String token, final User user) {
         this.token = token;
         this.user = user;
-        this.creationTime = LocalTime.now();
+        this.creationTime = Instant.now();
     }
 
     public String getToken() {
@@ -32,7 +33,7 @@ public class RecoveryToken {
         return user;
     }
 
-    public LocalTime getCreationTime() {
+    public Instant getCreationTime() {
         return creationTime;
     }
 }

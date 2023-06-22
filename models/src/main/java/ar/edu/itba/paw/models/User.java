@@ -48,7 +48,7 @@ public class User {
     @JoinColumn(name = "degreeid")
     private Degree degree;
 
-    @ManyToMany(fetch = FetchType.EAGER)
+    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinTable(
             name = "userroles",
             joinColumns = @JoinColumn(name = "userid"),
@@ -59,7 +59,7 @@ public class User {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Review> reviews;
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL,  orphanRemoval = true)
     private List<ReviewVote> votes;
 
     @ManyToMany(cascade = CascadeType.ALL)
@@ -73,7 +73,7 @@ public class User {
     )
     private Set<SubjectClass> userSemester;
 
-    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToOne(mappedBy = "user", cascade = CascadeType.REMOVE, orphanRemoval = true)
     private RecoveryToken recoveryToken;
 
     @Formula("(SELECT COALESCE(SUM(s.credits), 0) " +

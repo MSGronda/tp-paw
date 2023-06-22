@@ -12,7 +12,7 @@ public class EditUserPasswordForm {
     @NotNull
     @Size(min = 8, max = 25)
     private String newPassword;
-    @NotNull
+
     private String newPasswordConfirmation;
 
     @AssertTrue

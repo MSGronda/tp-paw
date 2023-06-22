@@ -14,6 +14,7 @@ public class UserForm {
     @NotBlank
     private String email;
 
+    @NotNull
     @Size(min = 8, max = 25)
     private String password;
 
@@ -22,8 +23,6 @@ public class UserForm {
     @Pattern(regexp = "^[A-Za-z][A-Za-z_]*$")
     private String name;
 
-    @NotNull
-    @Size(min = 8, max = 25)
     private String passwordConfirmation;
 
     @NotNull
@@ -31,7 +30,7 @@ public class UserForm {
 
     private String subjectIds;
 
-    @AssertTrue(message = "{AssertTrue.UserForm.arePasswordsEqual}")
+    @AssertTrue
     public boolean isPasswordConfirmationEqual() {
         return this.password.equals(passwordConfirmation);
     }

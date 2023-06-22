@@ -10,8 +10,6 @@ public class RecoverPasswordEditForm {
     @Size(min = 8, max = 25)
     private String password;
 
-    @NotNull
-    @Size(min = 8, max = 25)
     private String passwordConfirmation;
 
     @AssertTrue
