@@ -29,7 +29,7 @@ public interface ReviewService {
     boolean canUserEditReview(final User user, final Review review);
 
     Subject manyReviewsGetFirstSubject(String subjectIds);
-    void manyReviewsSubmit(final String subjectIds, final Review review);
+    void manyReviewsSubmit(final String subjectIds, final Review.Builder review);
     String manyReviewsNextUrl(final String subjectIds, final int current, final int total);
 
     void update(final Review.Builder review) throws UnauthorizedException;

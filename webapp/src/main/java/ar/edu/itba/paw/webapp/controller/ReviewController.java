@@ -58,7 +58,6 @@ public class ReviewController {
                         .timeDemanding(reviewForm.getTimeDemandingEnum())
                         .text(reviewForm.getText())
                         .user(authUserService.getCurrentUser())
-                        .build()
         );
 
         return new ModelAndView("redirect:/subject/" + subjectId);
@@ -121,7 +120,6 @@ public class ReviewController {
                         .text(reviewForm.getText())
                         .timeDemanding(reviewForm.getTimeDemandingEnum())
                         .difficulty(reviewForm.getDifficultyEnum())
-                        .build()
         );
 
         return new ModelAndView("redirect:" + reviewService.manyReviewsNextUrl(subjectIds, current, total));

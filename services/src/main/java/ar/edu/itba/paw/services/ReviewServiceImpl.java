@@ -37,10 +37,10 @@ public class ReviewServiceImpl implements ReviewService {
 
     @Transactional
     @Override
-    public Review create(final String subjectId, final Review review) {
+    public Review create(final String subjectId, final Review.Builder reviewBuilder) {
         final Subject subject = subjectService.findById(subjectId).orElseThrow(SubjectNotFoundException::new);
         return reviewDao.create(
-                Review.builderFrom(review)
+                reviewBuilder
                         .subject(subject)
         );
     }
@@ -102,16 +102,15 @@ public class ReviewServiceImpl implements ReviewService {
 
     @Override
     @Transactional
-    public void manyReviewsSubmit(final String subjectIds, final Review review) {
+    public void manyReviewsSubmit(final String subjectIds, final Review.Builder reviewBuilder) {
         final Subject subject = manyReviewsGetFirstSubject(subjectIds);
 
         if(didUserReview(subject, authUserService.getCurrentUser())) return;
 
         create(
                 subject.getId(),
-                Review.builderFrom(review)
+                reviewBuilder
                     .subject(subject)
-                    .build()
         );
     }
 
