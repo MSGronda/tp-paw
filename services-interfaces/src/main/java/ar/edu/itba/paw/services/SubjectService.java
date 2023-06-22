@@ -3,6 +3,8 @@ package ar.edu.itba.paw.services;
 import ar.edu.itba.paw.models.Subject;
 import ar.edu.itba.paw.models.User;
 import ar.edu.itba.paw.models.enums.SubjectFilterField;
+import ar.edu.itba.paw.models.exceptions.SubjectNotFoundException;
+import ar.edu.itba.paw.models.exceptions.UnauthorizedException;
 import ar.edu.itba.paw.services.exceptions.SubjectIdAlreadyExistsException;
 
 import java.util.List;
@@ -49,4 +51,8 @@ public interface SubjectService {
     List<Subject> findAllThatUserHasNotDone(User user);
     List<Subject> findAllThatUserHasDone(User user);
     List<Subject> findAllThatUserCouldUnlock(User user);
+
+    void delete(final User user, final String subjectId) throws UnauthorizedException, SubjectNotFoundException;
+
+    void delete(final User user, final Subject subject) throws UnauthorizedException;
 }

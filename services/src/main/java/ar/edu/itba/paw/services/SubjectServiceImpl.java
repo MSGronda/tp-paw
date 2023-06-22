@@ -6,6 +6,8 @@ import ar.edu.itba.paw.models.enums.OrderDir;
 import ar.edu.itba.paw.models.enums.SubjectFilterField;
 import ar.edu.itba.paw.models.enums.SubjectOrderField;
 import ar.edu.itba.paw.models.exceptions.InvalidPageNumberException;
+import ar.edu.itba.paw.models.exceptions.SubjectNotFoundException;
+import ar.edu.itba.paw.models.exceptions.UnauthorizedException;
 import ar.edu.itba.paw.persistence.dao.SubjectDao;
 import ar.edu.itba.paw.persistence.exceptions.SubjectIdAlreadyExistsPersistenceException;
 import ar.edu.itba.paw.services.exceptions.SubjectIdAlreadyExistsException;
@@ -25,8 +27,9 @@ public class SubjectServiceImpl implements SubjectService {
 
     private final ProfessorService professorService;
 
+
     @Autowired
-    public SubjectServiceImpl(final SubjectDao subjectDao, DegreeService degreeService, ProfessorService professorService) {
+    public SubjectServiceImpl(final SubjectDao subjectDao, DegreeService degreeService, ProfessorService professorService){
         this.subjectDao = subjectDao;
         this.degreeService = degreeService;
         this.professorService = professorService;
@@ -262,5 +265,22 @@ public class SubjectServiceImpl implements SubjectService {
         if(credits != null) filters.put(SubjectFilterField.CREDITS, credits.toString());
         if(department != null && !department.isEmpty()) filters.put(SubjectFilterField.DEPARTMENT, department);
         return filters;
+    }
+
+    @Transactional
+    @Override
+    public void delete(final User user, final String subjectId) throws UnauthorizedException, SubjectNotFoundException {
+        final Subject subject = findById(subjectId).orElseThrow(SubjectNotFoundException::new);
+        delete(user, subject);
+    }
+
+    @Transactional
+    @Override
+    public void delete(final User user, final Subject subject) throws UnauthorizedException {
+        if( !user.isEditor())
+            throw new UnauthorizedException();
+        //borrar lo necesario y ultimo la materia
+
+        subjectDao.delete(subject);
     }
 }

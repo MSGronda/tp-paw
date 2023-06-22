@@ -123,6 +123,21 @@
             justify-content: space-between;
             align-items: center;
         }
+        .clickable{
+            pointer-events: all !important;
+        }
+        sl-tooltip::part(body) {
+            color: black;
+            background-color: white;
+            margin: 0;
+            padding: 0;
+        }
+        sl-tooltip::part(base__arrow) {
+            background-color: white;
+        }
+        .delete-button {
+            color: red;
+        }
 
         <jsp:include page="../components/component-style/table_style.jsp"/>
 
@@ -162,9 +177,9 @@
                         <div class="clickable" slot="content">
                             <sl-card>
                                 <div class="column-center">
-                                    <span><spring:message code="review.delete.doyouwish"/></span>
+                                    <span><spring:message code="subject.delete.doyouwish"/></span>
                                     <div style="padding-top: 1rem;" class="row">
-                                        <sl-button style="padding-right: 1rem " class="delete-button" label="delete" href="<c:url value=""/>">
+                                        <sl-button style="padding-right: 1rem " class="delete-button" label="delete" href="<c:url value="/subject/${subject.id}/delete-subject"/>">
                                             <spring:message code="review.delete.confirm"/>
                                         </sl-button>
                                         <sl-button class="delete-button" label="cancel">
