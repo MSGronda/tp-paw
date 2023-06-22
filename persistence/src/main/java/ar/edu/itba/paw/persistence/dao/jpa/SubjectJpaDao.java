@@ -362,6 +362,7 @@ public class SubjectJpaDao implements SubjectDao {
     public void addClassesToSubject(final Subject subject, final Set<String> classesSet){
         for( String classCode : classesSet){
             SubjectClass subjectClass = new SubjectClass(classCode, subject);
+            em.persist(subjectClass);
             subject.getClasses().add(subjectClass);
         }
     }
