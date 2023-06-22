@@ -171,7 +171,7 @@
             <sec:authorize access="hasRole('EDITOR')">
                 <div>
                     <sl-tooltip content="<spring:message code="subject.edit"/>">
-                        <sl-icon-button name="pen" label="edit" href="<c:url value="/edit-subject"/>"></sl-icon-button>
+                        <sl-icon-button name="pen" label="edit" href="<c:url value="/subject/${subject.id}/edit"/>"></sl-icon-button>
                     </sl-tooltip>
                     <sl-tooltip trigger="click">
                         <div class="clickable" slot="content">

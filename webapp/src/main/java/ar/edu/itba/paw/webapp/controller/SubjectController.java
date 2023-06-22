@@ -6,7 +6,6 @@ import ar.edu.itba.paw.models.exceptions.UnauthorizedException;
 import ar.edu.itba.paw.services.*;
 import ar.edu.itba.paw.services.exceptions.SubjectIdAlreadyExistsException;
 import ar.edu.itba.paw.models.exceptions.SubjectNotFoundException;
-import ar.edu.itba.paw.webapp.form.ProfessorForm;
 import ar.edu.itba.paw.webapp.form.SubjectForm;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -125,10 +124,21 @@ public class SubjectController {
         subjectService.delete(authUserService.getCurrentUser(), id);
         return new ModelAndView("redirect:/");
 
+    @RequestMapping(value = "/subject/{id:\\d+\\.\\d+}/edit", method = {RequestMethod.GET})
+    public ModelAndView editSubjectForm(@PathVariable final String id, @ModelAttribute("subjectForm") final SubjectForm subjectForm,
+                                        final BindingResult errors) {
+        final Subject subject = subjectService.findById(id).orElseThrow(SubjectNotFoundException::new);
+        final ModelAndView mav = new ModelAndView("moderator-tools/editSubject");
+        mav.addObject("subject", subject);
+        return mav;
     }
 
-    @RequestMapping("/edit-subject")
-    public ModelAndView editSubject() {
+    @RequestMapping(value = "/subject/{id:\\d+\\.\\d+}/edit", method = {RequestMethod.POST})
+    public ModelAndView editSubject(@PathVariable final String id, @Valid @ModelAttribute("subjectForm") final SubjectForm subjectForm,
+                                    final BindingResult errors) {
         return new ModelAndView("moderator-tools/editSubject");
     }
+
+
+
 }
