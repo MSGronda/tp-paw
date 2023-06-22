@@ -1,9 +1,6 @@
 package ar.edu.itba.paw.persistence.dao.jpa;
 
-import ar.edu.itba.paw.models.Professor;
-import ar.edu.itba.paw.models.Subject;
-import ar.edu.itba.paw.models.SubjectClass;
-import ar.edu.itba.paw.models.User;
+import ar.edu.itba.paw.models.*;
 import ar.edu.itba.paw.models.enums.OrderDir;
 import ar.edu.itba.paw.models.enums.SubjectFilterField;
 import ar.edu.itba.paw.models.enums.SubjectOrderField;
@@ -16,6 +13,7 @@ import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
+import java.time.LocalTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -367,5 +365,12 @@ public class SubjectJpaDao implements SubjectDao {
         }
     }
 
-
+    @Override
+    public void addSubjectClassTimes(final Subject subject, final List<String> classCodes, final List<LocalTime> startTimes, final List<LocalTime> endTimes, final List<String> buildings, final List<String> modes, final List<Integer> days, final List<String> rooms) {
+        for( int i = 0 ; i < classCodes.size() ; i++) {
+            SubjectClass subjectClass = subject.getClassesById().get(classCodes.get(i));
+            SubjectClassTime subjectClassTime = new SubjectClassTime(subjectClass, days.get(i), startTimes.get(i), endTimes.get(i), rooms.get(i), buildings.get(i), modes.get(i));
+            em.persist(subjectClassTime);
+        }
+    }
 }

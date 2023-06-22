@@ -7,13 +7,14 @@ import ar.edu.itba.paw.models.enums.SubjectFilterField;
 import ar.edu.itba.paw.models.enums.SubjectOrderField;
 import ar.edu.itba.paw.persistence.exceptions.SubjectIdAlreadyExistsPersistenceException;
 
+import java.time.LocalTime;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
 public interface SubjectDao {
-    Subject create(Subject subject) throws SubjectIdAlreadyExistsPersistenceException;
+    Subject create(final Subject subject) throws SubjectIdAlreadyExistsPersistenceException;
     Optional<Subject> findById(final String id);
     List<Subject> getAll();
 
@@ -39,4 +40,5 @@ public interface SubjectDao {
 
     void addClassesToSubject(final Subject subject, final Set<String> classesSet);
 
+    void addSubjectClassTimes(final Subject subject, final List<String> classCodes, final List<LocalTime> startTimes, final List<LocalTime> endTimes, final List<String> buildings, final List<String> modes, final List<Integer> days, final List<String> rooms);
 }

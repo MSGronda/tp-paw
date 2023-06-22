@@ -45,7 +45,7 @@ public class DegreeServiceImpl implements DegreeService {
 
     @Transactional
     @Override
-    public void addSubjectToDegrees(Subject subject, List<Long> degreeIds, List<Integer> semesters) {
+    public void addSubjectToDegrees(final Subject subject, final List<Long> degreeIds, final List<Integer> semesters) {
         degreeDao.addSubjectToDegrees(subject, degreeIds, semesters);
     }
 

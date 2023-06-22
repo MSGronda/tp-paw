@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -55,8 +56,8 @@ public class SubjectServiceImpl implements SubjectService {
         // parsear y llamar a los demas services
 
         //se agrega a subjectDegrees
-        List<String> degreeIdsList = parseJsonList(degreeIds, false);
-        List<String> semestersList = parseJsonList(semesters, false);
+        final List<String> degreeIdsList = parseJsonList(degreeIds, false);
+        final List<String> semestersList = parseJsonList(semesters, false);
         degreeService.addSubjectToDegrees(
                 sub,
                 degreeIdsList.stream().map(Long::parseLong).collect(java.util.stream.Collectors.toList()),
@@ -64,31 +65,43 @@ public class SubjectServiceImpl implements SubjectService {
         );
 
         //se agregan profesores a professorSubjects
-        List<String> professorsList = parseJsonList(professors, true);
+        final List<String> professorsList = parseJsonList(professors, true);
         professorService.addSubjectToProfessors(
                 sub,
                 professorsList
         );
 
         //se agregan las correlativas
-        List<String> correlativesList = parseJsonList(requirementIds, false);
+        final List<String> correlativesList = parseJsonList(requirementIds, false);
         subjectDao.addPrerequisites( sub, correlativesList);
 
         //se crean las comisiones
-        List<String> classesList = parseJsonList(classCodes, false);
-        Set<String> uniqueClassesList = new HashSet<>(classesList);
+        final List<String> classesList = parseJsonList(classCodes, false);
+        final Set<String> uniqueClassesList = new HashSet<>(classesList);
         subjectDao.addClassesToSubject(sub, uniqueClassesList);
 
         //se agregan los profesores a las comisiones
-        List<List<String>> classProfessorsList = parseJsonListOfLists(classProfessors);
+        final List<List<String>> classProfessorsList = parseJsonListOfLists(classProfessors);
         professorService.addProfessorsToClasses(sub, classesList, classProfessorsList);
 
-        List<String> startTimes = parseJsonList(classStartTimes, false);
-        List<String> endTimes = parseJsonList(classEndTime, false);
-        List<String> buildings = parseJsonList(classBuildings, false);
-        List<String> modes = parseJsonList(classModes, false);
-        List<String> days = parseJsonList(classDays, false);
-        List<String> rooms = parseJsonList(classRooms, false);
+        //se agregan los datos a las comisiones
+        //TODO: verificar que start times sea previo a end times
+        final List<String> startTimes = parseJsonList(classStartTimes, false);
+        final List<String> endTimes = parseJsonList(classEndTime, false);
+        final List<String> buildings = parseJsonList(classBuildings, false);
+        final List<String> modes = parseJsonList(classModes, false);
+        final List<String> days = parseJsonList(classDays, false);
+        final List<String> rooms = parseJsonList(classRooms, false);
+        subjectDao.addSubjectClassTimes(sub,
+                classesList,
+                startTimes.stream().map(LocalTime::parse).collect(Collectors.toList()),
+                endTimes.stream().map(LocalTime::parse).collect(Collectors.toList()),
+                buildings,
+                modes,
+                days.stream().map(Integer::parseInt).collect(Collectors.toList()),
+                rooms
+        );
+
 
 
 

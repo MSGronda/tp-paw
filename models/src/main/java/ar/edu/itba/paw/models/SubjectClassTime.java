@@ -40,6 +40,16 @@ public class SubjectClassTime {
 
     protected SubjectClassTime() {}
 
+    public SubjectClassTime(SubjectClass subjectClass, int day, LocalTime startTime, LocalTime endTime, String classLoc, String building, String mode) {
+        this.subjectClass = subjectClass;
+        this.day = day;
+        this.startTime = startTime;
+        this.endTime = endTime;
+        this.classLoc = classLoc;
+        this.building = building;
+        this.mode = mode;
+    }
+
     public long getId() {
         return id;
     }
