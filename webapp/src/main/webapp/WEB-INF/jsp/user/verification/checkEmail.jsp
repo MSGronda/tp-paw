@@ -70,7 +70,7 @@
       <div class="center2">
         <sl-icon class="success" name="envelope-exclamation"></sl-icon>
         <h3><spring:message code="user.confirm.checkEmail.title"/></h3>
-        <h5><spring:message code="user.confirm.checkEmail.message"/></h5>
+        <h5><spring:message code="user.confirm.checkEmail.message" arguments="${param.email}" argumentSeparator="\0"/></h5>
       </div>
 
       <c:url var="resendUrl" value="/verification/resend"/>

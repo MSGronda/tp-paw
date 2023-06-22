@@ -48,12 +48,13 @@
       <sl-card class="card-basic">
         <h3><spring:message code="recover.edit.title"/></h3>
 
+        <form:errors path="passwordConfirmationEqual" cssClass="error" element="p"/>
         <form:errors path="password" cssClass="error" element="p"/>
         <spring:message code="profile.newpassword.placeholder" var="PasswordPlaceholder"/>
         <sl-input name="password" type="password" path="password" value="${RecoverPasswordEditForm.password}" placeholder="${PasswordPlaceholder}" password-toggle></sl-input>
         <br/>
 
-
+        <form:errors path="passwordConfirmationEqual" cssClass="error" element="p"/>
         <form:errors path="passwordConfirmation" cssClass="error" element="p"/>
         <spring:message code="profile.newpasswordconfirm.placeholder" var="PasswordConfirmationPlaceholder"/>
         <sl-input name="passwordConfirmation" type="password" path="passwordEditConfirmation" value="${RecoverPasswordEditForm.passwordConfirmation}" placeholder="${PasswordConfirmationPlaceholder}" password-toggle></sl-input>

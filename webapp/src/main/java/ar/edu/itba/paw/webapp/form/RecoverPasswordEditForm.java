@@ -1,7 +1,9 @@
 package ar.edu.itba.paw.webapp.form;
 
+import javax.validation.constraints.AssertTrue;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import java.util.Objects;
 
 public class RecoverPasswordEditForm {
     @NotNull
@@ -11,6 +13,12 @@ public class RecoverPasswordEditForm {
     @NotNull
     @Size(min = 8, max = 25)
     private String passwordConfirmation;
+
+    @AssertTrue
+    public boolean isPasswordConfirmationEqual() {
+        return Objects.equals(password, passwordConfirmation);
+    }
+
 
     public String getPassword() {
         return password;
@@ -25,8 +33,6 @@ public class RecoverPasswordEditForm {
     }
 
     public void setPasswordConfirmation(String passwordConfirmation) {
-        if(password.equals(passwordConfirmation)){
-            this.passwordConfirmation = passwordConfirmation;
-        }
+        this.passwordConfirmation = passwordConfirmation;
     }
 }

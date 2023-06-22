@@ -113,7 +113,9 @@ public class UserController {
             throw new InvalidFormException(e);
         }
 
-        return new ModelAndView("redirect:/verification?email=" + newUser.getEmail());
+        final ModelAndView mav = new ModelAndView("redirect:/verification");
+        mav.addObject("email", newUser.getEmail());
+        return mav;
     }
 
     @RequestMapping(value = "/register", method = RequestMethod.GET)
@@ -194,7 +196,7 @@ public class UserController {
         }
 
         try{
-            userService.changePassword(authUserService.getCurrentUser(), editUserPasswordForm.getEditPassword(), editUserPasswordForm.getOldPassword());
+            userService.changePassword(authUserService.getCurrentUser(), editUserPasswordForm.getNewPassword(), editUserPasswordForm.getOldPassword());
         }catch (OldPasswordDoesNotMatchException e){
             ModelAndView mav = editPasswordForm(editUserPasswordForm);
             mav.addObject("oldPasswordDoesNotMatch", true);

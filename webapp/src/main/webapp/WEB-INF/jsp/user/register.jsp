@@ -39,6 +39,7 @@
 
                 <br/>
 
+                <form:errors path="passwordConfirmationEqual" cssClass="error" element="p"/>
                 <form:errors path="password" cssClass="error" element="p"/>
                 <spring:message code="userform.password" var="PasswordPlaceholder"/>
                 <spring:message code="userform.password.help" var="PasswordHelp"/>
@@ -46,6 +47,7 @@
 
                 <br/>
 
+                <form:errors path="passwordConfirmationEqual" cssClass="error" element="p"/>
                 <form:errors path="passwordConfirmation" cssClass="error" element="p"/>
                 <spring:message code="userform.passwordConfirmation" var="PasswordConfirmationPlaceholder"/>
                 <sl-input name="passwordConfirmation" type="password" id="passwordConfirmation_input" path="passwordConfirmation" placeholder="${PasswordConfirmationPlaceholder}" value="${UserForm.passwordConfirmation}" password-toggle onkeydown="return event.key !== 'Enter';"></sl-input>

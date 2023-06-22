@@ -44,8 +44,8 @@
     </div>
   </div>
   <div class="container-50" >
-    <c:url var="editPassword" value="/profile/editpassword" />
-    <form:form modelAttribute="EditUserPasswordForm" action="${editPassword}" method="post">
+    <c:url var="newPassword" value="/profile/editpassword" />
+    <form:form modelAttribute="EditUserPasswordForm" action="${newPassword}" method="post">
       <sl-card class="card-basic">
 
         <c:if test="${oldPasswordDoesNotMatch}">
@@ -55,15 +55,17 @@
         <sl-input name="oldPassword" path="oldPassword" type="password" value="${EditUserPasswordForm.oldPassword}" placeholder="${OldPasswordPlaceholder}" password-toggle></sl-input>
         <br/>
 
-        <form:errors path="editPassword" cssClass="error" element="p"/>
+        <form:errors path="passwordConfirmationEqual" cssClass="error" element="p"/>
+        <form:errors path="newPassword" cssClass="error" element="p"/>
         <spring:message code="profile.newpassword.placeholder" var="PasswordPlaceholder"/>
-        <sl-input name="editPassword" type="password" path="password" value="${EditUserPasswordForm.editPassword}" placeholder="${PasswordPlaceholder}" password-toggle></sl-input>
+        <sl-input name="newPassword" type="password" path="newPassword" value="${EditUserPasswordForm.newPassword}" placeholder="${PasswordPlaceholder}" password-toggle></sl-input>
         <br/>
 
 
-        <form:errors path="passwordEditConfirmation" cssClass="error" element="p"/>
+        <form:errors path="passwordConfirmationEqual" cssClass="error" element="p"/>
+        <form:errors path="newPasswordConfirmation" cssClass="error" element="p"/>
         <spring:message code="profile.newpasswordconfirm.placeholder" var="PasswordConfirmationPlaceholder"/>
-        <sl-input name="passwordEditConfirmation" type="password" path="passwordEditConfirmation" value="${EditUserPasswordForm.passwordEditConfirmation}" placeholder="${PasswordConfirmationPlaceholder}" password-toggle></sl-input>
+        <sl-input name="newPasswordConfirmation" type="password" path="newPasswordConfirmation" value="${EditUserPasswordForm.newPasswordConfirmation}" placeholder="${PasswordConfirmationPlaceholder}" password-toggle></sl-input>
 
         <br/>
         <sl-button type="submit" variant="primary" outline onclick="this.disabled = true"><spring:message code="profile.update.password"/></sl-button>

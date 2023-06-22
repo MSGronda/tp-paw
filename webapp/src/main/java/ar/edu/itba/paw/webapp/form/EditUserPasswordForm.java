@@ -1,7 +1,9 @@
 package ar.edu.itba.paw.webapp.form;
 
+import javax.validation.constraints.AssertTrue;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import java.util.Objects;
 
 public class EditUserPasswordForm {
 
@@ -9,34 +11,32 @@ public class EditUserPasswordForm {
 
     @NotNull
     @Size(min = 8, max = 25)
-    private String editPassword;
+    private String newPassword;
     @NotNull
-    private String passwordEditConfirmation;
+    private String newPasswordConfirmation;
 
-    public void setEditPassword(String editPassword) {
-        this.editPassword = editPassword;
+    @AssertTrue
+    public boolean isPasswordConfirmationEqual() {
+        return Objects.equals(newPassword, newPasswordConfirmation);
     }
 
-    public String getEditPassword(){
-        return editPassword;
+    public void setNewPassword(String newPassword) {
+        this.newPassword = newPassword;
     }
-    public void setPasswordEditConfirmation(String passwordConfirmation) {
-        this.passwordEditConfirmation = passwordConfirmation;
-        checkConfirmEditPassword();
+    public String getNewPassword(){
+        return newPassword;
     }
-    public String getPasswordEditConfirmation() {
-        return passwordEditConfirmation;
+
+    public void setNewPasswordConfirmation(String passwordConfirmation) {
+        this.newPasswordConfirmation = passwordConfirmation;
     }
-    private void checkConfirmEditPassword() {
-        if(!this.editPassword.equals(passwordEditConfirmation)){
-            this.passwordEditConfirmation = null;
-        }
+    public String getNewPasswordConfirmation() {
+        return newPasswordConfirmation;
     }
 
     public String getOldPassword() {
         return oldPassword;
     }
-
     public void setOldPassword(String oldPassword) {
         this.oldPassword = oldPassword;
     }

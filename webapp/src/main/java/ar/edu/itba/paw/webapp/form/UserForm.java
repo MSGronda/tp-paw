@@ -4,6 +4,7 @@ package ar.edu.itba.paw.webapp.form;
 import org.hibernate.validator.constraints.Email;
 import org.hibernate.validator.constraints.NotBlank;
 
+import javax.validation.constraints.AssertTrue;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
@@ -30,6 +31,11 @@ public class UserForm {
 
     private String subjectIds;
 
+    @AssertTrue(message = "{AssertTrue.UserForm.arePasswordsEqual}")
+    public boolean isPasswordConfirmationEqual() {
+        return this.password.equals(passwordConfirmation);
+    }
+
     public void setEmail(String email) {
         this.email = email;
     }
@@ -53,15 +59,10 @@ public class UserForm {
 
     public void setPasswordConfirmation(String passwordConfirmation) {
         this.passwordConfirmation = passwordConfirmation;
-        checkConfirmPassword();
     }
+
     public String getPasswordConfirmation() {
         return passwordConfirmation;
-    }
-    private void checkConfirmPassword() {
-        if(!this.password.equals(passwordConfirmation)){
-            this.passwordConfirmation = null;
-        }
     }
 
     public long getDegreeId() {
