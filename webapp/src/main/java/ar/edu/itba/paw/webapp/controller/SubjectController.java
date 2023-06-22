@@ -124,7 +124,9 @@ public class SubjectController {
                     subjectForm.getClassModes()
             );
         } catch (SubjectIdAlreadyExistsException e) {
-            //ToDo indicar que el id ya que existe en el form
+            ModelAndView mav = createSubjectForm(subjectForm);
+            mav.addObject("subjectCodeRepeated", true);
+            return mav;
         }
 //
 //

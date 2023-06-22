@@ -218,6 +218,9 @@
                     <tr>
                         <td>
                             <form:errors path="id" cssClass="error" element="p"/>
+                            <c:if test="${subjectCodeRepeated == true}">
+                                <p class="error"><spring:message code="subject.create.code-repeated"/></p>
+                            </c:if>
                             <spring:message code="subject.id"/>
                         </td>
                         <td><sl-input name="id" path="id" value="${subjectForm.id}" id="subject-id" onkeydown="return event.key !== 'Enter';"></sl-input></td>

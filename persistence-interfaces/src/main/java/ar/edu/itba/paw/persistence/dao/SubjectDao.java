@@ -35,5 +35,5 @@ public interface SubjectDao {
     List<Subject> findAllThatUserHasDone(User user);
     List<Subject> findAllThatUserCouldUnlock(User user);
 
-    void addProfessorsToSubject(Subject subject, List<String> professors);
+    void addPrerequisites(Subject sub, List<String> correlativesList);
 }

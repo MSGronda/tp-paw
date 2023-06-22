@@ -70,6 +70,11 @@ public class SubjectServiceImpl implements SubjectService {
                 professorsList
         );
 
+        //se agregan las correlativas
+        List<String> correlativesList = parseJsonList(requirementIds, false);
+        subjectDao.addPrerequisites( sub, correlativesList);
+
+
 
         return sub;
     }

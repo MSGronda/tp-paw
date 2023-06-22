@@ -349,14 +349,12 @@ public class SubjectJpaDao implements SubjectDao {
                 .append(dirToUse.getQueryString());
     }
 
-    @Transactional
     @Override
-    public void addProfessorsToSubject(Subject subject, List<String> professors){
-        for(String professor : professors){
-            if( em.find(Professor.class, professor) == null){
-                em.persist(new Professor(professor));
-            }
-
+    public void addPrerequisites(Subject sub, List<String> correlativesList){
+        for( String requirement : correlativesList ){
+            Subject requiredSubject = em.find(Subject.class, requirement);
+            sub.getPrerequisites().add(requiredSubject);
         }
     }
+
 }
