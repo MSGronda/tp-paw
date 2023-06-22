@@ -123,13 +123,20 @@ public class SubjectController {
 
         subjectService.delete(authUserService.getCurrentUser(), id);
         return new ModelAndView("redirect:/");
+    }
 
     @RequestMapping(value = "/subject/{id:\\d+\\.\\d+}/edit", method = {RequestMethod.GET})
     public ModelAndView editSubjectForm(@PathVariable final String id, @ModelAttribute("subjectForm") final SubjectForm subjectForm,
                                         final BindingResult errors) {
         final Subject subject = subjectService.findById(id).orElseThrow(SubjectNotFoundException::new);
+        List<Subject> subjects = subjectService.getAll();
+        List<Professor> professors = professorService.getAll();
+        List<Degree> degrees = degreeService.getAll();
         final ModelAndView mav = new ModelAndView("moderator-tools/editSubject");
         mav.addObject("subject", subject);
+        mav.addObject("allSubjects", subjects);
+        mav.addObject("professors", professors);
+        mav.addObject("degrees", degrees);
         return mav;
     }
 

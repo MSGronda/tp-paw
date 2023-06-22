@@ -264,7 +264,7 @@
                             <form:errors path="credits" cssClass="error" element="p"/>
                             <spring:message code="subject.credits"/>
                         </td>
-                        <td><sl-input name="credits" path="credits" value="${subjectForm.credits}" type="number" id="subject-credits" onkeydown="return event.key !== 'Enter';"></sl-input></td>
+                        <td><sl-input name="credits" path="credits" value="${subject.credits}" type="number" id="subject-credits" onkeydown="return event.key !== 'Enter';"></sl-input></td>
                     </tr>
                     <tr>
                         <td>
@@ -282,6 +282,9 @@
                         <td/>
                         <td>
                             <ul id="degreeSemesters"></ul>
+                            <c:forEach var="degree" items="${subject.degrees}">
+                                <li><c:out value="${degree.name} - ${degree.degreeSubjects}"/></li>
+                            </c:forEach>
                         </td>
                     </tr>
                     <tr>
@@ -296,7 +299,7 @@
 
                             <input id="requirement" list="requirements" class="selection">
                             <datalist id="requirements">
-                                <c:forEach items="${subjects}" var="subject">
+                                <c:forEach items="${allSubjects}" var="subject">
                                     <option value="${subject.id} - ${subject.name}" id="${subject.id}"></option>
                                 </c:forEach>
                             </datalist>
@@ -308,6 +311,9 @@
                         <td></td>
                         <td>
                             <ul id="prerequisiteItems"></ul>
+                            <c:forEach var="subject" items="${subject.prerequisites}">
+                                <li><c:out value="${subject.id} - ${subject.name}"/></li>
+                            </c:forEach>
                         </td>
                     </tr>
                     <tr>
@@ -330,6 +336,9 @@
                         <td></td>
                         <td>
                             <ul id="professorItems"></ul>
+                            <c:forEach var="professor" items="${subject.professors}">
+                                <li><c:out value="${professor.name}"/>
+                            </c:forEach>
                         </td>
                     </tr>
                     <tr>
@@ -400,6 +409,22 @@
                         </tr>
                         </thead>
                         <tbody id="classItems">
+                            <c:forEach var="classforeach" items="${subject.classes}">
+
+
+                                <c:forEach var="time" items="${classforeach.classTimes}">
+                                    <tr>
+                                        <td><c:out value="${classforeach.classId}"/></td>
+                                        <td><c:out value="${classforeach.professors}"/></td>
+                                        <td><c:out value="${time.day}"/></td>
+                                        <td><c:out value="${time.startTime}"/></td>
+                                        <td><c:out value="${time.endTime}"/></td>
+                                        <td><c:out value="${time.mode}"/></td>
+                                        <td><c:out value="${time.building}"/></td>
+                                        <td><c:out value="${time.classLoc}"/></td>
+                                    </tr>
+                                </c:forEach>
+                            </c:forEach>
                         </tbody>
                     </table>
 
