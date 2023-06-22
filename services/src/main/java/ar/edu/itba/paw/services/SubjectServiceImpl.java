@@ -74,6 +74,22 @@ public class SubjectServiceImpl implements SubjectService {
         List<String> correlativesList = parseJsonList(requirementIds, false);
         subjectDao.addPrerequisites( sub, correlativesList);
 
+        //se crean las comisiones
+        List<String> classesList = parseJsonList(classCodes, false);
+        Set<String> uniqueClassesList = new HashSet<>(classesList);
+        subjectDao.addClassesToSubject(sub, uniqueClassesList);
+
+        //se agregan los profesores a las comisiones
+        List<List<String>> classProfessorsList = parseJsonListOfLists(classProfessors);
+        professorService.addProfessorsToClasses(sub, classesList, classProfessorsList);
+
+        List<String> startTimes = parseJsonList(classStartTimes, false);
+        List<String> endTimes = parseJsonList(classEndTime, false);
+        List<String> buildings = parseJsonList(classBuildings, false);
+        List<String> modes = parseJsonList(classModes, false);
+        List<String> days = parseJsonList(classDays, false);
+        List<String> rooms = parseJsonList(classRooms, false);
+
 
 
         return sub;
@@ -105,6 +121,33 @@ public class SubjectServiceImpl implements SubjectService {
 
 
         return parsedList;
+    }
+
+    private List<List<String>> parseJsonListOfLists(String classProfessors){
+        List<List<String>> resultList = new ArrayList<>();
+
+        // Remove the square brackets at the start and end of the input string
+        String cleanedInput = classProfessors.substring(1, classProfessors.length() - 1);
+
+        String[] elements = cleanedInput.split("],");
+        if (elements[0].equals("")) {
+            return resultList;
+        }
+        for( int i = 0; i < elements.length ; i++){
+            List<String> classProf = new ArrayList<>();
+
+            String trimmedInput = elements[i].replace("[", "").replace("]", "");
+            String[] elements2 = trimmedInput.split(",");
+            for( int j = 0 ; j < elements2.length ; j+=2 ){
+                String parsedElement = elements2[j].replace("\"", "");
+                String parsedElement2 = elements2[j+1].replace("\"", "");
+
+                parsedElement += "," + parsedElement2;
+                classProf.add(parsedElement);
+            }
+            resultList.add(classProf);
+        }
+        return resultList;
     }
 
     @Override

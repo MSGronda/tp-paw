@@ -12,4 +12,7 @@ public interface ProfessorService {
     void create(Professor professor);
 
     void addSubjectToProfessors(Subject subject, List<String> professors);
+
+    void addProfessorsToClasses(final Subject subject, final List<String> classCodes, final List<List<String>> classProfessors);
+
 }

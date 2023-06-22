@@ -14,4 +14,7 @@ public interface ProfessorDao {
     Optional<Professor> getByName(final String name);
 
     void addSubjectToProfessors(Subject subject, List<String> professors);
+
+    void addProfessorsToClasses(final Subject subject, final List<String> classCodes, final List<List<String>> classProfessors);
+
 }

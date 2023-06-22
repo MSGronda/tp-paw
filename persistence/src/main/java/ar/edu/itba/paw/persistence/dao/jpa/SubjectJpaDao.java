@@ -2,6 +2,7 @@ package ar.edu.itba.paw.persistence.dao.jpa;
 
 import ar.edu.itba.paw.models.Professor;
 import ar.edu.itba.paw.models.Subject;
+import ar.edu.itba.paw.models.SubjectClass;
 import ar.edu.itba.paw.models.User;
 import ar.edu.itba.paw.models.enums.OrderDir;
 import ar.edu.itba.paw.models.enums.SubjectFilterField;
@@ -350,11 +351,20 @@ public class SubjectJpaDao implements SubjectDao {
     }
 
     @Override
-    public void addPrerequisites(Subject sub, List<String> correlativesList){
+    public void addPrerequisites(final Subject sub, final List<String> correlativesList){
         for( String requirement : correlativesList ){
             Subject requiredSubject = em.find(Subject.class, requirement);
             sub.getPrerequisites().add(requiredSubject);
         }
     }
+
+    @Override
+    public void addClassesToSubject(final Subject subject, final Set<String> classesSet){
+        for( String classCode : classesSet){
+            SubjectClass subjectClass = new SubjectClass(classCode, subject);
+            subject.getClasses().add(subjectClass);
+        }
+    }
+
 
 }
