@@ -83,7 +83,13 @@
             <tr class="table-row">
                 <td><spring:message code="professor.name"/></td>
                 <td>
-                    <sl-input autofocus id="new-prof" help-text="<spring:message code="professor.name.help" />"></sl-input>
+                    <sl-input autofocus id="new-prof-name"></sl-input>
+                </td>
+            </tr>
+            <tr class="table-row">
+                <td><spring:message code="professor.surname"/></td>
+                <td>
+                    <sl-input id="new-prof-surname"></sl-input>
                 </td>
             </tr>
         </table>
@@ -588,8 +594,9 @@
     }
 
     function createProfessor(){
-        const professor = document.getElementById("new-prof");
-        const professorName = professor.value;
+        const profName = document.getElementById("new-prof-name");
+        const profSurname = document.getElementById("new-prof-surname");
+        const professorName = profSurname.value + ", " + profName.value;
         if(professorName === "") {
             dialog.hide();
             return;
@@ -607,7 +614,8 @@
 
         index++;
         checkCompleteFields();
-        professor.value = "";
+        profName.value = "";
+        profSurname.value = "";
         updateProfessorItems();
         dialog.hide();
     }
