@@ -53,20 +53,6 @@ function submitReviewVoteForm(url,formId, prevVote ,newVote) {
     });
 }
 
-$(document).ready(function() {
-    $('.vote-button').click(function() {
-        const formId = $(this).data('form-id');
-        const newVote = $(this).data('form-value');
-
-        const prevVote = parseInt($('#' + formId + ' input[name=vote]').val())
-
-        if(newVote !== prevVote)
-            submitReviewVoteForm('${pageContext.request.contextPath}/voteReview',formId, prevVote ,newVote);
-        else
-            submitReviewVoteForm('${pageContext.request.contextPath}/voteReview',formId, prevVote ,0);
-    })
-});
-
 const showMoreButtons = document.querySelectorAll('.show-button');
 
 showMoreButtons.forEach(button => {

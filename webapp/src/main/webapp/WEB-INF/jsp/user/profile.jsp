@@ -180,5 +180,20 @@
 <jsp:include page="../components/footer.jsp"/>
 <jsp:include page="../components/body_scripts.jsp"/>
 <script src="${pageContext.request.contextPath}/js/review_card.js"></script>
+<script>
+    $(document).ready(function() {
+        $('.vote-button').click(function() {
+            const formId = $(this).data('form-id');
+            const newVote = $(this).data('form-value');
+
+            const prevVote = parseInt($('#' + formId + ' input[name=vote]').val())
+
+            if(newVote !== prevVote)
+                submitReviewVoteForm('${pageContext.request.contextPath}/voteReview',formId, prevVote ,newVote);
+            else
+                submitReviewVoteForm('${pageContext.request.contextPath}/voteReview',formId, prevVote ,0);
+        })
+    });
+</script>
 </body>
 </html>
