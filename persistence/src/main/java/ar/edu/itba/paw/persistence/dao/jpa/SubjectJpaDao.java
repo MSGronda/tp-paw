@@ -376,16 +376,9 @@ public class SubjectJpaDao implements SubjectDao {
 
     @Override
     public void delete(final Subject subject){
-        //primero hay que borrar subjectDegrees
-        for( Degree degree : subject.getDegrees() ){
-            DegreeSubject degreeSubject = getDegreeSubject(subject, degree);
-            if( degreeSubject != null){
-                degree.getDegreeSubjects().remove(degreeSubject);
-            }
-        }
-        em.flush();
-//        Subject subjectToDelete = em.find(Subject.class, subject.getId());
-        em.remove(subject);
+        em.createQuery("delete from Subject where id = :id")
+                .setParameter("id",subject.getId())
+                .executeUpdate();
     }
 
     private DegreeSubject getDegreeSubject(final Subject subject, final Degree degree){

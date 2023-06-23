@@ -279,7 +279,6 @@ public class SubjectServiceImpl implements SubjectService {
     public void delete(final User user, final Subject subject) throws UnauthorizedException {
         if( !user.isEditor())
             throw new UnauthorizedException();
-        //borrar lo necesario y ultimo la materia
 
         subjectDao.delete(subject);
     }

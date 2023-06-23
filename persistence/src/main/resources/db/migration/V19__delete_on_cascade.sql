@@ -1,14 +1,27 @@
-ALTER TABLE reviews ADD CONSTRAINT subject_review_delete
-    FOREIGN KEY (idsub) REFERENCES subjects ON DELETE CASCADE;--BORRA
-ALTER TABLE reviewvote ADD CONSTRAINT review_review_votes_delete
+ALTER TABLE reviews DROP CONSTRAINT reviews_idsub_fkey;
+ALTER TABLE reviews ADD CONSTRAINT reviews_idsub_fkey
+    FOREIGN KEY (idsub) REFERENCES subjects ON DELETE CASCADE;
+
+ALTER TABLE reviewvote DROP CONSTRAINT reviewvote_idreview_fkey;
+ALTER TABLE reviewvote ADD CONSTRAINT reviewvote_idreview_fkey
     FOREIGN KEY (idreview) REFERENCES reviews ON DELETE CASCADE;--BORRA
-ALTER TABLE classloctime ADD CONSTRAINT subject_classtime_delete
+
+ALTER TABLE classloctime DROP CONSTRAINT classloctime_idsub_idclass_fkey;
+ALTER TABLE classloctime ADD CONSTRAINT classloctime_idsub_idclass_fkey
     FOREIGN KEY (idsub) REFERENCES subjects ON DELETE CASCADE;--BORRA
-ALTER TABLE classprofessors ADD CONSTRAINT subject_professors_delete
+
+ALTER TABLE classprofessors DROP CONSTRAINT classprofessors_idsub_idclass_fkey;
+ALTER TABLE classprofessors ADD CONSTRAINT classprofessors_idsub_idclass_fkey
+    FOREIGN KEY (idsub,idclass) REFERENCES class(idsub, idclass) ON DELETE CASCADE;--BORRA
+
+ALTER TABLE prereqsubjects DROP CONSTRAINT prereqsubjects_idsub_fkey;
+ALTER TABLE prereqsubjects ADD CONSTRAINT prereqsubjects_idsub_fkey
     FOREIGN KEY (idsub) REFERENCES subjects ON DELETE CASCADE;--BORRA
-ALTER TABLE prereqsubjects ADD CONSTRAINT review_prereq_delete
-    FOREIGN KEY (idsub) REFERENCES subjects ON DELETE CASCADE;--BORRA
-ALTER TABLE prereqsubjects ADD CONSTRAINT review_prereqdependency_delete
+
+ALTER TABLE prereqsubjects DROP CONSTRAINT prereqsubjects_idprereq_fkey;
+ALTER TABLE prereqsubjects ADD CONSTRAINT prereqsubjects_idprereq_fkey
     FOREIGN KEY (idprereq) REFERENCES subjects ON DELETE CASCADE;--BORRA
-ALTER TABLE class ADD CONSTRAINT subject_class_delete
+
+ALTER TABLE class DROP CONSTRAINT class_idsub_fkey;
+ALTER TABLE class ADD CONSTRAINT class_idsub_fkey
     FOREIGN KEY (idsub) REFERENCES subjects ON DELETE CASCADE;--BORRA
