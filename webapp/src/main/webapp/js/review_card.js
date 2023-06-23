@@ -9,9 +9,7 @@ function updateCounters(formId, changeLikes, changeDislikes){
 }
 
 function submitReviewVoteForm(url,formId, prevVote ,newVote) {
-
     $('#' + formId + ' input[name=vote]').val(newVote)
-
     $.ajax({
         url: url,
         type: 'POST',
@@ -54,3 +52,49 @@ function submitReviewVoteForm(url,formId, prevVote ,newVote) {
         }
     });
 }
+
+$(document).ready(function() {
+    $('.vote-button').click(function() {
+        const formId = $(this).data('form-id');
+        const newVote = $(this).data('form-value');
+
+        const prevVote = parseInt($('#' + formId + ' input[name=vote]').val())
+
+        if(newVote !== prevVote)
+            submitReviewVoteForm('${pageContext.request.contextPath}/voteReview',formId, prevVote ,newVote);
+        else
+            submitReviewVoteForm('${pageContext.request.contextPath}/voteReview',formId, prevVote ,0);
+    })
+});
+
+const showMoreButtons = document.querySelectorAll('.show-button');
+
+showMoreButtons.forEach(button => {
+    const showLessButtonText = button.querySelector('.show-less-text');
+
+    if(showLessButtonText !== null) {
+        showLessButtonText.style.display = 'none';
+    }
+})
+
+showMoreButtons.forEach(button => button.addEventListener('click',() => {
+    const dots = button.parentElement.querySelector(".dots");
+    const moreText = button.parentElement.querySelector(".more-text");
+    const showLessButtonText = button.querySelector('.show-less-text');
+    const showMoreButtonText = button.querySelector('.show-more-text');
+    if(dots !== null && moreText !== null){
+        if (dots.style.display === "none") {
+            dots.style.display = "inline";
+            moreText.style.display = "none";
+
+            showMoreButtonText.style.display = 'inline';
+            showLessButtonText.style.display = 'none';
+        } else {
+            dots.style.display = "none";
+            moreText.style.display = "inline";
+
+            showMoreButtonText.style.display = 'none';
+            showLessButtonText.style.display = 'inline';
+        }
+    }
+}))

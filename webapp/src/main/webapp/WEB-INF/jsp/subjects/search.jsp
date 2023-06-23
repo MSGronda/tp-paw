@@ -75,14 +75,6 @@
       .vert-divider {
           height: 11.5rem;
       }
-
-      .pagination-button {
-          display: flex;
-          flex-direction: column;
-          justify-content: space-around;
-          align-items: center;
-          padding-bottom: 3rem;
-      }
   </style>
 </head>
 <body>
@@ -205,48 +197,10 @@
           <c:import url="../components/subject_card.jsp"/>
         </c:forEach>
       </div>
-      <c:if test="${totalPages > 1}">
-        <div class="pagination-button">
-          <sl-radio-group name="pagination-radio" value="${currentPage}">
-            <sl-radio-button id="prevPage" value="-1" <c:if test="${currentPage-1 <= 0}">disabled</c:if>>
-              <sl-icon slot="prefix" name="chevron-left"></sl-icon>
-              <spring:message code="subject.previousPage"/>
-            </sl-radio-button>
-            <c:forEach var="pageNum" begin="1" end="${totalPages}">
-              <c:choose>
-                <c:when
-                  test="${(pageNum > currentPage -2 and pageNum < currentPage + 2) or (pageNum == 1 or pageNum == totalPages)}">
-                  <div class="active-pag-buttons">
-                    <sl-radio-button class="pageNumButton" value="${pageNum}">${pageNum}</sl-radio-button>
-                  </div>
-                </c:when>
-                <c:when test="${pageNum < totalPages and pageNum == currentPage + 2}">
-                  <div class="active-pag-buttons">
-                    <sl-radio-button class="pageNumButton" value="${pageNum}">${pageNum}</sl-radio-button>
-                    <sl-radio-button value="..." disabled>...</sl-radio-button>
-                  </div>
-                </c:when>
-                <c:when test="${pageNum > 1 and pageNum == currentPage - 2}">
-                  <div class="active-pag-buttons">
-                    <sl-radio-button value="..." disabled>...</sl-radio-button>
-                    <sl-radio-button class="pageNumButton" value="${pageNum}">${pageNum}</sl-radio-button>
-                  </div>
-                </c:when>
-                <c:otherwise>
-                  <div class="hidden-pag-buttons">
-                    <sl-radio-button class="pageNumButton" value="${pageNum}">${pageNum}</sl-radio-button>
-                  </div>
-                </c:otherwise>
-              </c:choose>
 
-            </c:forEach>
-            <sl-radio-button id="nextPage" value="0" <c:if test="${currentPage >= totalPages}">disabled</c:if>>
-              <sl-icon slot="suffix" name="chevron-right"></sl-icon>
-              <spring:message code="subject.nextPage"/>
-            </sl-radio-button>
-          </sl-radio-group>
-        </div>
-      </c:if>
+      <c:set value="${totalPages}" var="totalPages" scope="request"/>
+      <c:set value="${currentPage}" var="currentPage" scope="request"/>
+      <c:import url="../components/page_buttons.jsp"/>
     </c:otherwise>
   </c:choose>
 
@@ -254,7 +208,6 @@
 
 <jsp:include page="../components/footer.jsp"/>
 <jsp:include page="../components/body_scripts.jsp"/>
-<script src="${pageContext.request.contextPath}/js/url-param-utils.js"></script>
 <script>
     let params = new URLSearchParams(window.location.search);
 
@@ -377,55 +330,6 @@
             sectionUp.style.display = 'none';
             sectionDown.style.display = 'none';
         }
-    }
-
-    //Pagination buttons
-    let prevButton = document.getElementById("prevPage");
-    prevButton.addEventListener('click',
-        function (event) {
-            event.preventDefault();
-            let url = window.location.href;
-            console.log(">>>> pageNum:" + params.get('pageNum'));
-            let pageNum = ${currentPage} - 1;
-            if (pageNum >= 0) {
-                url = addOrUpdateParam(url, "pageNum", pageNum.toString());
-            } else {
-                url = addOrUpdateParam(url, "pageNum", "0");
-            }
-            window.location.href = url;
-        });
-    let nextButton = document.getElementById("nextPage");
-    nextButton.addEventListener('click',
-        function (event) {
-            event.preventDefault();
-            let url = window.location.href;
-            let pageNum = ${currentPage} + 1;
-            if (pageNum >= 0) {
-                url = addOrUpdateParam(url, "pageNum", pageNum.toString());
-            } else {
-                url = addOrUpdateParam(url, "pageNum", "0");
-            }
-            window.location.href = url;
-        });
-
-    let elements = document.getElementsByClassName("pageNumButton");
-    for (let i = 0, len = elements.length; i < len; i++) {
-        elements[i].addEventListener('click',
-            function (event) {
-                event.preventDefault();
-                let url = window.location.href;
-                let pageNum = Number(elements[i].value);
-                url = addOrUpdateParam(url, "pageNum", pageNum.toString());
-                window.location.href = url;
-            });
-    }
-    let activePaginationButtons = document.getElementsByClassName("active-pag-buttons");
-    for (let i = 0, len = activePaginationButtons.length; i < len; i++) {
-        activePaginationButtons[i].style.display = 'block';
-    }
-    let hiddenPaginationButtons = document.getElementsByClassName("hidden-pag-buttons");
-    for (let i = 0, len = hiddenPaginationButtons.length; i < len; i++) {
-        hiddenPaginationButtons[i].style.display = 'none';
     }
 </script>
 </body>

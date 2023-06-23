@@ -24,22 +24,28 @@
     overflow-wrap: break-word;
     margin-bottom: 2%;
   }
-  .more {
+
+  .more-text {
     display: none;
   }
 
-  .showMore{
+  .show-button {
     display: flex;
   }
-  .showMore::part(base) {
+  .show-button::part(base) {
     border: 0;
   }
-  .showMore::part(base):hover{
+  .show-button::part(base):hover{
     background: 0;
   }
-  .showMore::part(base):active {
+  .show-button::part(base):active {
     background: rgba(255, 99, 71, 0);
   }
+
+  .show-icon {
+      transform: translateY(2px);
+  }
+
   .delete-button {
     color: red;
   }
@@ -142,10 +148,20 @@
 
   <div class="break-text">
     <c:if test="${review.text.length() > 500}">
-      <c:out value="${review.text.substring(0,500)}"/><span class="dots">...</span><span class="more"><c:out value="${review.text.substring(500)}"/></span>
-
+      <c:out value="${review.text.substring(0,500)}"/>
+      <span class="dots">...</span>
+      <span class="more-text">
+        <c:out value="${review.text.substring(500)}"/>
+      </span>
       <br />
-      <sl-button size="small" class="showMore"><spring:message code="subject.showMore" />  <sl-icon name="chevron-down"></sl-icon></sl-button>
+      <sl-button size="small" class="show-button">
+        <span class="show-more-text">
+          <spring:message code="subject.showMore" />  <sl-icon class="show-icon" name="chevron-down"></sl-icon>
+        </span>
+        <span class="show-less-text">
+          <spring:message code="subject.showLess" />  <sl-icon class="show-icon" name="chevron-up"></sl-icon>
+        </span>
+      </sl-button>
     </c:if>
     <c:if test="${review.text.length() <= 500}">
       <c:out value="${review.text}"/>

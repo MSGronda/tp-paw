@@ -76,8 +76,8 @@
     </form:form>
 </main>
 <jsp:include page="../components/body_scripts.jsp"/>
-<script src="${pageContext.request.contextPath}/js/progress-step-bar.js"></script>
-<script src="${pageContext.request.contextPath}/js/url-param-utils.js"></script>
+<script src="<c:url value="/js/progress-step-bar.js" />"></script>
+<script src="<c:url value="/js/url-param-utils.js" />"></script>
 <script>
     const items = []
     for(let i=0; i<${total}; i++){

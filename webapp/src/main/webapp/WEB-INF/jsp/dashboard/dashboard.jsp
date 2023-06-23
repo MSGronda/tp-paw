@@ -345,7 +345,6 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.3.0/helpers.js"
         integrity="sha512-BQJ3AP+pvkpSDEexjv6OYwGVCVIFo507d09S8pFPTp63+d7YZDrvjoB+4cSPTThQVfQjP6yybIZ6P29ZQGcPvQ=="
         crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
 <script>
   window.onload = function(){
     const urlParams = new URLSearchParams(window.location.search);
@@ -357,9 +356,6 @@
   };
 </script>
 <script defer>
-
-
-
     const daysOfWeek = [
         '<spring:message code="subject.classDay1"/>', '<spring:message code="subject.classDay2"/>', '<spring:message code="subject.classDay3"/>',
         '<spring:message code="subject.classDay4"/>', '<spring:message code="subject.classDay5"/>', '<spring:message code="subject.classDay6"/>'
@@ -422,7 +418,6 @@
             }
         }
     );
-
 </script>
 </body>
 

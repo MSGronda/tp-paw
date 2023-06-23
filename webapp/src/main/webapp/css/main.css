@@ -148,3 +148,11 @@ sl-card.subject-card::part(body) {
     justify-self: center;
     margin: 0 auto;
 }
+
+.pagination-buttons {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    align-items: center;
+    padding-bottom: 3rem;
+}
