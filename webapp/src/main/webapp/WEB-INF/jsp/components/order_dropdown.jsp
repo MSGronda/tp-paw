@@ -135,7 +135,7 @@
                 event.preventDefault();
                 let url = window.location.href;
                 url = addOrUpdateParam(url,"order",orderBtns[elem][1]);
-                url = addOrUpdateParam(url,"pageNum","0");
+                url = addOrUpdateParam(url,"page","0");
                 if(dir !== null && dir === asc){
                   url = addOrUpdateParam(url,"dir",desc);
                 } else {

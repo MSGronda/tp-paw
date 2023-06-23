@@ -42,8 +42,8 @@ public class UserController {
     @RequestMapping("/user/{id:\\d+}")
     public ModelAndView user(
             @PathVariable final long id,
-            @RequestParam(defaultValue = "1") final int pageNum,
-            @RequestParam(defaultValue = "easy") final String order,
+            @RequestParam(defaultValue = "1") final int page,
+            @RequestParam(defaultValue = "difficulty") final String order,
             @RequestParam(defaultValue = "desc") final String dir
     ) {
         final User user = userService.findById(id).orElseThrow(UserNotFoundException::new);
@@ -53,17 +53,17 @@ public class UserController {
         }
 
         final ModelAndView mav = new ModelAndView("user/userProfile");
-        return setProfileViewAttributes(mav, user, pageNum, order, dir);
+        return setProfileViewAttributes(mav, user, page, order, dir);
     }
 
     @RequestMapping("/profile")
     public ModelAndView profile(
-            @RequestParam(defaultValue = "1") final int pageNum,
+            @RequestParam(defaultValue = "1") final int page,
             @RequestParam(defaultValue = "difficulty") final String order,
             @RequestParam(defaultValue = "desc") final String dir
     ) {
         final ModelAndView mav = new ModelAndView("/user/profile");
-        return setProfileViewAttributes(mav, authUserService.getCurrentUser(), pageNum, order, dir);
+        return setProfileViewAttributes(mav, authUserService.getCurrentUser(), page, order, dir);
     }
 
     private ModelAndView setProfileViewAttributes(

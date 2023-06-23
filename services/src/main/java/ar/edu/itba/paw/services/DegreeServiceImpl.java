@@ -7,16 +7,19 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.OptionalInt;
 
 @Service
 public class DegreeServiceImpl implements DegreeService {
     private final DegreeDao degreeDao;
+    private final SubjectService subjectService;
 
     @Autowired
-    public DegreeServiceImpl(final DegreeDao degreeDao) {
+    public DegreeServiceImpl(final DegreeDao degreeDao, final SubjectService subjectService) {
         this.degreeDao = degreeDao;
+        this.subjectService = subjectService;
     }
 
     @Override
@@ -40,5 +43,10 @@ public class DegreeServiceImpl implements DegreeService {
     @Override
     public List<Degree> getAll() {
         return degreeDao.getAll();
+    }
+
+    @Override
+    public Map<String, List<String>> getRelevantFiltersForDegree(Degree degree) {
+        return subjectService.getRelevantFiltersForSearch("");
     }
 }

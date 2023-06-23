@@ -208,16 +208,23 @@
 
 <jsp:include page="../components/footer.jsp"/>
 <jsp:include page="../components/body_scripts.jsp"/>
+<script src="<c:url value="/js/url-param-utils.js"/>"></script>
 <script>
     let params = new URLSearchParams(window.location.search);
 
     const filterSection = document.getElementById('filter-section');
     const keys = params.keys();
-    if (!keys.next().done && keys.next().done) // no tiene parametros aparte de q
-        filterSection.style.display = "none"
-    else
-        filterSection.style.display = "flex"
 
+    // Si no hay filtros ni sorts, no mostrar la seccion de filtros
+    // if ((!params.has("q") && keys.next().done) ||
+    //     (params.has("q") && !keys.next().done && keys.next().done)) {
+    //     filterSection.style.display = "none"
+    // } else {
+    //     filterSection.style.display = "flex"
+    // }
+
+    // Siempre mostrar la seccion de filtros
+    filterSection.style.display = "flex"
 
     // Department filters
     let dpt = params.get("department")
@@ -233,7 +240,7 @@
         document.getElementById(dptFilterBtns[elem][0]).addEventListener('click',
             function () {
                 // debemos remover el pageNum tambien
-                window.location.href = removeURLParam(addOrUpdateParam(window.location.href, "department", dptFilterBtns[elem][1]), 'pageNum')
+                window.location.href = removeURLParam(addOrUpdateParam(window.location.href, "department", dptFilterBtns[elem][1]), 'page')
 
             });
 
@@ -241,7 +248,7 @@
         document.getElementById(dptFilterBtns[elem][2]).addEventListener('click',
             // debemos remover el pageNum tambien
             function () {
-                window.location.href = removeURLParam(removeURLParam(window.location.href, "department"), 'pageNum')
+                window.location.href = removeURLParam(removeURLParam(window.location.href, "department"), 'page')
             });
 
         // Visibiliad de boton de eliminar filtro
@@ -267,12 +274,12 @@
         document.getElementById(creditFilterBtns[elem][0]).addEventListener('click',
             function () {
                 // debemos remover el pageNum tambien
-                window.location.href = removeURLParam(addOrUpdateParam(window.location.href, "credits", creditFilterBtns[elem][1]), 'pageNum');
+                window.location.href = removeURLParam(addOrUpdateParam(window.location.href, "credits", creditFilterBtns[elem][1]), 'page');
             });
         document.getElementById(creditFilterBtns[elem][2]).addEventListener('click',
             // debemos remover el pageNum tambien
             function () {
-                window.location.href = removeURLParam(removeURLParam(window.location.href, "credits"), 'pageNum');
+                window.location.href = removeURLParam(removeURLParam(window.location.href, "credits"), 'page');
             });
         const section = document.getElementById(creditFilterBtns[elem][3])
         if (credits === creditFilterBtns[elem][1])
@@ -306,16 +313,16 @@
         document.getElementById(addOrderByBtns[elem][0]).addEventListener('click',
             function () {
                 // debemos remover el pageNum tambien
-                window.location.href = removeURLParam(addOrUpdateParam(addOrUpdateParam(window.location.href, "ob", addOrderByBtns[elem][1]), "dir", "asc"), 'pageNum');
+                window.location.href = removeURLParam(addOrUpdateParam(addOrUpdateParam(window.location.href, "ob", addOrderByBtns[elem][1]), "dir", "asc"), 'page');
             });
         const sectionUp = document.getElementById(addOrderByBtns[elem][2])
         const sectionDown = document.getElementById(addOrderByBtns[elem][3])
 
         sectionUp.addEventListener('click', function () {
-            window.location.href = removeURLParam(addOrUpdateParam(window.location.href, "dir", "desc"), 'pageNum');
+            window.location.href = removeURLParam(addOrUpdateParam(window.location.href, "dir", "desc"), 'page');
         })
         sectionDown.addEventListener('click', function () {
-            window.location.href = removeURLParam(addOrUpdateParam(window.location.href, "dir", "asc"), 'pageNum');
+            window.location.href = removeURLParam(addOrUpdateParam(window.location.href, "dir", "asc"), 'page');
         })
 
         if (ob === addOrderByBtns[elem][1]) {

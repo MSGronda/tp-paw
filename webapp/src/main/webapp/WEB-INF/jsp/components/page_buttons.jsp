@@ -57,7 +57,7 @@
           function (event) {
               event.preventDefault();
               let url = window.location.href;
-              url = addOrUpdateParam(url, "pageNum", (${currentPage} - 1).toString());
+              url = addOrUpdateParam(url, "page", (${currentPage} - 1).toString());
 
               window.location.href = url;
           });
@@ -66,7 +66,7 @@
           function (event) {
               event.preventDefault();
               let url = window.location.href;
-              url = addOrUpdateParam(url, "pageNum", (${currentPage} + 1).toString());
+              url = addOrUpdateParam(url, "page", (${currentPage} + 1).toString());
 
               window.location.href = url;
           });
@@ -78,7 +78,7 @@
                   event.preventDefault();
                   let url = window.location.href;
                   let pageNum = Number(elements[i].value);
-                  url = addOrUpdateParam(url, "pageNum", pageNum.toString());
+                  url = addOrUpdateParam(url, "page", pageNum.toString());
                   window.location.href = url;
               });
       }

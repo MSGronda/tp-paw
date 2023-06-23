@@ -28,7 +28,8 @@ public class ExceptionControllerAdvice {
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler({
-            InvalidFormException.class
+            InvalidFormException.class,
+            InvalidPageNumberException.class
     })
     public String badRequestHandler() {
         return "error/bad_request";

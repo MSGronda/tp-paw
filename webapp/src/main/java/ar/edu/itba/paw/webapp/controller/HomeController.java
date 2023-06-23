@@ -29,21 +29,6 @@ public class HomeController {
         this.subjectService = subjectService;
     }
 
-    @RequestMapping("/degree")
-    public ModelAndView degree() {
-        return new ModelAndView("redirect:/degree/" + authUserService.getCurrentUser().getDegree().getId());
-    }
-
-    @RequestMapping("/degree/{id:\\d+}")
-    public ModelAndView degree(@PathVariable final long id) {
-        final Degree degree = degreeService.findById(id).orElseThrow(DegreeNotFoundException::new);
-
-        final ModelAndView mav = new ModelAndView("degree/index");
-        mav.addObject("degree", degree);
-        mav.addObject("subjectProgress", authUserService.getCurrentUser().getAllSubjectProgress());
-        return mav;
-    }
-
     @RequestMapping("/")
     public ModelAndView dashboard() {
         if (!authUserService.isAuthenticated()) return new ModelAndView("landing");

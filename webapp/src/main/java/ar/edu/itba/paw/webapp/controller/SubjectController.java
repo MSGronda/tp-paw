@@ -36,7 +36,7 @@ public class SubjectController {
     @RequestMapping("/subject/{id:\\d+\\.\\d+}")
     public ModelAndView subjectInfo(
             @PathVariable final String id,
-            @RequestParam(name = "pageNum", defaultValue = "1") final int page,
+            @RequestParam(name = "page", defaultValue = "1") final int page,
             @RequestParam(defaultValue = "name") final String order,
             @RequestParam(defaultValue = "asc") final String dir
     ) {
