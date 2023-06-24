@@ -293,18 +293,17 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public String getSemesterSubmitRedirectUrl(final String subjectIds) {
-        final List<String> subjectIdList = parseJsonList(subjectIds);
+    public String getSemesterSubmitRedirectUrl(final User user) {
+        final List<String> subjectIds = user.getUserSemester().stream()
+                .map(SubjectClass::getSubject)
+                .map(Subject::getId)
+                .collect(Collectors.toList());
 
-        if (subjectIdList.isEmpty()) {
-            return "/";
-        }
-
-        final StringBuilder sb = new StringBuilder("/many-reviews?r=");
+        final StringBuilder sb = new StringBuilder("redirect:/many-reviews?r=");
         int i = 0;
-        for (String subIds : subjectIdList) {
+        for (String subIds : subjectIds) {
             sb.append(subIds);
-            if (i + 1 < subjectIdList.size()) {
+            if (i + 1 < subjectIds.size()) {
                 sb.append(" ");
             }
             i++;
