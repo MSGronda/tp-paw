@@ -139,13 +139,18 @@ public class UserController {
 
     @RequestMapping(value = "/verification/resend", method = RequestMethod.POST)
     public ModelAndView resendConfirmationEmail(@RequestParam final String email) {
+        final ModelAndView mav = new ModelAndView("redirect:/verification");
+        mav.addObject("email", email);
+
         try {
             userService.resendVerificationEmail(email);
         } catch (UserNotFoundException e) {
-            return new ModelAndView("redirect:/verification?error=true&email=" + email);
+            mav.addObject("error", true);
+            return mav;
         }
 
-        return new ModelAndView("redirect:/verification?resent=true&email=" + email);
+        mav.addObject("resent", true);
+        return mav;
     }
 
     @RequestMapping("/verification/confirm")
