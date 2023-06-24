@@ -26,12 +26,6 @@
   #timedemand-up{
     font-size: 0.8rem;
   }
-  #semester-up{
-    font-size: 0.8rem;
-  }
-  #semester-down{
-     font-size: 0.8rem;
-  }
   .filter {
     width: 100%;
     display: flex;
@@ -46,9 +40,9 @@
   <div>
     <spring:message code="subject.actualFilter"/>
     <c:choose>
-      <c:when test="${order == \"easy\" && dir == \"desc\"}">
+      <c:when test="${order == \"easy\" && dir == \"asc\"}">
         <spring:message code="subject.order.difficulty"/>
-        <spring:message code="subject.directionDesc"/>
+        <spring:message code="subject.directionAsc"/>
       </c:when>
       <c:when test="${order == \"timedemanding\" && dir == \"asc\"}">
         <spring:message code="subject.order.time"/>
@@ -58,16 +52,8 @@
         <spring:message code="subject.order.time"/>
         <spring:message code="subject.directionDesc"/>
       </c:when>
-      <c:when test="${order == \"semester\" && dir == \"asc\"}">
-        <spring:message code="profile.order.semester"/>
-        <spring:message code="subject.directionAsc"/>
-      </c:when>
-      <c:when test="${order == \"easy\" && dir == \"asc\"}">
-        <spring:message code="subject.order.difficulty"/>
-        <spring:message code="subject.directionAsc"/>
-      </c:when>
       <c:otherwise>
-        <spring:message code="profile.order.semester"/>
+        <spring:message code="subject.order.difficulty"/>
         <spring:message code="subject.directionDesc"/>
       </c:otherwise>
     </c:choose>
@@ -101,17 +87,6 @@
             </section>
           </div>
         </sl-menu-item>
-        <sl-menu-item id="semester-order">
-          <div class="order-menu">
-            <spring:message code="profile.order.semester"/>
-            <section id="semester-down">
-              <sl-icon slot="suffix" name="arrow-down" ></sl-icon>
-            </section>
-            <section id="semester-up">
-              <sl-icon slot="suffix" name="arrow-up"></sl-icon>
-            </section>
-          </div>
-        </sl-menu-item>
       </sl-menu>
     </sl-dropdown>
   </div>
@@ -123,7 +98,6 @@
   const orderBtns = [
     ['difficulty-order','easy','diffuclty-down','diffuclty-up'],
     ['timedemand-order','timedemanding','timedemand-down','timedemand-up'],
-    ['semester-order','semester','semester-down','semester-up']
   ]
   const asc='asc'
   const desc = 'desc'
@@ -135,7 +109,7 @@
                 event.preventDefault();
                 let url = window.location.href;
                 url = addOrUpdateParam(url,"order",orderBtns[elem][1]);
-                url = addOrUpdateParam(url,"page","0");
+                url = addOrUpdateParam(url,"page","1");
                 if(dir !== null && dir === asc){
                   url = addOrUpdateParam(url,"dir",desc);
                 } else {
@@ -143,7 +117,7 @@
                 }
                 window.location.href = url;
               });
-      if(orderBtns[elem][0] === 'difficulty-order' && dir === desc){
+      if (orderBtns[elem][0] === 'difficulty-order' && dir === desc) {
         const section1 = document.getElementById(orderBtns[elem][2]);
         const section2 = document.getElementById(orderBtns[elem][3]);
         section1.style.display = "block";
@@ -153,17 +127,7 @@
         const section2 = document.getElementById(orderBtns[elem][3]);
         section1.style.display = "block";
         section2.style.display = "none";
-      }else if(orderBtns[elem][0] === 'difficulty-order' && dir === asc){
-        const section1 = document.getElementById(orderBtns[elem][2]);
-        const section2 = document.getElementById(orderBtns[elem][3]);
-        section1.style.display = "none";
-        section2.style.display = "block";
       } else if(orderBtns[elem][0] === 'timedemand-order' && dir === asc) {
-        const section1 = document.getElementById(orderBtns[elem][2]);
-        const section2 = document.getElementById(orderBtns[elem][3]);
-        section1.style.display = "none";
-        section2.style.display = "block";
-      } else if(orderBtns[elem][0] === 'semester-order' && dir === asc) {
         const section1 = document.getElementById(orderBtns[elem][2]);
         const section2 = document.getElementById(orderBtns[elem][3]);
         section1.style.display = "none";
@@ -171,8 +135,8 @@
       } else {
         const section1 = document.getElementById(orderBtns[elem][2]);
         const section2 = document.getElementById(orderBtns[elem][3]);
-        section1.style.display = "block";
-        section2.style.display = "none";
+        section1.style.display = "none";
+        section2.style.display = "block";
       }
     }
   }
