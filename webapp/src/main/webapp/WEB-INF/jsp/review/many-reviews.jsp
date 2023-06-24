@@ -87,7 +87,7 @@
     ProgressBar.init(
         items
         ,
-        ""+${current},
+        ""+${current - 1},
         'progress-bar-wrapper'
     );
 

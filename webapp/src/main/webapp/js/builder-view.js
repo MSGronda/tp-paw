@@ -241,15 +241,7 @@ function createSubjectDeselectAction(subject,idClass){
         updateOverallDifficulty(-(subject.difficulty+1))
     }
 }
-function _modifyBanners(delta, prefix, statsName){
-
-    overviewStats[statsName] += delta;
-
-    let average = 0;
-    if(Object.keys(schedule.chosenSubjectMap).length !== 0){
-        average = (overviewStats[statsName] *  (overviewStats.totalCredits/24) ) / Object.keys(schedule.chosenSubjectMap).length
-    }
-
+function _modifyBanners(prefix, average){
     if(average===0){
         document.getElementById(prefix+'-difficulty-none').style.display = 'flex';
         document.getElementById(prefix+'-difficulty-easy').style.display = 'none';
@@ -280,12 +272,38 @@ function updateCreditCounter(delta){
     overviewStats.totalCredits += delta;
     document.getElementById('number-of-credits').innerText = overviewStats.totalCredits.toString();
 }
+function reAdjustWithCredits(average){
+    let ret = average;
+    if(overviewStats.totalCredits < 6)
+        ret += 0.1;
+    else if(overviewStats.totalCredits >= 6 && overviewStats.totalCredits <= 18)
+        ret += 0.5;
+    else if(overviewStats.totalCredits > 18)
+        ret += 1;
+
+    return Math.min(ret,3);
+}
+
 function updateTimeDemand(delta){
-    _modifyBanners(delta,'time','timeDemand');
+    overviewStats['timeDemand'] += delta;
+
+    let average = 0;
+    if(Object.keys(schedule.chosenSubjectMap).length !== 0){
+        average = (overviewStats['timeDemand'] * (overviewStats.totalCredits/24) ) / Object.keys(schedule.chosenSubjectMap).length;
+    }
+
+    _modifyBanners('time', reAdjustWithCredits(average));
 }
 
 function updateOverallDifficulty(delta){
-    _modifyBanners(delta,'overall','overallDifficulty');
+    overviewStats['overallDifficulty'] += delta;
+
+    let average = 0;
+    if(Object.keys(schedule.chosenSubjectMap).length !== 0){
+        average = (overviewStats['overallDifficulty'] * (overviewStats.totalCredits/24) ) / Object.keys(schedule.chosenSubjectMap).length;
+    }
+
+    _modifyBanners('overall', reAdjustWithCredits(average));
 }
 
 function createSubjectSelectAction(subId){
