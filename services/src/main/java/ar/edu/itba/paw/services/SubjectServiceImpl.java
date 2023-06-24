@@ -64,28 +64,30 @@ public class SubjectServiceImpl implements SubjectService {
         degreeService.addSubjectToDegrees(
                 sub,
                 degreeIdsList.stream().map(Long::parseLong).collect(java.util.stream.Collectors.toList()),
-                semestersList.stream().map(Integer::parseInt).collect(java.util.stream.Collectors.toList())
+                semestersList.stream().map(Integer::parseInt).collect(java.util.stream.Collectors.toList()),
+                false
         );
 
         //se agregan profesores a professorSubjects
         final List<String> professorsList = parseJsonList(professors, true);
         professorService.addSubjectToProfessors(
                 sub,
-                professorsList
+                professorsList,
+                false
         );
 
         //se agregan las correlativas
         final List<String> correlativesList = parseJsonList(requirementIds, false);
-        subjectDao.addPrerequisites( sub, correlativesList);
+        subjectDao.addPrerequisites( sub, correlativesList, false);
 
         //se crean las comisiones
         final List<String> classesList = parseJsonList(classCodes, false);
         final Set<String> uniqueClassesList = new HashSet<>(classesList);
-        subjectDao.addClassesToSubject(sub, uniqueClassesList);
+        subjectDao.addClassesToSubject(sub, uniqueClassesList, false);
 
         //se agregan los profesores a las comisiones
         final List<List<String>> classProfessorsList = parseJsonListOfLists(classProfessors);
-        professorService.addProfessorsToClasses(sub, classesList, classProfessorsList);
+        professorService.addProfessorsToClasses(sub, classesList, classProfessorsList, false);
 
         //se agregan los datos a las comisiones
         //TODO: verificar que start times sea previo a end times
@@ -104,9 +106,6 @@ public class SubjectServiceImpl implements SubjectService {
                 days.stream().map(Integer::parseInt).collect(Collectors.toList()),
                 rooms
         );
-
-
-
 
         return sub;
     }
@@ -281,5 +280,74 @@ public class SubjectServiceImpl implements SubjectService {
             throw new UnauthorizedException();
 
         subjectDao.delete(subject);
+    }
+
+    @Transactional
+    @Override
+    public void edit(
+            final String id,
+            final int credits,
+            final String degreeIds,
+            final String semesters,
+            final String requirementIds,
+            final String professors,
+            final String classCodes,
+            final String classProfessors,
+            final String classDays,
+            final String classStartTimes,
+            final String classEndTime,
+            final String classBuildings,
+            final String classRooms,
+            final String classModes) {
+
+        Optional<Subject> optionalSubject = findById(id);
+        if(!optionalSubject.isPresent()) {
+            return;
+        }
+
+        Subject sub = optionalSubject.get();
+        subjectDao.editCredits(sub, credits);
+
+        final List<String> degreeIdsList = parseJsonList(degreeIds, false);
+        final List<String> semestersList = parseJsonList(semesters, false);
+        degreeService.addSubjectToDegrees(
+                sub,
+                degreeIdsList.stream().map(Long::parseLong).collect(java.util.stream.Collectors.toList()),
+                semestersList.stream().map(Integer::parseInt).collect(java.util.stream.Collectors.toList()),
+                true
+        );
+
+        final List<String> professorsList = parseJsonList(professors, true);
+        professorService.addSubjectToProfessors(
+                sub,
+                professorsList,
+                true
+        );
+
+        final List<String> correlativesList = parseJsonList(requirementIds, false);
+        subjectDao.addPrerequisites( sub, correlativesList, true);
+
+        final List<String> classesList = parseJsonList(classCodes, false);
+        final Set<String> uniqueClassesList = new HashSet<>(classesList);
+        subjectDao.addClassesToSubject(sub, uniqueClassesList, true);
+
+        final List<List<String>> classProfessorsList = parseJsonListOfLists(classProfessors);
+        professorService.addProfessorsToClassesEdit(sub, classesList, classProfessorsList, true);
+
+        final List<String> startTimes = parseJsonList(classStartTimes, false);
+        final List<String> endTimes = parseJsonList(classEndTime, false);
+        final List<String> buildings = parseJsonList(classBuildings, false);
+        final List<String> modes = parseJsonList(classModes, false);
+        final List<String> days = parseJsonList(classDays, false);
+        final List<String> rooms = parseJsonList(classRooms, false);
+        subjectDao.addSubjectClassTimes(sub,
+                classesList,
+                startTimes.stream().map(LocalTime::parse).collect(Collectors.toList()),
+                endTimes.stream().map(LocalTime::parse).collect(Collectors.toList()),
+                buildings,
+                modes,
+                days.stream().map(Integer::parseInt).collect(Collectors.toList()),
+                rooms
+        );
     }
 }

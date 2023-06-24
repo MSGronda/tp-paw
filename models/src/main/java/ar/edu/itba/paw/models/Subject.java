@@ -106,6 +106,10 @@ public class Subject {
         return credits;
     }
 
+    public void setCredits(final int credits) {
+        this.credits = credits;
+    }
+
     public ReviewStats getReviewStats() {
         if(reviewStats == null) {
             reviewStats = new ReviewStats();

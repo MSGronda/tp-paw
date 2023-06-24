@@ -55,4 +55,21 @@ public interface SubjectService {
     void delete(final User user, final String subjectId) throws UnauthorizedException, SubjectNotFoundException;
 
     void delete(final User user, final Subject subject) throws UnauthorizedException;
+
+
+    void edit(
+              String id,
+              int credits,
+              String degreeIds,
+              String semesters,
+              String requirementIds,
+              String professors,
+              String classCodes,
+              String classProfessors,
+              String classDays,
+              String classStartTimes,
+              String classEndTime,
+              String classBuildings,
+              String classRooms,
+              String classModes);
 }

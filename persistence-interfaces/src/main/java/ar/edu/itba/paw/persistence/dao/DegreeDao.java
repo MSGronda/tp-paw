@@ -17,5 +17,5 @@ public interface DegreeDao {
 
     OptionalInt findSubjectSemesterForDegree(final Subject subject, final Degree degree);
 
-    void addSubjectToDegrees(Subject subject, List<Long> degreeIds, List<Integer> semesters);
+    void addSubjectToDegrees(final Subject subject, List<Long> degreeIds, final List<Integer> semesters, final boolean rset);
 }

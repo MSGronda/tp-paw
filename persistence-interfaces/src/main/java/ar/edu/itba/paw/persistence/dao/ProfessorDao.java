@@ -11,10 +11,11 @@ public interface ProfessorDao {
     Optional<Professor> findById(final long id);
     void create(Professor professor);
 
-    Optional<Professor> getByName(final String name);
+    List<Professor> getByName(final String name);
 
-    void addSubjectToProfessors(Subject subject, List<String> professors);
+    void addSubjectToProfessors(final Subject subject, final List<String> professors, final boolean rset);
 
-    void addProfessorsToClasses(final Subject subject, final List<String> classCodes, final List<List<String>> classProfessors);
+    void addProfessorsToClasses(final Subject subject, final List<String> classCodes, final List<List<String>> classProfessors, final boolean rset);
 
+    void addProfessorsToClassesEdit(final Subject sub, final List<String> classesList, final List<List<String>> classProfessorsList, boolean b);
 }

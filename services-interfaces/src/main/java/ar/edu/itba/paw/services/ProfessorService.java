@@ -11,8 +11,9 @@ public interface ProfessorService {
     List<Professor> getAll();
     void create(Professor professor);
 
-    void addSubjectToProfessors(final Subject subject, final List<String> professors);
+    void addSubjectToProfessors(final Subject subject, final List<String> professors, final boolean rset);
 
-    void addProfessorsToClasses(final Subject subject, final List<String> classCodes, final List<List<String>> classProfessors);
+    void addProfessorsToClasses(final Subject subject, final List<String> classCodes, final List<List<String>> classProfessors, final boolean rset);
 
+    void addProfessorsToClassesEdit(final Subject sub, final List<String> classesList, final List<List<String>> classProfessorsList, boolean b);
 }

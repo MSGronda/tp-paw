@@ -6,6 +6,7 @@ import ar.edu.itba.paw.models.exceptions.UnauthorizedException;
 import ar.edu.itba.paw.services.*;
 import ar.edu.itba.paw.services.exceptions.SubjectIdAlreadyExistsException;
 import ar.edu.itba.paw.models.exceptions.SubjectNotFoundException;
+import ar.edu.itba.paw.webapp.form.EditSubjectForm;
 import ar.edu.itba.paw.webapp.form.SubjectForm;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -110,10 +111,7 @@ public class SubjectController {
             mav.addObject("subjectCodeRepeated", true);
             return mav;
         }
-//
-//
-//        return new ModelAndView("redirect:/subject/{subjectId:\\d+\\.\\d+}/addProfessor");
-        return new ModelAndView("redirect:/");
+        return new ModelAndView("redirect:/subejct/"+newSub.getId());
     }
 
     @RequestMapping("/subject/{id:\\d+\\.\\d+}/delete-subject")
@@ -126,7 +124,7 @@ public class SubjectController {
     }
 
     @RequestMapping(value = "/subject/{id:\\d+\\.\\d+}/edit", method = {RequestMethod.GET})
-    public ModelAndView editSubjectForm(@PathVariable final String id, @ModelAttribute("subjectForm") final SubjectForm subjectForm,
+    public ModelAndView editSubjectForm(@PathVariable final String id, @ModelAttribute("subjectForm") final EditSubjectForm editSubjectForm,
                                         final BindingResult errors) {
         final Subject subject = subjectService.findById(id).orElseThrow(SubjectNotFoundException::new);
         List<Subject> subjects = subjectService.getAll();
@@ -141,9 +139,29 @@ public class SubjectController {
     }
 
     @RequestMapping(value = "/subject/{id:\\d+\\.\\d+}/edit", method = {RequestMethod.POST})
-    public ModelAndView editSubject(@PathVariable final String id, @Valid @ModelAttribute("subjectForm") final SubjectForm subjectForm,
+    public ModelAndView editSubject(@PathVariable final String id, @Valid @ModelAttribute("editSubjectForm") final EditSubjectForm editSubjectForm,
                                     final BindingResult errors) {
-        return new ModelAndView("moderator-tools/editSubject");
+        System.out.println("marcos :" + editSubjectForm.getClassProfessors() );
+        System.out.println("marcos :" + editSubjectForm.getProfessors() );
+        System.out.println("marcos :" + editSubjectForm.getClassDays() );
+
+        subjectService.edit(
+                id,
+                editSubjectForm.getCredits(),
+                editSubjectForm.getDegreeIds(),
+                editSubjectForm.getSemesters(),
+                editSubjectForm.getRequirementIds(),
+                editSubjectForm.getProfessors(),
+                editSubjectForm.getClassCodes(),
+                editSubjectForm.getClassProfessors(),
+                editSubjectForm.getClassDays(),
+                editSubjectForm.getClassStartTimes(),
+                editSubjectForm.getClassEndTimes(),
+                editSubjectForm.getClassBuildings(),
+                editSubjectForm.getClassRooms(),
+                editSubjectForm.getClassModes()
+        );
+        return new ModelAndView("redirect:/subject/"+id);
     }
 
 

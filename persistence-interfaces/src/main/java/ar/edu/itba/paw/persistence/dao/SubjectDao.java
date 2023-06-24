@@ -36,11 +36,13 @@ public interface SubjectDao {
     List<Subject> findAllThatUserHasDone(User user);
     List<Subject> findAllThatUserCouldUnlock(User user);
 
-    void addPrerequisites(final Subject sub, final List<String> correlativesList);
+    void addPrerequisites(final Subject sub, final List<String> correlativesList, final boolean rset);
 
-    void addClassesToSubject(final Subject subject, final Set<String> classesSet);
+    void addClassesToSubject(final Subject subject, final Set<String> classesSet, final boolean rset);
 
     void addSubjectClassTimes(final Subject subject, final List<String> classCodes, final List<LocalTime> startTimes, final List<LocalTime> endTimes, final List<String> buildings, final List<String> modes, final List<Integer> days, final List<String> rooms);
 
     void delete(final Subject subject);
+
+    void editCredits(Subject subject, int credits);
 }

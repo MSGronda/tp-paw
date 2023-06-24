@@ -7,7 +7,6 @@ import ar.edu.itba.paw.models.enums.SubjectOrderField;
 import ar.edu.itba.paw.persistence.dao.SubjectDao;
 import ar.edu.itba.paw.persistence.exceptions.SubjectIdAlreadyExistsPersistenceException;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import javax.persistence.EntityManager;
@@ -349,15 +348,29 @@ public class SubjectJpaDao implements SubjectDao {
     }
 
     @Override
-    public void addPrerequisites(final Subject sub, final List<String> correlativesList){
+    public void addPrerequisites(final Subject sub, final List<String> correlativesList, final boolean rset){
+        if(rset) {
+            sub.getPrerequisites().clear();
+            em.flush();
+        }
         for( String requirement : correlativesList ){
             Subject requiredSubject = em.find(Subject.class, requirement);
             sub.getPrerequisites().add(requiredSubject);
+
         }
     }
 
     @Override
-    public void addClassesToSubject(final Subject subject, final Set<String> classesSet){
+    public void addClassesToSubject(final Subject subject, final Set<String> classesSet, final boolean rset){
+        if(rset) {
+            for(SubjectClass subjClass : subject.getClasses() ) {
+                subjClass.getClassTimes().clear();
+                subjClass.getProfessors().clear();
+
+            }
+            subject.getClasses().clear();
+            em.flush();
+        }
         for( String classCode : classesSet){
             SubjectClass subjectClass = new SubjectClass(classCode, subject);
             em.persist(subjectClass);
@@ -367,6 +380,7 @@ public class SubjectJpaDao implements SubjectDao {
 
     @Override
     public void addSubjectClassTimes(final Subject subject, final List<String> classCodes, final List<LocalTime> startTimes, final List<LocalTime> endTimes, final List<String> buildings, final List<String> modes, final List<Integer> days, final List<String> rooms) {
+
         for( int i = 0 ; i < classCodes.size() ; i++) {
             SubjectClass subjectClass = subject.getClassesById().get(classCodes.get(i));
             SubjectClassTime subjectClassTime;
@@ -393,6 +407,11 @@ public class SubjectJpaDao implements SubjectDao {
             }
         }
         return null;
+    }
+
+    @Override
+    public void editCredits(final Subject subject, final int credits) {
+        subject.setCredits(credits);
     }
 
 }

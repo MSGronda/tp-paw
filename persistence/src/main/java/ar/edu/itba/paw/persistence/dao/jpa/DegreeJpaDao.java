@@ -57,10 +57,17 @@ public class DegreeJpaDao implements DegreeDao {
     }
 
     @Override
-    public void addSubjectToDegrees(Subject subject, List<Long> degreeIds, List<Integer> semesters){
+    public void addSubjectToDegrees(final Subject subject, final List<Long> degreeIds, final List<Integer> semesters, final boolean rset){
+        if(rset) {
+            subject.getDegrees().clear();
+            em.flush();
+        }
         for( int i = 0 ; i < degreeIds.size() ; i++ ){
             Degree degree = em.find(Degree.class, degreeIds.get(i));
-            degree.getDegreeSubjects().add(new DegreeSubject(degree, subject, semesters.get(i)));
+            DegreeSubject ds = new DegreeSubject(degree, subject, semesters.get(i));
+            if(!degree.getDegreeSubjects().contains(ds)) {
+                degree.getDegreeSubjects().add(ds);
+            }
         }
     }
 }

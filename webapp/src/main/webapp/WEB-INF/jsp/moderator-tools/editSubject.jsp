@@ -214,7 +214,7 @@
 
 <main class="container-50">
     <c:url value="/subject/${subject.id}/edit" var="EditSubject"/>
-    <form:form modelAttribute="subjectForm" class="col s12" method="post" action="${EditSubject}">
+    <form:form modelAttribute="editSubjectForm" class="col s12" method="post" action="${EditSubject}">
         <div id="step1">
             <div class="table">
                 <table>
@@ -395,7 +395,7 @@
 <jsp:include page="../components/footer.jsp"/>
 <jsp:include page="../components/body_scripts.jsp"/>
 </body>
-
+<script src="${pageContext.request.contextPath}/js/create-edit-subject.js"></script>
 <script>
 
     window.onload = function () {
@@ -420,19 +420,16 @@
             professorMap[index] = "${prof.name}";
             index++;
         </c:forEach>
-        let classProfessorsList = [];
+        let classProfessorsList;
         <c:forEach var="classes" items="${subject.classes}">
-            <%--classCodeList.push("${classes.classId}");--%>
-
-             classProfessorsList = [];
-            <c:forEach var="subjectProfessors" items="${classes.professors}">
-                classProfessorsList.push("${subjectProfessors.name}");
-            </c:forEach>
-
             <c:forEach var="subjectTimes" items="${classes.classTimes}">
+                classProfessorsList = [];
+                <c:forEach var="subjectProfessors" items="${classes.professors}">
+                    classProfessorsList.push("${subjectProfessors.name}");
+                </c:forEach>
                 classCodeList.push("${classes.classId}");
                 classProfList.push(classProfessorsList);
-                classDayList.push(dayMap[${subjectTimes.day}].value);
+                classDayList.push("${subjectTimes.day}");
                 classStartTimeList.push("${subjectTimes.startTime}");
                 classEndTimeList.push("${subjectTimes.endTime}");
                 classBuildingList.push("${subjectTimes.building}");
@@ -445,65 +442,19 @@
         updatePrerequisiteItems();
         updateProfessorItems();
         updateClassItems();
+
+        document.getElementById('degreeIds-hiddenInput').value = JSON.stringify(degreeArray);
+        document.getElementById('semesters-hiddenInput').value = JSON.stringify(semesterArray);
+        document.getElementById('professors-hiddenInput').value = JSON.stringify(professorList);
+        document.getElementById('classCodes-hiddenInput').value = JSON.stringify(classCodeList);
+        document.getElementById('classProfessors-hiddenInput').value = JSON.stringify(classProfList);
+        document.getElementById('classDays-hiddenInput').value = JSON.stringify(classDayList);
+        document.getElementById('classStartTimes-hiddenInput').value = JSON.stringify(classStartTimeList);
+        document.getElementById('classEndTimes-hiddenInput').value = JSON.stringify(classEndTimeList);
+        document.getElementById('classBuildings-hiddenInput').value = JSON.stringify(classBuildingList);
+        document.getElementById('classRooms-hiddenInput').value = JSON.stringify(classRoomList);
+        document.getElementById('classModes-hiddenInput').value = JSON.stringify(classModeList);
     }
-
-
-    // lo que esta abajo hay que factorizar (lo usan: subject_create, register nada mas los steps)
-
-    function nextStep() {
-        let currentStepValue = getCurrentStep();
-        let currentStep = document.getElementById("step" + currentStepValue);
-        currentStep.style.display = "none";
-
-        let nextStep = document.getElementById("step" + ( currentStepValue + 1));
-        nextStep.style.display = "block";
-    }
-
-    function previousStep() {
-        let currentStepValue = getCurrentStep();
-        // Hide the current step
-        let currentStep = document.getElementById("step" + currentStepValue);
-        currentStep.style.display = "none";
-
-        // Show the previous step
-        let previousStep = document.getElementById("step" + (currentStepValue - 1));
-        previousStep.style.display = "block";
-    }
-
-    function getCurrentStep() {
-        for (let i = 1; i <= 2; i++) {
-            let step = document.getElementById("step" + i);
-            if (step.style.display !== "none") {
-                return i;
-            }
-        }
-    }
-
-    const dialog = document.querySelector('.dialog-header-actions');
-    const openButton = document.querySelector('#open-button')
-    const closeButton = dialog.querySelector('sl-button[slot="footer"]');
-
-    openButton.addEventListener('click', () => dialog.show());
-
-    const dialog2 = document.querySelector('.dialog-header-actions2');
-    const openButton2 = document.querySelector('#open-button2');
-
-    openButton2.addEventListener('click', () => dialog2.show());
-
-    const dialog3 = document.querySelector('.dialog-header-actions3');
-    const openButton3 = document.querySelector('#open-button3');
-    const closeButton3 = dialog3.querySelector('sl-button[slot="footer"]');
-
-    openButton3.addEventListener('click', () => dialog3.show());
-    closeButton3.addEventListener('click', () => dialog3.hide());
-
-
-    dialog.addEventListener('click', (event) => {
-        event.stopPropagation();
-    });
-
-    let requirementList = [];
-    let reqNameList = [];
 
     function addRequirement() {
         const requirement = document.getElementById("requirement");
@@ -554,12 +505,6 @@
         });
     }
 
-    let professorList = [];
-    let professorMap = {
-
-    }
-    let index = 0;
-
     function addProfessor() {
         const professor = document.getElementById("professor");
         const id = professor.value;
@@ -605,63 +550,6 @@
         profSurname.value = "";
         updateProfessorItems();
         dialog.hide();
-    }
-
-    function updateProfessorItems() {
-        let options = 0;
-        let selectedProfItems = document.getElementById('professorItems');
-        let classProfessors = document.getElementById('class-professors');
-        selectedProfItems.innerHTML = '';
-        classProfessors.innerHTML = '';
-        professorList.forEach((item) => {
-            let div = document.createElement('div');
-            div.className = 'list-rm';
-            let profItem = document.createElement('li');
-            let removeBtn = document.createElement('sl-icon-button');
-            removeBtn.name = "x";
-            removeBtn.addEventListener('click', () => {
-                let index = professorList.indexOf(item);
-                professorList.splice(index, 1);
-                updateProfessorItems();
-                document.getElementById('professors-hiddenInput').value = JSON.stringify(professorList);
-                //checkCompleteFields();
-            });
-            profItem.textContent = item;
-            selectedProfItems.appendChild(div);
-            div.appendChild(profItem);
-            div.appendChild(removeBtn);
-            let classProf = document.createElement('sl-option');
-
-            classProf.value=options++;
-            classProf.textContent=item;
-            classProfessors.appendChild(classProf);
-        });
-    }
-
-    let degreeArray = [];
-    let semesterArray = [];
-
-
-    function addDegreeSemester(){
-        const degree = document.getElementById("select-degree");
-        const semester = document.getElementById("select-semester");
-
-        if( degreeArray.includes(degree.value) || degree.value === "" || semester.value === ""){
-            degree.value = "";
-            semester.value = "";
-            return;
-        }
-
-        degreeArray.push(degree.value);
-        semesterArray.push(semester.value);
-        document.getElementById('degreeIds-hiddenInput').value = JSON.stringify(degreeArray);
-        document.getElementById('semesters-hiddenInput').value = JSON.stringify(semesterArray);
-        //checkCompleteFields();
-        checkForCorrelatives();
-        updateDegreeSemesterItems();
-        degree.value = "";
-        semester.value = "";
-        dialog3.hide();
     }
 
     let degreeMap = {
@@ -720,25 +608,6 @@
             div.appendChild(removeBtn);
         });
     }
-
-    function checkForCorrelatives(){
-        const requirementInput = document.getElementById('requirement');
-
-        const degrees = document.getElementById('degreeIds-hiddenInput').value;
-        requirementInput.disabled = !(
-            degrees.length > 2
-        )
-
-    }
-
-    let classCodeList = [];
-    let classProfList = [];
-    let classDayList = [];
-    let classStartTimeList = [];
-    let classEndTimeList = [];
-    let classBuildingList = [];
-    let classRoomList = [];
-    let classModeList = [];
 
     const modeMap = {
         "1":"Presencial",
@@ -841,69 +710,17 @@
         dialog2.hide();
     }
 
-    function updateClassItems() {
-        let selectedClassItems = document.getElementById('classItems');
-        selectedClassItems.innerHTML = '';
+    function checkCompleteFields(){
+        const credits = document.getElementById('subject-credits').value;
+        const professors = document.getElementById('professors-hiddenInput').value;
+        const degrees = document.getElementById('degreeIds-hiddenInput').value;
 
-        classCodeList.forEach((item, index) => {
-            let breakLine = document.createElement('br');
-            let tableRow = document.createElement('tr');
-            let classTitle = document.createElement('td');
-            let classProf = document.createElement('td');
-            let classDay = document.createElement('td');
-            let classStartTime = document.createElement('td');
-            let classEndTime = document.createElement('td');
-            let classMode = document.createElement('td');
-            let classBuilding = document.createElement('td');
-            let classRoom = document.createElement('td');
-            let classRemove = document.createElement('td');
-            let removeBtn = document.createElement('sl-icon-button');
-            classProf.className = "professors-cell-width";
-            removeBtn.className = 'list-rm';
-            removeBtn.name = "x";
-            removeBtn.addEventListener('click', () => {
-                classCodeList.splice(index, 1);
-                classProfList.splice(index, 1);
-                classDayList.splice(index, 1);
-                classStartTimeList.splice(index, 1);
-                classEndTimeList.splice(index, 1);
-                classBuildingList.splice(index, 1);
-                classRoomList.splice(index, 1);
-                classModeList.splice(index, 1);
-                document.getElementById('classCodes-hiddenInput').value = JSON.stringify(classCodeList);
-                document.getElementById('classProfessors-hiddenInput').value = JSON.stringify(classProfList);
-                document.getElementById('classDays-hiddenInput').value = JSON.stringify(classDayList);
-                document.getElementById('classStartTimes-hiddenInput').value = JSON.stringify(classStartTimeList);
-                document.getElementById('classEndTimes-hiddenInput').value = JSON.stringify(classEndTimeList);
-                document.getElementById('classBuildings-hiddenInput').value = JSON.stringify(classBuildingList);
-                document.getElementById('classRooms-hiddenInput').value = JSON.stringify(classRoomList);
-                document.getElementById('classModes-hiddenInput').value = JSON.stringify(classModeList);
-
-                updateClassItems();
-                checkCompleteFieldsForSubmit();
-            });
-            classTitle.textContent = item;
-            classProf.textContent= classProfList[index] ;
-            classDay.textContent= dayMap[classDayList[index]] ;
-            classStartTime.textContent= classStartTimeList[index] ;
-            classEndTime.textContent= classEndTimeList[index] ;
-            classMode.textContent= classModeList[index] ;
-            classBuilding.textContent= classBuildingList[index] ;
-            classRoom.textContent= classRoomList[index] ;
-            classRemove.appendChild(removeBtn);
-
-            tableRow.appendChild(classTitle);
-            tableRow.appendChild(classProf);
-            tableRow.appendChild(classDay);
-            tableRow.appendChild(classStartTime);
-            tableRow.appendChild(classEndTime);
-            tableRow.appendChild(classMode);
-            tableRow.appendChild(classBuilding);
-            tableRow.appendChild(classRoom);
-            tableRow.appendChild(classRemove);
-            selectedClassItems.appendChild(tableRow);
-            selectedClassItems.appendChild(breakLine);
-        });
+        document.getElementById('nextStep1').disabled = !(
+            credits > 0 && credits <= 12 &&
+            professors.length > 2 &&
+            degrees.length > 2
+        );
     }
+
 
 </script>

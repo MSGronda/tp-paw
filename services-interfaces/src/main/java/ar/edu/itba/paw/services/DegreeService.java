@@ -14,5 +14,5 @@ public interface DegreeService {
     Optional<Degree> findByName(final String name);
     OptionalInt findSubjectYearForDegree(final Subject subject, final Degree degree);
 
-    void addSubjectToDegrees(final Subject subject, final List<Long> degreeIds, final List<Integer> semesters);
+    void addSubjectToDegrees(final Subject subject, final List<Long> degreeIds, final List<Integer> semesters, final boolean rset);
 }
