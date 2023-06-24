@@ -89,7 +89,7 @@
         .edit-picture-button:hover {
             opacity: 100%;
         }
-        .edit-picture-icon {
+        .edit-icon {
             padding-top: 0.5rem;
         }
 
@@ -108,7 +108,7 @@
             <spring:message code="profile.picture.alt" var="pic" arguments="${user.username}" argumentSeparator="\0"/>
             <img class="profile-image" src="<c:url value="/image/${user.imageId}"/>" alt="${pic}" >
             <sl-button class="edit-picture-button" variant="primary" size="small" href="<c:url value="/profile/editprofilepicture"/>">
-                <sl-icon class="edit-picture-icon" name="pen" label="Edit"></sl-icon>
+                <sl-icon class="edit-icon" name="pen" label="Edit"></sl-icon>
             </sl-button>
         </div>
         <div class="title">
@@ -134,7 +134,7 @@
                         <td>
                             <div class="icon-area">
                                 <sl-button variant="primary" size="small" outline  href="<c:url value="/profile/editdata"/>">
-                                    <sl-icon name="pen" label="Edit"></sl-icon>
+                                    <sl-icon class="edit-icon" name="pen" label="Edit"></sl-icon>
                                 </sl-button>
                             </div>
 
