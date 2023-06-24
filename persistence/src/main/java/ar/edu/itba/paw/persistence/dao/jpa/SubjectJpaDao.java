@@ -31,22 +31,24 @@ public class SubjectJpaDao implements SubjectDao {
     @Override
     public List<Subject> findAllThatUserCanDo(User user) {
         @SuppressWarnings("unchecked") final List<Integer> ids =
-                em.createNativeQuery("SELECT id FROM subjects s\n" +
-                                "WHERE NOT EXISTS (\n" +
-                                "    SELECT id FROM prereqsubjects p\n" +
-                                "    WHERE p.idsub = s.id\n" +
-                                "    AND NOT EXISTS (\n" +
-                                "        SELECT * FROM usersubjectprogress usp\n" +
-                                "        WHERE usp.idsub = p.idprereq\n" +
-                                "        AND usp.iduser = ?\n" +
-                                "    )\n" +
-                                ")\n" +
-                                "AND s.id NOT IN (\n" +
-                                "    SELECT idsub FROM usersubjectprogress usp\n" +
-                                "    WHERE usp.iduser = ?\n" +
+                em.createNativeQuery("SELECT id FROM subjects s FULL JOIN subjectsdegrees sd ON s.id = sd.idsub\n" +
+                                "WHERE sd.iddeg = ?\n " +
+                                "AND NOT EXISTS ( \n" +
+                                "    SELECT id FROM prereqsubjects p \n" +
+                                "    WHERE p.idsub = s.id \n" +
+                                "    AND NOT EXISTS ( \n" +
+                                "        SELECT * FROM usersubjectprogress usp \n" +
+                                "        WHERE usp.idsub = p.idprereq \n" +
+                                "        AND usp.iduser = ? \n" +
+                                "    ) \n" +
+                                ") \n" +
+                                "AND s.id NOT IN ( \n" +
+                                "    SELECT idsub FROM usersubjectprogress usp \n" +
+                                "    WHERE usp.iduser = ? \n" +
                                 ")")
-                .setParameter(1, user.getId())
-                .setParameter(2,user.getId())
+                .setParameter(1,user.getDegree().getId())
+                .setParameter(2, user.getId())
+                .setParameter(3,user.getId())
                 .getResultList();
 
         if(ids.isEmpty()) return Collections.emptyList();
@@ -60,14 +62,15 @@ public class SubjectJpaDao implements SubjectDao {
     public List<Subject> findAllThatUserHasNotDone(User user){
         @SuppressWarnings("unchecked")
         final List<Integer> ids =
-                em.createNativeQuery("SELECT id\n" +
-                        "FROM subjects s\n" +
-                        "WHERE NOT EXISTS (\n" +
-                        "    SELECT *\n" +
-                        "\tFROM usersubjectprogress up\n" +
-                        "\tWHERE up.idsub = s.id AND up.subjectstate = 1 AND up.iduser = ?\n" +
-                        ")\n")
-                .setParameter(1, user.getId())
+                em.createNativeQuery("SELECT id FROM subjects s FULL JOIN subjectsdegrees sd ON s.id = sd.idsub\n" +
+                                "WHERE sd.iddeg = ?\n " +
+                                "AND NOT EXISTS ( \n" +
+                                "    SELECT * \n" +
+                                "FROM usersubjectprogress up \n" +
+                                "WHERE up.idsub = s.id AND up.subjectstate = 1 AND up.iduser = ? \n" +
+                                ")")
+                .setParameter(1, user.getDegree().getId())
+                .setParameter(2, user.getId())
                 .getResultList();
 
         if(ids.isEmpty()) return Collections.emptyList();
@@ -98,8 +101,9 @@ public class SubjectJpaDao implements SubjectDao {
     public List<Subject> findAllThatUserCouldUnlock(User user){
         @SuppressWarnings("unchecked")
         final List<Integer> ids = em.createNativeQuery("SELECT DISTINCT s.id\n" +
-                        "FROM subjects s\n" +
-                        "WHERE s.id NOT IN (\n" +
+                        "FROM subjects s FULL JOIN subjectsdegrees sd on s.id = sd.idsub\n" +
+                        "WHERE sd.iddeg = ? " +
+                        "AND s.id NOT IN (\n" +
                         "    SELECT up.idsub\n" +
                         "    FROM usersubjectprogress up\n" +
                         "    WHERE up.subjectstate = 1 AND up.iduser = ?\n" +
@@ -148,12 +152,13 @@ public class SubjectJpaDao implements SubjectDao {
                         "        )\n" +
                         "        )\n" +
                         ")")
-                .setParameter(1, user.getId())
+                .setParameter(1, user.getDegree().getId())
                 .setParameter(2, user.getId())
                 .setParameter(3, user.getId())
                 .setParameter(4, user.getId())
                 .setParameter(5, user.getId())
                 .setParameter(6, user.getId())
+                .setParameter(7, user.getId())
                 .getResultList();
 
         if(ids.isEmpty()) return Collections.emptyList();
