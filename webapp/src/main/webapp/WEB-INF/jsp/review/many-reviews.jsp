@@ -93,6 +93,12 @@
 
     function skip(){
         const params = new URLSearchParams(window.location.search);
+
+        if(parseInt(params.get("current")) === parseInt(params.get("total")) - 1){
+            window.location.href = '<c:url value="/"/>'
+            return;
+        }
+
         const r = params.get("r");
 
         const subs =  r.split(" ");

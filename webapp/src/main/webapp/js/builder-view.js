@@ -241,13 +241,13 @@ function createSubjectDeselectAction(subject,idClass){
         updateOverallDifficulty(-(subject.difficulty+1))
     }
 }
-function _modifyBanners(delta, prefix, scriptVariable){
+function _modifyBanners(delta, prefix, statsName){
 
-    overviewStats[scriptVariable] += delta;
+    overviewStats[statsName] += delta;
 
     let average = 0;
     if(Object.keys(schedule.chosenSubjectMap).length !== 0){
-        average = (overviewStats[scriptVariable] *  (overviewStats.totalCredits/24) ) / Object.keys(schedule.chosenSubjectMap).length
+        average = (overviewStats[statsName] *  (overviewStats.totalCredits/24) ) / Object.keys(schedule.chosenSubjectMap).length
     }
 
     if(average===0){
