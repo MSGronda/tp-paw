@@ -70,7 +70,7 @@ public class SemesterBuilderController {
         }
         User user = authUserService.getCurrentUser();
         String url = userService.getSemesterSubmitRedirectUrl(user);
-        userService.finishSemester(user);
+        userService.finishSemester(user, semesterForm.getSubjectIds());
         return new ModelAndView(url);
     }
 

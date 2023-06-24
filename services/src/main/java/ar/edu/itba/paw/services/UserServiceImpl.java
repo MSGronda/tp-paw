@@ -316,13 +316,8 @@ public class UserServiceImpl implements UserService {
 
     @Transactional
     @Override
-    public void finishSemester(final User user) {
-        final List<String> userSemesterSubjectIds = user.getUserSemester().stream()
-                .map(SubjectClass::getSubject)
-                .map(Subject::getId)
-                .collect(Collectors.toList());
-
-        updateSubjectProgress(user, userSemesterSubjectIds, SubjectProgress.DONE);
+    public void finishSemester(final User user, final String subjectIds) {
+        updateSubjectProgress(user, parseJsonList(subjectIds), SubjectProgress.DONE);
         clearSemester(user);
     }
 
