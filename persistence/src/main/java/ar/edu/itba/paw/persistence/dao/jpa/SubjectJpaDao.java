@@ -179,19 +179,24 @@ public class SubjectJpaDao implements SubjectDao {
         return search(user, name, page, null, null, null);
     }
 
-    @Override
-    public List<Subject> search(
+    private List<Subject> searchSpecific(
+            final boolean searchAll,
             final User user,
             final String name,
             final int page,
             final Map<SubjectFilterField, String> filters,
             final SubjectOrderField orderBy, OrderDir dir
-    ) {
+    ){
         //TODO: implement using CriteriaBuilder
 
-        final StringBuilder nativeQuerySb = new StringBuilder(
-                "SELECT s.id FROM subjects s LEFT JOIN subjectsdegrees sd ON s.id = sd.idsub WHERE sd.iddeg = ? AND subname ILIKE ?"
-        );
+        final StringBuilder nativeQuerySb;
+
+        if(searchAll){
+            nativeQuerySb = new StringBuilder("SELECT s.id FROM subjects s WHERE subname ILIKE ?");
+        }
+        else{
+            nativeQuerySb = new StringBuilder("SELECT s.id FROM subjects s LEFT JOIN subjectsdegrees sd ON s.id = sd.idsub WHERE sd.iddeg = ? AND subname ILIKE ?");
+        }
 
         List<Object> filterValues = null;
         if (filters != null) {
@@ -201,12 +206,21 @@ public class SubjectJpaDao implements SubjectDao {
         appendOrderSql(nativeQuerySb, orderBy, dir);
 
         final Query nativeQuery = em.createNativeQuery(nativeQuerySb.toString());
-        nativeQuery.setParameter(1, user.getDegree().getId());
-        nativeQuery.setParameter(2, "%" + sanitizeWildcards(name) + "%");
+
+        int offset;
+        if(!searchAll){
+            nativeQuery.setParameter(1, user.getDegree().getId());
+            nativeQuery.setParameter(2, "%" + sanitizeWildcards(name) + "%");
+            offset = 3;
+        }
+        else{
+            nativeQuery.setParameter(1, "%" + sanitizeWildcards(name) + "%");
+            offset = 2;
+        }
 
         if (filters != null) {
             for (int i = 0; i < filterValues.size(); i++) {
-                nativeQuery.setParameter(i + 3, filterValues.get(i));
+                nativeQuery.setParameter(i + offset, filterValues.get(i));
             }
         }
 
@@ -226,10 +240,40 @@ public class SubjectJpaDao implements SubjectDao {
     }
 
     @Override
-    public int getTotalPagesForSearch(final User user, final String name, final Map<SubjectFilterField, String> filters) {
-        final StringBuilder nativeQuerySb = new StringBuilder(
-                "SELECT count(*) FROM subjects s LEFT JOIN subjectsdegrees sd ON s.id = sd.idsub WHERE sd.iddeg = ? AND subname ILIKE ?"
-        );
+    public List<Subject> search(
+            final User user,
+            final String name,
+            final int page,
+            final Map<SubjectFilterField, String> filters,
+            final SubjectOrderField orderBy, OrderDir dir
+    ) {
+        return searchSpecific(false, user, name, page, filters, orderBy, dir);
+    }
+
+    @Override
+    public List<Subject> searchAll(
+            final String name,
+            final int page,
+            final Map<SubjectFilterField, String> filters,
+            final SubjectOrderField orderBy, OrderDir dir
+    ){
+        return searchSpecific(true, null, name, page, filters, orderBy, dir);
+    }
+
+    private int getTotalPagesForSearchSpecific(
+            final boolean searchAll,
+            final User user,
+            final String name,
+            final Map<SubjectFilterField, String> filters)
+    {
+        final StringBuilder nativeQuerySb;
+        if(searchAll){
+            nativeQuerySb = new StringBuilder("SELECT count(*) FROM subjects s WHERE subname ILIKE ?");
+        }
+        else{
+            nativeQuerySb = new StringBuilder("SELECT count(*) FROM subjects s LEFT JOIN subjectsdegrees sd ON s.id = sd.idsub WHERE sd.iddeg = ? AND subname ILIKE ?");
+        }
+
 
         List<Object> filterValues = null;
         if (filters != null) {
@@ -237,16 +281,36 @@ public class SubjectJpaDao implements SubjectDao {
         }
 
         final Query nativeQuery = em.createNativeQuery(nativeQuerySb.toString());
-        nativeQuery.setParameter(1, user.getDegree().getId());
-        nativeQuery.setParameter(2, "%" + sanitizeWildcards(name) + "%");
+
+        int offset;
+        if(!searchAll){
+            nativeQuery.setParameter(1, user.getDegree().getId());
+            nativeQuery.setParameter(2, "%" + sanitizeWildcards(name) + "%");
+            offset = 3;
+        }
+        else{
+            nativeQuery.setParameter(1, "%" + sanitizeWildcards(name) + "%");
+            offset = 2;
+        }
+
 
         if (filters != null) {
             for (int i = 0; i < filterValues.size(); i++) {
-                nativeQuery.setParameter(i + 3, filterValues.get(i));
+                nativeQuery.setParameter(i + offset, filterValues.get(i));
             }
         }
 
         return (int) Math.max(1, Math.ceil(((Number) nativeQuery.getSingleResult()).doubleValue() / PAGE_SIZE));
+    }
+
+    @Override
+    public int getTotalPagesForSearch(final User user, final String name, final Map<SubjectFilterField, String> filters) {
+        return getTotalPagesForSearchSpecific(false, user, name, filters);
+    }
+
+    @Override
+    public int getTotalPagesForSearchAll(final String name, final Map<SubjectFilterField, String> filters) {
+        return getTotalPagesForSearchSpecific(true, null, name, filters);
     }
 
     @Override

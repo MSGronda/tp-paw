@@ -23,7 +23,14 @@ public interface SubjectDao {
             Map<SubjectFilterField, String> filters,
             SubjectOrderField orderBy, OrderDir dir
     );
+    List<Subject> searchAll(
+            String name,
+            int page,
+            Map<SubjectFilterField, String> filters,
+            SubjectOrderField orderBy, OrderDir dir
+    );
     int getTotalPagesForSearch(final User user, final String name, final Map<SubjectFilterField, String> filters);
+    int getTotalPagesForSearchAll(final String name, final Map<SubjectFilterField, String> filters);
     Map<SubjectFilterField, List<String>> getRelevantFiltersForSearch(final String name, final Map<SubjectFilterField,String> filters);
 
     Map<User,Set<Subject>> getAllUserUnreviewedNotificationSubjects();

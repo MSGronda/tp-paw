@@ -67,16 +67,25 @@ public class SubjectServiceImpl implements SubjectService {
         final OrderDir orderDir = OrderDir.parse(dir);
         final SubjectOrderField orderField = SubjectOrderField.parse(orderBy);
 
+        if(user.isEditor()){
+            return subjectDao.searchAll(name, page, getFilterMap(credits, department), orderField, orderDir);
+        }
         return subjectDao.search(user, name, page, getFilterMap(credits, department), orderField, orderDir);
     }
 
     @Override
     public int getTotalPagesForSearch(final User user, final String name){
+        if(user.isEditor()){
+            return subjectDao.getTotalPagesForSearchAll(name, null);
+        }
         return subjectDao.getTotalPagesForSearch(user, name, null);
     }
 
     @Override
     public int getTotalPagesForSearch(final User user, final String name, final Integer credits, final String department){
+        if(user.isEditor()){
+            return subjectDao.getTotalPagesForSearchAll(name, getFilterMap(credits, department));
+        }
         return subjectDao.getTotalPagesForSearch(user, name, getFilterMap(credits, department));
     }
 
