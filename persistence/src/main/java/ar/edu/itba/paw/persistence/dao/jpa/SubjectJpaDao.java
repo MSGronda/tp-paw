@@ -175,12 +175,13 @@ public class SubjectJpaDao implements SubjectDao {
     }
 
     @Override
-    public List<Subject> search(final String name, final int page) {
-        return search(name, page, null, null, null);
+    public List<Subject> search(final User user, final String name, final int page) {
+        return search(user, name, page, null, null, null);
     }
 
     @Override
     public List<Subject> search(
+            final User user,
             final String name,
             final int page,
             final Map<SubjectFilterField, String> filters,
@@ -188,7 +189,9 @@ public class SubjectJpaDao implements SubjectDao {
     ) {
         //TODO: implement using CriteriaBuilder
 
-        final StringBuilder nativeQuerySb = new StringBuilder("SELECT id FROM subjects WHERE subname ILIKE ?");
+        final StringBuilder nativeQuerySb = new StringBuilder(
+                "SELECT s.id FROM subjects s LEFT JOIN subjectsdegrees sd ON s.id = sd.idsub WHERE sd.iddeg = ? AND subname ILIKE ?"
+        );
 
         List<Object> filterValues = null;
         if (filters != null) {
@@ -198,11 +201,12 @@ public class SubjectJpaDao implements SubjectDao {
         appendOrderSql(nativeQuerySb, orderBy, dir);
 
         final Query nativeQuery = em.createNativeQuery(nativeQuerySb.toString());
-        nativeQuery.setParameter(1, "%" + sanitizeWildcards(name) + "%");
+        nativeQuery.setParameter(1, user.getDegree().getId());
+        nativeQuery.setParameter(2, "%" + sanitizeWildcards(name) + "%");
 
         if (filters != null) {
             for (int i = 0; i < filterValues.size(); i++) {
-                nativeQuery.setParameter(i + 2, filterValues.get(i));
+                nativeQuery.setParameter(i + 3, filterValues.get(i));
             }
         }
 
@@ -222,8 +226,10 @@ public class SubjectJpaDao implements SubjectDao {
     }
 
     @Override
-    public int getTotalPagesForSearch(final String name, final Map<SubjectFilterField, String> filters) {
-        final StringBuilder nativeQuerySb = new StringBuilder("SELECT count(*) FROM subjects WHERE subname ILIKE ?");
+    public int getTotalPagesForSearch(final User user, final String name, final Map<SubjectFilterField, String> filters) {
+        final StringBuilder nativeQuerySb = new StringBuilder(
+                "SELECT count(*) FROM subjects s LEFT JOIN subjectsdegrees sd ON s.id = sd.idsub WHERE sd.iddeg = ? AND subname ILIKE ?"
+        );
 
         List<Object> filterValues = null;
         if (filters != null) {
@@ -231,11 +237,12 @@ public class SubjectJpaDao implements SubjectDao {
         }
 
         final Query nativeQuery = em.createNativeQuery(nativeQuerySb.toString());
-        nativeQuery.setParameter(1, "%" + sanitizeWildcards(name) + "%");
+        nativeQuery.setParameter(1, user.getDegree().getId());
+        nativeQuery.setParameter(2, "%" + sanitizeWildcards(name) + "%");
 
         if (filters != null) {
             for (int i = 0; i < filterValues.size(); i++) {
-                nativeQuery.setParameter(i + 2, filterValues.get(i));
+                nativeQuery.setParameter(i + 3, filterValues.get(i));
             }
         }
 

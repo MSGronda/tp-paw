@@ -1,5 +1,6 @@
 package ar.edu.itba.paw.webapp.controller;
 
+import ar.edu.itba.paw.models.User;
 import ar.edu.itba.paw.services.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -28,11 +29,13 @@ public class SearchController {
             @RequestParam(name = "credits", required = false) final Integer credits,
             @RequestParam(name = "department", required = false) final String department
     ) {
+
+        final User user = authUserService.getCurrentUser();
         final ModelAndView mav = new ModelAndView("subjects/search");
-        mav.addObject("subjects", subjectService.search(query, page, orderBy, dir, credits, department));
+        mav.addObject("subjects", subjectService.search(user, query, page, orderBy, dir, credits, department));
         mav.addObject("subjectProgress", authUserService.getCurrentUser().getAllSubjectProgress());
         mav.addObject("relevantFilters", subjectService.getRelevantFiltersForSearch(query, credits, department));
-        mav.addObject("totalPages", subjectService.getTotalPagesForSearch(query, credits, department));
+        mav.addObject("totalPages", subjectService.getTotalPagesForSearch(user, query, credits, department));
         mav.addObject("query", query);
         mav.addObject("currentPage", page);
         return mav;

@@ -15,14 +15,15 @@ public interface SubjectDao {
     Optional<Subject> findById(final String id);
     List<Subject> getAll();
 
-    List<Subject> search(final String name, final int page);
+    List<Subject> search(final User user, final String name, final int page);
     List<Subject> search(
+            User user,
             String name,
             int page,
             Map<SubjectFilterField, String> filters,
             SubjectOrderField orderBy, OrderDir dir
     );
-    int getTotalPagesForSearch(final String name, final Map<SubjectFilterField, String> filters);
+    int getTotalPagesForSearch(final User user, final String name, final Map<SubjectFilterField, String> filters);
     Map<SubjectFilterField, List<String>> getRelevantFiltersForSearch(final String name, final Map<SubjectFilterField,String> filters);
 
     Map<User,Set<Subject>> getAllUserUnreviewedNotificationSubjects();
