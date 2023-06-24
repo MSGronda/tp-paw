@@ -8,6 +8,7 @@ import javax.validation.constraints.AssertTrue;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
+import java.util.Objects;
 
 public class UserForm {
     @Email
@@ -32,7 +33,7 @@ public class UserForm {
 
     @AssertTrue
     public boolean isPasswordConfirmationEqual() {
-        return this.password.equals(passwordConfirmation);
+        return Objects.equals(password, passwordConfirmation);
     }
 
     public void setEmail(String email) {
