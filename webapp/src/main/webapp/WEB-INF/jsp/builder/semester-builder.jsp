@@ -353,8 +353,22 @@
                 <sl-menu-item id="credit-orderby">
                   <div class="order-menu">
                     <spring:message code="search.credits"/>
-                    <sl-icon id="credits-down" class="icon" slot="suffix" name="arrow-down"></sl-icon>
-                    <sl-icon style="display: none" id="credits-up" class="icon" slot="suffix" name="arrow-up"></sl-icon>
+                    <sl-icon style="display: none" id="order-credits-down" class="icon" slot="suffix" name="arrow-down"></sl-icon>
+                    <sl-icon style="display: none" id="order-credits-up" class="icon" slot="suffix" name="arrow-up"></sl-icon>
+                  </div>
+                </sl-menu-item>
+                <sl-menu-item id="difficulty-orderby">
+                  <div class="order-menu">
+                    <spring:message code="search.difficulty"/>
+                    <sl-icon style="display: none" id="order-difficulty-down" class="icon" slot="suffix" name="arrow-down"></sl-icon>
+                    <sl-icon style="display: none" id="order-difficulty-up" class="icon" slot="suffix" name="arrow-up"></sl-icon>
+                  </div>
+                </sl-menu-item>
+                <sl-menu-item id="timedemand-orderby">
+                  <div class="order-menu">
+                    <spring:message code="search.timedemand"/>
+                    <sl-icon style="display: none" id="order-timedemand-down" class="icon" slot="suffix" name="arrow-down"></sl-icon>
+                    <sl-icon style="display: none" id="order-timedemand-up" class="icon" slot="suffix" name="arrow-up"></sl-icon>
                   </div>
                 </sl-menu-item>
               </sl-menu>
@@ -814,8 +828,11 @@
     // set exit class selection action
     document.getElementById('exit-class-selector').addEventListener('click', exitClassSelectionAction);
 
-    // set order by action for credits
+    // set order by action for all sorters
     document.getElementById('credit-orderby').addEventListener('click', orderByCreditAction)
+    document.getElementById('difficulty-orderby').addEventListener('click', orderByDifficultyAction)
+    document.getElementById('timedemand-orderby').addEventListener('click', orderByTimeDemandAction)
+
 
     // set switch to table view
     document.getElementById('switch-to-table-button').addEventListener('click',switchToTableView);

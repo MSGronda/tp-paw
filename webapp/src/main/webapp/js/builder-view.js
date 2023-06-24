@@ -4,21 +4,59 @@ function sortByCreditsDesc(a,b){
 function sortByCreditsAsc(a,b){
     return  a.credits-b.credits
 }
-function orderByCreditAction() {
-    let sorter;
-    if (currentOrder === 'creditsDesc') {
-        sorter = sortByCreditsAsc
-        document.getElementById('credits-down').style.display = 'none'
-        document.getElementById('credits-up').style.display = 'flex'
-        currentOrder = 'creditsAsc'
-    } else {
-        sorter = sortByCreditsDesc
-        document.getElementById('credits-down').style.display = 'flex'
-        document.getElementById('credits-up').style.display = 'none'
-        currentOrder = 'creditsDesc'
-    }
+function sortByDifficultyDesc(a,b){
+    return  b.difficulty - a.difficulty
+}
+function sortByDifficultyAsc(a,b){
+    return  a.difficulty-b.difficulty
+}
+function sortByTimeDemandDesc(a,b){
+    return  b.timeDemand - a.timeDemand
+}
+function sortByTimeDemandAsc(a,b){
+    return  a.timeDemand-b.timeDemand
+}
+
+function orderByAction(name, sorter){
+    let orderArrows = document.querySelectorAll('[id^="order-"]');
+    orderArrows.forEach((elem) => {
+        if(elem.id !== name)
+            elem.style.display = 'none';
+        else
+            elem.style.display = 'flex';
+    })
     subjectClasses.sort(sorter)
     rebuildSubjectList()
+}
+function orderByCreditAction() {
+    if(currentOrder === 'order-credits-down'){
+        orderByAction('order-credits-up', sortByCreditsAsc)
+        currentOrder = 'order-credits-up'
+    }
+    else{
+        orderByAction('order-credits-down', sortByCreditsDesc)
+        currentOrder = 'order-credits-down'
+    }
+}
+function orderByDifficultyAction() {
+    if(currentOrder === 'order-difficulty-down'){
+        orderByAction('order-difficulty-up', sortByDifficultyAsc)
+        currentOrder = 'order-difficulty-up'
+    }
+    else{
+        orderByAction('order-difficulty-down', sortByDifficultyDesc)
+        currentOrder = 'order-difficulty-down'
+    }
+}
+function orderByTimeDemandAction() {
+    if(currentOrder === 'order-timedemand-down'){
+        orderByAction('order-timedemand-up', sortByTimeDemandAsc)
+        currentOrder = 'order-timedemand-up'
+    }
+    else{
+        orderByAction('order-timedemand-down', sortByTimeDemandDesc)
+        currentOrder = 'order-timedemand-down'
+    }
 }
 function rebuildSubjectList(){
     const subjectList = document.getElementById('subject-list');
