@@ -21,7 +21,7 @@ public class UserForm {
 
     @NotBlank
     @Size(min = 3, max = 20)
-    @Pattern(regexp = "^[A-Za-z][A-Za-z_]*$")
+    @Pattern(regexp = "^\\p{L}(\\p{L}|\\s|_)*$")
     private String name;
 
     private String passwordConfirmation;

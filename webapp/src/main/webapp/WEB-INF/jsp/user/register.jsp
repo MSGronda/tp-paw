@@ -82,7 +82,7 @@
         </form:form>
 </main>
 <jsp:include page="../components/footer.jsp"/>
-<script>    //se define este mapa para que funcione los metodos del js compartido
+<script >    //se define este mapa para que funcione los metodos del js compartido
     const subjectProgress = {};
 
     window.onload = function (){
@@ -98,7 +98,7 @@
         const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         const email = document.getElementById('email_input').value;
 
-        const usernamePattern = /^[A-Za-z][A-Za-z_]*$/;
+        const usernamePattern = /^\p{L}(\p{L}|\s|_)*$/u;
         const username = document.getElementById('username_input').value;
         const password = document.getElementById('password_input').value;
         const passwordConfirmation = document.getElementById('passwordConfirmation_input').value;
