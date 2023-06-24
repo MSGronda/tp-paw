@@ -67,27 +67,6 @@ a {
     background-color: #3a6dce;
 }
 
-sl-card.subject-card {
-    min-width: 100%;
-}
-
-sl-card.subject-card::part(base) {
-    min-height: 100%;
-}
-
-sl-card.subject-card::part(body) {
-    flex: 1 0 auto;
-}
-
-.chip-row {
-    display: flex;
-    flex-direction: row;
-    flex-wrap: wrap;
-    justify-content: flex-start;
-    align-items: center;
-    gap: 0.25rem;
-
-}
 .container-90{
     width: min(max(800px, 90%), 100%);
     padding-left: 2rem;
@@ -155,4 +134,42 @@ sl-card.subject-card::part(body) {
     justify-content: space-around;
     align-items: center;
     padding-bottom: 3rem;
+}
+
+/* SUBJECT CARD  */
+sl-card.subject-card {
+    min-width: 100%;
+    transition: transform 0.2s ease-in-out;
+    -webkit-font-smoothing: subpixel-antialiased;
+    backface-visibility: hidden;
+}
+sl-card.subject-card:hover {
+    transform: scale(1.03);
+}
+sl-card.subject-card::part(base) {
+    min-height: 100%;
+}
+sl-card.subject-card::part(body) {
+    flex: 1 0 auto;
+}
+.chip-row {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 0.25rem;
+
+}
+.class-info {
+    padding-top: 0.75rem;
+}
+.review-count {
+    padding-left: 0.1rem;
+}
+.chiprow span {
+    font-size: 11px;
+}
+.progress-icon {
+    padding-left: 1rem;
 }

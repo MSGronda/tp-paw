@@ -8,22 +8,6 @@
 <c:set var="subject" value="${requestScope.subject}"/>
 <c:set var="progress" value="${requestScope.progress}"/>
 
-<style>
-  .class-info{
-    padding-top: 0.75rem;
-  }
-  .review-count{
-    padding-left: 0.1rem;
-  }
-  span{
-    font-size: 11px;
-  }
-  .progress-icon{
-    padding-left: 1rem;
-  }
-</style>
-
-
 <a href='<c:url value="/subject/${subject.id}"/>'>
 <sl-card class="review-card subject-card" >
   <div>
