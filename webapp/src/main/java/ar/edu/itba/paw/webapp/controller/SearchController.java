@@ -33,8 +33,8 @@ public class SearchController {
         final User user = authUserService.getCurrentUser();
         final ModelAndView mav = new ModelAndView("subjects/search");
         mav.addObject("subjects", subjectService.search(user, query, page, orderBy, dir, credits, department));
-        mav.addObject("subjectProgress", authUserService.getCurrentUser().getAllSubjectProgress());
-        mav.addObject("relevantFilters", subjectService.getRelevantFiltersForSearch(query, credits, department));
+        mav.addObject("subjectProgress", user.getAllSubjectProgress());
+        mav.addObject("relevantFilters", subjectService.getRelevantFiltersForSearch(user, query, credits, department));
         mav.addObject("totalPages", subjectService.getTotalPagesForSearch(user, query, credits, department));
         mav.addObject("query", query);
         mav.addObject("currentPage", page);

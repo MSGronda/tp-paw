@@ -1,5 +1,6 @@
 package ar.edu.itba.paw.persistence.dao.jpa;
 
+import ar.edu.itba.paw.models.Degree;
 import ar.edu.itba.paw.models.Subject;
 import ar.edu.itba.paw.models.User;
 import ar.edu.itba.paw.models.enums.OrderDir;
@@ -313,13 +314,23 @@ public class SubjectJpaDao implements SubjectDao {
         return getTotalPagesForSearchSpecific(true, null, name, filters);
     }
 
-    @Override
-    public Map<SubjectFilterField, List<String>> getRelevantFiltersForSearch(final String name, final Map<SubjectFilterField, String> filters) {
+
+
+    private Map<SubjectFilterField, List<String>> getRelevantFiltersForSearchSpecific(final Degree degree, final String name, final Map<SubjectFilterField, String> filters) {
         final Map<SubjectFilterField, List<String>> relevant = new HashMap<>();
 
         for (SubjectFilterField field : SubjectFilterField.values()) {
-            final StringBuilder nativeQuerySb =
-                    new StringBuilder("SELECT DISTINCT ").append(field.getColumn()).append(" FROM subjects WHERE subname ILIKE ?");
+            final StringBuilder nativeQuerySb;
+            if(degree != null){
+                nativeQuerySb = new StringBuilder("SELECT DISTINCT ").append(field.getColumn()).append(
+                        " FROM subjects s LEFT JOIN subjectsdegrees sd ON s.id = sd.idsub WHERE sd.iddeg = ? AND subname ILIKE ?"
+                );
+            }
+            else{
+                nativeQuerySb = new StringBuilder("SELECT DISTINCT ").append(field.getColumn()).append(
+                            " FROM subjects WHERE subname ILIKE ?"
+                );
+            }
 
             List<Object> filterValues = null;
             if (filters != null) {
@@ -328,15 +339,21 @@ public class SubjectJpaDao implements SubjectDao {
 
             final Query nativeQuery = em.createNativeQuery(nativeQuerySb.toString());
 
+            int offset = degree == null ? 2 : 3;
             if (filters != null) {
                 for (int i = 0; i < filterValues.size(); i++) {
-                    nativeQuery.setParameter(i + 2, filterValues.get(i));
+                    nativeQuery.setParameter(i + offset, filterValues.get(i));
                 }
             }
+            if(degree != null){
+                nativeQuery.setParameter(1, degree.getId());
+                nativeQuery.setParameter(2, "%" + sanitizeWildcards(name) + "%");
+            }
+            else{
+                nativeQuery.setParameter(1, "%" + sanitizeWildcards(name) + "%");
+            }
 
-            @SuppressWarnings("unchecked") final List<Object> fieldValues = nativeQuery
-                    .setParameter(1, "%" + sanitizeWildcards(name) + "%")
-                    .getResultList();
+            @SuppressWarnings("unchecked") final List<Object> fieldValues = nativeQuery.getResultList();
 
             final List<String> relevantValues =
                     new HashSet<>(fieldValues)
@@ -350,6 +367,15 @@ public class SubjectJpaDao implements SubjectDao {
         }
 
         return relevant;
+    }
+
+    public Map<SubjectFilterField, List<String>> getRelevantFiltersForSearch(final Degree degree, final String name, final Map<SubjectFilterField, String> filters){
+        return getRelevantFiltersForSearchSpecific(degree, name, filters);
+    }
+
+    @Override
+    public Map<SubjectFilterField, List<String>> getRelevantFiltersForSearch(final String name, final Map<SubjectFilterField, String> filters) {
+        return getRelevantFiltersForSearchSpecific(null, name, filters);
     }
 
     @Override

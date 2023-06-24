@@ -26,6 +26,8 @@ public interface SubjectService {
     int getTotalPagesForSearch(final User user, final String name);
     int getTotalPagesForSearch(final User user, final String name, final Integer credits, final String department);
     Map<String, List<String>> getRelevantFiltersForSearch(final String name);
+    Map<String, List<String>> getRelevantFiltersForSearch(final User user, final String name);
+    Map<String, List<String>> getRelevantFiltersForSearch(final User user, final String name, final Integer credits, final String department);
     Map<String, List<String>> getRelevantFiltersForSearch(final String name, final Integer credits, final String department);
 
     Map<User,Set<Subject>> getAllUserUnreviewedNotificationSubjects();

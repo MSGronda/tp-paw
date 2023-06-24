@@ -1,5 +1,6 @@
 package ar.edu.itba.paw.persistence.dao;
 
+import ar.edu.itba.paw.models.Degree;
 import ar.edu.itba.paw.models.Subject;
 import ar.edu.itba.paw.models.User;
 import ar.edu.itba.paw.models.enums.OrderDir;
@@ -32,7 +33,7 @@ public interface SubjectDao {
     int getTotalPagesForSearch(final User user, final String name, final Map<SubjectFilterField, String> filters);
     int getTotalPagesForSearchAll(final String name, final Map<SubjectFilterField, String> filters);
     Map<SubjectFilterField, List<String>> getRelevantFiltersForSearch(final String name, final Map<SubjectFilterField,String> filters);
-
+    Map<SubjectFilterField, List<String>> getRelevantFiltersForSearch(final Degree degree, final String name, final Map<SubjectFilterField,String> filters);
     Map<User,Set<Subject>> getAllUserUnreviewedNotificationSubjects();
     void updateUnreviewedNotificationTime();
 

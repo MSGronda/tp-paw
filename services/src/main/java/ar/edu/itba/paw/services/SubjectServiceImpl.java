@@ -99,7 +99,6 @@ public class SubjectServiceImpl implements SubjectService {
                         Map.Entry::getValue
                 ));
     }
-
     @Override
     public Map<String, List<String>> getRelevantFiltersForSearch(final String name, final Integer credits, final String department) {
         return subjectDao.getRelevantFiltersForSearch(name, getFilterMap(credits, department))
@@ -109,6 +108,48 @@ public class SubjectServiceImpl implements SubjectService {
                         e -> e.getKey().name(),
                         Map.Entry::getValue
                 ));
+    }
+
+    @Override
+    public Map<String, List<String>> getRelevantFiltersForSearch(final User user, final String name) {
+        if(user.isEditor()){
+            return subjectDao.getRelevantFiltersForSearch(name, null)
+                    .entrySet()
+                    .stream()
+                    .collect(Collectors.toMap(
+                            e -> e.getKey().name(),
+                            Map.Entry::getValue
+                    ));
+        }
+        return subjectDao.getRelevantFiltersForSearch(user.getDegree(), name, null)
+                .entrySet()
+                .stream()
+                .collect(Collectors.toMap(
+                        e -> e.getKey().name(),
+                        Map.Entry::getValue
+                ));
+    }
+
+    @Override
+    public Map<String, List<String>> getRelevantFiltersForSearch(final User user, final String name, final Integer credits, final String department) {
+        if(user.isEditor()){
+            return subjectDao.getRelevantFiltersForSearch(name, getFilterMap(credits, department))
+                    .entrySet()
+                    .stream()
+                    .collect(Collectors.toMap(
+                            e -> e.getKey().name(),
+                            Map.Entry::getValue
+                    ));
+        }
+        else{
+            return subjectDao.getRelevantFiltersForSearch(user.getDegree(), name, getFilterMap(credits, department))
+                    .entrySet()
+                    .stream()
+                    .collect(Collectors.toMap(
+                            e -> e.getKey().name(),
+                            Map.Entry::getValue
+                    ));
+        }
     }
 
     @Override
