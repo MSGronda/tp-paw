@@ -25,6 +25,13 @@ public class DegreeController {
         this.authUserService = authUserService;
     }
 
+    @RequestMapping("/degrees")
+    public ModelAndView degrees() {
+        final ModelAndView mav = new ModelAndView("degree/degrees");
+        mav.addObject("degrees", degreeService.getAll());
+        return mav;
+    }
+
     @RequestMapping("/degree")
     public ModelAndView degree() {
         return new ModelAndView("redirect:/degree/" + authUserService.getCurrentUser().getDegree().getId());
