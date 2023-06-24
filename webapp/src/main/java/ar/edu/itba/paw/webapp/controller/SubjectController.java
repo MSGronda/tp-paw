@@ -111,7 +111,7 @@ public class SubjectController {
             mav.addObject("subjectCodeRepeated", true);
             return mav;
         }
-        return new ModelAndView("redirect:/subejct/"+newSub.getId());
+        return new ModelAndView("redirect:/subject/"+newSub.getId());
     }
 
     @RequestMapping("/subject/{id:\\d+\\.\\d+}/delete-subject")

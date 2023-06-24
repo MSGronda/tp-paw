@@ -460,7 +460,7 @@
         const requirement = document.getElementById("requirement");
         const id = requirement.value.split(" - ")[0];
         const name = requirement.value;
-        if(id === "" || id === "<spring:message code="subject.create.subject.error"/>" ) {
+        if(id === "" || id === "<spring:message code="subject.create.subject.error" htmlEscape="false" javaScriptEscape="true"/>" ) {
             return;
         }
         if(!requirementList.includes(id)) {
@@ -469,7 +469,7 @@
             document.getElementById('hiddenInput').value = JSON.stringify(requirementList);
             requirement.value = "";
         } else {
-            requirement.value = "<spring:message code="subject.create.subject.error"/>";
+            requirement.value = "<spring:message code="subject.create.subject.error" htmlEscape="false" javaScriptEscape="true"/>";
         }
         updatePrerequisiteItems();
     }
@@ -496,7 +496,7 @@
             degreeArray.forEach((degreeID) => {
                 if( !degreesSubjectMap[degreeID].includes(requirementList[reqNameList.indexOf(item)])){
                     let warning = document.createElement('li');
-                    warning.textContent = "<spring:message code="subject.create.notInDegree"/>";
+                    warning.textContent = "<spring:message code="subject.create.notInDegree" htmlEscape="false" javaScriptEscape="true"/>";
                     warning.style.color = "red";
                     div.appendChild(warning);
                 }
@@ -508,7 +508,7 @@
     function addProfessor() {
         const professor = document.getElementById("professor");
         const id = professor.value;
-        if(id === "" || id === "<spring:message code="subject.create.professor.error1"/>"){
+        if(id === "" || id === "<spring:message code="subject.create.professor.error1" htmlEscape="false" javaScriptEscape="true"/>"){
             return;
         }
         if(!professorList.includes(id)) {
@@ -519,7 +519,7 @@
             professor.value = "";
             index++;
         } else {
-            professor.value = "<spring:message code="subject.create.professor.error1"/>";
+            professor.value = "<spring:message code="subject.create.professor.error1" htmlEscape="false" javaScriptEscape="true"/>";
         }
         updateProfessorItems();
         //checkCompleteFields();
@@ -533,11 +533,11 @@
             dialog.hide();
             return;
         }
-        if(professorName === "<spring:message code="subject.create.professor.error2"/>"){
+        if(professorName === "<spring:message code="subject.create.professor.error2" htmlEscape="false" javaScriptEscape="true"/>"){
             return;
         }
         if(professorList.includes(professorName)){
-            professor.value = "<spring:message code="subject.create.professor.error2"/>";
+            professor.value = "<spring:message code="subject.create.professor.error2" htmlEscape="false" javaScriptEscape="true"/>";
             return;
         }
         professorList.push(professorName);
@@ -559,16 +559,16 @@
     }
 
     let semesterMap = {
-        "1":"<spring:message code="semester" arguments="1"/>",
-        "2":"<spring:message code="semester" arguments="2"/>",
-        "3":"<spring:message code="semester" arguments="3"/>",
-        "4":"<spring:message code="semester" arguments="4"/>",
-        "5":"<spring:message code="semester" arguments="5"/>",
-        "6":"<spring:message code="semester" arguments="6"/>",
-        "7":"<spring:message code="semester" arguments="7"/>",
-        "8":"<spring:message code="semester" arguments="8"/>",
-        "9":"<spring:message code="semester" arguments="9"/>",
-        "10":"<spring:message code="semester" arguments="10"/>",
+        "1":"<spring:message code="semester" arguments="1" htmlEscape="false" javaScriptEscape="true"/>",
+        "2":"<spring:message code="semester" arguments="2" htmlEscape="false" javaScriptEscape="true"/>",
+        "3":"<spring:message code="semester" arguments="3" htmlEscape="false" javaScriptEscape="true"/>",
+        "4":"<spring:message code="semester" arguments="4" htmlEscape="false" javaScriptEscape="true"/>",
+        "5":"<spring:message code="semester" arguments="5" htmlEscape="false" javaScriptEscape="true"/>",
+        "6":"<spring:message code="semester" arguments="6" htmlEscape="false" javaScriptEscape="true"/>",
+        "7":"<spring:message code="semester" arguments="7" htmlEscape="false" javaScriptEscape="true"/>",
+        "8":"<spring:message code="semester" arguments="8" htmlEscape="false" javaScriptEscape="true"/>",
+        "9":"<spring:message code="semester" arguments="9" htmlEscape="false" javaScriptEscape="true"/>",
+        "10":"<spring:message code="semester" arguments="10" htmlEscape="false" javaScriptEscape="true"/>",
         "-1":"<spring:message code="elective"/>",
     }
 
@@ -623,13 +623,13 @@
     }
 
     const dayMap = {
-        "1":"<spring:message code="subject.classDay1"/>",
-        "2":"<spring:message code="subject.classDay2"/>",
-        "3":"<spring:message code="subject.classDay3"/>",
-        "4":"<spring:message code="subject.classDay4"/>",
-        "5":"<spring:message code="subject.classDay5"/>",
-        "6":"<spring:message code="subject.classDay6"/>",
-        "7":"<spring:message code="subject.classDay7"/>",
+        "1":"<spring:message code="subject.classDay1" htmlEscape="false" javaScriptEscape="true"/>",
+        "2":"<spring:message code="subject.classDay2" htmlEscape="false" javaScriptEscape="true"/>",
+        "3":"<spring:message code="subject.classDay3" htmlEscape="false" javaScriptEscape="true"/>",
+        "4":"<spring:message code="subject.classDay4" htmlEscape="false" javaScriptEscape="true"/>",
+        "5":"<spring:message code="subject.classDay5" htmlEscape="false" javaScriptEscape="true"/>",
+        "6":"<spring:message code="subject.classDay6" htmlEscape="false" javaScriptEscape="true"/>",
+        "7":"<spring:message code="subject.classDay7" htmlEscape="false" javaScriptEscape="true"/>",
     }
 
     function updateErrorMessage(id) {
@@ -637,8 +637,8 @@
         errorMessage.innerHTML = "";
         let message = document.createElement('p');
         message.className="error-message";
-        if(id === 1) message.textContent = "<spring:message code="subject.create.class.error1"/>";
-        if(id === 2) message.textContent = "<spring:message code="subject.create.class.error2"/>";
+        if(id === 1) message.textContent = "<spring:message code="subject.create.class.error1" htmlEscape="false" javaScriptEscape="true"/>";
+        if(id === 2) message.textContent = "<spring:message code="subject.create.class.error2" htmlEscape="false" javaScriptEscape="true"/>";
         errorMessage.appendChild(message);
     }
 
@@ -657,7 +657,7 @@
             return;
         }
         if (classCodeList.includes(classCode.value) && classProfList.includes(classProf.value) && classDayList.includes(dayMap[classDay.value]) && classStartTimeList.includes(classStartTime.value) && classEndTimeList.includes(classEndTime.value) && classBuildingList.includes(buildingMap[classBuilding.value]) && classRoomList.includes(classRoom.value) && classModeList.includes(modeMap[classMode.value])) {
-            classCode.value = "<spring:message code="subject.create.class.error1"/>";
+            classCode.value = "<spring:message code="subject.create.class.error1" htmlEscape="false" javaScriptEscape="true"/>";
             updateErrorMessage(1)
             return;
         }
