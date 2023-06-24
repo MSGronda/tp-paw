@@ -219,47 +219,10 @@
             <div class="table">
                 <table>
                     <thead>
-                    <th colspan="2"><h1><spring:message code="subject.edit"/></h1></th>
+                    <th colspan="2"><h1><spring:message code="subject.current.edit" arguments="${subject.name}\0${subject.id}" argumentSeparator="\0"/></h1></th>
                     </thead>
                     <tbody>
                     <tr>
-                        <td>
-                            <form:errors path="id" cssClass="error" element="p"/>
-                            <c:if test="${subjectCodeRepeated == true}">
-                                <p class="error"><spring:message code="subject.create.code-repeated"/></p>
-                            </c:if>
-                            <spring:message code="subject.id"/>
-                        </td>
-                        <td><sl-input name="id" path="id" value="${subject.id}" id="subject-id" onkeydown="return event.key !== 'Enter';"></sl-input></td>
-                    </tr>
-                    <tr>
-
-                        <td>
-                            <form:errors path="name" cssClass="error" element="p"/>
-                            <spring:message code="subject.name"/>
-                        </td>
-                        <td><sl-input name="name" path="name" value="${subject.name}" id="subject-name" onkeydown="return event.key !== 'Enter';"></sl-input></td>
-                    </tr>
-                    <tr>
-
-                        <td>
-                            <form:errors path="department" cssClass="error" element="p"/>
-                            <spring:message code="subject.department"/>
-                        </td>
-                        <td>
-                            <sl-select id="department-select">
-                                <sl-option id="department-select-1" value="<c:out value="1"/>"><c:out value="Ambiente y Movilidad"/></sl-option>
-                                <sl-option id="department-select-2" value="<c:out value="2"/>"><c:out value="Ciencias Exactas y Naturales"/></sl-option>
-                                <sl-option id="department-select-3" value="<c:out value="3"/>"><c:out value="Ciencias de la Vida"/></sl-option>
-                                <sl-option id="department-select-4" value="<c:out value="4"/>"><c:out value="Economia y Negocios"/></sl-option>
-                                <sl-option id="department-select-5" value="<c:out value="5"/>"><c:out value="Sistemas Complejos y Energía"/></sl-option>
-                                <sl-option id="department-select-6" value="<c:out value="6"/>"><c:out value="Sistemas Digitales y Datos"/></sl-option>
-                            </sl-select>
-                            <input type="hidden" name="department" id="department-hiddenInput"/>
-                        </td>
-                    </tr>
-                    <tr>
-
                         <td>
                             <form:errors path="credits" cssClass="error" element="p"/>
                             <spring:message code="subject.credits"/>
@@ -281,10 +244,8 @@
                     <tr>
                         <td/>
                         <td>
-                            <ul id="degreeSemesters"></ul>
-                            <c:forEach var="degree" items="${subject.degrees}">
-                                <li><c:out value="${degree.name} - ${degree.degreeSubjects}"/></li>
-                            </c:forEach>
+                            <ul id="degreeSemesters">
+                            </ul>
                         </td>
                     </tr>
                     <tr>
@@ -310,10 +271,9 @@
                     <tr>
                         <td></td>
                         <td>
-                            <ul id="prerequisiteItems"></ul>
-                            <c:forEach var="subject" items="${subject.prerequisites}">
-                                <li><c:out value="${subject.id} - ${subject.name}"/></li>
-                            </c:forEach>
+                            <ul id="prerequisiteItems">
+
+                            </ul>
                         </td>
                     </tr>
                     <tr>
@@ -335,10 +295,9 @@
                     <tr>
                         <td></td>
                         <td>
-                            <ul id="professorItems"></ul>
-                            <c:forEach var="professor" items="${subject.professors}">
-                                <li><c:out value="${professor.name}"/>
-                            </c:forEach>
+                            <ul id="professorItems">
+
+                            </ul>
                         </td>
                     </tr>
                     <tr>
@@ -358,7 +317,7 @@
             <div>
                 <table>
                     <thead>
-                    <th colspan="2"><h1><spring:message code="subject.new"/></h1></th>
+                    <th colspan="2"><h1><spring:message code="subject.current.edit" arguments="${subject.name}\0${subject.id}" argumentSeparator="\0"/></h1></th>
                     </thead>
                     <tbody>
                     <tr>
@@ -409,22 +368,7 @@
                         </tr>
                         </thead>
                         <tbody id="classItems">
-                            <c:forEach var="classforeach" items="${subject.classes}">
 
-
-                                <c:forEach var="time" items="${classforeach.classTimes}">
-                                    <tr>
-                                        <td><c:out value="${classforeach.classId}"/></td>
-                                        <td><c:out value="${classforeach.professors}"/></td>
-                                        <td><c:out value="${time.day}"/></td>
-                                        <td><c:out value="${time.startTime}"/></td>
-                                        <td><c:out value="${time.endTime}"/></td>
-                                        <td><c:out value="${time.mode}"/></td>
-                                        <td><c:out value="${time.building}"/></td>
-                                        <td><c:out value="${time.classLoc}"/></td>
-                                    </tr>
-                                </c:forEach>
-                            </c:forEach>
                         </tbody>
                     </table>
 
@@ -454,29 +398,507 @@
 
 <script>
 
-    function setDepartment() {
-        console.log("me llame");
-        const departmentMap = {
-            "<c:out value="1"/>": "<c:out value="Ambiente y Movilidad"/>",
-            "<c:out value="2"/>": "<c:out value="Ciencias Exactas y Naturales"/>",
-            "<c:out value="3"/>": "<c:out value="Ciencias de la Vida"/>",
-            "<c:out value="4"/>": "<c:out value="Economia y Negocios"/>",
-            "<c:out value="5"/>": "<c:out value="Sistemas Complejos y Energía"/>",
-            "<c:out value="6"/>": "<c:out value="Sistemas Digitales y Datos"/>"
-        }
-        let departmentSelect = document.getElementById("department-select");
-        for (let key in departmentMap) {
-            if (departmentMap.hasOwnProperty(key)) {
-                let value = departmentMap[key];
-                if(value === "${subject.department}") {
-                    console.log("entre");
-                    departmentSelect.setAttribute("value", key);
-                }
+    window.onload = function () {
+        loadStartingFields();
+    };
+
+    function loadStartingFields() {
+        <c:forEach var="degree" items="${subject.degrees}">
+            <c:forEach var="semester" items="${degree.degreeSubjects}">
+                <c:if test="${semester.subject.id == subject.id}">
+                    semesterArray.push("${semester.semester}");
+                </c:if>
+            </c:forEach>
+            degreeArray.push("${degree.id}");
+        </c:forEach>
+        <c:forEach var="prereq" items="${subject.prerequisites}">
+            requirementList.push("${prereq.id}");
+            reqNameList.push("${prereq.id} - ${prereq.name}");
+        </c:forEach>
+        <c:forEach var="prof" items="${subject.professors}">
+            professorList.push("${prof.name}");
+            professorMap[index] = "${prof.name}";
+            index++;
+        </c:forEach>
+        <c:forEach var="classes" items="${subject.classes}">
+            classCodeList.push("${classes.classId}");
+            <c:forEach var="subjectProfessors" items="${classes.professors}">
+                classProfList.push("${subjectProfessors.name}");
+            </c:forEach>
+
+            <c:forEach var="subjectTimes" items="${classes.classTimes}">
+                classDayList.push(dayMap[${subjectTimes.day}].value);
+                classStartTimeList.push("${subjectTimes.startTime}");
+                classEndTimeList.push("${subjectTimes.endTime}");
+                classBuildingList.push("${subjectTimes.building}");
+                classRoomList.push("${subjectTimes.classLoc}");
+                classModeList.push("${subjectTimes.mode}");
+            </c:forEach>
+        </c:forEach>
+
+        updateDegreeSemesterItems();
+        updatePrerequisiteItems();
+        updateProfessorItems();
+        updateClassItems();
+    }
+
+
+    // lo que esta abajo hay que factorizar (lo usan: subject_create, register nada mas los steps)
+
+    function nextStep() {
+        let currentStepValue = getCurrentStep();
+        let currentStep = document.getElementById("step" + currentStepValue);
+        currentStep.style.display = "none";
+
+        let nextStep = document.getElementById("step" + ( currentStepValue + 1));
+        nextStep.style.display = "block";
+    }
+
+    function previousStep() {
+        let currentStepValue = getCurrentStep();
+        // Hide the current step
+        let currentStep = document.getElementById("step" + currentStepValue);
+        currentStep.style.display = "none";
+
+        // Show the previous step
+        let previousStep = document.getElementById("step" + (currentStepValue - 1));
+        previousStep.style.display = "block";
+    }
+
+    function getCurrentStep() {
+        for (let i = 1; i <= 2; i++) {
+            let step = document.getElementById("step" + i);
+            if (step.style.display !== "none") {
+                return i;
             }
         }
     }
 
-    $(document).ready(function() {
-        setDepartment();
+    const dialog = document.querySelector('.dialog-header-actions');
+    const openButton = document.querySelector('#open-button')
+    const closeButton = dialog.querySelector('sl-button[slot="footer"]');
+
+    openButton.addEventListener('click', () => dialog.show());
+
+    const dialog2 = document.querySelector('.dialog-header-actions2');
+    const openButton2 = document.querySelector('#open-button2');
+
+    openButton2.addEventListener('click', () => dialog2.show());
+
+    const dialog3 = document.querySelector('.dialog-header-actions3');
+    const openButton3 = document.querySelector('#open-button3');
+    const closeButton3 = dialog3.querySelector('sl-button[slot="footer"]');
+
+    openButton3.addEventListener('click', () => dialog3.show());
+    closeButton3.addEventListener('click', () => dialog3.hide());
+
+
+    dialog.addEventListener('click', (event) => {
+        event.stopPropagation();
     });
+
+    let requirementList = [];
+    let reqNameList = [];
+
+    function addRequirement() {
+        const requirement = document.getElementById("requirement");
+        const id = requirement.value.split(" - ")[0];
+        const name = requirement.value;
+        if(id === "" || id === "<spring:message code="subject.create.subject.error"/>" ) {
+            return;
+        }
+        if(!requirementList.includes(id)) {
+            requirementList.push(id);
+            reqNameList.push(name);
+            document.getElementById('hiddenInput').value = JSON.stringify(requirementList);
+            requirement.value = "";
+        } else {
+            requirement.value = "<spring:message code="subject.create.subject.error"/>";
+        }
+        updatePrerequisiteItems();
+    }
+    function updatePrerequisiteItems() {
+        let selectedPrequisitesItems = document.getElementById('prerequisiteItems');
+        selectedPrequisitesItems.innerHTML = '';
+        reqNameList.forEach((item) => {
+            let div = document.createElement('div');
+            div.className = 'list-rm';
+            let prereqItem = document.createElement('li');
+            prereqItem.textContent = item;
+
+            let removeBtn = document.createElement('sl-icon-button');
+            removeBtn.name = "x";
+            removeBtn.addEventListener('click', () => {
+                let index = reqNameList.indexOf(item);
+                reqNameList.splice(index, 1);
+                requirementList.splice(index, 1);
+                updatePrerequisiteItems();
+                document.getElementById('hiddenInput').value = JSON.stringify(requirementList);
+            });
+            div.appendChild(prereqItem);
+            div.appendChild(removeBtn);
+            degreeArray.forEach((degreeID) => {
+                if( !degreesSubjectMap[degreeID].includes(requirementList[reqNameList.indexOf(item)])){
+                    let warning = document.createElement('li');
+                    warning.textContent = "<spring:message code="subject.create.notInDegree"/>";
+                    warning.style.color = "red";
+                    div.appendChild(warning);
+                }
+            });
+            selectedPrequisitesItems.appendChild(div);
+        });
+    }
+
+    let professorList = [];
+    let professorMap = {
+
+    }
+    let index = 0;
+
+    function addProfessor() {
+        const professor = document.getElementById("professor");
+        const id = professor.value;
+        if(id === "" || id === "<spring:message code="subject.create.professor.error1"/>"){
+            return;
+        }
+        if(!professorList.includes(id)) {
+            professorList.push(id);
+            professorMap[index] = id;
+
+            document.getElementById('professors-hiddenInput').value = JSON.stringify(professorList);
+            professor.value = "";
+            index++;
+        } else {
+            professor.value = "<spring:message code="subject.create.professor.error1"/>";
+        }
+        updateProfessorItems();
+        //checkCompleteFields();
+    }
+
+    function createProfessor(){
+        const profName = document.getElementById("new-prof-name");
+        const profSurname = document.getElementById("new-prof-surname");
+        const professorName = profSurname.value + ", " + profName.value;
+        if(professorName === "") {
+            dialog.hide();
+            return;
+        }
+        if(professorName === "<spring:message code="subject.create.professor.error2"/>"){
+            return;
+        }
+        if(professorList.includes(professorName)){
+            professor.value = "<spring:message code="subject.create.professor.error2"/>";
+            return;
+        }
+        professorList.push(professorName);
+        document.getElementById('professors-hiddenInput').value = JSON.stringify(professorList);
+        professorMap[index] = professorName;
+
+        index++;
+        //checkCompleteFields();
+        profName.value = "";
+        profSurname.value = "";
+        updateProfessorItems();
+        dialog.hide();
+    }
+
+    function updateProfessorItems() {
+        let options = 0;
+        let selectedProfItems = document.getElementById('professorItems');
+        let classProfessors = document.getElementById('class-professors');
+        selectedProfItems.innerHTML = '';
+        classProfessors.innerHTML = '';
+        professorList.forEach((item) => {
+            let div = document.createElement('div');
+            div.className = 'list-rm';
+            let profItem = document.createElement('li');
+            let removeBtn = document.createElement('sl-icon-button');
+            removeBtn.name = "x";
+            removeBtn.addEventListener('click', () => {
+                let index = professorList.indexOf(item);
+                professorList.splice(index, 1);
+                updateProfessorItems();
+                document.getElementById('professors-hiddenInput').value = JSON.stringify(professorList);
+                //checkCompleteFields();
+            });
+            profItem.textContent = item;
+            selectedProfItems.appendChild(div);
+            div.appendChild(profItem);
+            div.appendChild(removeBtn);
+            let classProf = document.createElement('sl-option');
+
+            classProf.value=options++;
+            classProf.textContent=item;
+            classProfessors.appendChild(classProf);
+        });
+    }
+
+    let degreeArray = [];
+    let semesterArray = [];
+
+
+    function addDegreeSemester(){
+        const degree = document.getElementById("select-degree");
+        const semester = document.getElementById("select-semester");
+
+        if( degreeArray.includes(degree.value) || degree.value === "" || semester.value === ""){
+            degree.value = "";
+            semester.value = "";
+            return;
+        }
+
+        degreeArray.push(degree.value);
+        semesterArray.push(semester.value);
+        document.getElementById('degreeIds-hiddenInput').value = JSON.stringify(degreeArray);
+        document.getElementById('semesters-hiddenInput').value = JSON.stringify(semesterArray);
+        //checkCompleteFields();
+        checkForCorrelatives();
+        updateDegreeSemesterItems();
+        degree.value = "";
+        semester.value = "";
+        dialog3.hide();
+    }
+
+    let degreeMap = {
+        <c:forEach var="degree" items="${degrees}">
+        "${degree.id}":"${degree.name}",
+        </c:forEach>
+    }
+
+    let semesterMap = {
+        "1":"<spring:message code="semester" arguments="1"/>",
+        "2":"<spring:message code="semester" arguments="2"/>",
+        "3":"<spring:message code="semester" arguments="3"/>",
+        "4":"<spring:message code="semester" arguments="4"/>",
+        "5":"<spring:message code="semester" arguments="5"/>",
+        "6":"<spring:message code="semester" arguments="6"/>",
+        "7":"<spring:message code="semester" arguments="7"/>",
+        "8":"<spring:message code="semester" arguments="8"/>",
+        "9":"<spring:message code="semester" arguments="9"/>",
+        "10":"<spring:message code="semester" arguments="10"/>",
+        "-1":"<spring:message code="elective"/>",
+    }
+
+    const degreesSubjectMap = {
+        <c:forEach var="degree" items="${degrees}">
+        "${degree.id}":[
+            <c:forEach var="subject" items="${degree.subjects}">
+            "${subject.id}",
+            </c:forEach>
+        ],
+        </c:forEach>
+    }
+
+    function updateDegreeSemesterItems(){
+        let selectedDegreeSemester = document.getElementById('degreeSemesters');
+        selectedDegreeSemester.innerHTML = '';
+        degreeArray.forEach((degreeId) => {
+            let div = document.createElement('div');
+            div.className = 'list-rm';
+            let degreeItem = document.createElement('li');
+            let removeBtn = document.createElement('sl-icon-button');
+            removeBtn.name = "x";
+            removeBtn.addEventListener('click', () => {
+                let index = degreeArray.indexOf(degreeId);
+                degreeArray.splice(index, 1);
+                semesterArray.splice(index, 1);
+                document.getElementById('degreeIds-hiddenInput').value = JSON.stringify(degreeArray);
+                document.getElementById('semesters-hiddenInput').value = JSON.stringify(semesterArray);
+
+                updateDegreeSemesterItems();
+                //checkCompleteFields();
+                checkForCorrelatives();
+            });
+            degreeItem.textContent = degreeMap[degreeId] + " - " + semesterMap[semesterArray[degreeArray.indexOf(degreeId)]]
+            selectedDegreeSemester.appendChild(div);
+            div.appendChild(degreeItem);
+            div.appendChild(removeBtn);
+        });
+    }
+
+    function checkForCorrelatives(){
+        const requirementInput = document.getElementById('requirement');
+
+        const degrees = document.getElementById('degreeIds-hiddenInput').value;
+        requirementInput.disabled = !(
+            degrees.length > 2
+        )
+
+    }
+
+    let classCodeList = [];
+    let classProfList = [];
+    let classDayList = [];
+    let classStartTimeList = [];
+    let classEndTimeList = [];
+    let classBuildingList = [];
+    let classRoomList = [];
+    let classModeList = [];
+
+    const modeMap = {
+        "1":"Presencial",
+        "2":"Virtual",
+        "3":"Laboratorio"
+    }
+
+    const buildingMap = {
+        "1":"Rectorado",
+        "2":"Tecnológico",
+        "3":"Financiero",
+        "4":"Virtual"
+    }
+
+    const dayMap = {
+        "1":"<spring:message code="subject.classDay1"/>",
+        "2":"<spring:message code="subject.classDay2"/>",
+        "3":"<spring:message code="subject.classDay3"/>",
+        "4":"<spring:message code="subject.classDay4"/>",
+        "5":"<spring:message code="subject.classDay5"/>",
+        "6":"<spring:message code="subject.classDay6"/>",
+        "7":"<spring:message code="subject.classDay7"/>",
+    }
+
+    function updateErrorMessage(id) {
+        let errorMessage = document.getElementById('error-message');
+        errorMessage.innerHTML = "";
+        let message = document.createElement('p');
+        message.className="error-message";
+        if(id === 1) message.textContent = "<spring:message code="subject.create.class.error1"/>";
+        if(id === 2) message.textContent = "<spring:message code="subject.create.class.error2"/>";
+        errorMessage.appendChild(message);
+    }
+
+    function createClass() {
+        const classCode = document.getElementById("class-code");
+        const classProf = document.getElementById("class-professors");
+        const classDay = document.getElementById("class-day");
+        const classStartTime = document.getElementById("class-start-time");
+        const classEndTime = document.getElementById("class-end-time");
+        const classBuilding = document.getElementById("class-building");
+        const classRoom = document.getElementById("classroom");
+        const classMode = document.getElementById("class-mode");
+
+        if (classCode.value === "" || classProf.value.length === 0 || classDay.value === "" || classStartTime.value === "" || classEndTime.value === "" || classBuilding.value === "" || classRoom.value === "" || classMode.value === "") {
+            updateErrorMessage(2)
+            return;
+        }
+        if (classCodeList.includes(classCode.value) && classProfList.includes(classProf.value) && classDayList.includes(dayMap[classDay.value]) && classStartTimeList.includes(classStartTime.value) && classEndTimeList.includes(classEndTime.value) && classBuildingList.includes(buildingMap[classBuilding.value]) && classRoomList.includes(classRoom.value) && classModeList.includes(modeMap[classMode.value])) {
+            classCode.value = "<spring:message code="subject.create.class.error1"/>";
+            updateErrorMessage(1)
+            return;
+        }
+
+        classCodeList.push(classCode.value);
+        let profIndex = 0;
+        let professors = [];
+        if (classProf.value.length > 1){
+            while (profIndex < classProf.value.length) {
+                professors.push(professorMap[classProf.value[profIndex++]]);
+            }
+        }
+        else {
+            professors.push(professorMap[classProf.value]);
+        }
+        classProfList.push(professors);
+        classDayList.push(classDay.value);
+        classStartTimeList.push(classStartTime.value);
+        classEndTimeList.push(classEndTime.value);
+        classBuildingList.push(buildingMap[classBuilding.value]);
+        classRoomList.push(classRoom.value);
+        classModeList.push(modeMap[classMode.value]);
+
+        document.getElementById('classCodes-hiddenInput').value = JSON.stringify(classCodeList);
+        document.getElementById('classProfessors-hiddenInput').value = JSON.stringify(classProfList);
+        document.getElementById('classDays-hiddenInput').value = JSON.stringify(classDayList);
+        document.getElementById('classStartTimes-hiddenInput').value = JSON.stringify(classStartTimeList);
+        document.getElementById('classEndTimes-hiddenInput').value = JSON.stringify(classEndTimeList);
+
+        document.getElementById('classBuildings-hiddenInput').value = JSON.stringify(classBuildingList);
+        document.getElementById('classRooms-hiddenInput').value = JSON.stringify(classRoomList);
+        document.getElementById('classModes-hiddenInput').value = JSON.stringify(classModeList);
+
+        updateClassItems();
+        checkCompleteFieldsForSubmit();
+
+        classCode.value = "";
+        classProf.value = "";
+        classDay.value = "";
+        classStartTime.value = "";
+        classEndTime.value = "";
+        classBuilding.value = "";
+        classRoom.value = "";
+        classMode.value = "";
+
+        let errorMessage = document.getElementById('error-message');
+        errorMessage.innerHTML = "";
+
+
+        dialog2.hide();
+    }
+
+    function updateClassItems() {
+        let selectedClassItems = document.getElementById('classItems');
+        selectedClassItems.innerHTML = '';
+
+        classCodeList.forEach((item, index) => {
+            let breakLine = document.createElement('br');
+            let tableRow = document.createElement('tr');
+            let classTitle = document.createElement('td');
+            let classProf = document.createElement('td');
+            let classDay = document.createElement('td');
+            let classStartTime = document.createElement('td');
+            let classEndTime = document.createElement('td');
+            let classMode = document.createElement('td');
+            let classBuilding = document.createElement('td');
+            let classRoom = document.createElement('td');
+            let classRemove = document.createElement('td');
+            let removeBtn = document.createElement('sl-icon-button');
+            classProf.className = "professors-cell-width";
+            removeBtn.className = 'list-rm';
+            removeBtn.name = "x";
+            removeBtn.addEventListener('click', () => {
+                classCodeList.splice(index, 1);
+                classProfList.splice(index, 1);
+                classDayList.splice(index, 1);
+                classStartTimeList.splice(index, 1);
+                classEndTimeList.splice(index, 1);
+                classBuildingList.splice(index, 1);
+                classRoomList.splice(index, 1);
+                classModeList.splice(index, 1);
+                document.getElementById('classCodes-hiddenInput').value = JSON.stringify(classCodeList);
+                document.getElementById('classProfessors-hiddenInput').value = JSON.stringify(classProfList);
+                document.getElementById('classDays-hiddenInput').value = JSON.stringify(classDayList);
+                document.getElementById('classStartTimes-hiddenInput').value = JSON.stringify(classStartTimeList);
+                document.getElementById('classEndTimes-hiddenInput').value = JSON.stringify(classEndTimeList);
+                document.getElementById('classBuildings-hiddenInput').value = JSON.stringify(classBuildingList);
+                document.getElementById('classRooms-hiddenInput').value = JSON.stringify(classRoomList);
+                document.getElementById('classModes-hiddenInput').value = JSON.stringify(classModeList);
+
+                updateClassItems();
+                checkCompleteFieldsForSubmit();
+            });
+            classTitle.textContent = item;
+            classProf.textContent= classProfList[index] ;
+            classDay.textContent= dayMap[classDayList[index]] ;
+            classStartTime.textContent= classStartTimeList[index] ;
+            classEndTime.textContent= classEndTimeList[index] ;
+            classMode.textContent= classModeList[index] ;
+            classBuilding.textContent= classBuildingList[index] ;
+            classRoom.textContent= classRoomList[index] ;
+            classRemove.appendChild(removeBtn);
+
+            tableRow.appendChild(classTitle);
+            tableRow.appendChild(classProf);
+            tableRow.appendChild(classDay);
+            tableRow.appendChild(classStartTime);
+            tableRow.appendChild(classEndTime);
+            tableRow.appendChild(classMode);
+            tableRow.appendChild(classBuilding);
+            tableRow.appendChild(classRoom);
+            tableRow.appendChild(classRemove);
+            selectedClassItems.appendChild(tableRow);
+            selectedClassItems.appendChild(breakLine);
+        });
+    }
+
 </script>
