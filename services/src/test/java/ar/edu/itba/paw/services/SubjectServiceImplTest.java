@@ -1,14 +1,18 @@
 package ar.edu.itba.paw.services;
 
+import ar.edu.itba.paw.models.Degree;
 import ar.edu.itba.paw.models.Subject;
+import ar.edu.itba.paw.models.User;
 import ar.edu.itba.paw.models.enums.OrderDir;
 import ar.edu.itba.paw.models.enums.SubjectFilterField;
 import ar.edu.itba.paw.models.enums.SubjectOrderField;
 import ar.edu.itba.paw.persistence.dao.SubjectDao;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import java.util.*;
@@ -39,6 +43,12 @@ public class SubjectServiceImplTest {
 
     @Mock
     private SubjectDao subjectDao;
+
+    @Mock
+    private User user;
+
+    @Mock
+    private Degree userDegree;
 
     @InjectMocks
     private SubjectServiceImpl subjectService;
@@ -101,9 +111,12 @@ public class SubjectServiceImplTest {
                         .credits(CREDITS)
                         .build()
         );
-        when(subjectDao.search(eq(NAME), eq(1))).thenReturn(arrayList);
 
-        final List<Subject> subjects = subjectService.search(NAME, 1);
+        Mockito.lenient().when(userDegree.getId()).thenReturn(1L);
+        Mockito.lenient().when(user.getDegree()).thenReturn(userDegree);
+
+        when(subjectDao.search(eq(user), eq(NAME), eq(1))).thenReturn(arrayList);
+        final List<Subject> subjects = subjectService.search(user, NAME, 1);
 
         assertEquals(1, subjects.size());
         assertEquals(ID, subjects.get(0).getId());
@@ -128,10 +141,13 @@ public class SubjectServiceImplTest {
 
         final List<Subject> resultList = Collections.singletonList(subject1);
 
-        when(subjectDao.search(eq(NAME), eq(1), eq(filterMap), eq(orderBy), eq(dir))).thenReturn(resultList);
-        when(subjectDao.getTotalPagesForSearch(eq(NAME), eq(filterMap))).thenReturn(1);
+        Mockito.lenient().when(userDegree.getId()).thenReturn(1L);
+        Mockito.lenient().when(user.getDegree()).thenReturn(userDegree);
 
-        final List<Subject> actual = subjectService.search(NAME, 1, "name", "asc", null, DEPARTMENT);
+        when(subjectDao.search(eq(user), eq(NAME), eq(1), eq(filterMap), eq(orderBy), eq(dir))).thenReturn(resultList);
+        when(subjectDao.getTotalPagesForSearch(eq(user), eq(NAME), eq(filterMap))).thenReturn(1);
+
+        final List<Subject> actual = subjectService.search(user, NAME, 1, "name", "asc", null, DEPARTMENT);
 
         assertEquals(1, actual.size());
         assertEquals(ID, actual.get(0).getId());

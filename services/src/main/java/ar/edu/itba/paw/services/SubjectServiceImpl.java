@@ -48,12 +48,13 @@ public class SubjectServiceImpl implements SubjectService {
     }
 
     @Override
-    public List<Subject> search(final String name, final int page) {
-        return subjectDao.search(name, page);
+    public List<Subject> search(final User user, final String name, final int page) {
+        return subjectDao.search(user, name, page);
     }
 
     @Override
     public List<Subject> search(
+            final User user,
             final String name,
             final int page,
             final String orderBy,
@@ -61,22 +62,31 @@ public class SubjectServiceImpl implements SubjectService {
             final Integer credits,
             final String department
     ) {
-        if(page < 1 || page > getTotalPagesForSearch(name, credits, department)) throw new InvalidPageNumberException();
+        if(page < 1 || page > getTotalPagesForSearch(user, name, credits, department)) throw new InvalidPageNumberException();
 
         final OrderDir orderDir = OrderDir.parse(dir);
         final SubjectOrderField orderField = SubjectOrderField.parse(orderBy);
 
-        return subjectDao.search(name, page, getFilterMap(credits, department), orderField, orderDir);
+        if(user.isEditor()){
+            return subjectDao.searchAll(name, page, getFilterMap(credits, department), orderField, orderDir);
+        }
+        return subjectDao.search(user, name, page, getFilterMap(credits, department), orderField, orderDir);
     }
 
     @Override
-    public int getTotalPagesForSearch(final String name){
-        return subjectDao.getTotalPagesForSearch(name, null);
+    public int getTotalPagesForSearch(final User user, final String name){
+        if(user.isEditor()){
+            return subjectDao.getTotalPagesForSearchAll(name, null);
+        }
+        return subjectDao.getTotalPagesForSearch(user, name, null);
     }
 
     @Override
-    public int getTotalPagesForSearch(final String name, final Integer credits, final String department){
-        return subjectDao.getTotalPagesForSearch(name, getFilterMap(credits, department));
+    public int getTotalPagesForSearch(final User user, final String name, final Integer credits, final String department){
+        if(user.isEditor()){
+            return subjectDao.getTotalPagesForSearchAll(name, getFilterMap(credits, department));
+        }
+        return subjectDao.getTotalPagesForSearch(user, name, getFilterMap(credits, department));
     }
 
     @Override

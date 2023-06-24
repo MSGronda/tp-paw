@@ -49,8 +49,8 @@ public interface UserService {
             throws SubjectNotFoundException, SubjectClassNotFoundException;
     void removeFromCurrentSemester(final User user, final String subjectId, final String classId);
     void clearSemester(final User user);
-    String getSemesterSubmitRedirectUrl(final String subjectIds);
-    void finishSemester(final User user);
+    String getSemesterSubmitRedirectUrl(final User user);
+    void finishSemester(final User user, final String subjectIds);
 
    void updateUserDegreeAndSubjectProgress(final User user, final Degree degree, final String subjectIds);
 }

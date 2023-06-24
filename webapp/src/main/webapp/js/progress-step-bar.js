@@ -2,7 +2,7 @@
 (function (window) {
   function initProgressBar() {
     const ProgressBar = {};
-    ProgressBar.singleStepAnimation = 1000; //default value
+    ProgressBar.singleStepAnimation = 500; //default value
     // this delay is required as browser will need some time in rendering and then processing css animations.
     const renderingWaitDelay = 200;
 

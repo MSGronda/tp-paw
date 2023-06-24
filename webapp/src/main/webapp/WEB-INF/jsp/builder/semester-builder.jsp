@@ -29,6 +29,11 @@
     padding-top: .5rem;
     font-size: 1rem;
   }
+  .icon-lg{
+    padding-top: .4rem;
+    padding-right: 0.025rem;
+    font-size: 1rem;
+  }
 
   h4 {
     margin: 0 !important;
@@ -353,8 +358,22 @@
                 <sl-menu-item id="credit-orderby">
                   <div class="order-menu">
                     <spring:message code="search.credits"/>
-                    <sl-icon id="credits-down" class="icon" slot="suffix" name="arrow-down"></sl-icon>
-                    <sl-icon style="display: none" id="credits-up" class="icon" slot="suffix" name="arrow-up"></sl-icon>
+                    <sl-icon style="display: none" id="order-credits-down" class="icon" slot="suffix" name="arrow-down"></sl-icon>
+                    <sl-icon style="display: none" id="order-credits-up" class="icon" slot="suffix" name="arrow-up"></sl-icon>
+                  </div>
+                </sl-menu-item>
+                <sl-menu-item id="difficulty-orderby">
+                  <div class="order-menu">
+                    <spring:message code="search.difficulty"/>
+                    <sl-icon style="display: none" id="order-difficulty-down" class="icon" slot="suffix" name="arrow-down"></sl-icon>
+                    <sl-icon style="display: none" id="order-difficulty-up" class="icon" slot="suffix" name="arrow-up"></sl-icon>
+                  </div>
+                </sl-menu-item>
+                <sl-menu-item id="timedemand-orderby">
+                  <div class="order-menu">
+                    <spring:message code="search.timedemand"/>
+                    <sl-icon style="display: none" id="order-timedemand-down" class="icon" slot="suffix" name="arrow-down"></sl-icon>
+                    <sl-icon style="display: none" id="order-timedemand-up" class="icon" slot="suffix" name="arrow-up"></sl-icon>
                   </div>
                 </sl-menu-item>
               </sl-menu>
@@ -464,7 +483,7 @@
                     <sl-icon class="icon" name="check2" label="Select Subject"></sl-icon>
                   </sl-button>
                   <sl-button id="deselect-subject-${subject.id}" style="display: none; align-self: end" variant="default" size="small" circle>
-                    <sl-icon class="icon" name="x-lg" label="Remove subject"></sl-icon>
+                    <sl-icon class="icon-lg" name="x-lg" label="Remove subject"></sl-icon>
                   </sl-button>
                   <span id="selected-${subject.id}" style="display: none; color: #7db6f8; padding-top:0.5rem"><spring:message code="builder.selected"/></span>
                 </div>
@@ -485,7 +504,7 @@
             </div>
             <sl-button style="" id="exit-class-selector" variant="default"
                        size="small" circle>
-              <sl-icon name="x-lg" label="Exit" class="icon"></sl-icon>
+              <sl-icon name="x-lg" label="Exit" class="icon-lg"></sl-icon>
             </sl-button>
           </div>
         </div>
@@ -512,7 +531,7 @@
 
                 <sl-button  type="submit" id="deselect-class-${subject.id}-${subClass.classId}"
                            variant="default" size="small" circle>
-                  <sl-icon class="icon" name="x-lg" label="Select Subject"></sl-icon>
+                  <sl-icon class="icon-lg" name="x-lg" label="Select Subject"></sl-icon>
                 </sl-button>
                 </form>
               </div>
@@ -565,7 +584,7 @@
                   <input type="hidden" id="idClass-remove-${subject.id}" name="idClass" value="${0}">
                   <sl-button style="display: none;" id="deselect-class-${subject.id}-0"
                              variant="default" size="small" circle>
-                    <sl-icon class="icon" name="x-lg" label="Select Subject"></sl-icon>
+                    <sl-icon class="icon-lg" name="x-lg" label="Select Subject"></sl-icon>
                   </sl-button>
                 </form>
               </div>
@@ -814,8 +833,11 @@
     // set exit class selection action
     document.getElementById('exit-class-selector').addEventListener('click', exitClassSelectionAction);
 
-    // set order by action for credits
+    // set order by action for all sorters
     document.getElementById('credit-orderby').addEventListener('click', orderByCreditAction)
+    document.getElementById('difficulty-orderby').addEventListener('click', orderByDifficultyAction)
+    document.getElementById('timedemand-orderby').addEventListener('click', orderByTimeDemandAction)
+
 
     // set switch to table view
     document.getElementById('switch-to-table-button').addEventListener('click',switchToTableView);

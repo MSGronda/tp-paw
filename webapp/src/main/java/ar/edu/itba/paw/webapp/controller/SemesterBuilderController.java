@@ -1,6 +1,5 @@
 package ar.edu.itba.paw.webapp.controller;
 
-import ar.edu.itba.paw.models.Subject;
 import ar.edu.itba.paw.models.User;
 import ar.edu.itba.paw.models.exceptions.InvalidFormException;
 import ar.edu.itba.paw.models.exceptions.SubjectClassNotFoundException;
@@ -19,10 +18,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
-
 import javax.validation.Valid;
-import java.util.List;
-
 
 @Controller
 public class SemesterBuilderController {
@@ -72,12 +68,10 @@ public class SemesterBuilderController {
         if(errors.hasErrors()){
             return finishSemester(semesterForm);
         }
-
-        userService.finishSemester(authUserService.getCurrentUser());
-
-        return new ModelAndView(
-                "redirect:" + userService.getSemesterSubmitRedirectUrl(semesterForm.getSubjectIds())
-        );
+        User user = authUserService.getCurrentUser();
+        String url = userService.getSemesterSubmitRedirectUrl(user);
+        userService.finishSemester(user, semesterForm.getSubjectIds());
+        return new ModelAndView(url);
     }
 
     @RequestMapping(value = "/builder/add", method = RequestMethod.POST)
