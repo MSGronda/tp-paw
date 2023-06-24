@@ -385,7 +385,7 @@
 
             <div class="add-button">
                 <sl-button variant="success" onclick="previousStep()" class="bottom-buttons"><spring:message code="register.previous"/></sl-button>
-                <sl-button type="submit" variant="success" class="bottom-buttons" id="submit-button"><spring:message code="subject.create"/></sl-button>
+                <sl-button type="submit" variant="success" class="bottom-buttons" id="submit-button"><spring:message code="subject.edit.submit"/></sl-button>
             </div>
         </div>
         </div>
@@ -420,13 +420,18 @@
             professorMap[index] = "${prof.name}";
             index++;
         </c:forEach>
+        let classProfessorsList = [];
         <c:forEach var="classes" items="${subject.classes}">
-            classCodeList.push("${classes.classId}");
+            <%--classCodeList.push("${classes.classId}");--%>
+
+             classProfessorsList = [];
             <c:forEach var="subjectProfessors" items="${classes.professors}">
-                classProfList.push("${subjectProfessors.name}");
+                classProfessorsList.push("${subjectProfessors.name}");
             </c:forEach>
 
             <c:forEach var="subjectTimes" items="${classes.classTimes}">
+                classCodeList.push("${classes.classId}");
+                classProfList.push(classProfessorsList);
                 classDayList.push(dayMap[${subjectTimes.day}].value);
                 classStartTimeList.push("${subjectTimes.startTime}");
                 classEndTimeList.push("${subjectTimes.endTime}");
