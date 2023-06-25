@@ -183,7 +183,7 @@
                 </td>
             </tr>
             <tr>
-                <td><spring:message code="subject.classDay4"/></td>
+                <td><spring:message code="subject.classDay"/></td>
                 <td>
                     <sl-select id="class-day4">
                         <sl-option value="<c:out value="1"/>"><spring:message code="subject.classDay1"/></sl-option>
@@ -605,7 +605,7 @@
             professor.value = "<spring:message code="subject.create.professor.error1" htmlEscape="false" javaScriptEscape="true"/>";
         }
         updateProfessorItems();
-        //checkCompleteFields();
+        checkCompleteFields();
     }
 
     function createProfessor(){
@@ -629,7 +629,7 @@
         professorMap[index] = professorName;
 
         index++;
-        //checkCompleteFields();
+        checkCompleteFields();
         profName.value = "";
         profSurname.value = "";
         updateProfessorItems();
@@ -691,7 +691,7 @@
                 document.getElementById('semesters-hiddenInput').value = JSON.stringify(semestersHI);
 
                 updateDegreeSemesterItems();
-                //checkCompleteFields();
+                checkCompleteFields();
                 checkForCorrelatives();
             });
             degreeItem.textContent = degreeMap[degreeId] + " - " + semesterMap[semesterArray[degreeArray.indexOf(degreeId)]]
@@ -803,13 +803,13 @@
 
     function checkCompleteFields(){
         const credits = document.getElementById('subject-credits').value;
-        const professors = document.getElementById('professors-hiddenInput').value;
-        const degrees = document.getElementById('degreeIds-hiddenInput').value;
-
+        console.log(credits);
+        console.log(professorList.length);
+        console.log(degreeArray);
         document.getElementById('nextStep1').disabled = !(
             credits > 0 && credits <= 12 &&
-            professors.length > 2 &&
-            degrees.length > 2
+            professorList.length > 0 &&
+            degreeArray.length > 0
         );
     }
 
@@ -963,7 +963,7 @@
         semesterArray.push(semester.value);
         document.getElementById('degreeIds-hiddenInput').value = JSON.stringify(degreeIdsHI);
         document.getElementById('semesters-hiddenInput').value = JSON.stringify(semestersHI);
-        //checkCompleteFields();
+        checkCompleteFields();
         checkForCorrelatives();
         updateDegreeSemesterItems();
         degree.value = "";
@@ -1125,7 +1125,6 @@
         document.getElementById('class-building4').value = classBuildingList[index];
         document.getElementById('classroom4').value = classRoomList[index];
         dialog4.show();
-
     }
 
     function updateClass(){

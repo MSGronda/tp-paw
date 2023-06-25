@@ -46,6 +46,7 @@ const closeButton3 = dialog3.querySelector('sl-button[slot="footer"]');
 openButton3.addEventListener('click', () => dialog3.show());
 closeButton3.addEventListener('click', () => dialog3.hide());
 
+const dialog4 = document.querySelector('.dialog-header-actions4');
 
 dialog.addEventListener('click', (event) => {
     event.stopPropagation();
@@ -124,7 +125,7 @@ function addDegreeSemester(){
     semesterArray.push(semester.value);
     document.getElementById('degreeIds-hiddenInput').value = JSON.stringify(degreeArray);
     document.getElementById('semesters-hiddenInput').value = JSON.stringify(semesterArray);
-    //checkCompleteFields();
+    checkCompleteFields();
     checkForCorrelatives();
     updateDegreeSemesterItems();
     degree.value = "";
@@ -149,7 +150,7 @@ function updateDegreeSemesterItems(){
             document.getElementById('semesters-hiddenInput').value = JSON.stringify(semesterArray);
 
             updateDegreeSemesterItems();
-            //checkCompleteFields();
+            checkCompleteFields();
             checkForCorrelatives();
         });
         degreeItem.textContent = degreeMap[degreeId] + " - " + semesterMap[semesterArray[degreeArray.indexOf(degreeId)]]
@@ -193,9 +194,15 @@ function updateClassItems() {
         let classMode = document.createElement('td');
         let classBuilding = document.createElement('td');
         let classRoom = document.createElement('td');
+        let classEdit = document.createElement('td');
         let classRemove = document.createElement('td');
+        let editBtn = document.createElement('sl-icon-button');
         let removeBtn = document.createElement('sl-icon-button');
         classProf.className = "professors-cell-width";
+        editBtn.name = "pencil";
+        editBtn.addEventListener('click', () => {
+            editClass(item, index);
+        });
         removeBtn.className = 'list-rm';
         removeBtn.name = "x";
         removeBtn.addEventListener('click', () => {
@@ -228,7 +235,7 @@ function updateClassItems() {
         classBuilding.textContent= classBuildingList[index] ;
         classRoom.textContent= classRoomList[index] ;
         classRemove.appendChild(removeBtn);
-
+        classEdit.appendChild(editBtn);
         tableRow.appendChild(classTitle);
         tableRow.appendChild(classProf);
         tableRow.appendChild(classDay);
@@ -237,10 +244,35 @@ function updateClassItems() {
         tableRow.appendChild(classMode);
         tableRow.appendChild(classBuilding);
         tableRow.appendChild(classRoom);
+        tableRow.appendChild(classEdit);
         tableRow.appendChild(classRemove);
         selectedClassItems.appendChild(tableRow);
         selectedClassItems.appendChild(breakLine);
     });
+}
+
+let classToUpdate = -1;
+function editClass(classItem, index){
+    let options = 0;
+    document.getElementById('class-professors4').innerHTML = '';
+    let classProfessorsSlSelect =  document.getElementById('class-professors4');
+    professorList.forEach( (item) => {
+        let classProf = document.createElement('sl-option');
+        classProf.value=options++;
+        classProf.textContent=item;
+
+        classProfessorsSlSelect.appendChild(classProf);
+    });
+
+
+    document.getElementById('class-day4').value = classDayList[index];
+    document.getElementById('class-start-time4').value = classStartTimeList[index];
+    document.getElementById('class-end-time4').value = classEndTimeList[index];
+    document.getElementById('class-mode4').value = classModeList[index];
+    document.getElementById('class-building4').value = classBuildingList[index];
+    document.getElementById('classroom4').value = classRoomList[index];
+    dialog4.show();
+    classToUpdate = index;
 }
 
 function checkCompleteFieldsForSubmit(){

@@ -71,6 +71,9 @@
             margin: 0;
             font-size: medium;
         }
+        td{
+
+        }
     </style>
 </head>
 <body>
@@ -111,7 +114,7 @@
             </tr>
             <tr>
                 <td>
-                    <spring:message code="subject.professors"/>
+                    <spring:message code="subject.professors.noPoints"/>
                 </td>
                 <td>
                     <sl-select multiple clearable id="class-professors">
@@ -154,7 +157,7 @@
                 </td>
             </tr>
             <tr>
-                <td><spring:message code="subject.classNumber"/></td>
+                <td><spring:message code="subject.classroom"/></td>
                 <td><sl-input id="classroom"></sl-input></td>
             </tr>
             </tbody>
@@ -200,6 +203,68 @@
             </table>
         <sl-button slot="footer" variant="success" onclick="addDegreeSemester()"><spring:message code="subject.add.short"/></sl-button>
     </div>
+</sl-dialog>
+
+<sl-dialog label="<spring:message code="subject.edit.class.title"/>" class="dialog-header-actions4" style="--width: 45rem">
+    <p slot="footer"><spring:message code="subject.create.class.hint"/></p>
+    <div id="error-message4">
+
+    </div>
+    <div class="table">
+        <table>
+            <tbody>
+            <tr>
+                <td>
+                    <spring:message code="subject.professors.noPoints"/>
+                </td>
+                <td>
+                    <sl-select multiple clearable id="class-professors4">
+
+                    </sl-select>
+                </td>
+            </tr>
+            <tr>
+                <td><spring:message code="subject.classDay"/></td>
+                <td>
+                    <sl-select id="class-day4">
+                        <sl-option value="<c:out value="1"/>"><spring:message code="subject.classDay1"/></sl-option>
+                        <sl-option value="<c:out value="2"/>"><spring:message code="subject.classDay2"/></sl-option>
+                        <sl-option value="<c:out value="3"/>"><spring:message code="subject.classDay3"/></sl-option>
+                        <sl-option value="<c:out value="4"/>"><spring:message code="subject.classDay4"/></sl-option>
+                        <sl-option value="<c:out value="5"/>"><spring:message code="subject.classDay5"/></sl-option>
+                        <sl-option value="<c:out value="6"/>"><spring:message code="subject.classDay6"/></sl-option>
+                        <sl-option value="<c:out value="7"/>"><spring:message code="subject.classDay7"/></sl-option>
+                    </sl-select>
+                </td>
+            </tr>
+            <tr>
+                <td><spring:message code="subject.time.start"/></td>
+                <td><sl-input id="class-start-time4" type="time"></sl-input></td>
+            </tr>
+            <tr>
+                <td><spring:message code="subject.time.end"/></td>
+                <td><sl-input id="class-end-time4" type="time"></sl-input></td>
+            </tr>
+            <tr>
+                <td><spring:message code="subject.classMode"/></td>
+                <td>
+                    <sl-input id="class-mode4"></sl-input>
+                </td>
+            </tr>
+            <tr>
+                <td><spring:message code="builder.building"/></td>
+                <td>
+                    <sl-input id="class-building4"></sl-input>
+                </td>
+            </tr>
+            <tr>
+                <td><spring:message code="subject.classroom"/></td>
+                <td><sl-input id="classroom4"></sl-input></td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+    <sl-button slot="footer" variant="success" onclick="updateClass()"><spring:message code="subject.edit.short"/></sl-button>
 </sl-dialog>
 
 <main class="container-50">
@@ -303,7 +368,7 @@
                     <tr>
                         <td>
                             <form:errors path="professors" cssClass="error" element="p"/>
-                            <spring:message code="subject.professors"/>
+                            <spring:message code="subject.professors.noPoints"/>
                         </td>
                         <td style="display: flex; flex-direction: row">
                             <input id="professor" list="professors" class="selection">
@@ -356,7 +421,7 @@
                         <tr>
                             <th>
                                 <form:errors path="classCodes" cssClass="error" element="p"/>
-                                <spring:message code="builder.class"/>
+                                <spring:message code="subject.classCode"/>
                             </th>
                             <th>
                                 <form:errors path="classProfessors" cssClass="error" element="p"/>
@@ -386,6 +451,7 @@
                                 <form:errors path="classModes" cssClass="error" element="p"/>
                                 <spring:message code="subject.classroom"/>
                             </th>
+                            <th></th>
                             <th> </th>
                         </tr>
                         </thead>
@@ -596,6 +662,44 @@
 
 
         dialog2.hide();
+    }
+
+    function updateClass() {
+        let updatedClassProf = document.getElementById('class-professors4');
+        let profIndex = 0;
+        let updatedProfessors = [];
+        if( updatedClassProf.value.length > 1){
+            while( profIndex < updatedClassProf.value.length ){
+                updatedProfessors.push(professorMap[updatedClassProf.value[profIndex]]);
+                profIndex++;
+            }
+        }else{
+            updatedProfessors.push(professorMap[updatedClassProf.value]);
+        }
+
+        if( updatedClassProf.value.length === 0 || document.getElementById('class-day4').value === "" || document.getElementById('class-start-time4').value === "" || document.getElementById('class-end-time4').value === "" || document.getElementById('class-building4').value === "" || document.getElementById('classroom4').value === "" || document.getElementById('class-mode4').value === ""){
+            return;
+        }
+
+        classProfList[classToUpdate] = updatedProfessors;
+        classDayList[classToUpdate] = document.getElementById('class-day4').value;
+        classStartTimeList[classToUpdate] = document.getElementById('class-start-time4').value;
+        classEndTimeList[classToUpdate] = document.getElementById('class-end-time4').value;
+        classModeList[classToUpdate] = document.getElementById('class-mode4').value;
+        classBuildingList[classToUpdate] = document.getElementById('class-building4').value;
+        classRoomList[classToUpdate] = document.getElementById('classroom4').value;
+
+        updateClassItems();
+
+        dialog4.hide();
+        document.getElementById('classCodes-hiddenInput').value = JSON.stringify(classCodeList);
+        document.getElementById('classProfessors-hiddenInput').value = JSON.stringify(classProfList);
+        document.getElementById('classDays-hiddenInput').value = JSON.stringify(classDayList);
+        document.getElementById('classStartTimes-hiddenInput').value = JSON.stringify(classStartTimeList);
+        document.getElementById('classEndTimes-hiddenInput').value = JSON.stringify(classEndTimeList);
+        document.getElementById('classBuildings-hiddenInput').value = JSON.stringify(classBuildingList);
+        document.getElementById('classRooms-hiddenInput').value = JSON.stringify(classRoomList);
+        document.getElementById('classModes-hiddenInput').value = JSON.stringify(classModeList);
     }
 
     function updateErrorMessage(id) {
