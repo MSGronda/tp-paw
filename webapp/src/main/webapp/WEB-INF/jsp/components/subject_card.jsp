@@ -31,7 +31,14 @@
         </sl-badge>
       </c:if>
       <c:if test="${not empty subject.prerequisites}">
-        <sl-tooltip content="<c:out value="${subject.prerequisites.toString()}" />">
+        <sl-tooltip>
+          <div slot="content">
+            <ul class="subject-card-tooltip-list">
+              <c:forEach var="prerequisite" items="${subject.prerequisites}" >
+                <li><c:out value="${prerequisite.name}" /></li>
+              </c:forEach>
+            </ul>
+          </div>
           <sl-badge variant="warning" pill>
             <c:choose>
               <c:when test="${subject.prerequisites.size() > 1}">

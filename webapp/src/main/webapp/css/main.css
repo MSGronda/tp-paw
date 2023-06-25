@@ -144,7 +144,7 @@ sl-card.subject-card {
     backface-visibility: hidden;
 }
 sl-card.subject-card:hover {
-    transform: scale(1.03);
+    /*transform: scale(1.03);*/
 }
 sl-card.subject-card::part(base) {
     min-height: 100%;
@@ -172,4 +172,13 @@ sl-card.subject-card::part(body) {
 }
 .progress-icon {
     padding-left: 1rem;
+}
+.subject-card-tooltip-list {
+    list-style-type: disc !important;
+    color: white;
+    margin: 0;
+    padding: 0.25rem 0.25rem 0.25rem 1.25rem;
+}
+.subject-card-tooltip-list li {
+    display: list-item;
 }

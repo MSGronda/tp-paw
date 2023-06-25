@@ -130,16 +130,17 @@
 <main>
   <div class="info container-50">
     <div class="breadcrumb-area">
-      <c:if test="${year.present}">
+      <c:if test="${degree.present and year.present}">
+        <c:set var="degree" value="${degree.get()}"/>
         <c:set var="year" value="${year.asInt}"/>
         <sl-breadcrumb>
-          <sl-breadcrumb-item><a href='<c:url value="/degree/${user.degree.id}"/>'><c:out value="${user.degree.name}"/></a></sl-breadcrumb-item>
+          <sl-breadcrumb-item><a href='<c:url value="/degree/${degree.id}"/>'><c:out value="${degree.name}"/></a></sl-breadcrumb-item>
           <c:choose>
             <c:when test="${year == 0}">
-              <sl-breadcrumb-item><a href='<c:url value="/degree/${user.degree.id}?tab=electives"/>'><spring:message code="home.electives"/></a></sl-breadcrumb-item>
+              <sl-breadcrumb-item><a href='<c:url value="/degree/${degree.id}?tab=electives"/>'><spring:message code="home.electives"/></a></sl-breadcrumb-item>
             </c:when>
             <c:otherwise>
-              <sl-breadcrumb-item><a href='<c:url value="/degree/${user.degree.id}?tab=${year}"/>'><spring:message code="subject.year" arguments="${year}"/></a></sl-breadcrumb-item>
+              <sl-breadcrumb-item><a href='<c:url value="/degree/${degree.id}?tab=${year}"/>'><spring:message code="subject.year" arguments="${year}"/></a></sl-breadcrumb-item>
             </c:otherwise>
           </c:choose>
         </sl-breadcrumb>
