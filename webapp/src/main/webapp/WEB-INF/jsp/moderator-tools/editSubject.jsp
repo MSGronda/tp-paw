@@ -1068,15 +1068,28 @@
     }
 
     function addDeletedToHIArrays(index){
-        classIdHI.push(classId[index]);
-        classCodeHI.push("-1");
-        classProfHI.push([]);
-        classDayHI.push("-1");
-        classStartTimeHI.push("00:00");
-        classEndTimeHI.push("00:00");
-        classBuildingHI.push("-1");
-        classRoomHI.push("-1");
-        classModeHI.push("-1");
+        if(classIdHI.includes(classId[index])) {
+            let HIindex = classIdHI.indexOf(classId[index]);
+            classIdHI.splice(HIindex,1);
+            classCodeHI.splice(HIindex,1);
+            classProfHI.splice(HIindex,1);
+            classDayHI.splice(HIindex,1);
+            classStartTimeHI.splice(HIindex,1);
+            classEndTimeHI.splice(HIindex,1);
+            classBuildingHI.splice(HIindex,1);
+            classRoomHI.splice(HIindex,1);
+            classModeHI.splice(HIindex,1);
+        } else {
+            classIdHI.push(classId[index]);
+            classCodeHI.push("-1");
+            classProfHI.push([]);
+            classDayHI.push("-1");
+            classStartTimeHI.push("00:00");
+            classEndTimeHI.push("00:00");
+            classBuildingHI.push("-1");
+            classRoomHI.push("-1");
+            classModeHI.push("-1");
+        }
     }
 
     let updatedClassIndex = -1;
