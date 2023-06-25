@@ -255,8 +255,14 @@
                       <c:out value="${subjectClass.classId}"/>
                     </c:if>
                   </td>
-                  <td><spring:message code="subject.classDay${classTime.day}"/></td>
-
+                  <c:choose>
+                    <c:when test="${classTime.day >= 1 && classTime.day <= 7}">
+                      <td><spring:message code="subject.classDay${classTime.day}"/></td>
+                    </c:when>
+                    <c:otherwise>
+                      <td>-</td>
+                    </c:otherwise>
+                  </c:choose>
                   <td><c:out value="${classTime.startTime.hour}:${classTime.startTime.minute}"/><c:if test="${classTime.startTime.minute  == 0}">0</c:if>
                     - <c:out value="${classTime.endTime.hour}:${classTime.endTime.minute}"/><c:if test="${classTime.endTime.minute == 0}">0</c:if>
                   </td>

@@ -24,7 +24,7 @@
             <c:forEach varStatus="status" var="classTime" items="${subClass.classTimes}">
                 <tr>
                     <c:choose>
-                        <c:when test="${classTime.day != 0}">
+                        <c:when test="${classTime.day >= 1 && classTime.day <= 7}">
                             <td><spring:message code="subject.classDay${classTime.day}"/>
                         </c:when>
                         <c:otherwise><<td>-</td></c:otherwise>
