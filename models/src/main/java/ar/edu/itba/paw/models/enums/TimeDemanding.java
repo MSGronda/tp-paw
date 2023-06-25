@@ -16,7 +16,10 @@ public enum TimeDemanding {
         return value;
     }
 
-    public static TimeDemanding parse(long timeDemanding){
+    public static TimeDemanding parse(final Long timeDemanding){
+        if(timeDemanding == null)
+            return NO_DATA;
+
         for(TimeDemanding t : TimeDemanding.values()){
             if(t.value == timeDemanding){
                 return t;

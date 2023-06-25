@@ -16,7 +16,10 @@ public enum Difficulty {
         return value;
     }
 
-    public static Difficulty parse(long difficulty){
+    public static Difficulty parse(final Long difficulty){
+        if(difficulty == null)
+            return NO_DATA;
+
         for(Difficulty d : Difficulty.values()){
             if(d.value == difficulty){
                 return d;

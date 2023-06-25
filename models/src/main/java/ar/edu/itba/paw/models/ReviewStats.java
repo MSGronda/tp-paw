@@ -1,5 +1,7 @@
 package ar.edu.itba.paw.models;
 
+import ar.edu.itba.paw.models.converter.DifficultyConverter;
+import ar.edu.itba.paw.models.converter.TimeDemandingConverter;
 import ar.edu.itba.paw.models.enums.Difficulty;
 import ar.edu.itba.paw.models.enums.TimeDemanding;
 import jdk.nashorn.internal.ir.annotations.Immutable;
@@ -41,34 +43,27 @@ public class ReviewStats {
     @Column(name = "timedemandingcount")
     private int timeDemandingCount;
 
+    @Convert(converter = DifficultyConverter.class)
+    @Column(name = "difficulty")
+    private Difficulty difficulty;
+
+    @Convert(converter = TimeDemandingConverter.class)
+    @Column(name = "timedemanding")
+    private TimeDemanding timeDemanding;
+
     protected ReviewStats() {}
 
     public Difficulty getDifficulty(){
-        if(easyCount == 0 && mediumCount == 0 && hardCount == 0){
+        if(difficulty == null)
             return Difficulty.NO_DATA;
-        }
 
-        if(easyCount > mediumCount){
-            if(easyCount > hardCount)
-                return Difficulty.EASY;
-        }
-        else if(mediumCount > hardCount) {
-            return Difficulty.MEDIUM;
-        }
-        return Difficulty.HARD;
+        return difficulty;
     }
     public TimeDemanding getTimeDemanding(){
-        if(notTimeDemandingCount == 0 && timeDemandingCount == 0 && averageTimeDemandingCount == 0){
+        if(timeDemanding == null)
             return TimeDemanding.NO_DATA;
-        }
 
-        if(notTimeDemandingCount > averageTimeDemandingCount) {
-            if (notTimeDemandingCount > timeDemandingCount)
-                return TimeDemanding.LOW;
-        } else if(averageTimeDemandingCount > timeDemandingCount) {
-            return TimeDemanding.MEDIUM;
-        }
-        return TimeDemanding.HIGH;
+        return timeDemanding;
     }
 
     public Subject getSubject() {

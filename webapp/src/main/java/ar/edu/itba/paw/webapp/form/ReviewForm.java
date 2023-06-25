@@ -33,7 +33,7 @@ public class ReviewForm {
     }
 
     public Difficulty getDifficultyEnum() {
-        return Difficulty.parse(difficulty);
+        return Difficulty.parse(difficulty.longValue());
     }
 
     public void setDifficulty(Integer difficulty) {
@@ -45,7 +45,7 @@ public class ReviewForm {
     }
 
     public TimeDemanding getTimeDemandingEnum() {
-        return TimeDemanding.parse(timeDemanding);
+        return TimeDemanding.parse(timeDemanding.longValue());
     }
 
     public void setTimeDemanding(Integer timeDemanding) {
