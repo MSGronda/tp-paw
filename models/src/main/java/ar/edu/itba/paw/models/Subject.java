@@ -112,7 +112,7 @@ public class Subject {
 
     public ReviewStats getReviewStats() {
         if(reviewStats == null) {
-            reviewStats = new ReviewStats();
+            return new ReviewStats();
         }
 
         return reviewStats;
