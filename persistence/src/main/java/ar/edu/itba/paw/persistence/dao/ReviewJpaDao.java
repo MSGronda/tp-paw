@@ -1,4 +1,4 @@
-package ar.edu.itba.paw.persistence.dao.jpa;
+package ar.edu.itba.paw.persistence.dao;
 
 import ar.edu.itba.paw.models.Review;
 import ar.edu.itba.paw.models.ReviewVote;

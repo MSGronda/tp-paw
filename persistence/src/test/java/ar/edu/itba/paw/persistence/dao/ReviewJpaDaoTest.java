@@ -1,11 +1,10 @@
-package ar.edu.itba.paw.persistence.dao.jpa;
+package ar.edu.itba.paw.persistence.dao;
 
 import ar.edu.itba.paw.models.Review;
 import ar.edu.itba.paw.models.ReviewVote;
 import ar.edu.itba.paw.models.Subject;
 import ar.edu.itba.paw.models.User;
 import ar.edu.itba.paw.models.enums.*;
-import ar.edu.itba.paw.models.exceptions.InvalidPageNumberException;
 import ar.edu.itba.paw.persistence.config.TestConfig;
 import org.junit.Before;
 import org.junit.Test;

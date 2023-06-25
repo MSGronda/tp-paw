@@ -1,4 +1,4 @@
-package ar.edu.itba.paw.persistence.dao.jpa;
+package ar.edu.itba.paw.persistence.dao;
 
 import ar.edu.itba.paw.models.Role;
 import ar.edu.itba.paw.models.Subject;
@@ -19,7 +19,6 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
 import java.util.Locale;
-import java.util.Map;
 
 import static org.junit.Assert.*;
 
