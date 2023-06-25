@@ -299,54 +299,63 @@ public class SubjectServiceImpl implements SubjectService {
             final String classModes) {
 
         Optional<Subject> optionalSubject = findById(id);
-        if(!optionalSubject.isPresent()) {
+        if (!optionalSubject.isPresent()) {
             return;
         }
 
         Subject sub = optionalSubject.get();
-        subjectDao.editCredits(sub, credits);
+        if (credits != sub.getCredits()) {
+            subjectDao.editCredits(sub, credits);
+        }
 
-        final List<String> degreeIdsList = parseJsonList(degreeIds, false);
-        final List<String> semestersList = parseJsonList(semesters, false);
-        degreeService.updateSubjectToDegrees(
-                sub,
-                degreeIdsList.stream().map(Long::parseLong).collect(java.util.stream.Collectors.toList()),
-                semestersList.stream().map(Integer::parseInt).collect(java.util.stream.Collectors.toList())
-        );
+        if (!degreeIds.isEmpty() && !semesters.isEmpty()) {
+            final List<String> degreeIdsList = parseJsonList(degreeIds, false);
+            final List<String> semestersList = parseJsonList(semesters, false);
+            degreeService.updateSubjectToDegrees(
+                    sub,
+                    degreeIdsList.stream().map(Long::parseLong).collect(java.util.stream.Collectors.toList()),
+                    semestersList.stream().map(Integer::parseInt).collect(java.util.stream.Collectors.toList())
+            );
+        }
 
-        final List<String> professorsList = parseJsonList(professors, true);
-        professorService.updateSubjectToProfessors(
-                sub,
-                professorsList
-        );
+        if (!professors.isEmpty()) {
+            final List<String> professorsList = parseJsonList(professors, true);
+            professorService.updateSubjectToProfessors(
+                    sub,
+                    professorsList
+            );
+        }
+        if (!requirementIds.isEmpty()) {
+            final List<String> correlativesList = parseJsonList(requirementIds, false);
+            subjectDao.updatePrerequisites(sub, correlativesList);
+        }
 
-        final List<String> correlativesList = parseJsonList(requirementIds, false);
-        subjectDao.updatePrerequisites( sub, correlativesList);
-
-        final List<String> classesList = parseJsonList(classCodes, false);
-        final List<String> classesIdsList = parseJsonList(classIds, false);
-        subjectDao.updateClassesToSubject(sub, classesIdsList, classesList);
+        if (!classCodes.isEmpty() && !classIds.isEmpty()) {
+            final List<String> classesList = parseJsonList(classCodes, false);
+            final List<String> classesIdsList = parseJsonList(classIds, false);
+            subjectDao.updateClassesToSubject(sub, classesIdsList, classesList);
 
 
-        final List<List<String>> classProfessorsList = parseJsonListOfLists(classProfessors);
-        professorService.updateProfessorsToClasses(sub, classesIdsList, classesList, classProfessorsList);
+            final List<List<String>> classProfessorsList = parseJsonListOfLists(classProfessors);
+            professorService.updateProfessorsToClasses(sub, classesIdsList, classesList, classProfessorsList);
 
-        final List<String> startTimes = parseJsonList(classStartTimes, false);
-        final List<String> endTimes = parseJsonList(classEndTime, false);
-        final List<String> buildings = parseJsonList(classBuildings, false);
-        final List<String> modes = parseJsonList(classModes, false);
-        final List<String> days = parseJsonList(classDays, false);
-        final List<String> rooms = parseJsonList(classRooms, false);
-        subjectDao.updateSubjectClassTimes(
-                sub,
-                classesIdsList,
-                classesList,
-                startTimes.stream().map(LocalTime::parse).collect(Collectors.toList()),
-                endTimes.stream().map(LocalTime::parse).collect(Collectors.toList()),
-                buildings,
-                modes,
-                days.stream().map(Integer::parseInt).collect(Collectors.toList()),
-                rooms
-        );
+            final List<String> startTimes = parseJsonList(classStartTimes, false);
+            final List<String> endTimes = parseJsonList(classEndTime, false);
+            final List<String> buildings = parseJsonList(classBuildings, false);
+            final List<String> modes = parseJsonList(classModes, false);
+            final List<String> days = parseJsonList(classDays, false);
+            final List<String> rooms = parseJsonList(classRooms, false);
+            subjectDao.updateSubjectClassTimes(
+                    sub,
+                    classesIdsList,
+                    classesList,
+                    startTimes.stream().map(LocalTime::parse).collect(Collectors.toList()),
+                    endTimes.stream().map(LocalTime::parse).collect(Collectors.toList()),
+                    buildings,
+                    modes,
+                    days.stream().map(Integer::parseInt).collect(Collectors.toList()),
+                    rooms
+            );
+        }
     }
 }

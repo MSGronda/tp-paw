@@ -144,22 +144,13 @@
             <tr>
                 <td><spring:message code="subject.classMode"/></td>
                 <td>
-                    <sl-select id="class-mode">
-                        <sl-option value="<c:out value="1"/>"><spring:message code="subject.mode.inperson"/></sl-option>
-                        <sl-option value="<c:out value="2"/>"><spring:message code="subject.mode.virtual"/></sl-option>
-                        <sl-option value="<c:out value="3"/>"><spring:message code="subject.mode.lab"/></sl-option>
-                    </sl-select>
+                    <sl-input id="class-mode"></sl-input>
                 </td>
             </tr>
             <tr>
                 <td><spring:message code="builder.building"/></td>
                 <td>
-                    <sl-select id="class-building">
-                        <sl-option value="<c:out value="1"/>"><spring:message code="subject.building.rectorado"/></sl-option>
-                        <sl-option value="<c:out value="2"/>"><spring:message code="subject.building.tecnologico"/></sl-option>
-                        <sl-option value="<c:out value="3"/>"><spring:message code="subject.building.financiero"/></sl-option>
-                        <sl-option value="<c:out value="4"/>"><spring:message code="subject.mode.virtual"/></sl-option>
-                    </sl-select>
+                    <sl-input id="class-building"></sl-input>
                 </td>
             </tr>
             <tr>
@@ -529,19 +520,6 @@
         dialog.hide();
     }
 
-    const modeMap = {
-        "1":"Presencial",
-        "2":"Virtual",
-        "3":"Laboratorio"
-    }
-
-    const buildingMap = {
-        "1":"Rectorado",
-        "2":"Tecnológico",
-        "3":"Financiero",
-        "4":"Virtual"
-    }
-
     const dayMap = {
         "1":"<spring:message code="subject.classDay1" htmlEscape="false" javaScriptEscape="true"/>",
         "2":"<spring:message code="subject.classDay2" htmlEscape="false" javaScriptEscape="true"/>",
@@ -566,7 +544,7 @@
             updateErrorMessage(2)
             return;
         }
-        if (classCodeList.includes(classCode.value) && classProfList.includes(classProf.value) && classDayList.includes(dayMap[classDay.value]) && classStartTimeList.includes(classStartTime.value) && classEndTimeList.includes(classEndTime.value) && classBuildingList.includes(buildingMap[classBuilding.value]) && classRoomList.includes(classRoom.value) && classModeList.includes(modeMap[classMode.value])) {
+        if (classCodeList.includes(classCode.value) && classProfList.includes(classProf.value) && classDayList.includes(dayMap[classDay.value]) && classStartTimeList.includes(classStartTime.value) && classEndTimeList.includes(classEndTime.value) && classBuildingList.includes(classBuilding.value) && classRoomList.includes(classRoom.value) && classModeList.includes(classMode.value)) {
             classCode.value = "<spring:message code="subject.create.class.error1" htmlEscape="false" javaScriptEscape="true"/>";
             updateErrorMessage(1)
             return;
@@ -587,9 +565,9 @@
         classDayList.push(classDay.value);
         classStartTimeList.push(classStartTime.value);
         classEndTimeList.push(classEndTime.value);
-        classBuildingList.push(buildingMap[classBuilding.value]);
+        classBuildingList.push(classBuilding.value);
         classRoomList.push(classRoom.value);
-        classModeList.push(modeMap[classMode.value]);
+        classModeList.push(classMode.value);
 
         document.getElementById('classCodes-hiddenInput').value = JSON.stringify(classCodeList);
         document.getElementById('classProfessors-hiddenInput').value = JSON.stringify(classProfList);
