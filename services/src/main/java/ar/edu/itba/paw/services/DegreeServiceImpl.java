@@ -1,12 +1,14 @@
 package ar.edu.itba.paw.services;
 
 import ar.edu.itba.paw.models.Degree;
+import ar.edu.itba.paw.models.DegreeSubject;
 import ar.edu.itba.paw.models.Subject;
 import ar.edu.itba.paw.persistence.dao.DegreeDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.OptionalInt;
@@ -52,7 +54,50 @@ public class DegreeServiceImpl implements DegreeService {
     @Transactional
     @Override
     public void updateSubjectToDegrees(final Subject subject, final List<Long> degreeIds, final List<Integer> semesters) {
-        degreeDao.updateSubjectToDegrees(subject, degreeIds, semesters);
+        List<Degree> degreesToAdd = new ArrayList<>();
+        List<Integer> semestersToAdd = new ArrayList<>();
+
+        List<Degree> degreesToRemove = new ArrayList<>();
+        List<Integer> semesterToRemove = new ArrayList<>();
+
+        List<Degree> degreeToUpdate = new ArrayList<>();
+        List<Integer> semesterToUpdate = new ArrayList<>();
+
+        // itero por la lista de degrees
+        for (int i = 0; i < degreeIds.size(); i++) {
+            Optional<Degree> maybeDegree = degreeDao.findById(degreeIds.get(i));
+
+            if (maybeDegree.isPresent()) {
+                Degree degree = maybeDegree.get();
+
+                //si contiene el degree, 2 casos: si es el mismo semetre -> eliminar, sino actualizar
+                if (subject.getDegrees().contains(degree)) {
+
+                    //itero por los degreeSubjects para encontrar el indicado
+                    for (DegreeSubject degreeSubject : degree.getDegreeSubjects()) {
+                        if (degreeSubject.getSubject().equals(subject)) {
+                            if (degreeSubject.getSemester() != semesters.get(i)) {
+                                //semester se cambio, actualizar
+                                degreeToUpdate.add(degree);
+                                semesterToUpdate.add(semesters.get(i));
+                            } else {
+                                //semester es el mismo, eliminar
+                                degreesToRemove.add(degree);
+                                semesterToRemove.add(semesters.get(i));
+                            }
+                        }
+                    }
+                } else {
+                    //si no tiene degree, agregar nuevo degreeSubject
+                    degreesToAdd.add(degree);
+                    semestersToAdd.add(semesters.get(i));
+                }
+            }
+        }
+        degreeDao.updateInsertSubjectToDegrees(subject, degreesToAdd, semestersToAdd);
+        degreeDao.updateUpdateSubjectToDegrees(subject, degreeToUpdate, semesterToUpdate);
+        degreeDao.updateDeleteSubjectToDegrees(subject, degreesToRemove, semesterToRemove);
+
     }
 
 }

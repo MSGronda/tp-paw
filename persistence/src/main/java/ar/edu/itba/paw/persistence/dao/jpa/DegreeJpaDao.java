@@ -67,36 +67,49 @@ public class DegreeJpaDao implements DegreeDao {
     }
 
     @Override
-    public void updateSubjectToDegrees(final Subject subject, final List<Long> degreeIds, final List<Integer> semesters) {
-        // itero por la lista de degrees
-        for (int i = 0; i < degreeIds.size(); i++) {
-            Degree degree = em.find(Degree.class, degreeIds.get(i));
+    public void updateInsertSubjectToDegrees(final Subject subject, final List<Degree> degreesToInsert, final List<Integer> semestersToAdd) {
+        for( int i = 0 ; i < degreesToInsert.size() ; i++){
+            Degree degree = degreesToInsert.get(i);
+            DegreeSubject ds = new DegreeSubject(degree, subject, semestersToAdd.get(i));
+            em.persist(ds);
+            degree.getDegreeSubjects().add(ds);
+        }
+    }
 
-            //si contiene el degree, 2 casos: si es el mismo semetre -> eliminar, sino actualizar
-            if (subject.getDegrees().contains(degree)) {
-                int semester = semesters.get(i);
+    @Override
+    public void updateUpdateSubjectToDegrees(final Subject subject, final List<Degree> degreesToUpdate, final List<Integer> semestersToUpdate) {
+        for( int i = 0; i < degreesToUpdate.size() ; i++){
+            Degree degree = degreesToUpdate.get(i);
+            int semester = semestersToUpdate.get(i);
 
-                int size = degree.getDegreeSubjects().size();
-                //itero por los degreeSubjects para encontrar el indicado
-                for( int j = 0; j < size; j++){
-                    DegreeSubject ds = degree.getDegreeSubjects().get(j);
-                    if(ds.getSubject().equals(subject)){
-                        //semester se cambio, actualizar
-                        if(ds.getSemester() != semester){
-                            ds.setSemester(semester);
-                        }else{
-                            //semester es el mismo, eliminar
-                            degree.getDegreeSubjects().remove(ds);
-                            size--;
-                            em.remove(ds);
-                        }
-                    }
+            int size = degree.getDegreeSubjects().size();
+            //itero por los degreeSubjects para encontrar el indicado
+            for( int j = 0; j < size; j++){
+                DegreeSubject ds = degree.getDegreeSubjects().get(j);
+                if(ds.getSubject().equals(subject)){
+                    //semester se cambio, actualizar
+                    ds.setSemester(semester);
                 }
-            } else {
-                //si no tiene degree, agregar nuevo degreeSubject
-                DegreeSubject ds = new DegreeSubject(degree, subject, semesters.get(i));
-                em.persist(ds);
-                degree.getDegreeSubjects().add(ds);
+            }
+        }
+    }
+
+    @Override
+    public void updateDeleteSubjectToDegrees(final Subject subject, final List<Degree> degreesToDelete, final List<Integer> semestersToDelete) {
+        //conseguir el DegreeSubject y eliminarlo
+        for( int i = 0 ; i < degreesToDelete.size() ; i++){
+            Degree degree = degreesToDelete.get(i);
+            int semester = semestersToDelete.get(i);
+
+            int size = degree.getDegreeSubjects().size();
+            //itero por los degreeSubjects para encontrar el indicado
+            for( int j = 0; j < size; j++){
+                DegreeSubject ds = degree.getDegreeSubjects().get(j);
+                if(ds.getSubject().equals(subject)){
+                    degree.getDegreeSubjects().remove(ds);
+                    size--;
+                    em.remove(ds);
+                }
             }
         }
     }

@@ -316,6 +316,8 @@ public class SubjectServiceImpl implements SubjectService {
         if (!degreeIds.isEmpty() && !semesters.isEmpty()) {
             final List<String> degreeIdsList = parseJsonList(degreeIds, false);
             final List<String> semestersList = parseJsonList(semesters, false);
+            //este metodo se encarga de separar los degrees a partir de si ya existen o si fueron modificados
+            //llama al dao despues por cada caso, insertar, modificar o eliminar
             degreeService.updateSubjectToDegrees(
                     sub,
                     degreeIdsList.stream().map(Long::parseLong).collect(java.util.stream.Collectors.toList()),
