@@ -4,7 +4,7 @@
 <html>
 <head>
   <jsp:include page="../components/head_shared.jsp"/>
-  <title>Dashboard</title>
+  <title><spring:message code="dashboard.title"/></title>
   <style>
       sl-tab-panel {
           width: 100%;

@@ -5,7 +5,7 @@
 
 <html>
 <head>
-    <title><c:out value="${subject.name}" /> - Review</title>
+    <title><c:out value="${subject.name}" /> - <spring:message code="review.title"/></title>
     <jsp:include page="../components/head_shared.jsp"/>
     <style>
         .row{

@@ -278,9 +278,12 @@ function reAdjustWithCredits(average){
         ret += 0.1;
     else if(overviewStats.totalCredits >= 6 && overviewStats.totalCredits <= 18)
         ret += 0.5;
-    else if(overviewStats.totalCredits > 18)
+    else if(overviewStats.totalCredits > 18 && overviewStats.totalCredits < 24)
         ret += 1;
-
+    else if(overviewStats.totalCredits >= 24 && overviewStats.totalCredits < 27)
+        ret += 2;
+    else
+        ret = 3;
     return Math.min(ret,3);
 }
 

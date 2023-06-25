@@ -41,7 +41,7 @@
         <div class="tags-removable">
             <form:errors path="text" cssClass="error" element="p"/>
             <spring:message code="reviewForm.text.label" var="TextLabel"/>
-            <sl-textarea name="text" label="${TextLabel}" value="${ReviewForm.text}"></sl-textarea>
+            <sl-textarea name="text" label="${TextLabel}" value="<c:out value="${ReviewForm.text}"/>"></sl-textarea>
             <br/>
 
             <form:errors path="difficulty" cssClass="error" element="p"/>
@@ -80,14 +80,14 @@
 <script src="<c:url value="/js/url-param-utils.js" />"></script>
 <script>
     const items = []
-    for(let i=0; i<${total}; i++){
+    for(let i=0; i< <c:out value="${total}"/>; i++){
         items.push(""+i);
     }
 
     ProgressBar.init(
         items
         ,
-        ""+${current - 1},
+        ""+ <c:out value="${current - 1}"/>,
         'progress-bar-wrapper'
     );
 
