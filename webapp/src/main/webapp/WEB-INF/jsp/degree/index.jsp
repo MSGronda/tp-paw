@@ -242,7 +242,7 @@
 
     const dptFilterBtns = [
         <c:forEach var="dpt" items="${relevantFilters['DEPARTMENT']}">
-        ["${dpt.hashCode()}", "${dpt}", "remove-${dpt.hashCode()}", "remove-section-${dpt.hashCode()}"],
+        ["${dpt.hashCode()}", "<c:out value="${dpt}"/>", "remove-${dpt.hashCode()}", "remove-section-${dpt.hashCode()}"],
         </c:forEach>
     ]
 
@@ -276,7 +276,7 @@
 
     const creditFilterBtns = [
         <c:forEach var="credit" items="${relevantFilters['CREDITS']}">
-        ["credits-${credit}", "${credit}", "remove-${credit}", "remove-section-${credit}"],
+        ["credits-${credit}", "<c:out value="${credit}"/>", "remove-${credit}", "remove-section-${credit}"],
         </c:forEach>
     ]
     for (let elem in creditFilterBtns) {

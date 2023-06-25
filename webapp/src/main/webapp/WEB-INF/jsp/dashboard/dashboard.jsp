@@ -221,12 +221,12 @@
               <div class="row">
                 <h3><spring:message code="dashboard.overview.completedCredits"/></h3>
                 <sl-divider style="height: 1rem" vertical></sl-divider>
-                <h5>${user.creditsDone}</h5>
+                <h5><c:out value="${user.creditsDone}"/></h5>
               </div>
               <div class="row">
                 <h3><spring:message code="dashboard.overview.totalCredits"/></h3>
                 <sl-divider style="height: 1rem" vertical></sl-divider>
-                <h5>${degree.totalCredits}</h5>
+                <h5><c:out value="${degree.totalCredits}"/></h5>
               </div>
             </sl-card>
             <div class="stat-row">
@@ -236,8 +236,8 @@
                 </div>
 
                 <div class="column-center">
-                  <sl-progress-ring value="${userProgressPercentage}"></sl-progress-ring>
-                  <h4>${userProgressPercentage} %</h4>
+                  <sl-progress-ring value="<c:out value="${userProgressPercentage}"/>"></sl-progress-ring>
+                  <h4><c:out value="${userProgressPercentage}"/> %</h4>
                 </div>
               </sl-card>
               <sl-card class="progress-card">
@@ -367,16 +367,16 @@
 
       //  - - - - - - - Inflate time table - - - - - - -
       <c:forEach var="subClass" items="${user.userSemester}">
-        schedule.addClass('${subClass.subject.id}', '${subClass.subject.name}',
+        schedule.addClass('<c:out value="${subClass.subject.id}"/>', '<c:out value="${subClass.subject.name}"/>',
             [
                 <c:forEach var="classTime" items="${subClass.classTimes}">
                 {
-                    'day': '${classTime.day}',
-                    'start': '${classTime.startTime}',
-                    'end': '${classTime.endTime}',
-                    'loc': '${classTime.classLoc}',
-                    'building': '${classTime.building}',
-                    'mode': '${classTime.mode}'
+                    'day': '<c:out value="${classTime.day}"/>',
+                    'start': '<c:out value="${classTime.startTime}"/>',
+                    'end': '<c:out value="${classTime.endTime}"/>',
+                    'loc': '<c:out value="${classTime.classLoc}"/>',
+                    'building': '<c:out value="${classTime.building}"/>',
+                    'mode': '<c:out value="${classTime.mode}"/>'
                 },
                 </c:forEach>
             ],
@@ -409,9 +409,9 @@
                         barThickness: 50,
                         data: [
                             <c:forEach varStatus="status" var="year" items="${user.totalProgressPercentagePerYear.values()}">
-                            ${year},
+                              <c:out value="${year}"/>,
                             </c:forEach>
-                            ${user.electiveProgressPercentage}
+                              <c:out value="${user.electiveProgressPercentage}"/>
                         ]
                     }
                 ]

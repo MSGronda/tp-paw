@@ -7,7 +7,7 @@
 
 <sl-card class="class-card">
     <div class="chooser" slot="header">
-        <h5 class="class-card-name">${name} - ${subClass.classId}</h5>
+        <h5 class="class-card-name"><c:out value="${name}"/> - <c:out value="${subClass.classId}"/></h5>
     </div>
     <div class="column">
         <table>
@@ -29,10 +29,10 @@
                         </c:when>
                         <c:otherwise><<td>-</td></c:otherwise>
                     </c:choose>
-                    <td>${classTime.startTime} - ${classTime.endTime}</td>
-                    <td>${classTime.classLoc}</td>
-                    <td>${classTime.building}</td>
-                    <td>${classTime.mode}</td>
+                    <td><c:out value="${classTime.startTime}"/> - <c:out value="${classTime.endTime}"/></td>
+                    <td><c:out value="${classTime.classLoc}"/></td>
+                    <td><c:out value="${classTime.building}"/></td>
+                    <td><c:out value="${classTime.mode}"/></td>
                 </tr>
             </c:forEach>
             </tbody>
