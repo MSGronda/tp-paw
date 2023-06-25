@@ -197,15 +197,13 @@ public class SubjectJpaDao implements SubjectDao {
             final Map<SubjectFilterField, String> filters,
             final SubjectOrderField orderBy, OrderDir dir
     ){
-        //TODO: implement using CriteriaBuilder
-
         final StringBuilder nativeQuerySb;
 
         if(searchAll){
-            nativeQuerySb = new StringBuilder("SELECT s.id FROM subjects s WHERE subname ILIKE ?");
+            nativeQuerySb = new StringBuilder("SELECT s.id FROM subjects s LEFT JOIN subjectreviewstatistics srs ON s.id = srs.idsub WHERE subname ILIKE ?");
         }
         else{
-            nativeQuerySb = new StringBuilder("SELECT s.id FROM subjects s LEFT JOIN subjectsdegrees sd ON s.id = sd.idsub WHERE sd.iddeg = ? AND subname ILIKE ?");
+            nativeQuerySb = new StringBuilder("SELECT s.id FROM subjects s LEFT JOIN subjectreviewstatistics srs ON s.id = srs.idsub LEFT JOIN subjectsdegrees sd ON s.id = sd.idsub WHERE sd.iddeg = ? AND subname ILIKE ?");
         }
 
         List<Object> filterValues = null;
@@ -278,12 +276,11 @@ public class SubjectJpaDao implements SubjectDao {
     {
         final StringBuilder nativeQuerySb;
         if(searchAll){
-            nativeQuerySb = new StringBuilder("SELECT count(*) FROM subjects s WHERE subname ILIKE ?");
+            nativeQuerySb = new StringBuilder("SELECT count(*) FROM subjects s LEFT JOIN subjectreviewstatistics srs ON s.id = srs.idsub WHERE subname ILIKE ?");
         }
         else{
-            nativeQuerySb = new StringBuilder("SELECT count(*) FROM subjects s LEFT JOIN subjectsdegrees sd ON s.id = sd.idsub WHERE sd.iddeg = ? AND subname ILIKE ?");
+            nativeQuerySb = new StringBuilder("SELECT count(*) FROM subjects s LEFT JOIN subjectreviewstatistics srs ON s.id = srs.idsub LEFT JOIN subjectsdegrees sd ON s.id = sd.idsub WHERE sd.iddeg = ? AND subname ILIKE ?");
         }
-
 
         List<Object> filterValues = null;
         if (filters != null) {
@@ -323,21 +320,19 @@ public class SubjectJpaDao implements SubjectDao {
         return getTotalPagesForSearchSpecific(true, null, name, filters);
     }
 
-
-
     private Map<SubjectFilterField, List<String>> getRelevantFiltersForSearchSpecific(final Degree degree, final String name, final Map<SubjectFilterField, String> filters) {
         final Map<SubjectFilterField, List<String>> relevant = new HashMap<>();
 
         for (SubjectFilterField field : SubjectFilterField.values()) {
             final StringBuilder nativeQuerySb;
-            if(degree != null){
+            if(degree != null) {
                 nativeQuerySb = new StringBuilder("SELECT DISTINCT ").append(field.getColumn()).append(
-                        " FROM subjects s LEFT JOIN subjectsdegrees sd ON s.id = sd.idsub WHERE sd.iddeg = ? AND subname ILIKE ?"
+                        " FROM subjects s LEFT JOIN subjectreviewstatistics srs ON s.id = srs.idsub LEFT JOIN subjectsdegrees sd ON s.id = sd.idsub WHERE sd.iddeg = ? AND subname ILIKE ?"
                 );
             }
-            else{
+            else {
                 nativeQuerySb = new StringBuilder("SELECT DISTINCT ").append(field.getColumn()).append(
-                            " FROM subjects WHERE subname ILIKE ?"
+                            " FROM subjects LEFT JOIN subjectreviewstatistics srs ON s.id = srs.idsub WHERE subname ILIKE ?"
                 );
             }
 
@@ -367,6 +362,7 @@ public class SubjectJpaDao implements SubjectDao {
             final List<String> relevantValues =
                     new HashSet<>(fieldValues)
                             .stream()
+                            .filter(Objects::nonNull)
                             .sorted()
                             .map(Object::toString)
                             .filter(s -> !s.isEmpty())
@@ -458,7 +454,10 @@ public class SubjectJpaDao implements SubjectDao {
 
         final List<Object> filterValues = new ArrayList<>();
         for (Map.Entry<SubjectFilterField, String> entry : filters.entrySet()) {
-            if (entry.getKey() == SubjectFilterField.CREDITS) {
+            if (entry.getKey() == SubjectFilterField.CREDITS ||
+                    entry.getKey() == SubjectFilterField.DIFFICULTY ||
+                    entry.getKey() == SubjectFilterField.TIME
+            ) {
                 filterValues.add(Integer.parseInt(entry.getValue()));
             } else {
                 filterValues.add(entry.getValue());

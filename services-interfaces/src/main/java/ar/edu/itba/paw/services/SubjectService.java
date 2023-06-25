@@ -38,14 +38,36 @@ public interface SubjectService {
             final String orderBy,
             final String dir,
             final Integer credits,
-            final String department
+            final String department,
+            final Integer difficulty,
+            final Integer time
     );
     int getTotalPagesForSearch(final User user, final String name);
-    int getTotalPagesForSearch(final User user, final String name, final Integer credits, final String department);
+    int getTotalPagesForSearch(
+            final User user,
+            final String name,
+            final Integer credits,
+            final String department,
+            final Integer difficulty,
+            final Integer time
+    );
     Map<String, List<String>> getRelevantFiltersForSearch(final String name);
     Map<String, List<String>> getRelevantFiltersForSearch(final User user, final String name);
-    Map<String, List<String>> getRelevantFiltersForSearch(final User user, final String name, final Integer credits, final String department);
-    Map<String, List<String>> getRelevantFiltersForSearch(final String name, final Integer credits, final String department);
+    Map<String, List<String>> getRelevantFiltersForSearch(
+            final User user,
+            final String name,
+            final Integer credits,
+            final String department,
+            final Integer difficulty,
+            final Integer time
+    );
+    Map<String, List<String>> getRelevantFiltersForSearch(
+            final String name,
+            final Integer credits,
+            final String department,
+            final Integer difficulty,
+            final Integer time
+    );
 
     Map<User,Set<Subject>> getAllUserUnreviewedNotificationSubjects();
     void updateUnreviewedNotificationTime();

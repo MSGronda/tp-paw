@@ -3,7 +3,9 @@ package ar.edu.itba.paw.models.enums;
 public enum SubjectOrderField {
     ID("id", "credits"),
     NAME("name", "subname"),
-    CREDITS("credits", "credits");
+    CREDITS("credits", "credits"),
+    DIFFICULTY("difficulty", "difficulty"),
+    TIME("timeDemanding", "timeDemanding");
 
     private final String fieldName;
     private final String tableColumn;

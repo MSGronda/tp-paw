@@ -73,7 +73,8 @@
       }
 
       .vert-divider {
-          height: 11.5rem;
+          margin-top: 2rem;
+          height: 14rem;
       }
   </style>
 </head>
@@ -91,42 +92,109 @@
         </sl-button>
 
         <section class="filter-section" id="filter-section">
-          <div class="filter-option">
-            <h5><spring:message code="search.dpt"/></h5>
+          <c:if test="${not empty relevantFilters['DEPARTMENT']}">
+            <sl-divider class="vert-divider" style="--color: #cbcbcb;" vertical></sl-divider>
+            <div class="filter-option">
+              <h5><spring:message code="search.dpt"/></h5>
 
-            <c:forEach var="dptName" items="${relevantFilters['DEPARTMENT']}">
-              <sl-button-group>
-                <sl-button id="${dptName.hashCode()}" class="filter-button" size="small" variant="default" pill>
-                  <c:out value="${dptName}"/>
-                </sl-button>
-                <section id="remove-section-${dptName.hashCode()}">
-                  <sl-button id="remove-${dptName.hashCode()}" class="filter-button" variant="default" size="small" pill>
-                    <sl-icon class="filter-action" name="x-lg" label="Remove"></sl-icon>
+              <c:forEach var="dptName" items="${relevantFilters['DEPARTMENT']}">
+                <sl-button-group>
+                  <sl-button id="${dptName.hashCode()}" class="filter-button" size="small" variant="default" pill>
+                    <c:out value="${dptName}"/>
                   </sl-button>
-                </section>
-              </sl-button-group>
-            </c:forEach>
+                  <section id="remove-section-${dptName.hashCode()}">
+                    <sl-button id="remove-${dptName.hashCode()}" class="filter-button" variant="default" size="small" pill>
+                      <sl-icon class="filter-action" name="x-lg" label="Remove"></sl-icon>
+                    </sl-button>
+                  </section>
+                </sl-button-group>
+              </c:forEach>
+          </c:if>
 
           </div>
 
-          <sl-divider class="vert-divider" style="--color: #cbcbcb;" vertical></sl-divider>
+          <c:if test="${not empty relevantFilters['CREDITS']}">
+            <sl-divider class="vert-divider" style="--color: #cbcbcb;" vertical></sl-divider>
 
-          <div class="filter-option">
-            <h5><spring:message code="search.credits"/></h5>
+            <div class="filter-option">
+              <h5><spring:message code="search.credits"/></h5>
 
-            <c:forEach var="creditsName" items="${relevantFilters['CREDITS']}">
-              <sl-button-group>
-                <sl-button id="credits-${creditsName}" class="filter-button" size="small" variant="default" pill>
-                  <spring:message code="search.credits.number" arguments="${creditsName}"/>
-                </sl-button>
-                <section id="remove-section-${creditsName}">
-                  <sl-button id="remove-${creditsName}" class="filter-button" variant="default" size="small" pill>
-                    <sl-icon class="filter-action" name="x-lg" label="Remove"></sl-icon>
+              <c:forEach var="creditsName" items="${relevantFilters['CREDITS']}">
+                <sl-button-group>
+                  <sl-button id="credits-${creditsName}" class="filter-button" size="small" variant="default" pill>
+                    <spring:message code="search.credits.number" arguments="${creditsName}"/>
                   </sl-button>
-                </section>
-              </sl-button-group>
-            </c:forEach>
-          </div>
+                  <section id="remove-section-${creditsName}">
+                    <sl-button id="remove-${creditsName}" class="filter-button" variant="default" size="small" pill>
+                      <sl-icon class="filter-action" name="x-lg" label="Remove"></sl-icon>
+                    </sl-button>
+                  </section>
+                </sl-button-group>
+              </c:forEach>
+            </div>
+          </c:if>
+
+          <c:if test="${not empty relevantFilters['DIFFICULTY']}">
+            <sl-divider class="vert-divider" style="--color: #cbcbcb;" vertical></sl-divider>
+
+            <div class="filter-option">
+              <h5><spring:message code="search.difficulty"/></h5>
+
+              <c:forEach var="difficulty" items="${relevantFilters['DIFFICULTY']}">
+                <sl-button-group>
+                  <sl-button id="difficulty-${difficulty}" class="filter-button" size="small" variant="default" pill>
+                    <c:choose>
+                      <c:when test="${difficulty eq 0}">
+                        <spring:message code="form.easy"/>
+                      </c:when>
+                      <c:when test="${difficulty eq 1}">
+                        <spring:message code="form.normal"/>
+                      </c:when>
+                      <c:when test="${difficulty eq 2}">
+                        <spring:message code="form.hard"/>
+                      </c:when>
+                    </c:choose>
+                  </sl-button>
+                  <section id="remove-section-diff-${difficulty}">
+                    <sl-button id="remove-diff-${difficulty}" class="filter-button" variant="default" size="small" pill>
+                      <sl-icon class="filter-action" name="x-lg" label="Remove"></sl-icon>
+                    </sl-button>
+                  </section>
+                </sl-button-group>
+              </c:forEach>
+            </div>
+          </c:if>
+
+          <c:if test="${not empty relevantFilters['TIME']}">
+            <sl-divider class="vert-divider" style="--color: #cbcbcb;" vertical></sl-divider>
+
+            <div class="filter-option">
+              <h5><spring:message code="search.timedemand"/></h5>
+
+              <c:forEach var="time" items="${relevantFilters['TIME']}">
+                <sl-button-group>
+                  <sl-button id="time-${time}" class="filter-button" size="small" variant="default" pill>
+                    <c:choose>
+                      <c:when test="${time eq 0}">
+                        <spring:message code="form.NotTimeDemanding"/>
+                      </c:when>
+                      <c:when test="${time eq 1}">
+                        <spring:message code="form.averageTimeDemand"/>
+                      </c:when>
+                      <c:when test="${time eq 2}">
+                        <spring:message code="form.timeDemanding"/>
+                      </c:when>
+                    </c:choose>
+                  </sl-button>
+                  <section id="remove-section-time-${time}">
+                    <sl-button id="remove-time-${time}" class="filter-button" variant="default" size="small" pill>
+                      <sl-icon class="filter-action" name="x-lg" label="Remove"></sl-icon>
+                    </sl-button>
+                  </section>
+                </sl-button-group>
+              </c:forEach>
+            </div>
+          </c:if>
 
           <sl-divider class="vert-divider" style="--color: #cbcbcb;" vertical></sl-divider>
 
@@ -173,6 +241,8 @@
               </sl-button>
             </sl-button-group>
           </div>
+
+            <sl-divider class="vert-divider" style="--color: #cbcbcb;" vertical></sl-divider>
         </section>
         <sl-divider style="--color: #cbcbcb;"></sl-divider>
       </div>
@@ -282,6 +352,71 @@
             });
         const section = document.getElementById(creditFilterBtns[elem][3])
         if (credits === un_sanitize(creditFilterBtns[elem][1]))
+            section.style.display = "block";
+        else
+            section.style.display = "none"
+    }
+
+
+    // Difficulty filters
+    let difficulty = params.get("difficulty")
+
+    const difficultyFilterBtns = [
+        <c:forEach var="diff" items="${relevantFilters['DIFFICULTY']}">
+        ["difficulty-${diff}", "${diff}", "remove-diff-${diff}", "remove-section-diff-${diff}"],
+        </c:forEach>
+    ]
+
+    for (let elem in difficultyFilterBtns) {
+        // Comportamiento de boton de aplicar filtro
+        document.getElementById(difficultyFilterBtns[elem][0]).addEventListener('click',
+            function () {
+                // debemos remover el pageNum tambien
+                window.location.href = removeURLParam(addOrUpdateParam(window.location.href, "difficulty", difficultyFilterBtns[elem][1]), 'page')
+            });
+
+        // Comportamiento de boton de eliminar filtro
+        document.getElementById(difficultyFilterBtns[elem][2]).addEventListener('click',
+            // debemos remover el pageNum tambien
+            function () {
+                window.location.href = removeURLParam(removeURLParam(window.location.href, "difficulty"), 'page')
+            });
+
+        // Visibiliad de boton de eliminar filtro
+        const section = document.getElementById(difficultyFilterBtns[elem][3])
+        if (difficulty === difficultyFilterBtns[elem][1])
+            section.style.display = "block";
+        else
+            section.style.display = "none"
+    }
+
+    // Time filters
+    let time = params.get("time")
+
+    const timeFilterBtns = [
+        <c:forEach var="time" items="${relevantFilters['TIME']}">
+        ["time-${time}", "${time}", "remove-time-${time}", "remove-section-time-${time}"],
+        </c:forEach>
+    ]
+
+    for (let elem in timeFilterBtns) {
+        // Comportamiento de boton de aplicar filtro
+        document.getElementById(timeFilterBtns[elem][0]).addEventListener('click',
+            function () {
+                // debemos remover el pageNum tambien
+                window.location.href = removeURLParam(addOrUpdateParam(window.location.href, "time", timeFilterBtns[elem][1]), 'page')
+            });
+
+        // Comportamiento de boton de eliminar filtro
+        document.getElementById(timeFilterBtns[elem][2]).addEventListener('click',
+            // debemos remover el pageNum tambien
+            function () {
+                window.location.href = removeURLParam(removeURLParam(window.location.href, "time"), 'page')
+            });
+
+        // Visibiliad de boton de eliminar filtro
+        const section = document.getElementById(timeFilterBtns[elem][3])
+        if (time === timeFilterBtns[elem][1])
             section.style.display = "block";
         else
             section.style.display = "none"

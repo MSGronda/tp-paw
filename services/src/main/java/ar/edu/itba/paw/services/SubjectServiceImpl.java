@@ -4,9 +4,7 @@ import ar.edu.itba.paw.models.Subject;
 import ar.edu.itba.paw.models.SubjectClass;
 import ar.edu.itba.paw.models.SubjectClassTime;
 import ar.edu.itba.paw.models.User;
-import ar.edu.itba.paw.models.enums.OrderDir;
-import ar.edu.itba.paw.models.enums.SubjectFilterField;
-import ar.edu.itba.paw.models.enums.SubjectOrderField;
+import ar.edu.itba.paw.models.enums.*;
 import ar.edu.itba.paw.models.exceptions.InvalidPageNumberException;
 import ar.edu.itba.paw.models.exceptions.SubjectNotFoundException;
 import ar.edu.itba.paw.models.exceptions.UnauthorizedException;
@@ -19,6 +17,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.criteria.CriteriaBuilder;
+import java.sql.Time;
 import java.time.LocalTime;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -209,17 +208,19 @@ public class SubjectServiceImpl implements SubjectService {
             final String orderBy,
             final String dir,
             final Integer credits,
-            final String department
+            final String department,
+            final Integer difficulty,
+            final Integer time
     ) {
-        if(page < 1 || page > getTotalPagesForSearch(user, name, credits, department)) throw new InvalidPageNumberException();
+        if(page < 1 || page > getTotalPagesForSearch(user, name, credits, department, difficulty, time)) throw new InvalidPageNumberException();
 
         final OrderDir orderDir = OrderDir.parse(dir);
         final SubjectOrderField orderField = SubjectOrderField.parse(orderBy);
 
         if(user.isEditor()){
-            return subjectDao.searchAll(name, page, getFilterMap(credits, department), orderField, orderDir);
+            return subjectDao.searchAll(name, page, getFilterMap(credits, department, difficulty, time), orderField, orderDir);
         }
-        return subjectDao.search(user, name, page, getFilterMap(credits, department), orderField, orderDir);
+        return subjectDao.search(user, name, page, getFilterMap(credits, department, difficulty, time), orderField, orderDir);
     }
 
     @Override
@@ -231,11 +232,18 @@ public class SubjectServiceImpl implements SubjectService {
     }
 
     @Override
-    public int getTotalPagesForSearch(final User user, final String name, final Integer credits, final String department){
+    public int getTotalPagesForSearch(
+            final User user,
+            final String name,
+            final Integer credits,
+            final String department,
+            final Integer difficulty,
+            final Integer time
+    ){
         if(user.isEditor()){
-            return subjectDao.getTotalPagesForSearchAll(name, getFilterMap(credits, department));
+            return subjectDao.getTotalPagesForSearchAll(name, getFilterMap(credits, department, difficulty, time));
         }
-        return subjectDao.getTotalPagesForSearch(user, name, getFilterMap(credits, department));
+        return subjectDao.getTotalPagesForSearch(user, name, getFilterMap(credits, department, difficulty, time));
     }
 
     @Override
@@ -249,8 +257,14 @@ public class SubjectServiceImpl implements SubjectService {
                 ));
     }
     @Override
-    public Map<String, List<String>> getRelevantFiltersForSearch(final String name, final Integer credits, final String department) {
-        return subjectDao.getRelevantFiltersForSearch(name, getFilterMap(credits, department))
+    public Map<String, List<String>> getRelevantFiltersForSearch(
+            final String name,
+            final Integer credits,
+            final String department,
+            final Integer difficulty,
+            final Integer time
+    ) {
+        return subjectDao.getRelevantFiltersForSearch(name, getFilterMap(credits, department, difficulty, time))
                 .entrySet()
                 .stream()
                 .collect(Collectors.toMap(
@@ -280,9 +294,16 @@ public class SubjectServiceImpl implements SubjectService {
     }
 
     @Override
-    public Map<String, List<String>> getRelevantFiltersForSearch(final User user, final String name, final Integer credits, final String department) {
+    public Map<String, List<String>> getRelevantFiltersForSearch(
+            final User user,
+            final String name,
+            final Integer credits,
+            final String department,
+            final Integer difficulty,
+            final Integer time
+    ) {
         if(user.isEditor()){
-            return subjectDao.getRelevantFiltersForSearch(name, getFilterMap(credits, department))
+            return subjectDao.getRelevantFiltersForSearch(name, getFilterMap(credits, department, difficulty, time))
                     .entrySet()
                     .stream()
                     .collect(Collectors.toMap(
@@ -291,7 +312,7 @@ public class SubjectServiceImpl implements SubjectService {
                     ));
         }
         else{
-            return subjectDao.getRelevantFiltersForSearch(user.getDegree(), name, getFilterMap(credits, department))
+            return subjectDao.getRelevantFiltersForSearch(user.getDegree(), name, getFilterMap(credits, department, difficulty, time))
                     .entrySet()
                     .stream()
                     .collect(Collectors.toMap(
@@ -316,10 +337,22 @@ public class SubjectServiceImpl implements SubjectService {
         subjectDao.updateUnreviewedNotificationTime();
     }
 
-    private Map<SubjectFilterField, String> getFilterMap(final Integer credits, final String department) {
+    private Map<SubjectFilterField, String> getFilterMap(
+            final Integer credits,
+            final String department,
+            final Integer difficulty,
+            final Integer time
+    ) {
         final Map<SubjectFilterField, String> filters = new HashMap<>();
         if(credits != null) filters.put(SubjectFilterField.CREDITS, credits.toString());
         if(department != null && !department.isEmpty()) filters.put(SubjectFilterField.DEPARTMENT, department);
+
+        if(difficulty != null)
+            filters.put(SubjectFilterField.DIFFICULTY, String.valueOf(Difficulty.parse(difficulty.longValue()).getValue()));
+
+        if(time != null)
+            filters.put(SubjectFilterField.TIME, String.valueOf(TimeDemanding.parse(time.longValue()).getIntValue()));
+
         return filters;
     }
 

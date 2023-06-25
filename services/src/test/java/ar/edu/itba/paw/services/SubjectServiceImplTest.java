@@ -147,7 +147,7 @@ public class SubjectServiceImplTest {
         when(subjectDao.search(eq(user), eq(NAME), eq(1), eq(filterMap), eq(orderBy), eq(dir))).thenReturn(resultList);
         when(subjectDao.getTotalPagesForSearch(eq(user), eq(NAME), eq(filterMap))).thenReturn(1);
 
-        final List<Subject> actual = subjectService.search(user, NAME, 1, "name", "asc", null, DEPARTMENT);
+        final List<Subject> actual = subjectService.search(user, NAME, 1, "name", "asc", null, DEPARTMENT, null, null);
 
         assertEquals(1, actual.size());
         assertEquals(ID, actual.get(0).getId());
