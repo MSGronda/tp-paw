@@ -82,6 +82,30 @@ public class SubjectClassTime {
         return mode;
     }
 
+    public void setDay(int day) {
+        this.day = day;
+    }
+
+    public void setStartTime(LocalTime startTime) {
+        this.startTime = startTime;
+    }
+
+    public void setEndTime(LocalTime endTime) {
+        this.endTime = endTime;
+    }
+
+    public void setClassLoc(String classLoc) {
+        this.classLoc = classLoc;
+    }
+
+    public void setBuilding(String building) {
+        this.building = building;
+    }
+
+    public void setMode(String mode) {
+        this.mode = mode;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

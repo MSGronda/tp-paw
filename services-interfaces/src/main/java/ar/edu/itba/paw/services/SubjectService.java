@@ -58,18 +58,19 @@ public interface SubjectService {
 
 
     void edit(
-              String id,
-              int credits,
-              String degreeIds,
-              String semesters,
-              String requirementIds,
-              String professors,
-              String classCodes,
-              String classProfessors,
-              String classDays,
-              String classStartTimes,
-              String classEndTime,
-              String classBuildings,
-              String classRooms,
-              String classModes);
+              final String id,
+              final int credits,
+              final String degreeIds,
+              final String semesters,
+              final String requirementIds,
+              final String professors,
+              final String classIds,
+              final String classCodes,
+              final String classProfessors,
+              final String classDays,
+              final String classStartTimes,
+              final String classEndTime,
+              final String classBuildings,
+              final String classRooms,
+              final String classModes);
 }

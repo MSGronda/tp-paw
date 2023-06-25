@@ -22,28 +22,23 @@ public class EditSubjectForm {
     @Size(min=3)
     private String professors;
 
-    @Size(min=3)
+
+    private String classIds;
+
     private String classCodes;
 
-    @Size(min=3)
     private String classProfessors;
 
-    @Size(min=3)
     private String classDays;
 
-    @Size(min=3)
     private String classStartTimes;
 
-    @Size(min=3)
     private String classEndTimes;
 
-    @Size(min=3)
     private String classBuildings;
 
-    @Size(min=3)
     private String classRooms;
 
-    @Size(min=3)
     private String classModes;
 
     public Integer getCredits() {
@@ -148,5 +143,13 @@ public class EditSubjectForm {
 
     public void setClassEndTimes(String classEndTimes) {
         this.classEndTimes = classEndTimes;
+    }
+
+    public String getClassIds() {
+        return classIds;
+    }
+
+    public void setClassIds(String classIds) {
+        this.classIds = classIds;
     }
 }

@@ -64,33 +64,30 @@ public class SubjectServiceImpl implements SubjectService {
         degreeService.addSubjectToDegrees(
                 sub,
                 degreeIdsList.stream().map(Long::parseLong).collect(java.util.stream.Collectors.toList()),
-                semestersList.stream().map(Integer::parseInt).collect(java.util.stream.Collectors.toList()),
-                false
+                semestersList.stream().map(Integer::parseInt).collect(java.util.stream.Collectors.toList())
         );
 
         //se agregan profesores a professorSubjects
         final List<String> professorsList = parseJsonList(professors, true);
         professorService.addSubjectToProfessors(
                 sub,
-                professorsList,
-                false
+                professorsList
         );
 
         //se agregan las correlativas
         final List<String> correlativesList = parseJsonList(requirementIds, false);
-        subjectDao.addPrerequisites( sub, correlativesList, false);
+        subjectDao.addPrerequisites( sub, correlativesList);
 
         //se crean las comisiones
         final List<String> classesList = parseJsonList(classCodes, false);
         final Set<String> uniqueClassesList = new HashSet<>(classesList);
-        subjectDao.addClassesToSubject(sub, uniqueClassesList, false);
+        subjectDao.addClassesToSubject(sub, uniqueClassesList);
 
         //se agregan los profesores a las comisiones
         final List<List<String>> classProfessorsList = parseJsonListOfLists(classProfessors);
-        professorService.addProfessorsToClasses(sub, classesList, classProfessorsList, false);
+        professorService.addProfessorsToClasses(sub, classesList, classProfessorsList);
 
         //se agregan los datos a las comisiones
-        //TODO: verificar que start times sea previo a end times
         final List<String> startTimes = parseJsonList(classStartTimes, false);
         final List<String> endTimes = parseJsonList(classEndTime, false);
         final List<String> buildings = parseJsonList(classBuildings, false);
@@ -145,7 +142,7 @@ public class SubjectServiceImpl implements SubjectService {
         String cleanedInput = classProfessors.substring(1, classProfessors.length() - 1);
 
         String[] elements = cleanedInput.split("],");
-        if (elements[0].equals("")) {
+        if (elements[0].equals("") || elements[0].equals("[]")){
             return resultList;
         }
         for( int i = 0; i < elements.length ; i++){
@@ -291,6 +288,7 @@ public class SubjectServiceImpl implements SubjectService {
             final String semesters,
             final String requirementIds,
             final String professors,
+            final String classIds,
             final String classCodes,
             final String classProfessors,
             final String classDays,
@@ -310,29 +308,28 @@ public class SubjectServiceImpl implements SubjectService {
 
         final List<String> degreeIdsList = parseJsonList(degreeIds, false);
         final List<String> semestersList = parseJsonList(semesters, false);
-        degreeService.addSubjectToDegrees(
+        degreeService.updateSubjectToDegrees(
                 sub,
                 degreeIdsList.stream().map(Long::parseLong).collect(java.util.stream.Collectors.toList()),
-                semestersList.stream().map(Integer::parseInt).collect(java.util.stream.Collectors.toList()),
-                true
+                semestersList.stream().map(Integer::parseInt).collect(java.util.stream.Collectors.toList())
         );
 
         final List<String> professorsList = parseJsonList(professors, true);
-        professorService.addSubjectToProfessors(
+        professorService.updateSubjectToProfessors(
                 sub,
-                professorsList,
-                true
+                professorsList
         );
 
         final List<String> correlativesList = parseJsonList(requirementIds, false);
-        subjectDao.addPrerequisites( sub, correlativesList, true);
+        subjectDao.updatePrerequisites( sub, correlativesList);
 
         final List<String> classesList = parseJsonList(classCodes, false);
-        final Set<String> uniqueClassesList = new HashSet<>(classesList);
-        subjectDao.addClassesToSubject(sub, uniqueClassesList, true);
+        final List<String> classesIdsList = parseJsonList(classIds, false);
+        subjectDao.updateClassesToSubject(sub, classesIdsList, classesList);
+
 
         final List<List<String>> classProfessorsList = parseJsonListOfLists(classProfessors);
-        professorService.addProfessorsToClassesEdit(sub, classesList, classProfessorsList, true);
+        professorService.updateProfessorsToClasses(sub, classesIdsList, classesList, classProfessorsList);
 
         final List<String> startTimes = parseJsonList(classStartTimes, false);
         final List<String> endTimes = parseJsonList(classEndTime, false);
@@ -340,7 +337,9 @@ public class SubjectServiceImpl implements SubjectService {
         final List<String> modes = parseJsonList(classModes, false);
         final List<String> days = parseJsonList(classDays, false);
         final List<String> rooms = parseJsonList(classRooms, false);
-        subjectDao.addSubjectClassTimes(sub,
+        subjectDao.updateSubjectClassTimes(
+                sub,
+                classesIdsList,
                 classesList,
                 startTimes.stream().map(LocalTime::parse).collect(Collectors.toList()),
                 endTimes.stream().map(LocalTime::parse).collect(Collectors.toList()),
