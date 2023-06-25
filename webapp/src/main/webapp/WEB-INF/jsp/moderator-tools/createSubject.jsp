@@ -99,7 +99,7 @@
                             </c:if>
                             <spring:message code="subject.id"/>
                         </td>
-                        <td><sl-input name="id" path="id" value="${subjectForm.id}" id="subject-id" onkeydown="return event.key !== 'Enter';"></sl-input></td>
+                        <td><sl-input name="id" path="id" value="<c:out value="${subjectForm.id}"/>" id="subject-id" onkeydown="return event.key !== 'Enter';"></sl-input></td>
                     </tr>
                     <tr>
 
@@ -107,7 +107,7 @@
                             <form:errors path="name" cssClass="error" element="p"/>
                             <spring:message code="subject.name"/>
                         </td>
-                        <td><sl-input name="name" path="name" value="${subjectForm.name}" id="subject-name" onkeydown="return event.key !== 'Enter';"></sl-input></td>
+                        <td><sl-input name="name" path="name" value="<c:out value="${subjectForm.name}"/>" id="subject-name" onkeydown="return event.key !== 'Enter';"></sl-input></td>
                     </tr>
                     <tr>
 
@@ -133,7 +133,7 @@
                             <form:errors path="credits" cssClass="error" element="p"/>
                             <spring:message code="subject.credits"/>
                         </td>
-                        <td><sl-input name="credits" path="credits" value="${subjectForm.credits}" type="number" id="subject-credits" onkeydown="return event.key !== 'Enter';"></sl-input></td>
+                        <td><sl-input name="credits" path="credits" value="<c:out value="${subjectForm.credits}"/>" type="number" id="subject-credits" onkeydown="return event.key !== 'Enter';"></sl-input></td>
                     </tr>
                     <tr>
                         <td>
@@ -166,7 +166,7 @@
                             <input id="requirement" list="requirements" class="selection">
                             <datalist id="requirements">
                                 <c:forEach items="${subjects}" var="subject">
-                                    <option value="${subject.id} - ${subject.name}" id="${subject.id}"></option>
+                                    <option value="<c:out value="${subject.id}"/> - <c:out value="${subject.name}"/>" id="<c:out value="${subject.id}"/>"></option>
                                 </c:forEach>
                             </datalist>
                             <sl-icon-button name="plus-lg" onclick="addRequirement()"></sl-icon-button>
@@ -188,7 +188,7 @@
                             <input id="professor" list="professors" class="selection">
                             <datalist id="professors">
                                 <c:forEach items="${professors}" var="professor">
-                                    <option value="${professor.name}" id="${professor.id}"></option>
+                                    <option value="<c:out value="${professor.name}"/>" id="<c:out value="${professor.id}"/>"></option>
                                 </c:forEach>
                             </datalist>
                             <sl-icon-button name="plus-lg" onclick="addProfessor()"></sl-icon-button>
@@ -529,7 +529,7 @@
 
     let degreeMap = {
         <c:forEach var="degree" items="${degrees}">
-        "${degree.id}":"${degree.name}",
+        "<c:out value="${degree.id}"/>":"<c:out value="${degree.name}"/>",
         </c:forEach>
     }
 
@@ -587,9 +587,9 @@
 
     const degreesSubjectMap = {
         <c:forEach var="degree" items="${degrees}">
-        "${degree.id}":[
+        "<c:out value="${degree.id}"/>":[
             <c:forEach var="subject" items="${degree.subjects}">
-                "${subject.id}",
+            "<c:out value="${subject.id}"/>",
             </c:forEach>
         ],
         </c:forEach>
