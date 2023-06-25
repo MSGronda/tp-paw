@@ -158,9 +158,9 @@ public class UserServiceImpl implements UserService {
     @Transactional
     @Override
     public void updateSingleSubjectProgress(final User user, final Subject subject, final SubjectProgress progress) {
-        if(progress == SubjectProgress.DONE) {
-            for(final SubjectClass c : subject.getClasses()) {
-                if(user.getUserSemester().contains(c)) {
+        if (progress == SubjectProgress.DONE) {
+            for (final SubjectClass c : subject.getClasses()) {
+                if (user.getUserSemester().contains(c)) {
                     userDao.removeFromCurrentSemester(user, c);
                 }
             }
@@ -283,7 +283,7 @@ public class UserServiceImpl implements UserService {
         final Subject subject = subjectService.findById(subjectId).orElseThrow(SubjectNotFoundException::new);
 
         final Map<String, SubjectClass> classes = subject.getClassesById();
-        if(!classes.containsKey(classId)){
+        if (!classes.containsKey(classId)) {
             LOGGER.warn("No class in subject {} for id {}", subjectId, classId);
             throw new SubjectClassNotFoundException();
         }
@@ -338,7 +338,7 @@ public class UserServiceImpl implements UserService {
     @Transactional
     @Override
     public void makeModerator(final User requesterUser, final long toMakeModeratorId) throws UserNotFoundException, UnauthorizedException {
-        if(!requesterUser.isEditor()) throw new UnauthorizedException();
+        if (!requesterUser.isEditor()) throw new UnauthorizedException();
 
         final User toMakeModerator = userDao.findById(toMakeModeratorId).orElseThrow(UserNotFoundException::new);
         final Role role = rolesService.findByName(Role.RoleEnum.EDITOR.getName()).orElseThrow(IllegalStateException::new);
@@ -350,6 +350,13 @@ public class UserServiceImpl implements UserService {
     public void updateUserDegreeAndSubjectProgress(final User user, final Degree degree, final String subjectIds) {
         userDao.updateUserDegree(user, degree);
         updateMultipleSubjectProgress(user, parseJsonList(subjectIds), SubjectProgress.DONE);
+    }
+
+    @Transactional
+    @Override
+    public void clearDegree(final User user) {
+        userDao.clearSemester(user);
+        userDao.updateUserDegree(user, null);
     }
 
     private void autoLogin(final User user) {

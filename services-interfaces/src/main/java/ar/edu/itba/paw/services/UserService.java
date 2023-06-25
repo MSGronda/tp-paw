@@ -53,4 +53,6 @@ public interface UserService {
     void finishSemester(final User user, final String subjectIds);
 
    void updateUserDegreeAndSubjectProgress(final User user, final Degree degree, final String subjectIds);
+
+   void clearDegree(final User user);
 }

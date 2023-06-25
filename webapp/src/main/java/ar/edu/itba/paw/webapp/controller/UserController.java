@@ -370,4 +370,13 @@ public class UserController {
 
         return mav;
     }
+
+    @RequestMapping(value = "/change-degree", method = RequestMethod.POST )
+    public ModelAndView changeDegree() {
+        final User user = authUserService.getCurrentUser();
+
+        userService.clearDegree(user);
+
+        return new ModelAndView("redirect:/");
+    }
 }
