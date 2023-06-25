@@ -6,6 +6,7 @@ import ar.edu.itba.paw.models.enums.SubjectFilterField;
 import ar.edu.itba.paw.models.enums.SubjectOrderField;
 import ar.edu.itba.paw.persistence.dao.SubjectDao;
 import ar.edu.itba.paw.persistence.exceptions.SubjectIdAlreadyExistsPersistenceException;
+import org.springframework.cglib.core.Local;
 import org.springframework.stereotype.Repository;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
@@ -453,6 +454,46 @@ public class SubjectJpaDao implements SubjectDao {
             }
         }
 
+    }
+
+    @Override
+    public void createClassLocTime(final SubjectClass subjectClass,final int days,final LocalTime endTimes,final LocalTime startTimes,final String rooms,final String buildings,final String modes){
+        SubjectClassTime subjectClassTime;
+        //chequeo de start time isAfter end time
+        if( startTimes.isAfter(endTimes)){
+            subjectClassTime = new SubjectClassTime(subjectClass, days, endTimes, startTimes, rooms, buildings, modes);
+        }else{
+            subjectClassTime = new SubjectClassTime(subjectClass, days, startTimes, endTimes, rooms, buildings, modes);
+        }
+        //se persiste y se agrega a la lista
+        em.persist(subjectClassTime);
+        subjectClass.getClassTimes().add(subjectClassTime);
+    }
+
+    @Override
+    public void deleteClassLocTime(final long key){
+        SubjectClassTime subjectClassTime = em.find(SubjectClassTime.class, key);
+
+        //se guarda para despues verificar si es que quedo otra SubjectClassTime
+        SubjectClass subjectClass = subjectClassTime.getSubjectClass();
+
+        em.remove(subjectClassTime);
+    }
+
+    @Override
+    public void updateClassLocTime(final long key, final int days, final String rooms, final String buildings, final String modes, final LocalTime startTimes,final LocalTime endTimes){
+        SubjectClassTime subjectClassTime = em.find(SubjectClassTime.class, key);
+        subjectClassTime.setDay(days);
+        subjectClassTime.setClassLoc(rooms);
+        subjectClassTime.setBuilding(buildings);
+        subjectClassTime.setMode(modes);
+        if( startTimes.isAfter(endTimes)) {
+            subjectClassTime.setStartTime(endTimes);
+            subjectClassTime.setEndTime(startTimes);
+        }else{
+            subjectClassTime.setStartTime(startTimes);
+            subjectClassTime.setEndTime(endTimes);
+        }
     }
 
     @Override

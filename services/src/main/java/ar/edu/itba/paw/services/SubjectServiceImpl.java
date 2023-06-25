@@ -2,6 +2,7 @@ package ar.edu.itba.paw.services;
 
 import ar.edu.itba.paw.models.Subject;
 import ar.edu.itba.paw.models.SubjectClass;
+import ar.edu.itba.paw.models.SubjectClassTime;
 import ar.edu.itba.paw.models.User;
 import ar.edu.itba.paw.models.enums.OrderDir;
 import ar.edu.itba.paw.models.enums.SubjectFilterField;
@@ -13,9 +14,11 @@ import ar.edu.itba.paw.persistence.dao.SubjectDao;
 import ar.edu.itba.paw.persistence.exceptions.SubjectIdAlreadyExistsPersistenceException;
 import ar.edu.itba.paw.services.exceptions.SubjectIdAlreadyExistsException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cglib.core.Local;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.criteria.CriteriaBuilder;
 import java.time.LocalTime;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -350,23 +353,57 @@ public class SubjectServiceImpl implements SubjectService {
             final List<List<String>> classProfessorsList = parseJsonListOfLists(classProfessors);
             professorService.updateProfessorsToClasses(sub, classesIdsList, classesList, classProfessorsList);
 
-            final List<String> startTimes = parseJsonList(classStartTimes, false);
-            final List<String> endTimes = parseJsonList(classEndTime, false);
-            final List<String> buildings = parseJsonList(classBuildings, false);
-            final List<String> modes = parseJsonList(classModes, false);
-            final List<String> days = parseJsonList(classDays, false);
-            final List<String> rooms = parseJsonList(classRooms, false);
-            subjectDao.updateSubjectClassTimes(
-                    sub,
-                    classesIdsList,
-                    classesList,
-                    startTimes.stream().map(LocalTime::parse).collect(Collectors.toList()),
-                    endTimes.stream().map(LocalTime::parse).collect(Collectors.toList()),
-                    buildings,
-                    modes,
-                    days.stream().map(Integer::parseInt).collect(Collectors.toList()),
-                    rooms
-            );
+            prepareClassLocTimeToUpdate(sub,classesIdsList,classesList,classStartTimes,classEndTime,classBuildings,classModes,classDays,classRooms);
+        }
+    }
+
+    private void prepareClassLocTimeToUpdate(final Subject subject,final List<String> classIdsList,final List<String> classCodes,final String classStartTimes,final String classEndTimes,final String classBuildings,final String classModes,final String classDays,final String classRooms) {
+        final List<String> startTimes = parseJsonList(classStartTimes, false);
+        final List<String> endTimes = parseJsonList(classEndTimes, false);
+        final List<String> buildings = parseJsonList(classBuildings, false);
+        final List<String> modes = parseJsonList(classModes, false);
+        final List<String> days = parseJsonList(classDays, false);
+        final List<String> rooms = parseJsonList(classRooms, false);
+        List<Integer> parsedDays = days.stream().map(Integer::parseInt).collect(Collectors.toList());
+        List<LocalTime> parsedStartTime = startTimes.stream().map(LocalTime::parse).collect(Collectors.toList());
+        List<LocalTime> parsedEndTime = endTimes.stream().map(LocalTime::parse).collect(Collectors.toList());
+        for( int i = 0 ; i < classIdsList.size() ; i++){
+            //si classId es -1, es una nueva comision
+            //se crea
+            if( classIdsList.get(i).equals("-1")){
+                createClassLocTime(subject,classCodes,i,startTimes.stream().map(LocalTime::parse).collect(Collectors.toList())
+                        ,endTimes.stream().map(LocalTime::parse).collect(Collectors.toList())
+                        ,days.stream().map(Integer::parseInt).collect(Collectors.toList()),rooms,buildings,modes);
+            }else{//class id NO es -1
+                //si code es -1, borrar con subjectClassTime id
+                long key = Long.parseLong(classIdsList.get(i));
+                if(classCodes.get(i).equals("-1")){//chequiar si es la ultima classLocTime que cada, si lo es borro la comi
+                    subjectDao.deleteClassLocTime(key);
+                }else{
+                    //si no es -1 el class code, se modifica
+                    subjectDao.updateClassLocTime(key,parsedDays.get(i),rooms.get(i),buildings.get(i),modes.get(i),parsedStartTime.get(i),parsedEndTime.get(i));
+                }
+            }
+        }
+    }
+
+    private void createClassLocTime(final Subject subject,
+                             final List<String> classCodes,
+                             final int index,
+                             final List<LocalTime> startTimes,
+                             final List<LocalTime> endTimes,
+                             final List<Integer> days,
+                             final List<String> rooms,
+                             final List<String> buildings,
+                             final List<String> modes)
+    {
+        //se itera por subject Class de la subject para encontrar la comision
+        //es necesaria para agregarla a la nueva SubjectClassTime
+        for( SubjectClass subjectClass : subject.getClasses()){
+            //si es la comision indicada
+            if( subjectClass.getClassId().equals(classCodes.get(index))){
+                subjectDao.createClassLocTime(subjectClass,days.get(index),endTimes.get(index),startTimes.get(index),rooms.get(index), buildings.get(index), modes.get(index));
+            }
         }
     }
 
