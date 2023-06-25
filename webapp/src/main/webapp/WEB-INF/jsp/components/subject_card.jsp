@@ -25,7 +25,7 @@
 
         <%--      <c:out value="${subject.credits}"/> Credit<c:if test="${subject.credits != 1}">s</c:if>--%>
       </sl-badge>
-      <c:if test="${not empty subject.prerequisites}">
+      <c:if test="${empty subject.prerequisites}">
         <sl-badge variant="warning" pill>
           <spring:message code="card.noPrerequisites"/>
         </sl-badge>
