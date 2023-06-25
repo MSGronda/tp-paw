@@ -325,7 +325,7 @@ function addSelectedClassToList(subject,classSubject){
     const selected = document.getElementById('selected-subject-info-list');
     const selectedSubjectClass = document.getElementById('class-card-' +subject.id + '-'+classSubject.idClass).cloneNode(true);
     selectedSubjectClass.id = 'selected-class-card-' +subject.id + '-'+classSubject.idClass
-    selectedSubjectClass.firstElementChild.firstElementChild.textContent = subject.name + ' - ' + classSubject.idClass
+    selectedSubjectClass.firstElementChild.firstElementChild.textContent = subject.name + ' - ' + classSubject.stringIdClass
 
     selected.appendChild(selectedSubjectClass)
 }
