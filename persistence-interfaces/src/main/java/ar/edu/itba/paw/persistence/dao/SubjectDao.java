@@ -38,7 +38,9 @@ public interface SubjectDao {
 
     void addPrerequisites(final Subject sub, final List<String> correlativesList);
 
-    void updatePrerequisites(final Subject sub, final List<String> correlativesList);
+    void updatePrerequisitesToAdd(final Subject sub, final List<Subject> correlativesList);
+
+    void updatePrerequisitesToRemove(final Subject sub, final List<Subject> correlativesList);
 
     void addClassesToSubject(final Subject subject, final Set<String> classesSet);
 

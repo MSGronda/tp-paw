@@ -334,7 +334,9 @@ public class SubjectServiceImpl implements SubjectService {
         }
         if (!requirementIds.isEmpty()) {
             final List<String> correlativesList = parseJsonList(requirementIds, false);
-            subjectDao.updatePrerequisites(sub, correlativesList);
+            //este metodo se encarga de separar las correlativas que se tienen que agregar o sacar
+            //despues llama al dao por cada caso
+            prepareCorrelativesToUpdate(sub, correlativesList);
         }
 
         if (!classCodes.isEmpty() && !classIds.isEmpty()) {
@@ -364,5 +366,25 @@ public class SubjectServiceImpl implements SubjectService {
                     rooms
             );
         }
+    }
+
+    private void prepareCorrelativesToUpdate(final Subject subject, final List<String> correlativesList){
+        List<Subject> prereqToAdd = new ArrayList<>();
+        List<Subject> prereqToRemove = new ArrayList<>();
+
+        for( String prereqId : correlativesList ){
+            Optional<Subject> maybeSubject = findById(prereqId);
+            if( maybeSubject.isPresent()){
+                Subject prereq = maybeSubject.get();
+                if( subject.getPrerequisites().contains(prereq)){
+                    prereqToRemove.add(prereq);
+                }else{
+                    prereqToAdd.add(prereq);
+                }
+            }
+        }
+
+        subjectDao.updatePrerequisitesToAdd(subject, prereqToAdd);
+        subjectDao.updatePrerequisitesToRemove(subject, prereqToRemove);
     }
 }

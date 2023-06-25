@@ -355,24 +355,16 @@ public class SubjectJpaDao implements SubjectDao {
 
         }
     }
+    @Override
+    public void updatePrerequisitesToAdd(final Subject sub, final List<Subject> correlativesList) {
+        Set<Subject> prerequisites = sub.getPrerequisites();
+        prerequisites.addAll(correlativesList);
+    }
 
     @Override
-    public void updatePrerequisites(final Subject sub, final List<String> correlativesList){
-        //correlativesList tiene solo los cambios
-        //si ya esta correlativa, sacarla
-        //si no esta, agregarla
-        for( String prereqId : correlativesList ){
-            Subject prereq = em.find(Subject.class, prereqId);
-
-            Set<Subject> prerequisites = sub.getPrerequisites();
-            //ya la tiene, sacarla
-            if( prerequisites.contains(prereq)){
-                prerequisites.remove(prereq);
-            }else{
-                //no la tiene, agregarla
-                prerequisites.add(prereq);
-            }
-        }
+    public void updatePrerequisitesToRemove(final Subject sub, final List<Subject> correlativesList) {
+        Set<Subject> prerequisites = sub.getPrerequisites();
+        correlativesList.forEach(prerequisites::remove);
     }
 
     @Override
