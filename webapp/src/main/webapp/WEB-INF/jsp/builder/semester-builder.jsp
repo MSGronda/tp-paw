@@ -383,7 +383,7 @@
         <div id="subject-list" class="subject-list">
           <c:forEach var="subject" items="${availableSubjects}">
             <c:if test="${subject.credits != 0}">
-            <sl-dialog label="${subject.id}-${subject.name}" id="dialogue-${subject.id}" class="dialog-header-actions">
+            <sl-dialog label="<c:out value="${subject.id}"/>-<c:out value="${subject.name}"/>" id="dialogue-<c:out value="${subject.id}"/>" class="dialog-header-actions">
 
               <table>
                 <tbody>
@@ -460,10 +460,10 @@
                 <sl-button variant="primary" outline href="<c:url value="/subject/${subject.id}"/>" target="_blank" rel="noopener noreferrer"><spring:message code="builder.fullSubject"/></sl-button>
               </div>
             </sl-dialog>
-            <sl-card id="subject-card-${subject.id}" class="subject-info-card">
+            <sl-card id="subject-card-<c:out value="${subject.id}"/>" class="subject-info-card">
               <div class="chooser">
                 <div class="subject-info-card-details">
-                  <h5 id="open-button-${subject.id}" class="open-button"><c:out value="${subject.name}"/></h5>
+                  <h5 id="open-button-<c:out value="${subject.id}"/>" class="open-button"><c:out value="${subject.name}"/></h5>
                   <spring:message code="subject.credits"/> <c:out value="${subject.credits}"/>
                   <c:choose>
                     <c:when test="${subject.reviewStats.difficulty eq 'EASY'}">
@@ -479,13 +479,13 @@
                   </c:choose>
                 </div>
                 <div class="column">
-                  <sl-button id="select-${subject.id}" variant="default" size="small" circle>
+                  <sl-button id="select-<c:out value="${subject.id}"/>" variant="default" size="small" circle>
                     <sl-icon class="icon" name="check2" label="Select Subject"></sl-icon>
                   </sl-button>
-                  <sl-button id="deselect-subject-${subject.id}" style="display: none; align-self: end" variant="default" size="small" circle>
+                  <sl-button id="deselect-subject-<c:out value="${subject.id}"/>" style="display: none; align-self: end" variant="default" size="small" circle>
                     <sl-icon class="icon-lg" name="x-lg" label="Remove subject"></sl-icon>
                   </sl-button>
-                  <span id="selected-${subject.id}" style="display: none; color: #7db6f8; padding-top:0.5rem"><spring:message code="builder.selected"/></span>
+                  <span id="selected-<c:out value="${subject.id}"/>" style="display: none; color: #7db6f8; padding-top:0.5rem"><spring:message code="builder.selected"/></span>
                 </div>
               </div>
             </sl-card>
@@ -499,7 +499,7 @@
             <div>
               <h4><spring:message code="builder.selectClass"/></h4>
               <c:forEach var="subject" items="${availableSubjects}">
-                <h4 class="subject-name-title" id="subject-name-title-${subject.id}"><c:out value="${subject.name}"/></h4>
+                <h4 class="subject-name-title" id="subject-name-title-<c:out value="${subject.id}"/>"><c:out value="${subject.name}"/></h4>
               </c:forEach>
             </div>
             <sl-button style="" id="exit-class-selector" variant="default"
@@ -511,25 +511,25 @@
         <div id="class-list" class="class-list">
 
           <c:forEach var="subject" items="${availableSubjects}">
-          <div class="class-subject-list" id="classes-${subject.id}">
+          <div class="class-subject-list" id="classes-<c:out value="${subject.id}"/>">
             <c:forEach var="subClass" items="${subject.classes}">
-            <sl-card id="class-card-${subject.id}-${subClass.classId}" class="class-card">
+            <sl-card id="class-card-<c:out value="${subject.id}"/>-<c:out value="${subClass.classId}"/>" class="class-card">
               <div class="chooser" slot="header">
-                <h5>${subClass.classId}</h5>
-                <form id="form-select-class-${subject.id}-${subClass.classId}" method="post" action="${pageContext.request.contextPath}/builder/add">
-                  <input type="hidden" id="idSub-add-${subject.id}" name="idSub" value="${subject.id}">
-                  <input type="hidden" id="idClass-add-${subject.id}" name="idClass" value="${subClass.classId}">
+                <h5><c:out value="${subClass.classId}"/></h5>
+                <form id="form-select-class-<c:out value="${subject.id}"/>-<c:out value="${subClass.classId}"/>" method="post" action="${pageContext.request.contextPath}/builder/add">
+                  <input type="hidden" id="idSub-add-<c:out value="${subject.id}"/>" name="idSub" value="<c:out value="${subject.id}"/>">
+                  <input type="hidden" id="idClass-add-<c:out value="${subject.id}"/>" name="idClass" value="<c:out value="${subClass.classId}"/>">
 
-                  <sl-button type="submit" id="select-class-${subject.id}-${subClass.classId}" variant="default" size="small" circle>
+                  <sl-button type="submit" id="select-class-<c:out value="${subject.id}"/>-<c:out value="${subClass.classId}"/>" variant="default" size="small" circle>
                     <sl-icon class="icon" name="check2" label="Select Subject"></sl-icon>
                   </sl-button>
                 </form>
 
-                <form style="display: none" id="form-deselect-class-${subject.id}-${subClass.classId}" method="post" action="${pageContext.request.contextPath}/builder/remove">
-                  <input type="hidden" id="idSub-remove-${subject.id}" name="idSub" value="${subject.id}">
-                  <input type="hidden" id="idClass-remove-${subject.id}" name="idClass" value="${subClass.classId}">
+                <form style="display: none" id="form-deselect-class-<c:out value="${subject.id}"/>-<c:out value="${subClass.classId}"/>" method="post" action="${pageContext.request.contextPath}/builder/remove">
+                  <input type="hidden" id="idSub-remove-<c:out value="${subject.id}"/>" name="idSub" value="<c:out value="${subject.id}"/>">
+                  <input type="hidden" id="idClass-remove-<c:out value="${subject.id}"/>" name="idClass" value="<c:out value="${subClass.classId}"/>">
 
-                <sl-button  type="submit" id="deselect-class-${subject.id}-${subClass.classId}"
+                <sl-button  type="submit" id="deselect-class-<c:out value="${subject.id}"/>-<c:out value="${subClass.classId}"/>"
                            variant="default" size="small" circle>
                   <sl-icon class="icon-lg" name="x-lg" label="Select Subject"></sl-icon>
                 </sl-button>
@@ -555,10 +555,10 @@
                         </c:when>
                         <c:otherwise><<td>-</td></c:otherwise>
                       </c:choose>
-                        <td>${classTime.startTime} - ${classTime.endTime}</td>
-                        <td>${classTime.classLoc}</td>
-                        <td>${classTime.building}</td>
-                        <td>${classTime.mode}</td>
+                        <td><c:out value="${classTime.startTime}"/> - <c:out value="${classTime.endTime}"/></td>
+                        <td><c:out value="${classTime.classLoc}"/></td>
+                        <td><c:out value="${classTime.building}"/></td>
+                        <td><c:out value="${classTime.mode}"/></td>
                       </tr>
                     </c:forEach>
                     </tbody>
@@ -568,21 +568,21 @@
             </c:forEach>
 
             <c:if test="${subject.classes.size() == 0}">
-            <sl-card id="class-card-${subject.id}-0" class="class-card">
+            <sl-card id="class-card-<c:out value="${subject.id}"/>-0" class="class-card">
               <div class="chooser" slot="header">
                 <h5><c:out value="${subject.name}"/></h5>
-                <form id="form-select-class-${subject.id}-${0}" method="post" action="${pageContext.request.contextPath}/builder/add">
-                    <input type="hidden" id="idSub-add-${subject.id}" name="idSub" value="${subject.id}">
-                    <input type="hidden" id="idClass-add-${subject.id}" name="idClass" value="${0}">
-                  <sl-button id="select-class-${subject.id}-0" variant="default" size="small" type="submit" circle>
+                <form id="form-select-class-<c:out value="${subject.id}"/>-${0}" method="post" action="${pageContext.request.contextPath}/builder/add">
+                    <input type="hidden" id="idSub-add-<c:out value="${subject.id}"/>" name="idSub" value="<c:out value="${subject.id}"/>">
+                    <input type="hidden" id="idClass-add-<c:out value="${subject.id}"/>" name="idClass" value="${0}">
+                  <sl-button id="select-class-<c:out value="${subject.id}"/>-0" variant="default" size="small" type="submit" circle>
                     <sl-icon class="icon" name="check2" label="Select Subject"></sl-icon>
                   </sl-button>
                 </form>
 
-                <form style="display: none" id="form-deselect-class-${subject.id}-${0}" method="post" action="${pageContext.request.contextPath}/builder/remove">
-                  <input type="hidden" id="idSub-remove-${subject.id}" name="idSub" value="${subject.id}">
-                  <input type="hidden" id="idClass-remove-${subject.id}" name="idClass" value="${0}">
-                  <sl-button style="display: none;" id="deselect-class-${subject.id}-0"
+                <form style="display: none" id="form-deselect-class-<c:out value="${subject.id}"/>-${0}" method="post" action="${pageContext.request.contextPath}/builder/remove">
+                  <input type="hidden" id="idSub-remove-<c:out value="${subject.id}"/>" name="idSub" value="<c:out value="${subject.id}"/>">
+                  <input type="hidden" id="idClass-remove-<c:out value="${subject.id}"/>" name="idClass" value="${0}">
+                  <sl-button style="display: none;" id="deselect-class-<c:out value="${subject.id}"/>-0"
                              variant="default" size="small" circle>
                     <sl-icon class="icon-lg" name="x-lg" label="Select Subject"></sl-icon>
                   </sl-button>
@@ -697,7 +697,8 @@
             </div>
             <div class="unlockable-list">
               <c:forEach var="subject" items="${unlockableSubjects}">
-                <sl-button style="display: none" id="unlock-${subject.id}" variant="text" href="${pageContext.request.contextPath}/subject/${subject.id}">
+                <sl-button style="display: none" id="unlock-<c:out value="${subject.id}"/>" variant="text" href="${pageContext.request.contextPath}/subject/<c:out value="${subject.id}"/>">
+
                   <c:out value="${subject.name}"/>
                 </sl-button>
               </c:forEach>
@@ -747,28 +748,28 @@
       <c:forEach var="sub" items="${availableSubjects}">
       <c:if test="${sub.credits != 0}">
       {
-        'id': '${sub.id}', 'name': '${sub.name}', 'department': '${sub.department}', 'credits': ${sub.credits},
+        'id': '<c:out value="${sub.id}"/>', 'name': '<c:out value="${sub.name}"/>', 'department': '<c:out value="${sub.department}"/>', 'credits': <c:out value="${sub.credits}"/>,
         'classes': [
           <c:forEach var="subClass" items="${sub.classes}">
           {
-            'idClass': '${subClass.classId}', 'classTimes': [
+            'idClass': '<c:out value="${subClass.classId}"/>', 'classTimes': [
               <c:forEach var="classTime" items="${subClass.classTimes}">
               {
 
-                'day': '${classTime.day}',
-                'start': '${classTime.startTime}',
-                'end': '${classTime.endTime}',
-                'loc': '${classTime.classLoc}',
-                'building': '${classTime.building}',
-                'mode': '${classTime.mode}'
+                'day': '<c:out value="${classTime.day}"/>',
+                'start': '<c:out value="${classTime.startTime}"/>',
+                'end': '<c:out value="${classTime.endTime}"/>',
+                'loc': '<c:out value="${classTime.classLoc}"/>',
+                'building': '<c:out value="${classTime.building}"/>',
+                'mode': '<c:out value="${classTime.mode}"/>'
               },
               </c:forEach>
             ]
           },
           </c:forEach>
         ],
-        'difficulty': ${sub.reviewStats.difficulty.value},
-        'timeDemand': ${sub.reviewStats.timeDemanding.intValue}
+        'difficulty': <c:out value="${sub.reviewStats.difficulty.value}"/>,
+        'timeDemand': <c:out value="${sub.reviewStats.timeDemanding.intValue}"/>
       },
       </c:if>
       </c:forEach>
@@ -776,25 +777,25 @@
 
     <c:if test="${user.userSemester.size() != 0}">
       <c:forEach var="subClass" varStatus="status" items="${user.userSemester}">
-          const sub_${status.index} = subjectClasses.find(elem => elem.id === '${subClass.subject.id}')
-          const sub_${status.index}_class = sub_${status.index}.classes.find(elem => elem.idClass === '${subClass.classId}');
+          const sub_<c:out value="${status.index}"/> = subjectClasses.find(elem => elem.id === '<c:out value="${subClass.subject.id}"/>')
+          const sub_<c:out value="${status.index}"/>_class = sub_<c:out value="${status.index}"/>.classes.find(elem => elem.idClass === '<c:out value="${subClass.classId}"/>');
 
-          addSelectedClassToList(sub_${status.index}, sub_${status.index}_class);
-          schedule.addClass(sub_${status.index}.id, sub_${status.index}.name, sub_${status.index}_class.classTimes);
-          document.getElementById('subject-card-'+sub_${status.index}.id).style.display = 'none';
-          updateCreditCounter(sub_${status.index}.credits)
-          updateTimeDemand((sub_${status.index}.timeDemand+1))
-          updateOverallDifficulty((sub_${status.index}.difficulty+1))
-          disableIncompatibleSubjects(sub_${status.index});
+          addSelectedClassToList(sub_<c:out value="${status.index}"/>, sub_<c:out value="${status.index}"/>_class);
+          schedule.addClass(sub_<c:out value="${status.index}"/>.id, sub_<c:out value="${status.index}"/>.name, sub_<c:out value="${status.index}"/>_class.classTimes);
+          document.getElementById('subject-card-'+sub_<c:out value="${status.index}"/>.id).style.display = 'none';
+          updateCreditCounter(sub_<c:out value="${status.index}"/>.credits)
+          updateTimeDemand((sub_<c:out value="${status.index}"/>.timeDemand+1))
+          updateOverallDifficulty((sub_<c:out value="${status.index}"/>.difficulty+1))
+          disableIncompatibleSubjects(sub_<c:out value="${status.index}"/>);
       </c:forEach>
     </c:if>
 
     const unlockables = [
       <c:forEach var="subject" items="${unlockableSubjects}">
         {
-          'id': '${subject.id}', 'prereqs':[
+          'id': '<c:out value="${subject.id}"/>', 'prereqs':[
             <c:forEach var="prereq" items="${subject.prerequisites}">
-                  '${prereq.id}',
+                  '<c:out value="${prereq.id}"/>',
             </c:forEach>
           ]
         },

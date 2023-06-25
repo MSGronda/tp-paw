@@ -317,9 +317,9 @@ function createSubjectSelectAction(subId){
 }
 function addSelectedClassToList(subject,classSubject){
     // change visibility of buttons and behaviour before cloning
-    document.getElementById('form-select-class-' +subject.id + '-'+classSubject.idClass).style.display = 'none'
-    document.getElementById('form-deselect-class-' +subject.id + '-'+classSubject.idClass).style.display = 'flex'
-    document.getElementById('deselect-class-' +subject.id + '-'+classSubject.idClass)
+    document.getElementById('form-select-class-' + subject.id + '-' + classSubject.idClass).style.display = 'none'
+    document.getElementById('form-deselect-class-' + subject.id + '-' + classSubject.idClass).style.display = 'flex'
+    document.getElementById('deselect-class-' + subject.id + '-' + classSubject.idClass)
         .addEventListener('click', createSubjectDeselectAction(subject, classSubject.idClass));
 
     const selected = document.getElementById('selected-subject-info-list');
