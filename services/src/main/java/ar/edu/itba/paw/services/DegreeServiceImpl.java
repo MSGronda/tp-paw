@@ -90,10 +90,9 @@ public class DegreeServiceImpl implements DegreeService {
         List<Degree> degreesToAdd = new ArrayList<>();
         List<Integer> semestersToAdd = new ArrayList<>();
 
-        List<Degree> degreesToRemove = new ArrayList<>();
-        List<Integer> semesterToRemove = new ArrayList<>();
+        List<DegreeSubject> degreesToRemove = new ArrayList<>();
 
-        List<Degree> degreeToUpdate = new ArrayList<>();
+        List<DegreeSubject> degreeToUpdate = new ArrayList<>();
         List<Integer> semesterToUpdate = new ArrayList<>();
 
         // itero por la lista de degrees
@@ -111,12 +110,11 @@ public class DegreeServiceImpl implements DegreeService {
                         if (degreeSubject.getSubject().equals(subject)) {
                             if (degreeSubject.getSemester() != semesters.get(i)) {
                                 //semester se cambio, actualizar
-                                degreeToUpdate.add(degree);
+                                degreeToUpdate.add(degreeSubject);
                                 semesterToUpdate.add(semesters.get(i));
                             } else {
                                 //semester es el mismo, eliminar
-                                degreesToRemove.add(degree);
-                                semesterToRemove.add(semesters.get(i));
+                                degreesToRemove.add(degreeSubject);
                             }
                         }
                     }
@@ -129,7 +127,7 @@ public class DegreeServiceImpl implements DegreeService {
         }
         degreeDao.updateInsertSubjectToDegrees(subject, degreesToAdd, semestersToAdd);
         degreeDao.updateUpdateSubjectToDegrees(subject, degreeToUpdate, semesterToUpdate);
-        degreeDao.updateDeleteSubjectToDegrees(subject, degreesToRemove, semesterToRemove);
+        degreeDao.updateDeleteSubjectToDegrees(subject, degreesToRemove);
 
     }
 

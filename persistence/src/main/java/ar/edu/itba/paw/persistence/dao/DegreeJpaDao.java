@@ -77,40 +77,20 @@ public class DegreeJpaDao implements DegreeDao {
     }
 
     @Override
-    public void updateUpdateSubjectToDegrees(final Subject subject, final List<Degree> degreesToUpdate, final List<Integer> semestersToUpdate) {
-        for( int i = 0; i < degreesToUpdate.size() ; i++){
-            Degree degree = degreesToUpdate.get(i);
-            int semester = semestersToUpdate.get(i);
-
-            int size = degree.getDegreeSubjects().size();
-            //itero por los degreeSubjects para encontrar el indicado
-            for( int j = 0; j < size; j++){
-                DegreeSubject ds = degree.getDegreeSubjects().get(j);
-                if(ds.getSubject().equals(subject)){
-                    //semester se cambio, actualizar
-                    ds.setSemester(semester);
-                }
-            }
+    public void updateUpdateSubjectToDegrees(final Subject subject, final List<DegreeSubject> degreesToUpdate, final List<Integer> semestersToUpdate) {
+        for( int i = 0 ; i < degreesToUpdate.size() ; i++){
+            DegreeSubject degreeSubject = degreesToUpdate.get(i);
+            Integer semesterToUpdate = semestersToUpdate.get(i);
+            degreeSubject.setSemester(semesterToUpdate);
         }
     }
 
     @Override
-    public void updateDeleteSubjectToDegrees(final Subject subject, final List<Degree> degreesToDelete, final List<Integer> semestersToDelete) {
+    public void updateDeleteSubjectToDegrees(final Subject subject, final List<DegreeSubject> degreesToDelete) {
         //conseguir el DegreeSubject y eliminarlo
-        for( int i = 0 ; i < degreesToDelete.size() ; i++){
-            Degree degree = degreesToDelete.get(i);
-            int semester = semestersToDelete.get(i);
-
-            int size = degree.getDegreeSubjects().size();
-            //itero por los degreeSubjects para encontrar el indicado
-            for( int j = 0; j < size; j++){
-                DegreeSubject ds = degree.getDegreeSubjects().get(j);
-                if(ds.getSubject().equals(subject)){
-                    degree.getDegreeSubjects().remove(ds);
-                    size--;
-                    em.remove(ds);
-                }
-            }
+        for( DegreeSubject degreeSubject : degreesToDelete){
+            degreeSubject.getDegree().getDegreeSubjects().remove(degreeSubject);
+            em.remove(degreeSubject);
         }
     }
 }

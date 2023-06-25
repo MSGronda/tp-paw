@@ -1,6 +1,7 @@
 package ar.edu.itba.paw.persistence.dao;
 
 import ar.edu.itba.paw.models.Degree;
+import ar.edu.itba.paw.models.DegreeSubject;
 import ar.edu.itba.paw.models.Subject;
 
 import java.util.List;
@@ -21,7 +22,7 @@ public interface DegreeDao {
 
     void updateInsertSubjectToDegrees(final Subject subject, final List<Degree> degreesToInsert, final List<Integer> semestersToAdd);
 
-    void updateUpdateSubjectToDegrees(final Subject subject, final List<Degree> degreesToUpdate, final List<Integer> semestersToUpdate);
+    void updateUpdateSubjectToDegrees(final Subject subject, final List<DegreeSubject> degreesToUpdate, final List<Integer> semestersToUpdate);
 
-    void updateDeleteSubjectToDegrees(final Subject subject, final List<Degree> degreesToDelete, final List<Integer> semestersToDelete);
+    void updateDeleteSubjectToDegrees(final Subject subject, final List<DegreeSubject> degreesToDelete);
 }
