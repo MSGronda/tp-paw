@@ -4,7 +4,7 @@
 
 <html>
 <head>
-  <title>${query}
+  <title><c:out value="${query}"/>
     <c:if test="${query.length() > 0}"> - </c:if>
     Uni</title>
   <jsp:include page="../components/head_shared.jsp"/>
@@ -229,9 +229,13 @@
     // Department filters
     let dpt = params.get("department")
 
+    function un_sanitize(sanitized){
+      return sanitized.replace(/&amp;/g, "&").replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/&quo;t/g, "\"").replace(/&#x27;/g, "<").replace(/&#x2F;/g, "/")
+    }
+
     const dptFilterBtns = [
         <c:forEach var="dpt" items="${relevantFilters['DEPARTMENT']}">
-        ["${dpt.hashCode()}", "${dpt}", "remove-${dpt.hashCode()}", "remove-section-${dpt.hashCode()}"],
+        ["${dpt.hashCode()}", "<c:out value="${dpt}"/>", "remove-${dpt.hashCode()}", "remove-section-${dpt.hashCode()}"],
         </c:forEach>
     ]
 
@@ -240,7 +244,7 @@
         document.getElementById(dptFilterBtns[elem][0]).addEventListener('click',
             function () {
                 // debemos remover el pageNum tambien
-                window.location.href = removeURLParam(addOrUpdateParam(window.location.href, "department", dptFilterBtns[elem][1]), 'page')
+                window.location.href = removeURLParam(addOrUpdateParam(window.location.href, "department", un_sanitize(dptFilterBtns[elem][1])), 'page')
 
             });
 
@@ -253,8 +257,7 @@
 
         // Visibiliad de boton de eliminar filtro
         const section = document.getElementById(dptFilterBtns[elem][3])
-        console.log(dptFilterBtns[elem][3])
-        if (dpt === dptFilterBtns[elem][1])
+        if (dpt === un_sanitize(dptFilterBtns[elem][1]))
             section.style.display = "block";
         else
             section.style.display = "none"
@@ -263,18 +266,17 @@
 
     // Credit filters
     let credits = params.get("credits")
-    console.log(credits)
 
     const creditFilterBtns = [
         <c:forEach var="credit" items="${relevantFilters['CREDITS']}">
-        ["credits-${credit}", "${credit}", "remove-${credit}", "remove-section-${credit}"],
+        ["credits-${credit}", "<c:out value="${credit}"/>", "remove-${credit}", "remove-section-${credit}"],
         </c:forEach>
     ]
     for (let elem in creditFilterBtns) {
         document.getElementById(creditFilterBtns[elem][0]).addEventListener('click',
             function () {
                 // debemos remover el pageNum tambien
-                window.location.href = removeURLParam(addOrUpdateParam(window.location.href, "credits", creditFilterBtns[elem][1]), 'page');
+                window.location.href = removeURLParam(addOrUpdateParam(window.location.href, "credits", un_sanitize(creditFilterBtns[elem][1])), 'page');
             });
         document.getElementById(creditFilterBtns[elem][2]).addEventListener('click',
             // debemos remover el pageNum tambien
@@ -282,7 +284,7 @@
                 window.location.href = removeURLParam(removeURLParam(window.location.href, "credits"), 'page');
             });
         const section = document.getElementById(creditFilterBtns[elem][3])
-        if (credits === creditFilterBtns[elem][1])
+        if (credits === un_sanitize(creditFilterBtns[elem][1]))
             section.style.display = "block";
         else
             section.style.display = "none"
