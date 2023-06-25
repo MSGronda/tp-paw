@@ -44,6 +44,10 @@ public class DegreeSubject {
         return semester;
     }
 
+    public void setSemester(int semester) {
+        this.semester = semester;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

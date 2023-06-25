@@ -47,7 +47,7 @@ public class Subject {
     )
     private Set<Degree> degrees;
 
-    @OneToMany(mappedBy = "subject")
+    @OneToMany(mappedBy = "subject", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<SubjectClass> classes;
 
     @OneToMany(mappedBy = "subject", cascade = CascadeType.ALL, orphanRemoval = true)
@@ -106,12 +106,20 @@ public class Subject {
         return credits;
     }
 
+    public void setCredits(final int credits) {
+        this.credits = credits;
+    }
+
     public ReviewStats getReviewStats() {
         if(reviewStats == null) {
             reviewStats = new ReviewStats();
         }
 
         return reviewStats;
+    }
+
+    public List<Review> getReviews() {
+        return reviews;
     }
 
     @Override

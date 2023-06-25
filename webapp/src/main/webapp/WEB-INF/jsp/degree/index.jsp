@@ -193,7 +193,8 @@
         <sl-tab slot="nav" panel="electives">
             <spring:message code="home.electives"/>
         </sl-tab>
-
+        <sl-tooltip content="<spring:message code="subject.create.new"/>">
+        </sl-tooltip>
         <c:forEach var="year" items="${degree.years}">
             <sl-tab-panel class="year-panel" name="year-${year.number}">
                 <c:forEach var="subject" items="${year.subjects}">

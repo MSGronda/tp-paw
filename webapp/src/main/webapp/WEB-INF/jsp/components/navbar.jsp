@@ -51,22 +51,16 @@
       </sl-input>
     </form>
 
-    <sec:authorize access="!isAuthenticated()">
-      <sl-button variant="success" href="<c:url value="/login"/>"><spring:message code="navbar.access"/></sl-button>
-    </sec:authorize>
-    <sec:authorize access="isAuthenticated()">
-      <sl-button-group label="Alignment">
+    <sl-button-group label="Alignment">
         <sl-button class="nav-button" variant="text" href="${pageContext.request.contextPath}/"><spring:message code="navbar.dashboard"/></sl-button>
-
-        <sec:authorize access="hasRole('EDITOR')">
-          <sl-button class="nav-button" variant="text" href="${pageContext.request.contextPath}/degrees"><spring:message code="navbar.degrees"/></sl-button>
-        </sec:authorize>
-
         <sl-button class="nav-button" variant="text" href="${pageContext.request.contextPath}/degree"><spring:message code="navbar.curriculum"/></sl-button>
         <sl-button class="nav-button" variant="text" href="${pageContext.request.contextPath}/builder"><spring:message code="navbar.builder"/></sl-button>
+        <sec:authorize access="hasRole('EDITOR')">
+            <sl-button class="nav-button" variant="text" href="${pageContext.request.contextPath}/degrees"><spring:message code="navbar.degrees"/></sl-button>
+            <sl-button class="nav-button" variant="text" href="<c:url value="/create-subject"/>"><spring:message code="subject.create.new"/></sl-button>
+        </sec:authorize>
       </sl-button-group>
       <sl-button variant="primary" href="<c:url value="/profile"/>"><spring:message code="navbar.profile"/></sl-button>
-    </sec:authorize>
   </div>
 
 </div>

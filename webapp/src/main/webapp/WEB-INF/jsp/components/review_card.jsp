@@ -201,7 +201,7 @@
         </c:otherwise>
       </c:choose>
 
-      <sec:authorize access="isAuthenticated()">
+
         <sl-button class="vote-button" variant="default" size="small" circle
                    data-form-id="form-${review.id}" data-form-value="1">
           <sl-icon id="like-icon-form-${review.id}" class="vote-button-icon" name="hand-thumbs-up" label="Upvote"
@@ -215,19 +215,10 @@
                   </c:choose>
           ></sl-icon>
         </sl-button>
-      </sec:authorize>
-      <sec:authorize access="!isAuthenticated()">
-        <sl-button class="vote-button" variant="default" size="small" circle href="${pageContext.request.contextPath}/login">
-          <sl-icon class="vote-button-icon" name="hand-thumbs-up" label="Upvote"
-                      style="color: #4a90e2;"
-          ></sl-icon>
-        </sl-button>
-      </sec:authorize>
-
 
       <span id="like-number-form-${review.id}"><c:out value="${review.upvotes}"/></span>
 
-    <sec:authorize access="isAuthenticated()">
+
       <sl-button class="vote-button" variant="default" size="small" circle
                  data-form-id="form-${review.id}" data-form-value="-1">
         <sl-icon id="dislike-icon-form-${review.id}" class="vote-button-icon" name="hand-thumbs-down" label="Downvote"
@@ -241,23 +232,7 @@
                 </c:choose>
         ></sl-icon>
       </sl-button>
-    </sec:authorize>
-
-    <sec:authorize access="!isAuthenticated()">
-      <sl-button class="vote-button" variant="default" size="small" circle href="${pageContext.request.contextPath}/login">
-        <sl-icon  class="vote-button-icon" name="hand-thumbs-down" label="Downvote"
-                <c:choose>
-                  <c:when test="${user.votesByReview.containsKey(review) and user.votesByReview[review].vote eq 'DOWNVOTE'}">
-                    style="color: #f5a623;"
-                  </c:when>
-                  <c:otherwise>
-                    style="color: #4a90e2;"
-                  </c:otherwise>
-                </c:choose>
-        ></sl-icon>
-      </sl-button>
-    </sec:authorize>
-
+      
       <span id="dislike-number-form-${review.id}"><c:out value="${review.downvotes}"/></span>
     </form>
   </div>

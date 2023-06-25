@@ -1,17 +1,24 @@
 package ar.edu.itba.paw.webapp.controller;
 
 import ar.edu.itba.paw.models.*;
+import ar.edu.itba.paw.models.enums.SubjectProgress;
+import ar.edu.itba.paw.models.exceptions.UnauthorizedException;
+import ar.edu.itba.paw.services.*;
+import ar.edu.itba.paw.services.exceptions.SubjectIdAlreadyExistsException;
 import ar.edu.itba.paw.models.exceptions.SubjectNotFoundException;
-import ar.edu.itba.paw.services.AuthUserService;
-import ar.edu.itba.paw.services.DegreeService;
-import ar.edu.itba.paw.services.ReviewService;
-import ar.edu.itba.paw.services.SubjectService;
+import ar.edu.itba.paw.webapp.form.EditSubjectForm;
+import ar.edu.itba.paw.webapp.form.SubjectForm;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
+
+import javax.validation.Valid;
+import java.util.*;
 
 @Controller
 public class SubjectController {
@@ -19,18 +26,21 @@ public class SubjectController {
     private final ReviewService reviewService;
     private final DegreeService degreeService;
     private final AuthUserService authUserService;
+    private final ProfessorService professorService;
 
     @Autowired
     public SubjectController(
             final SubjectService subjectService,
             final ReviewService reviewService,
             final DegreeService degreeService,
-            final AuthUserService authUserService
+            final AuthUserService authUserService,
+            final ProfessorService professorService
     ) {
         this.subjectService = subjectService;
         this.reviewService = reviewService;
         this.degreeService = degreeService;
         this.authUserService = authUserService;
+        this.professorService = professorService;
     }
 
     @RequestMapping("/subject/{id:\\d+\\.\\d+}")
@@ -58,4 +68,118 @@ public class SubjectController {
 
         return mav;
     }
+
+    @RequestMapping(value = "/create-subject", method = {RequestMethod.GET} )
+    public ModelAndView createSubjectForm(@ModelAttribute("subjectForm") final SubjectForm subjectForm) {
+
+        ModelAndView mav = new ModelAndView("moderator-tools/createSubject");
+        List<Subject> subjects = subjectService.getAll();
+        List<Professor> professors = professorService.getAll();
+        List<Degree> degrees = degreeService.getAll();
+        mav.addObject("subjects", subjects);
+        mav.addObject("professors", professors);
+        mav.addObject("degrees", degrees);
+        return mav;
+    }
+    @RequestMapping(value = "/create-subject", method = {RequestMethod.POST} )
+    public ModelAndView createSubject(@Valid @ModelAttribute("subjectForm") final SubjectForm subjectForm,
+                                      final BindingResult errors) {
+        if(errors.hasErrors()) {
+            return createSubjectForm(subjectForm);
+        }
+        Subject newSub;
+        try{
+            newSub = subjectService.create(Subject.builder()
+                    .id(subjectForm.getId())
+                    .name(subjectForm.getName())
+                    .department(subjectForm.getDepartment())
+                    .credits(subjectForm.getCredits()),
+                    subjectForm.getDegreeIds(),
+                    subjectForm.getSemesters(),
+                    subjectForm.getRequirementIds(),
+                    subjectForm.getProfessors(),
+                    subjectForm.getClassCodes(),
+                    subjectForm.getClassProfessors(),
+                    subjectForm.getClassDays(),
+                    subjectForm.getClassStartTimes(),
+                    subjectForm.getClassEndTimes(),
+                    subjectForm.getClassBuildings(),
+                    subjectForm.getClassRooms(),
+                    subjectForm.getClassModes()
+            );
+        } catch (SubjectIdAlreadyExistsException e) {
+            ModelAndView mav = createSubjectForm(subjectForm);
+            mav.addObject("subjectCodeRepeated", true);
+            return mav;
+        }
+        return new ModelAndView("redirect:/subject/"+newSub.getId());
+    }
+
+    @RequestMapping("/subject/{id:\\d+\\.\\d+}/delete-subject")
+    public ModelAndView deleteSubject(
+            @PathVariable final String id
+    ) throws UnauthorizedException, SubjectNotFoundException {
+
+        subjectService.delete(authUserService.getCurrentUser(), id);
+        return new ModelAndView("redirect:/");
+    }
+
+    @RequestMapping(value = "/subject/{id:\\d+\\.\\d+}/edit", method = {RequestMethod.GET})
+    public ModelAndView editSubjectForm(@PathVariable final String id, @ModelAttribute("subjectForm") final EditSubjectForm editSubjectForm,
+                                        final BindingResult errors) {
+        final Subject subject = subjectService.findById(id).orElseThrow(SubjectNotFoundException::new);
+        List<Subject> subjects = subjectService.getAll();
+        List<Professor> professors = professorService.getAll();
+        List<Degree> degrees = degreeService.getAll();
+        final ModelAndView mav = new ModelAndView("moderator-tools/editSubject");
+        mav.addObject("subject", subject);
+        mav.addObject("allSubjects", subjects);
+        mav.addObject("professors", professors);
+        mav.addObject("degrees", degrees);
+        return mav;
+    }
+
+    @RequestMapping(value = "/subject/{id:\\d+\\.\\d+}/edit", method = {RequestMethod.POST})
+    public ModelAndView editSubject(@PathVariable final String id, @Valid @ModelAttribute("editSubjectForm") final EditSubjectForm editSubjectForm,
+                                    final BindingResult errors) {
+        System.out.println("class ids: " + editSubjectForm.getClassIds());
+        System.out.println("class codes: " + editSubjectForm.getClassCodes());
+        System.out.println("class professors: " + editSubjectForm.getClassProfessors());
+        System.out.println("class days: " + editSubjectForm.getClassDays());
+        System.out.println("class start times: " + editSubjectForm.getClassStartTimes());
+        System.out.println("class end times: " + editSubjectForm.getClassEndTimes());
+        System.out.println("class buildings: " + editSubjectForm.getClassBuildings());
+        System.out.println("class rooms: " + editSubjectForm.getClassRooms());
+        System.out.println("class modes: " + editSubjectForm.getClassModes());
+
+        System.out.println("degrees: " + editSubjectForm.getDegreeIds());
+        System.out.println("semesters: " + editSubjectForm.getSemesters());
+        System.out.println("requirements: " + editSubjectForm.getRequirementIds());
+
+//        System.out.println("marcos :" + editSubjectForm.getClassProfessors() );
+//        System.out.println("marcos :" + editSubjectForm.getProfessors() );
+//        System.out.println("marcos :" + editSubjectForm.getClassDays() );
+
+        subjectService.edit(
+                id,
+                editSubjectForm.getCredits(),
+                editSubjectForm.getDegreeIds(),
+                editSubjectForm.getSemesters(),
+                editSubjectForm.getRequirementIds(),
+                editSubjectForm.getProfessors(),
+                editSubjectForm.getClassIds(),
+                editSubjectForm.getClassCodes(),
+                editSubjectForm.getClassProfessors(),
+                editSubjectForm.getClassDays(),
+                editSubjectForm.getClassStartTimes(),
+                editSubjectForm.getClassEndTimes(),
+                editSubjectForm.getClassBuildings(),
+                editSubjectForm.getClassRooms(),
+                editSubjectForm.getClassModes()
+        );
+        return new ModelAndView("redirect:/subject/"+id);
+    }
+
+
+
 }

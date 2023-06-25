@@ -1,18 +1,19 @@
 package ar.edu.itba.paw.persistence.dao.jpa;
 
-import ar.edu.itba.paw.models.Degree;
-import ar.edu.itba.paw.models.Subject;
-import ar.edu.itba.paw.models.User;
+import ar.edu.itba.paw.models.*;
 import ar.edu.itba.paw.models.enums.OrderDir;
 import ar.edu.itba.paw.models.enums.SubjectFilterField;
 import ar.edu.itba.paw.models.enums.SubjectOrderField;
 import ar.edu.itba.paw.persistence.dao.SubjectDao;
+import ar.edu.itba.paw.persistence.exceptions.SubjectIdAlreadyExistsPersistenceException;
+import org.springframework.cglib.core.Local;
 import org.springframework.stereotype.Repository;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
+import java.time.LocalTime;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -23,6 +24,14 @@ public class SubjectJpaDao implements SubjectDao {
 
     @PersistenceContext
     private EntityManager em;
+
+    @Override
+    public Subject create(final Subject subject) throws SubjectIdAlreadyExistsPersistenceException {
+        if(findById(subject.getId()).isPresent())
+            throw new SubjectIdAlreadyExistsPersistenceException();
+        em.persist(subject);
+        return subject;
+    }
 
     @Override
     public Optional<Subject> findById(final String id) {
@@ -482,4 +491,174 @@ public class SubjectJpaDao implements SubjectDao {
                 .append(" ")
                 .append(dirToUse.getQueryString());
     }
+
+    @Override
+    public void addPrerequisites(final Subject sub, final List<String> correlativesList){
+        for( String requirement : correlativesList ){
+            Subject requiredSubject = em.find(Subject.class, requirement);
+            sub.getPrerequisites().add(requiredSubject);
+
+        }
+    }
+    @Override
+    public void updatePrerequisitesToAdd(final Subject sub, final List<Subject> correlativesList) {
+        Set<Subject> prerequisites = sub.getPrerequisites();
+        prerequisites.addAll(correlativesList);
+    }
+
+    @Override
+    public void updatePrerequisitesToRemove(final Subject sub, final List<Subject> correlativesList) {
+        Set<Subject> prerequisites = sub.getPrerequisites();
+        correlativesList.forEach(prerequisites::remove);
+    }
+
+    @Override
+    public void addClassesToSubject(final Subject subject, final Set<String> classesSet){
+        for( String classCode : classesSet){
+            SubjectClass subjectClass = new SubjectClass(classCode, subject);
+            em.persist(subjectClass);
+            subject.getClasses().add(subjectClass);
+        }
+    }
+
+    @Override
+    public void updateClassesToSubject(final Subject subject, final List<String> classesCodesToAdd) {
+        for( String code : classesCodesToAdd){
+            SubjectClass subjectClass = new SubjectClass(code, subject);
+            em.persist(subjectClass);
+            subject.getClasses().add(subjectClass);
+        }
+    }
+
+    @Override
+    public void addSubjectClassTimes(final Subject subject, final List<String> classCodes, final List<LocalTime> startTimes, final List<LocalTime> endTimes, final List<String> buildings, final List<String> modes, final List<Integer> days, final List<String> rooms) {
+
+        for( int i = 0 ; i < classCodes.size() ; i++) {
+            SubjectClass subjectClass = subject.getClassesById().get(classCodes.get(i));
+            SubjectClassTime subjectClassTime;
+            if( startTimes.get(i).isAfter(endTimes.get(i)) ){
+                subjectClassTime = new SubjectClassTime(subjectClass, days.get(i), endTimes.get(i), startTimes.get(i), rooms.get(i), buildings.get(i), modes.get(i));
+            }else{
+                subjectClassTime = new SubjectClassTime(subjectClass, days.get(i), startTimes.get(i), endTimes.get(i), rooms.get(i), buildings.get(i), modes.get(i));
+            }
+            em.persist(subjectClassTime);
+        }
+    }
+
+    @Override
+    public void updateSubjectClassTimes(final Subject subject, final List<String> classIdsList, final List<String> classCodes, final List<LocalTime> startTimes, final List<LocalTime> endTimes, final List<String> buildings, final List<String> modes, List<Integer> days, final List<String> rooms) {
+        for( int i = 0 ; i < classIdsList.size() ; i++){
+            //si classId es -1, es una nueva comision
+            //se crea
+            if( classIdsList.get(i).equals("-1")){
+                //se itera por subject Class de la subject para encontrar la comision
+                //es necesaria para agregarla a la nueva SubjectClassTime
+                for( SubjectClass subjectClass : subject.getClasses()){
+                    //si es la comision indicada
+                    if( subjectClass.getClassId().equals(classCodes.get(i))){
+                        SubjectClassTime subjectClassTime;
+                        //chequeo de start time isAfter end time
+                        if( startTimes.get(i).isAfter(endTimes.get(i))){
+                            subjectClassTime = new SubjectClassTime(subjectClass, days.get(i), endTimes.get(i), startTimes.get(i), rooms.get(i), buildings.get(i), modes.get(i));
+                        }else{
+                            subjectClassTime = new SubjectClassTime(subjectClass, days.get(i), startTimes.get(i), endTimes.get(i), rooms.get(i), buildings.get(i), modes.get(i));
+                        }
+                        //se persiste y se agrega a la lista
+                        em.persist(subjectClassTime);
+                        subjectClass.getClassTimes().add(subjectClassTime);
+                    }
+                }
+            }else{
+                //si code es -1, borrar con subjectClassTime id
+                if(classCodes.get(i).equals("-1")){//chequiar si es la ultima classLocTime que cada, si lo es borro la comi
+                    long key = Long.parseLong(classIdsList.get(i));
+                    SubjectClassTime subjectClassTime = em.find(SubjectClassTime.class, key);
+
+                    //se guarda para despues verificar si es que quedo otra SubjectClassTime
+                    //TODO
+                    SubjectClass subjectClass = subjectClassTime.getSubjectClass();
+
+                    em.remove(subjectClassTime);
+                }else{
+                    //si no es -1 el class code, se modifica
+                    long key = Long.parseLong(classIdsList.get(i));
+                    SubjectClassTime subjectClassTime = em.find(SubjectClassTime.class, key);
+                    subjectClassTime.setDay(days.get(i));
+                    subjectClassTime.setClassLoc(rooms.get(i));
+                    subjectClassTime.setBuilding(buildings.get(i));
+                    subjectClassTime.setMode(modes.get(i));
+                    if( startTimes.get(i).isAfter(endTimes.get(i))) {
+                        subjectClassTime.setStartTime(endTimes.get(i));
+                        subjectClassTime.setEndTime(startTimes.get(i));
+                    }else{
+                        subjectClassTime.setStartTime(startTimes.get(i));
+                        subjectClassTime.setEndTime(endTimes.get(i));
+                    }
+                }
+            }
+        }
+
+    }
+
+    @Override
+    public void createClassLocTime(final SubjectClass subjectClass,final int days,final LocalTime endTimes,final LocalTime startTimes,final String rooms,final String buildings,final String modes){
+        SubjectClassTime subjectClassTime;
+        //chequeo de start time isAfter end time
+        if( startTimes.isAfter(endTimes)){
+            subjectClassTime = new SubjectClassTime(subjectClass, days, endTimes, startTimes, rooms, buildings, modes);
+        }else{
+            subjectClassTime = new SubjectClassTime(subjectClass, days, startTimes, endTimes, rooms, buildings, modes);
+        }
+        //se persiste y se agrega a la lista
+        em.persist(subjectClassTime);
+        subjectClass.getClassTimes().add(subjectClassTime);
+    }
+
+    @Override
+    public void deleteClassLocTime(final long key){
+        SubjectClassTime subjectClassTime = em.find(SubjectClassTime.class, key);
+
+        //se guarda para despues verificar si es que quedo otra SubjectClassTime
+        SubjectClass subjectClass = subjectClassTime.getSubjectClass();
+
+        em.remove(subjectClassTime);
+    }
+
+    @Override
+    public void updateClassLocTime(final long key, final int days, final String rooms, final String buildings, final String modes, final LocalTime startTimes,final LocalTime endTimes){
+        SubjectClassTime subjectClassTime = em.find(SubjectClassTime.class, key);
+        subjectClassTime.setDay(days);
+        subjectClassTime.setClassLoc(rooms);
+        subjectClassTime.setBuilding(buildings);
+        subjectClassTime.setMode(modes);
+        if( startTimes.isAfter(endTimes)) {
+            subjectClassTime.setStartTime(endTimes);
+            subjectClassTime.setEndTime(startTimes);
+        }else{
+            subjectClassTime.setStartTime(startTimes);
+            subjectClassTime.setEndTime(endTimes);
+        }
+    }
+
+    @Override
+    public void delete(final Subject subject){
+        em.createQuery("delete from Subject where id = :id")
+                .setParameter("id",subject.getId())
+                .executeUpdate();
+    }
+
+    private DegreeSubject getDegreeSubject(final Subject subject, final Degree degree){
+        for(DegreeSubject degreeSubject : degree.getDegreeSubjects()){
+            if(degreeSubject.getSubject().equals(subject)){
+                return degreeSubject;
+            }
+        }
+        return null;
+    }
+
+    @Override
+    public void editCredits(final Subject subject, final int credits) {
+        subject.setCredits(credits);
+    }
+
 }

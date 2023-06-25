@@ -17,4 +17,8 @@ public interface DegreeService {
     Optional<Degree> findParentDegree(final Subject subject, final User user);
     OptionalInt findSubjectYearForParentDegree(final Subject subject, final User user);
     Map<String, List<String>> getRelevantFiltersForDegree(final Degree degree);
+
+    void addSubjectToDegrees(final Subject subject, final List<Long> degreeIds, final List<Integer> semesters);
+
+    void updateSubjectToDegrees(final Subject subject, final List<Long> degreeIds, final List<Integer> semesters);
 }

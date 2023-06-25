@@ -31,96 +31,117 @@
           font-size: 0.8rem;
       }
 
-      .info {
-          padding-bottom: 2rem;
-      }
+        .info {
+            padding-bottom: 2rem;
+        }
 
-      .review_bt {
-          width: 15rem;
-          /*align-self: center;*/
-          /*justify-self: center;*/
-      }
-      .progress-bt{
-          width: 7rem;
-          padding-left: 1rem;
-      }
-
-
-      .filter {
-          display: flex;
-          flex-direction: row;
-          align-items: center;
-          justify-content: space-between;
-      }
-      .actual-filter{
-          margin-left: 27%;
-      }
-      .filter-dropdown{
-          margin-right: 27%;
-      }
-
-      h1 {
-          font-weight: 500;
-          font-size: 25px
-      }
-
-      .review-column {
-          display: flex;
-          flex-direction: column;
-          justify-content: space-around;
-          padding: 1rem 2rem 3rem;
-          gap: 1rem;
-      }
-
-      .review-card [slot='header'] {
-          display: flex;
-          align-items: center;
-          justify-content: space-between;
-      }
-      .review-card h3 {
-          margin: 0;
-      }
-
-      .break-text {
-          overflow-wrap: break-word;
-          margin-bottom: 2%;
-      }
+        .review_bt {
+            width: 15rem;
+            /*align-self: center;*/
+            /*justify-self: center;*/
+        }
+        .progress-bt{
+            width: 7rem;
+            padding-left: 1rem;
+        }
 
 
-      a {
-          color: #0369a1;
-          background-color: transparent;
-          text-decoration: none;
-      }
-      hr {
-          width: 30rem;
-      }
-      .main-body{
-          width: 100%;
-          height: 100%;
-      }
-      .breadcrumb-area{
-          padding-top: 1rem;
-      }
+        .filter {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .actual-filter{
+            margin-left: 27%;
+        }
+        .filter-dropdown{
+            margin-right: 27%;
+        }
+
+        h1 {
+            font-weight: 500;
+            font-size: 25px
+        }
+
+        .review-column {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-around;
+            padding: 1rem 2rem 3rem;
+            gap: 1rem;
+        }
+
+        .review-card [slot='header'] {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .review-card h3 {
+            margin: 0;
+        }
+
+        .break-text {
+            overflow-wrap: break-word;
+            margin-bottom: 2%;
+        }
 
 
-      .text-center{
-          display: flex;
-          justify-content: center;
-      }
-      .review-and-progress{
-          display: flex;
-          align-items: center;
-          justify-content: center;
-      }
-      .review-and-progress-area{
-          display: flex;
-          flex-direction: column;
-      }
+        a {
+            color: #0369a1;
+            background-color: transparent;
+            text-decoration: none;
+        }
+        hr {
+            width: 30rem;
+        }
+        .main-body{
+            width: 100%;
+            height: 100%;
+        }
+        .breadcrumb-area{
+            padding-top: 1rem;
+        }
 
-      <jsp:include page="../components/component-style/table_style.jsp"/>
 
-  </style>
+        .text-center{
+            display: flex;
+            justify-content: center;
+        }
+        .review-and-progress{
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .review-and-progress-area{
+            display: flex;
+            flex-direction: column;
+        }
+        .edit-delete-buttons {
+            display: flex;
+            flex-direction: row;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .clickable{
+            pointer-events: all !important;
+        }
+        sl-tooltip::part(body) {
+            color: black;
+            background-color: white;
+            margin: 0;
+            padding: 0;
+        }
+        sl-tooltip::part(base__arrow) {
+            background-color: white;
+        }
+        .delete-button {
+            color: red;
+        }
+
+        <jsp:include page="../components/component-style/table_style.jsp"/>
+
+    </style>
 
 </head>
 <body>
@@ -146,9 +167,36 @@
         </sl-breadcrumb>
       </c:if>
     </div>
-    <h1>
-      <c:out value="${subject.name}"/> - <c:out value="${subject.id}"/>
-    </h1>
+    <div class="edit-delete-buttons">
+            <h1>
+                <c:out value="${subject.name}"/> - <c:out value="${subject.id}"/>
+            </h1>
+            <sec:authorize access="hasRole('EDITOR')">
+                <div>
+                    <sl-tooltip content="<spring:message code="subject.edit"/>">
+                        <sl-icon-button name="pen" label="edit" href="<c:url value="/subject/${subject.id}/edit"/>"></sl-icon-button>
+                    </sl-tooltip>
+                    <sl-tooltip trigger="click">
+                        <div class="clickable" slot="content">
+                            <sl-card>
+                                <div class="column-center">
+                                    <span><spring:message code="subject.delete.doyouwish"/></span>
+                                    <div style="padding-top: 1rem;" class="row">
+                                        <sl-button style="padding-right: 1rem " class="delete-button" label="delete" href="<c:url value="/subject/${subject.id}/delete-subject"/>">
+                                            <spring:message code="review.delete.confirm"/>
+                                        </sl-button>
+                                        <sl-button class="delete-button" label="cancel">
+                                            <spring:message code="review.delete.cancel"/>
+                                        </sl-button>
+                                    </div>
+                                </div>
+                            </sl-card>
+                        </div>
+                        <sl-icon-button name="trash3" class="delete-button" label="delete"></sl-icon-button>
+                    </sl-tooltip>
+                </div>
+            </sec:authorize>
+        </div>
     <sl-card class="main-body">
       <sl-tab-group>
         <sl-tab slot="nav" panel="general-panel"><spring:message code="subject.general"/></sl-tab>

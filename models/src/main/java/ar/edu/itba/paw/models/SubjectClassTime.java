@@ -40,6 +40,16 @@ public class SubjectClassTime {
 
     protected SubjectClassTime() {}
 
+    public SubjectClassTime(SubjectClass subjectClass, int day, LocalTime startTime, LocalTime endTime, String classLoc, String building, String mode) {
+        this.subjectClass = subjectClass;
+        this.day = day;
+        this.startTime = startTime;
+        this.endTime = endTime;
+        this.classLoc = classLoc;
+        this.building = building;
+        this.mode = mode;
+    }
+
     public long getId() {
         return id;
     }
@@ -70,6 +80,30 @@ public class SubjectClassTime {
 
     public String getMode() {
         return mode;
+    }
+
+    public void setDay(int day) {
+        this.day = day;
+    }
+
+    public void setStartTime(LocalTime startTime) {
+        this.startTime = startTime;
+    }
+
+    public void setEndTime(LocalTime endTime) {
+        this.endTime = endTime;
+    }
+
+    public void setClassLoc(String classLoc) {
+        this.classLoc = classLoc;
+    }
+
+    public void setBuilding(String building) {
+        this.building = building;
+    }
+
+    public void setMode(String mode) {
+        this.mode = mode;
     }
 
     @Override
