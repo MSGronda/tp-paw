@@ -209,6 +209,7 @@
 <jsp:include page="../components/footer.jsp"/>
 <jsp:include page="../components/body_scripts.jsp"/>
 <script src="<c:url value="/js/url-param-utils.js"/>"></script>
+<script src="<c:url value="/js/sanitizing-utils.js"/>"></script>
 <script>
     let params = new URLSearchParams(window.location.search);
 
@@ -228,10 +229,6 @@
 
     // Department filters
     let dpt = params.get("department")
-
-    function un_sanitize(sanitized){
-      return sanitized.replace(/&amp;/g, "&").replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/&quo;t/g, "\"").replace(/&#x27;/g, "<").replace(/&#x2F;/g, "/")
-    }
 
     const dptFilterBtns = [
         <c:forEach var="dpt" items="${relevantFilters['DEPARTMENT']}">

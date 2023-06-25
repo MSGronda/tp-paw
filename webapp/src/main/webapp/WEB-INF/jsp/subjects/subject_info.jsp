@@ -6,7 +6,7 @@
 
 <html>
 <head>
-  <title>${subject.name}</title>
+  <title><c:out value="${subject.name}"/></title>
   <jsp:include page="../components/head_shared.jsp"/>
   <style>
       #more {
@@ -312,8 +312,8 @@
 
 
       <form id="sub-progress" style="margin: 0" >
-        <input type="hidden" name="idSub" id="idSub" value="${subject.id}">
-        <input type="hidden" name="progress" id="progress" value="${progress.value}">
+        <input type="hidden" name="idSub" id="idSub" value="<c:out value="${subject.id}"/>">
+        <input type="hidden" name="progress" id="progress" value="<c:out value="${progress.value}"/>"/>
         <sec:authorize access="isAuthenticated()">
           <sl-tooltip content="<spring:message code="subject.progress.tooltip"/>">
             <c:choose>

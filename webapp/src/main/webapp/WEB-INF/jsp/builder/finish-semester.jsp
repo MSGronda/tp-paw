@@ -60,7 +60,7 @@
                     <c:forEach varStatus="status" var="subjectClass" items="${user.userSemester}">
                         <div class="subject-item">
                             <span><c:out value="${subjectClass.subject.name}"/> - <c:out value="${subjectClass.subject.id}"/> </span>
-                            <sl-checkbox name="${subjectClass.subject.id}" id="subject-check-${subjectClass.subject.id}"></sl-checkbox>
+                            <sl-checkbox name="<c:out value="${subjectClass.subject.id}"/>" id="subject-check-${subjectClass.subject.id.hashCode()}"></sl-checkbox>
                         </div>
                         <c:if test="${!status.last}"><sl-divider></sl-divider></c:if>
                     </c:forEach>
@@ -77,6 +77,7 @@
         </div>
     </main>
 <jsp:include page="../components/body_scripts.jsp"/>
+<script src="<c:url value="/js/sanitizing-utils.js"/>"></script>
 <script>
     function submit(){
         const subjectList = []
@@ -84,7 +85,7 @@
 
         for(let checkNum in checkboxes){
             if(checkboxes[checkNum].checked){
-                subjectList.push(checkboxes[checkNum].getAttribute('name'));
+                subjectList.push(un_sanitize(checkboxes[checkNum].getAttribute('name')));
             }
         }
 
