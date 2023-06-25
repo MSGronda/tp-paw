@@ -109,7 +109,7 @@
                 <form:errors path="profilePicture" cssClass="error" element="p"/>
                 <spring:message code="profile.upload.placeholder" var="uploadPlaceholder"/>
                 <span class="upload-button">
-                    <input type="file" name="profilePicture" placeholder="${uploadPlaceholder}" accept="image/gif, image/png, image/jpeg" onchange="previewImage(this.target.files[0])"/>
+                    <input type="file" name="profilePicture" placeholder="${uploadPlaceholder}" accept="image/gif, image/png, image/jpeg" onchange="previewImage(this.files[0])"/>
                 </span>
                 <br />
                 <span class="submit-button">
