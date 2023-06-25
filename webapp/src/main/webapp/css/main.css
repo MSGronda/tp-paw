@@ -139,9 +139,6 @@ a {
 /* SUBJECT CARD  */
 sl-card.subject-card {
     min-width: 100%;
-    transition: transform 0.2s ease-in-out;
-    -webkit-font-smoothing: subpixel-antialiased;
-    backface-visibility: hidden;
 }
 sl-card.subject-card:hover {
     /*transform: scale(1.03);*/
