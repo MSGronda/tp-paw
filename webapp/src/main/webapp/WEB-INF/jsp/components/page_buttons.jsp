@@ -53,23 +53,30 @@
   <script src="<c:url value="/js/url-param-utils.js" />"></script>
   <script>
       let prevButton = document.getElementById("prevPage");
-      prevButton.addEventListener('click',
-          function (event) {
-              event.preventDefault();
-              let url = window.location.href;
-              url = addOrUpdateParam(url, "page", (${currentPage} - 1).toString());
+      if(typeof prevButton !== null || prevButton !== undefined){
+        prevButton.addEventListener('click',
+                function (event) {
+                  event.preventDefault();
+                  let url = window.location.href;
+                  url = addOrUpdateParam(url, "page", (${currentPage} - 1).toString());
 
-              window.location.href = url;
-          });
+                  window.location.href = url;
+                }
+        );
+      }
+
       let nextButton = document.getElementById("nextPage");
-      nextButton.addEventListener('click',
-          function (event) {
-              event.preventDefault();
-              let url = window.location.href;
-              url = addOrUpdateParam(url, "page", (${currentPage} + 1).toString());
+      if(typeof nextButton !== null || nextButton !== undefined) {
+        nextButton.addEventListener('click',
+                function (event) {
+                  event.preventDefault();
+                  let url = window.location.href;
+                  url = addOrUpdateParam(url, "page", (${currentPage} + 1).toString());
 
-              window.location.href = url;
-          });
+                  window.location.href = url;
+                }
+        );
+      }
 
       let elements = document.getElementsByClassName("pageNumButton");
       for (let i = 0, len = elements.length; i < len; i++) {

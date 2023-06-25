@@ -427,6 +427,7 @@
 <jsp:include page="../components/body_scripts.jsp"/>
 <script src="${pageContext.request.contextPath}/js/subject_progress.js"></script>
 <script src="${pageContext.request.contextPath}/js/review_card.js"></script>
+<script src="${pageContext.request.contextPath}/js/url-param-utils.js"></script>
 <script>
     $(document).ready(function() {
         $('.vote-button').click(function() {

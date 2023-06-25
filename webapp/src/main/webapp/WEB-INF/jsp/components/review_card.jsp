@@ -148,11 +148,7 @@
 
   <div class="break-text">
     <c:if test="${review.text.length() > 500}">
-      <c:out value="${review.text.substring(0,500)}"/>
-      <span class="dots">...</span>
-      <span class="more-text">
-        <c:out value="${review.text.substring(500)}"/>
-      </span>
+      <c:out value="${review.text.substring(0,500)}"/><span class="dots">...</span><span class="more-text"><c:out value="${review.text.substring(500)}"/></span>
       <br />
       <sl-button size="small" class="show-button">
         <span class="show-more-text">
