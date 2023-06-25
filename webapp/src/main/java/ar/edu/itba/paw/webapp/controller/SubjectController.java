@@ -13,8 +13,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
-import java.util.OptionalInt;
-
 @Controller
 public class SubjectController {
     private final SubjectService subjectService;
@@ -48,7 +46,8 @@ public class SubjectController {
         final ModelAndView mav = new ModelAndView("subjects/subject_info");
         mav.addObject("totalPages", reviewService.getTotalPagesForSubjectReviews(subject));
         mav.addObject("reviews", reviewService.getAllSubjectReviews(subject, page, order, dir));
-        mav.addObject("year", degreeService.findSubjectYearForDegree(subject, user.getDegree()));
+        mav.addObject("degree", degreeService.findParentDegree(subject, user));
+        mav.addObject("year", degreeService.findSubjectYearForParentDegree(subject, user));
         mav.addObject("didReview", reviewService.didUserReview(subject, user));
         mav.addObject("progress", user.getSubjectProgress(subject));
         mav.addObject("user", user);

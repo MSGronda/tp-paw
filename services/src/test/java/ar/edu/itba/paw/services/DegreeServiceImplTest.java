@@ -16,6 +16,7 @@ import java.util.OptionalInt;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -74,10 +75,11 @@ public class DegreeServiceImplTest {
                 .id("00.01")
                 .name("Subject")
                 .build();
+        subject.getDegrees().add(degree);
 
-        when(degreeDao.findSubjectSemesterForDegree(subject, degree)).thenReturn(OptionalInt.of(2));
+        when(degreeDao.findSubjectSemesterForDegree(eq(subject), eq(degree))).thenReturn(OptionalInt.of(2));
 
-        final OptionalInt actual = degreeService.findSubjectYearForDegree(subject, degree);
+        final OptionalInt actual = degreeService.findSubjectYearForParentDegree(subject, null);
 
         assertTrue(actual.isPresent());
         assertEquals(1, actual.getAsInt());

@@ -2,14 +2,12 @@ package ar.edu.itba.paw.services;
 
 import ar.edu.itba.paw.models.Degree;
 import ar.edu.itba.paw.models.Subject;
+import ar.edu.itba.paw.models.User;
 import ar.edu.itba.paw.persistence.dao.DegreeDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.OptionalInt;
+import java.util.*;
 
 @Service
 public class DegreeServiceImpl implements DegreeService {
@@ -17,7 +15,10 @@ public class DegreeServiceImpl implements DegreeService {
     private final SubjectService subjectService;
 
     @Autowired
-    public DegreeServiceImpl(final DegreeDao degreeDao, final SubjectService subjectService) {
+    public DegreeServiceImpl(
+            final DegreeDao degreeDao,
+            final SubjectService subjectService
+    ) {
         this.degreeDao = degreeDao;
         this.subjectService = subjectService;
     }
@@ -33,7 +34,25 @@ public class DegreeServiceImpl implements DegreeService {
     }
 
     @Override
-    public OptionalInt findSubjectYearForDegree(final Subject subject, final Degree degree) {
+    public Optional<Degree> findParentDegree(final Subject subject, final User user) {
+        final Set<Degree> subjectDegrees = subject.getDegrees();
+
+        if(user != null) {
+            final Degree userDegree = user.getDegree();
+            if(subjectDegrees.contains(userDegree)) {
+                return Optional.of(userDegree);
+            }
+        }
+
+        return subjectDegrees.stream().findFirst();
+    }
+
+    @Override
+    public OptionalInt findSubjectYearForParentDegree(final Subject subject, final User user) {
+        final Optional<Degree> maybeDegree = findParentDegree(subject, user);
+        if(!maybeDegree.isPresent()) return OptionalInt.empty();
+        final Degree degree = maybeDegree.get();
+
         final OptionalInt semester = degreeDao.findSubjectSemesterForDegree(subject, degree);
         if(!semester.isPresent()) return OptionalInt.empty();
 
