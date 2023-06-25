@@ -9,7 +9,6 @@ import ar.edu.itba.paw.persistence.dao.UserDao;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -100,7 +99,7 @@ public class UserServiceImpl implements UserService {
         final Role role = rolesService.findByName("USER").orElseThrow(IllegalStateException::new);
         addRole(newUser, role);
 
-        updateSubjectProgress(newUser, completedSubjectIds, SubjectProgress.DONE);
+        updateMultipleSubjectProgress(newUser, completedSubjectIds, SubjectProgress.DONE);
 
         mailService.sendVerification(newUser, confirmToken);
 
@@ -158,13 +157,29 @@ public class UserServiceImpl implements UserService {
 
     @Transactional
     @Override
-    public void updateSubjectProgress(final User user, final Subject subject, final SubjectProgress progress) {
+    public void updateSingleSubjectProgress(final User user, final Subject subject, final SubjectProgress progress) {
+        if(progress == SubjectProgress.DONE) {
+            for(final SubjectClass c : subject.getClasses()) {
+                if(user.getUserSemester().contains(c)) {
+                    userDao.removeFromCurrentSemester(user, c);
+                }
+            }
+        }
+
         userDao.updateSubjectProgress(user, subject, progress);
     }
 
     @Transactional
     @Override
-    public void updateSubjectProgress(final User user, final List<String> subIds, final SubjectProgress progress) {
+    public void updateSingleSubjectProgress(final User user, final String subjectId, final SubjectProgress progress) {
+        final Subject subject = subjectService.findById(subjectId).orElseThrow(SubjectNotFoundException::new);
+
+        updateSingleSubjectProgress(user, subject, progress);
+    }
+
+    @Transactional
+    @Override
+    public void updateMultipleSubjectProgress(final User user, final List<String> subIds, final SubjectProgress progress) {
         if (subIds.isEmpty()) {
             return;
         }
@@ -173,8 +188,8 @@ public class UserServiceImpl implements UserService {
 
     @Transactional
     @Override
-    public void updateSubjectProgress(final User user, final String subIds, final SubjectProgress progress) {
-        updateSubjectProgress(user, parseJsonList(subIds), progress);
+    public void updateMultipleSubjectProgress(final User user, final String subIds, final SubjectProgress progress) {
+        updateMultipleSubjectProgress(user, parseJsonList(subIds), progress);
     }
 
     @Transactional
@@ -310,7 +325,7 @@ public class UserServiceImpl implements UserService {
     @Transactional
     @Override
     public void finishSemester(final User user, final String subjectIds) {
-        updateSubjectProgress(user, parseJsonList(subjectIds), SubjectProgress.DONE);
+        updateMultipleSubjectProgress(user, parseJsonList(subjectIds), SubjectProgress.DONE);
         clearSemester(user);
     }
 
@@ -334,7 +349,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public void updateUserDegreeAndSubjectProgress(final User user, final Degree degree, final String subjectIds) {
         userDao.updateUserDegree(user, degree);
-        updateSubjectProgress(user, parseJsonList(subjectIds), SubjectProgress.DONE);
+        updateMultipleSubjectProgress(user, parseJsonList(subjectIds), SubjectProgress.DONE);
     }
 
     private void autoLogin(final User user) {

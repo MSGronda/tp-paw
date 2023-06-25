@@ -327,7 +327,7 @@ public class UserController {
             @Valid @ModelAttribute("SubjectProgressForm") final SubjectProgressForm progressForm
     ) {
         try {
-            userService.updateSubjectProgress(
+            userService.updateSingleSubjectProgress(
                     authUserService.getCurrentUser(),
                     progressForm.getIdSub(),
                     SubjectProgress.parse(progressForm.getProgress())

@@ -20,9 +20,10 @@ public interface UserService {
 
     void resendVerificationEmail(final String email) throws UserNotFoundException;
 
-    void updateSubjectProgress(final User user, final Subject subject, final SubjectProgress progress);
-    void updateSubjectProgress(final User user, final List<String> subIds, final SubjectProgress progress);
-    void updateSubjectProgress(final User user, final String subIds, final SubjectProgress progress);
+    void updateSingleSubjectProgress(final User user, final Subject subject, final SubjectProgress progress);
+    void updateSingleSubjectProgress(final User user, final String subjectId, final SubjectProgress progress);
+    void updateMultipleSubjectProgress(final User user, final List<String> subIds, final SubjectProgress progress);
+    void updateMultipleSubjectProgress(final User user, final String subIds, final SubjectProgress progress);
 
     void changePassword(
             final User user,
