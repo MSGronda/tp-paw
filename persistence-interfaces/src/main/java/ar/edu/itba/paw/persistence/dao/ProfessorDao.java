@@ -2,8 +2,10 @@ package ar.edu.itba.paw.persistence.dao;
 
 import ar.edu.itba.paw.models.Professor;
 import ar.edu.itba.paw.models.Subject;
+import ar.edu.itba.paw.models.SubjectClass;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 public interface ProfessorDao {
@@ -17,7 +19,9 @@ public interface ProfessorDao {
 
     void addProfessorsToClasses(final Subject subject, final List<String> classCodes, final List<List<String>> classProfessors);
 
-    void updateProfessorsToClasses(final Subject sub, final List<String> classIdsList, final List<String> classesList, final List<List<String>> classProfessorsList);
+    void updateProfessorsToClassesAdd(final Map<SubjectClass, List<Professor>> professorsToAdd);
+    void updateProfessorsToClassesUpdate(final Map<SubjectClass, List<Professor>> professorsToUpdate);
+    void updateProfessorsToClassesRemove(final Map<SubjectClass, List<Professor>> professorsToRemove);
 
     //functions to create, delete or update professors in subjects
     void updateSubjectToProfessorsAdd(final Subject subject, final List<Professor> professorsToAdd);

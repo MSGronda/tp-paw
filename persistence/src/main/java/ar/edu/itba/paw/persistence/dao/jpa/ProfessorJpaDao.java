@@ -98,77 +98,23 @@ public class ProfessorJpaDao implements ProfessorDao {
     }
 
     @Override
-    public void updateProfessorsToClasses(final Subject subject, final List<String> classIdsList, final List<String> classCodes, final List<List<String>> classProfessors) {
-        //Itero por los ids de las clases
-        for( int i = 0; i < classIdsList.size() ; i++){
-            //si la comsion es nueva, agregar profesores si no existen
-            if( classIdsList.get(i).equals("-1")){
-                //iterar por profesores, fijarme si ya existen, sino agregar
-                for( String professor : classProfessors.get(i)){
-                    Optional<Professor> maybeProfessor = getByName(professor);
-                    if(maybeProfessor.isPresent()){
-                        for( SubjectClass subjectClass : subject.getClasses()){//tengo que meterme en cada clase que me pasaron en frontend
-                            //y fijarme que no contenga al profesor. Si no lo contiene lo añado
-                            if( subjectClass.getClassId().equals(classCodes.get(i))){
-                                Professor professorToAdd = maybeProfessor.get();
-                                if( !subjectClass.getProfessors().contains(professorToAdd)){
-                                    subjectClass.getProfessors().add(professorToAdd);
-                                }
-                            }
-                        }
-                    }
-                }
-            }else{
-                //si class Code no es -1, se updatea comsion
-                if( !classCodes.get(i).equals("-1")) {//Ya existe la comision, tengo que modificar un profesor en una comision
-                    SubjectClass subjectClassNext = null;
-                    //recorremos profesores del parametro
-                    //nos fijamos que no esten y se agregan
-                    for (String professor : classProfessors.get(i)) {//recorro la lista de profesores
-                        Optional<Professor> maybeProfessor = getByName(professor);
-                        if (maybeProfessor.isPresent()) {//en teoria siempre deberia existir
-                            for (SubjectClass subjectClass : subject.getClasses()) {
-                                if (subjectClass.getClassId().equals(classCodes.get(i))) {
-                                    subjectClassNext = subjectClass;
-                                    Professor professorToAdd = maybeProfessor.get();
-                                    if (!subjectClass.getProfessors().contains(professorToAdd)) {
-                                        subjectClass.getProfessors().add(professorToAdd);
-                                    }
-                                }
-                            }
-                        }
-                    }
-                    if (subjectClassNext != null) {
-                        //iteramos por los profesores de la comsion
-                        //si en el param no hay un prof que en la comision si, se borra ese profesor
-                        int size = subjectClassNext.getProfessors().size();
-                        for( int j = 0 ; j < size ; j++){
-                            if( !classProfessors.get(i).contains(subjectClassNext.getProfessors().get(j).getName())){
-                                subjectClassNext.getProfessors().remove(j);
-                                size--;
-                                j--;
-                            }
-                        }
-                    }
-                }//else se deberia borrar el profesor solo si es la ultima comision
-                //creo que no se puede hacer aca este chequeo
-//                }else{
-//                    SubjectClassTime subjectClassTime = em.find(SubjectClassTime.class, Long.parseLong(classIdsList.get(i)));
-//                    if( subjectClassTime != null){
-//                        String classId = subjectClassTime.getSubjectClass().getClassId();
-//                        for( SubjectClass subjectClass : subject.getClasses()){
-//                            if( subjectClass.getClassId().equals(classId)){
-//                                if( subjectClass.getClassTimes().size() == 1) {
-//                                    subjectClass.getProfessors().clear();
-//                                }
-//                                subjectClass.getClassTimes().
-//                            }
-//                        }
-//                    }
-//
-//                }
-            }
+    public void updateProfessorsToClassesAdd(final Map<SubjectClass, List<Professor>> professorsToAdd) {
+        for(Map.Entry<SubjectClass, List<Professor>> entry : professorsToAdd.entrySet()){
+            entry.getKey().getProfessors().addAll(entry.getValue());
+        }
+    }
 
+    @Override
+    public void updateProfessorsToClassesUpdate(final Map<SubjectClass, List<Professor>> professorsToUpdate) {
+        for(Map.Entry<SubjectClass, List<Professor>> entry : professorsToUpdate.entrySet()){
+            entry.getKey().getProfessors().addAll(entry.getValue());
+        }
+    }
+
+    @Override
+    public void updateProfessorsToClassesRemove(final Map<SubjectClass, List<Professor>> professorsToRemove) {
+        for(Map.Entry<SubjectClass, List<Professor>> entry : professorsToRemove.entrySet()){
+            entry.getKey().getProfessors().removeAll(entry.getValue());
         }
     }
 

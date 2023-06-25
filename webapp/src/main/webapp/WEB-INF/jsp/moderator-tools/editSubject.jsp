@@ -517,19 +517,6 @@
         updateProfessorItems();
         updateClassItems();
 
-        // document.getElementById('classIds-hiddenInput').value = JSON.stringify(classIdHI);
-        // document.getElementById('prereqIds-hiddenInput').value = JSON.stringify(prereqIdHI);
-        // document.getElementById('degreeIds-hiddenInput').value = JSON.stringify(degreeIdsHI);
-        // document.getElementById('semesters-hiddenInput').value = JSON.stringify(semestersHI);
-        // document.getElementById('professors-hiddenInput').value = JSON.stringify(professorsHI);
-        // document.getElementById('classCodes-hiddenInput').value = JSON.stringify(classCodeHI);
-        // document.getElementById('classProfessors-hiddenInput').value = JSON.stringify(classProfHI);
-        // document.getElementById('classDays-hiddenInput').value = JSON.stringify(classDayHI);
-        // document.getElementById('classStartTimes-hiddenInput').value = JSON.stringify(classStartTimeHI);
-        // document.getElementById('classEndTimes-hiddenInput').value = JSON.stringify(classEndTimeHI);
-        // document.getElementById('classBuildings-hiddenInput').value = JSON.stringify(classBuildingHI);
-        // document.getElementById('classRooms-hiddenInput').value = JSON.stringify(classRoomHI);
-        // document.getElementById('classModes-hiddenInput').value = JSON.stringify(classModeHI);
     }
 
     function addRequirement() {
@@ -734,6 +721,8 @@
         errorMessage.appendChild(message);
     }
 
+    let newClassIndex = -1;
+
     function createClass() {
         const classCode = document.getElementById("class-code");
         const classProf = document.getElementById("class-professors");
@@ -753,8 +742,9 @@
             updateErrorMessage(1)
             return;
         }
-        classId.push("-1");
-        classIdHI.push("-1");
+        classId.push(newClassIndex.toString());
+        classIdHI.push(newClassIndex.toString());
+        newClassIndex--;
         classCodeList.push(classCode.value);
         classCodeHI.push(classCode.value);
         let profIndex = 0;
@@ -1108,10 +1098,7 @@
         classProfList[index].forEach( (professor) => {
             Object.entries(professorMap).forEach(([key, value]) => {
                 if( value === professor){
-                    // console.log(key);
-                    // console.log(classProfessorsSlSelect.value);
                     professorValues += key + " ";
-                    // classProfessorsSlSelect.setAttribute("value", classProfessorsSlSelect.value.toString().replace(",", "") + " " + key);
                 }
             });
         });
@@ -1146,15 +1133,28 @@
             return;
         }
 
-        classIdHI.push(classId[updatedClassIndex])
-        classCodeHI.push(classCodeList[updatedClassIndex]);
-        classProfHI.push(updatedProfessors);
-        classDayHI.push(document.getElementById('class-day4').value);
-        classStartTimeHI.push(document.getElementById('class-start-time4').value);
-        classEndTimeHI.push(document.getElementById('class-end-time4').value);
-        classModeHI.push(document.getElementById('class-mode4').value);
-        classBuildingHI.push(document.getElementById('class-building4').value);
-        classRoomHI.push(document.getElementById('classroom4').value);
+        if(classIdHI.includes(classId[updatedClassIndex])) {
+
+            let index = classIdHI.indexOf(classId[updatedClassIndex]);
+            classCodeHI[index] = classCodeList[updatedClassIndex];
+            classProfHI[index] = updatedProfessors;
+            classDayHI[index] = document.getElementById('class-day4').value;
+            classStartTimeHI[index] = document.getElementById('class-start-time4').value;
+            classEndTimeHI[index] = document.getElementById('class-end-time4').value;
+            classModeHI[index] = document.getElementById('class-mode4').value;
+            classBuildingHI[index] = document.getElementById('class-building4').value;
+            classRoomHI[index] = document.getElementById('classroom4').value;
+        } else {
+            classIdHI.push(classId[updatedClassIndex])
+            classCodeHI.push(classCodeList[updatedClassIndex]);
+            classProfHI.push(updatedProfessors);
+            classDayHI.push(document.getElementById('class-day4').value);
+            classStartTimeHI.push(document.getElementById('class-start-time4').value);
+            classEndTimeHI.push(document.getElementById('class-end-time4').value);
+            classModeHI.push(document.getElementById('class-mode4').value);
+            classBuildingHI.push(document.getElementById('class-building4').value);
+            classRoomHI.push(document.getElementById('classroom4').value);
+        }
 
         classProfList[updatedClassIndex] = updatedProfessors;
         classDayList[updatedClassIndex] = document.getElementById('class-day4').value;
@@ -1165,17 +1165,6 @@
         classRoomList[updatedClassIndex] = document.getElementById('classroom4').value;
 
         updateClassItems();
-
-        // console.log(classCodeHI);
-        // console.log(classProfHI);
-        // console.log(classDayHI);
-        // console.log(classStartTimeHI);
-        // console.log(classEndTimeHI);
-        // console.log(classModeHI);
-        // console.log(classBuildingHI);
-        // console.log(classRoomHI);
-
-
 
         dialog4.hide();
 

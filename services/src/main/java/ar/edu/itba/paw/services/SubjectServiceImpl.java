@@ -347,8 +347,6 @@ public class SubjectServiceImpl implements SubjectService {
             final List<String> classesList = parseJsonList(classCodes, false);
             final List<String> classesIdsList = parseJsonList(classIds, false);
             prepareClassesToUpdate(sub, classesIdsList, classesList);
-//            subjectDao.updateClassesToSubject(sub, classesIdsList, classesList);
-
 
             final List<List<String>> classProfessorsList = parseJsonListOfLists(classProfessors);
             professorService.updateProfessorsToClasses(sub, classesIdsList, classesList, classProfessorsList);
@@ -370,16 +368,16 @@ public class SubjectServiceImpl implements SubjectService {
         for( int i = 0 ; i < classIdsList.size() ; i++){
             //si classId es -1, es una nueva comision
             //se crea
-            if( classIdsList.get(i).equals("-1")){
+            if( Integer.parseInt(classIdsList.get(i)) < 0 ){
                 createClassLocTime(subject,classCodes,i,startTimes.stream().map(LocalTime::parse).collect(Collectors.toList())
                         ,endTimes.stream().map(LocalTime::parse).collect(Collectors.toList())
                         ,days.stream().map(Integer::parseInt).collect(Collectors.toList()),rooms,buildings,modes);
-            }else{//class id NO es -1
+            } else {//class id NO es -1
                 //si code es -1, borrar con subjectClassTime id
                 long key = Long.parseLong(classIdsList.get(i));
                 if(classCodes.get(i).equals("-1")){//chequiar si es la ultima classLocTime que cada, si lo es borro la comi
                     subjectDao.deleteClassLocTime(key);
-                }else{
+                } else {
                     //si no es -1 el class code, se modifica
                     subjectDao.updateClassLocTime(key,parsedDays.get(i),rooms.get(i),buildings.get(i),modes.get(i),parsedStartTime.get(i),parsedEndTime.get(i));
                 }
@@ -430,7 +428,7 @@ public class SubjectServiceImpl implements SubjectService {
     private void prepareClassesToUpdate( final Subject subject, final List<String> classesIdsList, final List<String> classesCodeList){
         List<String> classesToAdd = new ArrayList<>();
         for(int i = 0 ; i < classesIdsList.size() ; i++){
-            if( classesIdsList.get(i).equals("-1")){
+            if( Integer.parseInt(classesIdsList.get(i)) < 0){
                 boolean hasSubjectClass = false;
                 for( SubjectClass subjectClass : subject.getClasses() ){
                     if( subjectClass.getClassId().equals(classesCodeList.get(i)) ){
