@@ -94,7 +94,7 @@
                             <form:errors path="credits" cssClass="error" element="p"/>
                             <spring:message code="subject.credits"/>
                         </td>
-                        <td><sl-input name="credits" path="credits" value="${subject.credits}" type="number" id="subject-credits" onkeydown="return event.key !== 'Enter';"></sl-input></td>
+                        <td><sl-input name="credits" path="credits" value="<c:out value="${subject.credits}"/>" type="number" id="subject-credits" onkeydown="return event.key !== 'Enter';"></sl-input></td>
                     </tr>
                     <tr>
                         <td>
@@ -128,7 +128,7 @@
                             <input id="requirement" list="requirements" class="selection">
                             <datalist id="requirements">
                                 <c:forEach items="${allSubjects}" var="subject">
-                                    <option value="${subject.id} - ${subject.name}" id="${subject.id}"></option>
+                                    <option value="<c:out value="${subject.id}"/> - <c:out value="${subject.name}"/>" id="<c:out value="${subject.id}"/>"></option>
                                 </c:forEach>
                             </datalist>
                             <sl-icon-button name="plus-lg" onclick="addRequirement()"></sl-icon-button>
@@ -152,7 +152,7 @@
                             <input id="professor" list="professors" class="selection">
                             <datalist id="professors">
                                 <c:forEach items="${professors}" var="professor">
-                                    <option value="${professor.name}" id="${professor.id}"></option>
+                                    <option value="<c:out value="${professor.name}"/>" id="<c:out value="${professor.id}"/>"></option>
                                 </c:forEach>
                             </datalist>
                             <sl-icon-button name="plus-lg" onclick="addProfessor()"></sl-icon-button>
@@ -279,49 +279,44 @@
     let degreeIdsOG = [];
     let semesterOG = [];
 
-    // degree -> 2
-    // semester -> 4
-
-    //degreeHI -> 2, 1
-    //semesterHI -> 4, 2
 
     function loadStartingFields() {
         <c:forEach var="degree" items="${subject.degrees}">
             <c:forEach var="semester" items="${degree.degreeSubjects}">
                 <c:if test="${semester.subject.id == subject.id}">
-                    semesterArray.push("${semester.semester}");
-                    semesterOG.push("${semester.semester}");
+                    semesterArray.push("<c:out value="${semester.semester}"/>");
+                    semesterOG.push("<c:out value="${semester.semester}"/>");
                 </c:if>
             </c:forEach>
-            degreeArray.push("${degree.id}");
-            degreeIdsOG.push("${degree.id}");
+            degreeArray.push("<c:out value="${degree.id}"/>");
+            degreeIdsOG.push("<c:out value="${degree.id}"/>");
         </c:forEach>
         <c:forEach var="prereq" items="${subject.prerequisites}">
-            requirementList.push("${prereq.id}");
-            reqNameList.push("${prereq.id} - ${prereq.name}");
+            requirementList.push("<c:out value="${prereq.id}"/>");
+            reqNameList.push("<c:out value="${prereq.id}"/> - <c:out value="${prereq.name}"/>");
         </c:forEach>
         <c:forEach var="prof" items="${subject.professors}">
-            professorList.push("${prof.name}");
-            professorMap[index] = "${prof.name}";
+            professorList.push("<c:out value="${prof.name}"/>");
+            professorMap[index] = "<c:out value="${prof.name}"/>";
             index++;
         </c:forEach>
         let classProfessorsList;
         <c:forEach var="classes" items="${subject.classes}">
             classProfessorsList = [];
             <c:forEach var="subjectProfessors" items="${classes.professors}">
-                classProfessorsList.push("${subjectProfessors.name}");
+                classProfessorsList.push("<c:out value="${subjectProfessors.name}"/>");
             </c:forEach>
 
             <c:forEach var="subjectTimes" items="${classes.classTimes}">
-                classId.push("${subjectTimes.id}");
-                classCodeList.push("${classes.classId}");
+                classId.push("<c:out value="${subjectTimes.id}"/>");
+                classCodeList.push("<c:out value="${classes.classId}"/>");
                 classProfList.push(classProfessorsList);
-                classDayList.push("${subjectTimes.day}");
-                classStartTimeList.push("${subjectTimes.startTime}");
-                classEndTimeList.push("${subjectTimes.endTime}");
-                classBuildingList.push("${subjectTimes.building}");
-                classRoomList.push("${subjectTimes.classLoc}");
-                classModeList.push("${subjectTimes.mode}");
+                classDayList.push("<c:out value="${subjectTimes.day}"/>");
+                classStartTimeList.push("<c:out value="${subjectTimes.startTime}"/>");
+                classEndTimeList.push("<c:out value="${subjectTimes.endTime}"/>");
+                classBuildingList.push("<c:out value="${subjectTimes.building}"/>");
+                classRoomList.push("<c:out value="${subjectTimes.classLoc}"/>");
+                classModeList.push("<c:out value="${subjectTimes.mode}"/>");
             </c:forEach>
         </c:forEach>
 
@@ -449,7 +444,7 @@
 
     let degreeMap = {
         <c:forEach var="degree" items="${degrees}">
-        "${degree.id}":"${degree.name}",
+            "<c:out value="${degree.id}"/>":"<c:out value="${degree.name}"/>",
         </c:forEach>
     }
 
@@ -469,9 +464,9 @@
 
     const degreesSubjectMap = {
         <c:forEach var="degree" items="${degrees}">
-        "${degree.id}":[
+        "<c:out value="${degree.id}"/>":[
             <c:forEach var="subject" items="${degree.subjects}">
-            "${subject.id}",
+                "<c:out value="${subject.id}"/>",
             </c:forEach>
         ],
         </c:forEach>
@@ -615,9 +610,6 @@
 
     function checkCompleteFields(){
         const credits = document.getElementById('subject-credits').value;
-        console.log(credits);
-        console.log(professorList.length);
-        console.log(degreeArray.length);
         document.getElementById('nextStep1').disabled = !(
             credits > 0 && credits <= 12 &&
             professorList.length > 0 &&
@@ -1022,8 +1014,5 @@
     let classBuildingHI = [];
     let classRoomHI = [];
     let classModeHI = [];
-
-
-
 
 </script>

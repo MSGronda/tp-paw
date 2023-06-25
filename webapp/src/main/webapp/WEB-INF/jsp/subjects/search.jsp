@@ -81,104 +81,104 @@
 <jsp:include page="../components/navbar.jsp"/>
 
 <main class="container-70">
-  <div class="filter-area">
-    <div class="filter">
+  <c:if test="${ not empty subjects }">
+    <div class="filter-area">
+      <div class="filter">
 
-      <sl-button size="small" variant="default" id="toggle-filters">
-        <sl-icon slot="prefix" name="filter"></sl-icon>
-        <spring:message code="search.filter"/>
-      </sl-button>
+        <sl-button size="small" variant="default" id="toggle-filters">
+          <sl-icon slot="prefix" name="filter"></sl-icon>
+          <spring:message code="search.filter"/>
+        </sl-button>
 
+        <section class="filter-section" id="filter-section">
+          <div class="filter-option">
+            <h5><spring:message code="search.dpt"/></h5>
 
-      <section class="filter-section" id="filter-section">
-        <div class="filter-option">
-          <h5><spring:message code="search.dpt"/></h5>
-
-          <c:forEach var="dptName" items="${relevantFilters['DEPARTMENT']}">
-            <sl-button-group>
-              <sl-button id="${dptName.hashCode()}" class="filter-button" size="small" variant="default" pill>
-                <c:out value="${dptName}"/>
-              </sl-button>
-              <section id="remove-section-${dptName.hashCode()}">
-                <sl-button id="remove-${dptName.hashCode()}" class="filter-button" variant="default" size="small" pill>
-                  <sl-icon class="filter-action" name="x-lg" label="Remove"></sl-icon>
+            <c:forEach var="dptName" items="${relevantFilters['DEPARTMENT']}">
+              <sl-button-group>
+                <sl-button id="${dptName.hashCode()}" class="filter-button" size="small" variant="default" pill>
+                  <c:out value="${dptName}"/>
                 </sl-button>
-              </section>
-            </sl-button-group>
-          </c:forEach>
+                <section id="remove-section-${dptName.hashCode()}">
+                  <sl-button id="remove-${dptName.hashCode()}" class="filter-button" variant="default" size="small" pill>
+                    <sl-icon class="filter-action" name="x-lg" label="Remove"></sl-icon>
+                  </sl-button>
+                </section>
+              </sl-button-group>
+            </c:forEach>
 
-        </div>
+          </div>
 
-        <sl-divider class="vert-divider" style="--color: #cbcbcb;" vertical></sl-divider>
+          <sl-divider class="vert-divider" style="--color: #cbcbcb;" vertical></sl-divider>
 
-        <div class="filter-option">
-          <h5><spring:message code="search.credits"/></h5>
+          <div class="filter-option">
+            <h5><spring:message code="search.credits"/></h5>
 
-          <c:forEach var="creditsName" items="${relevantFilters['CREDITS']}">
-            <sl-button-group>
-              <sl-button id="credits-${creditsName}" class="filter-button" size="small" variant="default" pill>
-                <spring:message code="search.credits.number" arguments="${creditsName}"/>
-              </sl-button>
-              <section id="remove-section-${creditsName}">
-                <sl-button id="remove-${creditsName}" class="filter-button" variant="default" size="small" pill>
-                  <sl-icon class="filter-action" name="x-lg" label="Remove"></sl-icon>
+            <c:forEach var="creditsName" items="${relevantFilters['CREDITS']}">
+              <sl-button-group>
+                <sl-button id="credits-${creditsName}" class="filter-button" size="small" variant="default" pill>
+                  <spring:message code="search.credits.number" arguments="${creditsName}"/>
                 </sl-button>
-              </section>
+                <section id="remove-section-${creditsName}">
+                  <sl-button id="remove-${creditsName}" class="filter-button" variant="default" size="small" pill>
+                    <sl-icon class="filter-action" name="x-lg" label="Remove"></sl-icon>
+                  </sl-button>
+                </section>
+              </sl-button-group>
+            </c:forEach>
+          </div>
+
+          <sl-divider class="vert-divider" style="--color: #cbcbcb;" vertical></sl-divider>
+
+          <div class="filter-option">
+            <h5><spring:message code="search.sort"/></h5>
+            <sl-button-group>
+              <sl-button class="filter-button" size="small" variant="default" id="order-by-name">
+                <spring:message code="search.sort.alphabetically"/>
+              </sl-button>
+
+              <sl-button class="filter-button" id="direction-name-up" variant="default" size="small" pill>
+                <sl-icon class="filter-action" name="arrow-up" label="Direction"></sl-icon>
+              </sl-button>
+
+              <sl-button class="filter-button" id="direction-name-down" variant="default" size="small" pill>
+                <sl-icon class="filter-action" name="arrow-down" label="Direction"></sl-icon>
+              </sl-button>
+
             </sl-button-group>
-          </c:forEach>
-        </div>
 
-        <sl-divider class="vert-divider" style="--color: #cbcbcb;" vertical></sl-divider>
+            <sl-button-group>
+              <sl-button class="filter-button" size="small" variant="default" id="order-by-credits">
+                <spring:message code="search.sort.credits"/>
+              </sl-button>
 
-        <div class="filter-option">
-          <h5><spring:message code="search.sort"/></h5>
-          <sl-button-group>
-            <sl-button class="filter-button" size="small" variant="default" id="order-by-name">
-              <spring:message code="search.sort.alphabetically"/>
-            </sl-button>
+              <sl-button class="filter-button" id="direction-credits-up" variant="default" size="small" pill>
+                <sl-icon class="filter-action" name="arrow-up" label="Direction"></sl-icon>
+              </sl-button>
+              <sl-button class="filter-button" id="direction-credits-down" variant="default" size="small" pill>
+                <sl-icon class="filter-action" name="arrow-down" label="Direction"></sl-icon>
+              </sl-button>
+            </sl-button-group>
 
-            <sl-button class="filter-button" id="direction-name-up" variant="default" size="small" pill>
-              <sl-icon class="filter-action" name="arrow-up" label="Direction"></sl-icon>
-            </sl-button>
+            <sl-button-group>
+              <sl-button class="filter-button" size="small" variant="default" id="order-by-id">
+                <spring:message code="search.sort.id"/>
+              </sl-button>
 
-            <sl-button class="filter-button" id="direction-name-down" variant="default" size="small" pill>
-              <sl-icon class="filter-action" name="arrow-down" label="Direction"></sl-icon>
-            </sl-button>
-
-          </sl-button-group>
-
-          <sl-button-group>
-            <sl-button class="filter-button" size="small" variant="default" id="order-by-credits">
-              <spring:message code="search.sort.credits"/>
-            </sl-button>
-
-            <sl-button class="filter-button" id="direction-credits-up" variant="default" size="small" pill>
-              <sl-icon class="filter-action" name="arrow-up" label="Direction"></sl-icon>
-            </sl-button>
-            <sl-button class="filter-button" id="direction-credits-down" variant="default" size="small" pill>
-              <sl-icon class="filter-action" name="arrow-down" label="Direction"></sl-icon>
-            </sl-button>
-          </sl-button-group>
-
-          <sl-button-group>
-            <sl-button class="filter-button" size="small" variant="default" id="order-by-id">
-              <spring:message code="search.sort.id"/>
-            </sl-button>
-
-            <sl-button class="filter-button" id="direction-id-up" variant="default" size="small" pill>
-              <sl-icon class="filter-action" name="arrow-up" label="Direction"></sl-icon>
-            </sl-button>
-            <sl-button class="filter-button" id="direction-id-down" variant="default" size="small" pill>
-              <sl-icon class="filter-action" name="arrow-down" label="Direction"></sl-icon>
-            </sl-button>
-          </sl-button-group>
-        </div>
-      </section>
-
-
-      <sl-divider style="--color: #cbcbcb;"></sl-divider>
+              <sl-button class="filter-button" id="direction-id-up" variant="default" size="small" pill>
+                <sl-icon class="filter-action" name="arrow-up" label="Direction"></sl-icon>
+              </sl-button>
+              <sl-button class="filter-button" id="direction-id-down" variant="default" size="small" pill>
+                <sl-icon class="filter-action" name="arrow-down" label="Direction"></sl-icon>
+              </sl-button>
+            </sl-button-group>
+          </div>
+        </section>
+        <sl-divider style="--color: #cbcbcb;"></sl-divider>
+      </div>
     </div>
-  </div>
+  </c:if>
+
 
   <c:choose>
     <c:when test="${ empty subjects }">
