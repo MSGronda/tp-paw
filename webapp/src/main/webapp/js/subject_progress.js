@@ -4,11 +4,6 @@ function modifyProgressButton(text,backgroundColor, textColor) {
 
     button.textContent = text;
 
-
-    console.log(button.shadowRoot)
-    console.log(button.shadowRoot.querySelector('[part="base"]'))
-
-
     const buttonStyle = button.shadowRoot.querySelector('[part="base"]');
     buttonStyle.style.backgroundColor= backgroundColor;
     buttonStyle.style.color = textColor

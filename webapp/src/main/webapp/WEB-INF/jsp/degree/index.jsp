@@ -230,6 +230,7 @@
         }
     };
 </script>
+<script src="<c:url value="/js/sanitizing-utils.js"/>"></script>
 <script>
     const redirectUrl = "<c:url value="/search"/>"
     let params = new URLSearchParams(window.location.search);
@@ -250,7 +251,7 @@
         // Comportamiento de boton de aplicar filtro
         document.getElementById(dptFilterBtns[elem][0]).addEventListener('click',
           function () {
-              window.location.href = addOrUpdateParam(redirectUrl, "department", dptFilterBtns[elem][1])
+              window.location.href = addOrUpdateParam(redirectUrl, "department", un_sanitize(dptFilterBtns[elem][1]))
 
           });
 
@@ -262,8 +263,7 @@
 
         // Visibiliad de boton de eliminar filtro
         const section = document.getElementById(dptFilterBtns[elem][3])
-        console.log(dptFilterBtns[elem][3])
-        if (dpt === dptFilterBtns[elem][1])
+        if (dpt === un_sanitize(dptFilterBtns[elem][1]))
             section.style.display = "block";
         else
             section.style.display = "none"
@@ -272,7 +272,7 @@
 
     // Credit filters
     let credits = params.get("credits")
-    console.log(credits)
+
 
     const creditFilterBtns = [
         <c:forEach var="credit" items="${relevantFilters['CREDITS']}">
@@ -283,14 +283,14 @@
         document.getElementById(creditFilterBtns[elem][0]).addEventListener('click',
           function () {
               // debemos remover el pageNum tambien
-              window.location.href = addOrUpdateParam(redirectUrl, "credits", creditFilterBtns[elem][1]);
+              window.location.href = addOrUpdateParam(redirectUrl, "credits", un_sanitize(creditFilterBtns[elem][1]));
           });
         document.getElementById(creditFilterBtns[elem][2]).addEventListener('click',
           function () {
               window.location.href = removeURLParam(redirectUrl, "credits");
           });
         const section = document.getElementById(creditFilterBtns[elem][3])
-        if (credits === creditFilterBtns[elem][1])
+        if (credits === un_sanitize(creditFilterBtns[elem][1]))
             section.style.display = "block";
         else
             section.style.display = "none"

@@ -96,7 +96,6 @@
   if (typeof ProgressBar === 'undefined') {
     window.ProgressBar = initProgressBar();
   } else {
-    console.log('Progress bar loaded');
   }
 
 })(window);

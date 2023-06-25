@@ -4,23 +4,25 @@ import ar.edu.itba.paw.models.Degree;
 import ar.edu.itba.paw.models.Subject;
 import ar.edu.itba.paw.models.User;
 import ar.edu.itba.paw.persistence.dao.DegreeDao;
+import ar.edu.itba.paw.persistence.dao.SubjectDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class DegreeServiceImpl implements DegreeService {
     private final DegreeDao degreeDao;
-    private final SubjectService subjectService;
+    private final SubjectDao subjectDao;
 
     @Autowired
     public DegreeServiceImpl(
             final DegreeDao degreeDao,
-            final SubjectService subjectService
+            final SubjectDao subjectDao
     ) {
         this.degreeDao = degreeDao;
-        this.subjectService = subjectService;
+        this.subjectDao = subjectDao;
     }
 
     @Override
@@ -66,6 +68,12 @@ public class DegreeServiceImpl implements DegreeService {
 
     @Override
     public Map<String, List<String>> getRelevantFiltersForDegree(Degree degree) {
-        return subjectService.getRelevantFiltersForSearch("");
+        return subjectDao.getRelevantFiltersForSearch(degree,"", null)
+                .entrySet()
+                .stream()
+                .collect(Collectors.toMap(
+                        e -> e.getKey().name(),
+                        Map.Entry::getValue
+                ));
     }
 }
