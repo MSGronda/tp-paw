@@ -142,24 +142,6 @@ public class SubjectController {
     @RequestMapping(value = "/subject/{id:\\d+\\.\\d+}/edit", method = {RequestMethod.POST})
     public ModelAndView editSubject(@PathVariable final String id, @Valid @ModelAttribute("editSubjectForm") final EditSubjectForm editSubjectForm,
                                     final BindingResult errors) {
-        System.out.println("class ids: " + editSubjectForm.getClassIds());
-        System.out.println("class codes: " + editSubjectForm.getClassCodes());
-        System.out.println("class professors: " + editSubjectForm.getClassProfessors());
-        System.out.println("class days: " + editSubjectForm.getClassDays());
-        System.out.println("class start times: " + editSubjectForm.getClassStartTimes());
-        System.out.println("class end times: " + editSubjectForm.getClassEndTimes());
-        System.out.println("class buildings: " + editSubjectForm.getClassBuildings());
-        System.out.println("class rooms: " + editSubjectForm.getClassRooms());
-        System.out.println("class modes: " + editSubjectForm.getClassModes());
-
-        System.out.println("degrees: " + editSubjectForm.getDegreeIds());
-        System.out.println("semesters: " + editSubjectForm.getSemesters());
-        System.out.println("requirements: " + editSubjectForm.getRequirementIds());
-
-//        System.out.println("marcos :" + editSubjectForm.getClassProfessors() );
-//        System.out.println("marcos :" + editSubjectForm.getProfessors() );
-//        System.out.println("marcos :" + editSubjectForm.getClassDays() );
-
         subjectService.edit(
                 id,
                 editSubjectForm.getCredits(),
