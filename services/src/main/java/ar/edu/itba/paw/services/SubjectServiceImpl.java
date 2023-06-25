@@ -142,7 +142,7 @@ public class SubjectServiceImpl implements SubjectService {
         String cleanedInput = classProfessors.substring(1, classProfessors.length() - 1);
 
         String[] elements = cleanedInput.split("],");
-        if (elements[0].equals("") || elements[0].equals("[]")){
+        if (elements[0].equals("") || elements[0].equals("[") || elements[0].equals("[]")){
             return resultList;
         }
         for( int i = 0; i < elements.length ; i++){
