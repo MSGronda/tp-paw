@@ -142,11 +142,16 @@ public class SubjectServiceImpl implements SubjectService {
         String cleanedInput = classProfessors.substring(1, classProfessors.length() - 1);
 
         String[] elements = cleanedInput.split("],");
-        if (elements[0].equals("") || elements[0].equals("[") || elements[0].equals("[]")){
-            return resultList;
-        }
+//        if (elements[0].equals("") || elements[0].equals("[") || elements[0].equals("[]")){
+//            return resultList;
+//        }
         for( int i = 0; i < elements.length ; i++){
             List<String> classProf = new ArrayList<>();
+
+            if( elements[i].equals("") || elements[i].equals("[") || elements[i].equals("[]")){
+                resultList.add(classProf);
+                continue;
+            }
 
             String trimmedInput = elements[i].replace("[", "").replace("]", "");
             String[] elements2 = trimmedInput.split(",");

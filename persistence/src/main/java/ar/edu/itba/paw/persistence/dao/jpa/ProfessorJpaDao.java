@@ -108,7 +108,7 @@ public class ProfessorJpaDao implements ProfessorDao {
         //Itero por los ids de las clases
         for( int i = 0; i < classIdsList.size() ; i++){
             //si la comsion es nueva, agregar profesores si no existen
-            if( classIdsList.get(i).equals("-1")){// si tengo que
+            if( classIdsList.get(i).equals("-1")){
                 //iterar por profesores, fijarme si ya existen, sino agregar
                 for( String professor : classProfessors.get(i)){
                     Optional<Professor> maybeProfessor = getByName(professor);
