@@ -377,27 +377,11 @@ public class SubjectJpaDao implements SubjectDao {
     }
 
     @Override
-    public void updateClassesToSubject(final Subject subject, final List<String> classesIdsList, final List<String> classesCodesList) {
-        //se agregan solamente las comisiones nuevas
-        //son nuevas si en classesIdsList hay un -1
-        for( int i = 0 ; i < classesIdsList.size() ; i++) {
-            //chequeo de -1
-            if( classesIdsList.get(i).equals("-1")){
-                //loop para fijarnos si no existe ya
-                //pudo haber sido agregada en un ciclo anterior
-                boolean hasSubjectClass = false;
-                for ( SubjectClass subjectClass : subject.getClasses() ){
-                    if( subjectClass.getClassId().equals(classesCodesList.get(i)) ){
-                        hasSubjectClass = true;
-                    }
-                }
-                //no esta, se agrega
-                if (!hasSubjectClass) {
-                    SubjectClass subjectClass = new SubjectClass(classesCodesList.get(i), subject);
-                    em.persist(subjectClass);
-                    subject.getClasses().add(subjectClass);
-                }
-            }
+    public void updateClassesToSubject(final Subject subject, final List<String> classesCodesToAdd) {
+        for( String code : classesCodesToAdd){
+            SubjectClass subjectClass = new SubjectClass(code, subject);
+            em.persist(subjectClass);
+            subject.getClasses().add(subjectClass);
         }
     }
 

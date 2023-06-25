@@ -44,7 +44,7 @@ public interface SubjectDao {
 
     void addClassesToSubject(final Subject subject, final Set<String> classesSet);
 
-    void updateClassesToSubject(final Subject subject, final List<String> classesIdsList , final List<String> classesCodesList);
+    void updateClassesToSubject(final Subject subject, final List<String> classesCodesToAdd);
 
     void addSubjectClassTimes(final Subject subject, final List<String> classCodes, final List<LocalTime> startTimes, final List<LocalTime> endTimes, final List<String> buildings, final List<String> modes, final List<Integer> days, final List<String> rooms);
 

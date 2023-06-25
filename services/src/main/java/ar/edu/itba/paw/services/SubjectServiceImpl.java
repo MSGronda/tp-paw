@@ -1,6 +1,7 @@
 package ar.edu.itba.paw.services;
 
 import ar.edu.itba.paw.models.Subject;
+import ar.edu.itba.paw.models.SubjectClass;
 import ar.edu.itba.paw.models.User;
 import ar.edu.itba.paw.models.enums.OrderDir;
 import ar.edu.itba.paw.models.enums.SubjectFilterField;
@@ -342,7 +343,8 @@ public class SubjectServiceImpl implements SubjectService {
         if (!classCodes.isEmpty() && !classIds.isEmpty()) {
             final List<String> classesList = parseJsonList(classCodes, false);
             final List<String> classesIdsList = parseJsonList(classIds, false);
-            subjectDao.updateClassesToSubject(sub, classesIdsList, classesList);
+            prepareClassesToUpdate(sub, classesIdsList, classesList);
+//            subjectDao.updateClassesToSubject(sub, classesIdsList, classesList);
 
 
             final List<List<String>> classProfessorsList = parseJsonListOfLists(classProfessors);
@@ -386,5 +388,24 @@ public class SubjectServiceImpl implements SubjectService {
 
         subjectDao.updatePrerequisitesToAdd(subject, prereqToAdd);
         subjectDao.updatePrerequisitesToRemove(subject, prereqToRemove);
+    }
+
+    private void prepareClassesToUpdate( final Subject subject, final List<String> classesIdsList, final List<String> classesCodeList){
+        List<String> classesToAdd = new ArrayList<>();
+        for(int i = 0 ; i < classesIdsList.size() ; i++){
+            if( classesIdsList.get(i).equals("-1")){
+                boolean hasSubjectClass = false;
+                for( SubjectClass subjectClass : subject.getClasses() ){
+                    if( subjectClass.getClassId().equals(classesCodeList.get(i)) ){
+                        hasSubjectClass = true;
+                        break;
+                    }
+                }
+                if( !hasSubjectClass ){
+                    classesToAdd.add(classesCodeList.get(i));
+                }
+            }
+        }
+        subjectDao.updateClassesToSubject(subject, classesToAdd);
     }
 }
