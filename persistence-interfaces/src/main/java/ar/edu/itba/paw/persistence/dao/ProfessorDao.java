@@ -15,9 +15,12 @@ public interface ProfessorDao {
 
     void addSubjectToProfessors(final Subject subject, final List<String> professors);
 
-    void updateSubjectToProfessors(final Subject subject, final List<String> professors);
-
     void addProfessorsToClasses(final Subject subject, final List<String> classCodes, final List<List<String>> classProfessors);
 
     void updateProfessorsToClasses(final Subject sub, final List<String> classIdsList, final List<String> classesList, final List<List<String>> classProfessorsList);
+
+    //functions to create, delete or update professors in subjects
+    void updateSubjectToProfessorsAdd(final Subject subject, final List<Professor> professorsToAdd);
+    void updateSubjectToProfessorsCreate(final Subject subject, final List<String> professorsToCreate);
+    void updateSubjectToProfessorsRemove(final Subject subject, final List<Professor> professorsToRemove);
 }

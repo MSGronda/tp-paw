@@ -60,29 +60,23 @@ public class ProfessorJpaDao implements ProfessorDao {
     }
 
     @Override
-    public void updateSubjectToProfessors(Subject subject, List<String> professors) {
-        //professors de param: tiene solo los cambios
-        //si ya existe en subject, eliminarlo
-        //si no existe en subject, agregarlo
-        for( String prof : professors){
-            Optional<Professor> maybeProfessor = getByName(prof);
-            if(maybeProfessor.isPresent()){
-                Professor professor = maybeProfessor.get();
-                Set<Professor> subjectProfessors = subject.getProfessors();
-                //lo contiene, eliminarlo
-                if(subjectProfessors.contains(professor)){
-                    subjectProfessors.remove(professor);
-                }else{
-                    //no lo contiene, agregarlo
-                    subjectProfessors.add(professor);
-                }
-            }else{
-                //no existe, crearlo y agregarlo
-                Professor professor = new Professor(prof);
-                em.persist(professor);
-                subject.getProfessors().add(professor);
-//                professor.getSubjects().add(subject);
-            }
+    public void updateSubjectToProfessorsAdd(final Subject subject, final List<Professor> professorsToAdd) {
+        subject.getProfessors().addAll(professorsToAdd);
+    }
+
+    @Override
+    public void updateSubjectToProfessorsCreate(final Subject subject, final List<String> professorsToCreate) {
+        for(String prof : professorsToCreate) {
+            Professor professor = new Professor(prof);
+            em.persist(professor);
+            subject.getProfessors().add(professor);
+        }
+    }
+
+    @Override
+    public void updateSubjectToProfessorsRemove(final Subject subject, final List<Professor> professorsToRemove) {
+        for(Professor prof: professorsToRemove){
+            subject.getProfessors().remove(prof);
         }
     }
 

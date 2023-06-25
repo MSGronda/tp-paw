@@ -7,8 +7,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 @Service
 public class ProfessorServiceImpl implements ProfessorService {
@@ -44,7 +46,41 @@ public class ProfessorServiceImpl implements ProfessorService {
     @Transactional
     @Override
     public void updateSubjectToProfessors(final Subject subject, final List<String> professors){
-        professorDao.updateSubjectToProfessors(subject, professors);
+
+        List<Professor> professorsToAdd = new ArrayList<>();
+        List<Professor> professorsToRemove = new ArrayList<>();
+        List<String> professorsToCreate = new ArrayList<>();
+
+        //professors de param: tiene solo los cambios
+        //si ya existe en subject, eliminarlo
+        //si no existe en subject, agregarlo
+        for( String prof : professors){
+            Optional<Professor> maybeProfessor = professorDao.getByName(prof);
+            if(maybeProfessor.isPresent()){
+                Professor professor = maybeProfessor.get();
+                Set<Professor> subjectProfessors = subject.getProfessors();
+                //lo contiene, eliminarlo
+                if(subjectProfessors.contains(professor)){
+                    professorsToRemove.add(professor);
+                }else{
+                    //no lo contiene, agregarlo
+                    professorsToAdd.add(professor);
+                }
+            }else{
+                //no existe, crearlo y agregarlo
+                professorsToCreate.add(prof);
+            }
+        }
+        if(!professorsToAdd.isEmpty()) {
+            professorDao.updateSubjectToProfessorsAdd(subject, professorsToAdd);
+        }
+        if(!professorsToCreate.isEmpty()) {
+            professorDao.updateSubjectToProfessorsCreate(subject, professorsToCreate);
+        }
+        if(!professorsToRemove.isEmpty()) {
+            professorDao.updateSubjectToProfessorsRemove(subject, professorsToRemove);
+        }
+
     }
 
     @Transactional
