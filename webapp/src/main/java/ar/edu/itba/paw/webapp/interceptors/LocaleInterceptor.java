@@ -46,7 +46,7 @@ public class LocaleInterceptor implements HandlerInterceptor {
         final Locale locale = user.getLocale();
 
         if(!locale.equals(httpServletRequest.getLocale())){
-            userService.setLocaleAsync(user, httpServletRequest.getLocale());
+            userService.setLocale(user, httpServletRequest.getLocale());
             LOGGER.debug("Set locale for user {} to '{}'", user.getId(), httpServletRequest.getLocale());
         }
     }

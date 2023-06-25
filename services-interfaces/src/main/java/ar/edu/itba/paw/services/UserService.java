@@ -43,7 +43,6 @@ public interface UserService {
     void confirmUser(final String token) throws InvalidTokenException;
 
     void setLocale(final User user, final Locale locale);
-    void setLocaleAsync(final User user, final Locale locale);
 
     void addToCurrentSemester(final User user, final String subjectId, final String classId)
             throws SubjectNotFoundException, SubjectClassNotFoundException;

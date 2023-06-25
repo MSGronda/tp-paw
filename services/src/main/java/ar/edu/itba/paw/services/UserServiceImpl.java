@@ -246,13 +246,6 @@ public class UserServiceImpl implements UserService {
         userDao.setLocale(user, locale);
     }
 
-    @Async
-    @Transactional
-    @Override
-    public void setLocaleAsync(final User user, final Locale locale) {
-        setLocale(user, locale);
-    }
-
     @Transactional
     @Override
     public void addToCurrentSemester(final User user, final String subjectId, final String classId) {
