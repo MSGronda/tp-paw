@@ -105,11 +105,11 @@
 
             <br />
             <c:url var="editProfilePicture" value="/profile/editprofilepicture" />
-            <form:form modelAttribute="editProfilePictureForm" acceptCharset="utf-8" action="${editProfilePicture}" method="post" enctype="multipart/form-data">
+            <form:form modelAttribute="editProfilePictureForm" acceptCharset="utf-8" action="${editProfilePicture}" method="post" enctype="multipart/form-data" onsubmit="validateFile()">
                 <form:errors path="profilePicture" cssClass="error" element="p"/>
                 <spring:message code="profile.upload.placeholder" var="uploadPlaceholder"/>
                 <span class="upload-button">
-                    <input type="file" name="profilePicture" placeholder="${uploadPlaceholder}" accept="image/gif, image/png, image/jpeg" onchange="previewImage(this.files[0])"/>
+                    <form:input id="image-input" type="file" name="profilePicture" placeholder="${uploadPlaceholder}" accept="image/gif, image/png, image/jpeg" onchange="previewImage(this.files[0])" path="profilePicture"/>
                 </span>
                 <br />
                 <span class="submit-button">
@@ -123,4 +123,18 @@
 <jsp:include page="../components/footer.jsp"/>
 <jsp:include page="../components/body_scripts.jsp"/>
 </body>
+<script>
+    function validateFile() {
+        var imageInput = document.getElementById('image-input');
+        var filePath = imageInput.value;
+        var allowedExtensions = /(\.jpg|\.jpeg|\.png)$/i;
+
+        if (!allowedExtensions.exec(filePath)) {
+            //  alert('Please upload a file with a .jpg, .jpeg, or .png extension.');
+            imageInput.value = '';
+            return false;
+        }
+        return true;
+    }
+</script>
 </html>
