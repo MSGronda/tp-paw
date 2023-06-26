@@ -221,7 +221,7 @@
               <div class="row">
                 <h3><spring:message code="dashboard.overview.completedCredits"/></h3>
                 <sl-divider style="height: 1rem" vertical></sl-divider>
-                <h5><c:out value="${user.creditsDone}"/></h5>
+                <h5><c:out value="${userCreditsDoneForDegree}"/></h5>
               </div>
               <div class="row">
                 <h3><spring:message code="dashboard.overview.totalCredits"/></h3>
@@ -396,7 +396,14 @@
     const chartElem = document.getElementById('progress-by-year');
     const chart = new Chart(chartElem,
         {
-            type: 'bar', options: {responsive: true, maintainAspectRatio: false, animation: false, plugins: {legend: {display: false}, tooltip: {enabled: false}}},
+            type: 'bar', options: {
+              responsive: true,
+            maintainAspectRatio: false,
+            animation: false,
+            plugins: {legend: {display: false},
+            tooltip: {enabled: false}},
+            scales: {x:{beginAtZero: true, max: 100},y:{beginAtZero: true, max: 100}}
+          },
             data: {
                 labels: [
                     <c:forEach var="year" varStatus="status" items="${user.totalProgressPercentagePerYear.keySet()}">

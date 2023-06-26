@@ -36,7 +36,8 @@ public class HomeController {
         mav.addObject("subjectsUserCanDo", subjectService.findAllThatUserCanDo(user));
         mav.addObject("futureSubjects", subjectService.findAllThatUserHasNotDone(user));
         mav.addObject("pastSubjects", subjectService.findAllThatUserHasDone(user));
-        mav.addObject("userProgressPercentage", user.getTotalProgressPercentage());
+        mav.addObject("userProgressPercentage", user.getTotalProgressPercentageForDegree());
+        mav.addObject("userCreditsDoneForDegree", user.getCreditsDoneForDegree());
         return mav;
     }
 }

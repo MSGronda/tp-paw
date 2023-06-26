@@ -78,7 +78,7 @@ public class User {
 
     @Formula("(SELECT COALESCE(SUM(s.credits), 0) " +
             "FROM subjects s JOIN usersubjectprogress up ON s.id = up.idsub " +
-            "WHERE up.iduser = id AND up.subjectstate = 1)")
+            "WHERE up.subjectstate = 1 AND up.iduser = id )")
     private int creditsDone;
 
     private User(final Builder builder) {
@@ -105,6 +105,18 @@ public class User {
     }
 
     public int getCreditsDone(){
+        return creditsDone;
+    }
+
+    public int getCreditsDoneForDegree(){
+        int creditsDone = 0;
+        for(DegreeYear dy : degree.getYears()){
+            for(Subject s : dy.getSubjects()){
+                if(allSubjectProgress.containsKey(s.getId())){
+                    creditsDone += s.getCredits();
+                }
+            }
+        }
         return creditsDone;
     }
 
@@ -181,6 +193,11 @@ public class User {
 
     public double getTotalProgressPercentage() {
         return Math.floor( ((1.0 * getCreditsDone()) / degree.getTotalCredits()) * 100);
+    }
+
+    public double getTotalProgressPercentageForDegree() {
+        int creditsDone = getCreditsDoneForDegree();
+        return Math.floor( ((1.0 * creditsDone) / degree.getTotalCredits()) * 100);
     }
 
     public Map<Integer, Double> getTotalProgressPercentagePerYear() {
