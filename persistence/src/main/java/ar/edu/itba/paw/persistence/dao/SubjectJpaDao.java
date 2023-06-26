@@ -630,15 +630,6 @@ public class SubjectJpaDao implements SubjectDao {
         em.remove(subject);
     }
 
-    private DegreeSubject getDegreeSubject(final Subject subject, final Degree degree){
-        for(DegreeSubject degreeSubject : degree.getDegreeSubjects()){
-            if(degreeSubject.getSubject().equals(subject)){
-                return degreeSubject;
-            }
-        }
-        return null;
-    }
-
     @Override
     public void editCredits(final Subject subject, final int credits) {
         subject.setCredits(credits);

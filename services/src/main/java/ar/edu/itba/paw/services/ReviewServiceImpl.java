@@ -51,11 +51,6 @@ public class ReviewServiceImpl implements ReviewService {
     }
 
     @Override
-    public List<Review> getAll() {
-        return reviewDao.getAll();
-    }
-
-    @Override
     public List<Review> getAllUserReviews(final User user, final int page, final String orderBy, final String dir) {
         if(page > getTotalPagesForUserReviews(user) || page < 1) throw new InvalidPageNumberException();
         return reviewDao.getAllUserReviews(user, page, ReviewOrderField.parse(orderBy), OrderDir.parse(dir));

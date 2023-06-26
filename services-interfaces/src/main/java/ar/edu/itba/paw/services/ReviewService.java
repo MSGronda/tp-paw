@@ -15,8 +15,6 @@ public interface ReviewService {
 
     Optional<Review> findById(final long id);
 
-    List<Review> getAll();
-
     List<Review> getAllUserReviews(final User user, final int page, final String orderBy, final String dir);
     int getTotalPagesForUserReviews(final User user);
 

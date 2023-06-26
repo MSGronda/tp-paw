@@ -14,8 +14,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.criteria.CriteriaBuilder;
-import java.sql.Time;
 import java.time.LocalTime;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -145,19 +143,19 @@ public class SubjectServiceImpl implements SubjectService {
         String cleanedInput = classProfessors.substring(1, classProfessors.length() - 1);
 
         String[] elements = cleanedInput.split("],");
-        for( int i = 0; i < elements.length ; i++){
+        for (String element : elements) {
             List<String> classProf = new ArrayList<>();
 
-            if( elements[i].equals("") || elements[i].equals("[") || elements[i].equals("[]")){
+            if (element.equals("") || element.equals("[") || element.equals("[]")) {
                 resultList.add(classProf);
                 continue;
             }
 
-            String trimmedInput = elements[i].replace("[", "").replace("]", "");
+            String trimmedInput = element.replace("[", "").replace("]", "");
             String[] elements2 = trimmedInput.split(",");
-            for( int j = 0 ; j < elements2.length ; j+=2 ){
+            for (int j = 0; j < elements2.length; j += 2) {
                 String parsedElement = elements2[j].replace("\"", "");
-                String parsedElement2 = elements2[j+1].replace("\"", "");
+                String parsedElement2 = elements2[j + 1].replace("\"", "");
 
                 parsedElement += "," + parsedElement2;
                 classProf.add(parsedElement);
@@ -221,14 +219,6 @@ public class SubjectServiceImpl implements SubjectService {
     }
 
     @Override
-    public int getTotalPagesForSearch(final User user, final String name){
-        if(user.isEditor()){
-            return subjectDao.getTotalPagesForSearchAll(name, null, null);
-        }
-        return subjectDao.getTotalPagesForSearch(user, name, null, null);
-    }
-
-    @Override
     public int getTotalPagesForSearch(
             final User user,
             final String name,
@@ -251,66 +241,6 @@ public class SubjectServiceImpl implements SubjectService {
                 getFilterMap(credits, department, difficulty, time),
                 SubjectOrderField.parse(orderBy)
         );
-    }
-
-    @Override
-    public Map<String, List<String>> getRelevantFiltersForSearch(final String name) {
-        return subjectDao.getRelevantFiltersForSearch(name, null, null)
-                .entrySet()
-                .stream()
-                .collect(Collectors.toMap(
-                        e -> e.getKey().name(),
-                        Map.Entry::getValue
-                ));
-    }
-    @Override
-    public Map<String, List<String>> getRelevantFiltersForSearch(
-            final String name,
-            final Integer credits,
-            final String department,
-            final Integer difficulty,
-            final Integer time,
-            final String orderBy
-    ) {
-        return subjectDao.getRelevantFiltersForSearch(
-                        name,
-                        getFilterMap(credits, department, difficulty, time),
-                        SubjectOrderField.parse(orderBy)
-                )
-                .entrySet()
-                .stream()
-                .collect(Collectors.toMap(
-                        e -> e.getKey().name(),
-                        Map.Entry::getValue
-                ));
-    }
-
-    @Override
-    public Map<String, List<String>> getRelevantFiltersForSearch(
-            final User user,
-            final String name
-    ) {
-        if(user.isEditor()){
-            return subjectDao.getRelevantFiltersForSearch(name, null, null)
-                    .entrySet()
-                    .stream()
-                    .collect(Collectors.toMap(
-                            e -> e.getKey().name(),
-                            Map.Entry::getValue
-                    ));
-        }
-        return subjectDao.getRelevantFiltersForSearch(
-                user.getDegree(),
-                        name,
-                        null,
-                        null
-                )
-                .entrySet()
-                .stream()
-                .collect(Collectors.toMap(
-                        e -> e.getKey().name(),
-                        Map.Entry::getValue
-                ));
     }
 
     @Override

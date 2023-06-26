@@ -69,11 +69,6 @@ public class UserServiceImpl implements UserService {
         return userDao.findById(id);
     }
 
-    @Override
-    public List<User> getAll() {
-        return userDao.getAll();
-    }
-
     @Transactional
     @Override
     public User create(final long degreeId, final String completedSubjectIds, final User user, final byte[] profilePic)

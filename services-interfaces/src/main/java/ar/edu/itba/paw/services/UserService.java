@@ -12,8 +12,6 @@ public interface UserService {
     User create(final long degreeId, final String completedSubjectIds, final User user, final byte[] profilePic) throws EmailAlreadyTakenException;
     User create(final long degreeId, final String completedSubjectIds, final User user) throws EmailAlreadyTakenException;
 
-    List<User> getAll();
-
     Optional<User> findById(final long id);
     Optional<User> findByEmail(final String email);
     Optional<User> findUnconfirmedByEmail(final String email);
