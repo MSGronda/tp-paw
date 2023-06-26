@@ -86,6 +86,12 @@ function rebuildSubjectList(){
             )
         }
 
+        subjectClone.children[0].children[0].children[0].addEventListener('click', () => {
+            const id = subjectClone.children[0].children[0].children[0].id.split('-')[2];
+            const dialog = document.getElementById('dialogue-' + id);
+            dialog.show();
+        });
+
 
         elements.appendChild(subjectClone);
     }

@@ -340,9 +340,87 @@
 <body>
 </body>
 <jsp:include page="../components/navbar.jsp"/>
+<c:forEach var="subject" items="${availableSubjects}">
+  <sl-dialog label="<c:out value="${subject.name}"/> - <c:out value="${subject.id}"/>" id="dialogue-${subject.id.hashCode()}" class="dialog-header-actions">
+    <table>
+      <tbody>
+      <tr>
+        <td><h3><spring:message code="subject.department"/></h3></td>
+        <td><p><c:out value="${subject.department}"/></p></td>
+      </tr>
+      <tr>
+        <th><spring:message code="subject.prerequisites"/></th>
+        <td>
+          <c:if test="${empty subject.prerequisites}">
+            <spring:message code="subject.prerequisites?"/>
+          </c:if>
+          <c:forEach var="prereq" items="${subject.prerequisites}" varStatus="status">
+            <a href='<c:url value="/subject/${prereq.id}"/>'><c:out value="${prereq.name}"/></a>
+            <c:if test="${not status.last}">
+              ,
+            </c:if>
+          </c:forEach>
+        </td>
+      </tr>
+      <tr>
+        <th><spring:message code="subject.professors"/></th>
+        <td>
+          <c:forEach var="professor" items="${subject.professors}" varStatus="status">
+            <sl-badge variant="primary">
+              <c:out value="${professor.name}"/>
+            </sl-badge>
+
+          </c:forEach>
+        </td>
+      </tr>
+      <tr>
+        <th><spring:message code="subject.difficulty" /></th>
+        <td>
+          <c:choose>
+            <c:when test="${subject.reviewStats.difficulty eq 'EASY'}">
+              <sl-badge size="medium" variant="success"><spring:message code="form.easy" /></sl-badge>
+            </c:when>
+            <c:when test="${subject.reviewStats.difficulty eq 'MEDIUM'}">
+              <sl-badge size="medium" variant="primary"><spring:message code="form.normal" /></sl-badge>
+            </c:when>
+            <c:when test="${subject.reviewStats.difficulty eq 'HARD'}">
+              <sl-badge size="medium" variant="warning"><spring:message code="form.hard" /></sl-badge>
+            </c:when>
+            <c:otherwise>
+              <sl-badge size="medium" variant="neutral"><spring:message code="form.noDif" /></sl-badge>
+            </c:otherwise>
+          </c:choose>
+        </td>
+      </tr>
+      <tr>
+        <th><spring:message code="subject.time" /></th>
+        <td>
+          <c:choose>
+            <c:when test="${subject.reviewStats.timeDemanding eq 'LOW'}">
+              <sl-badge size="medium" variant="success"><spring:message code="form.NotTimeDemanding" /></sl-badge>
+            </c:when>
+            <c:when test="${subject.reviewStats.timeDemanding eq 'MEDIUM'}">
+              <sl-badge size="medium" variant="primary"><spring:message code="form.averageTimeDemand" /></sl-badge>
+            </c:when>
+            <c:when test="${subject.reviewStats.timeDemanding eq 'HIGH'}">
+              <sl-badge size="medium" variant="warning"><spring:message code="form.timeDemanding" /></sl-badge>
+            </c:when>
+            <c:otherwise>
+              <sl-badge size="medium" variant="neutral"><spring:message code="form.noDif" /></sl-badge>
+            </c:otherwise>
+          </c:choose>
+        </td>
+      </tr>
+      </tbody>
+    </table>
+    <div class="column-center">
+      <sl-button variant="primary" outline href="<c:url value="/subject/${subject.id}"/>" target="_blank" rel="noopener noreferrer"><spring:message code="builder.fullSubject"/></sl-button>
+    </div>
+  </sl-dialog>
+</c:forEach>
+
 <main class="no-padding container-95">
   <div class="builder-area">
-
     <div id="choosing-tab" class="column chooser-tab">
       <sl-card id="choose-subject" class="subject-chooser-tab-area">
         <div slot="header">
@@ -390,83 +468,6 @@
         <div id="subject-list" class="subject-list">
           <c:forEach var="subject" items="${availableSubjects}">
             <c:if test="${subject.credits != 0}">
-            <sl-dialog label="<c:out value="${subject.name}"/> - <c:out value="${subject.id}"/>" id="dialogue-${subject.id.hashCode()}" class="dialog-header-actions">
-
-              <table>
-                <tbody>
-                <tr>
-                  <td><h3><spring:message code="subject.department"/></h3></td>
-                  <td><p><c:out value="${subject.department}"/></p></td>
-                </tr>
-                <tr>
-                  <th><spring:message code="subject.prerequisites"/></th>
-                  <td>
-                    <c:if test="${empty subject.prerequisites}">
-                      <spring:message code="subject.prerequisites?"/>
-                    </c:if>
-                    <c:forEach var="prereq" items="${subject.prerequisites}" varStatus="status">
-                      <a href='<c:url value="/subject/${prereq.id}"/>'><c:out value="${prereq.name}"/></a>
-                      <c:if test="${not status.last}">
-                        ,
-                      </c:if>
-                    </c:forEach>
-                  </td>
-                </tr>
-                <tr>
-                  <th><spring:message code="subject.professors"/></th>
-                  <td>
-                    <c:forEach var="professor" items="${subject.professors}" varStatus="status">
-                      <sl-badge variant="primary">
-                        <c:out value="${professor.name}"/>
-                      </sl-badge>
-
-                    </c:forEach>
-                  </td>
-                </tr>
-                <tr>
-                  <th><spring:message code="subject.difficulty" /></th>
-                  <td>
-                    <c:choose>
-                      <c:when test="${subject.reviewStats.difficulty eq 'EASY'}">
-                        <sl-badge size="medium" variant="success"><spring:message code="form.easy" /></sl-badge>
-                      </c:when>
-                      <c:when test="${subject.reviewStats.difficulty eq 'MEDIUM'}">
-                        <sl-badge size="medium" variant="primary"><spring:message code="form.normal" /></sl-badge>
-                      </c:when>
-                      <c:when test="${subject.reviewStats.difficulty eq 'HARD'}">
-                        <sl-badge size="medium" variant="warning"><spring:message code="form.hard" /></sl-badge>
-                      </c:when>
-                      <c:otherwise>
-                        <sl-badge size="medium" variant="neutral"><spring:message code="form.noDif" /></sl-badge>
-                      </c:otherwise>
-                    </c:choose>
-                  </td>
-                </tr>
-                <tr>
-                  <th><spring:message code="subject.time" /></th>
-                  <td>
-                    <c:choose>
-                      <c:when test="${subject.reviewStats.timeDemanding eq 'LOW'}">
-                        <sl-badge size="medium" variant="success"><spring:message code="form.NotTimeDemanding" /></sl-badge>
-                      </c:when>
-                      <c:when test="${subject.reviewStats.timeDemanding eq 'MEDIUM'}">
-                        <sl-badge size="medium" variant="primary"><spring:message code="form.averageTimeDemand" /></sl-badge>
-                      </c:when>
-                      <c:when test="${subject.reviewStats.timeDemanding eq 'HIGH'}">
-                        <sl-badge size="medium" variant="warning"><spring:message code="form.timeDemanding" /></sl-badge>
-                      </c:when>
-                      <c:otherwise>
-                        <sl-badge size="medium" variant="neutral"><spring:message code="form.noDif" /></sl-badge>
-                      </c:otherwise>
-                    </c:choose>
-                  </td>
-                </tr>
-                </tbody>
-              </table>
-              <div class="column-center">
-                <sl-button variant="primary" outline href="<c:url value="/subject/${subject.id}"/>" target="_blank" rel="noopener noreferrer"><spring:message code="builder.fullSubject"/></sl-button>
-              </div>
-            </sl-dialog>
             <sl-card id="subject-card-${subject.id.hashCode()}" class="subject-info-card">
               <div class="chooser">
                 <div class="subject-info-card-details">
