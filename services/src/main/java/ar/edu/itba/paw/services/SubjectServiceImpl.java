@@ -492,7 +492,7 @@ public class SubjectServiceImpl implements SubjectService {
     }
 
     private void prepareClassesToUpdate( final Subject subject, final List<String> classesIdsList, final List<String> classesCodeList){
-        List<String> classesToAdd = new ArrayList<>();
+        final Set<String> classesToAdd = new HashSet<>();
         for(int i = 0 ; i < classesIdsList.size() ; i++){
             if( Integer.parseInt(classesIdsList.get(i)) < 0){
                 boolean hasSubjectClass = false;
@@ -507,6 +507,6 @@ public class SubjectServiceImpl implements SubjectService {
                 }
             }
         }
-        subjectDao.updateClassesToSubject(subject, classesToAdd);
+        subjectDao.addClassesToSubject(subject, classesToAdd);
     }
 }

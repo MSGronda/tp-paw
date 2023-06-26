@@ -556,14 +556,6 @@ public class SubjectJpaDao implements SubjectDao {
         }
     }
 
-    @Override
-    public void updateClassesToSubject(final Subject subject, final List<String> classesCodesToAdd) {
-        for(final String code : classesCodesToAdd){
-            final SubjectClass subjectClass = new SubjectClass(code, subject);
-            subject.getClasses().add(subjectClass);
-            em.persist(subjectClass);
-        }
-    }
 
     @Override
     public void addSubjectClassTimes(

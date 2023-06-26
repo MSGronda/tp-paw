@@ -144,7 +144,7 @@ public class ProfessorServiceImpl implements ProfessorService {
             }
         }
         professorDao.updateProfessorsToClassesAdd(professorsToAdd);
-        professorDao.updateProfessorsToClassesUpdate(professorsToUpdate);
+        professorDao.updateProfessorsToClassesAdd(professorsToUpdate);
         professorDao.updateProfessorsToClassesRemove(professorsToRemove);
     }
 }

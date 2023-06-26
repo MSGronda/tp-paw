@@ -20,7 +20,8 @@ public interface ProfessorDao {
     void addProfessorsToClasses(final Subject subject, final List<String> classCodes, final List<List<String>> classProfessors);
 
     void updateProfessorsToClassesAdd(final Map<SubjectClass, List<Professor>> professorsToAdd);
-    void updateProfessorsToClassesUpdate(final Map<SubjectClass, List<Professor>> professorsToUpdate);
+
+
     void updateProfessorsToClassesRemove(final Map<SubjectClass, List<Professor>> professorsToRemove);
 
     //functions to create, delete or update professors in subjects
