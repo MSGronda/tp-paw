@@ -123,10 +123,10 @@ public class SubjectServiceImpl implements SubjectService {
                 parsedList.add(parsedElement);
             }
         }else{
-            for (int i = 0; i < elements.length; i+=2) {
+            for (int i = 1; i < elements.length; i+=2) {
                 // Remove quotes around each element
-                String parsedElement = elements[i].replace("\"", "");
-                String parsedElement2 = elements[i+1].replace("\"", "");
+                String parsedElement = elements[i-1].replace("\"", "");
+                String parsedElement2 = elements[i].replace("\"", "");
                 parsedElement += "," + parsedElement2;
                 parsedList.add(parsedElement);
             }
@@ -153,9 +153,9 @@ public class SubjectServiceImpl implements SubjectService {
 
             String trimmedInput = element.replace("[", "").replace("]", "");
             String[] elements2 = trimmedInput.split(",");
-            for (int j = 0; j < elements2.length; j += 2) {
-                String parsedElement = elements2[j].replace("\"", "");
-                String parsedElement2 = elements2[j + 1].replace("\"", "");
+            for (int j = 1; j < elements2.length; j += 2) {
+                String parsedElement = elements2[j - 1].replace("\"", "");
+                String parsedElement2 = elements2[j].replace("\"", "");
 
                 parsedElement += "," + parsedElement2;
                 classProf.add(parsedElement);
