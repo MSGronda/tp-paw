@@ -533,7 +533,6 @@ public class SubjectJpaDao implements SubjectDao {
         for( String requirement : correlativesList ){
             Subject requiredSubject = em.find(Subject.class, requirement);
             sub.getPrerequisites().add(requiredSubject);
-
         }
     }
     @Override
@@ -552,8 +551,8 @@ public class SubjectJpaDao implements SubjectDao {
     public void addClassesToSubject(final Subject subject, final Set<String> classesSet){
         for( String classCode : classesSet){
             SubjectClass subjectClass = new SubjectClass(classCode, subject);
-            em.persist(subjectClass);
             subject.getClasses().add(subjectClass);
+            em.persist(subjectClass);
         }
     }
 
@@ -561,14 +560,13 @@ public class SubjectJpaDao implements SubjectDao {
     public void updateClassesToSubject(final Subject subject, final List<String> classesCodesToAdd) {
         for( String code : classesCodesToAdd){
             SubjectClass subjectClass = new SubjectClass(code, subject);
-            em.persist(subjectClass);
             subject.getClasses().add(subjectClass);
+            em.persist(subjectClass);
         }
     }
 
     @Override
     public void addSubjectClassTimes(final Subject subject, final List<String> classCodes, final List<LocalTime> startTimes, final List<LocalTime> endTimes, final List<String> buildings, final List<String> modes, final List<Integer> days, final List<String> rooms) {
-
         for( int i = 0 ; i < classCodes.size() ; i++) {
             SubjectClass subjectClass = subject.getClassesById().get(classCodes.get(i));
             SubjectClassTime subjectClassTime;
@@ -581,73 +579,18 @@ public class SubjectJpaDao implements SubjectDao {
         }
     }
 
-    @Override
-    public void updateSubjectClassTimes(final Subject subject, final List<String> classIdsList, final List<String> classCodes, final List<LocalTime> startTimes, final List<LocalTime> endTimes, final List<String> buildings, final List<String> modes, List<Integer> days, final List<String> rooms) {
-        for( int i = 0 ; i < classIdsList.size() ; i++){
-            //si classId es -1, es una nueva comision
-            //se crea
-            if( classIdsList.get(i).equals("-1")){
-                //se itera por subject Class de la subject para encontrar la comision
-                //es necesaria para agregarla a la nueva SubjectClassTime
-                for( SubjectClass subjectClass : subject.getClasses()){
-                    //si es la comision indicada
-                    if( subjectClass.getClassId().equals(classCodes.get(i))){
-                        SubjectClassTime subjectClassTime;
-                        //chequeo de start time isAfter end time
-                        if( startTimes.get(i).isAfter(endTimes.get(i))){
-                            subjectClassTime = new SubjectClassTime(subjectClass, days.get(i), endTimes.get(i), startTimes.get(i), rooms.get(i), buildings.get(i), modes.get(i));
-                        }else{
-                            subjectClassTime = new SubjectClassTime(subjectClass, days.get(i), startTimes.get(i), endTimes.get(i), rooms.get(i), buildings.get(i), modes.get(i));
-                        }
-                        //se persiste y se agrega a la lista
-                        em.persist(subjectClassTime);
-                        subjectClass.getClassTimes().add(subjectClassTime);
-                    }
-                }
-            }else{
-                //si code es -1, borrar con subjectClassTime id
-                if(classCodes.get(i).equals("-1")){//chequiar si es la ultima classLocTime que cada, si lo es borro la comi
-                    long key = Long.parseLong(classIdsList.get(i));
-                    SubjectClassTime subjectClassTime = em.find(SubjectClassTime.class, key);
-
-                    //se guarda para despues verificar si es que quedo otra SubjectClassTime
-                    //TODO
-                    SubjectClass subjectClass = subjectClassTime.getSubjectClass();
-
-                    em.remove(subjectClassTime);
-                }else{
-                    //si no es -1 el class code, se modifica
-                    long key = Long.parseLong(classIdsList.get(i));
-                    SubjectClassTime subjectClassTime = em.find(SubjectClassTime.class, key);
-                    subjectClassTime.setDay(days.get(i));
-                    subjectClassTime.setClassLoc(rooms.get(i));
-                    subjectClassTime.setBuilding(buildings.get(i));
-                    subjectClassTime.setMode(modes.get(i));
-                    if( startTimes.get(i).isAfter(endTimes.get(i))) {
-                        subjectClassTime.setStartTime(endTimes.get(i));
-                        subjectClassTime.setEndTime(startTimes.get(i));
-                    }else{
-                        subjectClassTime.setStartTime(startTimes.get(i));
-                        subjectClassTime.setEndTime(endTimes.get(i));
-                    }
-                }
-            }
-        }
-
-    }
 
     @Override
     public void createClassLocTime(final SubjectClass subjectClass,final int days,final LocalTime endTimes,final LocalTime startTimes,final String rooms,final String buildings,final String modes){
         SubjectClassTime subjectClassTime;
-        //chequeo de start time isAfter end time
+
         if( startTimes.isAfter(endTimes)){
             subjectClassTime = new SubjectClassTime(subjectClass, days, endTimes, startTimes, rooms, buildings, modes);
         }else{
             subjectClassTime = new SubjectClassTime(subjectClass, days, startTimes, endTimes, rooms, buildings, modes);
         }
-        //se persiste y se agrega a la lista
-        em.persist(subjectClassTime);
         subjectClass.getClassTimes().add(subjectClassTime);
+        em.persist(subjectClassTime);
     }
 
     @Override

@@ -76,8 +76,6 @@ public interface SubjectDao {
 
     void addSubjectClassTimes(final Subject subject, final List<String> classCodes, final List<LocalTime> startTimes, final List<LocalTime> endTimes, final List<String> buildings, final List<String> modes, final List<Integer> days, final List<String> rooms);
 
-    void updateSubjectClassTimes(final Subject subject, final List<String> classIdsList, final List<String> classCodes, final List<LocalTime> startTimes, final List<LocalTime> endTimes, final List<String> buildings, final List<String> modes, final List<Integer> days, final List<String> rooms);
-
     void createClassLocTime(final SubjectClass subjectClass, final int days, final LocalTime endTimes, final LocalTime startTimes, final String rooms, final String buildings, final String modes);
 
     void deleteClassLocTime(final long key);
