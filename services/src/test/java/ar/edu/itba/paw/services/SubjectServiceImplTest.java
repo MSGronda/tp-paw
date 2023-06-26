@@ -145,7 +145,7 @@ public class SubjectServiceImplTest {
         Mockito.lenient().when(user.getDegree()).thenReturn(userDegree);
 
         when(subjectDao.search(eq(user), eq(NAME), eq(1), eq(filterMap), eq(orderBy), eq(dir))).thenReturn(resultList);
-        when(subjectDao.getTotalPagesForSearch(eq(user), eq(NAME), eq(filterMap))).thenReturn(1);
+        when(subjectDao.getTotalPagesForSearch(eq(user), eq(NAME), eq(filterMap), eq(orderBy))).thenReturn(1);
 
         final List<Subject> actual = subjectService.search(user, NAME, 1, "name", "asc", null, DEPARTMENT, null, null);
 

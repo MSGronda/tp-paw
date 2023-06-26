@@ -34,10 +34,28 @@ public interface SubjectDao {
             Map<SubjectFilterField, String> filters,
             SubjectOrderField orderBy, OrderDir dir
     );
-    int getTotalPagesForSearch(final User user, final String name, final Map<SubjectFilterField, String> filters);
-    int getTotalPagesForSearchAll(final String name, final Map<SubjectFilterField, String> filters);
-    Map<SubjectFilterField, List<String>> getRelevantFiltersForSearch(final String name, final Map<SubjectFilterField,String> filters);
-    Map<SubjectFilterField, List<String>> getRelevantFiltersForSearch(final Degree degree, final String name, final Map<SubjectFilterField,String> filters);
+    int getTotalPagesForSearch(
+            final User user,
+            final String name,
+            final Map<SubjectFilterField, String> filters,
+            final SubjectOrderField orderBy
+    );
+    int getTotalPagesForSearchAll(
+            final String name,
+            final Map<SubjectFilterField, String> filters,
+            final SubjectOrderField orderBy
+    );
+    Map<SubjectFilterField, List<String>> getRelevantFiltersForSearch(
+            final String name,
+            final Map<SubjectFilterField,String> filters,
+            final SubjectOrderField orderBy
+    );
+    Map<SubjectFilterField, List<String>> getRelevantFiltersForSearch(
+            final Degree degree,
+            final String name,
+            final Map<SubjectFilterField,String> filters,
+            final SubjectOrderField orderBy
+    );
     Map<User,Set<Subject>> getAllUserUnreviewedNotificationSubjects();
     void updateUnreviewedNotificationTime();
 

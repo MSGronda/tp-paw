@@ -44,7 +44,8 @@ public class SearchController {
                 credits,
                 department,
                 difficulty,
-                time
+                time,
+                orderBy
         );
 
         final List<Subject> result = subjectService.search(
@@ -65,7 +66,8 @@ public class SearchController {
                 credits,
                 department,
                 difficulty,
-                time
+                time,
+                orderBy
         );
 
         mav.addObject("subjects", result);

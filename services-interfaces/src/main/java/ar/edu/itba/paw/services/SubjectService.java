@@ -49,7 +49,8 @@ public interface SubjectService {
             final Integer credits,
             final String department,
             final Integer difficulty,
-            final Integer time
+            final Integer time,
+            final String orderBy
     );
     Map<String, List<String>> getRelevantFiltersForSearch(final String name);
     Map<String, List<String>> getRelevantFiltersForSearch(final User user, final String name);
@@ -59,14 +60,16 @@ public interface SubjectService {
             final Integer credits,
             final String department,
             final Integer difficulty,
-            final Integer time
+            final Integer time,
+            final String orderBy
     );
     Map<String, List<String>> getRelevantFiltersForSearch(
             final String name,
             final Integer credits,
             final String department,
             final Integer difficulty,
-            final Integer time
+            final Integer time,
+            final String orderBy
     );
 
     Map<User,Set<Subject>> getAllUserUnreviewedNotificationSubjects();

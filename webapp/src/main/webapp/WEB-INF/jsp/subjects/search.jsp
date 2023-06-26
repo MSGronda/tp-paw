@@ -212,7 +212,6 @@
               <sl-button class="filter-button" id="direction-name-down" variant="default" size="small" pill>
                 <sl-icon class="filter-action" name="arrow-down" label="Direction"></sl-icon>
               </sl-button>
-
             </sl-button-group>
 
             <sl-button-group>
@@ -237,6 +236,32 @@
                 <sl-icon class="filter-action" name="arrow-up" label="Direction"></sl-icon>
               </sl-button>
               <sl-button class="filter-button" id="direction-id-down" variant="default" size="small" pill>
+                <sl-icon class="filter-action" name="arrow-down" label="Direction"></sl-icon>
+              </sl-button>
+            </sl-button-group>
+
+            <sl-button-group>
+              <sl-button class="filter-button" size="small" variant="default" id="order-by-difficulty">
+                <spring:message code="search.difficulty"/>
+              </sl-button>
+
+              <sl-button class="filter-button" id="direction-difficulty-up" variant="default" size="small" pill>
+                <sl-icon class="filter-action" name="arrow-up" label="Direction"></sl-icon>
+              </sl-button>
+              <sl-button class="filter-button" id="direction-difficulty-down" variant="default" size="small" pill>
+                <sl-icon class="filter-action" name="arrow-down" label="Direction"></sl-icon>
+              </sl-button>
+            </sl-button-group>
+
+            <sl-button-group>
+              <sl-button class="filter-button" size="small" variant="default" id="order-by-time">
+                <spring:message code="search.timedemand"/>
+              </sl-button>
+
+              <sl-button class="filter-button" id="direction-time-up" variant="default" size="small" pill>
+                <sl-icon class="filter-action" name="arrow-up" label="Direction"></sl-icon>
+              </sl-button>
+              <sl-button class="filter-button" id="direction-time-down" variant="default" size="small" pill>
                 <sl-icon class="filter-action" name="arrow-down" label="Direction"></sl-icon>
               </sl-button>
             </sl-button-group>
@@ -441,7 +466,9 @@
     const addOrderByBtns = [
         ['order-by-name', "name", "direction-name-up", "direction-name-down"],
         ['order-by-credits', "credits", "direction-credits-up", "direction-credits-down"],
-        ['order-by-id', "id", "direction-id-up", "direction-id-down"]
+        ['order-by-id', "id", "direction-id-up", "direction-id-down"],
+        ['order-by-difficulty', "difficulty", "direction-difficulty-up", "direction-difficulty-down"],
+        ['order-by-time', "time", "direction-time-up", "direction-time-down"],
     ]
     for (let elem in addOrderByBtns) {
         document.getElementById(addOrderByBtns[elem][0]).addEventListener('click',

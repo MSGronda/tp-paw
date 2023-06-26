@@ -1,10 +1,10 @@
 package ar.edu.itba.paw.models.enums;
 
 public enum TimeDemanding {
-    NO_DATA(-1),
     LOW(0),
     MEDIUM(1),
-    HIGH(2);
+    HIGH(2),
+    NO_DATA(-1);
 
     private final int value;
 

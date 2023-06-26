@@ -4,11 +4,8 @@ import ar.edu.itba.paw.models.*;
 import ar.edu.itba.paw.models.enums.OrderDir;
 import ar.edu.itba.paw.models.enums.SubjectFilterField;
 import ar.edu.itba.paw.models.enums.SubjectOrderField;
-import ar.edu.itba.paw.persistence.dao.SubjectDao;
 import ar.edu.itba.paw.persistence.exceptions.SubjectIdAlreadyExistsPersistenceException;
-import org.springframework.cglib.core.Local;
 import org.springframework.stereotype.Repository;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -208,7 +205,7 @@ public class SubjectJpaDao implements SubjectDao {
 
         List<Object> filterValues = null;
         if (filters != null) {
-            filterValues = appendFiltersAndGetValues(nativeQuerySb, filters);
+            filterValues = appendFiltersAndGetValues(nativeQuerySb, filters, orderBy);
         }
 
         appendOrderSql(nativeQuerySb, orderBy, dir);
@@ -239,7 +236,9 @@ public class SubjectJpaDao implements SubjectDao {
 
         if(ids.isEmpty()) return Collections.emptyList();
 
-        final StringBuilder hqlQuerySb = new StringBuilder("from Subject where id in :ids");
+        final StringBuilder hqlQuerySb;
+
+        hqlQuerySb = new StringBuilder("select s from Subject s left join s.reviewStats where id in :ids");
         appendOrderHql(hqlQuerySb, orderBy, dir);
 
         return em.createQuery(hqlQuerySb.toString(), Subject.class)
@@ -272,7 +271,8 @@ public class SubjectJpaDao implements SubjectDao {
             final boolean searchAll,
             final User user,
             final String name,
-            final Map<SubjectFilterField, String> filters)
+            final Map<SubjectFilterField, String> filters,
+            final SubjectOrderField orderBy)
     {
         final StringBuilder nativeQuerySb;
         if(searchAll){
@@ -284,7 +284,7 @@ public class SubjectJpaDao implements SubjectDao {
 
         List<Object> filterValues = null;
         if (filters != null) {
-            filterValues = appendFiltersAndGetValues(nativeQuerySb, filters);
+            filterValues = appendFiltersAndGetValues(nativeQuerySb, filters, orderBy);
         }
 
         final Query nativeQuery = em.createNativeQuery(nativeQuerySb.toString());
@@ -311,16 +311,30 @@ public class SubjectJpaDao implements SubjectDao {
     }
 
     @Override
-    public int getTotalPagesForSearch(final User user, final String name, final Map<SubjectFilterField, String> filters) {
-        return getTotalPagesForSearchSpecific(false, user, name, filters);
+    public int getTotalPagesForSearch(
+            final User user,
+            final String name,
+            final Map<SubjectFilterField, String> filters,
+            final SubjectOrderField orderBy
+    ) {
+        return getTotalPagesForSearchSpecific(false, user, name, filters, orderBy);
     }
 
     @Override
-    public int getTotalPagesForSearchAll(final String name, final Map<SubjectFilterField, String> filters) {
-        return getTotalPagesForSearchSpecific(true, null, name, filters);
+    public int getTotalPagesForSearchAll(
+            final String name,
+            final Map<SubjectFilterField, String> filters,
+            final SubjectOrderField orderBy
+    ) {
+        return getTotalPagesForSearchSpecific(true, null, name, filters, orderBy);
     }
 
-    private Map<SubjectFilterField, List<String>> getRelevantFiltersForSearchSpecific(final Degree degree, final String name, final Map<SubjectFilterField, String> filters) {
+    private Map<SubjectFilterField, List<String>> getRelevantFiltersForSearchSpecific(
+            final Degree degree,
+            final String name,
+            final Map<SubjectFilterField, String> filters,
+            final SubjectOrderField orderBy
+    ) {
         final Map<SubjectFilterField, List<String>> relevant = new HashMap<>();
 
         for (SubjectFilterField field : SubjectFilterField.values()) {
@@ -338,7 +352,7 @@ public class SubjectJpaDao implements SubjectDao {
 
             List<Object> filterValues = null;
             if (filters != null) {
-                filterValues = appendFiltersAndGetValues(nativeQuerySb, filters);
+                filterValues = appendFiltersAndGetValues(nativeQuerySb, filters, orderBy);
             }
 
             final Query nativeQuery = em.createNativeQuery(nativeQuerySb.toString());
@@ -374,13 +388,23 @@ public class SubjectJpaDao implements SubjectDao {
         return relevant;
     }
 
-    public Map<SubjectFilterField, List<String>> getRelevantFiltersForSearch(final Degree degree, final String name, final Map<SubjectFilterField, String> filters){
-        return getRelevantFiltersForSearchSpecific(degree, name, filters);
+    @Override
+    public Map<SubjectFilterField, List<String>> getRelevantFiltersForSearch(
+            final Degree degree,
+            final String name,
+            final Map<SubjectFilterField, String> filters,
+            final SubjectOrderField orderBy
+    ){
+        return getRelevantFiltersForSearchSpecific(degree, name, filters, orderBy);
     }
 
     @Override
-    public Map<SubjectFilterField, List<String>> getRelevantFiltersForSearch(final String name, final Map<SubjectFilterField, String> filters) {
-        return getRelevantFiltersForSearchSpecific(null, name, filters);
+    public Map<SubjectFilterField, List<String>> getRelevantFiltersForSearch(
+            final String name,
+            final Map<SubjectFilterField, String> filters,
+            final SubjectOrderField orderBy
+    ) {
+        return getRelevantFiltersForSearchSpecific(null, name, filters, orderBy);
     }
 
     @Override
@@ -441,7 +465,16 @@ public class SubjectJpaDao implements SubjectDao {
         return s.replaceAll("%", "\\\\%").replaceAll("_", "\\\\_");
     }
 
-    private void appendFilters(final StringBuilder sb, final Map<SubjectFilterField, String> filters) {
+    private void appendFilters(final StringBuilder sb, final Map<SubjectFilterField, String> filters, final SubjectOrderField orderBy) {
+        if(orderBy != null) {
+            if(orderBy.equals(SubjectOrderField.DIFFICULTY)) {
+                sb.append(" AND difficulty IS NOT NULL");
+            }
+            else if(orderBy.equals(SubjectOrderField.TIME)) {
+                sb.append(" AND timeDemanding IS NOT NULL");
+            }
+        }
+
         for (SubjectFilterField field : filters.keySet()) {
             sb.append(" AND ")
                     .append(field.getColumn())
@@ -449,8 +482,12 @@ public class SubjectJpaDao implements SubjectDao {
         }
     }
 
-    private List<Object> appendFiltersAndGetValues(final StringBuilder sb, final Map<SubjectFilterField, String> filters) {
-        appendFilters(sb, filters);
+    private List<Object> appendFiltersAndGetValues(
+            final StringBuilder sb,
+            final Map<SubjectFilterField, String> filters,
+            final SubjectOrderField orderBy
+    ) {
+        appendFilters(sb, filters, orderBy);
 
         final List<Object> filterValues = new ArrayList<>();
         for (Map.Entry<SubjectFilterField, String> entry : filters.entrySet()) {

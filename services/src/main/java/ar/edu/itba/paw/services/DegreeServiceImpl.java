@@ -70,7 +70,7 @@ public class DegreeServiceImpl implements DegreeService {
 
     @Override
     public Map<String, List<String>> getRelevantFiltersForDegree(Degree degree) {
-        return subjectDao.getRelevantFiltersForSearch(degree,"", null)
+        return subjectDao.getRelevantFiltersForSearch(degree,"", null, null)
                 .entrySet()
                 .stream()
                 .collect(Collectors.toMap(

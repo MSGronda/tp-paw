@@ -1,10 +1,11 @@
 package ar.edu.itba.paw.models.enums;
 
 public enum Difficulty {
-    NO_DATA(-1),
     EASY(0),
     MEDIUM(1),
-    HARD(2);
+    HARD(2),
+
+    NO_DATA(-1);
 
     private final int value;
 

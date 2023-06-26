@@ -43,11 +43,11 @@ public class ReviewStats {
     @Column(name = "timedemandingcount")
     private int timeDemandingCount;
 
-    @Convert(converter = DifficultyConverter.class)
+    @Enumerated(EnumType.ORDINAL)
     @Column(name = "difficulty")
     private Difficulty difficulty;
 
-    @Convert(converter = TimeDemandingConverter.class)
+    @Enumerated(EnumType.ORDINAL)
     @Column(name = "timedemanding")
     private TimeDemanding timeDemanding;
 
