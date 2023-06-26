@@ -752,6 +752,9 @@
     }
     let currentOrder = 'none'
 
+    incompatibleSubjectMessage = "<spring:message code="builder.incompatible.subject"/>";
+    incompatibleClassMessage = "<spring:message code="builder.incompatible.class"/>";
+
     const subjectClasses = [
       <c:forEach var="sub" items="${availableSubjects}">
       <c:if test="${sub.credits != 0}">

@@ -111,6 +111,9 @@ function hideAllClasses(){
     }
 }
 
+let incompatibleSubjectMessage;
+let incompatibleClassMessage;
+
 function alterSubjectCard(subjectId,color,colorBorder, disabled, subject){
     const card = document.getElementById('subject-card-'+subjectId);
     card.style.color = color
@@ -120,7 +123,7 @@ function alterSubjectCard(subjectId,color,colorBorder, disabled, subject){
 
     if(card.parentElement.nodeName.toLowerCase() !== 'sl-tooltip'){
         const tooltip = document.createElement('sl-tooltip');
-        tooltip.setAttribute('content', subject.name + ' makes this subject incompatible with your current timetable')
+        tooltip.setAttribute('content', subject.name + " " + incompatibleSubjectMessage)
         tooltip.appendChild(disabledCard)
 
         card.replaceWith(tooltip)
@@ -145,7 +148,7 @@ function alterClassCard(subjectId, classId, color,colorBorder, disabled, subject
 
     if( card.parentElement.nodeName.toLowerCase() !== 'sl-tooltip'){
         const tooltip = document.createElement('sl-tooltip');
-        tooltip.setAttribute('content', subject.name + ' makes this class incompatible with your current timetable')
+        tooltip.setAttribute('content', subject.name + " " + incompatibleClassMessage)
         tooltip.appendChild(disabledClass)
 
         card.replaceWith(tooltip)
