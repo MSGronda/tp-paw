@@ -14,7 +14,8 @@ public class ExceptionControllerAdvice {
             ImageNotFoundException.class,
             ReviewNotFoundException.class,
             SubjectNotFoundException.class,
-            UserNotFoundException.class
+            UserNotFoundException.class,
+            InvalidPageNumberException.class
     })
     public String notFoundHandler() {
         return "error/page_not_found";
@@ -28,8 +29,7 @@ public class ExceptionControllerAdvice {
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler({
-            InvalidFormException.class,
-            InvalidPageNumberException.class
+            InvalidFormException.class
     })
     public String badRequestHandler() {
         return "error/bad_request";
