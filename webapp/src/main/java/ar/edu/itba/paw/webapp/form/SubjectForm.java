@@ -1,12 +1,6 @@
 package ar.edu.itba.paw.webapp.form;
 
-import org.springframework.beans.factory.annotation.Value;
-
-import javax.validation.Valid;
 import javax.validation.constraints.*;
-import java.util.List;
-import java.util.Map;
-
 public class SubjectForm {
     @NotNull
     @Pattern(regexp = "[0-9]{2}\\.[0-9]{2}")

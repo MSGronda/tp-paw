@@ -2,7 +2,7 @@ package ar.edu.itba.paw.models;
 
 import javax.persistence.*;
 import java.time.Instant;
-import java.time.LocalDateTime;
+
 
 @Entity
 @Table(name = "recoverytoken")

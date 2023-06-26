@@ -2,7 +2,6 @@ package ar.edu.itba.paw.services;
 
 import ar.edu.itba.paw.models.Subject;
 import ar.edu.itba.paw.models.User;
-import ar.edu.itba.paw.models.enums.SubjectFilterField;
 import ar.edu.itba.paw.models.exceptions.SubjectNotFoundException;
 import ar.edu.itba.paw.models.exceptions.UnauthorizedException;
 import ar.edu.itba.paw.services.exceptions.SubjectIdAlreadyExistsException;

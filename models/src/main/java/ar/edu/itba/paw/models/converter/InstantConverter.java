@@ -4,7 +4,6 @@ import javax.persistence.AttributeConverter;
 import javax.persistence.Converter;
 import java.sql.Timestamp;
 import java.time.Instant;
-import java.time.LocalDateTime;
 
 @Converter(autoApply = true)
 public class InstantConverter implements AttributeConverter<Instant, Timestamp>  {
