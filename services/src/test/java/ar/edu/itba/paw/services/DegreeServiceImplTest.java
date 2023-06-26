@@ -69,7 +69,7 @@ public class DegreeServiceImplTest {
     }
 
     @Test
-    public void findSubjectYearForDegree() {
+    public void findSubjectYearForParentDegree() {
         final Degree degree = new Degree(NAME);
         final Subject subject = Subject.builder()
                 .id("00.01")
