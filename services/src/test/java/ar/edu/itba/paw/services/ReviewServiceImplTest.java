@@ -17,8 +17,7 @@ import org.mockito.junit.MockitoJUnitRunner;
 
 import java.util.*;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -34,6 +33,15 @@ public class ReviewServiceImplTest {
     private static final String PASSWORD = "password";
     private static final String USERNAME = "username";
 
+    private static final String VALID_REVIEW_URL_IDS = "31.08 72.03 93.26 93.58";
+    private static final int VALID_REVIEW_CURRENT = 0;
+    private static final int VALID_REVIEW_TOTAL = 4;
+    private static final String NEXT_VALID_REVIEW_URL_PARAM = "/many-reviews?r=72.03 93.26 93.58&current=1&total=4";
+
+    private static final String VALID_FINAL_REVIEW_URL_IDS = "";
+    private static final int VALID_FINAL_REVIEW_CURRENT = 4;
+    private static final int VALID_FINAL_REVIEW_TOTAL = 4;
+    private static final String NEXT_FINAL_VALID_REVIEW_URL_PARAM = "/";
 
     @Mock
     private ReviewDao reviewDao;
@@ -94,4 +102,29 @@ public class ReviewServiceImplTest {
 
         reviewService.delete(review);
     }
+
+    @Test
+    public void testNextReviewValid(){
+        assertEquals(
+                NEXT_VALID_REVIEW_URL_PARAM,
+                reviewService.manyReviewsNextUrl(
+                    VALID_REVIEW_URL_IDS,
+                    VALID_REVIEW_CURRENT,
+                    VALID_REVIEW_TOTAL
+                )
+        );
+    }
+
+    @Test
+    public void testFinalReviewValid(){
+        assertEquals(
+                NEXT_FINAL_VALID_REVIEW_URL_PARAM,
+                reviewService.manyReviewsNextUrl(
+                        VALID_FINAL_REVIEW_URL_IDS,
+                        VALID_FINAL_REVIEW_CURRENT,
+                        VALID_FINAL_REVIEW_TOTAL
+                )
+        );
+    }
+
 }
