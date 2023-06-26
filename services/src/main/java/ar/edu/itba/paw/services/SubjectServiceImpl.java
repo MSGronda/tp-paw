@@ -38,19 +38,21 @@ public class SubjectServiceImpl implements SubjectService {
 
     @Transactional
     @Override
-    public Subject create(final Subject.Builder builder,
-                          final String degreeIds,
-                          final String semesters,
-                          final String requirementIds,
-                          final String professors,
-                          final String classCodes,
-                          final String classProfessors,
-                          final String classDays,
-                          final String classStartTimes,
-                          final String classEndTime,
-                          final String classBuildings,
-                          final String classRooms,
-                          final String classModes) throws SubjectIdAlreadyExistsException {
+    public Subject create(
+            final Subject.Builder builder,
+            final String degreeIds,
+            final String semesters,
+            final String requirementIds,
+            final String professors,
+            final String classCodes,
+            final String classProfessors,
+            final String classDays,
+            final String classStartTimes,
+            final String classEndTime,
+            final String classBuildings,
+            final String classRooms,
+            final String classModes
+    ) throws SubjectIdAlreadyExistsException {
         Subject sub;
         try{
             sub = subjectDao.create(builder.build());
@@ -416,14 +418,15 @@ public class SubjectServiceImpl implements SubjectService {
             final String classEndTime,
             final String classBuildings,
             final String classRooms,
-            final String classModes) {
+            final String classModes
+    ) {
 
-        Optional<Subject> optionalSubject = findById(id);
+        final Optional<Subject> optionalSubject = findById(id);
         if (!optionalSubject.isPresent()) {
             return;
         }
 
-        Subject sub = optionalSubject.get();
+        final Subject sub = optionalSubject.get();
         if (credits != sub.getCredits()) {
             subjectDao.editCredits(sub, credits);
         }
@@ -464,18 +467,38 @@ public class SubjectServiceImpl implements SubjectService {
 
             prepareClassLocTimeToUpdate(sub,classesIdsList,classesList,classStartTimes,classEndTime,classBuildings,classModes,classDays,classRooms);
         }
+
+        final List<SubjectClass> toDelete = new ArrayList<>();
+        for(final SubjectClass cl : sub.getClasses()){
+            if(cl.getClassTimes().isEmpty()){
+                toDelete.add(cl);
+            }
+        }
+        for(final SubjectClass cl : toDelete){
+            subjectDao.deleteClass(cl);
+        }
     }
 
-    private void prepareClassLocTimeToUpdate(final Subject subject,final List<String> classIdsList,final List<String> classCodes,final String classStartTimes,final String classEndTimes,final String classBuildings,final String classModes,final String classDays,final String classRooms) {
+    private void prepareClassLocTimeToUpdate(
+            final Subject subject,
+            final List<String> classIdsList,
+            final List<String> classCodes,
+            final String classStartTimes,
+            final String classEndTimes,
+            final String classBuildings,
+            final String classModes,
+            final String classDays,
+            final String classRooms
+    ) {
         final List<String> startTimes = parseJsonList(classStartTimes, false);
         final List<String> endTimes = parseJsonList(classEndTimes, false);
         final List<String> buildings = parseJsonList(classBuildings, false);
         final List<String> modes = parseJsonList(classModes, false);
         final List<String> days = parseJsonList(classDays, false);
         final List<String> rooms = parseJsonList(classRooms, false);
-        List<Integer> parsedDays = days.stream().map(Integer::parseInt).collect(Collectors.toList());
-        List<LocalTime> parsedStartTime = startTimes.stream().map(LocalTime::parse).collect(Collectors.toList());
-        List<LocalTime> parsedEndTime = endTimes.stream().map(LocalTime::parse).collect(Collectors.toList());
+        final List<Integer> parsedDays = days.stream().map(Integer::parseInt).collect(Collectors.toList());
+        final List<LocalTime> parsedStartTime = startTimes.stream().map(LocalTime::parse).collect(Collectors.toList());
+        final List<LocalTime> parsedEndTime = endTimes.stream().map(LocalTime::parse).collect(Collectors.toList());
         for( int i = 0 ; i < classIdsList.size() ; i++){
             //si classId es -1, es una nueva comision
             //se crea
@@ -496,15 +519,17 @@ public class SubjectServiceImpl implements SubjectService {
         }
     }
 
-    private void createClassLocTime(final Subject subject,
-                             final List<String> classCodes,
-                             final int index,
-                             final List<LocalTime> startTimes,
-                             final List<LocalTime> endTimes,
-                             final List<Integer> days,
-                             final List<String> rooms,
-                             final List<String> buildings,
-                             final List<String> modes)
+    private void createClassLocTime(
+            final Subject subject,
+            final List<String> classCodes,
+            final int index,
+            final List<LocalTime> startTimes,
+            final List<LocalTime> endTimes,
+            final List<Integer> days,
+            final List<String> rooms,
+            final List<String> buildings,
+            final List<String> modes
+    )
     {
         //se itera por subject Class de la subject para encontrar la comision
         //es necesaria para agregarla a la nueva SubjectClassTime

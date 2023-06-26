@@ -595,12 +595,18 @@ public class SubjectJpaDao implements SubjectDao {
 
     @Override
     public void deleteClassLocTime(final long key){
-        SubjectClassTime subjectClassTime = em.find(SubjectClassTime.class, key);
+        final SubjectClassTime subjectClassTime = em.find(SubjectClassTime.class, key);
 
         //se guarda para despues verificar si es que quedo otra SubjectClassTime
-        SubjectClass subjectClass = subjectClassTime.getSubjectClass();
+        final SubjectClass subjectClass = subjectClassTime.getSubjectClass();
 
-        em.remove(subjectClassTime);
+        subjectClass.getClassTimes().remove(subjectClassTime);
+    }
+
+    @Override
+    public void deleteClass(final SubjectClass subjectClass) {
+        final Subject subject = subjectClass.getSubject();
+        subject.getClasses().remove(subjectClass);
     }
 
     @Override

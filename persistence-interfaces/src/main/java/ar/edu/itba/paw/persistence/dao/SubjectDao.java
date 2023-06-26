@@ -80,6 +80,8 @@ public interface SubjectDao {
 
     void deleteClassLocTime(final long key);
 
+    void deleteClass(final SubjectClass subjectClass);
+
     void updateClassLocTime(final long key, final int days, final String rooms, final String buildings, final String modes, final LocalTime startTimes,final LocalTime endTimes);
 
     void delete(final Subject subject);
