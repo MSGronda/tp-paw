@@ -11,17 +11,6 @@ public class EditUserDataForm {
     @Size(max = 50)
     private String userName;
 
-    private CommonsMultipartFile profileImage;
-
-
-    public CommonsMultipartFile getProfileImage() {
-        return profileImage;
-    }
-
-    public void setProfileImage(CommonsMultipartFile profileImage) {
-        this.profileImage = profileImage;
-    }
-
     public String getUserName() {
         return userName;
     }
