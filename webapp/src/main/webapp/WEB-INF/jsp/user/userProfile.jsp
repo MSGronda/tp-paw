@@ -117,7 +117,12 @@
     <tbody>
       <tr>
         <td><spring:message code="degree"/></td>
-        <td><c:out value="${user.degree.name}"/></td>
+        <c:if test="${user.degree != null}" >
+          <td><c:out value="${user.degree.name}"/></td>
+        </c:if>
+        <c:if test="${user.degree == null}" >
+          <td><spring:message code="profile.no_degree"/></td>
+        </c:if>
       </tr>
 
       <c:forEach var="subject" items="${user.userSemester}" varStatus="status">
@@ -132,10 +137,12 @@
         </td>
       </tr>
       </c:forEach>
-    <tr>
-      <td><spring:message code="dashboard.overview.completedCredits"/></td>
-      <td><c:out value="${user.creditsDone}"/> <spring:message code="profile.outOf"/> <c:out value="${user.degree.totalCredits}"/> </td>
-    </tr>
+      <c:if test="${user.degree != null}">
+        <tr>
+          <td><spring:message code="dashboard.overview.completedCredits"/></td>
+          <td><c:out value="${user.creditsDone}"/> <spring:message code="profile.outOf"/> <c:out value="${user.degree.totalCredits}"/> </td>
+        </tr>
+      </c:if>
     </tbody>
   </table>
   </sl-card>
