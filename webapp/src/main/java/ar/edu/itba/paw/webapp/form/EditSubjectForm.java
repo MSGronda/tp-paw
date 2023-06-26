@@ -1,5 +1,7 @@
 package ar.edu.itba.paw.webapp.form;
 
+import org.hibernate.validator.constraints.NotBlank;
+
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
@@ -11,15 +13,15 @@ public class EditSubjectForm {
     @Max(12)
     private Integer credits;
 
-    @Size(min=3)
+    @NotBlank
     private String degreeIds;
 
-    @Size(min=3)
+    @NotBlank
     private String semesters;
 
     private String requirementIds;
 
-    @Size(min=3)
+    @NotBlank
     private String professors;
 
 
