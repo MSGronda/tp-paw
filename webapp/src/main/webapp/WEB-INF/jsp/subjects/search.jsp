@@ -85,7 +85,6 @@
   <c:if test="${ not empty subjects }">
     <div class="filter-area">
       <div class="filter">
-
         <sl-button size="small" variant="default" id="toggle-filters">
           <sl-icon slot="prefix" name="filter"></sl-icon>
           <spring:message code="search.filter"/>
@@ -109,9 +108,8 @@
                   </section>
                 </sl-button-group>
               </c:forEach>
+            </div>
           </c:if>
-
-          </div>
 
           <c:if test="${not empty relevantFilters['CREDITS']}">
             <sl-divider class="vert-divider" style="--color: #cbcbcb;" vertical></sl-divider>
