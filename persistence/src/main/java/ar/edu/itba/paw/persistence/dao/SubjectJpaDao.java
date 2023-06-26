@@ -658,7 +658,9 @@ public class SubjectJpaDao implements SubjectDao {
 
     @Override
     public void delete(final Subject subject){
-        em.remove(subject);
+        em.createQuery("delete from Subject where id = :id")
+                .setParameter("id", subject.getId())
+                .executeUpdate();
     }
 
     @Override
