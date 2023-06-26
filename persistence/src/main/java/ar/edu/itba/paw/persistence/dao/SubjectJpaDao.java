@@ -36,7 +36,7 @@ public class SubjectJpaDao implements SubjectDao {
     }
 
     @Override
-    public List<Subject> findAllThatUserCanDo(User user) {
+    public List<Subject> findAllThatUserCanDo(final User user) {
         @SuppressWarnings("unchecked") final List<Integer> ids =
                 em.createNativeQuery("SELECT id FROM subjects s FULL JOIN subjectsdegrees sd ON s.id = sd.idsub\n" +
                                 "WHERE sd.iddeg = ?\n " +
@@ -66,7 +66,7 @@ public class SubjectJpaDao implements SubjectDao {
     }
 
     @Override
-    public List<Subject> findAllThatUserHasNotDone(User user){
+    public List<Subject> findAllThatUserHasNotDone(final User user){
         @SuppressWarnings("unchecked")
         final List<Integer> ids =
                 em.createNativeQuery("SELECT id FROM subjects s FULL JOIN subjectsdegrees sd ON s.id = sd.idsub\n" +
@@ -88,7 +88,7 @@ public class SubjectJpaDao implements SubjectDao {
     }
 
     @Override
-    public List<Subject> findAllThatUserHasDone(User user) {
+    public List<Subject> findAllThatUserHasDone(final User user) {
         @SuppressWarnings("unchecked")
         final List<Integer> ids =
                 em.createNativeQuery("SELECT up.idsub\n" +
@@ -105,7 +105,7 @@ public class SubjectJpaDao implements SubjectDao {
     }
 
     @Override
-    public List<Subject> findAllThatUserCouldUnlock(User user){
+    public List<Subject> findAllThatUserCouldUnlock(final User user){
         @SuppressWarnings("unchecked")
         final List<Integer> ids = em.createNativeQuery("SELECT DISTINCT s.id\n" +
                         "FROM subjects s FULL JOIN subjectsdegrees sd on s.id = sd.idsub\n" +
@@ -272,8 +272,8 @@ public class SubjectJpaDao implements SubjectDao {
             final User user,
             final String name,
             final Map<SubjectFilterField, String> filters,
-            final SubjectOrderField orderBy)
-    {
+            final SubjectOrderField orderBy
+    ) {
         final StringBuilder nativeQuerySb;
         if(searchAll){
             nativeQuerySb = new StringBuilder("SELECT count(*) FROM subjects s LEFT JOIN subjectreviewstatistics srs ON s.id = srs.idsub WHERE subname ILIKE ?");
@@ -531,26 +531,26 @@ public class SubjectJpaDao implements SubjectDao {
     @Override
     public void addPrerequisites(final Subject sub, final List<String> correlativesList){
         for( String requirement : correlativesList ){
-            Subject requiredSubject = em.find(Subject.class, requirement);
+            final Subject requiredSubject = em.find(Subject.class, requirement);
             sub.getPrerequisites().add(requiredSubject);
         }
     }
     @Override
     public void updatePrerequisitesToAdd(final Subject sub, final List<Subject> correlativesList) {
-        Set<Subject> prerequisites = sub.getPrerequisites();
+        final Set<Subject> prerequisites = sub.getPrerequisites();
         prerequisites.addAll(correlativesList);
     }
 
     @Override
     public void updatePrerequisitesToRemove(final Subject sub, final List<Subject> correlativesList) {
-        Set<Subject> prerequisites = sub.getPrerequisites();
+        final Set<Subject> prerequisites = sub.getPrerequisites();
         correlativesList.forEach(prerequisites::remove);
     }
 
     @Override
     public void addClassesToSubject(final Subject subject, final Set<String> classesSet){
-        for( String classCode : classesSet){
-            SubjectClass subjectClass = new SubjectClass(classCode, subject);
+        for(final String classCode : classesSet){
+            final SubjectClass subjectClass = new SubjectClass(classCode, subject);
             subject.getClasses().add(subjectClass);
             em.persist(subjectClass);
         }
@@ -558,22 +558,47 @@ public class SubjectJpaDao implements SubjectDao {
 
     @Override
     public void updateClassesToSubject(final Subject subject, final List<String> classesCodesToAdd) {
-        for( String code : classesCodesToAdd){
-            SubjectClass subjectClass = new SubjectClass(code, subject);
+        for(final String code : classesCodesToAdd){
+            final SubjectClass subjectClass = new SubjectClass(code, subject);
             subject.getClasses().add(subjectClass);
             em.persist(subjectClass);
         }
     }
 
     @Override
-    public void addSubjectClassTimes(final Subject subject, final List<String> classCodes, final List<LocalTime> startTimes, final List<LocalTime> endTimes, final List<String> buildings, final List<String> modes, final List<Integer> days, final List<String> rooms) {
+    public void addSubjectClassTimes(
+            final Subject subject,
+            final List<String> classCodes,
+            final List<LocalTime> startTimes,
+            final List<LocalTime> endTimes,
+            final List<String> buildings,
+            final List<String> modes,
+            final List<Integer> days,
+            final List<String> rooms
+    ) {
         for( int i = 0 ; i < classCodes.size() ; i++) {
-            SubjectClass subjectClass = subject.getClassesById().get(classCodes.get(i));
-            SubjectClassTime subjectClassTime;
+            final SubjectClass subjectClass = subject.getClassesById().get(classCodes.get(i));
+            final SubjectClassTime subjectClassTime;
             if( startTimes.get(i).isAfter(endTimes.get(i)) ){
-                subjectClassTime = new SubjectClassTime(subjectClass, days.get(i), endTimes.get(i), startTimes.get(i), rooms.get(i), buildings.get(i), modes.get(i));
-            }else{
-                subjectClassTime = new SubjectClassTime(subjectClass, days.get(i), startTimes.get(i), endTimes.get(i), rooms.get(i), buildings.get(i), modes.get(i));
+                subjectClassTime = new SubjectClassTime(
+                        subjectClass,
+                        days.get(i),
+                        endTimes.get(i),
+                        startTimes.get(i),
+                        rooms.get(i),
+                        buildings.get(i),
+                        modes.get(i)
+                );
+            } else {
+                subjectClassTime = new SubjectClassTime(
+                        subjectClass,
+                        days.get(i),
+                        startTimes.get(i),
+                        endTimes.get(i),
+                        rooms.get(i),
+                        buildings.get(i),
+                        modes.get(i)
+                );
             }
             em.persist(subjectClassTime);
         }
@@ -581,12 +606,20 @@ public class SubjectJpaDao implements SubjectDao {
 
 
     @Override
-    public void createClassLocTime(final SubjectClass subjectClass,final int days,final LocalTime endTimes,final LocalTime startTimes,final String rooms,final String buildings,final String modes){
-        SubjectClassTime subjectClassTime;
+    public void createClassLocTime(
+            final SubjectClass subjectClass,
+            final int days,
+            final LocalTime endTimes,
+            final LocalTime startTimes,
+            final String rooms,
+            final String buildings,
+            final String modes
+    ){
+        final SubjectClassTime subjectClassTime;
 
-        if( startTimes.isAfter(endTimes)){
+        if(startTimes.isAfter(endTimes)) {
             subjectClassTime = new SubjectClassTime(subjectClass, days, endTimes, startTimes, rooms, buildings, modes);
-        }else{
+        } else {
             subjectClassTime = new SubjectClassTime(subjectClass, days, startTimes, endTimes, rooms, buildings, modes);
         }
         subjectClass.getClassTimes().add(subjectClassTime);
@@ -594,10 +627,8 @@ public class SubjectJpaDao implements SubjectDao {
     }
 
     @Override
-    public void deleteClassLocTime(final long key){
+    public void deleteClassLocTime(final long key) {
         final SubjectClassTime subjectClassTime = em.find(SubjectClassTime.class, key);
-
-        //se guarda para despues verificar si es que quedo otra SubjectClassTime
         final SubjectClass subjectClass = subjectClassTime.getSubjectClass();
 
         subjectClass.getClassTimes().remove(subjectClassTime);
@@ -610,16 +641,24 @@ public class SubjectJpaDao implements SubjectDao {
     }
 
     @Override
-    public void updateClassLocTime(final long key, final int days, final String rooms, final String buildings, final String modes, final LocalTime startTimes,final LocalTime endTimes){
-        SubjectClassTime subjectClassTime = em.find(SubjectClassTime.class, key);
+    public void updateClassLocTime(
+            final long key,
+            final int days,
+            final String rooms,
+            final String buildings,
+            final String modes,
+            final LocalTime startTimes,
+            final LocalTime endTimes
+    ){
+        final SubjectClassTime subjectClassTime = em.find(SubjectClassTime.class, key);
         subjectClassTime.setDay(days);
         subjectClassTime.setClassLoc(rooms);
         subjectClassTime.setBuilding(buildings);
         subjectClassTime.setMode(modes);
-        if( startTimes.isAfter(endTimes)) {
+        if(startTimes.isAfter(endTimes)) {
             subjectClassTime.setStartTime(endTimes);
             subjectClassTime.setEndTime(startTimes);
-        }else{
+        } else {
             subjectClassTime.setStartTime(startTimes);
             subjectClassTime.setEndTime(endTimes);
         }
@@ -634,5 +673,4 @@ public class SubjectJpaDao implements SubjectDao {
     public void editCredits(final Subject subject, final int credits) {
         subject.setCredits(credits);
     }
-
 }

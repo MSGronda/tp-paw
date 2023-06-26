@@ -4,77 +4,77 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <html>
 <head>
-    <title><spring:message code="subject.new" /></title>
-    <jsp:include page="../components/head_shared.jsp"/>
+  <title><spring:message code="subject.new" /></title>
+  <jsp:include page="../components/head_shared.jsp"/>
 
-    <style>
-        .add-button {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            margin-top: 2rem;
-        }
-        .table {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-        td {
-            font-size: 1.2rem;
-            padding-left: 1rem;
-            padding-right: 1rem;
-        }
-        table {
-            width: 100%;
-        }
-        .selection {
-            width: 80%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-        li {
-            list-style-type: none;
-            font-size: 0.9rem;
-        }
-        .list-rm {
-            display: flex;
-            flex-direction: row;
-            align-items: center;
-            border: 0;
-            padding: 0;
-            margin: 0;
-        }
-        .error-message {
-            color: red;
-        }
-        .professors-cell-width {
-            max-width:20rem;
-            overflow: hidden;
-            white-space: normal;
-            word-wrap: break-word;
-            max-height:5rem;
-        }
-        .optional{
-            color: grey;
-            margin: 0;
-        }
-        .correlatives-div{
-            display: flex;
-            flex-direction: column;
-        }
-        .bottom-buttons{
-            margin-left: 0.5rem;
-            margin-right: 0.5rem;
-        }
-        p{
-            margin: 0;
-            font-size: medium;
-        }
-        td{
+  <style>
+      .add-button {
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          margin-top: 2rem;
+      }
+      .table {
+          display: flex;
+          justify-content: center;
+          align-items: center;
+      }
+      td {
+          font-size: 1.2rem;
+          padding-left: 1rem;
+          padding-right: 1rem;
+      }
+      table {
+          width: 100%;
+      }
+      .selection {
+          width: 80%;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+      }
+      li {
+          list-style-type: none;
+          font-size: 0.9rem;
+      }
+      .list-rm {
+          display: flex;
+          flex-direction: row;
+          align-items: center;
+          border: 0;
+          padding: 0;
+          margin: 0;
+      }
+      .error-message {
+          color: red;
+      }
+      .professors-cell-width {
+          max-width:20rem;
+          overflow: hidden;
+          white-space: normal;
+          word-wrap: break-word;
+          max-height:5rem;
+      }
+      .optional{
+          color: grey;
+          margin: 0;
+      }
+      .correlatives-div{
+          display: flex;
+          flex-direction: column;
+      }
+      .bottom-buttons{
+          margin-left: 0.5rem;
+          margin-right: 0.5rem;
+      }
+      p{
+          margin: 0;
+          font-size: medium;
+      }
+      td{
 
-        }
-    </style>
+      }
+  </style>
 </head>
 <body>
 <jsp:include page="../components/navbar.jsp" />
@@ -82,215 +82,215 @@
 <jsp:include page="../components/common-dialogues.jsp"/>
 
 <main class="container-50">
-    <c:url value="/create-subject" var="CreateSubject"/>
-    <form:form modelAttribute="subjectForm" class="col s12" method="post" action="${CreateSubject}">
-        <div id="step1">
-            <div class="table">
-                <table>
-                    <thead>
-                    <th colspan="2"><h1><spring:message code="subject.new"/></h1></th>
-                    </thead>
-                    <tbody>
-                    <tr>
-                        <td>
-                            <form:errors path="id" cssClass="error" element="p"/>
-                            <c:if test="${subjectCodeRepeated == true}">
-                                <p class="error"><spring:message code="subject.create.code-repeated"/></p>
-                            </c:if>
-                            <spring:message code="subject.id"/>
-                        </td>
-                        <td><sl-input name="id" path="id" value="<c:out value="${subjectForm.id}"/>" id="subject-id" onkeydown="return event.key !== 'Enter';"></sl-input></td>
-                    </tr>
-                    <tr>
+  <c:url value="/create-subject" var="CreateSubject"/>
+  <form:form modelAttribute="subjectForm" class="col s12" method="post" action="${CreateSubject}">
+    <div id="step1">
+      <div class="table">
+        <table>
+          <thead>
+          <th colspan="2"><h1><spring:message code="subject.new"/></h1></th>
+          </thead>
+          <tbody>
+          <tr>
+            <td>
+              <form:errors path="id" cssClass="error" element="p"/>
+              <c:if test="${subjectCodeRepeated == true}">
+                <p class="error"><spring:message code="subject.create.code-repeated"/></p>
+              </c:if>
+              <spring:message code="subject.id"/>
+            </td>
+            <td><sl-input name="id" path="id" value="<c:out value="${subjectForm.id}"/>" id="subject-id" onkeydown="return event.key !== 'Enter';"></sl-input></td>
+          </tr>
+          <tr>
 
-                        <td>
-                            <form:errors path="name" cssClass="error" element="p"/>
-                            <spring:message code="subject.name"/>
-                        </td>
-                        <td><sl-input name="name" path="name" value="<c:out value="${subjectForm.name}"/>" id="subject-name" onkeydown="return event.key !== 'Enter';"></sl-input></td>
-                    </tr>
-                    <tr>
+            <td>
+              <form:errors path="name" cssClass="error" element="p"/>
+              <spring:message code="subject.name"/>
+            </td>
+            <td><sl-input name="name" path="name" value="<c:out value="${subjectForm.name}"/>" id="subject-name" onkeydown="return event.key !== 'Enter';"></sl-input></td>
+          </tr>
+          <tr>
 
-                        <td>
-                            <form:errors path="department" cssClass="error" element="p"/>
-                            <spring:message code="subject.department"/>
-                        </td>
-                        <td>
-                            <sl-select id="department-select">
-                                <sl-option id="department-select-1" value="<c:out value="1"/>"><c:out value="Ambiente y Movilidad"/></sl-option>
-                                <sl-option id="department-select-2" value="<c:out value="2"/>"><c:out value="Ciencias Exactas y Naturales"/></sl-option>
-                                <sl-option id="department-select-3" value="<c:out value="3"/>"><c:out value="Ciencias de la Vida"/></sl-option>
-                                <sl-option id="department-select-4" value="<c:out value="4"/>"><c:out value="Economia y Negocios"/></sl-option>
-                                <sl-option id="department-select-5" value="<c:out value="5"/>"><c:out value="Sistemas Complejos y Energía"/></sl-option>
-                                <sl-option id="department-select-6" value="<c:out value="6"/>"><c:out value="Sistemas Digitales y Datos"/></sl-option>
-                            </sl-select>
-                            <input type="hidden" name="department" id="department-hiddenInput"/>
-                        </td>
-                    </tr>
-                    <tr>
+            <td>
+              <form:errors path="department" cssClass="error" element="p"/>
+              <spring:message code="subject.department"/>
+            </td>
+            <td>
+              <sl-select id="department-select">
+                <sl-option id="department-select-1" value="<c:out value="1"/>"><c:out value="Ambiente y Movilidad"/></sl-option>
+                <sl-option id="department-select-2" value="<c:out value="2"/>"><c:out value="Ciencias Exactas y Naturales"/></sl-option>
+                <sl-option id="department-select-3" value="<c:out value="3"/>"><c:out value="Ciencias de la Vida"/></sl-option>
+                <sl-option id="department-select-4" value="<c:out value="4"/>"><c:out value="Economia y Negocios"/></sl-option>
+                <sl-option id="department-select-5" value="<c:out value="5"/>"><c:out value="Sistemas Complejos y Energía"/></sl-option>
+                <sl-option id="department-select-6" value="<c:out value="6"/>"><c:out value="Sistemas Digitales y Datos"/></sl-option>
+              </sl-select>
+              <input type="hidden" name="department" id="department-hiddenInput"/>
+            </td>
+          </tr>
+          <tr>
 
-                        <td>
-                            <form:errors path="credits" cssClass="error" element="p"/>
-                            <spring:message code="subject.credits"/>
-                        </td>
-                        <td><sl-input name="credits" path="credits" value="<c:out value="${subjectForm.credits}"/>" type="number" id="subject-credits" onkeydown="return event.key !== 'Enter';"></sl-input></td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <form:errors path="degreeIds" cssClass="error" element="p"/>
-                            <form:errors path="semesters" cssClass="error" element="p"/>
-                            <spring:message code="subject.degrees"/>
-                        </td>
-                        <td>
-                            <sl-button id="open-button3"><spring:message code="subject.add.degree"/></sl-button>
-                            <input name="degreeIds" type="hidden" id="degreeIds-hiddenInput"/>
-                            <input name="semesters" type="hidden" id="semesters-hiddenInput"/>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td/>
-                        <td>
-                            <ul id="degreeSemesters"></ul>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <div class="correlatives-div">
-                                <form:errors path="requirementIds" cssClass="error" element="p"/>
-                                <spring:message code="subject.prerequisites"/>
-                                <h6 class="optional"><spring:message code="subject.optional"/></h6>
-                            </div>
-                        </td>
-                        <td style="display: flex; flex-direction: row">
+            <td>
+              <form:errors path="credits" cssClass="error" element="p"/>
+              <spring:message code="subject.credits"/>
+            </td>
+            <td><sl-input name="credits" path="credits" value="<c:out value="${subjectForm.credits}"/>" type="number" id="subject-credits" onkeydown="return event.key !== 'Enter';"></sl-input></td>
+          </tr>
+          <tr>
+            <td>
+              <form:errors path="degreeIds" cssClass="error" element="p"/>
+              <form:errors path="semesters" cssClass="error" element="p"/>
+              <spring:message code="subject.degrees"/>
+            </td>
+            <td>
+              <sl-button id="open-button3"><spring:message code="subject.add.degree"/></sl-button>
+              <input name="degreeIds" type="hidden" id="degreeIds-hiddenInput"/>
+              <input name="semesters" type="hidden" id="semesters-hiddenInput"/>
+            </td>
+          </tr>
+          <tr>
+            <td/>
+            <td>
+              <ul id="degreeSemesters"></ul>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <div class="correlatives-div">
+                <form:errors path="requirementIds" cssClass="error" element="p"/>
+                <spring:message code="subject.prerequisites"/>
+                <h6 class="optional"><spring:message code="subject.optional"/></h6>
+              </div>
+            </td>
+            <td style="display: flex; flex-direction: row">
 
-                            <input id="requirement" list="requirements" class="selection">
-                            <datalist id="requirements">
-                                <c:forEach items="${subjects}" var="subject">
-                                    <option value="<c:out value="${subject.id}"/> - <c:out value="${subject.name}"/>" id="<c:out value="${subject.id}"/>"></option>
-                                </c:forEach>
-                            </datalist>
-                            <sl-icon-button name="plus-lg" onclick="addRequirement()"></sl-icon-button>
-                        </td>
-                        <input type="hidden" name="requirementIds" id="hiddenInput"/>
-                    </tr>
-                    <tr>
-                        <td></td>
-                        <td>
-                            <ul id="prerequisiteItems"></ul>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <form:errors path="professors" cssClass="error" element="p"/>
-                            <spring:message code="subject.professors.noPoints"/>
-                        </td>
-                        <td style="display: flex; flex-direction: row">
-                            <input id="professor" list="professors" class="selection">
-                            <datalist id="professors">
-                                <c:forEach items="${professors}" var="professor">
-                                    <option value="<c:out value="${professor.name}"/>" id="<c:out value="${professor.id}"/>"></option>
-                                </c:forEach>
-                            </datalist>
-                            <sl-icon-button name="plus-lg" onclick="addProfessor()"></sl-icon-button>
-                            <input name="professors" type="hidden" id="professors-hiddenInput"/>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td></td>
-                        <td>
-                            <ul id="professorItems"></ul>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td></td>
-                        <td>
-                            <sl-button id="open-button"><spring:message code="subject.create.professor"/></sl-button>
-                        </td>
-                    </tr>
-                    </tbody>
-                </table>
-            </div>
-            <div class="add-button">
-                <sl-button variant="success" onclick="nextStep()" id="nextStep1"><spring:message code="register.next"/></sl-button>
-            </div>
+              <input id="requirement" list="requirements" class="selection">
+              <datalist id="requirements">
+                <c:forEach items="${subjects}" var="subject">
+                  <option value="<c:out value="${subject.id}"/> - <c:out value="${subject.name}"/>" id="<c:out value="${subject.id}"/>"></option>
+                </c:forEach>
+              </datalist>
+              <sl-icon-button name="plus-lg" onclick="addRequirement()"></sl-icon-button>
+            </td>
+            <input type="hidden" name="requirementIds" id="hiddenInput"/>
+          </tr>
+          <tr>
+            <td></td>
+            <td>
+              <ul id="prerequisiteItems"></ul>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <form:errors path="professors" cssClass="error" element="p"/>
+              <spring:message code="subject.professors.noPoints"/>
+            </td>
+            <td style="display: flex; flex-direction: row">
+              <input id="professor" list="professors" class="selection">
+              <datalist id="professors">
+                <c:forEach items="${professors}" var="professor">
+                  <option value="<c:out value="${professor.name}"/>" id="<c:out value="${professor.id}"/>"></option>
+                </c:forEach>
+              </datalist>
+              <sl-icon-button name="plus-lg" onclick="addProfessor()"></sl-icon-button>
+              <input name="professors" type="hidden" id="professors-hiddenInput"/>
+            </td>
+          </tr>
+          <tr>
+            <td></td>
+            <td>
+              <ul id="professorItems"></ul>
+            </td>
+          </tr>
+          <tr>
+            <td></td>
+            <td>
+              <sl-button id="open-button"><spring:message code="subject.create.professor"/></sl-button>
+            </td>
+          </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="add-button">
+        <sl-button variant="success" onclick="nextStep()" id="nextStep1"><spring:message code="register.next"/></sl-button>
+      </div>
+    </div>
+    <div id="step2" style="display: none">
+      <div>
+        <table>
+          <thead>
+          <th colspan="2"><h1><spring:message code="subject.new"/></h1></th>
+          </thead>
+          <tbody>
+          <tr>
+            <td><spring:message code="subject.class"/></td>
+            <td><sl-button id="open-button2"><spring:message code="subject.create.class"/></sl-button></td>
+          </tr>
+          </tbody>
+        </table>
+        <br/>
+        <div>
+
+          <table>
+            <thead>
+            <tr>
+              <th>
+                <form:errors path="classCodes" cssClass="error" element="p"/>
+                <spring:message code="subject.classCode"/>
+              </th>
+              <th>
+                <form:errors path="classProfessors" cssClass="error" element="p"/>
+                <spring:message code="subject.add.professors"/>
+              </th>
+              <th>
+                <form:errors path="classDays" cssClass="error" element="p"/>
+                <spring:message code="subject.classDay"/>
+              </th>
+              <th>
+                <form:errors path="classStartTimes" cssClass="error" element="p"/>
+                <spring:message code="subject.time.start"/>
+              </th>
+              <th>
+                <form:errors path="classEndTimes" cssClass="error" element="p"/>
+                <spring:message code="subject.time.end"/>
+              </th>
+              <th>
+                <form:errors path="classBuildings" cssClass="error" element="p"/>
+                <spring:message code="builder.mode"/>
+              </th>
+              <th>
+                <form:errors path="classRooms" cssClass="error" element="p"/>
+                <spring:message code="builder.building"/>
+              </th>
+              <th>
+                <form:errors path="classModes" cssClass="error" element="p"/>
+                <spring:message code="subject.classroom"/>
+              </th>
+              <th></th>
+              <th> </th>
+            </tr>
+            </thead>
+            <tbody id="classItems">
+            </tbody>
+          </table>
+
         </div>
-        <div id="step2" style="display: none">
-            <div>
-                <table>
-                    <thead>
-                    <th colspan="2"><h1><spring:message code="subject.new"/></h1></th>
-                    </thead>
-                    <tbody>
-                    <tr>
-                        <td><spring:message code="subject.class"/></td>
-                        <td><sl-button id="open-button2"><spring:message code="subject.create.class"/></sl-button></td>
-                    </tr>
-                    </tbody>
-                </table>
-                <br/>
-                <div>
+        <input type="hidden" name="classCodes" id="classCodes-hiddenInput"/>
+        <input type="hidden" name="classProfessors" id="classProfessors-hiddenInput"/>
+        <input type="hidden" name="classDays" id="classDays-hiddenInput"/>
+        <input type="hidden" name="classStartTimes" id="classStartTimes-hiddenInput"/>
+        <input type="hidden" name="classEndTimes" id="classEndTimes-hiddenInput"/>
+        <input type="hidden" name="classBuildings" id="classBuildings-hiddenInput"/>
+        <input type="hidden" name="classRooms" id="classRooms-hiddenInput"/>
+        <input type="hidden" name="classModes" id="classModes-hiddenInput"/>
+      </div>
 
-                    <table>
-                        <thead>
-                        <tr>
-                            <th>
-                                <form:errors path="classCodes" cssClass="error" element="p"/>
-                                <spring:message code="subject.classCode"/>
-                            </th>
-                            <th>
-                                <form:errors path="classProfessors" cssClass="error" element="p"/>
-                                <spring:message code="subject.add.professors"/>
-                            </th>
-                            <th>
-                                <form:errors path="classDays" cssClass="error" element="p"/>
-                                <spring:message code="subject.classDay"/>
-                            </th>
-                            <th>
-                                <form:errors path="classStartTimes" cssClass="error" element="p"/>
-                                <spring:message code="subject.time.start"/>
-                            </th>
-                            <th>
-                                <form:errors path="classEndTimes" cssClass="error" element="p"/>
-                                <spring:message code="subject.time.end"/>
-                            </th>
-                            <th>
-                                <form:errors path="classBuildings" cssClass="error" element="p"/>
-                                <spring:message code="builder.mode"/>
-                            </th>
-                            <th>
-                                <form:errors path="classRooms" cssClass="error" element="p"/>
-                                <spring:message code="builder.building"/>
-                            </th>
-                            <th>
-                                <form:errors path="classModes" cssClass="error" element="p"/>
-                                <spring:message code="subject.classroom"/>
-                            </th>
-                            <th></th>
-                            <th> </th>
-                        </tr>
-                        </thead>
-                        <tbody id="classItems">
-                        </tbody>
-                    </table>
-
-                </div>
-                <input type="hidden" name="classCodes" id="classCodes-hiddenInput"/>
-                <input type="hidden" name="classProfessors" id="classProfessors-hiddenInput"/>
-                <input type="hidden" name="classDays" id="classDays-hiddenInput"/>
-                <input type="hidden" name="classStartTimes" id="classStartTimes-hiddenInput"/>
-                <input type="hidden" name="classEndTimes" id="classEndTimes-hiddenInput"/>
-                <input type="hidden" name="classBuildings" id="classBuildings-hiddenInput"/>
-                <input type="hidden" name="classRooms" id="classRooms-hiddenInput"/>
-                <input type="hidden" name="classModes" id="classModes-hiddenInput"/>
-            </div>
-
-            <div class="add-button">
-                <sl-button variant="success" onclick="previousStep()" class="bottom-buttons"><spring:message code="register.previous"/></sl-button>
-                <sl-button type="submit" variant="success" class="bottom-buttons" id="submit-button"><spring:message code="subject.create"/></sl-button>
-            </div>
-        </div>
-        </div>
-    </form:form>
+      <div class="add-button">
+        <sl-button variant="success" onclick="previousStep()" class="bottom-buttons"><spring:message code="register.previous"/></sl-button>
+        <sl-button type="submit" variant="success" class="bottom-buttons" id="submit-button"><spring:message code="subject.create"/></sl-button>
+      </div>
+    </div>
+    </div>
+  </form:form>
 
 </main>
 <jsp:include page="../components/footer.jsp"/>
@@ -530,6 +530,19 @@
         "10":"<spring:message code="semester" arguments="10" htmlEscape="false" javaScriptEscape="true"/>",
         "-1":"<spring:message code="elective" htmlEscape="false" javaScriptEscape="true"/>",
     }
+
+    //listener for id
+    const idInput = document.getElementById('subject-id');
+    idInput.addEventListener('sl-change', () => checkCompleteFields());
+
+    //listener for name
+    const nameInput = document.getElementById('subject-name');
+    nameInput.addEventListener('sl-change', () => checkCompleteFields());
+
+    //listener for credits
+    const creditsInput = document.getElementById('subject-credits');
+    creditsInput.addEventListener('sl-change', () => checkCompleteFields());
+
 
     // listener for department
     const departmentSelect = document.getElementById('department-select');

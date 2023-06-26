@@ -56,8 +56,8 @@ public class DegreeJpaDao implements DegreeDao {
     @Override
     public void addSubjectToDegrees(final Subject subject, final List<Long> degreeIds, final List<Integer> semesters) {
         for (int i = 0; i < degreeIds.size(); i++) {
-            Degree degree = em.find(Degree.class, degreeIds.get(i));
-            DegreeSubject ds = new DegreeSubject(degree, subject, semesters.get(i));
+            final Degree degree = em.find(Degree.class, degreeIds.get(i));
+            final DegreeSubject ds = new DegreeSubject(degree, subject, semesters.get(i));
             if (!degree.getDegreeSubjects().contains(ds)) {
                 degree.getDegreeSubjects().add(ds);
             }
@@ -67,18 +67,22 @@ public class DegreeJpaDao implements DegreeDao {
     @Override
     public void updateInsertSubjectToDegrees(final Subject subject, final List<Degree> degreesToInsert, final List<Integer> semestersToAdd) {
         for( int i = 0 ; i < degreesToInsert.size() ; i++){
-            Degree degree = degreesToInsert.get(i);
-            DegreeSubject ds = new DegreeSubject(degree, subject, semestersToAdd.get(i));
+            final Degree degree = degreesToInsert.get(i);
+            final DegreeSubject ds = new DegreeSubject(degree, subject, semestersToAdd.get(i));
             em.persist(ds);
             degree.getDegreeSubjects().add(ds);
         }
     }
 
     @Override
-    public void updateUpdateSubjectToDegrees(final Subject subject, final List<DegreeSubject> degreesToUpdate, final List<Integer> semestersToUpdate) {
+    public void updateUpdateSubjectToDegrees(
+            final Subject subject,
+            final List<DegreeSubject> degreesToUpdate,
+            final List<Integer> semestersToUpdate
+    ) {
         for( int i = 0 ; i < degreesToUpdate.size() ; i++){
-            DegreeSubject degreeSubject = degreesToUpdate.get(i);
-            Integer semesterToUpdate = semestersToUpdate.get(i);
+            final DegreeSubject degreeSubject = degreesToUpdate.get(i);
+            final Integer semesterToUpdate = semestersToUpdate.get(i);
             degreeSubject.setSemester(semesterToUpdate);
         }
     }
