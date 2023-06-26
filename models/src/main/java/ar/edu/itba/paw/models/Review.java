@@ -29,9 +29,11 @@ public class Review {
     @JoinColumn(name = "idsub")
     private Subject subject;
 
+    @Enumerated(EnumType.ORDINAL)
     @Column(name = "easy")
     private Difficulty difficulty;
 
+    @Enumerated(EnumType.ORDINAL)
     @Column(name = "timedemanding")
     private TimeDemanding timeDemanding;
 
