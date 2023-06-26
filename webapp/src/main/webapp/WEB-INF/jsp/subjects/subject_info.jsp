@@ -71,7 +71,10 @@
             padding: 1rem 2rem 3rem;
             gap: 1rem;
         }
-
+        h3 {
+          display: flex;
+          justify-content: center;
+        }
         .review-card [slot='header'] {
             display: flex;
             align-items: center;

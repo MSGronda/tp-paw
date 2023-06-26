@@ -49,7 +49,7 @@
       .button-row form {
           margin: 0;
       }
-      h4 {
+      h3 {
           display: flex;
           justify-content: center;
       }
@@ -198,7 +198,7 @@
     <c:import url="../components/order_dropdown.jsp"/>
   </c:if>
   <c:if test="${empty reviews}">
-    <h4><spring:message code="subject.noreviews"/></h4>
+    <h3><spring:message code="subject.noreviews"/></h3>
   </c:if>
   <div class="review-container">
     <c:forEach var="review" items="${reviews}">
