@@ -258,7 +258,10 @@ public class UserServiceImpl implements UserService {
     @Transactional
     @Override
     public void setLocale(final User user, final Locale locale) {
-        userDao.setLocale(user, locale);
+        if(!user.getLocale().equals(locale)){
+            userDao.setLocale(user, locale);
+            LOGGER.debug("Set locale for user {} to '{}'", user.getId(), locale);
+        }
     }
 
     @Transactional

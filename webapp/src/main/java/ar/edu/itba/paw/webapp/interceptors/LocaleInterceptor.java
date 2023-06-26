@@ -42,12 +42,6 @@ public class LocaleInterceptor implements HandlerInterceptor {
     public void afterCompletion(final HttpServletRequest httpServletRequest, final HttpServletResponse httpServletResponse, final Object o, final Exception e) {
         if(!authUserService.isAuthenticated()) return;
 
-        final User user = authUserService.getCurrentUser();
-        final Locale locale = user.getLocale();
-
-        if(!locale.equals(httpServletRequest.getLocale())){
-            userService.setLocale(user, httpServletRequest.getLocale());
-            LOGGER.debug("Set locale for user {} to '{}'", user.getId(), httpServletRequest.getLocale());
-        }
+        userService.setLocale(authUserService.getCurrentUser(), httpServletRequest.getLocale());
     }
 }
