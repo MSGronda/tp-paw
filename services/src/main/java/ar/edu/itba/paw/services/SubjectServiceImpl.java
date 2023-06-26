@@ -9,7 +9,7 @@ import ar.edu.itba.paw.models.exceptions.SubjectNotFoundException;
 import ar.edu.itba.paw.models.exceptions.UnauthorizedException;
 import ar.edu.itba.paw.persistence.dao.SubjectDao;
 import ar.edu.itba.paw.persistence.exceptions.SubjectIdAlreadyExistsPersistenceException;
-import ar.edu.itba.paw.services.exceptions.SubjectIdAlreadyExistsException;
+import ar.edu.itba.paw.models.exceptions.SubjectIdAlreadyExistsException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

@@ -7,7 +7,7 @@ import ar.edu.itba.paw.models.User;
 import ar.edu.itba.paw.models.exceptions.SubjectNotFoundException;
 import ar.edu.itba.paw.models.exceptions.UnauthorizedException;
 import ar.edu.itba.paw.services.*;
-import ar.edu.itba.paw.services.exceptions.SubjectIdAlreadyExistsException;
+import ar.edu.itba.paw.models.exceptions.SubjectIdAlreadyExistsException;
 import ar.edu.itba.paw.webapp.form.EditSubjectForm;
 import ar.edu.itba.paw.webapp.form.SubjectForm;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -64,29 +64,32 @@ public class SubjectController {
         mav.addObject("currentPage", page);
         mav.addObject("order", order);
         mav.addObject("dir", dir);
-
         return mav;
     }
 
-    @RequestMapping(value = "/create-subject", method = {RequestMethod.GET} )
+    @RequestMapping(value = "/create-subject", method = {RequestMethod.GET})
     public ModelAndView createSubjectForm(@ModelAttribute("subjectForm") final SubjectForm subjectForm) {
+        final List<Subject> subjects = subjectService.getAll();
+        final List<Professor> professors = professorService.getAll();
+        final List<Degree> degrees = degreeService.getAll();
 
-        ModelAndView mav = new ModelAndView("moderator-tools/createSubject");
-        List<Subject> subjects = subjectService.getAll();
-        List<Professor> professors = professorService.getAll();
-        List<Degree> degrees = degreeService.getAll();
+        final ModelAndView mav = new ModelAndView("moderator-tools/createSubject");
         mav.addObject("subjects", subjects);
         mav.addObject("professors", professors);
         mav.addObject("degrees", degrees);
         return mav;
     }
+
     @RequestMapping(value = "/create-subject", method = {RequestMethod.POST} )
-    public ModelAndView createSubject(@Valid @ModelAttribute("subjectForm") final SubjectForm subjectForm,
-                                      final BindingResult errors) {
+    public ModelAndView createSubject(
+            @Valid @ModelAttribute("subjectForm") final SubjectForm subjectForm,
+            final BindingResult errors
+    ) {
         if(errors.hasErrors()) {
             return createSubjectForm(subjectForm);
         }
-        Subject newSub;
+
+        final Subject newSub;
         try{
             newSub = subjectService.create(Subject.builder()
                     .id(subjectForm.getId())
@@ -107,7 +110,7 @@ public class SubjectController {
                     subjectForm.getClassModes()
             );
         } catch (SubjectIdAlreadyExistsException e) {
-            ModelAndView mav = createSubjectForm(subjectForm);
+            final ModelAndView mav = createSubjectForm(subjectForm);
             mav.addObject("subjectCodeRepeated", true);
             return mav;
         }
@@ -124,12 +127,15 @@ public class SubjectController {
     }
 
     @RequestMapping(value = "/subject/{id:\\d+\\.\\d+}/edit", method = {RequestMethod.GET})
-    public ModelAndView editSubjectForm(@PathVariable final String id, @ModelAttribute("subjectForm") final EditSubjectForm editSubjectForm,
-                                        final BindingResult errors) {
+    public ModelAndView editSubjectForm(
+            @PathVariable final String id,
+            @ModelAttribute("subjectForm") final EditSubjectForm editSubjectForm
+    ) {
         final Subject subject = subjectService.findById(id).orElseThrow(SubjectNotFoundException::new);
-        List<Subject> subjects = subjectService.getAll();
-        List<Professor> professors = professorService.getAll();
-        List<Degree> degrees = degreeService.getAll();
+        final List<Subject> subjects = subjectService.getAll();
+        final List<Professor> professors = professorService.getAll();
+        final List<Degree> degrees = degreeService.getAll();
+
         final ModelAndView mav = new ModelAndView("moderator-tools/editSubject");
         mav.addObject("subject", subject);
         mav.addObject("allSubjects", subjects);
@@ -139,8 +145,15 @@ public class SubjectController {
     }
 
     @RequestMapping(value = "/subject/{id:\\d+\\.\\d+}/edit", method = {RequestMethod.POST})
-    public ModelAndView editSubject(@PathVariable final String id, @Valid @ModelAttribute("editSubjectForm") final EditSubjectForm editSubjectForm,
-                                    final BindingResult errors) {
+    public ModelAndView editSubject(
+            @PathVariable final String id,
+            @Valid @ModelAttribute("editSubjectForm") final EditSubjectForm editSubjectForm,
+            final BindingResult errors
+    ) {
+        if(errors.hasErrors()) {
+            return editSubjectForm(id, editSubjectForm);
+        }
+
         subjectService.edit(
                 id,
                 editSubjectForm.getCredits(),
@@ -160,7 +173,4 @@ public class SubjectController {
         );
         return new ModelAndView("redirect:/subject/"+id);
     }
-
-
-
 }

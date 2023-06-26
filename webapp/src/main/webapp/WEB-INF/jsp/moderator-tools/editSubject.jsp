@@ -9,6 +9,9 @@
     <jsp:include page="../components/head_shared.jsp"/>
 
     <style>
+        #editSubjectForm {
+            margin-top: 1rem;
+        }
         .add-button {
             display: flex;
             justify-content: center;
@@ -72,6 +75,28 @@
             margin: 0;
             font-size: medium;
         }
+
+        main form [data-invalid]::part(base),
+        main form [data-invalid]::part(combobox),
+        main form [data-invalid]::part(control){
+            border-color: red;
+        }
+
+        main form [data-invalid]::part(form-control-label),
+        main form [data-invalid]::part(form-control-help-text) {
+            color: red;
+        }
+
+        main form [data-valid]::part(base),
+        main form [data-valid]::part(combobox),
+        main form [data-valid]::part(control) {
+            border-color: #009a00;
+        }
+
+        main form [data-valid]::part(form-control-label),
+        main form [data-valid]::part(form-control-help-text) {
+            color: #009a00;
+        }
     </style>
 </head>
 <body>
@@ -94,7 +119,7 @@
                             <form:errors path="credits" cssClass="error" element="p"/>
                             <spring:message code="subject.credits"/>
                         </td>
-                        <td><sl-input name="credits" path="credits" value="<c:out value="${subject.credits}"/>" type="number" id="subject-credits" onkeydown="return event.key !== 'Enter';"></sl-input></td>
+                        <td><sl-input required name="credits" path="credits" value="<c:out value="${subject.credits}"/>" type="number" id="subject-credits" onkeydown="return event.key !== 'Enter';"></sl-input></td>
                     </tr>
                     <tr>
                         <td>

@@ -4,7 +4,7 @@ import ar.edu.itba.paw.models.Subject;
 import ar.edu.itba.paw.models.User;
 import ar.edu.itba.paw.models.exceptions.SubjectNotFoundException;
 import ar.edu.itba.paw.models.exceptions.UnauthorizedException;
-import ar.edu.itba.paw.services.exceptions.SubjectIdAlreadyExistsException;
+import ar.edu.itba.paw.models.exceptions.SubjectIdAlreadyExistsException;
 
 import java.util.List;
 import java.util.Map;
@@ -66,9 +66,9 @@ public interface SubjectService {
     void updateUnreviewedNotificationTime();
 
     List<Subject> findAllThatUserCanDo(final User user);
-    List<Subject> findAllThatUserHasNotDone(User user);
-    List<Subject> findAllThatUserHasDone(User user);
-    List<Subject> findAllThatUserCouldUnlock(User user);
+    List<Subject> findAllThatUserHasNotDone(final User user);
+    List<Subject> findAllThatUserHasDone(final User user);
+    List<Subject> findAllThatUserCouldUnlock(final User user);
 
     void delete(final User user, final String subjectId) throws UnauthorizedException, SubjectNotFoundException;
 

@@ -28,10 +28,10 @@ public class UserController {
 
     @Autowired
     public UserController(
-            UserService userService,
-            ReviewService reviewService,
-            AuthUserService authUserService,
-            DegreeService degreeService
+            final UserService userService,
+            final ReviewService reviewService,
+            final AuthUserService authUserService,
+            final DegreeService degreeService
     ) {
         this.userService = userService;
         this.reviewService = reviewService;
@@ -230,7 +230,7 @@ public class UserController {
             @Valid @ModelAttribute ("RecoverPasswordForm") final RecoverPasswordForm recoverPasswordForm,
             final BindingResult errors
     ){
-        if( errors.hasErrors()){
+        if(errors.hasErrors()){
             return recoverPassword(recoverPasswordForm);
         }
 
