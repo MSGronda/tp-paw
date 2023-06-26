@@ -30,7 +30,7 @@ public class SubjectClass {
     private List<Professor> professors;
 
     @OnDelete(action = OnDeleteAction.CASCADE)
-    @OneToMany(mappedBy = "subjectClass", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "subjectClass")
     private List<SubjectClassTime> classTimes;
 
     protected SubjectClass() {}

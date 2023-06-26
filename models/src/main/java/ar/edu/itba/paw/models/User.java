@@ -48,7 +48,7 @@ public class User {
     @JoinColumn(name = "degreeid")
     private Degree degree;
 
-    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name = "userroles",
             joinColumns = @JoinColumn(name = "userid"),
@@ -62,7 +62,7 @@ public class User {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL,  orphanRemoval = true)
     private List<ReviewVote> votes;
 
-    @ManyToMany(cascade = CascadeType.ALL)
+    @ManyToMany
     @JoinTable(
             name = "userSemester",
             joinColumns = @JoinColumn(name = "iduser"),

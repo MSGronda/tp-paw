@@ -26,6 +26,10 @@ public class Subject {
     @PrimaryKeyJoinColumn(foreignKey = @ForeignKey(value = ConstraintMode.NO_CONSTRAINT))
     private ReviewStats reviewStats;
 
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    @OneToMany(mappedBy = "subject")
+    private List<DegreeSubject> degreeSubjects;
+
     @ManyToMany
     @JoinTable(
             name = "prereqsubjects",
@@ -51,11 +55,11 @@ public class Subject {
     private Set<Degree> degrees;
 
     @OnDelete(action = OnDeleteAction.CASCADE)
-    @OneToMany(mappedBy = "subject", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "subject")
     private Set<SubjectClass> classes;
 
     @OnDelete(action = OnDeleteAction.CASCADE)
-    @OneToMany(mappedBy = "subject", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "subject")
     private List<Review> reviews;
 
     private Subject(Builder builder) {

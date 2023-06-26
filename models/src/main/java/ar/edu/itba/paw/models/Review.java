@@ -44,7 +44,7 @@ public class Review {
     private boolean anonymous;
 
     @OnDelete(action = OnDeleteAction.CASCADE)
-    @OneToMany(mappedBy = "review", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "review")
     private List<ReviewVote> votes;
 
     @Formula("(SELECT COUNT(*) FROM reviewvote r WHERE r.idreview = id AND r.vote = 1)")
