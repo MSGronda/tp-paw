@@ -103,6 +103,15 @@
           display: flex;
           flex-direction: row;
       }
+      sl-tooltip::part(body) {
+        color: black;
+        background-color: white;
+        margin: 0;
+        padding: 0;
+      }
+      sl-tooltip::part(base__arrow) {
+        background-color: white;
+      }
       <jsp:include page="../components/component-style/table_style.jsp"/>
   </style>
 </head>

@@ -2,6 +2,14 @@ let degreeId;
 
 let subjectList = [];
 
+function resetCheckBox(){
+    const checkBoxes = document.querySelectorAll('[id^="degree-'  + degreeId + '-year-"]')
+    checkBoxes.forEach( e => {e.checked = false; e.selected = false})
+
+    const electiveCheckBox = document.querySelectorAll('[id^="elective-'  + degreeId + '"]')
+    electiveCheckBox.forEach( e => {e.checked = false; e.selected = false})
+}
+
 function nextStep() {
     const currentStepValue = getCurrentStep();
     const currentStep = document.getElementById("step" + currentStepValue);
@@ -20,6 +28,8 @@ function previousStep() {
     // Show the previous step
     const previousStep = document.getElementById("step" + (currentStepValue - 1));
     previousStep.style.display = "block";
+
+    resetCheckBox()
 }
 
 function getCurrentStep() {
@@ -33,6 +43,25 @@ function getCurrentStep() {
 }
 
 document.getElementById('select-degree').addEventListener('sl-change', updateDegreeSelection);
+
+function createCloseAction(elemId){
+    return function (){
+        const trees = document.querySelectorAll('[id^="year-tree-"]')
+        trees.forEach(e => {
+            if(e.id !== elemId){
+                e.expanded = false;
+                e.selected = false;
+            }
+        });
+    }
+}
+
+const trees = document.querySelectorAll('[id^="year-tree-"]')
+
+trees.forEach( e => {
+    e.addEventListener('sl-expand', createCloseAction(e.id));
+})
+
 
 function updateDegreeSelection() {
     degreeId = document.getElementById('select-degree').value;
@@ -117,6 +146,8 @@ function updateDegreeSelection() {
             const year = this.id.split('-')[4]; // Extract the year value from the checkbox ID
             const checked = document.getElementById('degree-' + degreeId + '-year-checkbox-'+year).checked;
 
+            createCloseAction('year-tree-' + degreeId +  '-' + year)();
+
             // Get all checkboxes within the corresponding year
             const yearSubjectCheckboxes = document.querySelectorAll('.degree-' + degreeId + '-year-' + year + '-subject');
 
@@ -138,8 +169,6 @@ function updateDegreeSelection() {
             });
         });
     });
-
-
 
     const electiveCheckboxes = document.querySelectorAll('.elective-' + degreeId +'-subject');
 

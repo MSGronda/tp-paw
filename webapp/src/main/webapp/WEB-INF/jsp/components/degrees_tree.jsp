@@ -37,7 +37,7 @@
         <div class="checkbox-label">
           <sl-checkbox id="degree-${degree.id}-year-checkbox-${year.number}" class="degree-${degree.id}-year-checkbox"></sl-checkbox>
         </div>
-        <sl-tree-item class="tree">
+        <sl-tree-item id="year-tree-${degree.id}-${year.number}" class="tree">
           <h3 ><spring:message code="subject.year" arguments="${year.number}"/></h3>
           <c:forEach var="subject" items="${year.subjects}">
             <sl-tree-item>
@@ -51,7 +51,7 @@
     </c:forEach>
     <div id="elective-tree-${degree.id}" style="display:none;">
       <div class="YearItem">
-        <sl-tree-item class="elective-tree">
+        <sl-tree-item id="year-tree-${degree.id}-${0}" class="elective-tree">
           <h3><spring:message code="home.electives"/></h3>
           <c:forEach var="elective" items="${degree.electives}">
             <sl-tree-item>
