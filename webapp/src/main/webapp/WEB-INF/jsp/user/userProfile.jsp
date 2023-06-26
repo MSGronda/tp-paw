@@ -65,6 +65,11 @@
       color: #4e90e2;
       font-weight: normal;
     }
+    a {
+      color: #0369a1;
+      background-color: transparent;
+      text-decoration: none;
+    }
     .moderator-tag {
       display: flex;
       flex-direction: row;
@@ -83,6 +88,7 @@
 <body>
 <jsp:include page="../components/navbar.jsp" />
 <main class="container-50 pusher container-account" >
+  <sl-card>
   <div class="header">
     <div class="image-container">
       <spring:message code="profile.picture.alt" var="pic" arguments="${user.username}" argumentSeparator="\0"/>
@@ -106,7 +112,33 @@
     <div>
     </div>
   </div>
-  <br/>
+  <br>
+  <table>
+    <tbody>
+      <tr>
+        <td><spring:message code="degree"/></td>
+        <td><c:out value="${user.degree.name}"/></td>
+      </tr>
+
+      <c:forEach var="subject" items="${user.userSemester}" varStatus="status">
+      <tr>
+        <td>
+          <c:if test="${status.first}">
+            <spring:message code="dashboard.currentSemester"/>
+          </c:if>
+        </td>
+        <td>
+          <a href="<c:url value="/subject/${subject.subject.id}"/>"><c:out value="${subject.subject.name}"/></a>
+        </td>
+      </tr>
+      </c:forEach>
+    <tr>
+      <td><spring:message code="dashboard.overview.completedCredits"/></td>
+      <td><c:out value="${user.creditsDone}"/> <spring:message code="profile.outOf"/> <c:out value="${user.degree.totalCredits}"/> </td>
+    </tr>
+    </tbody>
+  </table>
+  </sl-card>
   <br>
   <hr />
   <c:if test="${not empty reviews}">
