@@ -8,6 +8,9 @@
   <jsp:include page="../components/head_shared.jsp"/>
 
   <style>
+      #subjectForm {
+          margin-top: 3rem;
+      }
       .add-button {
           display: flex;
           justify-content: center;
@@ -74,6 +77,28 @@
       td{
 
       }
+
+      main form [data-user-invalid]::part(base),
+      main form [data-user-invalid]::part(combobox),
+      main form [data-user-invalid]::part(control){
+          border-color: red;
+      }
+
+      main form [data-user-invalid]::part(form-control-label),
+      main form [data-user-invalid]::part(form-control-help-text) {
+          color: red;
+      }
+
+      main form [data-user-valid]::part(base),
+      main form [data-user-valid]::part(combobox),
+      main form [data-user-valid]::part(control) {
+          border-color: #009a00;
+      }
+
+      main form [data-user-valid]::part(form-control-label),
+      main form [data-user-valid]::part(form-control-help-text) {
+          color: #009a00;
+      }
   </style>
 </head>
 <body>
@@ -99,7 +124,8 @@
               </c:if>
               <spring:message code="subject.id"/>
             </td>
-            <td><sl-input name="id" path="id" value="<c:out value="${subjectForm.id}"/>" id="subject-id" onkeydown="return event.key !== 'Enter';"></sl-input></td>
+            <spring:message code="subject.id.help" var="idHelp"/>
+            <td><sl-input required name="id" path="id" pattern="\d{2}\.\d{2}" help-text="${idHelp}" value="<c:out value="${subjectForm.id}"/>" id="subject-id" onkeydown="return event.key !== 'Enter';"></sl-input></td>
           </tr>
           <tr>
 
@@ -107,16 +133,15 @@
               <form:errors path="name" cssClass="error" element="p"/>
               <spring:message code="subject.name"/>
             </td>
-            <td><sl-input name="name" path="name" value="<c:out value="${subjectForm.name}"/>" id="subject-name" onkeydown="return event.key !== 'Enter';"></sl-input></td>
+            <td><sl-input required name="name" path="name" minlength="1" value="<c:out value="${subjectForm.name}"/>" id="subject-name" onkeydown="return event.key !== 'Enter';"></sl-input></td>
           </tr>
           <tr>
-
             <td>
               <form:errors path="department" cssClass="error" element="p"/>
               <spring:message code="subject.department"/>
             </td>
             <td>
-              <sl-select id="department-select">
+              <sl-select required  id="department-select">
                 <sl-option id="department-select-1" value="<c:out value="1"/>"><c:out value="Ambiente y Movilidad"/></sl-option>
                 <sl-option id="department-select-2" value="<c:out value="2"/>"><c:out value="Ciencias Exactas y Naturales"/></sl-option>
                 <sl-option id="department-select-3" value="<c:out value="3"/>"><c:out value="Ciencias de la Vida"/></sl-option>
@@ -133,7 +158,7 @@
               <form:errors path="credits" cssClass="error" element="p"/>
               <spring:message code="subject.credits"/>
             </td>
-            <td><sl-input name="credits" path="credits" value="<c:out value="${subjectForm.credits}"/>" type="number" id="subject-credits" onkeydown="return event.key !== 'Enter';"></sl-input></td>
+            <td><sl-input required name="credits" path="credits" value="<c:out value="${subjectForm.credits}"/>" type="number" id="subject-credits" onkeydown="return event.key !== 'Enter';"></sl-input></td>
           </tr>
           <tr>
             <td>
