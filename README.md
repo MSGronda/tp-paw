@@ -1,35 +1,23 @@
-# Project Title
+# UNI
 
-Uni is a project intended for students to review subjects completed in their curriculum. It is a webpage for students to share their experiences and help others make informed decisions when applying for new subjects.
+Uni is a webapp university students can use to create, manage and track their university careers. 
 
+## Requirements
 
+- Use Java 8.
+- Have a PostgresSQL running on port 5432
+
+## Deployment
+
+Run the following commands: 
+1)
+```
+    mvn jetty::run
+```
 ## Running the tests
 ```
     mvn test
 ```
-
-## Deployment
-
-To run the project locally a file named `application-dev.properties` must be created in the `src/main/resources` folder in the webapp module. This file must contain the following structure:
-
-```
-    auth.rememberMe.key=
-
-    baseUrl=http://localhost:8080
-
-    mail.host=
-    mail.port=
-    mail.username=
-    mail.displayname=Uni
-    mail.password=
-
-    db.url=
-    db.username=
-    db.password=
-```
-Also, the local database must be filed with the following SQL script:
-
-[Master SQL](https://drive.google.com/file/d/1o4RwuEiW01c00MXlRF4y0xqjixtE2NAK/view?usp=sharing)
 
 ## Technologies Used
 
@@ -59,7 +47,9 @@ This is the first issue of the project due to 17/5/2023 at 19hs
   - Review Voting
   - Review sorting
   - Review Paging in subject information and user profile (10 reviews per page)
-  - Semester Builder
+  - Semester Builder with insights 
+  - Progress tracking
+  - Subject creation, editing and removal
   - Logging
   - Mailing
   - Internationalization (English and Spanish)
