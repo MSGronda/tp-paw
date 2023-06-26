@@ -616,6 +616,10 @@
     const allProfessors = [<c:forEach var="prof" items="${professors}">"<c:out value="${prof.name}"/>", </c:forEach>
     ]
 
+    //listener for credits
+    const creditsInput = document.getElementById('subject-credits');
+    creditsInput.addEventListener('sl-change', () => checkCompleteFields());
+
     function checkCompleteFields(){
         const credits = document.getElementById('subject-credits').value;
         document.getElementById('nextStep1').disabled = !(
