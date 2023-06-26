@@ -28,6 +28,16 @@ function orderByAction(name, sorter){
     subjectClasses.sort(sorter)
     rebuildSubjectList()
 }
+function orderByNameAction() {
+    if(currentOrder === 'order-name-down'){
+        orderByAction('order-name-up', (a,b) => a.name.localeCompare(b.name))
+        currentOrder = 'order-name-up'
+    }
+    else{
+        orderByAction('order-name-down', (a,b) => b.name.localeCompare(a.name))
+        currentOrder = 'order-name-down'
+    }
+}
 function orderByCreditAction() {
     if(currentOrder === 'order-credits-down'){
         orderByAction('order-credits-up', sortByCreditsAsc)

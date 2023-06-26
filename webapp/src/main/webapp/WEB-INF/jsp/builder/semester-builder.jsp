@@ -355,6 +355,13 @@
               </sl-button>
 
               <sl-menu>
+                <sl-menu-item id="name-orderby">
+                  <div class="order-menu">
+                    <spring:message code="search.name"/>
+                    <sl-icon style="display: none" id="order-name-down" class="icon" slot="suffix" name="arrow-down"></sl-icon>
+                    <sl-icon style="display: none" id="order-name-up" class="icon" slot="suffix" name="arrow-up"></sl-icon>
+                  </div>
+                </sl-menu-item>
                 <sl-menu-item id="credit-orderby">
                   <div class="order-menu">
                     <spring:message code="search.credits"/>
@@ -837,6 +844,7 @@
     document.getElementById('exit-class-selector').addEventListener('click', exitClassSelectionAction);
 
     // set order by action for all sorters
+    document.getElementById('name-orderby').addEventListener('click', orderByNameAction)
     document.getElementById('credit-orderby').addEventListener('click', orderByCreditAction)
     document.getElementById('difficulty-orderby').addEventListener('click', orderByDifficultyAction)
     document.getElementById('timedemand-orderby').addEventListener('click', orderByTimeDemandAction)
