@@ -287,7 +287,7 @@ public class UserServiceImpl implements UserService {
 
         final Map<String, SubjectClass> classes = subject.getClassesById();
         if (!classes.containsKey(classId)) {
-            LOGGER.warn("No class in subject {} for id {}", subjectId, classId);
+            LOGGER.debug("No class in subject {} for id {}", subjectId, classId);
             throw new SubjectClassNotFoundException();
         }
         final SubjectClass subjectClass = classes.get(classId);
