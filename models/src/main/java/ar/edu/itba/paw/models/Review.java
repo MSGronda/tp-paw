@@ -3,6 +3,8 @@ package ar.edu.itba.paw.models;
 import ar.edu.itba.paw.models.enums.Difficulty;
 import ar.edu.itba.paw.models.enums.TimeDemanding;
 import org.hibernate.annotations.Formula;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
@@ -41,6 +43,7 @@ public class Review {
     @Column(name = "useranonymous")
     private boolean anonymous;
 
+    @OnDelete(action = OnDeleteAction.CASCADE)
     @OneToMany(mappedBy = "review", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ReviewVote> votes;
 

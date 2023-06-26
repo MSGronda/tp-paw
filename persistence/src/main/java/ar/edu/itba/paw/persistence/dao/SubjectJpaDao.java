@@ -346,7 +346,7 @@ public class SubjectJpaDao implements SubjectDao {
             }
             else {
                 nativeQuerySb = new StringBuilder("SELECT DISTINCT ").append(field.getColumn()).append(
-                            " FROM subjects LEFT JOIN subjectreviewstatistics srs ON s.id = srs.idsub WHERE subname ILIKE ?"
+                            " FROM subjects s LEFT JOIN subjectreviewstatistics srs ON s.id = srs.idsub WHERE subname ILIKE ?"
                 );
             }
 
@@ -621,9 +621,7 @@ public class SubjectJpaDao implements SubjectDao {
 
     @Override
     public void delete(final Subject subject){
-        em.createQuery("delete from Subject where id = :id")
-                .setParameter("id",subject.getId())
-                .executeUpdate();
+        em.remove(subject);
     }
 
     private DegreeSubject getDegreeSubject(final Subject subject, final Degree degree){

@@ -1,5 +1,8 @@
 package ar.edu.itba.paw.models;
 
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
+
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.*;
@@ -26,6 +29,7 @@ public class SubjectClass {
     )
     private List<Professor> professors;
 
+    @OnDelete(action = OnDeleteAction.CASCADE)
     @OneToMany(mappedBy = "subjectClass", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<SubjectClassTime> classTimes;
 
