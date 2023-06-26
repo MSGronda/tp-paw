@@ -1,6 +1,8 @@
 package ar.edu.itba.paw.persistence.dao;
 
 import ar.edu.itba.paw.models.Professor;
+import ar.edu.itba.paw.models.Subject;
+import ar.edu.itba.paw.models.SubjectClass;
 import ar.edu.itba.paw.persistence.config.TestConfig;
 import org.junit.Before;
 import org.junit.Test;
@@ -13,10 +15,9 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
-import java.util.List;
+import java.util.*;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 @SuppressWarnings("OptionalGetWithoutIsPresent")
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -25,6 +26,9 @@ import static org.junit.Assert.assertTrue;
 public class ProfessorJpaDaoTest {
     private final static String NAME = "name";
     private final static String NAME_2 = "name2";
+    private final static String SUBJECT_CODE = "10.01";
+    private final static String SUBJECT_NAME = "Informatica General";
+    private final static String DEPARTMENT_NAME = "Informatica";
 
     @PersistenceContext
     private EntityManager em;
@@ -58,5 +62,145 @@ public class ProfessorJpaDaoTest {
         assertEquals(2, actual.size());
         assertTrue(actual.contains(professor));
         assertTrue(actual.contains(professor2));
+    }
+
+    @Test
+    public void addSubjectToProfessors(){
+        final List<String> professorList = new ArrayList<>();
+        final Professor professor = new Professor(NAME);
+        final Professor professor2 = new Professor(NAME_2);
+        final Subject sub = Subject.builder().id(SUBJECT_CODE).name(SUBJECT_NAME).credits(9).department(DEPARTMENT_NAME).build();
+
+        professorList.add(professor.getName());
+        professorList.add(professor2.getName());
+        em.persist(professor);
+        em.persist(professor2);
+
+        professorJpaDao.addSubjectToProfessors(sub,professorList);
+
+        assertEquals(professor.getSubjects().get(0),sub);
+        assertEquals(professor2.getSubjects().get(0),sub);
+    }
+
+    @Test
+    public void addSubjectToProfessors2(){
+        final List<String> professorList = new ArrayList<>();
+        final Subject sub = Subject.builder().id(SUBJECT_CODE).name(SUBJECT_NAME).credits(9).department(DEPARTMENT_NAME).build();
+
+        em.persist(sub);
+
+        professorList.add(NAME);
+        professorList.add(NAME_2);
+
+        professorJpaDao.addSubjectToProfessors(sub,professorList);
+
+        Optional<Professor> maybeProfessor = em.createQuery("from Professor as p where p.name = :name", Professor.class)
+                .setParameter("name",NAME).getResultList().stream().findFirst();
+        Optional<Professor> maybeProfessor2 = em.createQuery("from Professor as p where p.name = :name", Professor.class)
+                .setParameter("name",NAME_2).getResultList().stream().findFirst();
+
+        assertTrue(maybeProfessor.isPresent());
+        assertTrue(maybeProfessor2.isPresent());
+
+        assertEquals(maybeProfessor.get().getSubjects().get(0),sub);
+        assertEquals(maybeProfessor2.get().getSubjects().get(0),sub);
+    }
+
+    @Test
+    public void updateSubjectToProfessorsAdd(){
+        final List<Professor> professorList = new ArrayList<>();
+        final Subject sub = Subject.builder().id(SUBJECT_CODE).name(SUBJECT_NAME).credits(9).department(DEPARTMENT_NAME).build();
+        final Professor professor = new Professor(NAME);
+        final Professor professor2 = new Professor(NAME_2);
+
+        em.persist(sub);
+        em.persist(professor);
+        em.persist(professor2);
+
+        professorList.add(professor);
+        professorList.add(professor2);
+
+        professorJpaDao.updateSubjectToProfessorsAdd(sub,professorList);
+
+        Optional<Subject> maybeSubejct = em.createQuery("from Subject as s where s.id = :id")
+                .setParameter("id",sub.getId())
+                .getResultList().stream().findFirst();
+        assertTrue(maybeSubejct.isPresent());
+        Set<Professor> pS = maybeSubejct.get().getProfessors();
+        Professor[] pA = {professor,professor2};
+        assertArrayEquals(pS.toArray(),pA);
+
+    }
+
+    @Test
+    public void updateSubjectToProfessorsCreate(){
+        final List<String> professorList = new ArrayList<>();
+        final Subject sub = Subject.builder().id(SUBJECT_CODE).name(SUBJECT_NAME).credits(9).department(DEPARTMENT_NAME).build();
+        final Professor professor = new Professor(NAME);
+        final Professor professor2 = new Professor(NAME_2);
+
+        em.persist(sub);
+
+        professorList.add(NAME);
+        professorList.add(NAME_2);
+
+        professorJpaDao.updateSubjectToProfessorsCreate(sub,professorList);
+
+        Optional<Professor> maybeProfessor = em.createQuery("from Professor as p where p.name = :name", Professor.class)
+                .setParameter("name",NAME).getResultList().stream().findFirst();
+        Optional<Professor> maybeProfessor2 = em.createQuery("from Professor as p where p.name = :name", Professor.class)
+                .setParameter("name",NAME_2).getResultList().stream().findFirst();
+
+        assertTrue(maybeProfessor.isPresent());
+        assertTrue(maybeProfessor2.isPresent());
+
+        Optional<Subject> maybeSubejct = em.createQuery("from Subject as s where s.id = :id")
+                .setParameter("id",sub.getId())
+                .getResultList().stream().findFirst();
+
+        assertTrue(maybeSubejct.isPresent());
+        Set<Professor> pS = maybeSubejct.get().getProfessors();
+        assertTrue(pS.contains(maybeProfessor.get()));
+        assertTrue(pS.contains(maybeProfessor2.get()));
+    }
+
+    @Test
+    public void updateSubjectToProfessorsRemove(){
+        final List<Professor> professorList = new ArrayList<>();
+        final Subject sub = Subject.builder().id(SUBJECT_CODE).name(SUBJECT_NAME).credits(9).department(DEPARTMENT_NAME).build();
+        final Professor professor = new Professor(NAME);
+        final Professor professor2 = new Professor(NAME_2);
+
+        em.persist(sub);
+        em.persist(professor);
+        em.persist(professor2);
+
+        professorList.add(professor);
+        professorList.add(professor2);
+
+        professorJpaDao.updateSubjectToProfessorsRemove(sub,professorList);
+
+        Optional<Subject> maybeSubejct = em.createQuery("from Subject as s where s.id = :id")
+                .setParameter("id",sub.getId())
+                .getResultList().stream().findFirst();
+        assertTrue(maybeSubejct.isPresent());
+        Set<Professor> pS = maybeSubejct.get().getProfessors();
+        assertFalse(pS.contains(professor));
+        assertFalse(pS.contains(professor2));
+    }
+
+    @Test
+    public void addProfessorsToClasses(){
+        
+    }
+
+    @Test
+    public void updateProfessorsToClassesAdd() {
+
+    }
+
+    @Test
+    public void updateProfessorsToClassesRemove() {
+
     }
 }
