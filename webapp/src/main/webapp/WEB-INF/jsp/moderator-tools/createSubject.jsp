@@ -533,6 +533,7 @@
         if(id === 1) message.textContent = "<spring:message code="subject.create.class.error1" htmlEscape="false" javaScriptEscape="true"/>";
         if(id === 2) message.textContent = "<spring:message code="subject.create.class.error2" htmlEscape="false" javaScriptEscape="true"/>";
         if(id === 3) message.textContent = "<spring:message code="subject.create.professor.error2" htmlEscape="false" javaScriptEscape="true"/>";
+        if(id === 4) message.textContent = "<spring:message code="subject.create.professor.error3" htmlEscape="false" javaScriptEscape="true"/>"
         errorMessage.appendChild(message);
     }
 
@@ -795,10 +796,18 @@
         const profName = document.getElementById("new-prof-name");
         const profSurname = document.getElementById("new-prof-surname");
 
+        const namePattern = /^\p{L}(\p{L}|\s|')*$/u;
+
         if(profName.value === "" || profSurname.value === "") {
             dialog.hide();
             return;
         }
+
+        if(!namePattern.test(profName.value) || !namePattern.test(profSurname.value)) {
+            updateErrorMessage(4,"2");
+            return;
+        }
+
         const professorName = profSurname.value + ", " + profName.value;
         if(professorList.includes(professorName)) {
             updateErrorMessage(3,"2");
@@ -814,6 +823,7 @@
         profSurname.value = "";
         updateProfessorItems();
         dialog.hide();
+        document.getElementById("error-message2").innerHTML= "";
     }
 
 </script>

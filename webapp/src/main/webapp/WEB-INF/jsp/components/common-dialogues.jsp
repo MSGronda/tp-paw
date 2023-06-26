@@ -13,13 +13,13 @@
       <tr class="table-row">
         <td><spring:message code="professor.name"/></td>
         <td>
-          <sl-input autofocus id="new-prof-name"></sl-input>
+          <sl-input pattern="\p{L}(\p{L}|\s|')*" autofocus id="new-prof-name"></sl-input>
         </td>
       </tr>
       <tr class="table-row">
         <td><spring:message code="professor.surname"/></td>
         <td>
-          <sl-input id="new-prof-surname"></sl-input>
+          <sl-input pattern="\p{L}(\p{L}|\s|')*" id="new-prof-surname"></sl-input>
         </td>
       </tr>
     </table>
