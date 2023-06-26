@@ -1,7 +1,5 @@
 package ar.edu.itba.paw.models;
 
-import ar.edu.itba.paw.models.converter.DifficultyConverter;
-import ar.edu.itba.paw.models.converter.TimeDemandingConverter;
 import ar.edu.itba.paw.models.enums.Difficulty;
 import ar.edu.itba.paw.models.enums.TimeDemanding;
 import jdk.nashorn.internal.ir.annotations.Immutable;
