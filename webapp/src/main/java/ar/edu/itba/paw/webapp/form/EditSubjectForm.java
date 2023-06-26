@@ -13,15 +13,11 @@ public class EditSubjectForm {
     @Max(12)
     private Integer credits;
 
-    @NotBlank
     private String degreeIds;
-
-    @NotBlank
     private String semesters;
 
     private String requirementIds;
 
-    @NotBlank
     private String professors;
 
 
