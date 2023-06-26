@@ -2,7 +2,6 @@ package ar.edu.itba.paw.services;
 
 import ar.edu.itba.paw.models.Subject;
 import ar.edu.itba.paw.models.SubjectClass;
-import ar.edu.itba.paw.models.SubjectClassTime;
 import ar.edu.itba.paw.models.User;
 import ar.edu.itba.paw.models.enums.*;
 import ar.edu.itba.paw.models.exceptions.InvalidPageNumberException;
@@ -12,7 +11,6 @@ import ar.edu.itba.paw.persistence.dao.SubjectDao;
 import ar.edu.itba.paw.persistence.exceptions.SubjectIdAlreadyExistsPersistenceException;
 import ar.edu.itba.paw.services.exceptions.SubjectIdAlreadyExistsException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cglib.core.Local;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

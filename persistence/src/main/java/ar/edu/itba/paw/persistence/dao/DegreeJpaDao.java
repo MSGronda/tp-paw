@@ -1,10 +1,8 @@
 package ar.edu.itba.paw.persistence.dao;
 
 import ar.edu.itba.paw.models.Degree;
-import ar.edu.itba.paw.models.DegreeSemester;
 import ar.edu.itba.paw.models.DegreeSubject;
 import ar.edu.itba.paw.models.Subject;
-import ar.edu.itba.paw.persistence.dao.DegreeDao;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;

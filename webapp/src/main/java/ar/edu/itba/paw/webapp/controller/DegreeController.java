@@ -4,7 +4,6 @@ import ar.edu.itba.paw.models.Degree;
 import ar.edu.itba.paw.models.exceptions.DegreeNotFoundException;
 import ar.edu.itba.paw.services.AuthUserService;
 import ar.edu.itba.paw.services.DegreeService;
-import ar.edu.itba.paw.services.SubjectService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;

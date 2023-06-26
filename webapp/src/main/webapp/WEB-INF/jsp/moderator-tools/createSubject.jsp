@@ -303,6 +303,10 @@
 
     function addRequirement() {
         const requirement = document.getElementById("requirement");
+        if(!allSubjects.includes(requirement.value)){
+            requirement.value = "<spring:message code="subject.not_exist" htmlEscape="false" javaScriptEscape="true"/>";
+            return;
+        }
         const id = requirement.value.split(" - ")[0];
         const name = requirement.value;
         if(id === "" || id === "<spring:message code="subject.create.subject.error" htmlEscape="false" javaScriptEscape="true"/>") {
@@ -321,6 +325,10 @@
 
     function addProfessor() {
         const professor = document.getElementById("professor");
+        if(!allProfessors.includes(professor.value)) {
+            professor.value = "<spring:message code="professor.not_exist" htmlEscape="false" javaScriptEscape="true"/>";
+            return;
+        }
         const id = professor.value;
         if(id === "" || id === "<spring:message code="subject.create.professor.error1" htmlEscape="false" javaScriptEscape="true"/>"){
             return;
@@ -449,6 +457,9 @@
 
         dialog2.hide();
     }
+
+    const allSubjects = [<c:forEach var="sub" items="${subjects}">"<c:out value="${sub.id}"/> - <c:out value="${sub.name}"/>",</c:forEach>
+    ]
 
     function updateClass() {
         let updatedClassProf = document.getElementById('class-professors4');
@@ -667,6 +678,8 @@
             div.appendChild(removeBtn);
         });
     }
+    const allProfessors = [<c:forEach var="prof" items="${professors}">"<c:out value="${prof.name}"/>", </c:forEach>
+    ]
 
     function updateClassItems() {
         let selectedClassItems = document.getElementById('classItems');

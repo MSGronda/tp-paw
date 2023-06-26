@@ -3,16 +3,13 @@ package ar.edu.itba.paw.persistence.dao;
 import ar.edu.itba.paw.models.Professor;
 import ar.edu.itba.paw.models.Subject;
 import ar.edu.itba.paw.models.SubjectClass;
-import ar.edu.itba.paw.models.SubjectClassTime;
-import ar.edu.itba.paw.persistence.dao.ProfessorDao;
 import org.springframework.stereotype.Repository;
-
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.Set;
+
 
 @Repository
 public class ProfessorJpaDao implements ProfessorDao {

@@ -2,9 +2,7 @@ package ar.edu.itba.paw.persistence.dao;
 
 import ar.edu.itba.paw.models.RecoveryToken;
 import ar.edu.itba.paw.models.User;
-import ar.edu.itba.paw.persistence.dao.RecoveryDao;
 import org.springframework.stereotype.Repository;
-
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.util.Optional;
