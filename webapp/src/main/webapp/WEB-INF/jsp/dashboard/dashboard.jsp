@@ -210,8 +210,8 @@
   <div class="dashboard-area">
     <div class="choosing-area">
       <sl-tab-group class="tabs">
-        <sl-tab slot="nav" panel="overview"><spring:message code="dashboard.overview"/></sl-tab>
         <sl-tab slot="nav" panel="current-semester"><spring:message code="dashboard.currentSemester"/></sl-tab>
+        <sl-tab slot="nav" panel="overview"><spring:message code="dashboard.overview"/></sl-tab>
         <sl-tab slot="nav" panel="future-subjects"><spring:message code="dashboard.futureSubjects"/></sl-tab>
         <sl-tab slot="nav" panel="past-subjects"><spring:message code="dashboard.pastSubjects"/></sl-tab>
 
