@@ -20,7 +20,7 @@ public class UserForm {
     private String password;
 
     @NotBlank
-    @Size(min = 3, max = 20)
+    @Size(max = 20)
     @Pattern(regexp = "^\\p{L}(\\p{L}|\\s|_)*$")
     private String name;
 
