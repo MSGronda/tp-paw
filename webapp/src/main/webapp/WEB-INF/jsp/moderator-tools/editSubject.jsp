@@ -797,7 +797,7 @@
             selectedClassItems.appendChild(breakLine);
         });
     }
-    const allSubjects = [<c:forEach var="sub" items="${subjects}">"<c:out value="${sub.id}"/> - <c:out value="${sub.name}"/>",</c:forEach>
+    const allSubjects = [<c:forEach var="sub" items="${allSubjects}">"<c:out value="${sub.id}"/> - <c:out value="${sub.name}"/>",</c:forEach>
     ]
     function addDeletedToHIArrays(index){
         if(classIdHI.includes(classId[index])) {
