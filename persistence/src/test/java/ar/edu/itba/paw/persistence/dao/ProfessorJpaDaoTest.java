@@ -29,6 +29,8 @@ public class ProfessorJpaDaoTest {
     private final static String SUBJECT_CODE = "10.01";
     private final static String SUBJECT_NAME = "Informatica General";
     private final static String DEPARTMENT_NAME = "Informatica";
+    private final static String CLASS_ID = "A";
+    private final static String CLASS_ID2 = "S";
 
     @PersistenceContext
     private EntityManager em;
@@ -191,16 +193,91 @@ public class ProfessorJpaDaoTest {
 
     @Test
     public void addProfessorsToClasses(){
-        
+        final Subject sub = Subject.builder().id(SUBJECT_CODE).name(SUBJECT_NAME).credits(9).department(DEPARTMENT_NAME).build();
+        final SubjectClass sC = new SubjectClass(CLASS_ID,sub);
+        final SubjectClass sC2 = new SubjectClass(CLASS_ID2,sub);
+        final List<List<String>> classProfessors = new ArrayList<>();
+        classProfessors.add(new ArrayList<>());
+        classProfessors.add(new ArrayList<>());
+        classProfessors.get(0).add(NAME);
+        classProfessors.get(0).add(NAME_2);
+        classProfessors.get(1).add(NAME);
+        final List<String> classCodes = new ArrayList<>();
+        classCodes.add(CLASS_ID);
+        classCodes.add(CLASS_ID2);
+        final Professor professor = new Professor(NAME);
+        final Professor professor2 = new Professor(NAME_2);
+        sub.getClasses().add(sC);
+        sub.getClasses().add(sC2);
+
+        em.persist(sub);
+        em.persist(sC);
+        em.persist(sC2);
+        em.persist(professor);
+        em.persist(professor2);
+
+        professorJpaDao.addProfessorsToClasses(sub,classCodes,classProfessors);
+
+        assertTrue(sC.getProfessors().contains(professor));
+        assertTrue(sC.getProfessors().contains(professor2));
+        assertTrue(sC2.getProfessors().contains(professor));
     }
 
     @Test
     public void updateProfessorsToClassesAdd() {
+        final Map<SubjectClass,List<Professor>> professorsToAdd = new HashMap<>();
+        final Subject sub = Subject.builder().id(SUBJECT_CODE).name(SUBJECT_NAME).credits(9).department(DEPARTMENT_NAME).build();
+        final SubjectClass sC = new SubjectClass(CLASS_ID,sub);
+        final SubjectClass sC2 = new SubjectClass(CLASS_ID2,sub);
+        final Professor professor = new Professor(NAME);
+        final Professor professor2 = new Professor(NAME_2);
+        final List<Professor> profList = new ArrayList<>();
+        profList.add(professor);
+        profList.add(professor2);
+        professorsToAdd.put(sC,profList);
+        professorsToAdd.put(sC2,new ArrayList<>());
+
+        em.persist(sub);
+        em.persist(sC);
+        em.persist(sC2);
+        em.persist(professor);
+        em.persist(professor2);
+
+        professorJpaDao.updateProfessorsToClassesAdd(professorsToAdd);
+
+        assertTrue(sC.getProfessors().contains(professor));
+        assertTrue(sC.getProfessors().contains(professor2));
+        assertTrue(sC2.getProfessors().isEmpty());
 
     }
 
     @Test
     public void updateProfessorsToClassesRemove() {
+        final Map<SubjectClass,List<Professor>> professorsToRemove = new HashMap<>();
+        final Subject sub = Subject.builder().id(SUBJECT_CODE).name(SUBJECT_NAME).credits(9).department(DEPARTMENT_NAME).build();
+        final SubjectClass sC = new SubjectClass(CLASS_ID,sub);
+        final SubjectClass sC2 = new SubjectClass(CLASS_ID2,sub);
+        final Professor professor = new Professor(NAME);
+        final Professor professor2 = new Professor(NAME_2);
+        final List<Professor> profList = new ArrayList<>();
+        final List<Professor> profList2 = new ArrayList<>();
+        profList2.add(professor2);
+        profList.add(professor);
+        profList.add(professor2);
+        sC.getProfessors().addAll(profList);
+        sC2.getProfessors().add(professor2);
+        professorsToRemove.put(sC,profList2);
+        professorsToRemove.put(sC2,profList2);
 
+        em.persist(sub);
+        em.persist(sC);
+        em.persist(sC2);
+        em.persist(professor);
+        em.persist(professor2);
+
+        professorJpaDao.updateProfessorsToClassesRemove(professorsToRemove);
+
+        assertEquals(sC.getProfessors().get(0),professor);
+        assertTrue(sC2.getProfessors().isEmpty());
     }
 }
