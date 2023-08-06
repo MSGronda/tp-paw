@@ -15,6 +15,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -61,26 +62,12 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(final HttpSecurity http) throws Exception {
         http.sessionManagement()
-                .sessionAuthenticationErrorUrl("/login")
+                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
             .and().authorizeRequests()
                 .antMatchers("/login","/register", "/recover/**", "/verification/**").anonymous()
                 .antMatchers("/user/{id:\\d+}/moderator", "/degrees", "/create-subject", "/subject/{id:\\d+\\.\\d+}/delete-subject", "/subject/{id:\\d+\\.\\d+}/edit").hasRole(Role.RoleEnum.EDITOR.getName())
                 .antMatchers("/").permitAll()
                 .antMatchers("/**").authenticated()
-            .and().formLogin()
-                .loginPage("/login")
-                .usernameParameter("email")
-                .passwordParameter("password")
-                .defaultSuccessUrl("/", false)
-                .failureHandler(new AuthFailureHandler())
-            .and().rememberMe()
-                .rememberMeParameter("rememberMe")
-                .userDetailsService(userDetailsService)
-                .key(environment.getRequiredProperty("auth.rememberMe.key"))
-                .tokenValiditySeconds((int) TimeUnit.DAYS.toSeconds(30))
-            .and().logout()
-                .logoutUrl("/logout")
-                .logoutSuccessUrl("/")
             .and().exceptionHandling()
                 .accessDeniedPage("/403")
             .and().csrf().disable();

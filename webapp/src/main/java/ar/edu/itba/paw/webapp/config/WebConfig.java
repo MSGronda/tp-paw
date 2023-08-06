@@ -36,7 +36,6 @@ import java.util.concurrent.TimeUnit;
 @EnableAsync
 @EnableTransactionManagement
 @EnableScheduling
-@EnableWebMvc
 @ComponentScan({
         "ar.edu.itba.paw.webapp.controller",
         "ar.edu.itba.paw.webapp.interceptors",
@@ -66,16 +65,6 @@ public class WebConfig extends WebMvcConfigurerAdapter {
     private DegreeSelectInterceptor degreeSelectInterceptor;
 
     @Bean
-    ViewResolver viewResolver() {
-        final InternalResourceViewResolver vr = new InternalResourceViewResolver();
-        vr.setViewClass(JstlView.class);
-        vr.setPrefix("/WEB-INF/jsp/");
-        vr.setSuffix(".jsp");
-
-        return vr;
-    }
-
-    @Bean
     public DataSource dataSource() {
         final SimpleDriverDataSource ds = new SimpleDriverDataSource();
 
@@ -98,14 +87,6 @@ public class WebConfig extends WebMvcConfigurerAdapter {
         f.migrate();
 
         return f;
-    }
-
-    @Override
-    public void addResourceHandlers(ResourceHandlerRegistry registry) {
-        super.addResourceHandlers(registry);
-        registry.addResourceHandler("/css/**").addResourceLocations("/css/");
-        registry.addResourceHandler("/js/**").addResourceLocations("/js/");
-        registry.addResourceHandler("/img/**").addResourceLocations("/img/");
     }
 
     @Bean
