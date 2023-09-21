@@ -9,17 +9,23 @@ import ar.edu.itba.paw.services.ReviewService;
 import ar.edu.itba.paw.services.UserService;
 import ar.edu.itba.paw.webapp.form.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.validation.Valid;
+import javax.ws.rs.*;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 import java.io.IOException;
+import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
 
-@Controller
+@Path("users")
+@Component
 public class UserController {
     private final UserService userService;
     private final ReviewService reviewService;
@@ -39,7 +45,8 @@ public class UserController {
         this.degreeService = degreeService;
     }
 
-    @RequestMapping("/user/{id:\\d+}")
+    /*
+    * @RequestMapping("/user/{id:\\d+}")
     public ModelAndView user(
             @PathVariable final long id,
             @RequestParam(defaultValue = "1") final int page,
@@ -378,5 +385,34 @@ public class UserController {
         userService.clearDegree(user);
 
         return new ModelAndView("redirect:/");
+    }
+    * */
+
+    // = = = = = = = = = = = API = = = = = = = = = = = = =
+    @POST
+    @Consumes(MediaType.APPLICATION_JSON)
+    public Response registerUser(
+            @Valid @ModelAttribute ("UserForm") final UserForm userForm, final Locale locale
+    ){
+        final User newUser;
+        try {
+            newUser = userService.create(
+                    userForm.getDegreeId(),
+                    userForm.getSubjectIds(),
+                    User.builder()
+                            .email(userForm.getEmail())
+                            .password(userForm.getPassword())
+                            .username(userForm.getName())
+                            .locale(locale)
+                            .build()
+            );
+        } catch (EmailAlreadyTakenException e){
+            //mav.addObject("EmailAlreadyUsed", true);
+            return Response.status(Response.Status.CONFLICT.getStatusCode()).build();
+        } catch (DegreeNotFoundException e) {
+            //throw new InvalidFormException(e);
+            return Response.status(Response.Status.BAD_REQUEST.getStatusCode()).build();
+        }
+        return Response.status(Response.Status.CREATED.getStatusCode()).build();
     }
 }

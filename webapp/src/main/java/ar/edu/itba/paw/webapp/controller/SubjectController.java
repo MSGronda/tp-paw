@@ -2,11 +2,16 @@ package ar.edu.itba.paw.webapp.controller;
 
 
 import ar.edu.itba.paw.models.Subject;
+import ar.edu.itba.paw.models.exceptions.SubjectIdAlreadyExistsException;
 import ar.edu.itba.paw.services.*;
 import ar.edu.itba.paw.webapp.dto.SubjectDto;
+import ar.edu.itba.paw.webapp.form.SubjectForm;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.method.P;
 import org.springframework.stereotype.Component;
+import org.springframework.web.bind.annotation.ModelAttribute;
 
+import javax.validation.Valid;
 import javax.ws.rs.*;
 import javax.ws.rs.core.*;
 import java.util.List;
@@ -198,5 +203,34 @@ public class SubjectController {
 
         Response.ResponseBuilder responseBuilder = Response.ok(new GenericEntity<List<SubjectDto>>(subjectsDtos){});
         return responseBuilder.build();
+    }
+
+    @POST
+    @Consumes(MediaType.APPLICATION_JSON)
+    public Response createSubejct(@Valid @ModelAttribute("subjectForm") final SubjectForm subjectForm){
+        Subject newSub;
+        try{
+            newSub = subjectService.create(Subject.builder()
+                            .id(subjectForm.getId())
+                            .name(subjectForm.getName())
+                            .department(subjectForm.getDepartment())
+                            .credits(subjectForm.getCredits()),
+                    subjectForm.getDegreeIds(),
+                    subjectForm.getSemesters(),
+                    subjectForm.getRequirementIds(),
+                    subjectForm.getProfessors(),
+                    subjectForm.getClassCodes(),
+                    subjectForm.getClassProfessors(),
+                    subjectForm.getClassDays(),
+                    subjectForm.getClassStartTimes(),
+                    subjectForm.getClassEndTimes(),
+                    subjectForm.getClassBuildings(),
+                    subjectForm.getClassRooms(),
+                    subjectForm.getClassModes()
+            );
+        } catch (SubjectIdAlreadyExistsException e){//No se si conflict es el status code que corresponde
+            return Response.status(Response.Status.CONFLICT.getStatusCode()).build();
+        }
+        return Response.status(Response.Status.CREATED.getStatusCode()).build();
     }
 }
