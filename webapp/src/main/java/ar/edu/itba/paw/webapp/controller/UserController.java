@@ -17,8 +17,10 @@ import org.springframework.web.servlet.ModelAndView;
 
 import javax.validation.Valid;
 import javax.ws.rs.*;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.UriInfo;
 import java.io.IOException;
 import java.util.List;
 import java.util.Locale;
@@ -27,23 +29,29 @@ import java.util.Optional;
 @Path("users")
 @Component
 public class UserController {
-    private final UserService userService;
-    private final ReviewService reviewService;
-    private final AuthUserService authUserService;
-    private final DegreeService degreeService;
-
     @Autowired
-    public UserController(
-            final UserService userService,
-            final ReviewService reviewService,
-            final AuthUserService authUserService,
-            final DegreeService degreeService
-    ) {
-        this.userService = userService;
-        this.reviewService = reviewService;
-        this.authUserService = authUserService;
-        this.degreeService = degreeService;
-    }
+    private UserService userService;
+    @Autowired
+    private ReviewService reviewService;
+    @Autowired
+    private AuthUserService authUserService;
+    @Autowired
+    private DegreeService degreeService;
+    @Context
+    private UriInfo uriInfo;
+
+//    @Autowired
+//    public UserController(
+//            final UserService userService,
+//            final ReviewService reviewService,
+//            final AuthUserService authUserService,
+//            final DegreeService degreeService
+//    ) {
+//        this.userService = userService;
+//        this.reviewService = reviewService;
+//        this.authUserService = authUserService;
+//        this.degreeService = degreeService;
+//    }
 
     /*
     * @RequestMapping("/user/{id:\\d+}")
@@ -90,6 +98,7 @@ public class UserController {
         return mav;
     }
 
+    //DONE
     @RequestMapping(value = "/register", method = RequestMethod.POST)
     public ModelAndView register(
             @Valid @ModelAttribute ("UserForm") final UserForm userForm,
