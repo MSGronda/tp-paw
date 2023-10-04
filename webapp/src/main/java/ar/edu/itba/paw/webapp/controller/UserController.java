@@ -7,8 +7,10 @@ import ar.edu.itba.paw.services.AuthUserService;
 import ar.edu.itba.paw.services.DegreeService;
 import ar.edu.itba.paw.services.ReviewService;
 import ar.edu.itba.paw.services.UserService;
+import ar.edu.itba.paw.webapp.dto.UserDto;
 import ar.edu.itba.paw.webapp.form.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.method.P;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
@@ -423,5 +425,31 @@ public class UserController {
             return Response.status(Response.Status.BAD_REQUEST.getStatusCode()).build();
         }
         return Response.status(Response.Status.CREATED.getStatusCode()).build();
+    }
+
+    @PUT
+    @Path("/{id}")
+    public Response editUsername(@Valid @ModelAttribute ("EditUserDataForm") final EditUserDataForm editUserDataForm){
+        userService.editProfile(authUserService.getCurrentUser(), editUserDataForm.getUserName() );
+        return Response.ok().build();
+    }
+
+    @PUT
+    @Path("/{id}")
+    public Response editPassword(@Valid @ModelAttribute ("EditUserPasswordForm") final EditUserPasswordForm editUserPasswordForm){
+        try{
+            userService.changePassword(authUserService.getCurrentUser(), editUserPasswordForm.getOldPassword(), editUserPasswordForm.getNewPassword());
+        }catch (OldPasswordDoesNotMatchException e) {
+            return Response.status(Response.Status.BAD_REQUEST.getStatusCode()).build();
+        }
+        return Response.ok().build();
+    }
+
+    @GET
+    @Path("/{id}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getUser(@PathParam("id") final Long id){
+        final User user = userService.findById(id).orElseThrow(InvalidFormException::new);
+        return Response.ok(UserDto.fromUser(uriInfo, user)).build();
     }
 }
