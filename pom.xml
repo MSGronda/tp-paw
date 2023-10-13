@@ -22,6 +22,7 @@
     <jstl.version>1.2</jstl.version>
     <flyway.version>9.8.1</flyway.version>
     <org.thymeleaf.version>3.0.15.RELEASE</org.thymeleaf.version>
+    <io.jsonwebtoken.version>0.12.2</io.jsonwebtoken.version>
 
     <junit.version>4.13.2</junit.version>
     <mockito.version>2.25.1</mockito.version>
@@ -305,6 +306,21 @@
         <groupId>org.glassfish.jersey.media</groupId>
         <artifactId>jersey-media-jaxb</artifactId>
         <version>${jersey.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>io.jsonwebtoken</groupId>
+        <artifactId>jjwt-api</artifactId>
+        <version>${io.jsonwebtoken.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>io.jsonwebtoken</groupId>
+        <artifactId>jjwt-impl</artifactId>
+        <version>${io.jsonwebtoken.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>io.jsonwebtoken</groupId>
+        <artifactId>jjwt-jackson</artifactId>
+        <version>${io.jsonwebtoken.version}</version>
       </dependency>
     </dependencies>
   </dependencyManagement>

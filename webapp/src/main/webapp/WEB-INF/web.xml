@@ -32,25 +32,6 @@
     </listener>
 
     <filter>
-        <filter-name>jersey</filter-name>
-        <filter-class>org.glassfish.jersey.servlet.ServletContainer</filter-class>
-        <init-param>
-            <param-name>jersey.config.server.provider.packages</param-name>
-            <param-value>ar.edu.itba.paw.webapp.controller</param-value>
-        </init-param>
-
-        <init-param>
-            <param-name>jersey.config.servlet.filter.forwardOn404</param-name>
-            <param-value>true</param-value>
-        </init-param>
-    </filter>
-
-    <filter-mapping>
-        <filter-name>jersey</filter-name>
-        <url-pattern>/*</url-pattern>
-    </filter-mapping>
-
-    <filter>
         <filter-name>springSecurityFilterChain</filter-name>
         <filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
     </filter>
@@ -82,6 +63,26 @@
     </filter>
     <filter-mapping>
         <filter-name>encodingFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
+
+
+    <filter>
+        <filter-name>jersey</filter-name>
+        <filter-class>org.glassfish.jersey.servlet.ServletContainer</filter-class>
+        <init-param>
+            <param-name>jersey.config.server.provider.packages</param-name>
+            <param-value>ar.edu.itba.paw.webapp.controller</param-value>
+        </init-param>
+
+        <init-param>
+            <param-name>jersey.config.servlet.filter.forwardOn404</param-name>
+            <param-value>true</param-value>
+        </init-param>
+    </filter>
+
+    <filter-mapping>
+        <filter-name>jersey</filter-name>
         <url-pattern>/*</url-pattern>
     </filter-mapping>
 
