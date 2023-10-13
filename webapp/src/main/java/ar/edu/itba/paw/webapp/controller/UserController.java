@@ -8,8 +8,9 @@ import ar.edu.itba.paw.services.DegreeService;
 import ar.edu.itba.paw.services.ReviewService;
 import ar.edu.itba.paw.services.UserService;
 import ar.edu.itba.paw.webapp.dto.UserDto;
-import ar.edu.itba.paw.webapp.form.*;
+import ar.edu.itba.paw.webapp.form.UserForm;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.security.access.method.P;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Controller;
@@ -24,6 +25,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 import java.io.IOException;
+import java.net.URI;
 import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
@@ -403,7 +405,7 @@ public class UserController {
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     public Response registerUser(
-            @Valid @ModelAttribute ("UserForm") final UserForm userForm, final Locale locale
+            @Valid @ModelAttribute("userForm") final UserForm userForm
     ){
         final User newUser;
         try {
@@ -414,36 +416,37 @@ public class UserController {
                             .email(userForm.getEmail())
                             .password(userForm.getPassword())
                             .username(userForm.getName())
-                            .locale(locale)
+                            .locale(LocaleContextHolder.getLocale())
                             .build()
             );
         } catch (EmailAlreadyTakenException e){
-            //mav.addObject("EmailAlreadyUsed", true);
             return Response.status(Response.Status.CONFLICT.getStatusCode()).build();
         } catch (DegreeNotFoundException e) {
-            //throw new InvalidFormException(e);
             return Response.status(Response.Status.BAD_REQUEST.getStatusCode()).build();
         }
-        return Response.status(Response.Status.CREATED.getStatusCode()).build();
+        final URI userUri = uriInfo.getBaseUriBuilder().path("/users/").path(String.valueOf(newUser.getId())).build();
+
+        return Response.created(userUri).build();
     }
 
-    @PUT
-    @Path("/{id}")
-    public Response editUsername(@Valid @ModelAttribute ("EditUserDataForm") final EditUserDataForm editUserDataForm){
-        userService.editProfile(authUserService.getCurrentUser(), editUserDataForm.getUserName() );
-        return Response.ok().build();
-    }
-
-    @PUT
-    @Path("/{id}")
-    public Response editPassword(@Valid @ModelAttribute ("EditUserPasswordForm") final EditUserPasswordForm editUserPasswordForm){
-        try{
-            userService.changePassword(authUserService.getCurrentUser(), editUserPasswordForm.getOldPassword(), editUserPasswordForm.getNewPassword());
-        }catch (OldPasswordDoesNotMatchException e) {
-            return Response.status(Response.Status.BAD_REQUEST.getStatusCode()).build();
-        }
-        return Response.ok().build();
-    }
+//    @PUT
+//    @Path("/{id}")
+//    @Produces("application/vnd.subject-list.v1+json")
+//    public Response editUsername(@Valid @ModelAttribute("EditUserDataForm") final EditUserDataForm editUserDataForm){
+//        userService.editProfile(authUserService.getCurrentUser(), editUserDataForm.getUserName() );
+//        return Response.ok().build();
+//    }
+//
+//    @PUT
+//    @Path("/{id}")
+//    public Response editPassword(@Valid @ModelAttribute("EditUserPasswordForm") final EditUserPasswordForm editUserPasswordForm){
+//        try{
+//            userService.changePassword(authUserService.getCurrentUser(), editUserPasswordForm.getOldPassword(), editUserPasswordForm.getNewPassword());
+//        }catch (OldPasswordDoesNotMatchException e) {
+//            return Response.status(Response.Status.BAD_REQUEST.getStatusCode()).build();
+//        }
+//        return Response.ok().build();
+//    }
 
     @GET
     @Path("/{id}")
