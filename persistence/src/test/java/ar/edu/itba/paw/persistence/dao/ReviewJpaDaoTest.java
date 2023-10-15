@@ -217,55 +217,6 @@ public class ReviewJpaDaoTest {
     }
 
     @Test
-    public void getAll() {
-        final Subject subject = Subject.builder()
-                .id(SUB_ID)
-                .name(SUB_NAME)
-                .credits(SUB_CREDITS)
-                .department(SUB_DEPT)
-                .build();
-
-        em.persist(subject);
-
-        final User user = User.builder()
-                .email(USER_EMAIL)
-                .username(USER_NAME)
-                .password(USER_PASS)
-                .confirmed(true)
-                .build();
-
-        em.persist(user);
-
-        final Review review = Review.builder()
-                .subject(subject)
-                .user(user)
-                .text(TEXT)
-                .difficulty(DIFF)
-                .anonymous(ANON)
-                .timeDemanding(TIME)
-                .build();
-
-        em.persist(review);
-
-        final Review review2 = Review.builder()
-                .subject(subject)
-                .user(user)
-                .text(TEXT_2)
-                .difficulty(DIFF_2)
-                .anonymous(ANON_2)
-                .timeDemanding(TIME_2)
-                .build();
-
-        em.persist(review2);
-
-        final List<Review> actual = reviewJpaDao.getAll();
-
-        assertEquals(2, actual.size());
-        assertTrue(actual.contains(review));
-        assertTrue(actual.contains(review2));
-    }
-
-    @Test
     public void voteReview() {
         final Subject subject = Subject.builder()
                 .id(SUB_ID)

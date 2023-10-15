@@ -11,7 +11,6 @@ import java.util.List;
 import java.util.Optional;
 
 public interface ReviewDao {
-    List<Review> getAll();
     Optional<Review> findById(final long id);
 
     Review create(final Review.Builder review);

@@ -49,12 +49,6 @@ public class ReviewJpaDao implements ReviewDao {
     }
 
     @Override
-    public List<Review> getAll() {
-        return em.createQuery("from Review", Review.class)
-                .getResultList();
-    }
-
-    @Override
     public Optional<ReviewVote> voteReview(final User user, final Review review, final ReviewVoteType vote){
         final Optional<ReviewVote> maybeReviewVote = em.createQuery("from ReviewVote where user = :user and review = :review", ReviewVote.class)
                 .setParameter("user", user)

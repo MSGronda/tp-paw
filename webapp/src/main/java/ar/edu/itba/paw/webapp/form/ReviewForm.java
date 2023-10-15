@@ -4,6 +4,7 @@ import ar.edu.itba.paw.models.enums.Difficulty;
 import ar.edu.itba.paw.models.enums.TimeDemanding;
 
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
 public class ReviewForm {
@@ -19,6 +20,10 @@ public class ReviewForm {
 
     @NotNull
     private Boolean anonymous;
+
+    @NotNull
+    @Pattern(regexp = "[0-9]{2}\\.[0-9]{2}")
+    private String subjectId;
 
     public String getText() {
         return text;
@@ -47,6 +52,9 @@ public class ReviewForm {
     public TimeDemanding getTimeDemandingEnum() {
         return TimeDemanding.parse(timeDemanding.longValue());
     }
+    public String getSubjectId() {
+        return subjectId;
+    }
 
     public void setTimeDemanding(Integer timeDemanding) {
         this.timeDemanding = timeDemanding;
@@ -60,4 +68,7 @@ public class ReviewForm {
         this.anonymous = anonymous;
     }
 
+    public void setSubjectId(String subjectId) {
+        this.subjectId = subjectId;
+    }
 }

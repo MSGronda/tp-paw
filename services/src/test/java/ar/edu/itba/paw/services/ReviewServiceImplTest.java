@@ -102,29 +102,4 @@ public class ReviewServiceImplTest {
 
         reviewService.delete(review);
     }
-
-    @Test
-    public void testNextReviewValid(){
-        assertEquals(
-                NEXT_VALID_REVIEW_URL_PARAM,
-                reviewService.manyReviewsNextUrl(
-                    VALID_REVIEW_URL_IDS,
-                    VALID_REVIEW_CURRENT,
-                    VALID_REVIEW_TOTAL
-                )
-        );
-    }
-
-    @Test
-    public void testFinalReviewValid(){
-        assertEquals(
-                NEXT_FINAL_VALID_REVIEW_URL_PARAM,
-                reviewService.manyReviewsNextUrl(
-                        VALID_FINAL_REVIEW_URL_IDS,
-                        VALID_FINAL_REVIEW_CURRENT,
-                        VALID_FINAL_REVIEW_TOTAL
-                )
-        );
-    }
-
 }

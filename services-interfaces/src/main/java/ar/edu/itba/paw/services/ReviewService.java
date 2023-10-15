@@ -11,24 +11,20 @@ import java.util.List;
 import java.util.Optional;
 
 public interface ReviewService {
+
+    List<Review> get(final Long userId, final String subjectId, final int page, final String orderBy, final String dir);
     Review create(final String subjectId, final Review.Builder review);
 
     Optional<Review> findById(final long id);
 
-    List<Review> getAllUserReviews(final User user, final int page, final String orderBy, final String dir);
     int getTotalPagesForUserReviews(final User user);
 
-    List<Review> getAllSubjectReviews(final Subject subject, final int page, final String orderBy, final String dir);
     int getTotalPagesForSubjectReviews(final Subject subject);
 
     void voteReview(final long reviewId, final ReviewVoteType vote) throws ReviewNotFoundException;
 
     boolean didUserReview(final Subject subject, final User user);
     boolean canUserEditReview(final User user, final Review review);
-
-    Subject manyReviewsGetFirstSubject(String subjectIds);
-    void manyReviewsSubmit(final String subjectIds, final Review.Builder review);
-    String manyReviewsNextUrl(final String subjectIds, final int current, final int total);
 
     void update(final Review.Builder review) throws UnauthorizedException;
     void delete(final Review review) throws UnauthorizedException;

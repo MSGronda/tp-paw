@@ -6,15 +6,13 @@ import ar.edu.itba.paw.models.User;
 import ar.edu.itba.paw.models.enums.OrderDir;
 import ar.edu.itba.paw.models.enums.ReviewOrderField;
 import ar.edu.itba.paw.models.enums.ReviewVoteType;
-import ar.edu.itba.paw.models.exceptions.InvalidPageNumberException;
-import ar.edu.itba.paw.models.exceptions.ReviewNotFoundException;
-import ar.edu.itba.paw.models.exceptions.SubjectNotFoundException;
-import ar.edu.itba.paw.models.exceptions.UnauthorizedException;
+import ar.edu.itba.paw.models.exceptions.*;
 import ar.edu.itba.paw.persistence.dao.ReviewDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -24,15 +22,19 @@ public class ReviewServiceImpl implements ReviewService {
     private final AuthUserService authUserService;
     private final SubjectService subjectService;
 
+    private final UserService userService;
+
     @Autowired
     public ReviewServiceImpl(
             final ReviewDao reviewDao,
             final AuthUserService authUserService,
-            final SubjectService subjectService
+            final SubjectService subjectService,
+            final UserService userService
     ) {
         this.reviewDao = reviewDao;
         this.authUserService = authUserService;
         this.subjectService = subjectService;
+        this.userService = userService;
     }
 
     @Transactional
@@ -46,14 +48,31 @@ public class ReviewServiceImpl implements ReviewService {
     }
 
     @Override
-    public Optional<Review> findById(final long id) {
-        return reviewDao.findById(id);
+    public List<Review> get(final Long userId, final String subjectId, final int page, final String orderBy, final String dir){
+        if(userId != null){
+            Optional<User> user = userService.findById(userId);
+
+            if(!user.isPresent()) throw new UserNotFoundException();
+
+            if(page > getTotalPagesForUserReviews(user.get()) || page < 1) throw new InvalidPageNumberException();
+
+            return reviewDao.getAllUserReviews(user.get(), page, ReviewOrderField.parse(orderBy), OrderDir.parse(dir));
+        }
+        else if(subjectId != null){
+            Optional<Subject> subject = subjectService.findById(subjectId);
+
+            if(!subject.isPresent()) throw new SubjectNotFoundException();
+
+            if(page < 1 || page > getTotalPagesForSubjectReviews(subject.get())) throw new InvalidPageNumberException();
+
+            return reviewDao.getAllSubjectReviews(subject.get(), page, ReviewOrderField.parse(orderBy), OrderDir.parse(dir));
+        }
+        return new ArrayList<>();
     }
 
     @Override
-    public List<Review> getAllUserReviews(final User user, final int page, final String orderBy, final String dir) {
-        if(page > getTotalPagesForUserReviews(user) || page < 1) throw new InvalidPageNumberException();
-        return reviewDao.getAllUserReviews(user, page, ReviewOrderField.parse(orderBy), OrderDir.parse(dir));
+    public Optional<Review> findById(final long id) {
+        return reviewDao.findById(id);
     }
 
     @Override
@@ -61,11 +80,6 @@ public class ReviewServiceImpl implements ReviewService {
         return reviewDao.getTotalPagesForUserReviews(user);
     }
 
-    @Override
-    public List<Review> getAllSubjectReviews(final Subject subject, final int page, final String orderBy, final String dir){
-        if(page < 1 || page > getTotalPagesForSubjectReviews(subject)) throw new InvalidPageNumberException();
-        return reviewDao.getAllSubjectReviews(subject, page, ReviewOrderField.parse(orderBy), OrderDir.parse(dir));
-    }
 
     @Override
     public int getTotalPagesForSubjectReviews(final Subject subject){
@@ -87,46 +101,6 @@ public class ReviewServiceImpl implements ReviewService {
     @Override
     public boolean canUserEditReview(final User user, final Review review) {
         return user.equals(review.getUser());
-    }
-
-    @Override
-    public Subject manyReviewsGetFirstSubject(String subjectIds) {
-        final String[] array = subjectIds.split(" ");
-        return subjectService.findById(array[0]).orElseThrow(SubjectNotFoundException::new);
-    }
-
-    @Override
-    @Transactional
-    public void manyReviewsSubmit(final String subjectIds, final Review.Builder reviewBuilder) {
-        final Subject subject = manyReviewsGetFirstSubject(subjectIds);
-
-        if(didUserReview(subject, authUserService.getCurrentUser())) return;
-
-        create(
-                subject.getId(),
-                reviewBuilder
-                    .subject(subject)
-        );
-    }
-
-    @Override
-    public String manyReviewsNextUrl(final String subjectIds, final int current, final int total){
-        // Remove first subject id from list
-        final String[] idArray = subjectIds.split(" ");
-        final StringBuilder sb = new StringBuilder();
-        for(int i=1;  i < idArray.length ; i++){
-            sb.append(idArray[i]);
-            if(i+1< idArray.length){
-                sb.append(" ");
-            }
-        }
-        final String nextSubjectIds = sb.toString();
-
-        if(!nextSubjectIds.isEmpty() && current < total){
-            return "/many-reviews?r=" + nextSubjectIds + "&current=" + (current + 1) + "&total=" + total;
-        }
-
-        return "/";
     }
 
     @Transactional

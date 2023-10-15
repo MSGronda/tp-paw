@@ -12,7 +12,7 @@ public class ReviewDto {
     private Long upVotes;
     private Long downVotes;
 
-    public static ReviewDto fromSubject(UriInfo uriInfo, Review review){
+    public static ReviewDto fromReview(UriInfo uriInfo, Review review){
         ReviewDto reviewDto =  new ReviewDto();
 
         reviewDto.id = review.getId();
