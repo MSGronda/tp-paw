@@ -270,4 +270,18 @@ public class ReviewController {
         }
         return Response.ok().build();
     }
+
+    @DELETE
+    @Path("/{id}")
+    public Response deleteReview(
+            @PathParam("id") final Long reviewId
+    ){
+        try{
+            reviewService.delete(reviewId);
+        }
+        catch (ReviewNotFoundException e){
+            return Response.status(Response.Status.NOT_FOUND.getStatusCode()).build();
+        }
+        return Response.noContent().build();
+    }
 }
