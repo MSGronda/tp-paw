@@ -41,6 +41,9 @@ public class ReviewServiceImpl implements ReviewService {
     @Override
     public Review create(final String subjectId, final Review.Builder reviewBuilder) {
         final Subject subject = subjectService.findById(subjectId).orElseThrow(SubjectNotFoundException::new);
+
+        if(didUserReview(subject, reviewBuilder.getUser())) throw new UserAlreadyReviewedException();
+
         return reviewDao.create(
                 reviewBuilder
                         .subject(subject)

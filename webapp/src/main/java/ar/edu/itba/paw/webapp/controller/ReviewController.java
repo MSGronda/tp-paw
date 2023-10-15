@@ -2,13 +2,10 @@ package ar.edu.itba.paw.webapp.controller;
 
 import ar.edu.itba.paw.models.Review;
 import ar.edu.itba.paw.models.Subject;
-import ar.edu.itba.paw.models.exceptions.SubjectIdAlreadyExistsException;
+import ar.edu.itba.paw.models.exceptions.*;
 import ar.edu.itba.paw.services.AuthUserService;
 import ar.edu.itba.paw.services.ReviewService;
 import ar.edu.itba.paw.services.SubjectService;
-import ar.edu.itba.paw.models.exceptions.ReviewNotFoundException;
-import ar.edu.itba.paw.models.exceptions.SubjectNotFoundException;
-import ar.edu.itba.paw.models.exceptions.UnauthorizedException;
 import ar.edu.itba.paw.webapp.dto.ReviewDto;
 import ar.edu.itba.paw.webapp.dto.SubjectDto;
 import ar.edu.itba.paw.webapp.form.ReviewForm;
@@ -243,9 +240,10 @@ public class ReviewController {
         } catch (SubjectNotFoundException e){
             return Response.status(Response.Status.NOT_FOUND.getStatusCode()).build();
         }
+        catch (UserAlreadyReviewedException e){
+            return Response.status(Response.Status.CONFLICT.getStatusCode()).build();
+        }
 
-        // TODO: si tiene ya una review de esa materia?
-        
         final URI reviewUri = uriInfo.getBaseUriBuilder().path("/reviews/").path(String.valueOf(newReview.getId())).build();
 
         return Response.created(reviewUri).build();
