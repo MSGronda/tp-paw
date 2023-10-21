@@ -9,6 +9,7 @@ import java.util.Locale;
 import java.util.Optional;
 
 public interface UserService {
+    Optional<User> getRelevantUser(final Long available, final Long unLockable, final Long done, final Long future, final Long plan);
     User create(final long degreeId, final String completedSubjectIds, final User user, final byte[] profilePic) throws EmailAlreadyTakenException;
     User create(final long degreeId, final String completedSubjectIds, final User user) throws EmailAlreadyTakenException;
 

@@ -59,10 +59,10 @@ public interface SubjectDao {
     Map<User,Set<Subject>> getAllUserUnreviewedNotificationSubjects();
     void updateUnreviewedNotificationTime();
 
-    List<Subject> findAllThatUserCanDo(User user);
-    List<Subject> findAllThatUserHasNotDone(User user);
-    List<Subject> findAllThatUserHasDone(User user);
-    List<Subject> findAllThatUserCouldUnlock(User user);
+    List<Subject> findAllThatUserCanDo(final User user, final int page, final SubjectOrderField orderBy, final OrderDir dir);
+    List<Subject> findAllThatUserHasNotDone(final User user, final int page, final SubjectOrderField orderBy, final OrderDir dir);
+    List<Subject> findAllThatUserHasDone(final User user, final int page, final SubjectOrderField orderBy, final OrderDir dir);
+    List<Subject> findAllThatUserCouldUnlock(final User user, final int page, final SubjectOrderField orderBy, final OrderDir dir);
 
     void addPrerequisites(final Subject sub, final List<String> correlativesList);
 

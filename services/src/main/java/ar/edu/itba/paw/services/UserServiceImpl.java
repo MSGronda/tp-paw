@@ -31,12 +31,10 @@ public class UserServiceImpl implements UserService {
     private final UserDao userDao;
     private final RecoveryDao recDao;
     private final ImageDao imageDao;
-
     private final RolesService rolesService;
     private final SubjectService subjectService;
     private final DegreeService degreeService;
     private final MailService mailService;
-
     private final PasswordEncoder passwordEncoder;
 
     private static final int MAX_IMAGE_SIZE = 1024 * 1024 * 5;
@@ -61,6 +59,26 @@ public class UserServiceImpl implements UserService {
         this.degreeService = degreeService;
         this.mailService = mailService;
         this.passwordEncoder = passwordEncoder;
+    }
+
+    @Override
+    public Optional<User> getRelevantUser(final Long available, final Long unLockable, final Long done, final Long future, final Long plan){
+        if(available != null){
+            return findById(available);
+        }
+        if(unLockable != null){
+            return findById(unLockable);
+        }
+        if(done != null){
+            return findById(done);
+        }
+        if(future != null){
+            return findById(future);
+        }
+        if(plan != null){
+            return findById(plan);
+        }
+        return findByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
     }
 
 

@@ -36,76 +36,95 @@ public class SubjectJpaDao implements SubjectDao {
     }
 
     @Override
-    public List<Subject> findAllThatUserCanDo(final User user) {
-        @SuppressWarnings("unchecked") final List<Integer> ids =
-                em.createNativeQuery("SELECT id FROM subjects s FULL JOIN subjectsdegrees sd ON s.id = sd.idsub\n" +
-                                "WHERE sd.iddeg = ?\n " +
-                                "AND NOT EXISTS ( \n" +
-                                "    SELECT id FROM prereqsubjects p \n" +
-                                "    WHERE p.idsub = s.id \n" +
-                                "    AND NOT EXISTS ( \n" +
-                                "        SELECT * FROM usersubjectprogress usp \n" +
-                                "        WHERE usp.idsub = p.idprereq \n" +
-                                "        AND usp.iduser = ? \n" +
-                                "    ) \n" +
-                                ") \n" +
-                                "AND s.id NOT IN ( \n" +
-                                "    SELECT idsub FROM usersubjectprogress usp \n" +
-                                "    WHERE usp.iduser = ? \n" +
-                                ")")
-                .setParameter(1,user.getDegree().getId())
-                .setParameter(2, user.getId())
-                .setParameter(3,user.getId())
-                .getResultList();
-
-        if(ids.isEmpty()) return Collections.emptyList();
-
-        return em.createQuery("from Subject s where s.id in :ids", Subject.class)
-                .setParameter("ids", ids)
-                .getResultList();
-    }
-
-    @Override
-    public List<Subject> findAllThatUserHasNotDone(final User user){
+    public List<Subject> findAllThatUserCanDo(final User user, final int page, final SubjectOrderField orderBy, final OrderDir dir) {
         @SuppressWarnings("unchecked")
         final List<Integer> ids =
-                em.createNativeQuery("SELECT id FROM subjects s FULL JOIN subjectsdegrees sd ON s.id = sd.idsub\n" +
-                                "WHERE sd.iddeg = ?\n " +
-                                "AND NOT EXISTS ( \n" +
-                                "    SELECT * \n" +
-                                "FROM usersubjectprogress up \n" +
-                                "WHERE up.idsub = s.id AND up.subjectstate = 1 AND up.iduser = ? \n" +
-                                ")")
-                .setParameter(1, user.getDegree().getId())
-                .setParameter(2, user.getId())
-                .getResultList();
+        em.createNativeQuery("SELECT id FROM subjects s FULL JOIN subjectsdegrees sd ON s.id = sd.idsub\n" +
+                        "WHERE sd.iddeg = ?\n " +
+                        "AND NOT EXISTS ( \n" +
+                        "    SELECT id FROM prereqsubjects p \n" +
+                        "    WHERE p.idsub = s.id \n" +
+                        "    AND NOT EXISTS ( \n" +
+                        "        SELECT * FROM usersubjectprogress usp \n" +
+                        "        WHERE usp.idsub = p.idprereq \n" +
+                        "        AND usp.iduser = ? \n" +
+                        "    ) \n" +
+                        ") \n" +
+                        "AND s.id NOT IN ( \n" +
+                        "    SELECT idsub FROM usersubjectprogress usp \n" +
+                        "    WHERE usp.iduser = ? \n" +
+                        ")")
+        .setParameter(1,user.getDegree().getId())
+        .setParameter(2, user.getId())
+        .setParameter(3,user.getId())
+        .setFirstResult((page - 1) * PAGE_SIZE)
+        .setMaxResults(PAGE_SIZE)
+        .getResultList();
 
         if(ids.isEmpty()) return Collections.emptyList();
 
-        return em.createQuery("from Subject s where s.id in :ids", Subject.class)
+        StringBuilder query = new StringBuilder("from Subject s where s.id in :ids");
+
+        appendOrderHql(query, orderBy, dir);
+
+        return em.createQuery(query.toString(), Subject.class)
                 .setParameter("ids", ids)
                 .getResultList();
     }
 
     @Override
-    public List<Subject> findAllThatUserHasDone(final User user) {
+    public List<Subject> findAllThatUserHasNotDone(final User user, final int page, final SubjectOrderField orderBy, final OrderDir dir){
+        @SuppressWarnings("unchecked")
+        final List<Integer> ids =
+        em.createNativeQuery("SELECT id FROM subjects s FULL JOIN subjectsdegrees sd ON s.id = sd.idsub\n" +
+                        "WHERE sd.iddeg = ?\n " +
+                        "AND NOT EXISTS ( \n" +
+                        "    SELECT * \n" +
+                        "FROM usersubjectprogress up \n" +
+                        "WHERE up.idsub = s.id AND up.subjectstate = 1 AND up.iduser = ? \n" +
+                        ")")
+        .setParameter(1, user.getDegree().getId())
+        .setParameter(2, user.getId())
+        .setFirstResult((page - 1) * PAGE_SIZE)
+        .setMaxResults(PAGE_SIZE)
+        .getResultList();
+
+        if(ids.isEmpty()) return Collections.emptyList();
+
+        StringBuilder query = new StringBuilder("from Subject s where s.id in :ids");
+
+        appendOrderHql(query, orderBy, dir);
+
+        return em.createQuery(query.toString(), Subject.class)
+                .setParameter("ids", ids)
+                .getResultList();
+    }
+
+    @Override
+    public List<Subject> findAllThatUserHasDone(final User user, final int page, final SubjectOrderField orderBy, final OrderDir dir) {
         @SuppressWarnings("unchecked")
         final List<Integer> ids =
                 em.createNativeQuery("SELECT up.idsub\n" +
                                 "\tFROM usersubjectprogress up\n" +
                                 "\tWHERE up.subjectstate = 1 AND up.iduser = ?\n")
                         .setParameter(1, user.getId())
+                        .setFirstResult((page - 1) * PAGE_SIZE)
+                        .setMaxResults(PAGE_SIZE)
                         .getResultList();
 
         if(ids.isEmpty()) return Collections.emptyList();
 
-        return em.createQuery("from Subject s where s.id in :ids", Subject.class)
+        StringBuilder query = new StringBuilder("from Subject s where s.id in :ids");
+
+        appendOrderHql(query, orderBy, dir);
+
+        return em.createQuery(query.toString(), Subject.class)
                 .setParameter("ids", ids)
                 .getResultList();
     }
 
     @Override
-    public List<Subject> findAllThatUserCouldUnlock(final User user){
+    public List<Subject> findAllThatUserCouldUnlock(final User user, final int page, final SubjectOrderField orderBy, final OrderDir dir){
         @SuppressWarnings("unchecked")
         final List<Integer> ids = em.createNativeQuery("SELECT DISTINCT s.id\n" +
                         "FROM subjects s FULL JOIN subjectsdegrees sd on s.id = sd.idsub\n" +
@@ -166,11 +185,17 @@ public class SubjectJpaDao implements SubjectDao {
                 .setParameter(5, user.getId())
                 .setParameter(6, user.getId())
                 .setParameter(7, user.getId())
+                .setFirstResult((page - 1) * PAGE_SIZE)
+                .setMaxResults(PAGE_SIZE)
                 .getResultList();
 
         if(ids.isEmpty()) return Collections.emptyList();
 
-        return em.createQuery("from Subject s where s.id in :ids", Subject.class)
+        StringBuilder query = new StringBuilder("from Subject s where s.id in :ids");
+
+        appendOrderHql(query, orderBy, dir);
+
+        return em.createQuery(query.toString(), Subject.class)
                 .setParameter("ids", ids)
                 .getResultList();
     }
@@ -192,7 +217,8 @@ public class SubjectJpaDao implements SubjectDao {
             final String name,
             final int page,
             final Map<SubjectFilterField, String> filters,
-            final SubjectOrderField orderBy, OrderDir dir
+            final SubjectOrderField orderBy,
+            final OrderDir dir
     ){
         final StringBuilder nativeQuerySb;
 
@@ -209,6 +235,8 @@ public class SubjectJpaDao implements SubjectDao {
         }
 
         appendOrderSql(nativeQuerySb, orderBy, dir);
+
+        System.out.println(nativeQuerySb.toString());
 
         final Query nativeQuery = em.createNativeQuery(nativeQuerySb.toString());
 

@@ -1,19 +1,13 @@
 package ar.edu.itba.paw.services;
 
-import ar.edu.itba.paw.models.Subject;
-import ar.edu.itba.paw.models.SubjectClass;
-import ar.edu.itba.paw.models.User;
+import ar.edu.itba.paw.models.*;
 import ar.edu.itba.paw.models.enums.*;
-import ar.edu.itba.paw.models.exceptions.InvalidPageNumberException;
-import ar.edu.itba.paw.models.exceptions.SubjectNotFoundException;
-import ar.edu.itba.paw.models.exceptions.UnauthorizedException;
+import ar.edu.itba.paw.models.exceptions.*;
 import ar.edu.itba.paw.persistence.dao.SubjectDao;
 import ar.edu.itba.paw.persistence.exceptions.SubjectIdAlreadyExistsPersistenceException;
-import ar.edu.itba.paw.models.exceptions.SubjectIdAlreadyExistsException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 import java.time.LocalTime;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -21,11 +15,8 @@ import java.util.stream.Collectors;
 @Service
 public class SubjectServiceImpl implements SubjectService {
     private final SubjectDao subjectDao;
-
     private final DegreeService degreeService;
-
     private final ProfessorService professorService;
-
 
     @Autowired
     public SubjectServiceImpl(final SubjectDao subjectDao, DegreeService degreeService, ProfessorService professorService){
@@ -33,6 +24,56 @@ public class SubjectServiceImpl implements SubjectService {
         this.degreeService = degreeService;
         this.professorService = professorService;
     }
+
+    @Override
+    public List<Subject> get(
+            final User user,
+            final Long degree,
+            final Long semester,
+            final Long available,
+            final Long unLockable,
+            final Long done,
+            final Long future,
+            final Long plan,
+            final String query,
+            final Integer credits,
+            final String department,
+            final Integer difficulty,
+            final Integer timeDemand,
+            final int page,
+            final String orderBy,
+            final String dir
+    ){
+        if(degree != null && semester != null){
+            Degree deg = degreeService.findById(degree).orElseThrow(DegreeNotFoundException::new);
+            List<DegreeSemester> semesters =  deg.getSemesters();
+            if(semesters.size() <= semester){
+                throw new SemesterNotFoundException();
+            }
+            return semesters.get(Math.toIntExact(semester)).getSubjects();
+        }
+        if(available != null){
+            return findAllThatUserCanDo(user, page, orderBy, dir);
+        }
+        if(unLockable != null){
+            return findAllThatUserCouldUnlock(user, page, orderBy, dir);
+        }
+        if(done != null){
+            return findAllThatUserHasDone(user, page, orderBy, dir);
+        }
+        if(future != null){
+            return findAllThatUserHasNotDone(user, page, orderBy, dir);
+        }
+        if(plan != null){
+            // TODO
+            throw new RuntimeException("IMPLEMENT ME!");
+        }
+        if(query != null){
+            return search(user, query, page, orderBy, dir, credits, department, difficulty, timeDemand);
+        }
+        return new ArrayList<>();
+    }
+
 
     @Transactional
     @Override
@@ -171,23 +212,31 @@ public class SubjectServiceImpl implements SubjectService {
     }
 
     @Override
-    public List<Subject> findAllThatUserCanDo(User user) {
-        return subjectDao.findAllThatUserCanDo(user);
+    public List<Subject> findAllThatUserCanDo(final User user, final int page, final String orderBy, final String dir) {
+        final OrderDir orderDir = OrderDir.parse(dir);
+        final SubjectOrderField orderField = SubjectOrderField.parse(orderBy);
+        return subjectDao.findAllThatUserCanDo(user, page, orderField, orderDir);
     }
 
     @Override
-    public List<Subject> findAllThatUserHasNotDone(User user){
-        return subjectDao.findAllThatUserHasNotDone(user);
+    public List<Subject> findAllThatUserHasNotDone(final User user, final int page, final String orderBy, final String dir){
+        final OrderDir orderDir = OrderDir.parse(dir);
+        final SubjectOrderField orderField = SubjectOrderField.parse(orderBy);
+        return subjectDao.findAllThatUserHasNotDone(user, page, orderField, orderDir);
     }
 
     @Override
-    public List<Subject> findAllThatUserHasDone(User user) {
-        return subjectDao.findAllThatUserHasDone(user);
+    public List<Subject> findAllThatUserHasDone(final User user, final int page, final String orderBy, final String dir) {
+        final OrderDir orderDir = OrderDir.parse(dir);
+        final SubjectOrderField orderField = SubjectOrderField.parse(orderBy);
+        return subjectDao.findAllThatUserHasDone(user, page, orderField, orderDir);
     }
 
     @Override
-    public List<Subject> findAllThatUserCouldUnlock(User user){
-        return subjectDao.findAllThatUserCouldUnlock(user);
+    public List<Subject> findAllThatUserCouldUnlock(final User user, final int page, final String orderBy, final String dir){
+        final OrderDir orderDir = OrderDir.parse(dir);
+        final SubjectOrderField orderField = SubjectOrderField.parse(orderBy);
+        return subjectDao.findAllThatUserCouldUnlock(user, page, orderField, orderDir);
     }
 
     @Override
@@ -207,7 +256,8 @@ public class SubjectServiceImpl implements SubjectService {
             final Integer difficulty,
             final Integer time
     ) {
-        if(page < 1 || page > getTotalPagesForSearch(user, name, credits, department, difficulty, time, orderBy)) throw new InvalidPageNumberException();
+        if(page < 1 || page > getTotalPagesForSearch(user, name, credits, department, difficulty, time, orderBy))
+            throw new InvalidPageNumberException();
 
         final OrderDir orderDir = OrderDir.parse(dir);
         final SubjectOrderField orderField = SubjectOrderField.parse(orderBy);
@@ -303,12 +353,13 @@ public class SubjectServiceImpl implements SubjectService {
             final Integer time
     ) {
         final Map<SubjectFilterField, String> filters = new HashMap<>();
-        if(credits != null) filters.put(SubjectFilterField.CREDITS, credits.toString());
-        if(department != null && !department.isEmpty()) filters.put(SubjectFilterField.DEPARTMENT, department);
 
+        if(credits != null)
+            filters.put(SubjectFilterField.CREDITS, credits.toString());
+        if(department != null && !department.isEmpty())
+            filters.put(SubjectFilterField.DEPARTMENT, department);
         if(difficulty != null)
             filters.put(SubjectFilterField.DIFFICULTY, String.valueOf(Difficulty.parse(difficulty.longValue()).getValue()));
-
         if(time != null)
             filters.put(SubjectFilterField.TIME, String.valueOf(TimeDemanding.parse(time.longValue()).getIntValue()));
 

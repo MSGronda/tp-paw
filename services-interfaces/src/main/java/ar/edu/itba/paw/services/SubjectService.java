@@ -25,6 +25,26 @@ public interface SubjectService {
                    final String classBuildings,
                    final String classRooms,
                    final String classModes) throws SubjectIdAlreadyExistsException;
+
+    List<Subject> get(
+            final User user,
+            final Long degree,
+            final Long semester,
+            final Long available,
+            final Long unLockable,
+            final Long done,
+            final Long future,
+            final Long plan,
+            final String query,
+            final Integer credits,
+            final String department,
+            final Integer difficulty,
+            final Integer timeDemand,
+            final int page,
+            final String orderBy,
+            final String dir
+    );
+
     List<Subject> getAll();
 
     Optional<Subject> findById(final String id);
@@ -65,10 +85,10 @@ public interface SubjectService {
     Map<User,Set<Subject>> getAllUserUnreviewedNotificationSubjects();
     void updateUnreviewedNotificationTime();
 
-    List<Subject> findAllThatUserCanDo(final User user);
-    List<Subject> findAllThatUserHasNotDone(final User user);
-    List<Subject> findAllThatUserHasDone(final User user);
-    List<Subject> findAllThatUserCouldUnlock(final User user);
+    List<Subject> findAllThatUserCanDo(final User user, final int page, final String orderBy, final String dir);
+    List<Subject> findAllThatUserHasNotDone(final User user, final int page, final String orderBy, final String dir);
+    List<Subject> findAllThatUserHasDone(final User user, final int page, final String orderBy, final String dir);
+    List<Subject> findAllThatUserCouldUnlock(final User user, final int page, final String orderBy, final String dir);
 
     void delete(final User user, final String subjectId) throws UnauthorizedException, SubjectNotFoundException;
 

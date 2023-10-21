@@ -2,12 +2,13 @@ package ar.edu.itba.paw.webapp.controller;
 
 
 import ar.edu.itba.paw.models.Subject;
+import ar.edu.itba.paw.models.User;
 import ar.edu.itba.paw.models.exceptions.SubjectIdAlreadyExistsException;
+import ar.edu.itba.paw.models.exceptions.UserNotFoundException;
 import ar.edu.itba.paw.services.*;
 import ar.edu.itba.paw.webapp.dto.SubjectDto;
 import ar.edu.itba.paw.webapp.form.SubjectForm;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.access.method.P;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.ModelAttribute;
 
@@ -23,17 +24,11 @@ import java.util.stream.Collectors;
 public class SubjectController {
 
     private final SubjectService subjectService;
-
-
     private final ReviewService reviewService;
-
-
     private final DegreeService degreeService;
-
     private final AuthUserService authUserService;
-
-
     private final ProfessorService professorService;
+    private final UserService userService;
 
     @Context
     private UriInfo uriInfo;
@@ -44,16 +39,15 @@ public class SubjectController {
             final ReviewService reviewService,
             final DegreeService degreeService,
             final AuthUserService authUserService,
-            final ProfessorService professorService
-    ) {
+            final ProfessorService professorService,
+            UserService userService) {
         this.subjectService = subjectService;
         this.reviewService = reviewService;
         this.degreeService = degreeService;
         this.authUserService = authUserService;
         this.professorService = professorService;
+        this.userService = userService;
     }
-
-
 
 //    @RequestMapping("/subject/{id:\\d+\\.\\d+}")
 //    public ModelAndView subjectInfo(
@@ -193,15 +187,55 @@ public class SubjectController {
     @GET
     @Produces("application/vnd.subject-list.v1+json")
     public Response getSubjects(
-            // PARAMS
-    ){
-        List<Subject> subs = subjectService.getAll();
+            @QueryParam("degree") final Long degree,
+            @QueryParam("semester") final Long semester,
+
+            @QueryParam("available") final Long available,
+            @QueryParam("unLockable") final Long unLockable,
+            @QueryParam("done") final Long done,
+            @QueryParam("future") final Long future,
+
+            @QueryParam("plan") final Long plan,        // devuelve todas la materias en el cuatri acutal del usuario
+
+            @QueryParam("q") final String query,
+            @QueryParam("credits") final Integer credits,
+            @QueryParam("department") final String department,
+            @QueryParam("difficulty") final Integer difficulty,
+            @QueryParam("timeDemand") final Integer timeDemand,
+
+            @QueryParam("page") @DefaultValue("1") final int page,
+            @QueryParam("orderBy") @DefaultValue("name") final String orderBy,
+            @QueryParam("dir") @DefaultValue("asc") final String dir
+        ){
+
+        User user = userService.getRelevantUser(available, unLockable, done, future, plan).orElseThrow(UserNotFoundException::new);
+
+        List<Subject> subs = subjectService.get(
+                user,
+                degree,
+                semester,
+                available,
+                unLockable,
+                done,
+                future,
+                plan,
+                query,
+                credits,
+                department,
+                difficulty,
+                timeDemand,
+                page,
+                orderBy,
+                dir
+        );
+
         List<SubjectDto> subjectsDtos = subs.stream().map(subject -> SubjectDto.fromSubject(uriInfo, subject)).collect(Collectors.toList());
 
         if(subjectsDtos.isEmpty())
             return Response.noContent().build();
 
         Response.ResponseBuilder responseBuilder = Response.ok(new GenericEntity<List<SubjectDto>>(subjectsDtos){});
+
         return responseBuilder.build();
     }
 
@@ -228,7 +262,7 @@ public class SubjectController {
                     subjectForm.getClassRooms(),
                     subjectForm.getClassModes()
             );
-        } catch (SubjectIdAlreadyExistsException e){//No se si conflict es el status code que corresponde
+        } catch (SubjectIdAlreadyExistsException e){        // No se si conflict es el status code que corresponde
             return Response.status(Response.Status.CONFLICT.getStatusCode()).build();
         }
         return Response.status(Response.Status.CREATED.getStatusCode()).build();
