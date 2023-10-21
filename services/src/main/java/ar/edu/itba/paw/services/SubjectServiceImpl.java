@@ -45,11 +45,12 @@ public class SubjectServiceImpl implements SubjectService {
             final String dir
     ){
         if(degree != null && semester != null){
-            Degree deg = degreeService.findById(degree).orElseThrow(DegreeNotFoundException::new);
-            List<DegreeSemester> semesters =  deg.getSemesters();
-            if(semesters.size() <= semester){
+            final Degree deg = degreeService.findById(degree).orElseThrow(DegreeNotFoundException::new);
+            final List<DegreeSemester> semesters =  deg.getSemesters();
+
+            if(semesters.size() <= semester)
                 throw new SemesterNotFoundException();
-            }
+
             return semesters.get(Math.toIntExact(semester)).getSubjects();
         }
         if(available != null){

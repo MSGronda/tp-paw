@@ -3,11 +3,11 @@ package ar.edu.itba.paw.webapp.controller;
 
 import ar.edu.itba.paw.models.Subject;
 import ar.edu.itba.paw.models.User;
-import ar.edu.itba.paw.models.exceptions.SubjectIdAlreadyExistsException;
-import ar.edu.itba.paw.models.exceptions.UserNotFoundException;
+import ar.edu.itba.paw.models.exceptions.*;
 import ar.edu.itba.paw.services.*;
 import ar.edu.itba.paw.webapp.dto.SubjectDto;
 import ar.edu.itba.paw.webapp.form.SubjectForm;
+import org.omg.CORBA.DynAnyPackage.Invalid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -16,6 +16,7 @@ import javax.validation.Valid;
 import javax.ws.rs.*;
 import javax.ws.rs.core.*;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 
@@ -195,7 +196,7 @@ public class SubjectController {
             @QueryParam("done") final Long done,
             @QueryParam("future") final Long future,
 
-            @QueryParam("plan") final Long plan,        // devuelve todas la materias en el cuatri acutal del usuario
+            @QueryParam("plan") final Long plan,
 
             @QueryParam("q") final String query,
             @QueryParam("credits") final Integer credits,
@@ -208,35 +209,42 @@ public class SubjectController {
             @QueryParam("dir") @DefaultValue("asc") final String dir
         ){
 
-        User user = userService.getRelevantUser(available, unLockable, done, future, plan).orElseThrow(UserNotFoundException::new);
+        final Optional<User> user = userService.getRelevantUser(available, unLockable, done, future, plan);
 
-        List<Subject> subs = subjectService.get(
-                user,
-                degree,
-                semester,
-                available,
-                unLockable,
-                done,
-                future,
-                plan,
-                query,
-                credits,
-                department,
-                difficulty,
-                timeDemand,
-                page,
-                orderBy,
-                dir
-        );
+        if(!user.isPresent()){
+            return Response.status(Response.Status.NOT_FOUND).build();
+        }
 
-        List<SubjectDto> subjectsDtos = subs.stream().map(subject -> SubjectDto.fromSubject(uriInfo, subject)).collect(Collectors.toList());
+        final List<Subject> subs;
+        try{
+            subs = subjectService.get(
+                    user.get(),
+                    degree,
+                    semester,
+                    available,
+                    unLockable,
+                    done,
+                    future,
+                    plan,
+                    query,
+                    credits,
+                    department,
+                    difficulty,
+                    timeDemand,
+                    page,
+                    orderBy,
+                    dir
+            );
+        } catch (DegreeNotFoundException | InvalidPageNumberException | SemesterNotFoundException e) {
+            return Response.status(Response.Status.NOT_FOUND).build();
+        }
+
+        final List<SubjectDto> subjectsDtos = subs.stream().map(subject -> SubjectDto.fromSubject(uriInfo, subject)).collect(Collectors.toList());
 
         if(subjectsDtos.isEmpty())
             return Response.noContent().build();
 
-        Response.ResponseBuilder responseBuilder = Response.ok(new GenericEntity<List<SubjectDto>>(subjectsDtos){});
-
-        return responseBuilder.build();
+        return Response.ok(new GenericEntity<List<SubjectDto>>(subjectsDtos){}).build();
     }
 
     @POST

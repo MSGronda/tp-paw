@@ -63,7 +63,7 @@ public class SubjectJpaDao implements SubjectDao {
 
         if(ids.isEmpty()) return Collections.emptyList();
 
-        StringBuilder query = new StringBuilder("from Subject s where s.id in :ids");
+        final StringBuilder query = new StringBuilder("from Subject s where s.id in :ids");
 
         appendOrderHql(query, orderBy, dir);
 
@@ -91,7 +91,7 @@ public class SubjectJpaDao implements SubjectDao {
 
         if(ids.isEmpty()) return Collections.emptyList();
 
-        StringBuilder query = new StringBuilder("from Subject s where s.id in :ids");
+        final StringBuilder query = new StringBuilder("from Subject s where s.id in :ids");
 
         appendOrderHql(query, orderBy, dir);
 
@@ -114,7 +114,7 @@ public class SubjectJpaDao implements SubjectDao {
 
         if(ids.isEmpty()) return Collections.emptyList();
 
-        StringBuilder query = new StringBuilder("from Subject s where s.id in :ids");
+        final StringBuilder query = new StringBuilder("from Subject s where s.id in :ids");
 
         appendOrderHql(query, orderBy, dir);
 
@@ -191,7 +191,7 @@ public class SubjectJpaDao implements SubjectDao {
 
         if(ids.isEmpty()) return Collections.emptyList();
 
-        StringBuilder query = new StringBuilder("from Subject s where s.id in :ids");
+        final StringBuilder query = new StringBuilder("from Subject s where s.id in :ids");
 
         appendOrderHql(query, orderBy, dir);
 
@@ -235,8 +235,6 @@ public class SubjectJpaDao implements SubjectDao {
         }
 
         appendOrderSql(nativeQuerySb, orderBy, dir);
-
-        System.out.println(nativeQuerySb.toString());
 
         final Query nativeQuery = em.createNativeQuery(nativeQuerySb.toString());
 
