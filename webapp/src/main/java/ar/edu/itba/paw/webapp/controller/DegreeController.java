@@ -24,26 +24,26 @@ public class DegreeController {
         this.authUserService = authUserService;
     }
 
-    @RequestMapping("/degrees")
-    public ModelAndView degrees() {
-        final ModelAndView mav = new ModelAndView("degree/degrees");
-        mav.addObject("degrees", degreeService.getAll());
-        return mav;
-    }
-
-    @RequestMapping("/degree")
-    public ModelAndView degree() {
-        return new ModelAndView("redirect:/degree/" + authUserService.getCurrentUser().getDegree().getId());
-    }
-
-    @RequestMapping("/degree/{id:\\d+}")
-    public ModelAndView degree(@PathVariable final long id) {
-        final Degree degree = degreeService.findById(id).orElseThrow(DegreeNotFoundException::new);
-
-        final ModelAndView mav = new ModelAndView("degree/index");
-        mav.addObject("degree", degree);
-        mav.addObject("subjectProgress", authUserService.getCurrentUser().getAllSubjectProgress());
-        mav.addObject("relevantFilters", degreeService.getRelevantFiltersForDegree(degree));
-        return mav;
-    }
+//    @RequestMapping("/degrees")
+//    public ModelAndView degrees() {
+//        final ModelAndView mav = new ModelAndView("degree/degrees");
+//        mav.addObject("degrees", degreeService.getAll());
+//        return mav;
+//    }
+//
+//    @RequestMapping("/degree")
+//    public ModelAndView degree() {
+//        return new ModelAndView("redirect:/degree/" + authUserService.getCurrentUser().getDegree().getId());
+//    }
+//
+//    @RequestMapping("/degree/{id:\\d+}")
+//    public ModelAndView degree(@PathVariable final long id) {
+//        final Degree degree = degreeService.findById(id).orElseThrow(DegreeNotFoundException::new);
+//
+//        final ModelAndView mav = new ModelAndView("degree/index");
+//        mav.addObject("degree", degree);
+//        mav.addObject("subjectProgress", authUserService.getCurrentUser().getAllSubjectProgress());
+//        mav.addObject("relevantFilters", degreeService.getRelevantFiltersForDegree(degree));
+//        return mav;
+//    }
 }

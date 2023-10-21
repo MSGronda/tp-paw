@@ -219,6 +219,7 @@ public class ReviewController {
         if(reviewDtos.isEmpty())
             return Response.noContent().build();
 
+        // TODO: devolver informacion sobre paginacion ????
         Response.ResponseBuilder responseBuilder = Response.ok(new GenericEntity<List<ReviewDto>>(reviewDtos){});
         return responseBuilder.build();
     }
@@ -257,6 +258,7 @@ public class ReviewController {
             @Valid @ModelAttribute("reviewForm") final ReviewForm reviewForm
     ){
         try{
+            // TODO: el update solo sea 1 paso?
             final Review review = reviewService.findById(reviewId).orElseThrow(ReviewNotFoundException::new);
             reviewService.update(
                     Review.builderFrom(review)

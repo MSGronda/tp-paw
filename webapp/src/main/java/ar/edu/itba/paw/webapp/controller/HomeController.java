@@ -23,22 +23,22 @@ public class HomeController {
         this.subjectService = subjectService;
     }
 
-    @RequestMapping("/")
-    public ModelAndView dashboard() {
-        if (!authUserService.isAuthenticated()) return new ModelAndView("landing");
-
-        final User user = authUserService.getCurrentUser();
-        final Degree degree = user.getDegree();
-
-        ModelAndView mav = new ModelAndView("dashboard/dashboard");
-        mav.addObject("degree", degree);
-        mav.addObject("user", user);
-        mav.addObject("subjectsUserCanDo", subjectService.findAllThatUserCanDo(user));
-        mav.addObject("futureSubjects", subjectService.findAllThatUserHasNotDone(user));
-        mav.addObject("pastSubjects", subjectService.findAllThatUserHasDone(user));
-        mav.addObject("userProgressPercentage", user.getTotalProgressPercentageForDegree());
-        mav.addObject("userCreditsDoneForDegree", user.getCreditsDoneForDegree());
-        return mav;
-    }
+//    @RequestMapping("/")
+//    public ModelAndView dashboard() {
+//        if (!authUserService.isAuthenticated()) return new ModelAndView("landing");
+//
+//        final User user = authUserService.getCurrentUser();
+//        final Degree degree = user.getDegree();
+//
+//        ModelAndView mav = new ModelAndView("dashboard/dashboard");
+//        mav.addObject("degree", degree);
+//        mav.addObject("user", user);
+//        mav.addObject("subjectsUserCanDo", subjectService.findAllThatUserCanDo(user));
+//        mav.addObject("futureSubjects", subjectService.findAllThatUserHasNotDone(user));
+//        mav.addObject("pastSubjects", subjectService.findAllThatUserHasDone(user));
+//        mav.addObject("userProgressPercentage", user.getTotalProgressPercentageForDegree());
+//        mav.addObject("userCreditsDoneForDegree", user.getCreditsDoneForDegree());
+//        return mav;
+//    }
 }
 

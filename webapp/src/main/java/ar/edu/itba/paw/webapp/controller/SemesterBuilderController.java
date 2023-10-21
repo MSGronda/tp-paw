@@ -39,78 +39,78 @@ public class SemesterBuilderController {
         this.userService = userService;
     }
 
-    @RequestMapping("/builder")
-    public ModelAndView subjectInfo() {
-        final User user = authUserService.getCurrentUser();
-
-        final ModelAndView mav = new ModelAndView("builder/semester-builder");
-        mav.addObject("user", user);
-        mav.addObject("availableSubjects", subjectService.findAllThatUserCanDo(user));
-        mav.addObject("unlockableSubjects", subjectService.findAllThatUserCouldUnlock(user));
-        mav.addObject("doneSubjects", subjectService.findAllThatUserHasDone(user));
-        return mav;
-    }
-
-    @RequestMapping(value ="/builder/finish", method = RequestMethod.GET)
-    public ModelAndView finishSemester(
-            @Valid @ModelAttribute("UserSemesterFinishForm") final UserSemesterFinishForm semesterForm
-    ){
-        final ModelAndView mav = new ModelAndView("builder/finish-semester");
-        mav.addObject("user", authUserService.getCurrentUser());
-        return mav;
-    }
-
-    @RequestMapping(value ="/builder/finish", method = RequestMethod.POST)
-    public ModelAndView finishSemesterSubmit(
-            @Valid @ModelAttribute("UserSemesterFinishForm") final UserSemesterFinishForm semesterForm,
-            final BindingResult errors
-    ){
-        if(errors.hasErrors()){
-            return finishSemester(semesterForm);
-        }
-        User user = authUserService.getCurrentUser();
-        String url = userService.getSemesterSubmitRedirectUrl(user);
-        userService.finishSemester(user, semesterForm.getSubjectIds());
-        return new ModelAndView(url);
-    }
-
-    @RequestMapping(value = "/builder/add", method = RequestMethod.POST)
-    public ModelAndView addSubjectToSemester(
-            @Valid @ModelAttribute("UserSemesterForm") final UserSemesterForm semesterForm,
-            final BindingResult errors
-    ){
-        if(errors.hasErrors()){
-            LOGGER.debug("Subject builder adding form has errors");
-            throw new InvalidFormException();
-        }
-
-        try {
-            userService.addToCurrentSemester(authUserService.getCurrentUser(), semesterForm.getIdSub(), semesterForm.getIdClass());
-        } catch (SubjectNotFoundException | SubjectClassNotFoundException e) {
-            LOGGER.debug("form has invalid subject or class");
-            throw new InvalidFormException(e);
-        }
-
-        return new ModelAndView("redirect:/builder");
-    }
-
-    @RequestMapping(value = "/builder/remove", method = RequestMethod.POST)
-    public ModelAndView removeSubjectToSemester(
-            @Valid @ModelAttribute("UserSemesterForm") final UserSemesterForm semesterForm,
-            final BindingResult errors
-    ){
-        if(errors.hasErrors()){
-            LOGGER.debug("Subject builder adding form has errors");
-            throw new InvalidFormException();
-        }
-
-        try {
-            userService.removeFromCurrentSemester(authUserService.getCurrentUser(), semesterForm.getIdSub(), semesterForm.getIdClass());
-        } catch (SubjectNotFoundException | SubjectClassNotFoundException e) {
-            LOGGER.debug("form has invalid subject or class");
-            throw new InvalidFormException();
-        }
-
-        return new ModelAndView("redirect:/builder");
-    }
+//    @RequestMapping("/builder")
+//    public ModelAndView subjectInfo() {
+//        final User user = authUserService.getCurrentUser();
+//
+//        final ModelAndView mav = new ModelAndView("builder/semester-builder");
+//        mav.addObject("user", user);
+//        mav.addObject("availableSubjects", subjectService.findAllThatUserCanDo(user));
+//        mav.addObject("unlockableSubjects", subjectService.findAllThatUserCouldUnlock(user));
+//        mav.addObject("doneSubjects", subjectService.findAllThatUserHasDone(user));
+//        return mav;
+//    }
+//
+//    @RequestMapping(value ="/builder/finish", method = RequestMethod.GET)
+//    public ModelAndView finishSemester(
+//            @Valid @ModelAttribute("UserSemesterFinishForm") final UserSemesterFinishForm semesterForm
+//    ){
+//        final ModelAndView mav = new ModelAndView("builder/finish-semester");
+//        mav.addObject("user", authUserService.getCurrentUser());
+//        return mav;
+//    }
+//
+//    @RequestMapping(value ="/builder/finish", method = RequestMethod.POST)
+//    public ModelAndView finishSemesterSubmit(
+//            @Valid @ModelAttribute("UserSemesterFinishForm") final UserSemesterFinishForm semesterForm,
+//            final BindingResult errors
+//    ){
+//        if(errors.hasErrors()){
+//            return finishSemester(semesterForm);
+//        }
+//        User user = authUserService.getCurrentUser();
+//        String url = userService.getSemesterSubmitRedirectUrl(user);
+//        userService.finishSemester(user, semesterForm.getSubjectIds());
+//        return new ModelAndView(url);
+//    }
+//
+//    @RequestMapping(value = "/builder/add", method = RequestMethod.POST)
+//    public ModelAndView addSubjectToSemester(
+//            @Valid @ModelAttribute("UserSemesterForm") final UserSemesterForm semesterForm,
+//            final BindingResult errors
+//    ){
+//        if(errors.hasErrors()){
+//            LOGGER.debug("Subject builder adding form has errors");
+//            throw new InvalidFormException();
+//        }
+//
+//        try {
+//            userService.addToCurrentSemester(authUserService.getCurrentUser(), semesterForm.getIdSub(), semesterForm.getIdClass());
+//        } catch (SubjectNotFoundException | SubjectClassNotFoundException e) {
+//            LOGGER.debug("form has invalid subject or class");
+//            throw new InvalidFormException(e);
+//        }
+//
+//        return new ModelAndView("redirect:/builder");
+//    }
+//
+//    @RequestMapping(value = "/builder/remove", method = RequestMethod.POST)
+//    public ModelAndView removeSubjectToSemester(
+//            @Valid @ModelAttribute("UserSemesterForm") final UserSemesterForm semesterForm,
+//            final BindingResult errors
+//    ){
+//        if(errors.hasErrors()){
+//            LOGGER.debug("Subject builder adding form has errors");
+//            throw new InvalidFormException();
+//        }
+//
+//        try {
+//            userService.removeFromCurrentSemester(authUserService.getCurrentUser(), semesterForm.getIdSub(), semesterForm.getIdClass());
+//        } catch (SubjectNotFoundException | SubjectClassNotFoundException e) {
+//            LOGGER.debug("form has invalid subject or class");
+//            throw new InvalidFormException();
+//        }
+//
+//        return new ModelAndView("redirect:/builder");
+//    }
 }
