@@ -208,16 +208,10 @@ public class SubjectController {
             @QueryParam("dir") @DefaultValue("asc") final String dir
         ){
 
-        final Optional<User> user = userService.getRelevantUser(available, unLockable, done, future, plan);
+        final User user = userService.getRelevantUser(available, unLockable, done, future, plan).orElseThrow(UserNotFoundException::new);
 
-        if(!user.isPresent()){
-            return Response.status(Response.Status.NOT_FOUND).build();
-        }
-
-        final List<Subject> subs;
-        try{
-            subs = subjectService.get(
-                    user.get(),
+        final List<Subject> subs = subjectService.get(
+                    user,
                     degree,
                     semester,
                     available,
@@ -233,10 +227,8 @@ public class SubjectController {
                     page,
                     orderBy,
                     dir
-            );
-        } catch (DegreeNotFoundException | InvalidPageNumberException | SemesterNotFoundException e) {
-            return Response.status(Response.Status.NOT_FOUND).build();
-        }
+        );
+
 
         final List<SubjectDto> subjectsDtos = subs.stream().map(subject -> SubjectDto.fromSubject(uriInfo, subject)).collect(Collectors.toList());
 
@@ -248,10 +240,9 @@ public class SubjectController {
 
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response createSubject(@Valid @ModelAttribute("subjectForm") final SubjectForm subjectForm){
-        Subject newSub;
-        try{
-            newSub = subjectService.create(Subject.builder()
+    public Response createSubject(@Valid @ModelAttribute("subjectForm") final SubjectForm subjectForm) {
+        final Subject newSub = subjectService.create(
+                    Subject.builder()
                             .id(subjectForm.getId())
                             .name(subjectForm.getName())
                             .department(subjectForm.getDepartment())
@@ -269,9 +260,48 @@ public class SubjectController {
                     subjectForm.getClassRooms(),
                     subjectForm.getClassModes()
             );
-        } catch (SubjectIdAlreadyExistsException e){        // No se si conflict es el status code que corresponde
-            return Response.status(Response.Status.CONFLICT.getStatusCode()).build();
-        }
+
         return Response.status(Response.Status.CREATED.getStatusCode()).build();
+    }
+
+    @GET
+    @Path("/{id}")
+    public Response getSubjectById(@PathParam("id") final String subjectId){
+        final Subject subject = subjectService.findById(subjectId).orElseThrow(SubjectNotFoundException::new);
+        return Response.ok(SubjectDto.fromSubject(uriInfo,subject)).build();
+    }
+
+    @DELETE
+    @Path("/{id}")
+    public Response deleteSubject(@PathParam("id") final String subjectId){
+        final User user = authUserService.getCurrentUser();
+        subjectService.delete(user, subjectId);
+        return Response.ok().build();
+    }
+
+    @PUT
+    @Path("/{id}")
+    public Response editSubject(
+            @PathParam("id") final String subjectId,
+            @Valid @ModelAttribute("subjectForm") final SubjectForm subjectForm
+        ){
+        subjectService.edit(
+                subjectForm.getId(),
+                subjectForm.getCredits(),
+                subjectForm.getDegreeIds(),
+                subjectForm.getSemesters(),
+                subjectForm.getRequirementIds(),
+                subjectForm.getProfessors(),
+                subjectForm.getClassCodes(),
+                subjectForm.getClassCodes(),        // EEEEEEE ?????
+                subjectForm.getClassProfessors(),
+                subjectForm.getClassDays(),
+                subjectForm.getClassStartTimes(),
+                subjectForm.getClassEndTimes(),
+                subjectForm.getClassBuildings(),
+                subjectForm.getClassRooms(),
+                subjectForm.getClassModes()
+        );
+        return Response.ok().build();
     }
 }
