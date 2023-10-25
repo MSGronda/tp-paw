@@ -110,5 +110,6 @@ public interface SubjectService {
               final String classEndTime,
               final String classBuildings,
               final String classRooms,
-              final String classModes);
+              final String classModes
+    );
 }

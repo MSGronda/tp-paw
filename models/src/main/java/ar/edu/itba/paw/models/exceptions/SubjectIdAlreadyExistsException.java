@@ -1,4 +1,4 @@
 package ar.edu.itba.paw.models.exceptions;
 
-public class SubjectIdAlreadyExistsException extends Exception{
+public class SubjectIdAlreadyExistsException extends RuntimeException{
 }
