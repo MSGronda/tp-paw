@@ -45,7 +45,7 @@ public interface SubjectService {
             final String dir
     );
 
-    List<Subject> getAll();
+    List<Subject> getAll(final int page, final String orderBy, final String dir);
 
     Optional<Subject> findById(final String id);
 

@@ -91,9 +91,9 @@ public class SubjectServiceImplTest {
 
         final List<Subject> resultList = Arrays.asList(subject1, subject2);
 
-        when(subjectDao.getAll()).thenReturn(resultList);
+        when(subjectDao.getAll(1, SubjectOrderField.ID,  OrderDir.DESCENDING)).thenReturn(resultList);
 
-        final List<Subject> subjects = subjectService.getAll();
+        final List<Subject> subjects = subjectService.getAll(1, "id",  "desc");
 
         assertEquals(2, subjects.size());
         assertTrue(subjects.contains(subject1));

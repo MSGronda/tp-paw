@@ -1,6 +1,8 @@
 package ar.edu.itba.paw.persistence.dao;
 
 import ar.edu.itba.paw.models.Subject;
+import ar.edu.itba.paw.models.enums.OrderDir;
+import ar.edu.itba.paw.models.enums.SubjectOrderField;
 import ar.edu.itba.paw.persistence.config.TestConfig;
 import org.junit.Before;
 import org.junit.Test;
@@ -84,7 +86,7 @@ public class SubjectJpaDaoTest {
 
         em.persist(subject2);
 
-        final List<Subject> actual = subjectJpaDao.getAll();
+        final List<Subject> actual = subjectJpaDao.getAll(1, SubjectOrderField.NAME, OrderDir.DESCENDING);
 
         assertEquals(2, actual.size());
         assertTrue(actual.contains(subject));

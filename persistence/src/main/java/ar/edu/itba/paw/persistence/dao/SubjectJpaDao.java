@@ -201,8 +201,12 @@ public class SubjectJpaDao implements SubjectDao {
     }
 
     @Override
-    public List<Subject> getAll() {
-        return em.createQuery("from Subject", Subject.class)
+    public List<Subject> getAll(final int page, final SubjectOrderField orderBy, final OrderDir dir) {
+        final String query = "from Subject" + " order by " + orderBy.getTableColumn() + " " + dir.getQueryString();
+
+        return em.createQuery(query, Subject.class)
+                .setFirstResult((page - 1) * PAGE_SIZE)
+                .setMaxResults(PAGE_SIZE)
                 .getResultList();
     }
 

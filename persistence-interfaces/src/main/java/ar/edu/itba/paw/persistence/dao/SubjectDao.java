@@ -18,7 +18,7 @@ import java.util.Set;
 public interface SubjectDao {
     Subject create(final Subject subject) throws SubjectIdAlreadyExistsPersistenceException;
     Optional<Subject> findById(final String id);
-    List<Subject> getAll();
+    List<Subject> getAll(final int page, final SubjectOrderField orderBy, final OrderDir dir);
 
     List<Subject> search(final User user, final String name, final int page);
     List<Subject> search(

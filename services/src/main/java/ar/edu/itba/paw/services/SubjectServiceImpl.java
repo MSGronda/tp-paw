@@ -72,7 +72,7 @@ public class SubjectServiceImpl implements SubjectService {
         if(query != null){
             return search(user, query, page, orderBy, dir, credits, department, difficulty, timeDemand);
         }
-        return new ArrayList<>();
+        return getAll(page,orderBy, dir);
     }
 
 
@@ -333,8 +333,10 @@ public class SubjectServiceImpl implements SubjectService {
     }
 
     @Override
-    public List<Subject> getAll() {
-        return subjectDao.getAll();
+    public List<Subject> getAll(final int page, final String orderBy, final String dir) {
+        final OrderDir orderDir = OrderDir.parse(dir);
+        final SubjectOrderField orderField = SubjectOrderField.parse(orderBy);
+        return subjectDao.getAll(page, orderField, orderDir);
     }
 
     @Override

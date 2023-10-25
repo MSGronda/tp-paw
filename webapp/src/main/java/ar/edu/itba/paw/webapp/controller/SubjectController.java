@@ -7,7 +7,6 @@ import ar.edu.itba.paw.models.exceptions.*;
 import ar.edu.itba.paw.services.*;
 import ar.edu.itba.paw.webapp.dto.SubjectDto;
 import ar.edu.itba.paw.webapp.form.SubjectForm;
-import org.omg.CORBA.DynAnyPackage.Invalid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -249,7 +248,7 @@ public class SubjectController {
 
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response createSubejct(@Valid @ModelAttribute("subjectForm") final SubjectForm subjectForm){
+    public Response createSubject(@Valid @ModelAttribute("subjectForm") final SubjectForm subjectForm){
         Subject newSub;
         try{
             newSub = subjectService.create(Subject.builder()
