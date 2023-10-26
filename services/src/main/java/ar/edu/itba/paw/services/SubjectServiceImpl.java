@@ -4,7 +4,6 @@ import ar.edu.itba.paw.models.*;
 import ar.edu.itba.paw.models.enums.*;
 import ar.edu.itba.paw.models.exceptions.*;
 import ar.edu.itba.paw.persistence.dao.SubjectDao;
-import ar.edu.itba.paw.persistence.exceptions.SubjectIdAlreadyExistsPersistenceException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -85,12 +84,7 @@ public class SubjectServiceImpl implements SubjectService {
             final List<String> requirementIds,
             final List<String> professors
     ) {
-        final Subject sub;
-        try {
-            sub = subjectDao.create(builder.build());
-        } catch (SubjectIdAlreadyExistsPersistenceException e) {
-            throw new RuntimeException(e);
-        }
+        final Subject sub = subjectDao.create(builder.build());
 
         degreeService.addSubjectToDegrees(sub, degreeIds, semesters);
 

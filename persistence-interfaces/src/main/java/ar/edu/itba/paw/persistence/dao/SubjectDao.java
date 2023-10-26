@@ -7,7 +7,6 @@ import ar.edu.itba.paw.models.User;
 import ar.edu.itba.paw.models.enums.OrderDir;
 import ar.edu.itba.paw.models.enums.SubjectFilterField;
 import ar.edu.itba.paw.models.enums.SubjectOrderField;
-import ar.edu.itba.paw.persistence.exceptions.SubjectIdAlreadyExistsPersistenceException;
 
 import java.time.LocalTime;
 import java.util.List;
@@ -16,7 +15,7 @@ import java.util.Optional;
 import java.util.Set;
 
 public interface SubjectDao {
-    Subject create(final Subject subject) throws SubjectIdAlreadyExistsPersistenceException;
+    Subject create(final Subject subject);
     Optional<Subject> findById(final String id);
     List<Subject> getAll(final int page, final SubjectOrderField orderBy, final OrderDir dir);
 
