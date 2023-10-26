@@ -80,75 +80,55 @@ public class SubjectServiceImpl implements SubjectService {
     @Override
     public Subject create(
             final Subject.Builder builder,
-            final String degreeIds,
-            final String semesters,
-            final String requirementIds,
-            final String professors,
-            final String classCodes,
-            final String classProfessors,
-            final String classDays,
-            final String classStartTimes,
-            final String classEndTime,
-            final String classBuildings,
-            final String classRooms,
-            final String classModes
-    ) throws SubjectIdAlreadyExistsException {
-        Subject sub;
-        try{
+            final List<Long> degreeIds,
+            final List<Integer> semesters,
+            final List<String> requirementIds,
+            final List<String> professors
+    ) {
+        final Subject sub;
+        try {
             sub = subjectDao.create(builder.build());
-        } catch (final SubjectIdAlreadyExistsPersistenceException e){
-            throw new SubjectIdAlreadyExistsException();
+        } catch (SubjectIdAlreadyExistsPersistenceException e) {
+            throw new RuntimeException(e);
         }
-        // parsear y llamar a los demas services
 
-        //se agrega a subjectDegrees
-        final List<String> degreeIdsList = parseJsonList(degreeIds, false);
-        final List<String> semestersList = parseJsonList(semesters, false);
-        degreeService.addSubjectToDegrees(
-                sub,
-                degreeIdsList.stream().map(Long::parseLong).collect(java.util.stream.Collectors.toList()),
-                semestersList.stream().map(Integer::parseInt).collect(java.util.stream.Collectors.toList())
-        );
+        degreeService.addSubjectToDegrees(sub, degreeIds, semesters);
 
-        //se agregan profesores a professorSubjects
-        final List<String> professorsList = parseJsonList(professors, true);
-        professorService.addSubjectToProfessors(
-                sub,
-                professorsList
-        );
+        professorService.addSubjectToProfessors(sub,professors);
 
-        //se agregan las correlativas
-        final List<String> correlativesList = parseJsonList(requirementIds, false);
-        subjectDao.addPrerequisites( sub, correlativesList);
-
-        //se crean las comisiones
-        final List<String> classesList = parseJsonList(classCodes, false);
-        final Set<String> uniqueClassesList = new HashSet<>(classesList);
-        subjectDao.addClassesToSubject(sub, uniqueClassesList);
-
-        //se agregan los profesores a las comisiones
-        final List<List<String>> classProfessorsList = parseJsonListOfLists(classProfessors);
-        professorService.addProfessorsToClasses(sub, classesList, classProfessorsList);
-
-        //se agregan los datos a las comisiones
-        final List<String> startTimes = parseJsonList(classStartTimes, false);
-        final List<String> endTimes = parseJsonList(classEndTime, false);
-        final List<String> buildings = parseJsonList(classBuildings, false);
-        final List<String> modes = parseJsonList(classModes, false);
-        final List<String> days = parseJsonList(classDays, false);
-        final List<String> rooms = parseJsonList(classRooms, false);
-        subjectDao.addSubjectClassTimes(sub,
-                classesList,
-                startTimes.stream().map(LocalTime::parse).collect(Collectors.toList()),
-                endTimes.stream().map(LocalTime::parse).collect(Collectors.toList()),
-                buildings,
-                modes,
-                days.stream().map(Integer::parseInt).collect(Collectors.toList()),
-                rooms
-        );
+        subjectDao.addPrerequisites(sub, requirementIds);
 
         return sub;
     }
+
+    @Override
+    @Transactional
+    public void addClass(
+        final Subject subject,
+        final String classCode,
+        final List<String> professors,
+        final List<Integer> days,
+        final List<LocalTime> startTimes,
+        final List<LocalTime> endTimes,
+        final List<String> locations,
+        final List<String> buildings,
+        final List<String> modes
+    ){
+        final SubjectClass subjectClass = subjectDao.addClassToSubject(subject, classCode);
+
+        professorService.addProfessorsToClass(subjectClass, professors);
+
+        subjectDao.addClassTimesToClass(
+            subjectClass,
+            days,
+            startTimes,
+            endTimes,
+            locations,
+            buildings,
+            modes
+        );
+    }
+
 
     private List<String> parseJsonList(String stringifyString, boolean everySecondComma) {
         String trimmedInput = stringifyString.replace("[", "").replace("]", "");
@@ -390,77 +370,77 @@ public class SubjectServiceImpl implements SubjectService {
     public void edit(
             final String id,
             final int credits,
-            final String degreeIds,
-            final String semesters,
-            final String requirementIds,
-            final String professors,
-            final String classIds,
-            final String classCodes,
-            final String classProfessors,
-            final String classDays,
-            final String classStartTimes,
-            final String classEndTime,
-            final String classBuildings,
-            final String classRooms,
-            final String classModes
+            final List<Long> degreeIds,
+            final List<Integer> semesters,
+            final List<String> requirementIds,
+            final List<String> professors,
+            final List<String> classIds,
+            final List<String> classCodes,
+            final List<String> classProfessors,
+            final List<String> classDays,
+            final List<String> classStartTimes,
+            final List<String> classEndTimes,
+            final List<String> classBuildings,
+            final List<String> classRooms,
+            final List<String> classModes
     ) {
 
-        final Optional<Subject> optionalSubject = findById(id);
-        if (!optionalSubject.isPresent()) {
-            return;
-        }
-
-        final Subject sub = optionalSubject.get();
-        if (credits != sub.getCredits()) {
-            subjectDao.editCredits(sub, credits);
-        }
-
-        if (!degreeIds.isEmpty() && !semesters.isEmpty()) {
-            final List<String> degreeIdsList = parseJsonList(degreeIds, false);
-            final List<String> semestersList = parseJsonList(semesters, false);
-            //este metodo se encarga de separar los degrees a partir de si ya existen o si fueron modificados
-            //llama al dao despues por cada caso, insertar, modificar o eliminar
-            degreeService.updateSubjectToDegrees(
-                    sub,
-                    degreeIdsList.stream().map(Long::parseLong).collect(java.util.stream.Collectors.toList()),
-                    semestersList.stream().map(Integer::parseInt).collect(java.util.stream.Collectors.toList())
-            );
-        }
-
-        if (!professors.isEmpty()) {
-            final List<String> professorsList = parseJsonList(professors, true);
-            professorService.updateSubjectToProfessors(
-                    sub,
-                    professorsList
-            );
-        }
-        if (!requirementIds.isEmpty()) {
-            final List<String> correlativesList = parseJsonList(requirementIds, false);
-            //este metodo se encarga de separar las correlativas que se tienen que agregar o sacar
-            //despues llama al dao por cada caso
-            prepareCorrelativesToUpdate(sub, correlativesList);
-        }
-
-        if (!classCodes.isEmpty() && !classIds.isEmpty()) {
-            final List<String> classesList = parseJsonList(classCodes, false);
-            final List<String> classesIdsList = parseJsonList(classIds, false);
-            prepareClassesToUpdate(sub, classesIdsList, classesList);
-
-            final List<List<String>> classProfessorsList = parseJsonListOfLists(classProfessors);
-            professorService.updateProfessorsToClasses(sub, classesIdsList, classesList, classProfessorsList);
-
-            prepareClassLocTimeToUpdate(sub,classesIdsList,classesList,classStartTimes,classEndTime,classBuildings,classModes,classDays,classRooms);
-        }
-
-        final List<SubjectClass> toDelete = new ArrayList<>();
-        for(final SubjectClass cl : sub.getClasses()){
-            if(cl.getClassTimes().isEmpty()){
-                toDelete.add(cl);
-            }
-        }
-        for(final SubjectClass cl : toDelete){
-            subjectDao.deleteClass(cl);
-        }
+//        final Optional<Subject> optionalSubject = findById(id);
+//        if (!optionalSubject.isPresent()) {
+//            return;
+//        }
+//
+//        final Subject sub = optionalSubject.get();
+//        if (credits != sub.getCredits()) {
+//            subjectDao.editCredits(sub, credits);
+//        }
+//
+//        if (!degreeIds.isEmpty() && !semesters.isEmpty()) {
+//            final List<String> degreeIdsList = parseJsonList(degreeIds, false);
+//            final List<String> semestersList = parseJsonList(semesters, false);
+//            //este metodo se encarga de separar los degrees a partir de si ya existen o si fueron modificados
+//            //llama al dao despues por cada caso, insertar, modificar o eliminar
+//            degreeService.updateSubjectToDegrees(
+//                    sub,
+//                    degreeIdsList.stream().map(Long::parseLong).collect(java.util.stream.Collectors.toList()),
+//                    semestersList.stream().map(Integer::parseInt).collect(java.util.stream.Collectors.toList())
+//            );
+//        }
+//
+//        if (!professors.isEmpty()) {
+//            final List<String> professorsList = parseJsonList(professors, true);
+//            professorService.updateSubjectToProfessors(
+//                    sub,
+//                    professorsList
+//            );
+//        }
+//        if (!requirementIds.isEmpty()) {
+//            final List<String> correlativesList = parseJsonList(requirementIds, false);
+//            //este metodo se encarga de separar las correlativas que se tienen que agregar o sacar
+//            //despues llama al dao por cada caso
+//            prepareCorrelativesToUpdate(sub, correlativesList);
+//        }
+//
+//        if (!classCodes.isEmpty() && !classIds.isEmpty()) {
+//            final List<String> classesList = parseJsonList(classCodes, false);
+//            final List<String> classesIdsList = parseJsonList(classIds, false);
+//            prepareClassesToUpdate(sub, classesIdsList, classesList);
+//
+//            final List<List<String>> classProfessorsList = parseJsonListOfLists(classProfessors);
+//            professorService.updateProfessorsToClasses(sub, classesIdsList, classesList, classProfessorsList);
+//
+//            prepareClassLocTimeToUpdate(sub,classesIdsList,classesList,classStartTimes,classEndTime,classBuildings,classModes,classDays,classRooms);
+//        }
+//
+//        final List<SubjectClass> toDelete = new ArrayList<>();
+//        for(final SubjectClass cl : sub.getClasses()){
+//            if(cl.getClassTimes().isEmpty()){
+//                toDelete.add(cl);
+//            }
+//        }
+//        for(final SubjectClass cl : toDelete){
+//            subjectDao.deleteClass(cl);
+//        }
     }
 
     private void prepareClassLocTimeToUpdate(

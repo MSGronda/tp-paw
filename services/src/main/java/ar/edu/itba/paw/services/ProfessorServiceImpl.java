@@ -82,6 +82,11 @@ public class ProfessorServiceImpl implements ProfessorService {
     }
     @Transactional
     @Override
+    public void addProfessorsToClass(final SubjectClass subjectClass, final List<String> classProfessors){
+        professorDao.addProfessorsToClass(subjectClass, classProfessors);
+    }
+    @Transactional
+    @Override
     public void updateProfessorsToClasses(final Subject sub, final List<String> classIdsList, final List<String> classCodes, final List<List<String>> classProfessors) {
 
         Map<SubjectClass, List<Professor>> professorsToAdd = new HashMap<>();

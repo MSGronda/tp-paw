@@ -6,25 +6,31 @@ import ar.edu.itba.paw.models.exceptions.SubjectNotFoundException;
 import ar.edu.itba.paw.models.exceptions.UnauthorizedException;
 import ar.edu.itba.paw.models.exceptions.SubjectIdAlreadyExistsException;
 
+import java.time.LocalTime;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
 public interface SubjectService {
-    Subject create(final Subject.Builder builder,
-                   final String degreeIds,
-                   final String semesters,
-                   final String requirementIds,
-                   final String professors,
-                   final String classCodes,
-                   final String classProfessors,
-                   final String classDays,
-                   final String classStartTimes,
-                   final String classEndTime,
-                   final String classBuildings,
-                   final String classRooms,
-                   final String classModes) throws SubjectIdAlreadyExistsException;
+    Subject create(
+            final Subject.Builder builder,
+            final List<Long> degreeIds,
+            final List<Integer> semesters,
+            final List<String> requirementIds,
+            final List<String> professors
+    );
+    void addClass(
+            final Subject subject,
+            final String classCode,
+            final List<String> professors,
+            final List<Integer> days,
+            final List<LocalTime> startTimes,
+            final List<LocalTime> endTimes,
+            final List<String> locations,
+            final List<String> buildings,
+            final List<String> modes
+    );
 
     List<Subject> get(
             final User user,
@@ -98,18 +104,18 @@ public interface SubjectService {
     void edit(
               final String id,
               final int credits,
-              final String degreeIds,
-              final String semesters,
-              final String requirementIds,
-              final String professors,
-              final String classIds,
-              final String classCodes,
-              final String classProfessors,
-              final String classDays,
-              final String classStartTimes,
-              final String classEndTime,
-              final String classBuildings,
-              final String classRooms,
-              final String classModes
+              final List<Long> degreeIds,
+              final List<Integer> semesters,
+              final List<String> requirementIds,
+              final List<String> professors,
+              final List<String> classIds,
+              final List<String> classCodes,
+              final List<String> classProfessors,
+              final List<String> classDays,
+              final List<String> classStartTimes,
+              final List<String> classEndTimes,
+              final List<String> classBuildings,
+              final List<String> classRooms,
+              final List<String> classModes
     );
 }

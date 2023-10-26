@@ -1,6 +1,9 @@
 package ar.edu.itba.paw.webapp.form;
 
 import javax.validation.constraints.*;
+import java.util.List;
+
+
 public class SubjectForm {
     @NotNull
     @Pattern(regexp = "[0-9]{2}\\.[0-9]{2}")
@@ -15,36 +18,18 @@ public class SubjectForm {
     private Integer credits;
 
     @Size(min=3)
-    private String degreeIds;
+    private List<Long> degreeIds;
     @Size(min=3)
-    private String semesters;
-    private String requirementIds;
+    private List<Integer> semesters;
 
-    @Size(min=3)
-    private String professors;
+    @NotNull
+    private List<String> requirementIds;
 
-    @Size(min=3)
-    private String classCodes;
+    @NotNull
+    private List<String> professors;
 
-    @Size(min=3)
-    private String classProfessors;
-
-    @Size(min=3)
-    private String classDays;
-
-    @Size(min=3)
-    private String classStartTimes;
-
-    @Size(min=3)
-    private String classEndTimes;
-
-    @Size(min=3)
-    private String classBuildings;
-
-    @Size(min=3)
-    private String classRooms;
-    @Size(min=3)
-    private String classModes;
+    @NotNull
+    private List<SubjectClassForm> subjectClasses;
 
     public String getId() {
         return id;
@@ -66,8 +51,8 @@ public class SubjectForm {
         return department;
     }
 
-    public void setDepartment(String deparment) {
-        this.department = deparment;
+    public void setDepartment(String department) {
+        this.department = department;
     }
 
     public Integer getCredits() {
@@ -78,99 +63,43 @@ public class SubjectForm {
         this.credits = credits;
     }
 
-    public String getSemesters() {
-        return semesters;
-    }
-
-    public void setSemesters(String semesters) {
-        this.semesters = semesters;
-    }
-
-    public String getDegreeIds() {
+    public List<Long> getDegreeIds() {
         return degreeIds;
     }
 
-    public void setDegreeIds(String degreeIds) {
+    public void setDegreeIds(List<Long> degreeIds) {
         this.degreeIds = degreeIds;
     }
 
-    public String getRequirementIds() {
+    public List<Integer> getSemesters() {
+        return semesters;
+    }
+
+    public void setSemesters(List<Integer> semesters) {
+        this.semesters = semesters;
+    }
+
+    public List<String> getRequirementIds() {
         return requirementIds;
     }
 
-    public void setRequirementIds(String requirementIds) {
+    public void setRequirementIds(List<String> requirementIds) {
         this.requirementIds = requirementIds;
     }
 
-    public String getProfessors() {
+    public List<String> getProfessors() {
         return professors;
     }
 
-    public void setProfessors(String professors) {
+    public void setProfessors(List<String> professors) {
         this.professors = professors;
     }
 
-    public String getClassCodes() {
-        return classCodes;
+    public List<SubjectClassForm> getSubjectClasses() {
+        return subjectClasses;
     }
 
-    public void setClassCodes(String classCodes) {
-        this.classCodes = classCodes;
-    }
-
-    public String getClassProfessors() {
-        return classProfessors;
-    }
-
-    public void setClassProfessors(String classProfessors) {
-        this.classProfessors = classProfessors;
-    }
-
-    public String getClassDays() {
-        return classDays;
-    }
-
-    public void setClassDays(String classDays) {
-        this.classDays = classDays;
-    }
-
-    public String getClassBuildings() {
-        return classBuildings;
-    }
-
-    public void setClassBuildings(String classBuildings) {
-        this.classBuildings = classBuildings;
-    }
-
-    public String getClassRooms() {
-        return classRooms;
-    }
-
-    public void setClassRooms(String classRooms) {
-        this.classRooms = classRooms;
-    }
-
-    public String getClassModes() {
-        return classModes;
-    }
-
-    public void setClassModes(String classModes) {
-        this.classModes = classModes;
-    }
-
-    public String getClassStartTimes() {
-        return classStartTimes;
-    }
-
-    public void setClassStartTimes(String classStartTimes) {
-        this.classStartTimes = classStartTimes;
-    }
-
-    public String getClassEndTimes() {
-        return classEndTimes;
-    }
-
-    public void setClassEndTimes(String classEndTimes) {
-        this.classEndTimes = classEndTimes;
+    public void setSubjectClasses(List<SubjectClassForm> subjectClasses) {
+        this.subjectClasses = subjectClasses;
     }
 }

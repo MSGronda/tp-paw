@@ -562,6 +562,7 @@ public class SubjectJpaDao implements SubjectDao {
     public void addPrerequisites(final Subject sub, final List<String> correlativesList){
         for( String requirement : correlativesList ){
             final Subject requiredSubject = em.find(Subject.class, requirement);
+            System.out.println(requiredSubject);
             sub.getPrerequisites().add(requiredSubject);
         }
     }
@@ -586,6 +587,50 @@ public class SubjectJpaDao implements SubjectDao {
         }
     }
 
+    @Override
+    public SubjectClass addClassToSubject(final Subject subject, final String classCode){
+        final SubjectClass subjectClass = new SubjectClass(classCode, subject);
+        subject.getClasses().add(subjectClass);
+        em.persist(subjectClass);
+        return subjectClass;
+    }
+
+    @Override
+    public void addClassTimesToClass(
+            final SubjectClass subjectClass,
+            final List<Integer> days,
+            final List<LocalTime> startTimes,
+            final List<LocalTime> endTimes,
+            final List<String> locations,
+            final List<String> buildings,
+            final List<String> modes
+    ){
+        for(int i=0; i<days.size(); i++){
+            final SubjectClassTime subjectClassTime;
+            if( startTimes.get(i).isAfter(endTimes.get(i)) ){
+                subjectClassTime = new SubjectClassTime(
+                        subjectClass,
+                        days.get(i),
+                        endTimes.get(i),
+                        startTimes.get(i),
+                        locations.get(i),
+                        buildings.get(i),
+                        modes.get(i)
+                );
+            } else {
+                subjectClassTime = new SubjectClassTime(
+                        subjectClass,
+                        days.get(i),
+                        startTimes.get(i),
+                        endTimes.get(i),
+                        locations.get(i),
+                        buildings.get(i),
+                        modes.get(i)
+                );
+            }
+            em.persist(subjectClassTime);
+        }
+    }
 
     @Override
     public void addSubjectClassTimes(

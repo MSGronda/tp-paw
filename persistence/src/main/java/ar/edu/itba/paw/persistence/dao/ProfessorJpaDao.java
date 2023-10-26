@@ -103,6 +103,21 @@ public class ProfessorJpaDao implements ProfessorDao {
     }
 
     @Override
+    public void addProfessorsToClass(final SubjectClass subjectClass, final List<String> classProfessors){
+        for( String professor : classProfessors){
+            Optional<Professor> maybeProfessor = getByName(professor);
+
+            if(maybeProfessor.isPresent()){
+                Professor professorToAdd = maybeProfessor.get();
+                if( !subjectClass.getProfessors().contains(professorToAdd)){
+                    subjectClass.getProfessors().add(professorToAdd);
+                }
+            }
+            // TODO: check caso contrario
+        }
+    }
+
+    @Override
     public void updateProfessorsToClassesAdd(final Map<SubjectClass, List<Professor>> professorsToAdd) {
         for(Map.Entry<SubjectClass, List<Professor>> entry : professorsToAdd.entrySet()){
             for( Professor professor : entry.getValue()){

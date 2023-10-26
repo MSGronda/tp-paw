@@ -86,4 +86,16 @@ public interface SubjectDao {
     void delete(final Subject subject);
 
     void editCredits(Subject subject, int credits);
+
+    SubjectClass addClassToSubject(final Subject subject, final String classCode);
+
+    void addClassTimesToClass(
+            final SubjectClass subjectClass,
+            final List<Integer> days,
+            final List<LocalTime> startTimes,
+            final List<LocalTime> endTimes,
+            final List<String> locations,
+            final List<String> buildings,
+            final List<String> modes
+    );
 }

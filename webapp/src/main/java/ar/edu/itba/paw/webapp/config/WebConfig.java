@@ -1,5 +1,6 @@
 package ar.edu.itba.paw.webapp.config;
 
+import ar.edu.itba.paw.webapp.form.converters.StringToLocalTimeConverter;
 import ar.edu.itba.paw.webapp.interceptors.DegreeSelectInterceptor;
 import ar.edu.itba.paw.webapp.interceptors.LocaleInterceptor;
 import org.flywaydb.core.Flyway;
@@ -10,6 +11,9 @@ import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.*;
 import org.springframework.context.support.ReloadableResourceBundleMessageSource;
 import org.springframework.core.env.Environment;
+import org.springframework.format.FormatterRegistry;
+import org.springframework.format.support.DefaultFormattingConversionService;
+import org.springframework.format.support.FormattingConversionService;
 import org.springframework.jdbc.datasource.SimpleDriverDataSource;
 import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.JpaVendorAdapter;
@@ -141,5 +145,17 @@ public class WebConfig extends WebMvcConfigurerAdapter {
         super.addInterceptors(registry);
         registry.addInterceptor(degreeSelectInterceptor);
         registry.addInterceptor(localeInterceptor);
+    }
+
+    @Bean
+    public FormattingConversionService mvcConversionService() {
+        DefaultFormattingConversionService conversionService = new DefaultFormattingConversionService();
+        conversionService.addConverter(new StringToLocalTimeConverter());
+        return conversionService;
+    }
+
+    @Override
+    public void addFormatters(FormatterRegistry registry) {
+        registry.addConverter(new StringToLocalTimeConverter());
     }
 }

@@ -19,6 +19,8 @@ public interface ProfessorDao {
 
     void addProfessorsToClasses(final Subject subject, final List<String> classCodes, final List<List<String>> classProfessors);
 
+    void addProfessorsToClass(final SubjectClass subjectClass, final List<String> classProfessors);
+
     void updateProfessorsToClassesAdd(final Map<SubjectClass, List<Professor>> professorsToAdd);
 
 
