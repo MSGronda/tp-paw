@@ -14,7 +14,7 @@ public class LocationDto {
     private String mode;
 
     public static LocationDto fromLocation(UriInfo uriInfo, SubjectClassTime subjectClassTime){
-        LocationDto locationDto = new LocationDto();
+        final LocationDto locationDto = new LocationDto();
 
         locationDto.id = subjectClassTime.getId();
         locationDto.day = subjectClassTime.getDay();

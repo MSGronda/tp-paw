@@ -16,7 +16,7 @@ public class ClassDto {
     private List<LocationDto> locations;
 
     public static ClassDto fromClass(UriInfo uriInfo, SubjectClass subjectClass){
-        ClassDto classDto = new ClassDto();
+        final ClassDto classDto = new ClassDto();
 
         classDto.idSubject = subjectClass.getSubject().getId();
         classDto.idClass = subjectClass.getClassId();
@@ -26,7 +26,6 @@ public class ClassDto {
         return classDto;
     }
 
-    // Getters
     public String getIdSubject() {
         return idSubject;
     }
@@ -42,9 +41,6 @@ public class ClassDto {
     public List<LocationDto> getLocations() {
         return locations;
     }
-
-    // Setters
-
 
     public void setIdSubject(String idSubject) {
         this.idSubject = idSubject;

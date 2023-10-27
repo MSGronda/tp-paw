@@ -28,7 +28,7 @@ public class UserDto {
     public static UserDto fromUser(final UriInfo uriInfo, final User user){
         if( user == null)
             return null;
-        UserDto userDto = new UserDto();
+        final UserDto userDto = new UserDto();
         userDto.id = user.getId();
         userDto.email = user.getEmail();
         userDto.username = user.getUsername();

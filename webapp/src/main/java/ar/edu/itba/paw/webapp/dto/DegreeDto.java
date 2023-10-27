@@ -12,7 +12,7 @@ public class DegreeDto {
     private Integer totalCredits;
 
     public static DegreeDto fromDegree(UriInfo uriInfo, Degree degree){
-        DegreeDto degreeDto = new DegreeDto();
+        final DegreeDto degreeDto = new DegreeDto();
 
         degreeDto.id = degree.getId();
         degreeDto.name = degree.getName();
