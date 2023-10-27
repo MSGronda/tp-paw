@@ -26,11 +26,6 @@ public class UserForm {
 
     private String passwordConfirmation;
 
-    @NotNull
-    private long degreeId;
-
-    private String subjectIds;
-
     @AssertTrue
     public boolean isPasswordConfirmationEqual() {
         return Objects.equals(password, passwordConfirmation);
@@ -60,24 +55,7 @@ public class UserForm {
     public void setPasswordConfirmation(String passwordConfirmation) {
         this.passwordConfirmation = passwordConfirmation;
     }
-
     public String getPasswordConfirmation() {
         return passwordConfirmation;
-    }
-
-    public long getDegreeId() {
-        return degreeId;
-    }
-
-    public void setDegreeId(long degreeId) {
-        this.degreeId = degreeId;
-    }
-
-    public String getSubjectIds() {
-        return subjectIds;
-    }
-
-    public void setSubjectIds(String subjectIds) {
-        this.subjectIds = subjectIds;
     }
 }

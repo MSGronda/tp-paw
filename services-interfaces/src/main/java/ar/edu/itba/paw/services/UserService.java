@@ -10,8 +10,8 @@ import java.util.Optional;
 
 public interface UserService {
     Optional<User> getRelevantUser(final Long available, final Long unLockable, final Long done, final Long future, final Long plan);
-    User create(final long degreeId, final String completedSubjectIds, final User user, final byte[] profilePic) throws EmailAlreadyTakenException;
-    User create(final long degreeId, final String completedSubjectIds, final User user) throws EmailAlreadyTakenException;
+    User create(final User user, final byte[] profilePic) throws EmailAlreadyTakenException;
+    User create(final User user) throws EmailAlreadyTakenException;
 
     Optional<User> findById(final long id);
     Optional<User> findByEmail(final String email);
@@ -54,4 +54,6 @@ public interface UserService {
    void updateUserDegreeAndSubjectProgress(final User user, final Degree degree, final String subjectIds);
 
    void clearDegree(final User user);
+
+   void updateUser(final Long userId, final User user, final String username, final String oldPassword, final String newPassword, final Long degreeId, final List<String> subjectIds) throws OldPasswordDoesNotMatchException;
 }
