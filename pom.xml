@@ -43,6 +43,9 @@
 
     <maven-war-plugin.version>2.6</maven-war-plugin.version>
 
+    <!-- PATCH -->
+    <javax.ws.rs.version>2.1</javax.ws.rs.version>
+
     <!-- Jersey dependencies -->
     <jersey.version>3.0-SNAPSHOT</jersey.version>
   </properties>
@@ -321,6 +324,12 @@
         <groupId>io.jsonwebtoken</groupId>
         <artifactId>jjwt-jackson</artifactId>
         <version>${io.jsonwebtoken.version}</version>
+      </dependency>
+      <!-- PATCH -->
+      <dependency>
+        <groupId>javax.ws.rs</groupId>
+        <artifactId>javax.ws.rs-api</artifactId>
+        <version>${javax.ws.rs.version}</version>
       </dependency>
     </dependencies>
   </dependencyManagement>

@@ -89,7 +89,7 @@ public class UserServiceImpl implements UserService {
 
     @Transactional
     @Override
-    public User create(final long degreeId, final String completedSubjectIds, final User user, final byte[] profilePic)
+    public User create(final User user, final byte[] profilePic)
             throws EmailAlreadyTakenException, DegreeNotFoundException {
 
         final Image image = imageDao.create(profilePic);
@@ -99,7 +99,6 @@ public class UserServiceImpl implements UserService {
         try {
             newUser = userDao.create(
                     User.builderFrom(user)
-                            .degree(degreeService.findById(degreeId).orElseThrow(DegreeNotFoundException::new))
                             .password(passwordEncoder.encode(user.getPassword()))
                             .verificationToken(confirmToken)
                             .imageId(image.getId())
@@ -112,7 +111,7 @@ public class UserServiceImpl implements UserService {
         final Role role = rolesService.findByName("USER").orElseThrow(IllegalStateException::new);
         addRole(newUser, role);
 
-        updateMultipleSubjectProgress(newUser, completedSubjectIds, SubjectProgress.DONE);
+        //updateMultipleSubjectProgress(newUser, completedSubjectIds, SubjectProgress.DONE);
 
         mailService.sendVerification(newUser, confirmToken);
 
@@ -121,7 +120,7 @@ public class UserServiceImpl implements UserService {
 
     @Transactional
     @Override
-    public User create(final long degreeId, final String completedSubjectIds, final User user)
+    public User create(final User user)
             throws EmailAlreadyTakenException, DegreeNotFoundException {
 
         final byte[] defaultImg;
@@ -133,7 +132,7 @@ public class UserServiceImpl implements UserService {
             throw new IllegalStateException("Failed to read default image");
         }
 
-        return create(degreeId, completedSubjectIds, user, defaultImg);
+        return create(user, defaultImg);
     }
 
     @Transactional
@@ -419,5 +418,22 @@ public class UserServiceImpl implements UserService {
         }
 
         return parsedList;
+    }
+
+    @Transactional
+    @Override
+    public void updateUser(final Long userId, final User user, final String username, final String oldPassword, final String newPassword, final Long degreeId, final List<String> subjectIds) throws OldPasswordDoesNotMatchException{
+        if( user.getId() != userId) {
+            throw new ProfileNotOwnedException();
+        }
+        if (username != null ){
+            editProfile(user, username);
+        }
+        if( oldPassword != null && newPassword != null) {
+            changePassword(user, newPassword, oldPassword);
+        }
+        if(degreeId != null && subjectIds != null) {
+            updateUserDegreeAndSubjectProgress(user, degreeService.findById(degreeId).orElseThrow(DegreeNotFoundException::new), subjectIds.toString());
+        }
     }
 }
