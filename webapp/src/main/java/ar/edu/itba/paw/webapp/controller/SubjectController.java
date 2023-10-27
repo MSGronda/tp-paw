@@ -1,6 +1,5 @@
 package ar.edu.itba.paw.webapp.controller;
 
-
 import ar.edu.itba.paw.models.Subject;
 import ar.edu.itba.paw.models.User;
 import ar.edu.itba.paw.models.exceptions.*;
@@ -11,7 +10,6 @@ import ar.edu.itba.paw.webapp.form.SubjectForm;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.ModelAttribute;
-
 import javax.validation.Valid;
 import javax.ws.rs.*;
 import javax.ws.rs.core.*;
@@ -138,31 +136,4 @@ public class SubjectController {
         subjectService.delete(user, subjectId);
         return Response.ok().build();
     }
-
-//    @PUT
-//    @Path("/{id}")
-//    @Consumes(MediaType.APPLICATION_JSON)
-//    public Response editSubject(
-//            @PathParam("id") final String subjectId,
-//            @Valid @ModelAttribute("subjectForm") final SubjectForm subjectForm
-//        ){
-//        subjectService.edit(
-//                subjectForm.getId(),
-//                subjectForm.getCredits(),
-//                subjectForm.getDegreeIds(),
-//                subjectForm.getSemesters(),
-//                subjectForm.getRequirementIds(),
-//                subjectForm.getProfessors(),
-//                subjectForm.getClassCodes(),
-//                subjectForm.getClassCodes(),        // EEEEEEE ?????
-//                subjectForm.getClassProfessors(),
-//                subjectForm.getClassDays(),
-//                subjectForm.getClassStartTimes(),
-//                subjectForm.getClassEndTimes(),
-//                subjectForm.getClassBuildings(),
-//                subjectForm.getClassRooms(),
-//                subjectForm.getClassModes()
-//        );
-//        return Response.ok().build();
-//    }
 }

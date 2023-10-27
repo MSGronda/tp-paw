@@ -6,6 +6,7 @@ import ar.edu.itba.paw.services.AuthUserService;
 import ar.edu.itba.paw.services.DegreeService;
 import ar.edu.itba.paw.services.ReviewService;
 import ar.edu.itba.paw.services.UserService;
+import ar.edu.itba.paw.webapp.dto.PlanDto;
 import ar.edu.itba.paw.webapp.dto.UserDto;
 import ar.edu.itba.paw.webapp.form.EditUserDataForm;
 import ar.edu.itba.paw.webapp.form.EditUserForm;
@@ -436,5 +437,12 @@ public class UserController {
     public Response getUser(@PathParam("id") final Long id){
         final User user = userService.findById(id).orElseThrow(UserNotFoundException::new);
         return Response.ok(UserDto.fromUser(uriInfo, user)).build();
+    }
+
+    @GET
+    @Path("/{id}/plan")
+    public Response getUserSemester(@PathParam("id") final Long id){
+        final User user = userService.findById(id).orElseThrow(UserNotFoundException::new);
+        return Response.ok(PlanDto.fromUser(uriInfo, user)).build();
     }
 }

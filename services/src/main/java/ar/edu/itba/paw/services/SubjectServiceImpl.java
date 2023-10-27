@@ -65,8 +65,7 @@ public class SubjectServiceImpl implements SubjectService {
             return findAllThatUserHasNotDone(user, page, orderBy, dir);
         }
         if(plan != null){
-            // TODO
-            throw new RuntimeException("IMPLEMENT ME!");
+            return getUserSemester(user);
         }
         if(query != null){
             return search(user, query, page, orderBy, dir, credits, department, difficulty, timeDemand);
@@ -121,6 +120,16 @@ public class SubjectServiceImpl implements SubjectService {
             buildings,
             modes
         );
+    }
+
+    public List<Subject> getUserSemester(final User user){
+        final List<Subject> subjects = new ArrayList<>();
+
+        for(final SubjectClass sc : user.getUserSemester()){
+            subjects.add(sc.getSubject());
+        }
+
+        return subjects;
     }
 
 
