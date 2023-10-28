@@ -50,11 +50,7 @@ public class ReviewJpaDao implements ReviewDao {
 
     @Override
     public Optional<ReviewVote> voteReview(final User user, final Review review, final ReviewVoteType vote){
-        final Optional<ReviewVote> maybeReviewVote = em.createQuery("from ReviewVote where user = :user and review = :review", ReviewVote.class)
-                .setParameter("user", user)
-                .setParameter("review", review)
-                .getResultList()
-                .stream().findFirst();
+        final Optional<ReviewVote> maybeReviewVote = getUserVote(user, review);
 
         if(vote == null) {
             maybeReviewVote.ifPresent(reviewVote -> em.remove(reviewVote));
@@ -71,6 +67,15 @@ public class ReviewJpaDao implements ReviewDao {
         em.persist(reviewVote);
 
         return Optional.of(reviewVote);
+    }
+
+    @Override
+    public Optional<ReviewVote> getUserVote(final User user, final Review review){
+        return em.createQuery("from ReviewVote where user = :user and review = :review", ReviewVote.class)
+                .setParameter("user", user)
+                .setParameter("review", review)
+                .getResultList()
+                .stream().findFirst();
     }
 
     @Override

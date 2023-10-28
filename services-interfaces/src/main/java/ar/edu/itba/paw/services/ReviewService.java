@@ -1,6 +1,7 @@
 package ar.edu.itba.paw.services;
 
 import ar.edu.itba.paw.models.Review;
+import ar.edu.itba.paw.models.ReviewVote;
 import ar.edu.itba.paw.models.Subject;
 import ar.edu.itba.paw.models.User;
 import ar.edu.itba.paw.models.enums.ReviewVoteType;
@@ -29,4 +30,7 @@ public interface ReviewService {
     void update(final Review.Builder review) throws UnauthorizedException;
     void delete(final Review review) throws UnauthorizedException;
     void delete(final long reviewId);
+
+    List<ReviewVote> getVotes(final Long reviewId, final Long userId);
+
 }

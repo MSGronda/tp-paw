@@ -1,11 +1,13 @@
 package ar.edu.itba.paw.webapp.controller;
 
 import ar.edu.itba.paw.models.Review;
+import ar.edu.itba.paw.models.ReviewVote;
 import ar.edu.itba.paw.models.exceptions.*;
 import ar.edu.itba.paw.services.AuthUserService;
 import ar.edu.itba.paw.services.ReviewService;
 import ar.edu.itba.paw.services.SubjectService;
 import ar.edu.itba.paw.webapp.dto.ReviewDto;
+import ar.edu.itba.paw.webapp.dto.ReviewVoteDto;
 import ar.edu.itba.paw.webapp.form.ReviewForm;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -203,10 +205,10 @@ public class ReviewController {
     ){
         final List<Review> reviews = reviewService.get(userId, subjectId, page, orderBy, dir);
 
-        List<ReviewDto> reviewDtos = reviews.stream().map(review -> ReviewDto.fromReview(uriInfo, review)).collect(Collectors.toList());
-
-        if(reviewDtos.isEmpty())
+        if(reviews.isEmpty())
             return Response.noContent().build();
+
+        final List<ReviewDto> reviewDtos = reviews.stream().map(review -> ReviewDto.fromReview(uriInfo, review)).collect(Collectors.toList());
 
         return Response.ok(new GenericEntity<List<ReviewDto>>(reviewDtos){}).build();
     }
@@ -269,5 +271,21 @@ public class ReviewController {
     ){
         reviewService.delete(reviewId);
         return Response.noContent().build();
+    }
+
+    @GET
+    @Path("/{id}/votes")
+    public Response getReviewVotes(
+            @PathParam("id") final Long reviewId,
+            @QueryParam("userId") final Long userId
+    ){
+        final List<ReviewVote> votes = reviewService.getVotes(reviewId, userId);
+
+        if(votes.isEmpty())
+            return Response.noContent().build();
+
+        final List<ReviewVoteDto> voteDtos = votes.stream().map(vote -> ReviewVoteDto.fromReviewVote(uriInfo, vote)).collect(Collectors.toList());
+
+        return Response.ok(new GenericEntity<List<ReviewVoteDto>>(voteDtos){}).build();
     }
 }

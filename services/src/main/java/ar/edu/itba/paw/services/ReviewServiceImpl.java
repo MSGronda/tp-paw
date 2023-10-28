@@ -1,6 +1,7 @@
 package ar.edu.itba.paw.services;
 
 import ar.edu.itba.paw.models.Review;
+import ar.edu.itba.paw.models.ReviewVote;
 import ar.edu.itba.paw.models.Subject;
 import ar.edu.itba.paw.models.User;
 import ar.edu.itba.paw.models.enums.OrderDir;
@@ -132,4 +133,25 @@ public class ReviewServiceImpl implements ReviewService {
         final Review review = findById(reviewId).orElseThrow(ReviewNotFoundException::new);
         delete(review);
     }
+
+    @Override
+    public List<ReviewVote> getVotes(final Long reviewId, final Long userId){
+        final Review review = findById(reviewId).orElseThrow(ReviewNotFoundException::new);
+
+        if(userId == null)
+            return review.getVotes();
+
+        final User user = userService.findById(userId).orElseThrow(UserNotFoundException::new);
+
+        final Optional<ReviewVote> vote = reviewDao.getUserVote(user, review);
+
+        if(!vote.isPresent())
+            return new ArrayList<>();
+
+        final List<ReviewVote> reviewVotes = new ArrayList<>();
+        reviewVotes.add(vote.get());
+
+        return reviewVotes;
+    }
+
 }
