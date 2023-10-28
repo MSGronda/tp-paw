@@ -9,6 +9,7 @@ import ar.edu.itba.paw.services.SubjectService;
 import ar.edu.itba.paw.webapp.dto.ReviewDto;
 import ar.edu.itba.paw.webapp.dto.ReviewVoteDto;
 import ar.edu.itba.paw.webapp.form.ReviewForm;
+import ar.edu.itba.paw.webapp.form.ReviewVoteForm;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -277,9 +278,10 @@ public class ReviewController {
     @Path("/{id}/votes")
     public Response getReviewVotes(
             @PathParam("id") final Long reviewId,
-            @QueryParam("userId") final Long userId
+            @QueryParam("userId") final Long userId,
+            @QueryParam("page") @DefaultValue("1") final int page
     ){
-        final List<ReviewVote> votes = reviewService.getVotes(reviewId, userId);
+        final List<ReviewVote> votes = reviewService.getVotes(reviewId, userId, page);
 
         if(votes.isEmpty())
             return Response.noContent().build();
@@ -287,5 +289,15 @@ public class ReviewController {
         final List<ReviewVoteDto> voteDtos = votes.stream().map(vote -> ReviewVoteDto.fromReviewVote(uriInfo, vote)).collect(Collectors.toList());
 
         return Response.ok(new GenericEntity<List<ReviewVoteDto>>(voteDtos){}).build();
+    }
+
+    @POST
+    @Path("/{id}/votes")
+    public Response createReviewVote(
+            @PathParam("id") final Long reviewId,
+            @Valid @ModelAttribute("reviewVoteForm") final ReviewVoteForm reviewVoteForm
+    ){
+        reviewService.voteReview(reviewId, reviewVoteForm.getVoteType());
+        return Response.ok().build();
     }
 }

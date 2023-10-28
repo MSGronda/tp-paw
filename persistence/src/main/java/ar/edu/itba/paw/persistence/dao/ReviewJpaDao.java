@@ -7,6 +7,7 @@ import ar.edu.itba.paw.models.User;
 import ar.edu.itba.paw.models.enums.OrderDir;
 import ar.edu.itba.paw.models.enums.ReviewOrderField;
 import ar.edu.itba.paw.models.enums.ReviewVoteType;
+import org.hibernate.Query;
 import org.springframework.stereotype.Repository;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -52,11 +53,6 @@ public class ReviewJpaDao implements ReviewDao {
     public Optional<ReviewVote> voteReview(final User user, final Review review, final ReviewVoteType vote){
         final Optional<ReviewVote> maybeReviewVote = getUserVote(user, review);
 
-        if(vote == null) {
-            maybeReviewVote.ifPresent(reviewVote -> em.remove(reviewVote));
-            return Optional.empty();
-        }
-
         if(maybeReviewVote.isPresent()) {
             final ReviewVote reviewVote = maybeReviewVote.get();
             reviewVote.setVote(vote);
@@ -77,6 +73,17 @@ public class ReviewJpaDao implements ReviewDao {
                 .getResultList()
                 .stream().findFirst();
     }
+
+    @Override
+    public List<ReviewVote> getReviewVotes(final Review review, final int page){
+        return em.createQuery("from ReviewVote where review = :review order by vote", ReviewVote.class)
+                .setParameter("review", review)
+                .setFirstResult((page - 1) * PAGE_SIZE)
+                .setMaxResults(PAGE_SIZE)
+                .getResultList();
+    }
+
+
 
     @Override
     public boolean didUserVote(final User user, final Review review) {

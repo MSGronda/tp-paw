@@ -22,6 +22,7 @@ public interface ReviewDao {
     boolean didUserReview(final Subject subject, final User user);
 
     Optional<ReviewVote> getUserVote(final User user, final Review review);
+    List<ReviewVote> getReviewVotes(final Review review, final int page);
 
     List<Review> getAllUserReviews(final User user, final int page, final ReviewOrderField orderBy, final OrderDir dir);
     int getTotalPagesForUserReviews(final User user);

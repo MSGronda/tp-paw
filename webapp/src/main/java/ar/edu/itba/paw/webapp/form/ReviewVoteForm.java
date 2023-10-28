@@ -6,7 +6,7 @@ import javax.validation.constraints.NotNull;
 
 public class ReviewVoteForm {
     @NotNull
-    private int vote;
+    private Long vote;
 
     @NotNull
     private Long reviewId;
@@ -15,15 +15,19 @@ public class ReviewVoteForm {
         return reviewId;
     }
 
-    public void setReviewId(Long reviewId) {
+    public void setReviewId(final Long reviewId) {
         this.reviewId = reviewId;
     }
 
-    public ReviewVoteType getVote() {
+    public ReviewVoteType getVoteType() {
         return ReviewVoteType.parse(vote);
     }
 
-    public void setVote(int vote) {
+    public Long getVote() {
+        return vote;
+    }
+
+    public void setVote(final Long vote) {
         this.vote = vote;
     }
 }

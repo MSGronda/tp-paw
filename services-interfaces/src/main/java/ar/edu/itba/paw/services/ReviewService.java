@@ -30,7 +30,5 @@ public interface ReviewService {
     void update(final Review.Builder review) throws UnauthorizedException;
     void delete(final Review review) throws UnauthorizedException;
     void delete(final long reviewId);
-
-    List<ReviewVote> getVotes(final Long reviewId, final Long userId);
-
+    List<ReviewVote> getVotes(final Long reviewId, final Long userId, final int page);
 }

@@ -12,12 +12,12 @@ public class ReviewVoteDto {
 
     private Long vote;
 
+
     public static ReviewVoteDto fromReviewVote(final UriInfo uriInfo, final ReviewVote reviewVote){
         final ReviewVoteDto reviewVoteDto = new ReviewVoteDto();
         reviewVoteDto.reviewId = reviewVote.getReview().getId();
         reviewVoteDto.userId = reviewVote.getUser().getId();
         reviewVoteDto.vote = reviewVote.getVote().getIntValue();
-
         return reviewVoteDto;
     }
 

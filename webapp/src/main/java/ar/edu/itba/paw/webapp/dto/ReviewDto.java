@@ -1,6 +1,7 @@
 package ar.edu.itba.paw.webapp.dto;
 import ar.edu.itba.paw.models.Review;
 import javax.ws.rs.core.UriInfo;
+import java.net.URI;
 
 public class ReviewDto {
     private Long id;
@@ -12,7 +13,9 @@ public class ReviewDto {
     private Long upVotes;
     private Long downVotes;
 
-    public static ReviewDto fromReview(UriInfo uriInfo, Review review){
+    private URI votes;
+
+    public static ReviewDto fromReview(final UriInfo uriInfo, final Review review){
         final ReviewDto reviewDto =  new ReviewDto();
 
         reviewDto.id = review.getId();
@@ -24,76 +27,80 @@ public class ReviewDto {
         reviewDto.upVotes = review.getUpvotes();
         reviewDto.downVotes = review.getDownvotes();
 
-        // TODO: list de ReviewVotes
+        reviewDto.votes = uriInfo.getBaseUriBuilder().path("reviews").path(String.valueOf(reviewDto.id)).path("votes").build();
 
         return reviewDto;
     }
 
-    // Getters
-
     public Long getId() {
         return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public String getSubjectId() {
         return subjectId;
     }
 
-    public String getDifficulty() {
-        return difficulty;
-    }
-
-    public String getTimeDemand() {
-        return timeDemand;
-    }
-
-    public String getText() {
-        return text;
-    }
-
-    public Boolean getAnonymous() {
-        return anonymous;
-    }
-
-    public Long getUpVotes() {
-        return upVotes;
-    }
-
-    public Long getDownVotes() {
-        return downVotes;
-    }
-
-    // Setters
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
     public void setSubjectId(String subjectId) {
         this.subjectId = subjectId;
+    }
+
+    public String getDifficulty() {
+        return difficulty;
     }
 
     public void setDifficulty(String difficulty) {
         this.difficulty = difficulty;
     }
 
+    public String getTimeDemand() {
+        return timeDemand;
+    }
+
     public void setTimeDemand(String timeDemand) {
         this.timeDemand = timeDemand;
+    }
+
+    public String getText() {
+        return text;
     }
 
     public void setText(String text) {
         this.text = text;
     }
 
+    public Boolean getAnonymous() {
+        return anonymous;
+    }
+
     public void setAnonymous(Boolean anonymous) {
         this.anonymous = anonymous;
+    }
+
+    public Long getUpVotes() {
+        return upVotes;
     }
 
     public void setUpVotes(Long upVotes) {
         this.upVotes = upVotes;
     }
 
+    public Long getDownVotes() {
+        return downVotes;
+    }
+
     public void setDownVotes(Long downVotes) {
         this.downVotes = downVotes;
+    }
+
+    public URI getVotes() {
+        return votes;
+    }
+
+    public void setVotes(URI votes) {
+        this.votes = votes;
     }
 }

@@ -92,7 +92,7 @@ public class ReviewServiceImpl implements ReviewService {
 
     @Transactional
     @Override
-    public void voteReview(final long reviewId, final ReviewVoteType vote) throws ReviewNotFoundException {
+    public void voteReview(final long reviewId, final ReviewVoteType vote) {
         final Review review = findById(reviewId).orElseThrow(ReviewNotFoundException::new);
         reviewDao.voteReview(authUserService.getCurrentUser(), review, vote);
     }
@@ -135,17 +135,20 @@ public class ReviewServiceImpl implements ReviewService {
     }
 
     @Override
-    public List<ReviewVote> getVotes(final Long reviewId, final Long userId){
+    public List<ReviewVote> getVotes(final Long reviewId, final Long userId, final int page){
+        if(page < 1)
+            throw new InvalidPageNumberException();
+
         final Review review = findById(reviewId).orElseThrow(ReviewNotFoundException::new);
 
         if(userId == null)
-            return review.getVotes();
+            return reviewDao.getReviewVotes(review, page);
 
         final User user = userService.findById(userId).orElseThrow(UserNotFoundException::new);
 
         final Optional<ReviewVote> vote = reviewDao.getUserVote(user, review);
 
-        if(!vote.isPresent())
+        if(!vote.isPresent() || page > 1)
             return new ArrayList<>();
 
         final List<ReviewVote> reviewVotes = new ArrayList<>();
@@ -153,5 +156,6 @@ public class ReviewServiceImpl implements ReviewService {
 
         return reviewVotes;
     }
+
 
 }
