@@ -28,5 +28,5 @@ public interface ReviewService {
 
     void update(final Review.Builder review) throws UnauthorizedException;
     void delete(final Review review) throws UnauthorizedException;
-    void delete(final long reviewId) throws UnauthorizedException, ReviewNotFoundException;
+    void delete(final long reviewId);
 }

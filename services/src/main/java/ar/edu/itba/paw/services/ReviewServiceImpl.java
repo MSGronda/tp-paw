@@ -128,7 +128,7 @@ public class ReviewServiceImpl implements ReviewService {
 
     @Transactional
     @Override
-    public void delete(long reviewId) throws UnauthorizedException, ReviewNotFoundException {
+    public void delete(long reviewId) {
         final Review review = findById(reviewId).orElseThrow(ReviewNotFoundException::new);
         delete(review);
     }

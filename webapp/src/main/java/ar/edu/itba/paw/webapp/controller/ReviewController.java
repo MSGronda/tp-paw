@@ -1,24 +1,17 @@
 package ar.edu.itba.paw.webapp.controller;
 
 import ar.edu.itba.paw.models.Review;
-import ar.edu.itba.paw.models.Subject;
 import ar.edu.itba.paw.models.exceptions.*;
 import ar.edu.itba.paw.services.AuthUserService;
 import ar.edu.itba.paw.services.ReviewService;
 import ar.edu.itba.paw.services.SubjectService;
 import ar.edu.itba.paw.webapp.dto.ReviewDto;
-import ar.edu.itba.paw.webapp.dto.SubjectDto;
 import ar.edu.itba.paw.webapp.form.ReviewForm;
-import ar.edu.itba.paw.webapp.form.ReviewVoteForm;
-import ar.edu.itba.paw.webapp.form.SubjectForm;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.ModelAndView;
-
 import javax.validation.Valid;
 import javax.ws.rs.*;
 import javax.ws.rs.core.*;
@@ -208,68 +201,64 @@ public class ReviewController {
             @QueryParam("userId") final Long userId,
             @QueryParam("subjectId") final String subjectId
     ){
-        final List<Review> reviews;
-        try{
-            reviews = reviewService.get(userId, subjectId, page, orderBy, dir);
-        } catch (SubjectNotFoundException e){
-            return Response.status(Response.Status.NOT_FOUND.getStatusCode()).build();
-        }
+        final List<Review> reviews = reviewService.get(userId, subjectId, page, orderBy, dir);
+
         List<ReviewDto> reviewDtos = reviews.stream().map(review -> ReviewDto.fromReview(uriInfo, review)).collect(Collectors.toList());
 
         if(reviewDtos.isEmpty())
             return Response.noContent().build();
 
-        // TODO: devolver informacion sobre paginacion ????
-        Response.ResponseBuilder responseBuilder = Response.ok(new GenericEntity<List<ReviewDto>>(reviewDtos){});
-        return responseBuilder.build();
+        return Response.ok(new GenericEntity<List<ReviewDto>>(reviewDtos){}).build();
     }
 
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     public Response createReview(@Valid @ModelAttribute("reviewForm") final ReviewForm reviewForm){
-        final Review newReview;
-        try{
-                newReview = reviewService.create(
-                        reviewForm.getSubjectId(),
-                        Review.builder()
-                        .anonymous(reviewForm.getAnonymous())
-                        .difficulty(reviewForm.getDifficultyEnum())
-                        .timeDemanding(reviewForm.getTimeDemandingEnum())
-                        .text(reviewForm.getText())
-                        .user(authUserService.getCurrentUser())
-                );
-        } catch (SubjectNotFoundException e){
-            return Response.status(Response.Status.NOT_FOUND.getStatusCode()).build();
-        }
-        catch (UserAlreadyReviewedException e){
-            return Response.status(Response.Status.CONFLICT.getStatusCode()).build();
-        }
+
+        final Review newReview = reviewService.create(
+            reviewForm.getSubjectId(),
+            Review.builder()
+            .anonymous(reviewForm.getAnonymous())
+            .difficulty(reviewForm.getDifficultyEnum())
+            .timeDemanding(reviewForm.getTimeDemandingEnum())
+            .text(reviewForm.getText())
+            .user(authUserService.getCurrentUser())
+        );
 
         final URI reviewUri = uriInfo.getBaseUriBuilder().path("/reviews/").path(String.valueOf(newReview.getId())).build();
 
         return Response.created(reviewUri).build();
     }
 
-    @PUT
-    @Consumes(MediaType.APPLICATION_JSON)
+    @GET
     @Path("/{id}")
+    public Response getReviewById(
+            @PathParam("id") final Long reviewId
+    ){
+        final Review review = reviewService.findById(reviewId).orElseThrow(ReviewNotFoundException::new);
+        return Response.ok(ReviewDto.fromReview(uriInfo, review)).build();
+    }
+
+    @PUT
+    @Path("/{id}")
+    @Consumes(MediaType.APPLICATION_JSON)
     public Response updateReview(
             @PathParam("id") final Long reviewId,
             @Valid @ModelAttribute("reviewForm") final ReviewForm reviewForm
     ){
-        try{
-            // TODO: el update solo sea 1 paso?
-            final Review review = reviewService.findById(reviewId).orElseThrow(ReviewNotFoundException::new);
-            reviewService.update(
-                    Review.builderFrom(review)
-                            .text(reviewForm.getText())
-                            .difficulty(reviewForm.getDifficultyEnum())
-                            .timeDemanding(reviewForm.getTimeDemandingEnum())
-                            .anonymous(reviewForm.getAnonymous())
-            );
-        } catch (ReviewNotFoundException e){
-            return Response.status(Response.Status.NOT_FOUND.getStatusCode()).build();
-        }
+        // TODO check: si el review no existe, tira: "405 HTTP method PUT is not supported by this URL".
+        // No se por que.
+
+        // TODO: esto pero en un paso (?)
+        final Review review = reviewService.findById(reviewId).orElseThrow(ReviewNotFoundException::new);
+        reviewService.update(
+            Review.builderFrom(review)
+                    .text(reviewForm.getText())
+                    .difficulty(reviewForm.getDifficultyEnum())
+                    .timeDemanding(reviewForm.getTimeDemandingEnum())
+                    .anonymous(reviewForm.getAnonymous())
+        );
+
         return Response.ok().build();
     }
 
@@ -278,12 +267,7 @@ public class ReviewController {
     public Response deleteReview(
             @PathParam("id") final Long reviewId
     ){
-        try{
-            reviewService.delete(reviewId);
-        }
-        catch (ReviewNotFoundException e){
-            return Response.status(Response.Status.NOT_FOUND.getStatusCode()).build();
-        }
+        reviewService.delete(reviewId);
         return Response.noContent().build();
     }
 }
