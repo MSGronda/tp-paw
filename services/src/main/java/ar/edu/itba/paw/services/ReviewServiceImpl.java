@@ -92,9 +92,22 @@ public class ReviewServiceImpl implements ReviewService {
 
     @Transactional
     @Override
-    public void voteReview(final long reviewId, final ReviewVoteType vote) {
+    public ReviewVote voteReview(final long reviewId, final ReviewVoteType vote) {
         final Review review = findById(reviewId).orElseThrow(ReviewNotFoundException::new);
-        reviewDao.voteReview(authUserService.getCurrentUser(), review, vote);
+        return reviewDao.voteReview(authUserService.getCurrentUser(), review, vote);
+    }
+
+    @Transactional
+    @Override
+    public void deleteReviewVote(final long reviewId, final long userId){
+        final Review review = findById(reviewId).orElseThrow(ReviewNotFoundException::new);
+        final User user = authUserService.getCurrentUser();
+
+        if(userId != user.getId()){
+            throw new UnauthorizedException();
+        }
+
+        reviewDao.deleteReviewVote(authUserService.getCurrentUser(), review);
     }
 
     @Override

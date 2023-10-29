@@ -17,7 +17,10 @@ public interface ReviewDao {
     Review update(final Review.Builder review);
     void delete(final Review review);
 
-    Optional<ReviewVote> voteReview(final User user, final Review review, final ReviewVoteType vote);
+    ReviewVote voteReview(final User user, final Review review, final ReviewVoteType vote);
+
+    void deleteReviewVote(final User user, final Review review);
+
     boolean didUserVote(final User user, final Review review);
     boolean didUserReview(final Subject subject, final User user);
 

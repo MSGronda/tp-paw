@@ -50,19 +50,25 @@ public class ReviewJpaDao implements ReviewDao {
     }
 
     @Override
-    public Optional<ReviewVote> voteReview(final User user, final Review review, final ReviewVoteType vote){
+    public ReviewVote voteReview(final User user, final Review review, final ReviewVoteType vote){
         final Optional<ReviewVote> maybeReviewVote = getUserVote(user, review);
 
         if(maybeReviewVote.isPresent()) {
             final ReviewVote reviewVote = maybeReviewVote.get();
             reviewVote.setVote(vote);
-            return Optional.of(reviewVote);
+            return reviewVote;
         }
 
         final ReviewVote reviewVote = new ReviewVote(user, review, vote);
         em.persist(reviewVote);
 
-        return Optional.of(reviewVote);
+        return reviewVote;
+    }
+
+    @Override
+    public void deleteReviewVote(final User user, final Review review){
+        final Optional<ReviewVote> maybeReviewVote = getUserVote(user, review);
+        maybeReviewVote.ifPresent(reviewVote -> em.remove(reviewVote));
     }
 
     @Override

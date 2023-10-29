@@ -247,7 +247,7 @@ public class ReviewJpaDaoTest {
 
         em.persist(review);
 
-        final ReviewVote actual = reviewJpaDao.voteReview(user, review, ReviewVoteType.UPVOTE).get();
+        final ReviewVote actual = reviewJpaDao.voteReview(user, review, ReviewVoteType.UPVOTE);
 
         assertEquals(ReviewVoteType.UPVOTE, actual.getVote());
         assertEquals(user, actual.getUser());

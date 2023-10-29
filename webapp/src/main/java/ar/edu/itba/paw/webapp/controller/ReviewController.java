@@ -297,7 +297,19 @@ public class ReviewController {
             @PathParam("id") final Long reviewId,
             @Valid @ModelAttribute("reviewVoteForm") final ReviewVoteForm reviewVoteForm
     ){
-        reviewService.voteReview(reviewId, reviewVoteForm.getVoteType());
-        return Response.ok().build();
+        final ReviewVote vote = reviewService.voteReview(reviewId, reviewVoteForm.getVoteType());
+        return Response.ok(ReviewVoteDto.fromReviewVote(uriInfo, vote)).build();
     }
+
+    @DELETE
+    @Path("/{reviewId}/votes/{userId}")
+    public Response deleteReviewVote(
+            @PathParam("reviewId") final Long reviewId,
+            @PathParam("userId") final Long userId
+    ){
+        reviewService.deleteReviewVote(reviewId, userId);
+
+        return Response.noContent().build();
+    }
+
 }

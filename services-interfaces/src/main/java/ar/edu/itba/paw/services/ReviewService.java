@@ -22,7 +22,7 @@ public interface ReviewService {
 
     int getTotalPagesForSubjectReviews(final Subject subject);
 
-    void voteReview(final long reviewId, final ReviewVoteType vote) throws ReviewNotFoundException;
+    ReviewVote voteReview(final long reviewId, final ReviewVoteType vote);
 
     boolean didUserReview(final Subject subject, final User user);
     boolean canUserEditReview(final User user, final Review review);
@@ -31,4 +31,6 @@ public interface ReviewService {
     void delete(final Review review) throws UnauthorizedException;
     void delete(final long reviewId);
     List<ReviewVote> getVotes(final Long reviewId, final Long userId, final int page);
+
+    void deleteReviewVote(final long reviewId, final long userId);
 }
