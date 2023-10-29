@@ -3,6 +3,7 @@ package ar.edu.itba.paw.services;
 import ar.edu.itba.paw.models.*;
 import ar.edu.itba.paw.models.enums.SubjectProgress;
 import ar.edu.itba.paw.models.exceptions.*;
+import ar.edu.itba.paw.services.enums.UserSemesterEditType;
 
 import java.util.List;
 import java.util.Locale;
@@ -47,9 +48,21 @@ public interface UserService {
     void addToCurrentSemester(final User user, final String subjectId, final String classId)
             throws SubjectNotFoundException, SubjectClassNotFoundException;
     void removeFromCurrentSemester(final User user, final String subjectId, final String classId);
-    void clearSemester(final User user);
+
+    void editUserSemester(
+            final User currentUser,
+            final Long userId,
+            final UserSemesterEditType type,
+            final List<String> subjectIds,
+            final List<String> classIds,
+            final List<String> passedSubjectIds
+    );
+
+    void createUserSemester(final User currentUser, final Long userId, final List<String> subjectIds, final List<String> classIds);
+
+    void deleteUserSemester(final User currentUser, final Long userId);
     String getSemesterSubmitRedirectUrl(final User user);
-    void finishSemester(final User user, final String subjectIds);
+    void finishSemester(final User user, final List<String> subjectIds);
 
    void updateUserDegreeAndSubjectProgress(final User user, final Degree degree, final String subjectIds);
 

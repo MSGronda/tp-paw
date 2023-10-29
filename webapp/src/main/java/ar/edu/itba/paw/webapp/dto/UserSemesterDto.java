@@ -4,18 +4,16 @@ import ar.edu.itba.paw.models.SubjectClass;
 import ar.edu.itba.paw.models.User;
 import javax.ws.rs.core.UriInfo;
 import java.net.URI;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
-public class PlanDto {
+public class UserSemesterDto {
     private Long userId;
     private Map<String, String> classes;
     private URI planSubjects;
 
-    public static PlanDto fromUser(final UriInfo uriInfo, final User user){
-        final PlanDto planDto = new PlanDto();
+    public static UserSemesterDto fromUser(final UriInfo uriInfo, final User user){
+        final UserSemesterDto planDto = new UserSemesterDto();
 
         planDto.userId = user.getId();
         planDto.classes = new HashMap<>();

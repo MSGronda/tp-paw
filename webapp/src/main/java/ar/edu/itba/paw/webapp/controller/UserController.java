@@ -1,18 +1,15 @@
 package ar.edu.itba.paw.webapp.controller;
 
+import ar.edu.itba.paw.models.SubjectClass;
 import ar.edu.itba.paw.models.User;
 import ar.edu.itba.paw.models.exceptions.*;
 import ar.edu.itba.paw.services.AuthUserService;
 import ar.edu.itba.paw.services.DegreeService;
 import ar.edu.itba.paw.services.ReviewService;
 import ar.edu.itba.paw.services.UserService;
-import ar.edu.itba.paw.webapp.dto.PlanDto;
+import ar.edu.itba.paw.webapp.dto.UserSemesterDto;
 import ar.edu.itba.paw.webapp.dto.UserDto;
-import ar.edu.itba.paw.webapp.form.EditUserDataForm;
-import ar.edu.itba.paw.webapp.form.EditUserForm;
-import ar.edu.itba.paw.webapp.form.EditUserPasswordForm;
-import ar.edu.itba.paw.webapp.form.UserForm;
-import org.hibernate.loader.custom.Return;
+import ar.edu.itba.paw.webapp.form.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Component;
@@ -25,6 +22,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 import java.net.URI;
+import java.util.List;
 
 @Path("users")
 @Component
@@ -441,8 +439,53 @@ public class UserController {
 
     @GET
     @Path("/{id}/plan")
+    @Produces("application/vnd.user-plan.v1+json")
     public Response getUserSemester(@PathParam("id") final Long id){
         final User user = userService.findById(id).orElseThrow(UserNotFoundException::new);
-        return Response.ok(PlanDto.fromUser(uriInfo, user)).build();
+        return Response.ok(UserSemesterDto.fromUser(uriInfo, user)).build();
+    }
+
+    @POST
+    @Path("/{id}/plan")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces("application/vnd.user-plan.v1+json")
+    public Response createUserSemester(
+            @PathParam("id") final Long id,
+            @Valid final UserSemesterForm userSemesterForm
+    ){
+        final User currentUser = authUserService.getCurrentUser();
+        userService.createUserSemester(currentUser, id, userSemesterForm.getIdSub(), userSemesterForm.getIdClass());
+        return Response.ok(UserSemesterDto.fromUser(uriInfo, currentUser)).build();
+    }
+
+    @PATCH
+    @Path("/{id}/plan")
+    @Consumes(MediaType.APPLICATION_JSON)
+    public Response alterUserSemester(
+            @PathParam("id") final Long id,
+            @Valid final UserSemesterEditForm userSemesterEditForm
+    ){
+        final User currentUser = authUserService.getCurrentUser();
+        userService.editUserSemester(
+                currentUser,
+                id,
+                userSemesterEditForm.getEditType(),
+                userSemesterEditForm.getSubjectIds(),
+                userSemesterEditForm.getClassIds(),
+                userSemesterEditForm.getPassedSubjectIds()
+        );
+
+        return Response.accepted().build();
+    }
+
+    @DELETE
+    @Path("/{id}/plan")
+    public Response deleteUserSemester(
+            @PathParam("id") final Long id
+    ){
+        final User currentUser = authUserService.getCurrentUser();
+        userService.deleteUserSemester(currentUser, id);
+
+        return Response.noContent().build();
     }
 }

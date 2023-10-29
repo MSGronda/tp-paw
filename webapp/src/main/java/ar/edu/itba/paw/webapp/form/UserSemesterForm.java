@@ -1,28 +1,29 @@
 package ar.edu.itba.paw.webapp.form;
 
 import javax.validation.constraints.NotNull;
+import java.util.List;
 
 public class UserSemesterForm {
 
     @NotNull
-    private String idSub;
+    private List<String> idSub;
 
     @NotNull
-    private String idClass;
+    private List<String> idClass;
 
-    public String getIdSub() {
+    public List<String> getIdSub() {
         return idSub;
     }
 
-    public String getIdClass() {
-        return idClass;
-    }
-
-    public void setIdSub(String idSub) {
+    public void setIdSub(List<String> idSub) {
         this.idSub = idSub;
     }
 
-    public void setIdClass(String idClass) {
+    public List<String> getIdClass() {
+        return idClass;
+    }
+
+    public void setIdClass(List<String> idClass) {
         this.idClass = idClass;
     }
 }

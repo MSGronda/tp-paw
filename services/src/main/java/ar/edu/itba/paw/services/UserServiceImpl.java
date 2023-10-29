@@ -6,6 +6,7 @@ import ar.edu.itba.paw.models.exceptions.*;
 import ar.edu.itba.paw.persistence.dao.ImageDao;
 import ar.edu.itba.paw.persistence.dao.RecoveryDao;
 import ar.edu.itba.paw.persistence.dao.UserDao;
+import ar.edu.itba.paw.services.enums.UserSemesterEditType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -286,10 +287,75 @@ public class UserServiceImpl implements UserService {
             LOGGER.debug("No class in subject {} for id {}", subjectId, classId);
             throw new SubjectClassNotFoundException();
         }
+
         final SubjectClass subjectClass = classes.get(classId);
+
+        if(semesterAlreadyContainsSubject(user, subjectClass)){
+            throw new UserSemesterAlreadyContainsSubjectException();
+        }
 
         userDao.addToCurrentSemester(user, subjectClass);
         LOGGER.info("User {} added to its current semester the subject: {}, class: {}", user.getId(), subjectClass.getSubject().getName(), subjectClass.getClassId());
+    }
+
+    private boolean semesterAlreadyContainsSubject(final User user, final SubjectClass subjectClass){
+        for(final SubjectClass sb : user.getUserSemester()){
+            if(Objects.equals(sb.getSubject().getId(), subjectClass.getSubject().getId())){
+                return true;
+            }
+        }
+        return false;
+    }
+
+    @Transactional
+    @Override
+    public void createUserSemester(final User currentUser, final Long userId, final List<String> subjectIds, final List<String> classIds){
+        if(userId != currentUser.getId()){
+            throw new UnauthorizedException();
+        }
+        if(subjectIds.size() != classIds.size()){
+            throw new InvalidUserSemesterIds();
+        }
+        if(!currentUser.getUserSemester().isEmpty()){
+            throw new UserAlreadyHasSemesterException();
+        }
+
+        for(int i=0; i<subjectIds.size(); i++){
+            addToCurrentSemester(currentUser, subjectIds.get(i), classIds.get(i));
+        }
+    }
+
+    @Transactional
+    @Override
+    public void editUserSemester(
+            final User currentUser,
+            final Long userId,
+            final UserSemesterEditType type,
+            final List<String> subjectIds,
+            final List<String> classIds,
+            final List<String> passedSubjectIds
+    ){
+        switch (type){
+            case ADD_SUBJECT:
+                if(subjectIds == null || classIds == null || subjectIds.size() != classIds.size()){
+                    throw new InvalidUserSemesterIds();
+                }
+                for(int i=0; i<subjectIds.size(); i++){
+                    addToCurrentSemester(currentUser, subjectIds.get(i), classIds.get(i));
+                }
+                break;
+            case REMOVE_SUBJECT:
+                if(subjectIds == null || classIds == null || subjectIds.size() != classIds.size()){
+                    throw new InvalidUserSemesterIds();
+                }
+                for(int i=0; i<subjectIds.size(); i++){
+                    removeFromCurrentSemester(currentUser, subjectIds.get(i), classIds.get(i));
+                }
+                break;
+            case FINISH_SEMESTER:
+                finishSemester(currentUser, passedSubjectIds);
+                break;
+        }
     }
 
     @Transactional
@@ -311,8 +377,11 @@ public class UserServiceImpl implements UserService {
 
     @Transactional
     @Override
-    public void clearSemester(final User user) {
-        userDao.clearSemester(user);
+    public void deleteUserSemester(final User currentUser, final Long userId){
+        if(currentUser.getId() != userId){
+            throw new UnauthorizedException();
+        }
+        userDao.clearSemester(currentUser);
     }
 
     @Override
@@ -339,9 +408,9 @@ public class UserServiceImpl implements UserService {
 
     @Transactional
     @Override
-    public void finishSemester(final User user, final String subjectIds) {
-        updateMultipleSubjectProgress(user, parseJsonList(subjectIds), SubjectProgress.DONE);
-        clearSemester(user);
+    public void finishSemester(final User user, final List<String> subjectIds) {
+        updateMultipleSubjectProgress(user, subjectIds, SubjectProgress.DONE);
+        userDao.clearSemester(user);
     }
 
     @Transactional
