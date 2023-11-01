@@ -78,6 +78,13 @@ public class DegreeServiceImpl implements DegreeService {
                         Map.Entry::getValue
                 ));
     }
+
+    @Transactional
+    @Override
+    public void create(final Degree.Builder builder) {
+        degreeDao.create(builder.build());
+    }
+
     @Transactional
     @Override
     public void addSubjectToDegrees(final Subject subject, final List<Long> degreeIds, final List<Integer> semesters) {

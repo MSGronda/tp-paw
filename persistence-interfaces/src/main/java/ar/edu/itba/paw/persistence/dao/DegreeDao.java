@@ -9,7 +9,7 @@ import java.util.Optional;
 import java.util.OptionalInt;
 
 public interface DegreeDao {
-    Degree create(final String name);
+    Degree create(Degree degree);
 
     List<Degree> getAll();
 

@@ -21,9 +21,10 @@ public class Degree {
     @Column(name = "totalCredits", nullable = false, columnDefinition = "int default 244")
     private int totalCredits;
 
-    public Degree(String name) {
-        this.name = name;
-        this.subjects = new ArrayList<>();
+    public Degree(Builder builder) {
+        this.name = builder.name;
+        this.totalCredits = builder.totalCredits;
+        this.subjects = builder.subjects;
     }
 
     protected Degree() {}
@@ -96,5 +97,54 @@ public class Degree {
     @Override
     public int hashCode() {
         return Objects.hash(getId());
+    }
+
+    public static Builder builder() {
+        return new Builder();
+    }
+
+    public static Builder builderFrom(Degree degree) {
+        return new Builder(degree);
+    }
+
+    public static class Builder {
+        private String name;
+        private int totalCredits;
+        private List<DegreeSubject> subjects;
+
+        private Builder() {
+            this.subjects = new ArrayList<>();
+        }
+
+        private Builder(Degree degree) {
+            this.name = degree.name;
+            this.totalCredits = degree.totalCredits;
+            this.subjects = degree.subjects;
+        }
+
+        public Builder name(final String name) {
+            this.name = name;
+            return this;
+        }
+        public Builder totalCredits(final int totalCredits) {
+            this.totalCredits = totalCredits;
+            return this;
+        }
+        public Builder subjects(final List<DegreeSubject> subjects) {
+            this.subjects = subjects;
+            return this;
+        }
+        public String getName() {
+            return name;
+        }
+        public int getTotalCredits() {
+            return totalCredits;
+        }
+        public List<DegreeSubject> getSubjects() {
+            return subjects;
+        }
+        public Degree build() {
+            return new Degree(this);
+        }
     }
 }

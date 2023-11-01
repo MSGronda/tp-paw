@@ -84,7 +84,10 @@ public class DegreeController {
     public Response createDegree(@Valid @ModelAttribute("degreeForm") final DegreeForm degreeForm) {
         Degree newDeg;
         try {
-            // TODO: create method for degree
+            degreeService.create(Degree.builder()
+                    .name(degreeForm.getName())
+                    .totalCredits(Integer.parseInt(degreeForm.getTotalCredits())
+                    ));
         } catch (final IllegalArgumentException e) {
             return Response.status(Response.Status.BAD_REQUEST).build();
         }

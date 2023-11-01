@@ -3,6 +3,7 @@ package ar.edu.itba.paw.persistence.dao;
 import ar.edu.itba.paw.models.Degree;
 import ar.edu.itba.paw.models.DegreeSubject;
 import ar.edu.itba.paw.models.Subject;
+import ar.edu.itba.paw.models.exceptions.SubjectIdAlreadyExistsException;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
@@ -17,10 +18,10 @@ public class DegreeJpaDao implements DegreeDao {
     private EntityManager em;
 
     @Override
-    public Degree create(final String name) {
-        final Degree deg = new Degree(name);
-        em.persist(deg);
-        return deg;
+    public Degree create(final Degree degree) {
+
+        em.persist(degree);
+        return degree;
     }
 
     @Override

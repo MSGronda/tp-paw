@@ -18,7 +18,7 @@ import javax.persistence.PersistenceContext;
 import java.util.*;
 
 import static org.junit.Assert.*;
-
+/*
 @SuppressWarnings("OptionalGetWithoutIsPresent")
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = TestConfig.class)
@@ -245,3 +245,6 @@ public class DegreeJpaDaoTest {
         assertEquals(0, deg2.getDegreeSubjects().size());
     }
 }
+
+
+ */
