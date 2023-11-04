@@ -1,5 +1,5 @@
 import { Text } from '@mantine/core';
-import {Navbar } from "../../components/default-navbar/default_navbar";
+import {Navbar } from "../../components/navbar/navbar";
 import classes from './home.module.css';
 
 

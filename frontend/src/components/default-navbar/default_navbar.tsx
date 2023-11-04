@@ -4,7 +4,7 @@ import classes from './default_navbar.module.css';
 import UniLogo from '../../images/uni.png'
 
 
-export function Navbar() {
+export function Default_Navbar() {
   const [opened, { toggle }] = useDisclosure(false);
 
 
