@@ -353,6 +353,9 @@ public class UserServiceImpl implements UserService {
                 }
                 break;
             case FINISH_SEMESTER:
+                if(passedSubjectIds == null){
+                    throw new InvalidUserSemesterIds();
+                }
                 finishSemester(currentUser, passedSubjectIds);
                 break;
         }
@@ -409,8 +412,27 @@ public class UserServiceImpl implements UserService {
     @Transactional
     @Override
     public void finishSemester(final User user, final List<String> subjectIds) {
+        if(!validFinishedSemesterSubjectIds(user, subjectIds)){
+            throw new InvalidUserSemesterIds();
+        }
         updateMultipleSubjectProgress(user, subjectIds, SubjectProgress.DONE);
         userDao.clearSemester(user);
+    }
+
+    private boolean validFinishedSemesterSubjectIds(final User user, final List<String> subjectIds){
+        for(String idSub : subjectIds) {
+            boolean valid = false;
+            for(SubjectClass subject : user.getUserSemester()){
+                if (subject.getSubject().getId().equals(idSub)) {
+                    valid = true;
+                    break;
+                }
+            }
+            if(!valid){
+                return false;
+            }
+        }
+        return true;
     }
 
     @Transactional

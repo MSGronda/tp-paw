@@ -104,6 +104,10 @@ public class User {
         return userSemester;
     }
 
+    public boolean hasSemester(){
+        return !userSemester.isEmpty();
+    }
+
     public int getCreditsDone(){
         return creditsDone;
     }

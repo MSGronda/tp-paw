@@ -7,7 +7,7 @@ import javax.validation.constraints.NotNull;
 import java.util.List;
 
 public class UserSemesterEditForm {
-
+    @NotNull
     private Long type;
 
     private List<String> subjectIds;

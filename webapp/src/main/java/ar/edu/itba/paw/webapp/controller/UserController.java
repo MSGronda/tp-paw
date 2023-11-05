@@ -424,7 +424,8 @@ public class UserController {
                 editUserForm.getOldPassword(),
                 editUserForm.getNewPassword(),
                 editUserForm.getDegreeId(),
-                editUserForm.getSubjectIds());
+                editUserForm.getSubjectIds()
+        );
         return Response.ok().build();
     }
 
@@ -442,6 +443,11 @@ public class UserController {
     @Produces("application/vnd.user-plan.v1+json")
     public Response getUserSemester(@PathParam("id") final Long id){
         final User user = userService.findById(id).orElseThrow(UserNotFoundException::new);
+
+        if(!user.hasSemester()){
+            return Response.noContent().build();
+        }
+
         return Response.ok(UserSemesterDto.fromUser(uriInfo, user)).build();
     }
 
