@@ -207,6 +207,26 @@ public class UserServiceImpl implements UserService {
 
     @Transactional
     @Override
+    public void updateMultipleSubjectProgress(
+            final User currentUser,
+            final Long userId,
+            final List<String> passedSubjects,
+            final List<String> notPassedSubject
+    ){
+        if(currentUser.getId() != userId){
+            throw new UnauthorizedException();
+        }
+        if(!passedSubjects.isEmpty()){
+            userDao.updateSubjectProgressList(currentUser, passedSubjects, SubjectProgress.DONE);
+        }
+        if(!notPassedSubject.isEmpty()){
+            userDao.updateSubjectProgressList(currentUser, notPassedSubject, SubjectProgress.PENDING);
+        }
+
+    }
+
+    @Transactional
+    @Override
     public void changePassword(
             final User user,
             final String password,

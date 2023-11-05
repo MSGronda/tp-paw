@@ -69,4 +69,6 @@ public interface UserService {
    void clearDegree(final User user);
 
    void updateUser(final Long userId, final User user, final String username, final String oldPassword, final String newPassword, final Long degreeId, final List<String> subjectIds) throws OldPasswordDoesNotMatchException;
+
+    void updateMultipleSubjectProgress(final User currentUser, final Long id, final List<String> newPassedSubjects, final List<String> newNotPassedSubjects);
 }

@@ -7,6 +7,7 @@ import ar.edu.itba.paw.services.AuthUserService;
 import ar.edu.itba.paw.services.DegreeService;
 import ar.edu.itba.paw.services.ReviewService;
 import ar.edu.itba.paw.services.UserService;
+import ar.edu.itba.paw.webapp.dto.UserProgressDto;
 import ar.edu.itba.paw.webapp.dto.UserSemesterDto;
 import ar.edu.itba.paw.webapp.dto.UserDto;
 import ar.edu.itba.paw.webapp.form.*;
@@ -493,5 +494,30 @@ public class UserController {
         userService.deleteUserSemester(currentUser, id);
 
         return Response.noContent().build();
+    }
+
+    @GET
+    @Path("/{id}/progress")
+    @Produces("application/vnd.user-progress.v1+json")
+    public Response getUserProgress(
+        @PathParam("id") final Long id
+    ){
+        final User user = userService.findById(id).orElseThrow(UserNotFoundException::new);
+
+        return Response.ok(UserProgressDto.fromUser(uriInfo, user)).build();
+    }
+
+    @PATCH
+    @Path("/{id}/progress")
+    @Consumes(MediaType.APPLICATION_JSON)
+    public Response addCompletedSubjects(
+        @PathParam("id") final Long id,
+        @Valid final UserProgressForm userProgressForm
+    ){
+        final User currentUser = authUserService.getCurrentUser();
+
+        userService.updateMultipleSubjectProgress(currentUser, id, userProgressForm.getNewPassedSubjects(), userProgressForm.getNewNotPassedSubjects());
+
+        return Response.accepted().build();
     }
 }

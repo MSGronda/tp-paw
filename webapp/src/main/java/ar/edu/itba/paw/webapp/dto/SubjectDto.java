@@ -14,7 +14,7 @@ public class SubjectDto {
 
     private List<ClassDto> classes;
 
-    public static SubjectDto fromSubject(UriInfo uriInfo, Subject subject){
+    public static SubjectDto fromSubject(final UriInfo uriInfo, final Subject subject){
         final SubjectDto subjectDto =  new SubjectDto();
 
         subjectDto.id = subject.getId();
