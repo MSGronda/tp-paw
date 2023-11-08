@@ -10,7 +10,7 @@ export function Default_Navbar() {
 
   return (
     <header className={classes.header}>
-      <Container size="md" className={classes.inner}>
+      <Container size="xl" className={classes.inner}>
         <img src={UniLogo} alt="UnimartLogo" className={classes.resize_image}/>
         <Burger opened={opened} onClick={toggle} hiddenFrom="xs" size="sm" />
       </Container>

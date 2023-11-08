@@ -1,0 +1,58 @@
+.fullsize{
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.background{
+    background: linear-gradient(to bottom,#4a90e2, #0369a1);
+    height: 100%;
+}
+
+.main {
+    width: min(max(800px, 50%), 100%);
+    padding-left: 2rem;
+    padding-right: 2rem;
+    align-self: center;
+    justify-self: center;
+    margin: 0 auto;
+    width: 100%;
+    height: 100%;
+}
+
+.landing_row{
+    height: 100%;
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-evenly;
+}
+
+.info{
+    color: white;
+}
+
+.landing{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: auto;   
+    width: 35%;
+    text-align: center;
+}
+.get_started{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+}
+.buttons{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-evenly;
+    width: 50%;
+}
