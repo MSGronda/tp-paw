@@ -19,38 +19,65 @@ export default function Register() {
     const [passwordError, setPasswordError] = useState('');
     const [confirmPasswordError, setConfirmPasswordError] = useState('');
 
-    // Handle form submission
-    const handleFormSubmit = (e: { preventDefault: () => void; }) => {
-        e.preventDefault();
-
-        // Validate form inputs here
-        if (!email || !/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(email)) {
+    // Function to validate email
+    const validateEmail = (value: string) => {
+        if (!value || !/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(value)) {
             setEmailError(t("Register.email_error"));
+            return false;
         } else {
             setEmailError('');
-        }
-
-        if (!username || username.length === 0) {
-            setUsernameError(t("Register.username_error"));
-        } else {
-            setUsernameError('');
-        }
-
-        if (!password || password.length === 0) {
-            setPasswordError(t("Register.password_error"));
-        } else {
-            setPasswordError('');
-        }
-
-        if (!confirmPassword || confirmPassword !== password) {
-            setConfirmPasswordError(t("Register.confirm_password_error"));
-        } else {
-            setConfirmPasswordError('');
+            return true;
         }
     };
 
-    // Determine if the submit button should be disabled
-    const isSubmitDisabled = !!emailError || !!usernameError || !!passwordError || !!confirmPasswordError;
+    // Function to validate username
+    const validateUsername = (value: string) => {
+        if (!value || value.length === 0) {
+            setUsernameError(t("Register.username_error"));
+            return false;
+        } else {
+            setUsernameError('');
+            return true;
+        }
+    };
+
+    // Function to validate password
+    const validatePassword = (value: string) => {
+        if (!value || value.length === 0) {
+            setPasswordError(t("Register.password_error"));
+            return false;
+        } else {
+            setPasswordError('');
+            return true;
+        }
+    };
+
+    // Function to validate confirm password
+    const validateConfirmPassword = (value: string) => {
+        if (!value || value !== password) {
+            setConfirmPasswordError(t("Register.confirm_password_error"));
+            return false;
+        } else {
+            setConfirmPasswordError('');
+            return true;
+        }
+    };
+
+    // Handle form submission
+    const handleFormSubmit = (e: { preventDefault: () => void; }) => {
+        e.preventDefault();
+        
+        // Call validation functions
+        const isEmailValid = validateEmail(email);
+        const isUsernameValid = validateUsername(username);
+        const isPasswordValid = validatePassword(password);
+        const isConfirmPasswordValid = validateConfirmPassword(confirmPassword);
+
+        // Determine if the submit button should be disabled
+        const isSubmitDisabled = !isEmailValid || !isUsernameValid || !isPasswordValid || !isConfirmPasswordValid;
+    };
+
+    const isSubmitDisabled = !email || !username || !password || !confirmPassword || !!emailError || !!usernameError || !!passwordError || !!confirmPasswordError;
 
     return (
         <div className={classes.fullsize}>
@@ -61,7 +88,7 @@ export default function Register() {
                     <TextInput
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
-                        onBlur={() => setEmailError(email.length > 0 ? '' : t("Register.email_error"))}
+                        onBlur={() => validateEmail(email)}
                         label={t("Register.email")}
                         placeholder={t("Register.email_example")}
                         className={classes.padding}
@@ -70,7 +97,7 @@ export default function Register() {
                     <TextInput
                         value={username}
                         onChange={(e) => setUsername(e.target.value)}
-                        onBlur={() => setUsernameError(username.length > 0 ? '' : t("Register.username_error"))}
+                        onBlur={() => validateUsername(username)}
                         label={t("Register.username")}
                         placeholder={t("Register.username_example")}
                         className={classes.padding}
@@ -79,7 +106,7 @@ export default function Register() {
                     <PasswordInput
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
-                        onBlur={() => setPasswordError(password.length > 0 ? '' : t("Register.password_error"))}
+                        onBlur={() => validatePassword(password)}
                         label={t("Register.password")}
                         className={classes.padding}
                         error={passwordError}
@@ -87,7 +114,7 @@ export default function Register() {
                     <PasswordInput
                         value={confirmPassword}
                         onChange={(e) => setConfirmPassword(e.target.value)}
-                        onBlur={() => setConfirmPasswordError(confirmPassword !== password ? t("Register.confirm_password_error") : '')}
+                        onBlur={() => validateConfirmPassword(confirmPassword)}
                         label={t("Register.confirm_password")}
                         className={classes.padding}
                         error={confirmPasswordError}
