@@ -9,6 +9,7 @@ export const TRANSLATIONS_ES = {
         message3: "Planificá cuatrimestres futuros"
     },
     Register: {
+        title: "Registrarse",
         email: "Correo Electrónico",
         email_example: "usuario@gmail.com",
         email_error: "Correo electrónico inválido",
@@ -20,5 +21,19 @@ export const TRANSLATIONS_ES = {
         confirm_password: "Repetir Contraseña",
         confirm_password_error: "Las contraseñas no coinciden",
         register: "Registrarse"
+    },
+    Login: {
+        title: "Ingresar",
+        email: "Correo Electrónico",
+        email_example: "usuario@gmail.com",
+        email_error: "Correo electrónico inválido",
+        password: "Contraseña",
+        password_error: "Contraseña inválida",
+        login: "Registrarse",
+        rememberMe: "Recuerdame",
+        noAccount: "¿No tenes una cuenta?",
+        register: "Registrate acá",
+        forgotPassword: "¿No tienes o olvidaste tu contraseña?",
+        recover: "Recuperar"
     }
 }

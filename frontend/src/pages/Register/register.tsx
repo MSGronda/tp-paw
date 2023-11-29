@@ -3,6 +3,12 @@ import { Default_Navbar } from "../../components/default-navbar/default_navbar";
 import { PasswordInput, TextInput, Button } from '@mantine/core';
 import { useTranslation } from 'react-i18next';
 import { useState } from 'react';
+import {
+    validateConfirmPassword,
+    validateEmail,
+    validatePassword,
+    validateUsername
+} from "../../utils/register_utils.ts";
 
 export default function Register() {
     const { t } = useTranslation();
@@ -19,59 +25,15 @@ export default function Register() {
     const [passwordError, setPasswordError] = useState('');
     const [confirmPasswordError, setConfirmPasswordError] = useState('');
 
-    // Function to validate email
-    const validateEmail = (value: string) => {
-        if (!value || !/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(value)) {
-            setEmailError(t("Register.email_error"));
-            return false;
-        } else {
-            setEmailError('');
-            return true;
-        }
-    };
-
-    // Function to validate username
-    const validateUsername = (value: string) => {
-        if (!value || value.length === 0) {
-            setUsernameError(t("Register.username_error"));
-            return false;
-        } else {
-            setUsernameError('');
-            return true;
-        }
-    };
-
-    // Function to validate password
-    const validatePassword = (value: string) => {
-        if (!value || value.length === 0) {
-            setPasswordError(t("Register.password_error"));
-            return false;
-        } else {
-            setPasswordError('');
-            return true;
-        }
-    };
-
-    // Function to validate confirm password
-    const validateConfirmPassword = (value: string) => {
-        if (!value || value !== password) {
-            setConfirmPasswordError(t("Register.confirm_password_error"));
-            return false;
-        } else {
-            setConfirmPasswordError('');
-            return true;
-        }
-    };
-
     // Handle form submission
     const handleFormSubmit = (e: { preventDefault: () => void; }) => {
         e.preventDefault();
-        
+
         // Call validation functions
-        const isEmailValid = validateEmail(email);
-        const isUsernameValid = validateUsername(username);
-        const isPasswordValid = validatePassword(password);
-        const isConfirmPasswordValid = validateConfirmPassword(confirmPassword);
+        const isEmailValid = validateEmail(email, setEmailError);
+        const isUsernameValid = validateUsername(username, setUsernameError);
+        const isPasswordValid = validatePassword(password, setPasswordError);
+        const isConfirmPasswordValid = validateConfirmPassword(confirmPassword, password, setConfirmPasswordError);
 
         // Determine if the submit button should be disabled
         const isSubmitDisabled = !isEmailValid || !isUsernameValid || !isPasswordValid || !isConfirmPasswordValid;
@@ -83,12 +45,12 @@ export default function Register() {
         <div className={classes.fullsize}>
             <Default_Navbar />
             <div className={classes.center}>
-                <h2>Register</h2>
+                <h2>{t("Register.title")}</h2>
                 <form onSubmit={handleFormSubmit}>
                     <TextInput
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
-                        onBlur={() => validateEmail(email)}
+                        onBlur={() => validateEmail(email, setEmailError)}
                         label={t("Register.email")}
                         placeholder={t("Register.email_example")}
                         className={classes.padding}
@@ -97,7 +59,7 @@ export default function Register() {
                     <TextInput
                         value={username}
                         onChange={(e) => setUsername(e.target.value)}
-                        onBlur={() => validateUsername(username)}
+                        onBlur={() => validateUsername(username, setUsernameError)}
                         label={t("Register.username")}
                         placeholder={t("Register.username_example")}
                         className={classes.padding}
@@ -106,7 +68,7 @@ export default function Register() {
                     <PasswordInput
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
-                        onBlur={() => validatePassword(password)}
+                        onBlur={() => validatePassword(password, setPasswordError)}
                         label={t("Register.password")}
                         className={classes.padding}
                         error={passwordError}
@@ -114,7 +76,7 @@ export default function Register() {
                     <PasswordInput
                         value={confirmPassword}
                         onChange={(e) => setConfirmPassword(e.target.value)}
-                        onBlur={() => validateConfirmPassword(confirmPassword)}
+                        onBlur={() => validateConfirmPassword(confirmPassword, password, setConfirmPasswordError)}
                         label={t("Register.confirm_password")}
                         className={classes.padding}
                         error={confirmPasswordError}

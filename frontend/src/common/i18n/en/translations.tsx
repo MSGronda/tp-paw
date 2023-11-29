@@ -9,6 +9,7 @@ export const TRANSLATIONS_EN = {
         message3: "Plan future semesters"
     },
     Register: {
+        title: "Register",
         email: "Email",
         email_example: "username@gmail.com",
         email_error: "Invalid email",
@@ -20,5 +21,19 @@ export const TRANSLATIONS_EN = {
         confirm_password: "Repeat Password",
         confirm_password_error: "Passwords do not match",
         register: "Register"
+    },
+    Login: {
+        title: "Login",
+        email: "Email",
+        email_example: "username@gmail.com",
+        email_error: "Invalid email",
+        password: "Password",
+        password_error: "Invalid password",
+        login: "Login",
+        rememberMe: "Remember me",
+        noAccount: "Don't have an account?",
+        register: "Register here",
+        forgotPassword: "Don't have or forgot your password?",
+        recover: "Recover"
     }
 }

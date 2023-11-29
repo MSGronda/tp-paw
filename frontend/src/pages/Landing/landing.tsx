@@ -1,4 +1,4 @@
-import { Text, Card, Button } from '@mantine/core';
+import { Card, Button } from '@mantine/core';
 import { Default_Navbar } from "../../components/default-navbar/default_navbar"
 import classes from './landing.module.css';
 import { useTranslation } from 'react-i18next';
