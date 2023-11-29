@@ -2,7 +2,7 @@ import classes from './register.module.css';
 import { Default_Navbar } from "../../components/default-navbar/default_navbar";
 import { PasswordInput, TextInput, Button } from '@mantine/core';
 import { useTranslation } from 'react-i18next';
-import { useState } from 'react';
+import {useEffect, useState} from 'react';
 import {
     validateConfirmPassword,
     validateEmail,
@@ -12,6 +12,10 @@ import {
 
 export default function Register() {
     const { t } = useTranslation();
+
+    useEffect(() => {
+        document.title = t("Register.title")
+    }, [])
 
     // State variables to keep track of input values
     const [email, setEmail] = useState('');

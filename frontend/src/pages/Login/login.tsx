@@ -5,11 +5,15 @@ import {
     validateEmail,
     validatePassword
 } from "../../utils/register_utils.ts";
-import {useState} from "react";
+import {useEffect, useState} from "react";
 import {t} from "i18next";
 import {useNavigate} from "react-router-dom";
 
 export default function Login(){
+
+    useEffect(() => {
+        document.title = t("Login.title")
+    }, [])
 
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
@@ -21,8 +25,7 @@ export default function Login(){
 
     const navigate = useNavigate();
 
-
-    const handleFormSubmit = (e: { preventDefault: () => void; }) => {
+    const handleFormSubmit = async (e: { preventDefault: () => void; }) => {
         e.preventDefault();
 
         // Call validation functions
