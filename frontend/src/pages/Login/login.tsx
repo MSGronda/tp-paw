@@ -8,6 +8,7 @@ import {
 import {useEffect, useState} from "react";
 import {t} from "i18next";
 import {useNavigate} from "react-router-dom";
+import AuthService from "../../services/AuthService.ts";
 
 export default function Login(){
 
@@ -22,6 +23,7 @@ export default function Login(){
     const [emailError, setEmailError] = useState('');
     const [passwordError, setPasswordError] = useState('');
 
+    const [invalidCredentials, setInvalidCredentials] = useState(false)
 
     const navigate = useNavigate();
 
@@ -32,6 +34,14 @@ export default function Login(){
         validateEmail(email, setEmailError);
         validatePassword(password, setPasswordError);
 
+        const success = await AuthService.login(email, password)
+
+        if(!success){
+            setInvalidCredentials(true)
+        }
+        else{
+            navigate('/home')
+        }
     };
 
     let isSubmitDisabled = !email || !password || !!emailError || !!passwordError;
@@ -42,6 +52,7 @@ export default function Login(){
             <Default_Navbar />
             <div className={classes.center}>
                 <h2>{t("Login.title")}</h2>
+                {invalidCredentials && <p>The credentials provided are invalid</p>}
                 <form onSubmit={handleFormSubmit}>
                     <TextInput
                         value={email}
