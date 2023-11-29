@@ -138,4 +138,23 @@ public class DegreeServiceImpl implements DegreeService {
 
     }
 
+    @Override
+    public void addSemestersToDegree(Degree degree, Map<Integer, List<String>> semesters) {
+        for (Map.Entry<Integer, List<String>> entry : semesters.entrySet()) {
+            for (String subjectId : entry.getValue()) {
+                Optional<Subject> maybeSubject = subjectDao.findById(subjectId);
+                if (maybeSubject.isPresent()) {
+                    Subject subject = maybeSubject.get();
+                    DegreeSubject degreeSubject = new DegreeSubject(degree, subject, entry.getKey());
+                    degree.getDegreeSubjects().add(degreeSubject);
+                }
+            }
+        }
+    }
+
+    @Override
+    public void delete(Degree degree) {
+        degreeDao.delete(degree);
+    }
+
 }

@@ -1,17 +1,15 @@
 package ar.edu.itba.paw.webapp.controller;
 
 import ar.edu.itba.paw.models.Degree;
-import ar.edu.itba.paw.models.Subject;
 import ar.edu.itba.paw.models.exceptions.DegreeNotFoundException;
 import ar.edu.itba.paw.services.AuthUserService;
 import ar.edu.itba.paw.services.DegreeService;
 import ar.edu.itba.paw.webapp.dto.DegreeDto;
 import ar.edu.itba.paw.webapp.dto.SemesterDto;
-import ar.edu.itba.paw.webapp.dto.SubjectDto;
 import ar.edu.itba.paw.webapp.form.DegreeForm;
+import ar.edu.itba.paw.webapp.form.DegreeSemesterForm;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import javax.validation.Valid;
 import javax.ws.rs.*;
@@ -107,19 +105,29 @@ public class DegreeController {
     @PUT
     @Path("/{id}")
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response updateDegree(
-            @Valid @ModelAttribute("degreeForm") final DegreeForm degreeForm,
-            @PathParam("id") final long id) {
+    public Response updateDegree (
+            @PathParam("id") final long id,
+            @Valid @ModelAttribute("degreeSemesterForm") final DegreeSemesterForm degreeSemesterForm
+    ) {
         final Degree degree = degreeService.findById(id).orElseThrow(DegreeNotFoundException::new);
-        //TODO degree.update(degreeForm.getName(), degreeFOrm.subjects());
-        return Response.ok().build();
+        try {
+            degreeService.addSemestersToDegree(degree, degreeSemesterForm.getSemesters());
+        } catch (final IllegalArgumentException e) {
+            return Response.status(Response.Status.BAD_REQUEST).build();
+        }
+        return Response.status(Response.Status.CREATED.getStatusCode()).build();
     }
 
     @DELETE
     @Path("/{id}")
     public Response deleteDegree(@PathParam("id") final long id) {
-        //TODO: delete method in DegreeService
-        return Response.noContent().build();
+        final Degree degree = degreeService.findById(id).orElseThrow(DegreeNotFoundException::new);
+        try {
+            degreeService.delete(degree);
+        } catch (final IllegalArgumentException e) {
+            return Response.status(Response.Status.BAD_REQUEST).build();
+        }
+        return Response.status(Response.Status.CREATED.getStatusCode()).build();
     }
 
     //done

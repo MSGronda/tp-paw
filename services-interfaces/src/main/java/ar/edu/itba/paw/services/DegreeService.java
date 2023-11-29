@@ -21,4 +21,7 @@ public interface DegreeService {
     void create(final Degree.Builder builder);
     void addSubjectToDegrees(final Subject subject, final List<Long> degreeIds, final List<Integer> semesters);
     void updateSubjectToDegrees(final Subject subject, final List<Long> degreeIds, final List<Integer> semesters);
+    void addSemestersToDegree(Degree degree, Map<Integer, List<String>> semesters);
+
+    void delete(Degree degree);
 }
