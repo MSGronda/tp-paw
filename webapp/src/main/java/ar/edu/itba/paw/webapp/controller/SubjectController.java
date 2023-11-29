@@ -21,24 +21,15 @@ import java.util.stream.Collectors;
 @Component
 public class SubjectController {
 
-    private final SubjectService subjectService;
-    private final AuthUserService authUserService;
-    private final UserService userService;
-
+    @Autowired
+    private SubjectService subjectService;
+    @Autowired
+    private AuthUserService authUserService;
+    @Autowired
+    private UserService userService;
     @Context
     private UriInfo uriInfo;
-
-    @Autowired
-    public SubjectController(
-            final SubjectService subjectService,
-            final AuthUserService authUserService,
-            final UserService userService
-    ) {
-        this.subjectService = subjectService;
-        this.authUserService = authUserService;
-        this.userService = userService;
-    }
-
+    
     @GET
     @Produces("application/vnd.subject-list.v1+json")
     public Response getSubjects(
