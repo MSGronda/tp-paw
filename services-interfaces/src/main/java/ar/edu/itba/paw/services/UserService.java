@@ -54,8 +54,7 @@ public interface UserService {
             final Long userId,
             final UserSemesterEditType type,
             final List<String> subjectIds,
-            final List<String> classIds,
-            final List<String> passedSubjectIds
+            final List<String> classIds
     );
 
     void createUserSemester(final User currentUser, final Long userId, final List<String> subjectIds, final List<String> classIds);

@@ -478,8 +478,7 @@ public class UserController {
                 id,
                 userSemesterEditForm.getEditType(),
                 userSemesterEditForm.getSubjectIds(),
-                userSemesterEditForm.getClassIds(),
-                userSemesterEditForm.getPassedSubjectIds()
+                userSemesterEditForm.getClassIds()
         );
 
         return Response.accepted().build();

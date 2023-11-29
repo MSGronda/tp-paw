@@ -12,6 +12,8 @@ public class UserSemesterDto {
     private Map<String, String> classes;
     private URI planSubjects;
 
+    private URI subjectProgress;
+
     public static UserSemesterDto fromUser(final UriInfo uriInfo, final User user){
         final UserSemesterDto planDto = new UserSemesterDto();
 
@@ -23,6 +25,8 @@ public class UserSemesterDto {
         }
 
         planDto.planSubjects = uriInfo.getBaseUriBuilder().path("subjects").queryParam("userPlan", String.valueOf(user.getId())).build();
+
+        planDto.subjectProgress = uriInfo.getBaseUriBuilder().path("users").path(String.valueOf(user.getId())).path("progress").build();
 
         return planDto;
     }
@@ -49,5 +53,13 @@ public class UserSemesterDto {
 
     public void setPlanSubjects(URI planSubjects) {
         this.planSubjects = planSubjects;
+    }
+
+    public URI getSubjectProgress() {
+        return subjectProgress;
+    }
+
+    public void setSubjectProgress(URI subjectProgress) {
+        this.subjectProgress = subjectProgress;
     }
 }

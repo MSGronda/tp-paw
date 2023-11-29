@@ -352,8 +352,7 @@ public class UserServiceImpl implements UserService {
             final Long userId,
             final UserSemesterEditType type,
             final List<String> subjectIds,
-            final List<String> classIds,
-            final List<String> passedSubjectIds
+            final List<String> classIds
     ){
         switch (type){
             case ADD_SUBJECT:
@@ -373,11 +372,10 @@ public class UserServiceImpl implements UserService {
                 }
                 break;
             case FINISH_SEMESTER:
-                if(passedSubjectIds == null){
-                    throw new InvalidUserSemesterIds();
-                }
-                finishSemester(currentUser, passedSubjectIds);
-                break;
+
+                // Debera hacer un PATCH a {id}/progress para marcar como curzadas las materias
+
+                userDao.clearSemester(currentUser);
         }
     }
 
