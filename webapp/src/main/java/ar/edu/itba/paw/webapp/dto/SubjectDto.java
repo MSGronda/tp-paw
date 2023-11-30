@@ -11,8 +11,10 @@ public class SubjectDto {
     private String name;
     private String department;
     private Integer credits;
-
     private List<ClassDto> classes;
+    private String difficulty;
+    private String timeDemand;
+    private Integer reviewCount;
 
     public static SubjectDto fromSubject(final UriInfo uriInfo, final Subject subject){
         final SubjectDto subjectDto =  new SubjectDto();
@@ -22,6 +24,10 @@ public class SubjectDto {
         subjectDto.department = subject.getDepartment();
         subjectDto.credits = subject.getCredits();
         subjectDto.classes = subject.getClasses().stream().map(subjectClass -> ClassDto.fromClass(uriInfo, subjectClass)).collect(Collectors.toList());
+
+        subjectDto.difficulty = subject.getReviewStats().getDifficulty().name();
+        subjectDto.timeDemand = subject.getReviewStats().getTimeDemanding().name();
+        subjectDto.reviewCount = subject.getReviewStats().getReviewCount();
 
         return subjectDto;
     }
@@ -64,5 +70,29 @@ public class SubjectDto {
 
     public void setClasses(List<ClassDto> classes) {
         this.classes = classes;
+    }
+
+    public String getDifficulty() {
+        return difficulty;
+    }
+
+    public void setDifficulty(String difficulty) {
+        this.difficulty = difficulty;
+    }
+
+    public String getTimeDemand() {
+        return timeDemand;
+    }
+
+    public void setTimeDemand(String timeDemand) {
+        this.timeDemand = timeDemand;
+    }
+
+    public Integer getReviewCount() {
+        return reviewCount;
+    }
+
+    public void setReviewCount(Integer reviewCount) {
+        this.reviewCount = reviewCount;
     }
 }
