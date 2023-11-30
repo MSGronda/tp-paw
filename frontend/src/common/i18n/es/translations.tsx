@@ -55,4 +55,8 @@ export const TRANSLATIONS_ES = {
         semesterbuilder: "Armador de Cuatrimestre",
         profile: "Perfil"
     },
+    ReviewCard: {
+        showMore: "Mostrar más",
+        showLess: "Mostrar menos"
+    }
 }

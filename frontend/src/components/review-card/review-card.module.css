@@ -1,0 +1,53 @@
+.card{
+    width: 45%;
+}
+
+.header{
+    display: flex;
+    justify-content: space-between;
+    font-size: 1.2rem;
+}
+
+.username_redirect{
+    color: black;
+}
+.username_redirect:hover{
+    color: #0369a1;
+}
+
+.break-text {
+    overflow-wrap: break-word;
+    margin-bottom: 2%;
+}
+
+.showmore{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.badge_row {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    height: 20%;
+}
+
+.badge_row_elem {
+    margin-right: 0.3rem;
+}
+
+.divider{
+    margin-top: 2%;
+    margin-bottom: 2%;
+}
+
+.like_buttons{
+    display: flex;
+    justify-content: left;
+    width: 100%;
+}
+
+.like_button{
+   margin: 1%;
+}

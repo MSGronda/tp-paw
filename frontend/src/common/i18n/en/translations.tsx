@@ -54,5 +54,9 @@ export const TRANSLATIONS_EN = {
         curriculum: "Curriculum",
         semesterbuilder: "Semester Builder",
         profile: "Profile"
+    },
+    ReviewCard: {
+        showMore: "Show more",
+        showLess: "Show less"
     }
 }
