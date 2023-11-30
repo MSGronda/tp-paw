@@ -15,8 +15,8 @@
     <maven.compiler.source>1.8</maven.compiler.source>
     <maven.compiler.target>1.8</maven.compiler.target>
 
-    <spring.version>4.2.5.RELEASE</spring.version>
-    <spring-security.version>4.0.4.RELEASE</spring-security.version>
+    <spring.version>4.3.22.RELEASE</spring.version>
+    <spring-security.version>4.2.11.RELEASE</spring-security.version>
     <org.postgresql.version>42.2.5</org.postgresql.version>
     <servlet-api.version>2.5</servlet-api.version>
     <jstl.version>1.2</jstl.version>

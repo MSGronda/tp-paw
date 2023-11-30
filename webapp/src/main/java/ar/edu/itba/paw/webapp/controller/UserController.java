@@ -62,6 +62,12 @@ public class UserController {
         return Response.ok().build();
     }
 
+    @GET
+    @Produces("application/vnd.user.v1+json")
+    public Response getCurrentUser(){
+        final User user = authUserService.getCurrentUser();
+        return Response.ok(UserDto.fromUser(uriInfo, user)).build();
+    }
 
     @GET
     @Path("/{id}")

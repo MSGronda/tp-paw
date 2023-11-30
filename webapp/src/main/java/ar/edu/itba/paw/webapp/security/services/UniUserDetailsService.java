@@ -1,8 +1,9 @@
-package ar.edu.itba.paw.webapp.auth;
+package ar.edu.itba.paw.webapp.security.services;
 
 import ar.edu.itba.paw.models.Role;
 import ar.edu.itba.paw.models.User;
 import ar.edu.itba.paw.services.UserService;
+import ar.edu.itba.paw.webapp.auth.UniAuthUser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;

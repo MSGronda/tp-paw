@@ -1,9 +1,12 @@
-package ar.edu.itba.paw.webapp.config;
+package ar.edu.itba.paw.webapp.security.config;
 
 import ar.edu.itba.paw.models.User;
 import ar.edu.itba.paw.services.UserService;
 import ar.edu.itba.paw.models.Role;
-import ar.edu.itba.paw.webapp.auth.JwtFilter;
+import ar.edu.itba.paw.webapp.security.filters.JwtFilter;
+import ar.edu.itba.paw.webapp.security.handlers.UniAccessDeniedHandler;
+import ar.edu.itba.paw.webapp.security.handlers.UniAuthenticationEntryPoint;
+import ar.edu.itba.paw.webapp.security.services.UniUserDetailsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
@@ -21,11 +24,13 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.access.AccessDeniedHandler;
+import org.springframework.security.web.access.intercept.FilterSecurityInterceptor;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import org.springframework.web.filter.CharacterEncodingFilter;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -33,11 +38,12 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Optional;
-import java.util.concurrent.TimeUnit;
 
 
 @EnableWebSecurity
-@ComponentScan({ "ar.edu.itba.paw.webapp.auth" })
+@ComponentScan({"ar.edu.itba.paw.webapp.security.services",
+        "ar.edu.itba.paw.webapp.security.filters",
+    })
 @Configuration
 public class WebAuthConfig extends WebSecurityConfigurerAdapter {
 
@@ -70,21 +76,38 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
                 .passwordEncoder(passwordEncoder());
     }
 
+    @Bean
+    public AccessDeniedHandler accessDeniedHandler() {
+        return new UniAccessDeniedHandler();
+    }
+
+    @Bean
+    public UniAuthenticationEntryPoint authenticationEntryPoint() {
+        return new UniAuthenticationEntryPoint();
+    }
+
     @Override
     protected void configure(final HttpSecurity http) throws Exception {
-        http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-                .and().headers().cacheControl().disable()
-            .and().authorizeRequests()
-                .antMatchers("/login","/register", "/recover/**", "/verification/**").anonymous()
+
+        CharacterEncodingFilter filter = new CharacterEncodingFilter();
+        filter.setEncoding("UTF-8");
+        filter.setForceEncoding(true);
+        http
+                .cors().and().csrf().disable()
+                .exceptionHandling()
+                .authenticationEntryPoint(new UniAuthenticationEntryPoint())
+                .accessDeniedHandler(accessDeniedHandler())
+                .and().sessionManagement()
+                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                .and().headers()
+                .cacheControl().disable()
+                .and().authorizeRequests()
+                    .antMatchers("/login","/register", "/recover/**", "/verification/**").anonymous()
                 .antMatchers("/user/{id:\\d+}/moderator", "/degrees", "/create-subject", "/subject/{id:\\d+\\.\\d+}/delete-subject", "/subject/{id:\\d+\\.\\d+}/edit").hasRole(Role.RoleEnum.EDITOR.getName())
                 .antMatchers("/").permitAll()
                 .antMatchers("/**").authenticated()
-            .and().exceptionHandling()
-                .accessDeniedHandler((req, res, e) -> res.setStatus(HttpServletResponse.SC_FORBIDDEN))
-                .authenticationEntryPoint((req, res, e) -> res.setStatus(HttpServletResponse.SC_UNAUTHORIZED))
-            .and()
-                .csrf().disable()
-                .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
+                .and().addFilterBefore(jwtFilter,
+                        FilterSecurityInterceptor.class);
     }
 
     @Override
@@ -96,9 +119,11 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration cors = new CorsConfiguration();
         cors.setAllowedOrigins(Collections.singletonList("*"));
-        cors.setAllowedMethods(Collections.singletonList("*"));
-        cors.setAllowedHeaders(Collections.singletonList("*"));
-        cors.setExposedHeaders(Arrays.asList("Authorization", "X-Refresh", "Location", "Link", "X-Total-Pages"));
+        cors.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
+        cors.setAllowedHeaders(Arrays.asList("authorization", "content-type", "x-auth-token"));
+        cors.setExposedHeaders(Arrays.asList("X-JWT", "X-Refresh-Token", "X-Content-Type-Options", "X-XSS-Protection", "X-Frame-Options",
+                "authorization", "Location",
+                "Content-Disposition", "Link"));
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", cors);
         return source;
