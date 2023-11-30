@@ -29,7 +29,7 @@ export const TRANSLATIONS_ES = {
         email_error: "Correo electrónico inválido",
         password: "Contraseña",
         password_error: "Contraseña inválida",
-        login: "Registrarse",
+        login: "Ingresar",
         rememberMe: "Recuerdame",
         noAccount: "¿No tenes una cuenta?",
         register: "Registrate acá",
