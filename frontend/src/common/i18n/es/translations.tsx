@@ -59,4 +59,8 @@ export const TRANSLATIONS_ES = {
         showMore: "Mostrar más",
         showLess: "Mostrar menos"
     }
+    Footer: {
+        mission: "Nuestra misión es proveer una manera simple e intuitiva de compartir opiniones, consejos y conocimiento general para todos tus materias de la universidad.",
+        rights: "© 2023 Equipo Uni, Todos los derechos reservados."
+    }
 }

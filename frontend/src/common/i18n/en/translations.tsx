@@ -58,5 +58,9 @@ export const TRANSLATIONS_EN = {
     ReviewCard: {
         showMore: "Show more",
         showLess: "Show less"
+    },
+    Footer: {
+        mission: "Our mission is to provide a simple and intuitive way of sharing your opinions, tips and general knowledge for all of your college courses.",
+        rights: "© 2023 Uni Team, All rights reserved."
     }
 }
