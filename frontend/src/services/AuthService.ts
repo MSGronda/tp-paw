@@ -9,14 +9,15 @@ const login = async (mail: string, password: string) => {
 
         const response = await axiosService.axiosWrapper(axiosService.GET, `${USER_PATH}`, config);
 
-        if(!response){
-            console.error("Unable to login")
+        if (!response || !response.config.headers.Authorization) {
+            console.error("Unable to login");
             return false;
         }
 
-        const token = response.headers.authorization.split(" ")[1];
-
+        const token = response.config.headers.Authorization.split(" ")[1];
+        console.log(response)
         if (token) localStorage.setItem('token', token);
+        console.log(response.data)
         if (response.data) localStorage.setItem('user', JSON.stringify(response.data));
     } catch (err) {
         console.error(err);
