@@ -35,5 +35,18 @@ export const TRANSLATIONS_ES = {
         register: "Registrate acá",
         forgotPassword: "¿No tienes o olvidaste tu contraseña?",
         recover: "Recuperar"
+    },
+    SubjectCard: {
+        credits: "{{n}} creditos",
+        prerequisites: "{{n}} correlativas",
+        done_tooltip: "Todavia no has cursado esta materia",
+        easy: "Facil",
+        normal: "Normal",
+        hard: "Dificil",
+        low: "Demanda de poco tiempo",
+        medium: "Demanda de tiempo normal",
+        high: "Requiere mucho tiempo",
+        reviews: "{{n}} reseñas",
+        no_reviews: "No hay reseñas"
     }
 }

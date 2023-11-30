@@ -4,6 +4,8 @@ import Landing from './pages/Landing/landing';
 import Register from './pages/Register/register';
 import Login from "./pages/Login/login.tsx";
 import Degree from './pages/Degree/Degree.tsx';
+import Test from './pages/Test/test.tsx';
+
 
 const router = createBrowserRouter([
     {
@@ -23,8 +25,13 @@ const router = createBrowserRouter([
         element: <Login/>
     },
     {
+
         path: '/degree/:id',
         element: <Degree/>
+    },
+    {
+        path: '/test',
+        element: <Test/>
     }
 ]);
 
