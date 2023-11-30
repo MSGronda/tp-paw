@@ -36,6 +36,12 @@ export const TRANSLATIONS_EN = {
         forgotPassword: "Don't have or forgot your password?",
         recover: "Recover"
     },
+    Home: {
+        currentSemester: "Current Semester",
+        overview: "Overview",
+        futureSubjects: "Future Subjects",
+        pastSubjects: "Past Subjects"
+    },
     SubjectCard: {
         credits: "{{n}} credits",
         prerequisites: "{{n}} prerequisites",

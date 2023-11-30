@@ -1,4 +1,4 @@
-import { Container, Group, Burger } from '@mantine/core';
+import { Container, Burger } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import classes from './default_navbar.module.css';
 import UniLogo from '../../images/uni.png'

@@ -36,6 +36,12 @@ export const TRANSLATIONS_ES = {
         forgotPassword: "¿No tienes o olvidaste tu contraseña?",
         recover: "Recuperar"
     },
+    Home: {
+        currentSemester: "Cuatrimestre Actual",
+        overview: "Panorama",
+        futureSubjects: "Materias futuras",
+        pastSubjects: "Materias aprobadas"
+    },
     SubjectCard: {
         credits: "{{n}} creditos",
         prerequisites: "{{n}} correlativas",
