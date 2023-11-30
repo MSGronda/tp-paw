@@ -16,18 +16,19 @@
   
   .link {
     display: block;
-    line-height: 1;
+    line-height: 1; /* Ensure line height is appropriate for the font size */
     padding: rem(8px) rem(12px);
-    border-radius: var(--mantine-radius-sm);
+    border-radius: var(--mantine-radius-sm); /* Make sure this variable is defined */
     text-decoration: none;
-    color: light-dark(var(--mantine-color-gray-7), var(--mantine-color-dark-0));
-    font-size: var(--mantine-font-size-sm);
+    color: light-dark(var(--mantine-color-gray-7), var(--mantine-color-dark-0)); /* Make sure these variables are defined */
+    font-size: var(--mantine-font-size-sm); /* Make sure this variable is defined */
     font-weight: 500;
   
     @mixin hover {
       background-color: light-dark(var(--mantine-color-gray-0), var(--mantine-color-dark-6));
     }
   }
+  
 
   .resize_image {
     width: 100px;
@@ -36,4 +37,11 @@
 
   .search{
     width: 22rem;
+  }
+
+  .button{
+    /* color: black;
+    min-width: 100px; Adjust the width as needed 
+    padding: 10px;  Adjust the padding as needed  
+    text-align: center; */
   }

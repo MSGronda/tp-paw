@@ -48,5 +48,11 @@ export const TRANSLATIONS_EN = {
         high: "Very time demanding",
         reviews: "{{n}} reviews",
         no_reviews: "No reviews"
+    },
+    Navbar: {
+        home: "Home",
+        curriculum: "Curriculum",
+        semesterbuilder: "Semester Builder",
+        profile: "Profile"
     }
 }

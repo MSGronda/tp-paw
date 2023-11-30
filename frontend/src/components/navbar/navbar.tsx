@@ -3,23 +3,32 @@ import { useDisclosure } from '@mantine/hooks';
 import { IconSearch } from '@tabler/icons-react';
 import classes from './navbar.module.css';
 import UniLogo from '../../images/uni.png'
+import { useTranslation } from "react-i18next";
+import { useNavigate } from 'react-router-dom';
 
-const links = [
-  { link: '/', label: 'Inicio' },
-  { link: '/curriculum', label: 'Plan de Estudios' },
-  { link: '/semesterbuilder', label: 'Armador de Cuatrimestre' },
-  { link: '/profile', label: 'Perfil' },
-];
 
 export function Navbar() {
-  const [opened, { toggle }] = useDisclosure(false);
+  const { t } = useTranslation();
 
-  const items = links.map((link) => (
+  const links = [
+    { link: '/', label: t('Navbar.home') },
+    { link: '/curriculum', label: t('Navbar.curriculum') },
+    { link: '/semesterbuilder', label: t('Navbar.semesterbuilder') },
+    { link: '/profile', label: t('Navbar.profile') },
+  ];
+
+  const [opened, { toggle }] = useDisclosure(false);
+  const navigate = useNavigate();
+
+  const items = links.map((link, index) => (
     <a
-      key={link.label}
+      key={index}
       href={link.link}
       className={classes.link}
-      onClick={(event) => event.preventDefault()}
+      onClick={(event) => {
+        event.preventDefault();
+        navigate(link.link); // Navigate to the link when the button is clicked
+      }}
     >
       {link.label}
     </a>

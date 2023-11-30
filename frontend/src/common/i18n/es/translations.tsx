@@ -48,5 +48,11 @@ export const TRANSLATIONS_ES = {
         high: "Requiere mucho tiempo",
         reviews: "{{n}} reseñas",
         no_reviews: "No hay reseñas"
-    }
+    },
+    Navbar: {
+        home: "Inicio",
+        curriculum: "Plan de Estudios",
+        semesterbuilder: "Armador de Cuatrimestre",
+        profile: "Perfil"
+    },
 }
