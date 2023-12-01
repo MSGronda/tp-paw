@@ -138,11 +138,16 @@ public class DegreeServiceImpl implements DegreeService {
 
     }
 
+    @Transactional
     @Override
-    public void addSemestersToDegree(Degree degree, Map<Integer, List<String>> semesters) {
-        for (Map.Entry<Integer, List<String>> entry : semesters.entrySet()) {
+    public void addSemestersToDegree(final Degree degree, final Map<Integer, List<String>> semesterSubjects) {
+
+        for (Map.Entry<Integer, List<String>> entry : semesterSubjects.entrySet()) {
+
             for (String subjectId : entry.getValue()) {
+
                 Optional<Subject> maybeSubject = subjectDao.findById(subjectId);
+
                 if (maybeSubject.isPresent()) {
                     Subject subject = maybeSubject.get();
                     DegreeSubject degreeSubject = new DegreeSubject(degree, subject, entry.getKey());
@@ -152,9 +157,16 @@ public class DegreeServiceImpl implements DegreeService {
         }
     }
 
+    @Transactional
     @Override
-    public void delete(Degree degree) {
-        degreeDao.delete(degree);
+    public void replaceSemestersInDegree(final Degree degree, final Map<Integer, List<String>> semesterSubjects){
+        degree.getDegreeSubjects().clear();
+        addSemestersToDegree(degree, semesterSubjects);
     }
 
+    @Transactional
+    @Override
+    public void delete(final Degree degree) {
+        degreeDao.delete(degree);
+    }
 }

@@ -8,6 +8,7 @@ import ar.edu.itba.paw.webapp.dto.DegreeDto;
 import ar.edu.itba.paw.webapp.dto.SemesterDto;
 import ar.edu.itba.paw.webapp.form.DegreeForm;
 import ar.edu.itba.paw.webapp.form.DegreeSemesterForm;
+import org.eclipse.persistence.jaxb.json.JsonSchemaOutputResolver;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -61,94 +62,61 @@ public class DegreeController {
     }
     */
 
-    //done
     @GET
     @Produces("application/vnd.degree-list.v1+json")
     public Response getDegrees(
-            //params
+        // TODO: params (?)
     ) {
-        List<Degree> degrees = degreeService.getAll();
-        List<DegreeDto> degreeDtos = degrees.stream().map(degree -> DegreeDto.fromDegree(uriInfo, degree)).collect(Collectors.toList());
+        System.out.println("getting");
+
+        final List<Degree> degrees = degreeService.getAll();
+        final List<DegreeDto> degreeDtos = degrees.stream().map(degree -> DegreeDto.fromDegree(uriInfo, degree)).collect(Collectors.toList());
         if(degreeDtos.isEmpty()) {
             return Response.noContent().build();
         }
-        Response.ResponseBuilder responseBuilder = Response.ok(new GenericEntity<List<DegreeDto>>(degreeDtos){});
-        return responseBuilder.build();
 
+        return Response.ok(new GenericEntity<List<DegreeDto>>(degreeDtos){}).build();
     }
 
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     public Response createDegree(@Valid @ModelAttribute("degreeForm") final DegreeForm degreeForm) {
-        Degree newDeg;
-        try {
-            degreeService.create(Degree.builder()
-                    .name(degreeForm.getName())
-                    .totalCredits(Integer.parseInt(degreeForm.getTotalCredits())
-                    ));
-        } catch (final IllegalArgumentException e) {
-            return Response.status(Response.Status.BAD_REQUEST).build();
-        }
+        degreeService.create(Degree.builder()
+                .name(degreeForm.getName())
+                .totalCredits(degreeForm.getTotalCredits())
+        );
         return Response.status(Response.Status.CREATED.getStatusCode()).build();
     }
 
-    //done
+
     @GET
     @Path("/{id}")
     @Produces("application/vnd.degree.v1+json")
-    public Response getDegree(@PathParam("id") final long id) {
+    public Response getDegreeById(@PathParam("id") final long id) {
         final Degree degree = degreeService.findById(id).orElseThrow(DegreeNotFoundException::new);
-        Response.ResponseBuilder response = Response.ok(DegreeDto.fromDegree(uriInfo, degree));
-        return response.build();
-    }
 
-    @PUT
-    @Path("/{id}")
-    @Consumes(MediaType.APPLICATION_JSON)
-    public Response updateDegree (
-            @PathParam("id") final long id,
-            @Valid @ModelAttribute("degreeSemesterForm") final DegreeSemesterForm degreeSemesterForm
-    ) {
-        final Degree degree = degreeService.findById(id).orElseThrow(DegreeNotFoundException::new);
-        try {
-            degreeService.addSemestersToDegree(degree, degreeSemesterForm.getSemesters());
-        } catch (final IllegalArgumentException e) {
-            return Response.status(Response.Status.BAD_REQUEST).build();
-        }
-        return Response.status(Response.Status.CREATED.getStatusCode()).build();
+        return Response.ok(DegreeDto.fromDegree(uriInfo, degree)).build();
     }
 
     @DELETE
     @Path("/{id}")
     public Response deleteDegree(@PathParam("id") final long id) {
         final Degree degree = degreeService.findById(id).orElseThrow(DegreeNotFoundException::new);
-        try {
-            degreeService.delete(degree);
-        } catch (final IllegalArgumentException e) {
-            return Response.status(Response.Status.BAD_REQUEST).build();
-        }
-        return Response.status(Response.Status.CREATED.getStatusCode()).build();
+
+        degreeService.delete(degree);
+        return Response.status(Response.Status.NO_CONTENT.getStatusCode()).build();
     }
 
-    //done
     @GET
     @Path("/{id}/semesters")
     @Produces("application/vnd.degree.semesters.list.v1+json")
     public Response getDegreeSemesters(@PathParam("id") final long id) {
         final Degree degree = degreeService.findById(id).orElseThrow(DegreeNotFoundException::new);
         final List<SemesterDto> semesters = degree.getSemesters().stream().map(semester -> SemesterDto.fromSemester(uriInfo, degree, semester.getNumber())).collect(Collectors.toList());
+
         return Response.ok(new GenericEntity<List<SemesterDto>>(semesters){}).build();
     }
 
-    @POST
-    @Path("/{id}/semesters")
-    @Consumes(MediaType.APPLICATION_JSON)
-    public Response createSemester(@PathParam("id") final long id) {
-        return Response.ok().build();
-    }
-
-
-    //done
     @GET
     @Path("/{degreeId}/semesters/{id}")
     @Produces("application/vnd.degree.semester.v1+json")
@@ -157,7 +125,38 @@ public class DegreeController {
             @PathParam("id") final long id
     ) {
         final Degree degree = degreeService.findById(degreeId).orElseThrow(DegreeNotFoundException::new);
+
         return Response.ok( SemesterDto.fromSemester(uriInfo, degree, (int)id)).build();
+    }
+
+
+    @POST
+    @Path("/{id}/semesters")
+    @Consumes(MediaType.APPLICATION_JSON)
+    public Response createSemester(
+            @PathParam("id") final long id,
+            @Valid @ModelAttribute("degreeSemesterForm") final DegreeSemesterForm degreeSemesterForm
+    ) {
+
+        // TODO: fix el form de mierda que no funciona
+
+        final Degree degree = degreeService.findById(id).orElseThrow(DegreeNotFoundException::new);
+        degreeService.addSemestersToDegree(degree, degreeSemesterForm.getSemesters());
+
+        return Response.status(Response.Status.CREATED.getStatusCode()).build();
+    }
+
+    @PUT
+    @Path("/{id}/semesters")
+    @Consumes(MediaType.APPLICATION_JSON)
+    public Response replaceDegreesSemesters(
+            @PathParam("id") final long id,
+            @Valid @ModelAttribute("degreeSemesterForm") final DegreeSemesterForm degreeSemesterForm
+    ) {
+        final Degree degree = degreeService.findById(id).orElseThrow(DegreeNotFoundException::new);
+        degreeService.replaceSemestersInDegree(degree, degreeSemesterForm.getSemesters());
+
+        return Response.status(Response.Status.ACCEPTED.getStatusCode()).build();  // TODO CHECK accepted
     }
 
     @PUT
@@ -167,6 +166,7 @@ public class DegreeController {
             @PathParam("degreeId") final long degreeId,
             @PathParam("id") final long id
     ) {
+        // TODO
         return Response.ok().build();
     }
 
@@ -176,6 +176,7 @@ public class DegreeController {
             @PathParam("degreeId") final long degreeId,
             @PathParam("id") final long id
     ) {
+        // TODO
         return Response.ok().build();
     }
 

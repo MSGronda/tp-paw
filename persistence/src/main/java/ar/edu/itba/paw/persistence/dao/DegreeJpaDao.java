@@ -98,7 +98,7 @@ public class DegreeJpaDao implements DegreeDao {
     }
 
     @Override
-    public void delete(Degree degree) {
+    public void delete(final Degree degree) {
         em.remove(degree);
     }
 }

@@ -102,12 +102,13 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
                 .and().headers()
                 .cacheControl().disable()
                 .and().authorizeRequests()
-                    .antMatchers("/login","/register", "/recover/**", "/verification/**").anonymous()
-                .antMatchers("/user/{id:\\d+}/moderator", "/degrees", "/create-subject", "/subject/{id:\\d+\\.\\d+}/delete-subject", "/subject/{id:\\d+\\.\\d+}/edit").hasRole(Role.RoleEnum.EDITOR.getName())
-                .antMatchers("/").permitAll()
+
+                // TODO COMPLETE (!!!)
+//                .antMatchers("/login","/register", "/recover/**", "/verification/**").anonymous()
+//                .antMatchers("/user/{id:\\d+}/moderator", "/degrees", "/create-subject", "/subject/{id:\\d+\\.\\d+}/delete-subject", "/subject/{id:\\d+\\.\\d+}/edit").hasRole(Role.RoleEnum.EDITOR.getName())
+//                .antMatchers("/").permitAll()
                 .antMatchers("/**").authenticated()
-                .and().addFilterBefore(jwtFilter,
-                        FilterSecurityInterceptor.class);
+                .and().addFilterBefore(jwtFilter, FilterSecurityInterceptor.class);
     }
 
     @Override

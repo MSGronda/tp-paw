@@ -21,6 +21,8 @@ public class Degree {
     @Column(name = "totalCredits", nullable = false, columnDefinition = "int default 244")
     private int totalCredits;
 
+    private static final int ELECTIVE_ID = -1;
+
     public Degree(Builder builder) {
         this.name = builder.name;
         this.totalCredits = builder.totalCredits;
@@ -41,6 +43,10 @@ public class Degree {
         return name;
     }
 
+    public static int getElectiveId(){
+        return ELECTIVE_ID;
+    }
+
     public List<Subject> getSubjects() {
         return subjects
                 .stream()
@@ -50,7 +56,7 @@ public class Degree {
 
     public List<Subject> getElectives() {
         return subjects.stream()
-                .filter(s -> s.getSemester() == -1)
+                .filter(s -> s.getSemester() == ELECTIVE_ID)
                 .map(DegreeSubject::getSubject)
                 .collect(Collectors.toList());
     }
@@ -58,7 +64,7 @@ public class Degree {
     public List<DegreeSemester> getSemesters() {
         final Map<Integer, DegreeSemester> map = new HashMap<>();
         for (DegreeSubject ds : subjects) {
-            if (ds.getSemester() == -1) continue;
+            if (ds.getSemester() == ELECTIVE_ID) continue;
 
             final DegreeSemester s = map.getOrDefault(ds.getSemester(), new DegreeSemester(ds.getSemester(), new ArrayList<>()));
             s.getSubjects().add(ds.getSubject());
