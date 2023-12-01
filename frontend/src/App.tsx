@@ -5,6 +5,7 @@ import router from './router';
 import '@mantine/core/styles.css';
 import { useTranslation } from 'react-i18next';
 import { useEffect } from 'react';
+import { AuthContextProvider } from './context/AuthContext';
 
 export default function App() {
 
@@ -16,7 +17,9 @@ export default function App() {
   
   return (
     <MantineProvider>
+      <AuthContextProvider>
       <RouterProvider router={router}/>
+      </AuthContextProvider>
     </MantineProvider>
   );
 }
