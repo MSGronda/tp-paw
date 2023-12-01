@@ -5,10 +5,11 @@ import {
     validateEmail,
     validatePassword
 } from "../../utils/register_utils.ts";
-import {useEffect, useState} from "react";
+import {useContext, useEffect, useState} from "react";
 import {t} from "i18next";
 import {useNavigate} from "react-router-dom";
 import AuthService from "../../services/AuthService.ts";
+import AuthContext from "../../context/AuthContext.tsx";
 
 export default function Login(){
 
@@ -27,6 +28,8 @@ export default function Login(){
 
     const navigate = useNavigate();
 
+    const authContext = useContext(AuthContext);
+
     const handleFormSubmit = async (e: { preventDefault: () => void; }) => {
         e.preventDefault();
 
@@ -34,13 +37,14 @@ export default function Login(){
         validateEmail(email, setEmailError);
         validatePassword(password, setPasswordError);
 
-        const success = await AuthService.login(email, password)
+        const token = await AuthService.login(email, password, rememberMe)
 
-        if(!success){
+        if(!token){
             setInvalidCredentials(true)
         }
         else{
-            navigate('/home')
+            authContext.onLogin(token)
+            navigate('/')
         }
     };
 

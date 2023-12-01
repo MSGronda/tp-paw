@@ -2,7 +2,7 @@ import {axiosService} from "./index";
 
 const USER_PATH: string = "users";
 
-const login = async (mail: string, password: string) => {
+const login = async (mail: string, password: string, rememberMe: boolean) => {
     try {
         let config: Record<string, any> = {}
         config['headers'] =  {Authorization: axiosService.getBasicToken(mail, password)}
@@ -15,15 +15,18 @@ const login = async (mail: string, password: string) => {
         }
 
         const token = response.config.headers.Authorization.split(" ")[1];
-        console.log(response)
-        if (token) localStorage.setItem('token', token);
-        console.log(response.data)
+        
+        if (rememberMe){
+            localStorage.setItem('token', token);
+        } else{
+            sessionStorage.setItem('token', token);
+        }
         if (response.data) localStorage.setItem('user', JSON.stringify(response.data));
+        return token;
     } catch (err) {
         console.error(err);
         return false;
     }
-    return true;
 };
 
 const logout = () => {

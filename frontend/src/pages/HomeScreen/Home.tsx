@@ -4,6 +4,9 @@ import classes from './home.module.css';
 import {IconMessageCircle, IconPhoto, IconSettings} from "@tabler/icons-react";
 import {useTranslation} from "react-i18next";
 import SubjectCard from "../../components/subject-card/subject-card.tsx";
+import { useContext } from 'react';
+import AuthContext from '../../context/AuthContext.tsx';
+import Landing from '../Landing/landing.tsx';
 
 
 export default function Home() {
@@ -54,5 +57,14 @@ export default function Home() {
                 </Tabs>
             </div>
         </div>
+    );
+}
+
+
+export function HomeScreen() {
+    const authContext = useContext(AuthContext);
+    const isLoggedIn = authContext.isAuthenticated;
+    return (
+        isLoggedIn ? <Home/> : <Landing/>
     );
 }
