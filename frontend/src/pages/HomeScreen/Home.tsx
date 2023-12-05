@@ -1,4 +1,4 @@
-import {rem, Tabs} from '@mantine/core';
+import {Grid, rem, Tabs} from '@mantine/core';
 import {Navbar } from "../../components/navbar/navbar";
 import classes from './home.module.css';
 import {IconMessageCircle, IconPhoto, IconSettings} from "@tabler/icons-react";
@@ -12,6 +12,16 @@ import Landing from '../Landing/landing.tsx';
 export default function Home() {
     const iconStyle = { width: rem(12), height: rem(12) };
     const { t } = useTranslation();
+    let subjectsArray: { id: string, credits: number, difficulty: string, name: string, numReviews: number, prerequisites: [string], timeDemand: string, progress: string}[] = [
+        { "id": "72.40", credits:6, difficulty:"easy","name": "Ingenieria en Software II",numReviews:732,prerequisites:["72.38"],timeDemand:"low",progress:"incomplete" },
+        { "id": "72.41", credits:6, difficulty:"easy","name": "Gestion de Proyectos Informaticos",numReviews:732,prerequisites:["72.38"],timeDemand:"low",progress:"incomplete" },
+        { "id": "72.42", credits:6, difficulty:"easy","name": "Progrmacion de Objetos Distribuidos",numReviews:732,prerequisites:["72.38"],timeDemand:"low",progress:"incomplete" },
+        { "id": "72.43", credits:6, difficulty:"easy","name": "Base de Datos 2",numReviews:732,prerequisites:["72.38"],timeDemand:"low",progress:"incomplete" },
+        { "id": "72.44", credits:6, difficulty:"easy","name": "Proyecto Aplicacion Web",numReviews:732,prerequisites:["72.38"],timeDemand:"low",progress:"incomplete" },
+        { "id": "72.45", credits:6, difficulty:"easy","name": "Protocolos de Comunicacion",numReviews:732,prerequisites:["72.38"],timeDemand:"low",progress:"incomplete" },
+        { "id": "72.46", credits:6, difficulty:"easy","name": "Metodos Numericos Avanzados",numReviews:732,prerequisites:["72.38"],timeDemand:"low",progress:"incomplete" },
+    ];
+    //<Grid.Col span={2}><SubjectCard id={"72.40"} credits={6} difficulty={"easy"} name={"Ingenieria del Software II"} numReviews={7} prerequisites={["72.38"]} timeDemand={"low"} progress={"incomplete"} /></Grid.Col>
     return (
         <div className={classes.fullsize}>
         <Navbar/>
@@ -41,18 +51,15 @@ export default function Home() {
                     </Tabs.Panel>
 
                     <Tabs.Panel value="future-subjects">
-                        <div className={classes.futureSubjectsArea}>
-                            <SubjectCard id={"72.40"} credits={6} difficulty={"easy"} name={"Ingenieria del Software II"} numReviews={7} prerequisites={["72.38"]} timeDemand={"low"} progress={"incomplete"} />
-                            <SubjectCard id={"72.40"} credits={6} difficulty={"easy"} name={"Ingenieria del Software II"} numReviews={7} prerequisites={["72.38"]} timeDemand={"low"} progress={"incomplete"} />
-                            <SubjectCard id={"72.40"} credits={6} difficulty={"easy"} name={"Ingenieria del Software II"} numReviews={7} prerequisites={["72.38"]} timeDemand={"low"} progress={"incomplete"} />
-                            <SubjectCard id={"72.40"} credits={6} difficulty={"easy"} name={"Ingenieria del Software II"} numReviews={7} prerequisites={["72.38"]} timeDemand={"low"} progress={"incomplete"} />
-                            <SubjectCard id={"72.40"} credits={6} difficulty={"easy"} name={"Ingenieria del Software II"} numReviews={7} prerequisites={["72.38"]} timeDemand={"low"} progress={"incomplete"} />
-                        </div>
-
+                        <Grid gutter="sm">
+                            {getSubjectsCards(subjectsArray).map((item) => <Grid.Col span={2}>{item}</Grid.Col>)}
+                        </Grid>
                     </Tabs.Panel>
 
                     <Tabs.Panel value="past-subjects">
-                        Settings tab content
+                        <Grid gutter="sm">
+                            {getSubjectsCards(subjectsArray).map((item) => <Grid.Col span={2}>{item}</Grid.Col>)}
+                        </Grid>
                     </Tabs.Panel>
                 </Tabs>
             </div>
@@ -68,3 +75,10 @@ export function HomeScreen() {
         isLoggedIn ? <Home/> : <Landing/>
     );
 }
+const getSubjectsCards = subjects => {
+    let content = [];
+    for (let subject of subjects) {
+        content.push(<SubjectCard id={subject.id} credits={subject.credits} difficulty={subject.difficulty} name={subject.name} numReviews={subject.numReviews} prerequisites={subject.prerequisites} timeDemand={subject.timeDemand} progress={subject.progress} />);
+    }
+    return content;
+};

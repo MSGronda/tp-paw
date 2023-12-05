@@ -18,10 +18,8 @@
 
 .future-subjects-area {
     display: grid;
-    grid-template-columns: repeat(auto-fill, 1fr);
-    grid-template-rows: repeat(auto-fill, 1fr);
-    grid-column-gap: 23px;
-    grid-row-gap: 20px;
+    grid-template-rows: auto auto auto;
+    padding: 10px;
 }
 
 .container-90{
