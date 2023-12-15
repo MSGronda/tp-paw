@@ -14,7 +14,11 @@ public class SemesterDto {
                                            final Integer semesterId){
         SemesterDto semesterDto = new SemesterDto();
         semesterDto.semester = semesterId;
-        semesterDto.subjects = uriInfo.getBaseUriBuilder().path("subjects").queryParam(String.valueOf(degree.getId())).queryParam("semester", String.valueOf(semesterId)).build();
+        semesterDto.subjects = uriInfo.getBaseUriBuilder()
+                .path("subjects")
+                .queryParam("degree", String.valueOf(degree.getId()))
+                .queryParam("semester", String.valueOf(semesterId))
+                .build();
 
         return semesterDto;
     }

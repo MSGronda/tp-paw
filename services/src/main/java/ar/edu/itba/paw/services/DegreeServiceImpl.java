@@ -151,18 +151,16 @@ public class DegreeServiceImpl implements DegreeService {
                 if (maybeSubject.isPresent()) {
                     Subject subject = maybeSubject.get();
                     DegreeSubject degreeSubject = new DegreeSubject(degree, subject, entry.getKey());
-                    degree.getDegreeSubjects().add(degreeSubject);
+
+                    if (!degree.getDegreeSubjects().contains(degreeSubject)) {
+                        degree.getDegreeSubjects().add(degreeSubject);
+                    }
+
                 }
             }
         }
     }
 
-    @Transactional
-    @Override
-    public void replaceSemestersInDegree(final Degree degree, final Map<Integer, List<String>> semesterSubjects){
-        degree.getDegreeSubjects().clear();
-        addSemestersToDegree(degree, semesterSubjects);
-    }
 
     @Transactional
     @Override

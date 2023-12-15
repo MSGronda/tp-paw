@@ -12,6 +12,8 @@ import org.eclipse.persistence.jaxb.json.JsonSchemaOutputResolver;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.RequestBody;
+
 import javax.validation.Valid;
 import javax.ws.rs.*;
 import javax.ws.rs.core.*;
@@ -126,7 +128,7 @@ public class DegreeController {
     ) {
         final Degree degree = degreeService.findById(degreeId).orElseThrow(DegreeNotFoundException::new);
 
-        return Response.ok( SemesterDto.fromSemester(uriInfo, degree, (int)id)).build();
+        return Response.ok(SemesterDto.fromSemester(uriInfo, degree, (int)id)).build();
     }
 
 
@@ -135,29 +137,14 @@ public class DegreeController {
     @Consumes(MediaType.APPLICATION_JSON)
     public Response createSemester(
             @PathParam("id") final long id,
-            @Valid @ModelAttribute("degreeSemesterForm") final DegreeSemesterForm degreeSemesterForm
+            @Valid final DegreeSemesterForm degreeSemesterForm
     ) {
-
-        // TODO: fix el form de mierda que no funciona
-
         final Degree degree = degreeService.findById(id).orElseThrow(DegreeNotFoundException::new);
-        degreeService.addSemestersToDegree(degree, degreeSemesterForm.getSemesters());
+        degreeService.addSemestersToDegree(degree, degreeSemesterForm.getSemesterMap());
 
         return Response.status(Response.Status.CREATED.getStatusCode()).build();
     }
 
-    @PUT
-    @Path("/{id}/semesters")
-    @Consumes(MediaType.APPLICATION_JSON)
-    public Response replaceDegreesSemesters(
-            @PathParam("id") final long id,
-            @Valid @ModelAttribute("degreeSemesterForm") final DegreeSemesterForm degreeSemesterForm
-    ) {
-        final Degree degree = degreeService.findById(id).orElseThrow(DegreeNotFoundException::new);
-        degreeService.replaceSemestersInDegree(degree, degreeSemesterForm.getSemesters());
-
-        return Response.status(Response.Status.ACCEPTED.getStatusCode()).build();  // TODO CHECK accepted
-    }
 
     @PUT
     @Path("/{degreeId}/semesters/{id}")
