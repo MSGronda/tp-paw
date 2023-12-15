@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import javax.validation.Valid;
 import javax.ws.rs.*;
 import javax.ws.rs.core.*;
+import java.net.URI;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -83,11 +84,15 @@ public class DegreeController {
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     public Response createDegree(@Valid @ModelAttribute("degreeForm") final DegreeForm degreeForm) {
-        degreeService.create(Degree.builder()
+        final Degree degree = degreeService.create(Degree.builder()
                 .name(degreeForm.getName())
                 .totalCredits(degreeForm.getTotalCredits())
         );
-        return Response.status(Response.Status.CREATED.getStatusCode()).build();
+
+        // TODO: CHECK si es correcto hacerlo aca
+        final URI uri = uriInfo.getBaseUriBuilder().path("degrees").path(String.valueOf(degree.getId())).build();
+
+        return Response.created(uri).build();
     }
 
 
@@ -161,10 +166,12 @@ public class DegreeController {
     @Path("/{degreeId}/semesters/{id}")
     public Response deleteDegreeSemester(
             @PathParam("degreeId") final long degreeId,
-            @PathParam("id") final long id
+            @PathParam("id") final int id
     ) {
-        // TODO
-        return Response.ok().build();
+        final Degree degree = degreeService.findById(degreeId).orElseThrow(DegreeNotFoundException::new);
+        degreeService.deleteSemesterFromDegree(degree, id);
+
+        return Response.status(Response.Status.NO_CONTENT.getStatusCode()).build();
     }
 
 }

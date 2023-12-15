@@ -18,10 +18,11 @@ public interface DegreeService {
     OptionalInt findSubjectYearForParentDegree(final Subject subject, final User user);
     Map<String, List<String>> getRelevantFiltersForDegree(final Degree degree);
 
-    void create(final Degree.Builder builder);
+    Degree create(final Degree.Builder builder);
     void addSubjectToDegrees(final Subject subject, final List<Long> degreeIds, final List<Integer> semesters);
     void updateSubjectToDegrees(final Subject subject, final List<Long> degreeIds, final List<Integer> semesters);
     void addSemestersToDegree(final Degree degree, final Map<Integer, List<String>> semesterSubjects);
 
+    void deleteSemesterFromDegree(final Degree degree, final int semesterId);
     void delete(final Degree degree);
 }

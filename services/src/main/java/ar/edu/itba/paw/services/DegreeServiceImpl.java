@@ -81,8 +81,11 @@ public class DegreeServiceImpl implements DegreeService {
 
     @Transactional
     @Override
-    public void create(final Degree.Builder builder) {
-        degreeDao.create(builder.build());
+    public Degree create(final Degree.Builder builder) {
+        final Degree degree = builder.build();
+        degreeDao.create(degree);
+
+        return degree;
     }
 
     @Transactional
@@ -160,7 +163,20 @@ public class DegreeServiceImpl implements DegreeService {
             }
         }
     }
+    @Transactional
+    @Override
+    public void deleteSemesterFromDegree(final Degree degree, final int semesterId){
+        final List<DegreeSubject> subjects = degree.getDegreeSubjects();
 
+        final List<DegreeSubject> subjectsToDelete = new ArrayList<>();
+        subjects.forEach(subject -> {
+            if(subject.getSemester() == semesterId){
+                subjectsToDelete.add(subject);
+            }
+        });
+
+        subjectsToDelete.forEach(subjects::remove);
+    }
 
     @Transactional
     @Override
