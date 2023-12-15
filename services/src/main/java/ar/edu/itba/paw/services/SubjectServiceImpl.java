@@ -47,10 +47,10 @@ public class SubjectServiceImpl implements SubjectService {
             final Degree deg = degreeService.findById(degree).orElseThrow(DegreeNotFoundException::new);
             final List<DegreeSemester> semesters =  deg.getSemesters();
 
-            if(semesters.size() <= semester)
+            if(semesters.size() < semester)
                 throw new SemesterNotFoundException();
 
-            return semesters.get(Math.toIntExact(semester)).getSubjects();
+            return semesters.get(Math.toIntExact(semester) - 1).getSubjects();
         }
         if(available != null){
             return findAllThatUserCanDo(user, page, orderBy, dir);
