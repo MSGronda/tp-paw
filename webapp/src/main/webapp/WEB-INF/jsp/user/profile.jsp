@@ -112,7 +112,6 @@
       sl-tooltip::part(base__arrow) {
         background-color: white;
       }
-      <jsp:include page="../components/component-style/table_style.jsp"/>
   </style>
 </head>
 <body>

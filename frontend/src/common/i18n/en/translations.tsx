@@ -68,5 +68,14 @@ export const TRANSLATIONS_EN = {
     Footer: {
         mission: "Our mission is to provide a simple and intuitive way of sharing your opinions, tips and general knowledge for all of your college courses.",
         rights: "© 2023 Uni Team, All rights reserved."
+    },
+    Profile: {
+        email: "Email:",
+        username: "Username",
+        reviews:"User reviews:",
+        loggeduser: "My profile",
+        logout: "Logout",
+        change_password: "Change password",
+        change_degree: "Change degree"
     }
 }

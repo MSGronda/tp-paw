@@ -68,5 +68,14 @@ export const TRANSLATIONS_ES = {
     Footer: {
         mission: "Nuestra misión es proveer una manera simple e intuitiva de compartir opiniones, consejos y conocimiento general para todos tus materias de la universidad.",
         rights: "© 2023 Equipo Uni, Todos los derechos reservados."
+    },
+    Profile: {
+        email: "email:",
+        username: "Nombre de usuario:",
+        reviews: "Reseñas por el usuario",
+        loggeduser: "Tu perfil",
+        logout: "Cerrar sesión",
+        change_password: "Cambiar constraseña",
+        change_degree: "Cambiar carrera"
     }
 }

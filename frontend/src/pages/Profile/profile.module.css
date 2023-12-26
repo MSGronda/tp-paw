@@ -1,0 +1,44 @@
+.fullsize {
+    width: 100%;
+    flex-direction: column;
+    background-color: #efefef;
+    flex: content;
+}
+.body {
+    width: min(max(800px, 50%), 100%);
+    padding-left: 2rem;
+    padding-right: 2rem;
+    align-self: center;
+    justify-self: center;
+    margin: 0 auto;
+    background-color: #efefef;
+    flex: 1 0 auto;
+    display: flex;
+    flex-direction: column;
+    margin-top: -3rem;
+}
+.header {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+.image_container {
+    position: relative;
+    display: inline-block;
+}
+.title {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    margin-left: 2rem;
+    width: 100%;
+}
+.moderator_tag {
+    display: flex;
+    flex-direction: row;
+}
+.logoutbutton {
+    display: flex;
+    align-items: center;
+}
+

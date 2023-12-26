@@ -48,7 +48,7 @@ export default function Login(){
         }
     };
 
-    let isSubmitDisabled = !email || !password || !!emailError || !!passwordError;
+    const isSubmitDisabled = !email || !password || !!emailError || !!passwordError;
 
 
     return (
