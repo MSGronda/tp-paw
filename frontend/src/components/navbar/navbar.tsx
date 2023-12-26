@@ -1,10 +1,11 @@
-import { Autocomplete, Group, Burger, rem } from '@mantine/core';
+import { Autocomplete, Group, Burger, rem, Input } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import { IconSearch } from '@tabler/icons-react';
 import classes from './navbar.module.css';
 import UniLogo from '../../images/uni.png'
 import { useTranslation } from "react-i18next";
 import { useNavigate } from 'react-router-dom';
+import React from 'react';
 
 
 export function Navbar() {
@@ -19,6 +20,17 @@ export function Navbar() {
 
   const [opened, { toggle }] = useDisclosure(false);
   const navigate = useNavigate();
+  const [searchValue, setSearchValue] = React.useState('');
+
+  const handleSearchChange = (value: string) => {
+    setSearchValue(value);
+  };
+
+  const handleSearchSubmit = (event: { key: string; }) => {
+    if ( event.key === 'Enter'){
+      navigate(`/search?q=${searchValue}`);
+    }
+  };
 
   const items = links.map((link, index) => (
     <a
@@ -43,9 +55,12 @@ export function Navbar() {
         </Group>
 
         <Group>
-        <Autocomplete
+        <Input
             className={classes.search}
             placeholder="Search"
+            value={searchValue}
+            onChange={(event) => handleSearchChange(event.currentTarget.value)}
+            onKeyDown={handleSearchSubmit}
             leftSection={<IconSearch style={{ width: rem(16), height: rem(16) }} stroke={1.5} />}
             visibleFrom="xs"
           />

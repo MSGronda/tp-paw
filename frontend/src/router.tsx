@@ -7,6 +7,7 @@ import Test from './pages/Test/test.tsx';
 import { AnonymousRoute } from './AnonymousRoute.tsx';
 import { PrivateRoute } from './PrivateRoute.tsx';
 import Profile from './pages/Profile/profile.tsx';
+import Search from './pages/Search/search.tsx';
 
 
 
@@ -31,6 +32,10 @@ const router = createBrowserRouter([
 
         path: '/degree/:id',
         element: <PrivateRoute component={Degree} roles={['ADMIN']}/>
+    },
+    {
+        path: '/search',
+        element: <PrivateRoute component={Search} roles={['ADMIN', 'USER']}/>,
     },
     {
         path: '/test',

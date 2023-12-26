@@ -14,4 +14,13 @@ export class SubjectService {
             return handleResponse(error.response);
         }
     }
+
+    async getSubjectsByName(name: string){
+        try{
+            const res = await axiosService.axiosWrapper(axiosService.GET, `${path}?q=${name}`, {});
+            return handleResponse(res);
+        } catch (error: any) {
+            return handleResponse(error.response);
+        }
+    }
 }
