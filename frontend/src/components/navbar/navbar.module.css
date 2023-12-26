@@ -38,3 +38,8 @@
   .search{
     width: 22rem;
   }
+
+  .image{
+    cursor: pointer;
+  }
+  
