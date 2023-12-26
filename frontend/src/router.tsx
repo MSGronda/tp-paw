@@ -4,6 +4,8 @@ import Register from './pages/Register/register';
 import Login from "./pages/Login/login.tsx";
 import Degree from './pages/Degree/Degree.tsx';
 import Test from './pages/Test/test.tsx';
+import { AnonymousRoute } from './AnonymousRoute.tsx';
+import { PrivateRoute } from './PrivateRoute.tsx';
 
 
 const router = createBrowserRouter([
@@ -17,16 +19,16 @@ const router = createBrowserRouter([
     // },
     {
         path: '/register',
-        element: <Register/>
+        element: <AnonymousRoute component={Register}/>
     },
     {
         path: '/login',
-        element: <Login/>
+        element: <AnonymousRoute component={Login}/>
     },
     {
 
         path: '/degree/:id',
-        element: <Degree/>
+        element: <PrivateRoute component={Degree} roles={['ADMIN']}/>
     },
     {
         path: '/test',
