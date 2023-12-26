@@ -4,12 +4,10 @@ import Register from './pages/Register/register';
 import Login from "./pages/Login/login.tsx";
 import Degree from './pages/Degree/Degree.tsx';
 import Test from './pages/Test/test.tsx';
-<<<<<<< Updated upstream
 import { AnonymousRoute } from './AnonymousRoute.tsx';
 import { PrivateRoute } from './PrivateRoute.tsx';
-=======
 import Profile from './pages/Profile/profile.tsx';
->>>>>>> Stashed changes
+
 
 
 const router = createBrowserRouter([
