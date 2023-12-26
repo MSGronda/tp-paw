@@ -18,7 +18,6 @@ export function Navbar() {
     { link: '/profile', label: t('Navbar.profile') },
   ];
 
-  const [opened, { toggle }] = useDisclosure(false);
   const navigate = useNavigate();
   const [searchValue, setSearchValue] = React.useState('');
 
@@ -31,6 +30,10 @@ export function Navbar() {
       navigate(`/search?q=${searchValue}`);
     }
   };
+
+  const handleLogoClick = () => {
+    navigate('/');
+  }
 
   const items = links.map((link, index) => (
     <a
@@ -50,10 +53,10 @@ export function Navbar() {
     <header className={classes.header}>
       <div className={classes.inner}>
         <Group>
-          <Burger opened={opened} onClick={toggle} size="sm" hiddenFrom="sm" />
-          <img src={UniLogo} alt="UnimartLogo" className={classes.resize_image}/>
+          <span onClick={handleLogoClick} className={classes.image}>
+            <img src={UniLogo} alt="UnimartLogo" className={classes.resize_image}/>
+          </span>
         </Group>
-
         <Group>
         <Input
             className={classes.search}
