@@ -17,28 +17,27 @@ export default function Search() {
     const { t } = useTranslation();
     const navigate = useNavigate();
     const [subjects, setSubjects] = useState<any>([]);
+    const [loading, setLoading] = useState(true);
 
     const searchSubjects = async (searchValue: string) => {
         const res = await subjectService.getSubjectsByName(searchValue);
         const data = handleService(res, navigate)
         // console.log(data)
         setSubjects(data);
+        setLoading(false);
     }
 
     useEffect(() => {
         searchSubjects(query ?? '');
     }, [query]);
 
-    useEffect(() => {
-        console.log(subjects)
-    }, [subjects])
-
     return (
         <div className={classes.fullsize}>
             <Navbar/>
             <div className={classes.container_70}>
             <div>
-                {subjects.length > 0 ? (
+                { loading ?  <div/> :
+                subjects.length > 0 ? (
                     <div className={classes.search_area}>
                     {subjects.map((subject: { id: string; credits: number; difficulty: string; name: string; reviewCount: number; prerequisites: string[]; timeDemand: string; progress: string; }) => (
                         <SubjectCard
