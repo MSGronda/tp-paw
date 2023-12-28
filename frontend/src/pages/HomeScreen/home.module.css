@@ -21,12 +21,3 @@
     grid-template-rows: auto auto auto;
     padding: 10px;
 }
-
-.container-90{
-    width: min(max(800px, 90%), 100%);
-    padding-left: 2rem;
-    padding-right: 2rem;
-    align-self: center;
-    justify-self: center;
-    margin: 0 auto;
-}

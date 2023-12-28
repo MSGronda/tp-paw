@@ -1,4 +1,4 @@
-import {Grid, rem, Tabs} from '@mantine/core';
+import {Card, Container, Flex, Grid, rem, Tabs, Text} from '@mantine/core';
 import {Navbar } from "../../components/navbar/navbar";
 import classes from './home.module.css';
 import {IconMessageCircle, IconPhoto, IconSettings} from "@tabler/icons-react";
@@ -21,7 +21,6 @@ export default function Home() {
         { "id": "72.45", credits:6, difficulty:"easy","name": "Protocolos de Comunicacion",numReviews:732,prerequisites:["72.38"],timeDemand:"low",progress:"incomplete" },
         { "id": "72.46", credits:6, difficulty:"easy","name": "Metodos Numericos Avanzados",numReviews:732,prerequisites:["72.38"],timeDemand:"low",progress:"incomplete" },
     ];
-    //<Grid.Col span={2}><SubjectCard id={"72.40"} credits={6} difficulty={"easy"} name={"Ingenieria del Software II"} numReviews={7} prerequisites={["72.38"]} timeDemand={"low"} progress={"incomplete"} /></Grid.Col>
     return (
         <div className={classes.fullsize}>
         <Navbar/>
@@ -47,7 +46,53 @@ export default function Home() {
                     </Tabs.Panel>
 
                     <Tabs.Panel value="overview">
-                        Messages tab content
+                        <Grid gutter={{ base: 5, xs: 'md', md: 'xl', xl: 50 }}
+                              columns={12}
+                              justify="center">
+                            <Grid.Col span={12}>
+                                <Container size="responsive" w={rem(1500)}>
+                                    <Card shadow="xs"
+                                          padding="xl"
+                                          color="#efefef">
+                                        <div>
+                                            <Text>
+                                                LALALALALAL
+                                            </Text>
+                                        </div>
+                                    </Card>
+                                </Container>
+                            </Grid.Col>
+                            <Grid.Col span="content" >
+                                <Container size="responsive">
+                                    <Flex mih={50}
+                                          bg="#efefef"
+                                          gap="lg"
+                                          justify="flex-start"
+                                          align="center"
+                                          direction="row"
+                                          wrap="wrap">
+                                        <Card color="#efefef"
+                                              shadow="xs"
+                                              padding="xl">
+                                            <div>
+                                                <Text>
+                                                    LALALALALAL
+                                                </Text>
+                                            </div>
+                                        </Card>
+                                        <Card color="#efefef"
+                                              shadow="xs"
+                                              padding="xl">
+                                            <div>
+                                                <Text>
+                                                    LALALALALAL
+                                                </Text>
+                                            </div>
+                                        </Card>
+                                    </Flex>
+                                </Container>
+                            </Grid.Col>
+                        </Grid>
                     </Tabs.Panel>
 
                     <Tabs.Panel value="future-subjects">
