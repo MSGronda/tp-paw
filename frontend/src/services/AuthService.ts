@@ -12,7 +12,7 @@ const login = async (mail: string, password: string, rememberMe: boolean) => {
             console.error("Unable to login");
             return false;
         }
-        const token = response.config.headers.Authorization?.split(" ")[1];
+        const token = response.headers.authorization.split(" ")[1];
         
         if (rememberMe){
             localStorage.setItem('token', token);
@@ -30,6 +30,7 @@ const login = async (mail: string, password: string, rememberMe: boolean) => {
 const logout = () => {
     localStorage.removeItem('user');
     localStorage.removeItem('token');
+    sessionStorage.removeItem('token');
 };
 
 const getCurrentUser = () => {

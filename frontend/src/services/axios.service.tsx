@@ -34,7 +34,10 @@ export class AxiosService {
     }
 
     getBearerToken() {
-        return "Bearer " + localStorage.getItem("token");
+        if (localStorage.getItem("token") !== null)
+            return "Bearer " + localStorage.getItem("token");
+        else
+            return "Bearer " + sessionStorage.getItem("token");
     }
 
 

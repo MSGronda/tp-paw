@@ -40,15 +40,15 @@ export const AuthContextProvider = ({children}: { children: React.ReactNode}) =>
     const refreshTokenstorage = isInLocalStorage ? localStorage.getItem("refreshToken") as string : sessionStorage.getItem("refreshToken") as string;
     const [refreshToken, setRefreshTokenKey] = useState<string | undefined>(refreshTokenstorage);
 
-    const [email, setEmail] = useState<string | undefined>(() => {
-        try {
-            return jwtDecode<CustomJwtPayload>(token as string).sub as string;
-        } catch (e) {
-            if (isAuthenticated) {
-                console.error(e);
-            }
-        }
-    });
+    // const [email, setEmail] = useState<string | undefined>(() => {
+    //     try {
+    //         return jwtDecode<CustomJwtPayload>(token as string).sub as string;
+    //     } catch (e) {
+    //         if (isAuthenticated) {
+    //             console.error(e);
+    //         }
+    //     }
+    // });
 
     //TODO revisar
     // const [role, setRole] = useState<string | undefined>(() => {
@@ -61,16 +61,16 @@ export const AuthContextProvider = ({children}: { children: React.ReactNode}) =>
     //     }
     // });
 
-    const [userId, setUserId] = useState<number | undefined>(() => {
-        try {
-          return parseInt(jwtDecode<CustomJwtPayload>(token as string)
-            .userUrl.split("/")
-            .pop() as string)
-        } catch (error) {
-          if (isAuthenticated)
-            console.error(error);
-        }
-      });
+    // const [userId, setUserId] = useState<number | undefined>(() => {
+    //     try {
+    //       return parseInt(jwtDecode<CustomJwtPayload>(token as string)
+    //         .userUrl.split("/")
+    //         .pop() as string)
+    //     } catch (error) {
+    //       if (isAuthenticated)
+    //         console.error(error);
+    //     }
+    //   });
 
     const logoutHandler = () => {
         localStorage.removeItem("token");
@@ -94,10 +94,10 @@ export const AuthContextProvider = ({children}: { children: React.ReactNode}) =>
             //console.log(jwtDecode<CustomJwtPayload>(authKey as string))
             // setEmail(jwtDecode<CustomJwtPayload>(authKey as string).sub as string);
             // setRole(jwtDecode<CustomJwtPayload>(authKey as string).roles as string);
-            const id = jwtDecode<CustomJwtPayload>(token as string)
-                        .userUrl.split("/")
-                        .pop();
-            if (id) setUserId(parseInt(id));
+            // const id = jwtDecode<CustomJwtPayload>(token as string)
+            //             .userUrl.split("/")
+            //             .pop();
+            // if (id) setUserId(parseInt(id));
         } catch (e) {
             console.error(e);
         }
@@ -115,8 +115,8 @@ export const AuthContextProvider = ({children}: { children: React.ReactNode}) =>
                 authKey,
                 refreshToken,
                 // role,
-                userId,
-                email,
+                // userId,
+                // email,
                 profileImage,
                 updateProfileImage,
                 setAuthKey,
