@@ -8,13 +8,11 @@ const login = async (mail: string, password: string, rememberMe: boolean) => {
         config['headers'] =  {Authorization: axiosService.getBasicToken(mail, password)}
 
         const response = await axiosService.axiosWrapper(axiosService.GET, `${USER_PATH}`, config);
-
-        if (!response || !response.config.headers.Authorization) {
+        if (!response || !response.data.id) {
             console.error("Unable to login");
             return false;
         }
-
-        const token = response.config.headers.Authorization.split(" ")[1];
+        const token = response.config.headers.Authorization?.split(" ")[1];
         
         if (rememberMe){
             localStorage.setItem('token', token);

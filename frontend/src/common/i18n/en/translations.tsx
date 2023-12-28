@@ -34,7 +34,8 @@ export const TRANSLATIONS_EN = {
         noAccount: "Don't have an account?",
         register: "Register here",
         forgotPassword: "Don't have or forgot your password?",
-        recover: "Recover"
+        recover: "Recover",
+        invalid_credentials: "The credentials provided are invalid"
     },
     Home: {
         currentSemester: "Current Semester",

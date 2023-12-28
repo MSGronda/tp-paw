@@ -23,3 +23,7 @@
     width: 30%;
     padding-top: 1rem;
 }
+
+.invalid_cred{
+    color:red;
+}

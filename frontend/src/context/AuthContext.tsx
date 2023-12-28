@@ -6,8 +6,8 @@ type CustomJwtPayload = JwtPayload & { roles: string; userUrl: string; exp: numb
 
 export interface AuthContextInterface {
     isAuthenticated: boolean;
-    onLogout: () => void;
-    onLogin: (token: string, refreshToken?: string) => Promise<void>;
+    logoutHandler: () => void;
+    loginHandler: (token: string, refreshToken?: string) => Promise<void>;
     authKey?: string | undefined;
     refreshToken?: string | undefined;
     // role?: string | undefined;
@@ -23,8 +23,8 @@ const AuthContext = React.createContext<AuthContextInterface>({
     isAuthenticated: false,
     profileImage: "",
     updateProfileImage: () => {},
-    onLogout: () => {},
-    onLogin: async () => {},
+    logoutHandler: () => {},
+    loginHandler: async () => {},
     setToken: () => {},
     setRefreshToken: () => {},
 });
@@ -91,7 +91,8 @@ export const AuthContextProvider = ({children}: { children: React.ReactNode}) =>
             setAuthKey(authKey);
             setRefreshTokenKey(refreshToken);
             setIsAuthenticated(true);
-            setEmail(jwtDecode<CustomJwtPayload>(authKey as string).sub as string);
+            //console.log(jwtDecode<CustomJwtPayload>(authKey as string))
+            // setEmail(jwtDecode<CustomJwtPayload>(authKey as string).sub as string);
             // setRole(jwtDecode<CustomJwtPayload>(authKey as string).roles as string);
             const id = jwtDecode<CustomJwtPayload>(token as string)
                         .userUrl.split("/")

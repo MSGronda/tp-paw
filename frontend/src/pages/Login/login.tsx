@@ -10,6 +10,7 @@ import {t} from "i18next";
 import {useNavigate} from "react-router-dom";
 import AuthService from "../../services/AuthService.ts";
 import AuthContext from "../../context/AuthContext.tsx";
+import React from "react";
 
 export default function Login(){
 
@@ -28,22 +29,20 @@ export default function Login(){
 
     const navigate = useNavigate();
 
-    const authContext = useContext(AuthContext);
+    const authContext = React.useContext(AuthContext);
 
     const handleFormSubmit = async (e: { preventDefault: () => void; }) => {
         e.preventDefault();
 
-        // Call validation functions
         validateEmail(email, setEmailError);
         validatePassword(password, setPasswordError);
 
         const token = await AuthService.login(email, password, rememberMe)
-
         if(!token){
             setInvalidCredentials(true)
         }
         else{
-            authContext.onLogin(token)
+            authContext.loginHandler(token)
             navigate('/')
         }
     };
@@ -56,7 +55,7 @@ export default function Login(){
             <Default_Navbar />
             <div className={classes.center}>
                 <h2>{t("Login.title")}</h2>
-                {invalidCredentials && <p>The credentials provided are invalid</p>}
+                {invalidCredentials && <p className={classes.invalid_cred}>{t("Login.invalid_credentials")}</p>}
                 <form onSubmit={handleFormSubmit}>
                     <TextInput
                         value={email}
