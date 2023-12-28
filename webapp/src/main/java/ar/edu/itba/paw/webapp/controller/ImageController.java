@@ -1,17 +1,20 @@
 package ar.edu.itba.paw.webapp.controller;
 
 import ar.edu.itba.paw.models.Image;
-import ar.edu.itba.paw.services.ImageService;
 import ar.edu.itba.paw.models.exceptions.ImageNotFoundException;
+import ar.edu.itba.paw.services.ImageService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.MediaType;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
 
-@Controller
+import javax.ws.rs.GET;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.Response;
+
+@Path("images")
+@Component
 public class ImageController {
     private final ImageService imgService;
 
@@ -20,12 +23,12 @@ public class ImageController {
         this.imgService = imgService;
     }
 
-    @RequestMapping(
-            value = "/image/{id}", method = {RequestMethod.GET},
-            produces = {MediaType.IMAGE_JPEG_VALUE, MediaType.IMAGE_PNG_VALUE}
-    )
-    @ResponseBody
-    public byte[] image(@PathVariable final long id) {
-        return imgService.findById(id).map(Image::getImage).orElseThrow(ImageNotFoundException::new);
+    @GET
+    @Path("/{id}")
+    @Produces({"image/jpeg", "image/png"})
+    public Response image(@PathParam("id") final long id) {
+        final byte[] img = imgService.findById(id).map(Image::getImage).orElseThrow(ImageNotFoundException::new);
+        
+        return Response.ok(img).build();
     }
 }

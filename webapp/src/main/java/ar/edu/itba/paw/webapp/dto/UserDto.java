@@ -10,7 +10,7 @@ public class UserDto {
     private String email;
     private String username;
 
-    //TODO - Image
+    private URI image;
 
     //private Locale locale
     private URI degree;
@@ -32,6 +32,8 @@ public class UserDto {
         userDto.id = user.getId();
         userDto.email = user.getEmail();
         userDto.username = user.getUsername();
+        userDto.image = uriInfo.getBaseUriBuilder().path("images").path(String.valueOf(user.getImageId())).build();
+        
         userDto.degree = uriInfo.getBaseUriBuilder().path("degrees").path(String.valueOf(user.getDegree().getId())).build();
         userDto.reviews = uriInfo.getBaseUriBuilder().path("reviews").queryParam("userId", user.getId()).build();
         //TODO - CHECK THIS
@@ -62,6 +64,14 @@ public class UserDto {
 
     public void setUsername(String username) {
         this.username = username;
+    }
+
+    public URI getImage() {
+        return image;
+    }
+
+    public void setImage(URI image) {
+        this.image = image;
     }
 
     public URI getDegree() {

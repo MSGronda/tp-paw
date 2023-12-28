@@ -44,7 +44,7 @@ public class UserController {
                         .locale(LocaleContextHolder.getLocale())
                         .build()
         );
-        final URI userUri = uriInfo.getBaseUriBuilder().path(String.valueOf(newUser.getId())).build();
+        final URI userUri = uriInfo.getBaseUriBuilder().path("/users").path(String.valueOf(newUser.getId())).build();
         return Response.created(userUri).build();
     }
 
@@ -60,6 +60,17 @@ public class UserController {
                 editUserForm.getSubjectIds()
         );
         return Response.ok().build();
+    }
+    
+    @POST
+    @Path("/{id}/picture")
+    @Consumes({"image/jpeg", "image/png"})
+    public Response updatePicture(@PathParam("id") final Long id, final byte[] picture){
+        final User user = userService.findById(id).orElseThrow(UserNotFoundException::new);
+        userService.updateProfilePicture(user, picture);
+        
+        final URI imgUri = uriInfo.getBaseUriBuilder().path("image").path(String.valueOf(user.getImageId())).build();
+        return Response.created(imgUri).build();
     }
 
     @GET
