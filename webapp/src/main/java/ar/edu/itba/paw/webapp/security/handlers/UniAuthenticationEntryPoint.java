@@ -1,5 +1,6 @@
 package ar.edu.itba.paw.webapp.security.handlers;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.AuthenticationEntryPoint;
 
@@ -12,6 +13,6 @@ public class UniAuthenticationEntryPoint implements AuthenticationEntryPoint {
     @Override
     public void commence(HttpServletRequest request, HttpServletResponse response,
                          AuthenticationException exception) throws IOException {
-
+        response.setStatus(HttpStatus.UNAUTHORIZED.value());
     }
 }
