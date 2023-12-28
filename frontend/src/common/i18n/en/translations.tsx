@@ -78,5 +78,8 @@ export const TRANSLATIONS_EN = {
         logout: "Logout",
         change_password: "Change password",
         change_degree: "Change degree"
-    }
+    },
+    Search: {
+        not_found: "We could not find a subject that matched: {{query}}"
+    },
 }

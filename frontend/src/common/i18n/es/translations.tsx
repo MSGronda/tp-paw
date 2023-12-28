@@ -79,5 +79,8 @@ export const TRANSLATIONS_ES = {
         logout: "Cerrar sesión",
         change_password: "Cambiar constraseña",
         change_degree: "Cambiar carrera"
+    },
+    Search: {
+        not_found: "No pudimos encontrar una materia que coincida con: {{query}}"
     }
 }

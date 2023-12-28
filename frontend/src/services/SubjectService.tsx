@@ -17,7 +17,11 @@ export class SubjectService {
 
     async getSubjectsByName(name: string){
         try{
-            const res = await axiosService.axiosWrapper(axiosService.GET, `${path}?q=${name}`, {});
+            let config: any = {}; // Add type annotation to config object
+            config.params = { // Access 'params' property directly
+                q: name
+            };
+            const res = await axiosService.authAxiosWrapper(axiosService.GET, `${path}`, config);
             return handleResponse(res);
         } catch (error: any) {
             return handleResponse(error.response);

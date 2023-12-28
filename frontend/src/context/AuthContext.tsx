@@ -80,9 +80,9 @@ export const AuthContextProvider = ({children}: { children: React.ReactNode}) =>
         setIsAuthenticated(false);
         setAuthKey(undefined);
         setRefreshTokenKey(undefined);
-        setEmail(undefined);
+        // setEmail(undefined);
         // setRole(undefined);
-        setUserId(undefined);
+        // setUserId(undefined);
     }
 
 
