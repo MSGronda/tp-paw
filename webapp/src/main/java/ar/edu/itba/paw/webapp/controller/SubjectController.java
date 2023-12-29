@@ -4,6 +4,7 @@ import ar.edu.itba.paw.models.Subject;
 import ar.edu.itba.paw.models.User;
 import ar.edu.itba.paw.models.exceptions.*;
 import ar.edu.itba.paw.services.*;
+import ar.edu.itba.paw.webapp.controller.utils.PaginationLinkBuilder;
 import ar.edu.itba.paw.webapp.dto.SubjectDto;
 import ar.edu.itba.paw.webapp.form.SubjectClassTimeForm;
 import ar.edu.itba.paw.webapp.form.SubjectForm;
@@ -75,12 +76,23 @@ public class SubjectController {
             dir
         );
 
+        int lastPage = subjectService.getTotalPagesForSearch(
+            user,
+            query,
+            credits,
+            department,
+            difficulty,
+            timeDemand,
+            orderBy);
+
         final List<SubjectDto> subjectsDtos = subs.stream().map(subject -> SubjectDto.fromSubject(uriInfo, subject)).collect(Collectors.toList());
 
         if(subjectsDtos.isEmpty())
             return Response.noContent().build();
 
-        return Response.ok(new GenericEntity<List<SubjectDto>>(subjectsDtos){}).build();
+        Response.ResponseBuilder responseBuilder = Response.ok(new GenericEntity<List<SubjectDto>>(subjectsDtos){});
+        PaginationLinkBuilder.getResponsePaginationLinks(responseBuilder, uriInfo, page, lastPage);
+        return responseBuilder.build();
     }
 
     @POST
