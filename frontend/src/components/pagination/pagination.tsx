@@ -8,6 +8,9 @@ const PaginationComponent = (props: any) => {
     queryParams.set('page', value.toString());
     window.history.replaceState(null, '', `${window.location.pathname}?${queryParams}`);
     props.setPage(value);
+
+    // Scroll to the top of the page
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   return (
