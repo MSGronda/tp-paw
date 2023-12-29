@@ -14,23 +14,15 @@ export const handleResponse = (response: any) => {
                     data: response.data
                 }
             }
-            let previousPage = "";
-            let nextPage = "";
-            if(parsed.prev)
-                previousPage = parsed.prev.url;
-            if(parsed.next)
-                nextPage = parsed.next.url;
             return {
                 headers: response.headers,
                 status: response.status,
                 failure: false,
                 data: response.data,
+                current: parseInt(parsed.current.page),
                 maxPage: parseInt(parsed.last.page),
                 lastPage: parsed.last.url,
                 firstPage: parsed.first.url,
-                previousPage: previousPage,
-                nextPage: nextPage
-
             }
         }
         return {

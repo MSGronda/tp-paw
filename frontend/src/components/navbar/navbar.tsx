@@ -27,7 +27,7 @@ export function Navbar() {
 
   const handleSearchSubmit = (event: { key: string; }) => {
     if ( event.key === 'Enter'){
-      navigate(`/search?q=${searchValue}`);
+      navigate(`/search?q=${searchValue}&page=1`);
     }
   };
 

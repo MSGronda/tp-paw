@@ -15,11 +15,12 @@ export class SubjectService {
         }
     }
 
-    async getSubjectsByName(name: string){
+    async getSubjectsByName(name: string, page: number){
         try{
             let config: any = {}; // Add type annotation to config object
             config.params = { // Access 'params' property directly
-                q: name
+                q: name,
+                page: page
             };
             const res = await axiosService.authAxiosWrapper(axiosService.GET, `${path}`, config);
             return handleResponse(res);

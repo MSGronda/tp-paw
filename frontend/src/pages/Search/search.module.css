@@ -24,6 +24,18 @@
     overflow: overlay;
 }
 
+.results_area {
+    display: flex;
+    flex-direction: column;
+}
+
+.center_pagination{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 2rem;
+}
+
 .not_found_area {
     display: flex;
     flex-direction: row;
