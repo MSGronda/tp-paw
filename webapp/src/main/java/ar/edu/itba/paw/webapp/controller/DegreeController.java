@@ -70,8 +70,6 @@ public class DegreeController {
     public Response getDegrees(
         // TODO: params (?)
     ) {
-        System.out.println("getting");
-
         final List<Degree> degrees = degreeService.getAll();
         final List<DegreeDto> degreeDtos = degrees.stream().map(degree -> DegreeDto.fromDegree(uriInfo, degree)).collect(Collectors.toList());
         if(degreeDtos.isEmpty()) {
@@ -114,6 +112,21 @@ public class DegreeController {
         return Response.status(Response.Status.NO_CONTENT.getStatusCode()).build();
     }
 
+    @PUT
+    @Path("/{id}")
+    @Consumes(MediaType.APPLICATION_JSON)
+    public Response editDegree(
+            @PathParam("id") final long id,
+            @Valid final DegreeForm degreeForm
+    ){
+        final Degree degree = degreeService.findById(id).orElseThrow(DegreeNotFoundException::new);
+
+        degreeService.editName(degree, degreeForm.getName());
+        degreeService.editTotalCredits(degree, degreeForm.getTotalCredits());
+
+        return Response.ok().build();
+    }
+
     @GET
     @Path("/{id}/semesters")
     @Produces("application/vnd.degree.semesters.list.v1+json")
@@ -135,7 +148,6 @@ public class DegreeController {
 
         return Response.ok(SemesterDto.fromSemester(uriInfo, degree, (int)id)).build();
     }
-
 
     @POST
     @Path("/{id}/semesters")

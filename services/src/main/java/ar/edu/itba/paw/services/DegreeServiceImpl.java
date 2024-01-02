@@ -180,6 +180,17 @@ public class DegreeServiceImpl implements DegreeService {
 
     @Transactional
     @Override
+    public void editName(final Degree degree, final String name){
+        degreeDao.editName(degree, name);
+    }
+    @Transactional
+    @Override
+    public void editTotalCredits(final Degree degree, final int totalCredits){
+        degreeDao.editTotalCredits(degree, totalCredits);
+    }
+
+    @Transactional
+    @Override
     public void delete(final Degree degree) {
         degreeDao.delete(degree);
     }

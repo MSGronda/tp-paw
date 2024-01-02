@@ -88,6 +88,14 @@ public class Degree {
         return new ArrayList<>(yearMap.values());
     }
 
+    public void setName(final String name){
+        this.name = name;
+    }
+
+    public void setTotalCredits(final int totalCredits){
+        this.totalCredits = totalCredits;
+    }
+
     public List<DegreeSubject> getDegreeSubjects() {
         return subjects;
     }

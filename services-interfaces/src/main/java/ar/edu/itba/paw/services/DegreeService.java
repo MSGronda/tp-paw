@@ -23,6 +23,9 @@ public interface DegreeService {
     void updateSubjectToDegrees(final Subject subject, final List<Long> degreeIds, final List<Integer> semesters);
     void addSemestersToDegree(final Degree degree, final Map<Integer, List<String>> semesterSubjects);
 
+    void editName(final Degree degree, final String name);
+    void editTotalCredits(final Degree degree, final int totalCredits);
+
     void deleteSemesterFromDegree(final Degree degree, final int semesterId);
     void delete(final Degree degree);
 }

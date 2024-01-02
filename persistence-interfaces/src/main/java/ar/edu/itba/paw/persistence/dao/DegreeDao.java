@@ -26,5 +26,8 @@ public interface DegreeDao {
 
     void updateDeleteSubjectToDegrees(final Subject subject, final List<DegreeSubject> degreesToDelete);
 
+    void editName(final Degree degree, final String name);
+    void editTotalCredits(final Degree degree, final int totalCredits);
+
     void delete(Degree degree);
 }
