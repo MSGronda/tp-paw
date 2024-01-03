@@ -8,11 +8,10 @@ import ar.edu.itba.paw.webapp.dto.DegreeDto;
 import ar.edu.itba.paw.webapp.dto.SemesterDto;
 import ar.edu.itba.paw.webapp.form.DegreeForm;
 import ar.edu.itba.paw.webapp.form.DegreeSemesterForm;
-import org.eclipse.persistence.jaxb.json.JsonSchemaOutputResolver;
+import ar.edu.itba.paw.webapp.form.EditDegreeSemesterForm;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.RequestBody;
 
 import javax.validation.Valid;
 import javax.ws.rs.*;
@@ -163,14 +162,17 @@ public class DegreeController {
     }
 
 
-    @PUT
-    @Path("/{degreeId}/semesters/{id}")
+    @PATCH
+    @Path("/{degreeId}/semesters")
     @Consumes(MediaType.APPLICATION_JSON)
     public Response editDegreeSemester(
             @PathParam("degreeId") final long degreeId,
-            @PathParam("id") final long id
+            @Valid final EditDegreeSemesterForm editDegreeSemesterForm
     ) {
-        // TODO
+        final Degree degree = degreeService.findById(degreeId).orElseThrow(DegreeNotFoundException::new);
+
+        editDegreeSemesterForm.getOperationsForEdit().forEach(op -> degreeService.editDegreeSemester(degree,op));
+
         return Response.ok().build();
     }
 

@@ -3,11 +3,9 @@ package ar.edu.itba.paw.services;
 import ar.edu.itba.paw.models.Degree;
 import ar.edu.itba.paw.models.Subject;
 import ar.edu.itba.paw.models.User;
+import ar.edu.itba.paw.services.enums.OperationType;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.OptionalInt;
+import java.util.*;
 
 
 public interface DegreeService {
@@ -28,4 +26,6 @@ public interface DegreeService {
 
     void deleteSemesterFromDegree(final Degree degree, final int semesterId);
     void delete(final Degree degree);
+
+    void editDegreeSemester(final Degree degree, final AbstractMap.SimpleEntry<OperationType, AbstractMap.SimpleEntry<Integer, String>> op);
 }

@@ -1,5 +1,6 @@
 package ar.edu.itba.paw.webapp.form;
 
+import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import java.util.HashMap;
 import java.util.List;
@@ -8,6 +9,7 @@ import java.util.Map;
 public class DegreeSemesterForm {
 
     @NotNull
+    @Valid
     private List<SemesterSubForm> semesters;
 
     public List<SemesterSubForm> getSemesters() {

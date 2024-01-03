@@ -4,8 +4,10 @@ import ar.edu.itba.paw.models.Degree;
 import ar.edu.itba.paw.models.DegreeSubject;
 import ar.edu.itba.paw.models.Subject;
 import ar.edu.itba.paw.models.User;
+import ar.edu.itba.paw.models.exceptions.SubjectNotFoundException;
 import ar.edu.itba.paw.persistence.dao.DegreeDao;
 import ar.edu.itba.paw.persistence.dao.SubjectDao;
+import ar.edu.itba.paw.services.enums.OperationType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -193,5 +195,23 @@ public class DegreeServiceImpl implements DegreeService {
     @Override
     public void delete(final Degree degree) {
         degreeDao.delete(degree);
+    }
+
+    @Transactional
+    @Override
+    public void editDegreeSemester(
+        final Degree degree,
+        final AbstractMap.SimpleEntry<OperationType, AbstractMap.SimpleEntry<Integer, String>> op
+    ){
+        final Subject subject = subjectDao.findById(op.getValue().getValue()).orElseThrow(SubjectNotFoundException::new);
+        final DegreeSubject ds = new DegreeSubject(degree, subject, op.getValue().getKey());
+        if(op.getKey() == OperationType.Add){
+            if(!degree.getDegreeSubjects().contains(ds)){
+                degree.getDegreeSubjects().add(ds);
+            }
+        }
+        else if(op.getKey() == OperationType.Remove){
+            degree.getDegreeSubjects().remove(ds);
+        }
     }
 }
