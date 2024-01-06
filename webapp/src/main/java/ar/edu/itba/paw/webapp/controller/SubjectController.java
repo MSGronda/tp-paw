@@ -117,17 +117,17 @@ public class SubjectController {
             subjectForm.getProfessors()
         );
 
-        subjectForm.getSubjectClasses().forEach(classForm -> subjectService.addClass(
+        subjectService.addClasses(
                 newSub,
-                classForm.getCode(),
-                classForm.getProfessors(),
-                classForm.getClassTimes().stream().map(SubjectClassTimeForm::getDay).collect(Collectors.toList()),
-                classForm.getClassTimes().stream().map(SubjectClassTimeForm::getStartTime).collect(Collectors.toList()),
-                classForm.getClassTimes().stream().map(SubjectClassTimeForm::getEndTime).collect(Collectors.toList()),
-                classForm.getClassTimes().stream().map(SubjectClassTimeForm::getLocation).collect(Collectors.toList()),
-                classForm.getClassTimes().stream().map(SubjectClassTimeForm::getBuilding).collect(Collectors.toList()),
-                classForm.getClassTimes().stream().map(SubjectClassTimeForm::getMode).collect(Collectors.toList())
-        ));
+                subjectForm.getCollectedCodes(),
+                subjectForm.getCollectedProfessors(),
+                subjectForm.getCollectedDays(),
+                subjectForm.getCollectedStartTimes(),
+                subjectForm.getCollectedEndTimes(),
+                subjectForm.getCollectedLocations(),
+                subjectForm.getCollectedBuildings(),
+                subjectForm.getCollectedModes()
+        );
 
         return Response.status(Response.Status.CREATED.getStatusCode()).build();
     }
@@ -162,39 +162,21 @@ public class SubjectController {
                 subjectForm.getCredits(),
                 subjectForm.getRequirementIds()
         );
+
         degreeService.replaceSubjectDegrees(subject, subjectForm.getDegreeIds(), subjectForm.getSemesters());
+
         professorService.replaceSubjectProfessors(subject, subjectForm.getProfessors());
-
-        final List<String> codes = new ArrayList<>();
-        final List<List<String>> professors = new ArrayList<>();
-        final List<List<Integer>> days = new ArrayList<>();
-        final List<List<LocalTime>> startTimes = new ArrayList<>();
-        final List<List<LocalTime>> endTimes = new ArrayList<>();
-        final List<List<String>> locations = new ArrayList<>();
-        final List<List<String>> buildings = new ArrayList<>();
-        final List<List<String>> modes = new ArrayList<>();
-
-        subjectForm.getSubjectClasses().forEach(classForm -> {
-            codes.add(classForm.getCode());
-            professors.add(classForm.getProfessors());
-            days.add(classForm.getClassTimes().stream().map(SubjectClassTimeForm::getDay).collect(Collectors.toList()));
-            startTimes.add(classForm.getClassTimes().stream().map(SubjectClassTimeForm::getStartTime).collect(Collectors.toList()));
-            endTimes.add(classForm.getClassTimes().stream().map(SubjectClassTimeForm::getEndTime).collect(Collectors.toList()));
-            locations.add(classForm.getClassTimes().stream().map(SubjectClassTimeForm::getLocation).collect(Collectors.toList()));
-            buildings.add(classForm.getClassTimes().stream().map(SubjectClassTimeForm::getBuilding).collect(Collectors.toList()));
-            modes.add(classForm.getClassTimes().stream().map(SubjectClassTimeForm::getMode).collect(Collectors.toList()));
-        });
 
         subjectService.setClasses(
                 subject,
-                codes,
-                professors,
-                days,
-                startTimes,
-                endTimes,
-                locations,
-                buildings,
-                modes
+                subjectForm.getCollectedCodes(),
+                subjectForm.getCollectedProfessors(),
+                subjectForm.getCollectedDays(),
+                subjectForm.getCollectedStartTimes(),
+                subjectForm.getCollectedEndTimes(),
+                subjectForm.getCollectedLocations(),
+                subjectForm.getCollectedBuildings(),
+                subjectForm.getCollectedModes()
         );
 
         return Response.ok().build();

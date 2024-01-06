@@ -138,4 +138,16 @@ public interface SubjectService {
             final List<List<String>> buildings,
             final List<List<String>> modes
     );
+
+    void addClasses(
+            final Subject subject,
+            final List<String> codes,
+            final List<List<String>> professors,
+            final List<List<Integer>> days,
+            final List<List<LocalTime>> startTimes,
+            final List<List<LocalTime>> endTimes,
+            final List<List<String>> locations,
+            final List<List<String>> buildings,
+            final List<List<String>> modes
+    );
 }

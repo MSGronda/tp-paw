@@ -2,7 +2,10 @@ package ar.edu.itba.paw.webapp.form;
 
 import javax.validation.Valid;
 import javax.validation.constraints.*;
+import java.time.LocalTime;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 
 public class SubjectForm {
@@ -30,6 +33,16 @@ public class SubjectForm {
 
     @NotNull
     private List<String> professors;
+
+    private boolean collected = false;
+    private List<String> collectedCodes;
+    private List<List<String>> collectedProfessors;
+    private List<List<Integer>> collectedDays;
+    private List<List<LocalTime>> collectedStartTimes;
+    private List<List<LocalTime>> collectedEndTimes;
+    private List<List<String>> collectedLocations;
+    private List<List<String>> collectedBuildings;
+    private List<List<String>> collectedModes;
 
     @NotNull
     @Valid
@@ -105,5 +118,89 @@ public class SubjectForm {
 
     public void setSubjectClasses(List<SubjectClassForm> subjectClasses) {
         this.subjectClasses = subjectClasses;
+    }
+
+    private void collectClasses(){
+        if(collected){
+            return;
+        }
+
+        collected = true;
+
+        collectedCodes = new ArrayList<>();
+        collectedProfessors = new ArrayList<>();
+        collectedDays = new ArrayList<>();
+        collectedStartTimes = new ArrayList<>();
+        collectedEndTimes = new ArrayList<>();
+        collectedLocations = new ArrayList<>();
+        collectedBuildings = new ArrayList<>();
+        collectedModes = new ArrayList<>();
+
+        subjectClasses.forEach(classForm -> {
+            collectedCodes.add(classForm.getCode());
+            collectedProfessors.add(classForm.getProfessors());
+            collectedDays.add(classForm.getClassTimes().stream().map(SubjectClassTimeForm::getDay).collect(Collectors.toList()));
+            collectedStartTimes.add(classForm.getClassTimes().stream().map(SubjectClassTimeForm::getStartTime).collect(Collectors.toList()));
+            collectedEndTimes.add(classForm.getClassTimes().stream().map(SubjectClassTimeForm::getEndTime).collect(Collectors.toList()));
+            collectedLocations.add(classForm.getClassTimes().stream().map(SubjectClassTimeForm::getLocation).collect(Collectors.toList()));
+            collectedBuildings.add(classForm.getClassTimes().stream().map(SubjectClassTimeForm::getBuilding).collect(Collectors.toList()));
+            collectedModes.add(classForm.getClassTimes().stream().map(SubjectClassTimeForm::getMode).collect(Collectors.toList()));
+        });
+    }
+
+    public List<String> getCollectedCodes() {
+        if(!collected){
+            collectClasses();
+        }
+        return collectedCodes;
+    }
+
+    public List<List<String>> getCollectedProfessors() {
+        if(!collected){
+            collectClasses();
+        }
+        return collectedProfessors;
+    }
+
+    public List<List<Integer>> getCollectedDays() {
+        if(!collected){
+            collectClasses();
+        }
+        return collectedDays;
+    }
+
+    public List<List<LocalTime>> getCollectedStartTimes() {
+        if(!collected){
+            collectClasses();
+        }
+        return collectedStartTimes;
+    }
+
+    public List<List<LocalTime>> getCollectedEndTimes() {
+        if(!collected){
+            collectClasses();
+        }
+        return collectedEndTimes;
+    }
+
+    public List<List<String>> getCollectedLocations() {
+        if(!collected){
+            collectClasses();
+        }
+        return collectedLocations;
+    }
+
+    public List<List<String>> getCollectedBuildings() {
+        if(!collected){
+            collectClasses();
+        }
+        return collectedBuildings;
+    }
+
+    public List<List<String>> getCollectedModes() {
+        if(!collected){
+            collectClasses();
+        }
+        return collectedModes;
     }
 }

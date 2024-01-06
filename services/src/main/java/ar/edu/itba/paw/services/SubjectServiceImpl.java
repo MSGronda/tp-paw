@@ -569,6 +569,35 @@ public class SubjectServiceImpl implements SubjectService {
 
     @Override
     @Transactional
+    public void addClasses(
+        final Subject subject,
+        final List<String> codes,
+        final List<List<String>> professors,
+        final List<List<Integer>> days,
+        final List<List<LocalTime>> startTimes,
+        final List<List<LocalTime>> endTimes,
+        final List<List<String>> locations,
+        final List<List<String>> buildings,
+        final List<List<String>> modes
+    ){
+        // TODO: ojo con los .size()
+        for(int i=0; i<codes.size(); i++){
+            addClass(
+                    subject,
+                    codes.get(i),
+                    professors.get(i),
+                    days.get(i),
+                    startTimes.get(i),
+                    endTimes.get(i),
+                    locations.get(i),
+                    buildings.get(i),
+                    modes.get(i)
+            );
+        }
+    }
+
+    @Override
+    @Transactional
     public void setClasses(
             final Subject subject,
             final List<String> codes,
