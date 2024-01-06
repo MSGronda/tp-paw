@@ -6,9 +6,7 @@ import ar.edu.itba.paw.models.SubjectClass;
 import org.springframework.stereotype.Repository;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 
 @Repository
@@ -135,4 +133,33 @@ public class ProfessorJpaDao implements ProfessorDao {
         }
     }
 
+    private Professor getOrGenerateProfessor(final String profName){
+        final Optional<Professor> maybeProfessor = getByName(profName);
+        final Professor professor;
+        if(!maybeProfessor.isPresent()){
+            professor = new Professor(profName);
+            em.persist(professor);
+        }else{
+            professor = maybeProfessor.get();
+        }
+        return professor;
+    }
+
+    @Override
+    public void replaceSubjectProfessors(final Subject subject, final List<String> professors){
+        final Set<Professor> newProfessors = new HashSet<>();
+        for(final String profName : professors){
+           newProfessors.add(getOrGenerateProfessor(profName));
+        }
+        subject.setProfessors(newProfessors);
+    }
+
+    @Override
+    public void replaceClassProfessors(final SubjectClass subjectClass, final List<String> professors) {
+        final List<Professor> newProfessors = new ArrayList<>();
+        for(final String profName : professors){
+            newProfessors.add(getOrGenerateProfessor(profName));
+        }
+        subjectClass.setProfessors(newProfessors);
+    }
 }

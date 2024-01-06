@@ -152,4 +152,18 @@ public class ProfessorServiceImpl implements ProfessorService {
         professorDao.updateProfessorsToClassesAdd(professorsToUpdate);
         professorDao.updateProfessorsToClassesRemove(professorsToRemove);
     }
+
+    @Override
+    @Transactional
+    public void replaceSubjectProfessors(final Subject subject, final List<String> professors){
+        professorDao.replaceSubjectProfessors(subject, professors);
+    }
+
+    @Transactional
+    @Override
+    public void replaceClassProfessors(final SubjectClass subjectClass, final List<String> professors) {
+        professorDao.replaceClassProfessors(subjectClass, professors);
+    }
+
+
 }

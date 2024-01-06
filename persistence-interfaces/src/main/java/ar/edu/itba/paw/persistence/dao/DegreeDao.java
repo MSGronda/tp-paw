@@ -30,4 +30,6 @@ public interface DegreeDao {
     void editTotalCredits(final Degree degree, final int totalCredits);
 
     void delete(Degree degree);
+
+    void replaceSubjectDegrees(final Subject subject, final List<Long> degreeIds, final List<Integer> semesters);
 }

@@ -87,6 +87,15 @@ public class Subject {
         return classes;
     }
 
+    public Optional<SubjectClass> getClassById(final String classId){
+        for(final SubjectClass sc : classes){
+            if(sc.getClassId().equals(classId)){
+                return Optional.of(sc);
+            }
+        }
+        return Optional.empty();
+    }
+
     public String getId() {
         return id;
     }
@@ -117,6 +126,26 @@ public class Subject {
 
     public void setCredits(final int credits) {
         this.credits = credits;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setDepartment(String department) {
+        this.department = department;
+    }
+
+    public void setPrerequisites(Set<Subject> prerequisites) {
+        this.prerequisites = prerequisites;
+    }
+
+    public void setProfessors(Set<Professor> professors) {
+        this.professors = professors;
+    }
+
+    public void setDegrees(Set<Degree> degrees) {
+        this.degrees = degrees;
     }
 
     public ReviewStats getReviewStats() {
@@ -156,7 +185,6 @@ public class Subject {
     public static Builder builderFrom(Subject subject) {
         return new Builder(subject);
     }
-
 
     public static class Builder {
         private String id;

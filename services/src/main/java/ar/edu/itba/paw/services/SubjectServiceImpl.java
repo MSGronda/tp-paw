@@ -546,4 +546,74 @@ public class SubjectServiceImpl implements SubjectService {
         }
         subjectDao.addClassesToSubject(subject, classesToAdd);
     }
+
+    @Override
+    @Transactional
+    public void editSubject(
+            final Subject subject,
+            final String name,
+            final String department,
+            final int credits,
+            final List<String> requirementIds
+    ){
+        final Set<Subject> prereqs = new HashSet<>();
+        requirementIds.forEach(id -> findById(id).ifPresent(prereqs::add));
+        subjectDao.editSubject(
+                subject,
+                name,
+                department,
+                credits,
+                prereqs
+        );
+    }
+
+    @Override
+    @Transactional
+    public void setClasses(
+            final Subject subject,
+            final List<String> codes,
+            final List<List<String>> professors,
+            final List<List<Integer>> days,
+            final List<List<LocalTime>> startTimes,
+            final List<List<LocalTime>> endTimes,
+            final List<List<String>> locations,
+            final List<List<String>> buildings,
+            final List<List<String>> modes
+    ){
+
+        subjectDao.removeSubjectClassIfNotPresent(subject, codes);
+
+        // TODO: ojo con los .size()
+        for(int i=0; i<codes.size(); i++){
+            final Optional<SubjectClass> maybeSubjectClass = subject.getClassById(codes.get(i));
+
+            if(!maybeSubjectClass.isPresent()){
+                addClass(
+                        subject,
+                        codes.get(i),
+                        professors.get(i),
+                        days.get(i),
+                        startTimes.get(i),
+                        endTimes.get(i),
+                        locations.get(i),
+                        buildings.get(i),
+                        modes.get(i)
+                );
+            }
+            else{
+                final SubjectClass subjectClass = maybeSubjectClass.get();
+                professorService.replaceClassProfessors(subjectClass, professors.get(i));
+                subjectDao.replaceClassTimes(
+                        subjectClass,
+                        days.get(i),
+                        startTimes.get(i),
+                        endTimes.get(i),
+                        locations.get(i),
+                        buildings.get(i),
+                        modes.get(i)
+                );
+            }
+        }
+    }
+
 }

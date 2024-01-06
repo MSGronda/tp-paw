@@ -30,4 +30,7 @@ public interface ProfessorDao {
     void updateSubjectToProfessorsAdd(final Subject subject, final List<Professor> professorsToAdd);
     void updateSubjectToProfessorsCreate(final Subject subject, final List<String> professorsToCreate);
     void updateSubjectToProfessorsRemove(final Subject subject, final List<Professor> professorsToRemove);
+
+    void replaceSubjectProfessors(final Subject subject, final List<String> professors);
+    void replaceClassProfessors(final SubjectClass subjectClass, final List<String> professors);
 }

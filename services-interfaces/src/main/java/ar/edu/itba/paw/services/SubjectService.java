@@ -118,4 +118,24 @@ public interface SubjectService {
               final List<String> classRooms,
               final List<String> classModes
     );
+
+    void editSubject(
+            final Subject subject,
+            final String name,
+            final String department,
+            final int credits,
+            final List<String> requirementIds
+    );
+
+    void setClasses(
+            final Subject subject,
+            final List<String> codes,
+            final List<List<String>> professors,
+            final List<List<Integer>> days,
+            final List<List<LocalTime>> startTimes,
+            final List<List<LocalTime>> endTimes,
+            final List<List<String>> locations,
+            final List<List<String>> buildings,
+            final List<List<String>> modes
+    );
 }

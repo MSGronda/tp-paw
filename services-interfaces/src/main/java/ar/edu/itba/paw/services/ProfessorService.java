@@ -20,4 +20,7 @@ public interface ProfessorService {
     void addProfessorsToClass(final SubjectClass subjectClass, final List<String> classProfessors);
 
     void updateProfessorsToClasses(final Subject subject, final List<String> classIdsList, final List<String> classCodes, final List<List<String>> classProfessors);
+
+    void replaceSubjectProfessors(final Subject subject, final List<String> professors);
+    void replaceClassProfessors(final SubjectClass subjectClass, final List<String> professors);
 }

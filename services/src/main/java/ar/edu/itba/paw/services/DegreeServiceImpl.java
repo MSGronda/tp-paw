@@ -214,4 +214,10 @@ public class DegreeServiceImpl implements DegreeService {
             degree.getDegreeSubjects().remove(ds);
         }
     }
+
+    @Transactional
+    @Override
+    public void replaceSubjectDegrees(final Subject subject, final List<Long> degreeIds, final List<Integer> semesters) {
+        degreeDao.replaceSubjectDegrees(subject, degreeIds, semesters);
+    }
 }

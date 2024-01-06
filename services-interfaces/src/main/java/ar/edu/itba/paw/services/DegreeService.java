@@ -28,4 +28,6 @@ public interface DegreeService {
     void delete(final Degree degree);
 
     void editDegreeSemester(final Degree degree, final AbstractMap.SimpleEntry<OperationType, AbstractMap.SimpleEntry<Integer, String>> op);
+
+    void replaceSubjectDegrees(final Subject subject, final List<Long> degreeIds, final List<Integer> semesters);
 }

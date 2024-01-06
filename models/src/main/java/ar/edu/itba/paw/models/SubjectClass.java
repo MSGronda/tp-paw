@@ -58,6 +58,14 @@ public class SubjectClass {
         return subject;
     }
 
+    public void setProfessors(final List<Professor> professors){
+        this.professors = professors;
+    }
+
+    public void setClassTimes(List<SubjectClassTime> classTimes) {
+        this.classTimes = classTimes;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

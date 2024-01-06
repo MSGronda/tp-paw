@@ -14,6 +14,8 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import javax.validation.Valid;
 import javax.ws.rs.*;
 import javax.ws.rs.core.*;
+import java.time.LocalTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -28,6 +30,10 @@ public class SubjectController {
     private AuthUserService authUserService;
     @Autowired
     private UserService userService;
+    @Autowired
+    private ProfessorService professorService;
+    @Autowired
+    private DegreeService degreeService;
     @Context
     private UriInfo uriInfo;
     
@@ -83,7 +89,8 @@ public class SubjectController {
             department,
             difficulty,
             timeDemand,
-            orderBy);
+            orderBy
+        );
 
         final List<SubjectDto> subjectsDtos = subs.stream().map(subject -> SubjectDto.fromSubject(uriInfo, subject)).collect(Collectors.toList());
 
@@ -137,6 +144,59 @@ public class SubjectController {
     public Response deleteSubject(@PathParam("id") final String subjectId){
         final User user = authUserService.getCurrentUser();
         subjectService.delete(user, subjectId);
+        return Response.ok().build();
+    }
+
+    @PUT
+    @Path("/{id}")
+    public Response editSubject(
+            @PathParam("id") final String subjectId,
+            @Valid @ModelAttribute("subjectForm") final SubjectForm subjectForm
+    ){
+        final Subject subject = subjectService.findById(subjectId).orElseThrow(SubjectNotFoundException::new);
+
+        subjectService.editSubject(
+                subject,
+                subjectForm.getName(),
+                subjectForm.getDepartment(),
+                subjectForm.getCredits(),
+                subjectForm.getRequirementIds()
+        );
+        degreeService.replaceSubjectDegrees(subject, subjectForm.getDegreeIds(), subjectForm.getSemesters());
+        professorService.replaceSubjectProfessors(subject, subjectForm.getProfessors());
+
+        final List<String> codes = new ArrayList<>();
+        final List<List<String>> professors = new ArrayList<>();
+        final List<List<Integer>> days = new ArrayList<>();
+        final List<List<LocalTime>> startTimes = new ArrayList<>();
+        final List<List<LocalTime>> endTimes = new ArrayList<>();
+        final List<List<String>> locations = new ArrayList<>();
+        final List<List<String>> buildings = new ArrayList<>();
+        final List<List<String>> modes = new ArrayList<>();
+
+        subjectForm.getSubjectClasses().forEach(classForm -> {
+            codes.add(classForm.getCode());
+            professors.add(classForm.getProfessors());
+            days.add(classForm.getClassTimes().stream().map(SubjectClassTimeForm::getDay).collect(Collectors.toList()));
+            startTimes.add(classForm.getClassTimes().stream().map(SubjectClassTimeForm::getStartTime).collect(Collectors.toList()));
+            endTimes.add(classForm.getClassTimes().stream().map(SubjectClassTimeForm::getEndTime).collect(Collectors.toList()));
+            locations.add(classForm.getClassTimes().stream().map(SubjectClassTimeForm::getLocation).collect(Collectors.toList()));
+            buildings.add(classForm.getClassTimes().stream().map(SubjectClassTimeForm::getBuilding).collect(Collectors.toList()));
+            modes.add(classForm.getClassTimes().stream().map(SubjectClassTimeForm::getMode).collect(Collectors.toList()));
+        });
+
+        subjectService.setClasses(
+                subject,
+                codes,
+                professors,
+                days,
+                startTimes,
+                endTimes,
+                locations,
+                buildings,
+                modes
+        );
+
         return Response.ok().build();
     }
 }

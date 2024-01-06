@@ -1,5 +1,6 @@
 package ar.edu.itba.paw.webapp.form;
 
+import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import java.util.List;
@@ -13,6 +14,7 @@ public class SubjectClassForm {
     private List<String> professors;
 
     @NotNull
+    @Valid
     private List<SubjectClassTimeForm> classTimes;
 
     public String getCode() {

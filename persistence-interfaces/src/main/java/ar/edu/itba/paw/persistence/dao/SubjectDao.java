@@ -1,9 +1,6 @@
 package ar.edu.itba.paw.persistence.dao;
 
-import ar.edu.itba.paw.models.Degree;
-import ar.edu.itba.paw.models.Subject;
-import ar.edu.itba.paw.models.SubjectClass;
-import ar.edu.itba.paw.models.User;
+import ar.edu.itba.paw.models.*;
 import ar.edu.itba.paw.models.enums.OrderDir;
 import ar.edu.itba.paw.models.enums.SubjectFilterField;
 import ar.edu.itba.paw.models.enums.SubjectOrderField;
@@ -84,8 +81,6 @@ public interface SubjectDao {
 
     void delete(final Subject subject);
 
-    void editCredits(Subject subject, int credits);
-
     SubjectClass addClassToSubject(final Subject subject, final String classCode);
 
     void addClassTimesToClass(
@@ -97,4 +92,25 @@ public interface SubjectDao {
             final List<String> buildings,
             final List<String> modes
     );
+
+    Subject editSubject(
+            final Subject subject,
+            final String name,
+            final String department,
+            final int credits,
+            final Set<Subject> prerequisites
+    );
+
+    void replaceClassTimes(
+            final SubjectClass subjectClass,
+            final List<Integer> days,
+            final List<LocalTime> startTimes,
+            final List<LocalTime> endTimes,
+            final List<String> locations,
+            final List<String> buildings,
+            final List<String> modes
+    );
+
+    void removeSubjectClassIfNotPresent(final Subject subject, final List<String> classCodes);
+
 }

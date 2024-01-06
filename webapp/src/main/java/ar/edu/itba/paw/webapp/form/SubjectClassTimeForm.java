@@ -4,7 +4,6 @@ import javax.validation.constraints.NotNull;
 import java.time.LocalTime;
 
 public class SubjectClassTimeForm {
-
     @NotNull
     private Integer day;
 

@@ -562,7 +562,6 @@ public class SubjectJpaDao implements SubjectDao {
     public void addPrerequisites(final Subject sub, final List<String> correlativesList){
         for( String requirement : correlativesList ){
             final Subject requiredSubject = em.find(Subject.class, requirement);
-            System.out.println(requiredSubject);
             sub.getPrerequisites().add(requiredSubject);
         }
     }
@@ -739,7 +738,69 @@ public class SubjectJpaDao implements SubjectDao {
     }
 
     @Override
-    public void editCredits(final Subject subject, final int credits) {
+    public Subject editSubject(
+            final Subject subject,
+            final String name,
+            final String department,
+            final int credits,
+            final Set<Subject> prerequisites
+    ){
+        subject.setName(name);
+        subject.setDepartment(department);
         subject.setCredits(credits);
+        subject.setPrerequisites(prerequisites);
+
+        return subject;
+    }
+
+    private void clearClassTimes(final SubjectClass subjectClass){
+        subjectClass.getClassTimes().removeIf(subjectClassTime -> {
+                em.remove(subjectClassTime);
+                return true;
+            }
+        );
+    }
+
+    @Override
+    public void replaceClassTimes(
+            final SubjectClass subjectClass,
+            final List<Integer> days,
+            final List<LocalTime> startTimes,
+            final List<LocalTime> endTimes,
+            final List<String> locations,
+            final List<String> buildings,
+            final List<String> modes
+    ){
+        clearClassTimes(subjectClass);
+
+        final List<SubjectClassTime> classTimes = new ArrayList<>();
+        for(int i=0; i< days.size(); i++){
+            // TODO: ojo con los .size()
+            final SubjectClassTime subjectClassTime = new SubjectClassTime(
+                    subjectClass,
+                    days.get(i),
+                    startTimes.get(i),
+                    endTimes.get(i),
+                    locations.get(i),
+                    buildings.get(i),
+                    modes.get(i)
+            );
+
+            classTimes.add(subjectClassTime);
+            em.persist(subjectClassTime);
+        }
+        subjectClass.setClassTimes(classTimes);
+    }
+
+    @Override
+    public void removeSubjectClassIfNotPresent(final Subject subject, final List<String> classCodes){
+        subject.getClasses().removeIf(subjectClass -> {
+                if (!classCodes.contains(subjectClass.getClassId())){
+                    em.remove(subjectClass);
+                    return true;
+                }
+                return false;
+            }
+        );
     }
 }

@@ -1,5 +1,6 @@
 package ar.edu.itba.paw.webapp.form;
 
+import javax.validation.Valid;
 import javax.validation.constraints.*;
 import java.util.List;
 
@@ -8,18 +9,20 @@ public class SubjectForm {
     @NotNull
     @Pattern(regexp = "[0-9]{2}\\.[0-9]{2}")
     private String id;
+
     @Size(min=1, max=50)
     private String name;
+
     @Size(min=1, max=40)
     private String department;
+
     @NotNull
-    @Min(1)
-    @Max(12)
     private Integer credits;
 
-    @Size(min=3)
+    @NotNull
     private List<Long> degreeIds;
-    @Size(min=3)
+
+    @NotNull
     private List<Integer> semesters;
 
     @NotNull
@@ -29,6 +32,7 @@ public class SubjectForm {
     private List<String> professors;
 
     @NotNull
+    @Valid
     private List<SubjectClassForm> subjectClasses;
 
     public String getId() {
