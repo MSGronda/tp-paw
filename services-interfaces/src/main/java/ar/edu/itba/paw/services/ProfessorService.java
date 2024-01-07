@@ -9,18 +9,16 @@ import java.util.Optional;
 
 public interface ProfessorService {
     Optional<Professor> findById(final long id);
+
     List<Professor> getAll();
 
     void addSubjectToProfessors(final Subject subject, final List<String> professors);
-
-    void updateSubjectToProfessors(final Subject subject, final List<String> professors);
 
     void addProfessorsToClasses(final Subject subject, final List<String> classCodes, final List<List<String>> classProfessors);
 
     void addProfessorsToClass(final SubjectClass subjectClass, final List<String> classProfessors);
 
-    void updateProfessorsToClasses(final Subject subject, final List<String> classIdsList, final List<String> classCodes, final List<List<String>> classProfessors);
-
     void replaceSubjectProfessors(final Subject subject, final List<String> professors);
+
     void replaceClassProfessors(final SubjectClass subjectClass, final List<String> professors);
 }
