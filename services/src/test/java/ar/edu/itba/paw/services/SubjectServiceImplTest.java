@@ -101,30 +101,6 @@ public class SubjectServiceImplTest {
     }
 
     @Test
-    public void testFindByName() {
-        final ArrayList<Subject> arrayList = new ArrayList<>();
-        arrayList.add(
-                Subject.builder()
-                        .id(ID)
-                        .name(NAME)
-                        .department(DEPARTMENT)
-                        .credits(CREDITS)
-                        .build()
-        );
-
-        Mockito.lenient().when(userDegree.getId()).thenReturn(1L);
-        Mockito.lenient().when(user.getDegree()).thenReturn(userDegree);
-
-        when(subjectDao.search(eq(user), eq(NAME), eq(1))).thenReturn(arrayList);
-        final List<Subject> subjects = subjectService.search(user, NAME, 1);
-
-        assertEquals(1, subjects.size());
-        assertEquals(ID, subjects.get(0).getId());
-        assertEquals(NAME, subjects.get(0).getName());
-        assertEquals(DEPARTMENT, subjects.get(0).getDepartment());
-    }
-
-    @Test
     public void testFindByNameFiltered() {
         final Map<SubjectFilterField, String> filterMap = new HashMap<>();
         filterMap.put(SubjectFilterField.DEPARTMENT, DEPARTMENT);

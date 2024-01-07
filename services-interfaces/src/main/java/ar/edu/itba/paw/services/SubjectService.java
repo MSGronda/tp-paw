@@ -55,7 +55,6 @@ public interface SubjectService {
 
     Optional<Subject> findById(final String id);
 
-    List<Subject> search(final User user, final String name, final int page);
     List<Subject> search(
             final User user,
             final String name,
@@ -96,28 +95,7 @@ public interface SubjectService {
     List<Subject> findAllThatUserHasDone(final User user, final int page, final String orderBy, final String dir);
     List<Subject> findAllThatUserCouldUnlock(final User user, final int page, final String orderBy, final String dir);
 
-    void delete(final User user, final String subjectId) throws UnauthorizedException, SubjectNotFoundException;
-
-    void delete(final User user, final Subject subject) throws UnauthorizedException;
-
-
-    void edit(
-              final String id,
-              final int credits,
-              final List<Long> degreeIds,
-              final List<Integer> semesters,
-              final List<String> requirementIds,
-              final List<String> professors,
-              final List<String> classIds,
-              final List<String> classCodes,
-              final List<String> classProfessors,
-              final List<String> classDays,
-              final List<String> classStartTimes,
-              final List<String> classEndTimes,
-              final List<String> classBuildings,
-              final List<String> classRooms,
-              final List<String> classModes
-    );
+    void delete(final User user, final String subjectId);
 
     void editSubject(
             final Subject subject,
