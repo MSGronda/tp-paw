@@ -19,17 +19,24 @@ public class ProfessorJpaDao implements ProfessorDao {
         em.persist(professor);
     }
 
+    private Professor getOrGenerateProfessor(final String profName){
+        final Optional<Professor> maybeProfessor = getByName(profName);
+        final Professor professor;
+        if(!maybeProfessor.isPresent()){
+            professor = new Professor(profName);
+            em.persist(professor);
+        }else{
+            professor = maybeProfessor.get();
+        }
+        return professor;
+    }
+
     @Override
     public void addSubjectToProfessors(final Subject subject, final List<String> professors) {
-        for (String singleProfessor : professors) {
-            Optional<Professor> maybeProfessor = getByName(singleProfessor);
-            Professor professor;
-            if (!maybeProfessor.isPresent()) {
-                professor = new Professor(singleProfessor);
-                professor.getSubjects().add(subject);
-                em.persist(professor);
-            } else {
-                professor = maybeProfessor.get();
+        for (String professorName : professors) {
+            final Professor professor = getOrGenerateProfessor(professorName);
+
+            if(!professor.getSubjects().contains(subject)){
                 professor.getSubjects().add(subject);
             }
         }
@@ -37,16 +44,12 @@ public class ProfessorJpaDao implements ProfessorDao {
 
     @Override
     public void addProfessorsToClass(final SubjectClass subjectClass, final List<String> classProfessors){
-        for(String professor : classProfessors){
-            Optional<Professor> maybeProfessor = getByName(professor);
+        for(String professorName : classProfessors){
+            final Professor professor = getOrGenerateProfessor(professorName);
 
-            if(maybeProfessor.isPresent()){
-                Professor professorToAdd = maybeProfessor.get();
-                if( !subjectClass.getProfessors().contains(professorToAdd)){
-                    subjectClass.getProfessors().add(professorToAdd);
-                }
+            if( !subjectClass.getProfessors().contains(professor)) {
+                subjectClass.getProfessors().add(professor);
             }
-            // TODO: check caso contrario
         }
     }
 
@@ -85,17 +88,5 @@ public class ProfessorJpaDao implements ProfessorDao {
     public List<Professor> getAll() {
         return em.createQuery("from Professor", Professor.class)
                 .getResultList();
-    }
-
-    private Professor getOrGenerateProfessor(final String profName){
-        final Optional<Professor> maybeProfessor = getByName(profName);
-        final Professor professor;
-        if(!maybeProfessor.isPresent()){
-            professor = new Professor(profName);
-            em.persist(professor);
-        }else{
-            professor = maybeProfessor.get();
-        }
-        return professor;
     }
 }
