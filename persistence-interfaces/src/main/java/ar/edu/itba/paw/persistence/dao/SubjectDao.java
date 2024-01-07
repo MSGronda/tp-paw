@@ -16,7 +16,6 @@ public interface SubjectDao {
     Optional<Subject> findById(final String id);
     List<Subject> getAll(final int page, final SubjectOrderField orderBy, final OrderDir dir);
 
-    List<Subject> search(final User user, final String name, final int page);
     List<Subject> search(
             User user,
             String name,
@@ -61,23 +60,6 @@ public interface SubjectDao {
     List<Subject> findAllThatUserCouldUnlock(final User user, final int page, final SubjectOrderField orderBy, final OrderDir dir);
 
     void addPrerequisites(final Subject sub, final List<String> correlativesList);
-
-    void updatePrerequisitesToAdd(final Subject sub, final List<Subject> correlativesList);
-
-    void updatePrerequisitesToRemove(final Subject sub, final List<Subject> correlativesList);
-
-    void addClassesToSubject(final Subject subject, final Set<String> classesSet);
-
-
-    void addSubjectClassTimes(final Subject subject, final List<String> classCodes, final List<LocalTime> startTimes, final List<LocalTime> endTimes, final List<String> buildings, final List<String> modes, final List<Integer> days, final List<String> rooms);
-
-    void createClassLocTime(final SubjectClass subjectClass, final int days, final LocalTime endTimes, final LocalTime startTimes, final String rooms, final String buildings, final String modes);
-
-    void deleteClassLocTime(final long key);
-
-    void deleteClass(final SubjectClass subjectClass);
-
-    void updateClassLocTime(final long key, final int days, final String rooms, final String buildings, final String modes, final LocalTime startTimes,final LocalTime endTimes);
 
     void delete(final Subject subject);
 
