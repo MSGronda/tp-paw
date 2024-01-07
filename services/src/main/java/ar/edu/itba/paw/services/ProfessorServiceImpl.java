@@ -27,11 +27,6 @@ public class ProfessorServiceImpl implements ProfessorService {
 
     @Transactional
     @Override
-    public void addProfessorsToClasses(final Subject subject, final List<String> classCodes, final List<List<String>> classProfessors){
-        professorDao.addProfessorsToClasses(subject, classCodes, classProfessors);
-    }
-    @Transactional
-    @Override
     public void addProfessorsToClass(final SubjectClass subjectClass, final List<String> classProfessors){
         professorDao.addProfessorsToClass(subjectClass, classProfessors);
     }

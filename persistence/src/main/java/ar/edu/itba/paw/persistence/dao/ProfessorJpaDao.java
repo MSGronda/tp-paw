@@ -15,94 +15,29 @@ public class ProfessorJpaDao implements ProfessorDao {
     private EntityManager em;
 
     @Override
-    public Optional<Professor> findById(final long id) {
-        return Optional.ofNullable(em.find(Professor.class, id));
-    }
-
-    @Override
-    public Optional<Professor> getByName(final String name) {
-        return em.createQuery("from Professor as p where p.name = :name", Professor.class)
-                        .setParameter("name", name)
-                        .getResultList()
-                        .stream().findFirst();
-    }
-
-    @Override
-    public List<Professor> getAll() {
-        return em.createQuery("from Professor", Professor.class)
-                .getResultList();
-    }
-
-    @Override
     public void create(Professor professor) {
         em.persist(professor);
     }
 
     @Override
-    public void addSubjectToProfessors(final Subject subject, final List<String> professors){
-        for(String singleProfessor : professors){
+    public void addSubjectToProfessors(final Subject subject, final List<String> professors) {
+        for (String singleProfessor : professors) {
             Optional<Professor> maybeProfessor = getByName(singleProfessor);
             Professor professor;
-            if(!maybeProfessor.isPresent()){
+            if (!maybeProfessor.isPresent()) {
                 professor = new Professor(singleProfessor);
                 professor.getSubjects().add(subject);
                 em.persist(professor);
-            }else{
-                professor = maybeProfessor.get();
-                professor.getSubjects().add(subject);
-            }
-        }
-    }
-
-    @Override
-    public void updateSubjectToProfessorsAdd(final Subject subject, final List<Professor> professorsToAdd) {
-        subject.getProfessors().addAll(professorsToAdd);
-    }
-
-    @Override
-    public void updateSubjectToProfessorsCreate(final Subject subject, final List<String> professorsToCreate) {
-        for(String prof : professorsToCreate) {
-            final Optional<Professor> maybeProfessor = getByName(prof);
-
-            final Professor professor;
-            if(!maybeProfessor.isPresent()) {
-                professor = new Professor(prof);
-                em.persist(professor);
             } else {
                 professor = maybeProfessor.get();
-            }
-
-            subject.getProfessors().add(professor);
-        }
-    }
-
-    @Override
-    public void updateSubjectToProfessorsRemove(final Subject subject, final List<Professor> professorsToRemove) {
-        for(Professor prof: professorsToRemove){
-            subject.getProfessors().remove(prof);
-        }
-    }
-
-    @Override
-    public void addProfessorsToClasses(final Subject subject, final List<String> classCodes, final List<List<String>> classProfessors) {
-        Map<String, SubjectClass> subjectClassMap = subject.getClassesById();
-        for( int i = 0; i < classCodes.size() ; i++){
-            SubjectClass subjectClass = subjectClassMap.get(classCodes.get(i));
-            for( String professor : classProfessors.get(i)){
-                Optional<Professor> maybeProfessor = getByName(professor);
-                if(maybeProfessor.isPresent()){
-                    Professor professorToAdd = maybeProfessor.get();
-                    if( !subjectClass.getProfessors().contains(professorToAdd)){
-                        subjectClass.getProfessors().add(professorToAdd);
-                    }
-                }
+                professor.getSubjects().add(subject);
             }
         }
     }
 
     @Override
     public void addProfessorsToClass(final SubjectClass subjectClass, final List<String> classProfessors){
-        for( String professor : classProfessors){
+        for(String professor : classProfessors){
             Optional<Professor> maybeProfessor = getByName(professor);
 
             if(maybeProfessor.isPresent()){
@@ -116,21 +51,40 @@ public class ProfessorJpaDao implements ProfessorDao {
     }
 
     @Override
-    public void updateProfessorsToClassesAdd(final Map<SubjectClass, List<Professor>> professorsToAdd) {
-        for(Map.Entry<SubjectClass, List<Professor>> entry : professorsToAdd.entrySet()){
-            for( Professor professor : entry.getValue()){
-                if( !entry.getKey().getProfessors().contains(professor)){
-                    entry.getKey().getProfessors().add(professor);
-                }
-            }
+    public void replaceSubjectProfessors(final Subject subject, final List<String> professors){
+        final Set<Professor> newProfessors = new HashSet<>();
+        for(final String profName : professors){
+            newProfessors.add(getOrGenerateProfessor(profName));
         }
+        subject.setProfessors(newProfessors);
     }
 
     @Override
-    public void updateProfessorsToClassesRemove(final Map<SubjectClass, List<Professor>> professorsToRemove) {
-        for(Map.Entry<SubjectClass, List<Professor>> entry : professorsToRemove.entrySet()){
-            entry.getKey().getProfessors().removeAll(entry.getValue());
+    public void replaceClassProfessors(final SubjectClass subjectClass, final List<String> professors) {
+        final List<Professor> newProfessors = new ArrayList<>();
+        for(final String profName : professors){
+            newProfessors.add(getOrGenerateProfessor(profName));
         }
+        subjectClass.setProfessors(newProfessors);
+    }
+
+    @Override
+    public Optional<Professor> findById(final long id) {
+        return Optional.ofNullable(em.find(Professor.class, id));
+    }
+
+    @Override
+    public Optional<Professor> getByName(final String name) {
+        return em.createQuery("from Professor as p where p.name = :name", Professor.class)
+                .setParameter("name", name)
+                .getResultList()
+                .stream().findFirst();
+    }
+
+    @Override
+    public List<Professor> getAll() {
+        return em.createQuery("from Professor", Professor.class)
+                .getResultList();
     }
 
     private Professor getOrGenerateProfessor(final String profName){
@@ -143,23 +97,5 @@ public class ProfessorJpaDao implements ProfessorDao {
             professor = maybeProfessor.get();
         }
         return professor;
-    }
-
-    @Override
-    public void replaceSubjectProfessors(final Subject subject, final List<String> professors){
-        final Set<Professor> newProfessors = new HashSet<>();
-        for(final String profName : professors){
-           newProfessors.add(getOrGenerateProfessor(profName));
-        }
-        subject.setProfessors(newProfessors);
-    }
-
-    @Override
-    public void replaceClassProfessors(final SubjectClass subjectClass, final List<String> professors) {
-        final List<Professor> newProfessors = new ArrayList<>();
-        for(final String profName : professors){
-            newProfessors.add(getOrGenerateProfessor(profName));
-        }
-        subjectClass.setProfessors(newProfessors);
     }
 }
