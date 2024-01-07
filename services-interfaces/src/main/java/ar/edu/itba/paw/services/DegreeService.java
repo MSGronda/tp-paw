@@ -18,7 +18,6 @@ public interface DegreeService {
 
     Degree create(final Degree.Builder builder);
     void addSubjectToDegrees(final Subject subject, final List<Long> degreeIds, final List<Integer> semesters);
-    void updateSubjectToDegrees(final Subject subject, final List<Long> degreeIds, final List<Integer> semesters);
     void addSemestersToDegree(final Degree degree, final Map<Integer, List<String>> semesterSubjects);
 
     void editName(final Degree degree, final String name);

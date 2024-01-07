@@ -29,6 +29,101 @@ public class DegreeServiceImpl implements DegreeService {
         this.subjectDao = subjectDao;
     }
 
+    @Transactional
+    @Override
+    public Degree create(final Degree.Builder builder) {
+        final Degree degree = builder.build();
+        degreeDao.create(degree);
+
+        return degree;
+    }
+
+    @Transactional
+    @Override
+    public void addSubjectToDegrees(final Subject subject, final List<Long> degreeIds, final List<Integer> semesters) {
+        degreeDao.addSubjectToDegrees(subject, degreeIds, semesters);
+    }
+
+    @Transactional
+    @Override
+    public void addSemestersToDegree(final Degree degree, final Map<Integer, List<String>> semesterSubjects) {
+
+        for (Map.Entry<Integer, List<String>> entry : semesterSubjects.entrySet()) {
+
+            for (String subjectId : entry.getValue()) {
+
+                Optional<Subject> maybeSubject = subjectDao.findById(subjectId);
+
+                if (maybeSubject.isPresent()) {
+                    Subject subject = maybeSubject.get();
+                    DegreeSubject degreeSubject = new DegreeSubject(degree, subject, entry.getKey());
+
+                    if (!degree.getDegreeSubjects().contains(degreeSubject)) {
+                        degree.getDegreeSubjects().add(degreeSubject);
+                    }
+
+                }
+            }
+        }
+    }
+
+    @Transactional
+    @Override
+    public void deleteSemesterFromDegree(final Degree degree, final int semesterId){
+        final List<DegreeSubject> subjects = degree.getDegreeSubjects();
+
+        final List<DegreeSubject> subjectsToDelete = new ArrayList<>();
+        subjects.forEach(subject -> {
+            if(subject.getSemester() == semesterId){
+                subjectsToDelete.add(subject);
+            }
+        });
+
+        subjectsToDelete.forEach(subjects::remove);
+    }
+
+    @Transactional
+    @Override
+    public void delete(final Degree degree) {
+        degreeDao.delete(degree);
+    }
+
+    @Transactional
+    @Override
+    public void editName(final Degree degree, final String name){
+        degreeDao.editName(degree, name);
+    }
+
+    @Transactional
+    @Override
+    public void editTotalCredits(final Degree degree, final int totalCredits){
+        degreeDao.editTotalCredits(degree, totalCredits);
+    }
+
+    @Transactional
+    @Override
+    public void editDegreeSemester(
+            final Degree degree,
+            final AbstractMap.SimpleEntry<OperationType, AbstractMap.SimpleEntry<Integer, String>> op
+    ){
+        final Subject subject = subjectDao.findById(op.getValue().getValue()).orElseThrow(SubjectNotFoundException::new);
+        final DegreeSubject ds = new DegreeSubject(degree, subject, op.getValue().getKey());
+        if(op.getKey() == OperationType.Add){
+            if(!degree.getDegreeSubjects().contains(ds)){
+                degree.getDegreeSubjects().add(ds);
+            }
+        }
+        else if(op.getKey() == OperationType.Remove){
+            degree.getDegreeSubjects().remove(ds);
+        }
+    }
+
+    @Transactional
+    @Override
+    public void replaceSubjectDegrees(final Subject subject, final List<Long> degreeIds, final List<Integer> semesters) {
+        degreeDao.replaceSubjectDegrees(subject, degreeIds, semesters);
+    }
+
     @Override
     public Optional<Degree> findById(final long id) {
         return degreeDao.findById(id);
@@ -79,145 +174,5 @@ public class DegreeServiceImpl implements DegreeService {
                         e -> e.getKey().name(),
                         Map.Entry::getValue
                 ));
-    }
-
-    @Transactional
-    @Override
-    public Degree create(final Degree.Builder builder) {
-        final Degree degree = builder.build();
-        degreeDao.create(degree);
-
-        return degree;
-    }
-
-    @Transactional
-    @Override
-    public void addSubjectToDegrees(final Subject subject, final List<Long> degreeIds, final List<Integer> semesters) {
-        degreeDao.addSubjectToDegrees(subject, degreeIds, semesters);
-    }
-
-    @Transactional
-    @Override
-    public void updateSubjectToDegrees(final Subject subject, final List<Long> degreeIds, final List<Integer> semesters) {
-        List<Degree> degreesToAdd = new ArrayList<>();
-        List<Integer> semestersToAdd = new ArrayList<>();
-
-        List<DegreeSubject> degreesToRemove = new ArrayList<>();
-
-        List<DegreeSubject> degreeToUpdate = new ArrayList<>();
-        List<Integer> semesterToUpdate = new ArrayList<>();
-
-        // itero por la lista de degrees
-        for (int i = 0; i < degreeIds.size(); i++) {
-            Optional<Degree> maybeDegree = degreeDao.findById(degreeIds.get(i));
-
-            if (maybeDegree.isPresent()) {
-                Degree degree = maybeDegree.get();
-
-                //si contiene el degree, 2 casos: si es el mismo semetre -> eliminar, sino actualizar
-                if (subject.getDegrees().contains(degree)) {
-
-                    //itero por los degreeSubjects para encontrar el indicado
-                    for (DegreeSubject degreeSubject : degree.getDegreeSubjects()) {
-                        if (degreeSubject.getSubject().equals(subject)) {
-                            if (degreeSubject.getSemester() != semesters.get(i)) {
-                                //semester se cambio, actualizar
-                                degreeToUpdate.add(degreeSubject);
-                                semesterToUpdate.add(semesters.get(i));
-                            } else {
-                                //semester es el mismo, eliminar
-                                degreesToRemove.add(degreeSubject);
-                            }
-                        }
-                    }
-                } else {
-                    //si no tiene degree, agregar nuevo degreeSubject
-                    degreesToAdd.add(degree);
-                    semestersToAdd.add(semesters.get(i));
-                }
-            }
-        }
-        degreeDao.updateInsertSubjectToDegrees(subject, degreesToAdd, semestersToAdd);
-        degreeDao.updateUpdateSubjectToDegrees(subject, degreeToUpdate, semesterToUpdate);
-        degreeDao.updateDeleteSubjectToDegrees(subject, degreesToRemove);
-
-    }
-
-    @Transactional
-    @Override
-    public void addSemestersToDegree(final Degree degree, final Map<Integer, List<String>> semesterSubjects) {
-
-        for (Map.Entry<Integer, List<String>> entry : semesterSubjects.entrySet()) {
-
-            for (String subjectId : entry.getValue()) {
-
-                Optional<Subject> maybeSubject = subjectDao.findById(subjectId);
-
-                if (maybeSubject.isPresent()) {
-                    Subject subject = maybeSubject.get();
-                    DegreeSubject degreeSubject = new DegreeSubject(degree, subject, entry.getKey());
-
-                    if (!degree.getDegreeSubjects().contains(degreeSubject)) {
-                        degree.getDegreeSubjects().add(degreeSubject);
-                    }
-
-                }
-            }
-        }
-    }
-    @Transactional
-    @Override
-    public void deleteSemesterFromDegree(final Degree degree, final int semesterId){
-        final List<DegreeSubject> subjects = degree.getDegreeSubjects();
-
-        final List<DegreeSubject> subjectsToDelete = new ArrayList<>();
-        subjects.forEach(subject -> {
-            if(subject.getSemester() == semesterId){
-                subjectsToDelete.add(subject);
-            }
-        });
-
-        subjectsToDelete.forEach(subjects::remove);
-    }
-
-    @Transactional
-    @Override
-    public void editName(final Degree degree, final String name){
-        degreeDao.editName(degree, name);
-    }
-    @Transactional
-    @Override
-    public void editTotalCredits(final Degree degree, final int totalCredits){
-        degreeDao.editTotalCredits(degree, totalCredits);
-    }
-
-    @Transactional
-    @Override
-    public void delete(final Degree degree) {
-        degreeDao.delete(degree);
-    }
-
-    @Transactional
-    @Override
-    public void editDegreeSemester(
-        final Degree degree,
-        final AbstractMap.SimpleEntry<OperationType, AbstractMap.SimpleEntry<Integer, String>> op
-    ){
-        final Subject subject = subjectDao.findById(op.getValue().getValue()).orElseThrow(SubjectNotFoundException::new);
-        final DegreeSubject ds = new DegreeSubject(degree, subject, op.getValue().getKey());
-        if(op.getKey() == OperationType.Add){
-            if(!degree.getDegreeSubjects().contains(ds)){
-                degree.getDegreeSubjects().add(ds);
-            }
-        }
-        else if(op.getKey() == OperationType.Remove){
-            degree.getDegreeSubjects().remove(ds);
-        }
-    }
-
-    @Transactional
-    @Override
-    public void replaceSubjectDegrees(final Subject subject, final List<Long> degreeIds, final List<Integer> semesters) {
-        degreeDao.replaceSubjectDegrees(subject, degreeIds, semesters);
     }
 }
