@@ -42,7 +42,9 @@ export const TRANSLATIONS_ES = {
         currentSemester: "Cuatrimestre Actual",
         overview: "Panorama",
         futureSubjects: "Materias futuras",
-        pastSubjects: "Materias aprobadas"
+        pastSubjects: "Materias aprobadas",
+        completedCredits: "Créditos Aprobados",
+        totalCredits: "Total de créditos en tu carrera"
     },
     SubjectCard: {
         credits: "{{n}} creditos",

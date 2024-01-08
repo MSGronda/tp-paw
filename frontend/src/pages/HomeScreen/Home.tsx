@@ -1,4 +1,16 @@
-import {Card, Container, Flex, Grid, rem, Tabs, Text} from '@mantine/core';
+import {
+    Card,
+    Container,
+    createTheme,
+    Divider,
+    Flex,
+    Grid,
+    Group,
+    MantineProvider,
+    rem,
+    Tabs,
+    Text
+} from '@mantine/core';
 import {Navbar } from "../../components/navbar/navbar";
 import classes from './home.module.css';
 import {IconMessageCircle, IconPhoto, IconSettings} from "@tabler/icons-react";
@@ -46,6 +58,73 @@ export default function Home() {
                     </Tabs.Panel>
 
                     <Tabs.Panel value="overview">
+                        <div className={classes.fullsizeTab}>
+                            <Flex gap="md"
+                                  justify="start"
+                                  align="center"
+                                  direction="column"
+                                  miw={200}>
+                                <Card shadow="xs"
+                                      padding="xl"
+                                      color="#efefef"
+                                      className={classes.cardWidth}
+                                      miw={}>
+                                    <Flex gap="md"
+                                          justify="center"
+                                          align="flex-start"
+                                          direction="column">
+                                        <div className={classes.row}>
+                                            <Group>
+                                                <Text fw={700}>
+                                                    {t("Home.completedCredits")}
+                                                </Text>
+                                                <Divider orientation="vertical"/>
+                                                <Text fw={700}>
+                                                    {getCompletedCredits()}
+                                                </Text>
+                                            </Group>
+                                        </div>
+                                        <div className={classes.row}>
+                                            <Group>
+                                                <Text fw={700}>
+                                                    {t("Home.totalCredits")}
+                                                </Text>
+                                                <Divider orientation="vertical"/>
+                                                <Text fw={700}>
+                                                    {getTotalCredits()}
+                                                </Text>
+                                            </Group>
+                                        </div>
+                                    </Flex>
+                                </Card>
+                                <Flex mih={50}
+                                      bg="#efefef"
+                                      gap="lg"
+                                      justify="flex-start"
+                                      align="center"
+                                      direction="row"
+                                      wrap="wrap">
+                                    <Card color="#efefef"
+                                          shadow="xs"
+                                          padding="xl">
+                                        <div>
+                                            <Text>
+                                                LALALALALAL
+                                            </Text>
+                                        </div>
+                                    </Card>
+                                    <Card color="#efefef"
+                                          shadow="xs"
+                                          padding="xl">
+                                        <div>
+                                            <Text>
+                                                LALALALALAL
+                                            </Text>
+                                        </div>
+                                    </Card>
+                                </Flex>
+                            </Flex>
+                        </div>
                         <Grid gutter={{ base: 5, xs: 'md', md: 'xl', xl: 50 }}
                               columns={12}
                               justify="center">
@@ -54,15 +133,38 @@ export default function Home() {
                                     <Card shadow="xs"
                                           padding="xl"
                                           color="#efefef">
-                                        <div>
-                                            <Text>
-                                                LALALALALAL
-                                            </Text>
-                                        </div>
+                                        <Flex gap="md"
+                                              justify="start"
+                                              align="center"
+                                              direction="column"
+                                              wrap="wrap">
+                                            <div className={classes.row}>
+                                                <Group>
+                                                    <Text fw={700}>
+                                                        {t("Home.completedCredits")}
+                                                    </Text>
+                                                    <Divider orientation="vertical"/>
+                                                    <Text fw={700}>
+                                                        {getCompletedCredits()}
+                                                    </Text>
+                                                </Group>
+                                            </div>
+                                            <div className={classes.row}>
+                                                <Group>
+                                                    <Text fw={700}>
+                                                        {t("Home.totalCredits")}
+                                                    </Text>
+                                                    <Divider orientation="vertical"/>
+                                                    <Text fw={700}>
+                                                        {getTotalCredits()}
+                                                    </Text>
+                                                </Group>
+                                            </div>
+                                        </Flex>
                                     </Card>
                                 </Container>
                             </Grid.Col>
-                            <Grid.Col span="content" >
+                            <Grid.Col span="content">
                                 <Container size="responsive">
                                     <Flex mih={50}
                                           bg="#efefef"
@@ -83,7 +185,7 @@ export default function Home() {
                                         <Card color="#efefef"
                                               shadow="xs"
                                               padding="xl">
-                                            <div>
+                                        <div>
                                                 <Text>
                                                     LALALALALAL
                                                 </Text>
@@ -96,14 +198,14 @@ export default function Home() {
                     </Tabs.Panel>
 
                     <Tabs.Panel value="future-subjects">
-                        <Grid gutter="sm">
-                            {getSubjectsCards(subjectsArray).map((item) => <Grid.Col span={2}>{item}</Grid.Col>)}
+                        <Grid gutter="sm" columns={12}>
+                            {getSubjectsCards(subjectsArray).map((item) => <Grid.Col span={3}>{item}</Grid.Col>)}
                         </Grid>
                     </Tabs.Panel>
 
                     <Tabs.Panel value="past-subjects">
                         <Grid gutter="sm">
-                            {getSubjectsCards(subjectsArray).map((item) => <Grid.Col span={2}>{item}</Grid.Col>)}
+                            {getSubjectsCards(subjectsArray).map((item) => <Grid.Col span={3}>{item}</Grid.Col>)}
                         </Grid>
                     </Tabs.Panel>
                 </Tabs>
@@ -111,7 +213,6 @@ export default function Home() {
         </div>
     );
 }
-
 
 export function HomeScreen() {
     const authContext = useContext(AuthContext);
@@ -127,3 +228,10 @@ const getSubjectsCards = subjects => {
     }
     return content;
 };
+function getCompletedCredits() {
+    return 133;
+}
+
+function getTotalCredits() {
+    return 244;
+}
