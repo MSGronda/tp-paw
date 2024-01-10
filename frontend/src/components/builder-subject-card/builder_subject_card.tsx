@@ -2,6 +2,7 @@ import {Card, ActionIcon} from "@mantine/core";
 import classes from "../builder-subject-card/builder_subject_card.module.css";
 import DifficultyChip from "../difficulty-chip/difficulty-chip.tsx";
 import {IconCheck} from "@tabler/icons-react";
+import {t} from "i18next";
 
 
 interface BuilderSubjectCardProps {
@@ -20,7 +21,7 @@ export default function BuilderSubjectCard(props: BuilderSubjectCardProps): JSX.
             <div className={classes.card_row}>
                 <div className={classes.card_column}>
                     <h4 className={classes.card_title}>{name}</h4>
-                    <span>Credits: {credits}</span>
+                    <span>{t("SubjectCard.credits", {n: credits})}</span>
                     <div>
                         <DifficultyChip numReviews={numReviews} difficulty={difficulty}/>
                     </div>

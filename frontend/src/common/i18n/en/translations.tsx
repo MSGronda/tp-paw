@@ -85,4 +85,18 @@ export const TRANSLATIONS_EN = {
     Search: {
         not_found: "We could not find a subject that matched: {{query}}"
     },
+    TimeTable: {
+        day: "Day",
+        time: "Time",
+        class: "Class",
+        building: "Building",
+        mode: "Mode",
+        day1: "Monday",
+        day2: "Tuesday",
+        day3: "Wednesday",
+        day4: "Thursday",
+        day5: "Friday",
+        day6: "Saturday",
+        day7: "Sunday"
+    }
 }

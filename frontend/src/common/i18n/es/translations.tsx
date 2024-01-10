@@ -84,5 +84,19 @@ export const TRANSLATIONS_ES = {
     },
     Search: {
         not_found: "No pudimos encontrar una materia que coincida con: {{query}}"
+    },
+    TimeTable: {
+        day: "Día",
+        time: "Horario",
+        class: "Clase",
+        building: "Edifício",
+        mode: "Modalidad",
+        day1: "Lunes",
+        day2: "Martes",
+        day3: "Miercoles",
+        day4: "Jueves",
+        day5: "Viernes",
+        day6: "Sabado",
+        day7: "Domingo"
     }
 }
