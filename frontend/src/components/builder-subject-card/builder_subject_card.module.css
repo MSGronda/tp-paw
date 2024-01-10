@@ -1,0 +1,24 @@
+.card_title {
+    padding: 0;
+    margin: 0;
+    line-height: 1.2;
+}
+
+.card_area {
+    width: 13rem;
+    height: 8rem;
+}
+
+.card_column {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    height: 100%;
+}
+
+.card_row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 100%;
+}
