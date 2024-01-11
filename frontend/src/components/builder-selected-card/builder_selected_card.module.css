@@ -1,0 +1,14 @@
+.selection_row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 0.5rem 1rem;
+}
+
+.card_area {
+    width: 100%;
+}
+
+.card_title{
+    margin: 0;
+}
