@@ -22,6 +22,7 @@ tbody th{
     font-weight: 600;
     padding: 0.15rem 0.6rem;
     border-bottom: 1px solid #e9ecef;
+    background-color: #f8f9fa;
 }
 tbody tr {
     transition: background-color 0.15s ease-in-out;
