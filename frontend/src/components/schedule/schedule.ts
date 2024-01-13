@@ -1,6 +1,11 @@
-class Schedule {
-    constructor(rows, cols) {
-        this.scheduleHTML = document.getElementById('weekly-schedule');
+export class Schedule {
+    private rows: number;
+    private cols: number;
+    private scheduleArray: any[];
+    private chosenSubjectMap: {};
+    private colors: string[];
+    private currentColor: number;
+    constructor(rows: number, cols: number) {
         this.rows = rows;
         this.cols = cols;
         this.scheduleArray = [];
@@ -21,7 +26,7 @@ class Schedule {
         }
         this.setupSchedule();
     }
-    normalizeArrayPos(max, val){
+    normalizeArrayPos(max: number, val: number){
         return Math.max(Math.min(max - 1, val), 0)
     }
 
@@ -117,7 +122,7 @@ class Schedule {
         column = this.normalizeArrayPos(this.cols, column);
         rowStart = this.normalizeArrayPos(this.rows, rowStart);
         rowEnd = this.normalizeArrayPos(this.rows, rowEnd);
-        
+
         const elem = document.getElementById('r'+rowStart+'c'+column)
         elem.rowSpan = rowEnd - rowStart
         elem.style.backgroundColor = this.colors[this.currentColor]
@@ -183,29 +188,5 @@ class Schedule {
             this.removeFromCalendarArray(arrayPos.rowStart,arrayPos.rowEnd,arrayPos.column)
         }
         delete this.chosenSubjectMap[subjectId]
-    }
-
-    generateCsv(){
-        const csvData = [];
-
-        // day of weak beader
-        csvData.push([' ',daysOfWeek[0],daysOfWeek[1],daysOfWeek[2],daysOfWeek[3],daysOfWeek[4],daysOfWeek[5]].join(',') )
-
-        const table = document.getElementById('weekly-schedule')
-
-        for(let row in this.scheduleArray){
-            const rowData = [];
-            // time
-            rowData.push(table.children[row].children[0].innerHTML)
-
-            for(let col in this.scheduleArray[row]){
-                if(this.scheduleArray[row][col] === 0)
-                    rowData.push(' ');
-                else
-                    rowData.push(this.scheduleArray[row][col])
-            }
-            csvData.push(rowData.join(','));
-        }
-        return csvData.join('\n');
     }
 }

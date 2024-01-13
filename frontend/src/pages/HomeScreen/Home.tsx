@@ -68,7 +68,7 @@ export default function Home() {
                                       padding="xl"
                                       color="#efefef"
                                       className={classes.cardWidth}
-                                      miw={}>
+                                      >
                                     <Flex gap="md"
                                           justify="center"
                                           align="flex-start"
