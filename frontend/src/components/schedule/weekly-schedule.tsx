@@ -7,8 +7,7 @@ interface WeeklyScheduleProps {
     cols: number;
 
     // Hay para cada classTime, hay un subject name
-    subjectNames: string[];
-    classTimes: ClassTime[];
+    subjectClasses: [string, ClassTime][];
 }
 
 const HIDDEN_CELL = -1;
@@ -22,11 +21,11 @@ function getRowIndex(time: string){
 function calcRowSpan(classTime: ClassTime): number {
     return getRowIndex(classTime.endTime) - getRowIndex(classTime.startTime);
 }
-function findEventByIdx(rowIdx: number, colIdx: number, classTimes: ClassTime[]): number{
-    for(let i=0; i<classTimes.length; i++){
-        if(colIdx + 1 == classTimes[i].day){
-            const startTimeIdx = getRowIndex(classTimes[i].startTime);
-            const endTimeIdx = getRowIndex(classTimes[i].endTime);
+function findEventByIdx(rowIdx: number, colIdx: number, subjectClasses: [string, ClassTime][]): number{
+    for(let i=0; i<subjectClasses.length; i++){
+        if(colIdx + 1 == subjectClasses[i][1].day){
+            const startTimeIdx = getRowIndex(subjectClasses[i][1].startTime);
+            const endTimeIdx = getRowIndex(subjectClasses[i][1].endTime);
             if(rowIdx == startTimeIdx){
                 return i;
             }
@@ -50,7 +49,7 @@ function generateTimeSlots(rows: number): string[] {
 }
 
 export default function WeeklySchedule(props: WeeklyScheduleProps) {
-    const {rows, cols, subjectNames, classTimes} = props;
+    const {rows, cols, subjectClasses} = props;
     const colors = [
         '#fda4a5', '#fdba74' ,'#fce046', '#bff265',
         '#86eead', '#5febd4', '#7dd2fd', '#a4b5fc'
@@ -64,16 +63,16 @@ export default function WeeklySchedule(props: WeeklyScheduleProps) {
     };
 
     const renderTableCells = (rowIdx: number, colIdx: number) => {
-        const idx = findEventByIdx(rowIdx, colIdx, classTimes);
+        const idx = findEventByIdx(rowIdx, colIdx, subjectClasses);
         if(idx>=0){
             const cellColor = getNextColor();
             return (
-                <td rowSpan={calcRowSpan(classTimes[idx])} style={{backgroundColor: cellColor}}>
+                <td rowSpan={calcRowSpan(subjectClasses[idx][1])} style={{backgroundColor: cellColor}}>
                     <div style={{maxWidth: "6rem", textAlign: "center", alignSelf: "center", fontWeight: "bold"}}>
-                        {subjectNames[idx]}
+                        {subjectClasses[idx][0]}
                     </div>
-                    <div style={{textAlign: "center"}}>{classTimes[idx].classNumber}</div>
-                    <div style={{textAlign: "center"}}>{classTimes[idx].mode}</div>
+                    <div style={{textAlign: "center"}}>{subjectClasses[idx][1].classNumber}</div>
+                    <div style={{textAlign: "center"}}>{subjectClasses[idx][1].mode}</div>
                 </td>
             );
         }

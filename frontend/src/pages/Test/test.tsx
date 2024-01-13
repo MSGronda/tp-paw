@@ -1,29 +1,32 @@
 import classes from './test.module.css';
 import "../../common/i18n/index";
 import WeeklySchedule from "../../components/schedule/weekly-schedule.tsx";
+import ClassTime from "../../models/ClassTime.ts";
 
 export default function Test() {
-    const classTimes = [
-        {
-            day: 1,
-            startTime: "8:00",
-            endTime: "10:00",
-            classNumber: "101F",
-            building: "SDF",
-            mode: "Presencial"
-        },
-        {
-            day: 5,
-            startTime: "11:00",
-            endTime: "22:00",
-            classNumber: "101F",
-            building: "SDF",
-            mode: "Presencial"
-        }
-    ];
-    const subjectNames = [
-        "Cacona 1",
-        "Cacona 1",
+    const subjectClasses:[string, ClassTime][] = [
+        [
+            "Cacona 1",
+            {
+                day: 1,
+                startTime: "8:00",
+                endTime: "10:00",
+                classNumber: "101F",
+                building: "SDF",
+                mode: "Presencial"
+            }
+        ],
+        [
+            "Cacona 1",
+            {
+                day: 5,
+                startTime: "11:00",
+                endTime: "22:00",
+                classNumber: "101F",
+                building: "SDF",
+                mode: "Presencial"
+            }
+        ]
     ]
 
     return (
@@ -32,8 +35,7 @@ export default function Test() {
                     <WeeklySchedule
                         rows={29}
                         cols={7}
-                        classTimes={classTimes}
-                        subjectNames={subjectNames}
+                        subjectClasses={subjectClasses}
                     />
                 </div>
         </div>
