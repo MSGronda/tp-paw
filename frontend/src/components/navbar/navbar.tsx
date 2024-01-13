@@ -14,7 +14,7 @@ export function Navbar() {
   const links = [
     { link: '/', label: t('Navbar.home') },
     { link: '/curriculum', label: t('Navbar.curriculum') },
-    { link: '/semesterbuilder', label: t('Navbar.semesterbuilder') },
+    { link: '/builder', label: t('Navbar.semesterbuilder') },
     { link: '/profile', label: t('Navbar.profile') },
   ];
 

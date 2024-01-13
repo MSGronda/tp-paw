@@ -8,6 +8,7 @@ import { AnonymousRoute } from './AnonymousRoute.tsx';
 import { PrivateRoute } from './PrivateRoute.tsx';
 import Profile from './pages/Profile/profile.tsx';
 import Search from './pages/Search/search.tsx';
+import SemesterBuilder from "./pages/SemesterBuilder/semester_builder.tsx";
 
 
 
@@ -44,7 +45,11 @@ const router = createBrowserRouter([
     {
         path: '/profile',
         element: <Profile/>
-    }
+    },
+    {
+        path: '/builder',
+        element: <SemesterBuilder/>
+    },
 ]);
 
 export default router;

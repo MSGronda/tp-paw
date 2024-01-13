@@ -82,15 +82,15 @@ public class SubjectController {
             dir
         );
 
-        int lastPage = subjectService.getTotalPagesForSearch(
-            user,
-            query,
-            credits,
-            department,
-            difficulty,
-            timeDemand,
-            orderBy
-        );
+//        int lastPage = subjectService.getTotalPagesForSearch(
+//            user,
+//            query,
+//            credits,
+//            department,
+//            difficulty,
+//            timeDemand,
+//            orderBy
+//        );
 
         final List<SubjectDto> subjectsDtos = subs.stream().map(subject -> SubjectDto.fromSubject(uriInfo, subject)).collect(Collectors.toList());
 
@@ -98,7 +98,7 @@ public class SubjectController {
             return Response.noContent().build();
 
         Response.ResponseBuilder responseBuilder = Response.ok(new GenericEntity<List<SubjectDto>>(subjectsDtos){});
-        PaginationLinkBuilder.getResponsePaginationLinks(responseBuilder, uriInfo, page, lastPage);
+//        PaginationLinkBuilder.getResponsePaginationLinks(responseBuilder, uriInfo, page, lastPage);
         return responseBuilder.build();
     }
 

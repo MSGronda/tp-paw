@@ -47,6 +47,7 @@ function SubjectCard(props: SubjectCardProps): JSX.Element {
                     { numReviews > 0 && timeDemand == 'LOW' ? <Badge className={classes.badge_row_elem} color={'green.7'}>{t("SubjectCard.low")}</Badge> : null }
                     { numReviews > 0 && timeDemand == 'MEDIUM' ? <Badge className={classes.badge_row_elem} color={'blue.7'}>{t("SubjectCard.medium")}</Badge> : null }
                     { numReviews > 0 && timeDemand == 'HIGH' ? <Badge className={classes.badge_row_elem} color={'red.7'}>{t("SubjectCard.high")}</Badge> : null }
+
                     { numReviews > 0 ? <span>{t("SubjectCard.reviews", {n: numReviews})}</span> : null }
                     { numReviews == 0 ? <Badge color={'gray.7'}>{t("SubjectCard.done_tooltip")}</Badge> : null }
                 </div>

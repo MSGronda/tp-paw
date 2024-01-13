@@ -28,4 +28,17 @@ export class SubjectService {
             return handleResponse(error.response);
         }
     }
+
+    async getSubjectsUserCan(userId: number) {
+        try{
+            const config: any = {};
+            config.params = {
+                available: userId
+            };
+            const res = await axiosService.authAxiosWrapper(axiosService.GET, `${path}`, config);
+            return handleResponse(res);
+        } catch (error: any) {
+            return handleResponse(error.response);
+        }
+    }
 }
