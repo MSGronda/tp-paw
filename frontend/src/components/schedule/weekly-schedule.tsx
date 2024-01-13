@@ -29,7 +29,7 @@ function findEventByIdx(rowIdx: number, colIdx: number, subjectClasses: [string,
             if(rowIdx == startTimeIdx){
                 return i;
             }
-            else if(startTimeIdx < rowIdx && rowIdx <= endTimeIdx){
+            else if(startTimeIdx < rowIdx && rowIdx < endTimeIdx){
                 return HIDDEN_CELL;
             }
             return EMPTY_CELL;
