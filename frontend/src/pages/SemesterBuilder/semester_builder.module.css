@@ -1,7 +1,57 @@
-.available_card {
-    max-width: 20rem;
+.general_area {
+    background-color: #efefef;
+    height: 100vh;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+
+}
+.container_95 {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-evenly;
+
+    width: min(max(800px, 90%), 100%);
+    height: 92%;
+    padding-left: 2rem;
+    padding-right: 2rem;
+    margin: auto 0;
+    align-self: center;
+}
+.section_titles {
+    padding: 0.75rem 1rem;
+    margin: 0;
 }
 
-.background {
-    background-color: #efefef;
+/* Available Subjects */
+
+.available_card {
+    width: 30rem;
+    height: 100%;
 }
+.available_header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.available_subjects_list {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    overflow-y: auto;
+}
+
+/* Selected Classes */
+.selected_card {
+    width: 35rem;
+    height: 100%;
+}
+.selected_header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.selected_list {
+    overflow-y: auto;
+}
+
+

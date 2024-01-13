@@ -2,26 +2,24 @@ import {Card, ActionIcon, Divider} from "@mantine/core";
 import classes from "./builder_selected_card.module.css"
 import "../../common/table-style.css";
 import {IconCheck} from "@tabler/icons-react";
-import ClassTime from "../../models/ClassTime.ts";
 import {t} from "i18next";
 import getDayName from "../../common/timeTable.ts";
+import SelectedSubject from "../../models/SelectedSubject.ts";
 
 interface BuilderClassTimeCardProps {
-    subjectName: string;
-    className: string;
-    times: ClassTime[];
-    selectionCallback: () => void;
+    selected: SelectedSubject;
+    removeCallback: (id: string, className: string) => void;
 }
 
 export default function BuilderSelectedCard(props: BuilderClassTimeCardProps): JSX.Element {
-    const {subjectName, className, times, selectionCallback} = props;
+    const {selected, removeCallback} = props;
 
     return (
         <Card padding={0} className={classes.card_area} withBorder>
             <Card.Section >
                 <div className={classes.selection_row}>
-                    <h4 className={classes.card_title}>{subjectName} - {className}</h4>
-                    <ActionIcon variant="default" onClick={selectionCallback}>
+                    <h4 className={classes.card_title}>{selected.name} - {selected.className}</h4>
+                    <ActionIcon variant="default" onClick={() => {removeCallback(selected.id, selected.className)}}>
                         <IconCheck style={{ width: '70%', height: '70%' }} stroke={1.5} />
                     </ActionIcon>
                 </div>
@@ -38,7 +36,7 @@ export default function BuilderSelectedCard(props: BuilderClassTimeCardProps): J
                 </tr>
                 </thead>
                 <tbody>
-                    {times.map((time) => (
+                    {selected.times.map((time) => (
                         <tr>
                             <td>{getDayName(time.day)}</td>
                             <td>{time.startTime} - {time.endTime}</td>

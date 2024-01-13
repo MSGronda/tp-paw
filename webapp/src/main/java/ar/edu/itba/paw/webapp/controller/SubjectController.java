@@ -82,6 +82,8 @@ public class SubjectController {
             dir
         );
 
+        // TODO: @MC, acordate de arreglar esto para el caso que de available, unLockable, done, future, etc
+
 //        int lastPage = subjectService.getTotalPagesForSearch(
 //            user,
 //            query,
