@@ -1,11 +1,15 @@
 import {useState} from "react";
 import classes from "../SemesterBuilder/semester_builder.module.css";
 import {Navbar} from "../../components/navbar/navbar.tsx";
-import {Card, Divider, Select} from "@mantine/core";
+import {ActionIcon, Card, Divider, Select} from "@mantine/core";
 import Subject from "../../models/Subject.ts";
 import BuilderSubjectCard from "../../components/builder-subject-card/builder_subject_card.tsx";
 import BuilderSelectedCard from "../../components/builder-selected-card/builder_selected_card.tsx";
 import SelectedSubject from "../../models/SelectedSubject.ts";
+import DifficultyChip from "../../components/difficulty-chip/difficulty-chip.tsx";
+import TimeDemandChip from "../../components/time-demand-chip/time-demand-chip.tsx";
+import {IconCalendarEvent, IconCheck, IconList} from "@tabler/icons-react";
+import WeeklySchedule from "../../components/schedule/weekly-schedule.tsx";
 
 const dummySubjects: Subject[] = [
     {
@@ -212,12 +216,17 @@ export default function SemesterBuilder() {
 
     const [subjects, setSubjects] = useState<Subject[]>(dummySubjects);
     const [selectedSubjects, setSelectedSubjects] = useState<SelectedSubject[]>(dummySelected);
+    const [showSchedule, setShowSchedule] = useState(false);
 
     const selectSubject = (id: string) => {
         // TODO
     }
     const removeSubject = (id: string, classId: string) => {
         // TODO
+    }
+
+    const showScheduleAction = () => {
+        setShowSchedule(!showSchedule);
     }
 
     return (
@@ -234,7 +243,6 @@ export default function SemesterBuilder() {
                             <Select
                                 data={['Name', 'Credits', 'Difficulty', 'Time Demand']}
                                 defaultValue="Name"
-                                style={{paddingRight: "1rem"}}
                                 allowDeselect={false}
                             />
                         </div>
@@ -250,38 +258,112 @@ export default function SemesterBuilder() {
                     </div>
                 </Card>
 
-                {/* Selected Subjects */}
+                {/* Schedule */}
+                {
+                    showSchedule ?
+                        <Card className={classes.schedule_card} withBorder>
+                            <Card.Section>
+                                <div className={classes.selected_header}>
+                                    <h4 className={classes.section_titles}>Your timetable</h4>
+                                    <ActionIcon variant="default" onClick={showScheduleAction}>
+                                        <IconList style={{ width: '70%', height: '70%' }} stroke={1.5} />
+                                    </ActionIcon>
+                                </div>
+                                <Divider/>
+                            </Card.Section>
+                            <div className={classes.schedule_area}>
+                                <WeeklySchedule rows={29} cols={7} subjectClasses={selectedSubjects}/>
+                            </div>
+                        </Card>
+                        :
+                    <></>
+                }
 
-                <Card className={classes.selected_card} withBorder>
-                    <Card.Section>
-                        <div className={classes.selected_header}>
-                            <h4 className={classes.section_titles}>Selected Subjects</h4>
+                {/* Selected Subjects */}
+                {
+                    !showSchedule ?
+                    <Card className={classes.selected_card} withBorder>
+                        <Card.Section>
+                            <div className={classes.selected_header}>
+                                <h4 className={classes.section_titles}>Selected Subjects</h4>
+                                <ActionIcon variant="default" onClick={showScheduleAction}>
+                                    <IconCalendarEvent style={{ width: '70%', height: '70%' }} stroke={1.5} />
+                                </ActionIcon>
+                            </div>
+                            <Divider/>
+                        </Card.Section>
+                        <div className={classes.selected_list}>
+                            {selectedSubjects.map((selected) => (
+                                <BuilderSelectedCard
+                                    selected={selected}
+                                    removeCallback={removeSubject}
+                                />
+                            ))}
                         </div>
-                        <Divider/>
-                    </Card.Section>
-                    <div className={classes.selected_list}>
-                        {selectedSubjects.map((selected) => (
-                            <BuilderSelectedCard
-                                selected={selected}
-                                removeCallback={removeSubject}
-                            />
-                        ))}
-                    </div>
-                </Card>
+                    </Card>
+                        :
+                    <></>
+                }
+
 
                 {/* Overview */}
+                {
+                    !showSchedule ?
+                    <Card className={classes.selected_card} withBorder>
+                        <Card.Section>
+                            <div className={classes.selected_header}>
+                                <h4 className={classes.section_titles}>Your semester overview</h4>
+                            </div>
+                            <Divider/>
+                        </Card.Section>
+                        <div>
+                            <div className={classes.info_card}>
+                                <Card  withBorder>
+                                    <div className={classes.info_row}>
+                                        <span style={{paddingRight: '0.5rem'}}>Number of credits</span>
+                                        <Divider orientation="vertical" />
+                                        <span style={{paddingLeft: '0.5rem'}}>5</span>
+                                    </div>
+                                </Card>
+                            </div>
+                            <div className={classes.info_card}>
+                                <Card  withBorder>
+                                    <div className={classes.info_row}>
+                                        <span style={{paddingRight: '0.5rem'}}>Time Demand</span>
+                                        <Divider orientation="vertical" />
+                                        <div style={{paddingLeft: '0.5rem'}}>
+                                            <TimeDemandChip numReviews={5} timeDemand={'HIGH'}/>
+                                        </div>
+                                    </div>
+                                </Card>
+                            </div>
+                            <div className={classes.info_card}>
+                                <Card  withBorder>
+                                    <div className={classes.info_row}>
+                                        <span style={{paddingRight: '0.5rem'}}>Overall difficulty</span>
+                                        <Divider orientation="vertical" />
+                                        <div style={{paddingLeft: '0.5rem'}}>
+                                            <DifficultyChip numReviews={5} difficulty={'HARD'}/>
+                                        </div>
+                                    </div>
+                                </Card>
+                            </div>
+                            <div className={classes.info_card}>
+                                <Card withBorder>
+                                    <Card.Section>
+                                        <p className={classes.subsection_title}>By doing this semester you unlock</p>
+                                        <Divider />
+                                    </Card.Section>
+                                    <div className={classes.unlockable_area}>
 
-                <Card className={classes.selected_card} withBorder>
-                    <Card.Section>
-                        <div className={classes.selected_header}>
-                            <h4 className={classes.section_titles}>Your semester overview</h4>
+                                    </div>
+                                </Card>
+                            </div>
                         </div>
-                        <Divider/>
-                    </Card.Section>
-                    <div>
-
-                    </div>
-                </Card>
+                    </Card>
+                    :
+                    <></>
+                }
             </div>
         </div>
     )

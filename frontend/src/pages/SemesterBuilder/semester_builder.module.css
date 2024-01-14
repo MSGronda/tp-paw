@@ -19,12 +19,23 @@
     align-self: center;
 }
 .section_titles {
-    padding: 0.75rem 1rem;
+    margin: 0;
+}
+.subsection_title{
+    padding: 0.5rem 0.5rem;
     margin: 0;
 }
 
-/* Available Subjects */
+/* Schedule */
+.schedule_card {
+    width: 70rem;
+    height: 100%;
+}
+.schedule_area{
+    overflow-y: auto;
+}
 
+/* Available Subjects */
 .available_card {
     width: 30rem;
     height: 100%;
@@ -33,6 +44,7 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
+    margin: 0.75rem;
 }
 .available_subjects_list {
     display: grid;
@@ -49,9 +61,23 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
+    margin: 0.75rem;
 }
 .selected_list {
     overflow-y: auto;
 }
 
+/* Overview */
+.info_card {
+    padding: 0.5rem 0;
+}
+
+.info_row {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+.unlockable_area {
+    min-height: 30rem;
+}
 

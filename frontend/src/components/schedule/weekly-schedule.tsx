@@ -1,13 +1,13 @@
 import {t} from "i18next";
 import "../../common/table-style.css";
-import ClassTime from "../../models/ClassTime.ts";
+import SelectedSubject from "../../models/SelectedSubject.ts";
 
 interface WeeklyScheduleProps {
     rows: number;
     cols: number;
 
     // Hay para cada classTime, hay un subject name
-    subjectClasses: [string, ClassTime][];
+    subjectClasses: SelectedSubject[];
 }
 
 const HIDDEN_CELL = -1;
@@ -18,24 +18,27 @@ function getRowIndex(time: string){
         return -1
     return (parseInt(time.split(":")[0]) - 8)*2 + (parseInt(time.split(":")[1]) === 30 ? 1 : 0);
 }
-function calcRowSpan(classTime: ClassTime): number {
-    return getRowIndex(classTime.endTime) - getRowIndex(classTime.startTime);
+function calcRowSpan(startTime: string, endTime: string): number {
+    return getRowIndex(endTime) - getRowIndex(startTime);
 }
-function findEventByIdx(rowIdx: number, colIdx: number, subjectClasses: [string, ClassTime][]): number{
+function findEventByIdx(rowIdx: number, colIdx: number, subjectClasses: SelectedSubject[]): [number, number]{
     for(let i=0; i<subjectClasses.length; i++){
-        if(colIdx + 1 == subjectClasses[i][1].day){
-            const startTimeIdx = getRowIndex(subjectClasses[i][1].startTime);
-            const endTimeIdx = getRowIndex(subjectClasses[i][1].endTime);
-            if(rowIdx == startTimeIdx){
-                return i;
+        for(let j=0; j<subjectClasses[i].times.length; j++){
+            if(colIdx + 1 == subjectClasses[i].times[j].day){
+                const startTimeIdx = getRowIndex(subjectClasses[i].times[j].startTime);
+                const endTimeIdx = getRowIndex(subjectClasses[i].times[j].endTime);
+                if(rowIdx == startTimeIdx){
+                    return [i,j];
+                }
+                else if(startTimeIdx < rowIdx && rowIdx < endTimeIdx){
+                    return [HIDDEN_CELL, HIDDEN_CELL];
+                }
+                return [EMPTY_CELL, EMPTY_CELL];
             }
-            else if(startTimeIdx < rowIdx && rowIdx < endTimeIdx){
-                return HIDDEN_CELL;
-            }
-            return EMPTY_CELL;
         }
+
     }
-    return EMPTY_CELL;
+    return [EMPTY_CELL, EMPTY_CELL];
 }
 
 function generateTimeSlots(rows: number): string[] {
@@ -63,20 +66,21 @@ export default function WeeklySchedule(props: WeeklyScheduleProps) {
     };
 
     const renderTableCells = (rowIdx: number, colIdx: number) => {
-        const idx = findEventByIdx(rowIdx, colIdx, subjectClasses);
-        if(idx>=0){
+        const [i,j] = findEventByIdx(rowIdx, colIdx, subjectClasses);
+
+        if(i>=0){
             const cellColor = getNextColor();
             return (
-                <td rowSpan={calcRowSpan(subjectClasses[idx][1])} style={{backgroundColor: cellColor}}>
+                <td rowSpan={calcRowSpan(subjectClasses[i].times[j].startTime, subjectClasses[i].times[j].endTime)} style={{backgroundColor: cellColor}}>
                     <div style={{maxWidth: "6rem", textAlign: "center", alignSelf: "center", fontWeight: "bold"}}>
-                        {subjectClasses[idx][0]}
+                        {subjectClasses[i].name}
                     </div>
-                    <div style={{textAlign: "center"}}>{subjectClasses[idx][1].classNumber}</div>
-                    <div style={{textAlign: "center"}}>{subjectClasses[idx][1].mode}</div>
+                    <div style={{textAlign: "center"}}>{subjectClasses[i].times[j].classNumber}</div>
+                    <div style={{textAlign: "center"}}>{subjectClasses[i].times[j].mode}</div>
                 </td>
             );
         }
-        else if(idx==HIDDEN_CELL){
+        else if(i==HIDDEN_CELL){
             return <td style={{display: "none"}}></td>;
         }
         return <td></td>;
