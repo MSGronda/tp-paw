@@ -57,7 +57,8 @@ export const TRANSLATIONS_EN = {
         medium: "Normal time demand",
         high: "Very time demanding",
         reviews: "{{n}} reviews",
-        no_reviews: "No reviews"
+        no_reviews: "No reviews",
+        no_info: "No information"
     },
     Navbar: {
         home: "Home",

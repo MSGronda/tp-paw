@@ -57,7 +57,8 @@ export const TRANSLATIONS_ES = {
         medium: "Demanda de tiempo normal",
         high: "Requiere mucho tiempo",
         reviews: "{{n}} reseñas",
-        no_reviews: "No hay reseñas"
+        no_reviews: "No hay reseñas",
+        no_info: "Sin informacion"
     },
     Navbar: {
         home: "Inicio",

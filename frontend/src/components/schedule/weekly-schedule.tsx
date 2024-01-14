@@ -53,15 +53,21 @@ function generateTimeSlots(rows: number): string[] {
 
 export default function WeeklySchedule(props: WeeklyScheduleProps) {
     const {rows, cols, subjectClasses} = props;
+    const timeSlots = generateTimeSlots(rows);
+
     const colors = [
         '#fda4a5', '#fdba74' ,'#fce046', '#bff265',
         '#86eead', '#5febd4', '#7dd2fd', '#a4b5fc'
     ]
-    const timeSlots = generateTimeSlots(rows);
     let currentColor = 1;
+    const colorMap = new Map<string, string>();
 
-    const getNextColor = () => {
-        currentColor = (currentColor + 1) % colors.length
+    const getColor = (subjectId: string) => {
+        if(colorMap.has(subjectId)){
+            return colorMap.get(subjectId);
+        }
+        currentColor = (currentColor + 1) % colors.length;
+        colorMap.set(subjectId, colors[currentColor]);
         return colors[currentColor];
     };
 
@@ -69,11 +75,13 @@ export default function WeeklySchedule(props: WeeklyScheduleProps) {
         const [i,j] = findEventByIdx(rowIdx, colIdx, subjectClasses);
 
         if(i>=0){
-            const cellColor = getNextColor();
+            const cellColor = getColor(subjectClasses[i].id);
             return (
                 <td rowSpan={calcRowSpan(subjectClasses[i].times[j].startTime, subjectClasses[i].times[j].endTime)} style={{backgroundColor: cellColor}}>
-                    <div style={{maxWidth: "6rem", textAlign: "center", alignSelf: "center", fontWeight: "bold"}}>
-                        {subjectClasses[i].name}
+                    <div style={{textAlign: "center", fontWeight: "bold", display: "flex", justifyContent: "center"}}>
+                        <h4 style={{maxWidth: "6rem", padding: 0, margin: 0}}>
+                            {subjectClasses[i].name}
+                        </h4>
                     </div>
                     <div style={{textAlign: "center"}}>{subjectClasses[i].times[j].classNumber}</div>
                     <div style={{textAlign: "center"}}>{subjectClasses[i].times[j].mode}</div>

@@ -18,6 +18,7 @@ export default function DifficultyChip(props: DifficultyChipProps): JSX.Element 
                     { numReviews > 0 && difficulty == 'EASY' ? <Badge className={classes.badge_row_elem} color={'green.7'}>{t("SubjectCard.easy")}</Badge> : null }
                     { numReviews > 0 && difficulty == 'NORMAL' ? <Badge className={classes.badge_row_elem} color={'blue.7'}>{t("SubjectCard.normal")}</Badge> : null }
                     { numReviews > 0 && difficulty == 'HARD' ? <Badge className={classes.badge_row_elem} color={'red.7'}>{t("SubjectCard.hard")}</Badge> : null }
+                    { difficulty == 'NO-INFO' ? <Badge className={classes.badge_row_elem} color={'gray.7'}>{t("SubjectCard.no_info")}</Badge> : null }
                 </div>
             </div>
     );

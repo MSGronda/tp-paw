@@ -1,26 +1,27 @@
 import {Card, ActionIcon, Divider} from "@mantine/core";
-import classes from "./builder_selected_card.module.css"
+import classes from "./builder_select_class_card.module.css"
 import "../../common/table-style.css";
-import {IconX} from "@tabler/icons-react";
+import {IconCheck} from "@tabler/icons-react";
 import {t} from "i18next";
 import getDayName from "../../common/timeTable.ts";
-import SelectedSubject from "../../models/SelectedSubject.ts";
+import Class from "../../models/Class.ts";
 
-interface BuilderClassTimeCardProps {
-    selected: SelectedSubject;
-    removeCallback: (id: string, className: string) => void;
+
+interface BuilderSelectClassCardProps {
+    subjectClass: Class;
+    addClassCallback: (idClass: string) => void;
 }
 
-export default function BuilderSelectedCard(props: BuilderClassTimeCardProps): JSX.Element {
-    const {selected, removeCallback} = props;
+export default function BuilderSelectClassCard(props: BuilderSelectClassCardProps): JSX.Element {
+    const {subjectClass, addClassCallback} = props;
 
     return (
         <Card padding={0} className={classes.card_area} withBorder>
             <Card.Section >
                 <div className={classes.selection_row}>
-                    <h4 className={classes.card_title}>{selected.name} - {selected.className}</h4>
-                    <ActionIcon variant="default" onClick={() => {removeCallback(selected.id, selected.className)}}>
-                        <IconX style={{ width: '70%', height: '70%' }} stroke={1.5} />
+                    <h4 className={classes.card_title}>{subjectClass.idClass}</h4>
+                    <ActionIcon variant="default" onClick={() => {addClassCallback(subjectClass.idClass)}}>
+                        <IconCheck style={{ width: '70%', height: '70%' }} stroke={1.5} />
                     </ActionIcon>
                 </div>
                 <Divider/>
@@ -36,7 +37,7 @@ export default function BuilderSelectedCard(props: BuilderClassTimeCardProps): J
                 </tr>
                 </thead>
                 <tbody>
-                    {selected.times.map((time) => (
+                    {subjectClass.locations.map((time) => (
                         <tr>
                             <td>{getDayName(time.day)}</td>
                             <td>{time.startTime} - {time.endTime}</td>
