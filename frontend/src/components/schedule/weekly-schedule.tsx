@@ -27,18 +27,14 @@ function findEventByIdx(rowIdx: number, colIdx: number, subjectClasses: Selected
             if(colIdx + 1 == subjectClasses[i].selectedClass.locations[j].day){
                 const startTimeIdx = getRowIndex(subjectClasses[i].selectedClass.locations[j].startTime);
                 const endTimeIdx = getRowIndex(subjectClasses[i].selectedClass.locations[j].endTime);
-                console.log(`${startTimeIdx}, ${endTimeIdx}`)
-                console.log(subjectClasses.length)
                 if(rowIdx == startTimeIdx){
                     return [i,j];
                 }
                 else if(startTimeIdx < rowIdx && rowIdx < endTimeIdx){
                     return [HIDDEN_CELL, HIDDEN_CELL];
                 }
-                return [EMPTY_CELL, EMPTY_CELL];
             }
         }
-
     }
     return [EMPTY_CELL, EMPTY_CELL];
 }
