@@ -10,7 +10,7 @@ import {Grid} from "@mantine/core/lib";
 
 
 
-export function Subject() {
+export function SubjectInfo() {
     const { t } = useTranslation();
     const iconStyle = { width: rem(12), height: rem(12) };
     const subject: Subject = {
@@ -40,7 +40,7 @@ export function Subject() {
                         <Tabs.Tab value="professors-panel" leftSection={<IconPhoto style={iconStyle} />}> {t("Subject.classProf")} </Tabs.Tab>
                     </Tabs.List>
 
-                    
+
                 </Tabs>
             </Card>
         </div>
@@ -51,7 +51,7 @@ export function SubjectScreen() {
     const authContext = useContext(AuthContext);
     const isLoggedIn = authContext.isAuthenticated;
     return (
-        isLoggedIn ? <Subject/> : <Landing/>
+        isLoggedIn ? <SubjectInfo/> : <Landing/>
     );
 }
 
