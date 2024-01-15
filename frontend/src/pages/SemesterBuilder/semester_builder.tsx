@@ -2,7 +2,7 @@ import {useState} from "react";
 import classes from "../SemesterBuilder/semester_builder.module.css";
 import {Navbar} from "../../components/navbar/navbar.tsx";
 import {ActionIcon, Card, Divider, Select} from "@mantine/core";
-import Subject from "../../models/Subject.ts";
+import {Subject, getDifficultyValue, getTimeDemandValue} from "../../models/Subject.ts";
 import BuilderSubjectCard from "../../components/builder-subject-card/builder_subject_card.tsx";
 import BuilderSelectedCard from "../../components/builder-selected-card/builder_selected_card.tsx";
 import {SelectedSubject, selectedSubjectToSubject, subjectToSelectedSubject} from "../../models/SelectedSubject.ts";
@@ -43,7 +43,7 @@ const dummySubjects: Subject[] = [
                 ]
             }
         ],
-        difficulty: "EASY",
+        difficulty: "HARD",
         timeDemand: "LOW",
         reviewCount: 5,
         prerequisites: ["11.14"]
@@ -111,7 +111,7 @@ const dummySubjects: Subject[] = [
                 }
             ]
         }],
-        difficulty: "EASY",
+        difficulty: "HARD",
         timeDemand: "LOW",
         reviewCount: 11,
         prerequisites: []
@@ -131,8 +131,8 @@ export default function SemesterBuilder() {
 
     // Overview
     const [totalCredits, setTotalCredits] = useState(0);
-    const [timeDemand, setTimeDemand] = useState("NO-INFO");
-    const [difficulty, setDifficulty] = useState("NO-INFO");
+    const [timeDemand, setTimeDemand] = useState(0);
+    const [difficulty, setDifficulty] = useState(0);
     const [unlocked, setUnlocked] = useState<Subject[]>([]);
 
     // Conditional rendering
@@ -151,7 +151,15 @@ export default function SemesterBuilder() {
         setSelectClass(undefined);
         setShowClassSelect(false);
     }
-
+    const updateCredits = (delta: number) => {
+        setTotalCredits(totalCredits + delta);
+    }
+    const updateTimeDemand = (delta: number) => {
+        setTimeDemand(timeDemand + delta);
+    }
+    const updateDifficulty = (delta: number) => {
+        setDifficulty(difficulty + delta)
+    }
     const selectClassCallback = (idClass: string) => {
         if(!selectClass){
             return;
@@ -173,8 +181,11 @@ export default function SemesterBuilder() {
         const newAvailable = [...available]
         setAvailable(newAvailable.filter((s) => s.id != selectClass.id))
 
+        // Update los stats
+        updateCredits(selectClass.credits);
+        updateDifficulty(getDifficultyValue(selectClass.difficulty))
+        updateTimeDemand(getTimeDemandValue(selectClass.timeDemand))
     }
-
     const removeSubject = (id: string) => {
         const selectedSubject = selectedSubjects.find((ss) => ss.subject.id == id)
 
@@ -190,8 +201,12 @@ export default function SemesterBuilder() {
         // Elimino de selectedSubjects
         const newSelected = [...selectedSubjects]
         setSelectedSubjects(newSelected.filter((s) => s.subject.id != id))
-    }
 
+        // Update los stats
+        updateCredits(-selectedSubject.subject.credits);
+        updateDifficulty(-getDifficultyValue(selectedSubject.subject.difficulty))
+        updateTimeDemand(-getTimeDemandValue(selectedSubject.subject.timeDemand))
+    }
     const showScheduleAction = () => {
         setShowSchedule(!showSchedule);
     }
@@ -330,7 +345,7 @@ export default function SemesterBuilder() {
                                         <span style={{paddingRight: '0.5rem'}}>Time Demand</span>
                                         <Divider orientation="vertical" />
                                         <div style={{paddingLeft: '0.5rem'}}>
-                                            <TimeDemandChip numReviews={5} timeDemand={timeDemand}/>
+                                            <TimeDemandChip numReviews={5} timeDemand={calcTimeDemand(timeDemand, selectedSubjects.length, totalCredits)}/>
                                         </div>
                                     </div>
                                 </Card>
@@ -341,7 +356,7 @@ export default function SemesterBuilder() {
                                         <span style={{paddingRight: '0.5rem'}}>Overall difficulty</span>
                                         <Divider orientation="vertical" />
                                         <div style={{paddingLeft: '0.5rem'}}>
-                                            <DifficultyChip numReviews={5} difficulty={difficulty}/>
+                                            <DifficultyChip numReviews={5} difficulty={calcDifficulty(difficulty, selectedSubjects.length, totalCredits)}/>
                                         </div>
                                     </div>
                                 </Card>
@@ -364,4 +379,66 @@ export default function SemesterBuilder() {
             </div>
         </div>
     )
+}
+
+// = = = = = Overview calculations = = = = =
+
+function readjustWithCredits(average: number, credits: number){
+    let ret = average;
+
+    if(credits == 0)
+        ret += 0;
+    else if(credits > 0 && credits < 6)
+        ret += 0.1;
+    else if(credits >= 6 && credits <= 18)
+        ret += 0.5;
+    else if(credits > 18 && credits < 24)
+        ret += 1;
+    else if(credits >= 24 && credits < 27)
+        ret += 2;
+    else
+        ret = 3;
+
+    return Math.min(ret,3);
+}
+
+function calcDifficulty(difficultyValue: number, selectedLength: number, totalCredits: number){
+    let finalValue = 0;
+
+    if(selectedLength != 0){
+        finalValue = (difficultyValue * (totalCredits/24) ) / selectedLength;
+    }
+
+    finalValue = readjustWithCredits(finalValue, totalCredits);
+
+    if(finalValue > 0 && finalValue <= 1){
+        return "EASY";
+    }
+    else if(finalValue > 1 && finalValue <= 2){
+        return "NORMAL";
+    }
+    else if(finalValue > 2 && finalValue <= 3){
+        return "HARD";
+    }
+    return "NO-INFO";
+}
+
+function calcTimeDemand(difficultyValue: number, selectedLength: number, totalCredits: number){
+    let finalValue = 0;
+    if(selectedLength != 0){
+        finalValue = (difficultyValue * (totalCredits/24) ) / selectedLength;
+    }
+
+    finalValue = readjustWithCredits(finalValue, totalCredits);
+
+    if(finalValue > 0 && finalValue <= 1){
+        return "LOW";
+    }
+    else if(finalValue > 1 && finalValue <= 2){
+        return "MEDIUM";
+    }
+    else if(finalValue > 2 && finalValue <= 3){
+        return "HIGH";
+    }
+    return "NO-INFO";
 }
