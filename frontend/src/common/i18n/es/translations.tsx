@@ -99,5 +99,14 @@ export const TRANSLATIONS_ES = {
         day5: "Viernes",
         day6: "Sabado",
         day7: "Domingo"
+    },
+    Subejct: {
+        general: "Información General",
+        times: "Horarios de Clase",
+        classProf: "Profesores",
+        department: "Departmento",
+        credits: "Créditos",
+        prerequisites: "Correlativas",
+        emptyPrerequisites: "Ninguna",
     }
 }
