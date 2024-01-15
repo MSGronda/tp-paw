@@ -22,11 +22,13 @@ function calcRowSpan(startTime: string, endTime: string): number {
     return getRowIndex(endTime) - getRowIndex(startTime);
 }
 function findEventByIdx(rowIdx: number, colIdx: number, subjectClasses: SelectedSubject[]): [number, number]{
-    for(let i=0; i<subjectClasses.length; i++){
+    for(let i= 0; i<subjectClasses.length; i++){
         for(let j=0; j<subjectClasses[i].selectedClass.locations.length; j++){
             if(colIdx + 1 == subjectClasses[i].selectedClass.locations[j].day){
                 const startTimeIdx = getRowIndex(subjectClasses[i].selectedClass.locations[j].startTime);
                 const endTimeIdx = getRowIndex(subjectClasses[i].selectedClass.locations[j].endTime);
+                console.log(`${startTimeIdx}, ${endTimeIdx}`)
+                console.log(subjectClasses.length)
                 if(rowIdx == startTimeIdx){
                     return [i,j];
                 }

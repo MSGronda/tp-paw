@@ -5,7 +5,7 @@ import {useTranslation} from "react-i18next";
 import classes from "./Subject.module.css";
 import {Card, Tabs, Text, rem} from '@mantine/core';
 import {IconPhoto} from "@tabler/icons-react";
-import Subject from "../../models/Subject.ts";
+import {Subject} from "../../models/Subject.ts";
 import {Grid} from "@mantine/core/lib";
 
 

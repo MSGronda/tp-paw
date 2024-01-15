@@ -1,4 +1,4 @@
-import Subject from "./Subject.ts";
+import {Subject} from "./Subject.ts";
 import Class from "./Class.ts";
 
 

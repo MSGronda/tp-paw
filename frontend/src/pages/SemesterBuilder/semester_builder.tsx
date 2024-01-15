@@ -11,6 +11,7 @@ import TimeDemandChip from "../../components/time-demand-chip/time-demand-chip.t
 import {IconCalendarEvent, IconList, IconX} from "@tabler/icons-react";
 import WeeklySchedule from "../../components/schedule/weekly-schedule.tsx";
 import BuilderSelectClassCard from "../../components/builder-select-class-card/builder_select_class_card.tsx";
+import Class from "../../models/Class.ts";
 
 const dummySubjects: Subject[] = [
     {
@@ -55,7 +56,7 @@ const dummySubjects: Subject[] = [
         credits: 6,
         classes: [
             {
-                idSubject: "11.15",
+                idSubject: "11.16",
                 professors: ["Hola"],
                 idClass: "Z",
                 locations: [
@@ -89,22 +90,14 @@ const dummySubjects: Subject[] = [
         department: "Economia",
         credits: 3,
         classes: [ {
-            idSubject: "11.15",
+            idSubject: "11.17",
             professors: ["Hola"],
             idClass: "A",
             locations: [
                 {
                     day: 2,
-                    startTime: "9:00",
+                    startTime: "10:00",
                     endTime: "12:00",
-                    classNumber: "101F",
-                    building: "SDF",
-                    mode: "Presencial"
-                },
-                {
-                    day: 3,
-                    startTime: "15:00",
-                    endTime: "19:00",
                     classNumber: "101F",
                     building: "SDF",
                     mode: "Presencial"
@@ -119,6 +112,14 @@ const dummySubjects: Subject[] = [
 ]
 const dummySelected: SelectedSubject[] = []
 
+const COLS = 7
+const ROWS = 29
+
+function timeStringToNumber(time: string) {
+    return (parseInt(time.split(":")[0]) - 8)*2 + (parseInt(time.split(":")[1]) === 30 ? 1 : 0);
+}
+
+
 export default function SemesterBuilder() {
     // Available
     const [available, setAvailable] = useState<Subject[]>(dummySubjects);
@@ -128,6 +129,7 @@ export default function SemesterBuilder() {
 
     // Selected
     const [selectedSubjects, setSelectedSubjects] = useState<SelectedSubject[]>(dummySelected);
+    const [scheduleArray, setScheduleArray] = useState<number[]>(new Array(ROWS * COLS).fill(0));
 
     // Overview
     const [totalCredits, setTotalCredits] = useState(0);
@@ -185,6 +187,9 @@ export default function SemesterBuilder() {
         updateCredits(selectClass.credits);
         updateDifficulty(getDifficultyValue(selectClass.difficulty))
         updateTimeDemand(getTimeDemandValue(selectClass.timeDemand))
+
+        // Update schedule array
+        updateScheduleArray(selectedClass, 1);
     }
     const removeSubject = (id: string) => {
         const selectedSubject = selectedSubjects.find((ss) => ss.subject.id == id)
@@ -206,11 +211,51 @@ export default function SemesterBuilder() {
         updateCredits(-selectedSubject.subject.credits);
         updateDifficulty(-getDifficultyValue(selectedSubject.subject.difficulty))
         updateTimeDemand(-getTimeDemandValue(selectedSubject.subject.timeDemand))
+
+        // Update schedule array
+        updateScheduleArray(selectedSubject.selectedClass, 0);
     }
     const showScheduleAction = () => {
         setShowSchedule(!showSchedule);
     }
 
+    // Schedule checkers
+    const checkSubjectEnabled = (id: string): boolean => {
+        const subject = available.find((s) => s.id == id)
+        if(!subject){
+            return false;
+        }
+        // Para cada comision, me fijo si es viable (no tiene conflictos en los horarios)
+        for(const sc of subject.classes){
+            let viable = true;          // Comision viable
+
+            for(const time of sc.locations){
+                // Si una de los horarios de una clase tiene conflicto, no es viable la comision entera
+                if(isOverlapped(time.day, time.startTime, time.endTime, scheduleArray)){
+                    viable = false;
+                    break;
+                }
+            }
+
+            if(viable){
+                return true;    // Con que una comision sea viable, toda la materia es viable
+            }
+        }
+        return false;
+    }
+    const updateScheduleArray = (subjectClass: Class, value: number) => {
+
+        const newScheduleArray = [...scheduleArray]     // Ay no :|
+
+        for(const time of subjectClass.locations){
+            const startTimeValue = timeStringToNumber(time.startTime);
+            const endTimeValue = timeStringToNumber(time.endTime);
+            for(let i = startTimeValue; i < endTimeValue; i++){
+                newScheduleArray[time.day + i * COLS] = value;
+            }
+        }
+        setScheduleArray(newScheduleArray);
+    }
 
     return (
         <div className={classes.general_area}>
@@ -237,6 +282,7 @@ export default function SemesterBuilder() {
                                 <BuilderSubjectCard
                                     subject={subject}
                                     selectionCallback={selectSubject}
+                                    enabled={checkSubjectEnabled(subject.id)}
                                 />
                             ))}
                         </div>
@@ -285,7 +331,7 @@ export default function SemesterBuilder() {
                                 <Divider/>
                             </Card.Section>
                             <div className={classes.schedule_area}>
-                                <WeeklySchedule rows={29} cols={7} subjectClasses={selectedSubjects}/>
+                                <WeeklySchedule rows={ROWS} cols={COLS} subjectClasses={selectedSubjects}/>
                             </div>
                         </Card>
                         :
@@ -441,4 +487,16 @@ function calcTimeDemand(difficultyValue: number, selectedLength: number, totalCr
         return "HIGH";
     }
     return "NO-INFO";
+}
+
+//  = = = = = Schedule checkers = = = = =
+function isOverlapped(day: number, startTime: string, endTime: string, scheduleArray: number[]){
+    const startTimeValue = timeStringToNumber(startTime);
+    const endTimeValue = timeStringToNumber(endTime);
+    for(let i = startTimeValue; i < endTimeValue; i++){
+        if(scheduleArray[day + i * COLS] != 0){
+            return true;
+        }
+    }
+    return false;
 }
