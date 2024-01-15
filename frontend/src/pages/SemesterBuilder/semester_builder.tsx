@@ -101,9 +101,25 @@ const dummySubjects: Subject[] = [
                     classNumber: "101F",
                     building: "SDF",
                     mode: "Presencial"
-                }
-            ]
-        }],
+                },
+            ],
+        },
+        {
+                idSubject: "11.17",
+                professors: ["Hola"],
+                idClass: "B",
+                locations: [
+                    {
+                        day: 2,
+                        startTime: "8:00",
+                        endTime: "10:00",
+                        classNumber: "101F",
+                        building: "SDF",
+                        mode: "Presencial"
+                    },
+                ],
+            }
+        ],
         difficulty: "HARD",
         timeDemand: "LOW",
         reviewCount: 11,
@@ -114,11 +130,6 @@ const dummySelected: SelectedSubject[] = []
 
 const COLS = 7
 const ROWS = 29
-
-function timeStringToNumber(time: string) {
-    return (parseInt(time.split(":")[0]) - 8)*2 + (parseInt(time.split(":")[1]) === 30 ? 1 : 0);
-}
-
 
 export default function SemesterBuilder() {
     // Available
@@ -220,24 +231,10 @@ export default function SemesterBuilder() {
     }
 
     // Schedule checkers
-    const checkSubjectEnabled = (id: string): boolean => {
-        const subject = available.find((s) => s.id == id)
-        if(!subject){
-            return false;
-        }
+    const subjectEnabled = (subject: Subject): boolean => {
         // Para cada comision, me fijo si es viable (no tiene conflictos en los horarios)
         for(const sc of subject.classes){
-            let viable = true;          // Comision viable
-
-            for(const time of sc.locations){
-                // Si una de los horarios de una clase tiene conflicto, no es viable la comision entera
-                if(isOverlapped(time.day, time.startTime, time.endTime, scheduleArray)){
-                    viable = false;
-                    break;
-                }
-            }
-
-            if(viable){
+            if(classEnabled(sc)){
                 return true;    // Con que una comision sea viable, toda la materia es viable
             }
         }
@@ -255,6 +252,17 @@ export default function SemesterBuilder() {
             }
         }
         setScheduleArray(newScheduleArray);
+    }
+    const classEnabled = (subjectClass: Class): boolean => {
+        let viable = true;          // Comision viable
+        for(const time of subjectClass.locations){
+            // Si una de los horarios de una clase tiene conflicto, no es viable la comision entera
+            if(isOverlapped(time.day, time.startTime, time.endTime, scheduleArray)){
+                viable = false;
+                break;
+            }
+        }
+        return viable;
     }
 
     return (
@@ -282,7 +290,7 @@ export default function SemesterBuilder() {
                                 <BuilderSubjectCard
                                     subject={subject}
                                     selectionCallback={selectSubject}
-                                    enabled={checkSubjectEnabled(subject.id)}
+                                    enabled={subjectEnabled(subject)}
                                 />
                             ))}
                         </div>
@@ -309,6 +317,7 @@ export default function SemesterBuilder() {
                                     <BuilderSelectClassCard
                                         subjectClass={subjectClass}
                                         addClassCallback={selectClassCallback}
+                                        enabled={classEnabled(subjectClass)}
                                     />
                                 ))}
                             </div>
@@ -490,6 +499,10 @@ function calcTimeDemand(difficultyValue: number, selectedLength: number, totalCr
 }
 
 //  = = = = = Schedule checkers = = = = =
+
+function timeStringToNumber(time: string) {
+    return (parseInt(time.split(":")[0]) - 8)*2 + (parseInt(time.split(":")[1]) === 30 ? 1 : 0);
+}
 function isOverlapped(day: number, startTime: string, endTime: string, scheduleArray: number[]){
     const startTimeValue = timeStringToNumber(startTime);
     const endTimeValue = timeStringToNumber(endTime);

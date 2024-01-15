@@ -10,17 +10,25 @@ import Class from "../../models/Class.ts";
 interface BuilderSelectClassCardProps {
     subjectClass: Class;
     addClassCallback: (idClass: string) => void;
+    enabled: boolean;
 }
 
 export default function BuilderSelectClassCard(props: BuilderSelectClassCardProps): JSX.Element {
-    const {subjectClass, addClassCallback} = props;
+    const {subjectClass, addClassCallback, enabled} = props;
+
+    const getTextColor = () => {
+        if(enabled)
+            return '#000000';
+        else
+            return '#a8a8a8';
+    }
 
     return (
         <Card padding={0} className={classes.card_area} withBorder>
             <Card.Section >
                 <div className={classes.selection_row}>
-                    <h4 className={classes.card_title}>{subjectClass.idClass}</h4>
-                    <ActionIcon variant="default" onClick={() => {addClassCallback(subjectClass.idClass)}}>
+                    <h4 style={{color: getTextColor()}} className={classes.card_title}>{subjectClass.idClass}</h4>
+                    <ActionIcon variant="default" onClick={() => {addClassCallback(subjectClass.idClass)}} disabled={!enabled}>
                         <IconCheck style={{ width: '70%', height: '70%' }} stroke={1.5} />
                     </ActionIcon>
                 </div>
