@@ -4,11 +4,11 @@ import "../../common/table-style.css";
 import {IconX} from "@tabler/icons-react";
 import {t} from "i18next";
 import getDayName from "../../common/timeTable.ts";
-import SelectedSubject from "../../models/SelectedSubject.ts";
+import {SelectedSubject} from "../../models/SelectedSubject.ts";
 
 interface BuilderClassTimeCardProps {
     selected: SelectedSubject;
-    removeCallback: (id: string, className: string) => void;
+    removeCallback: (id: string) => void;
 }
 
 export default function BuilderSelectedCard(props: BuilderClassTimeCardProps): JSX.Element {
@@ -18,8 +18,8 @@ export default function BuilderSelectedCard(props: BuilderClassTimeCardProps): J
         <Card padding={0} className={classes.card_area} withBorder>
             <Card.Section >
                 <div className={classes.selection_row}>
-                    <h4 className={classes.card_title}>{selected.name} - {selected.className}</h4>
-                    <ActionIcon variant="default" onClick={() => {removeCallback(selected.id, selected.className)}}>
+                    <h4 className={classes.card_title}>{selected.subject.name} - {selected.selectedClass.idClass}</h4>
+                    <ActionIcon variant="default" onClick={() => {removeCallback(selected.subject.id)}}>
                         <IconX style={{ width: '70%', height: '70%' }} stroke={1.5} />
                     </ActionIcon>
                 </div>
@@ -36,7 +36,7 @@ export default function BuilderSelectedCard(props: BuilderClassTimeCardProps): J
                 </tr>
                 </thead>
                 <tbody>
-                    {selected.times.map((time) => (
+                    {selected.selectedClass.locations.map((time) => (
                         <tr>
                             <td>{getDayName(time.day)}</td>
                             <td>{time.startTime} - {time.endTime}</td>

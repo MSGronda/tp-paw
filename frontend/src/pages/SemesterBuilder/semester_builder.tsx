@@ -5,7 +5,7 @@ import {ActionIcon, Card, Divider, Select} from "@mantine/core";
 import Subject from "../../models/Subject.ts";
 import BuilderSubjectCard from "../../components/builder-subject-card/builder_subject_card.tsx";
 import BuilderSelectedCard from "../../components/builder-selected-card/builder_selected_card.tsx";
-import {SelectedSubject, subjectToSelectedSubject} from "../../models/SelectedSubject.ts";
+import {SelectedSubject, selectedSubjectToSubject, subjectToSelectedSubject} from "../../models/SelectedSubject.ts";
 import DifficultyChip from "../../components/difficulty-chip/difficulty-chip.tsx";
 import TimeDemandChip from "../../components/time-demand-chip/time-demand-chip.tsx";
 import {IconCalendarEvent, IconList, IconX} from "@tabler/icons-react";
@@ -158,23 +158,38 @@ export default function SemesterBuilder() {
         }
 
         const selectedClass = selectClass.classes.find((c) => c.idClass == idClass)
-        if(selectedClass){
-            // Agrego a selected
-            const newSelected = [...selectedSubjects]
-
-            newSelected.push(subjectToSelectedSubject(selectClass, idClass))
-
-            setSelectedSubjects(newSelected)
-            setShowClassSelect(false);
-
-            // Elimino de available
-            const newAvailable = [...available]
-            setAvailable(newAvailable.filter((s) => s.id != selectClass.id))
+        if(!selectedClass){
+            return;
         }
+
+        // Agrego a selected
+        const newSelected = [...selectedSubjects]
+        newSelected.push(subjectToSelectedSubject(selectClass, idClass))
+        setSelectedSubjects(newSelected)
+
+        setShowClassSelect(false);
+
+        // Elimino de available
+        const newAvailable = [...available]
+        setAvailable(newAvailable.filter((s) => s.id != selectClass.id))
+
     }
 
-    const removeSubject = (id: string, classId: string) => {
-        // TODO
+    const removeSubject = (id: string) => {
+        const selectedSubject = selectedSubjects.find((ss) => ss.subject.id == id)
+
+        if(!selectedSubject){
+            return;
+        }
+
+        // Agrego a available
+        const newAvailable = [...available]
+        newAvailable.push(selectedSubjectToSubject(selectedSubject))
+        setAvailable(newAvailable)
+
+        // Elimino de selectedSubjects
+        const newSelected = [...selectedSubjects]
+        setSelectedSubjects(newSelected.filter((s) => s.subject.id != id))
     }
 
     const showScheduleAction = () => {

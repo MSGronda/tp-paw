@@ -1,6 +1,6 @@
 import {t} from "i18next";
 import "../../common/table-style.css";
-import SelectedSubject from "../../models/SelectedSubject.ts";
+import {SelectedSubject} from "../../models/SelectedSubject.ts";
 
 interface WeeklyScheduleProps {
     rows: number;
@@ -23,10 +23,10 @@ function calcRowSpan(startTime: string, endTime: string): number {
 }
 function findEventByIdx(rowIdx: number, colIdx: number, subjectClasses: SelectedSubject[]): [number, number]{
     for(let i=0; i<subjectClasses.length; i++){
-        for(let j=0; j<subjectClasses[i].times.length; j++){
-            if(colIdx + 1 == subjectClasses[i].times[j].day){
-                const startTimeIdx = getRowIndex(subjectClasses[i].times[j].startTime);
-                const endTimeIdx = getRowIndex(subjectClasses[i].times[j].endTime);
+        for(let j=0; j<subjectClasses[i].selectedClass.locations.length; j++){
+            if(colIdx + 1 == subjectClasses[i].selectedClass.locations[j].day){
+                const startTimeIdx = getRowIndex(subjectClasses[i].selectedClass.locations[j].startTime);
+                const endTimeIdx = getRowIndex(subjectClasses[i].selectedClass.locations[j].endTime);
                 if(rowIdx == startTimeIdx){
                     return [i,j];
                 }
@@ -75,16 +75,16 @@ export default function WeeklySchedule(props: WeeklyScheduleProps) {
         const [i,j] = findEventByIdx(rowIdx, colIdx, subjectClasses);
 
         if(i>=0){
-            const cellColor = getColor(subjectClasses[i].id);
+            const cellColor = getColor(subjectClasses[i].subject.id);
             return (
-                <td rowSpan={calcRowSpan(subjectClasses[i].times[j].startTime, subjectClasses[i].times[j].endTime)} style={{backgroundColor: cellColor}}>
+                <td rowSpan={calcRowSpan(subjectClasses[i].selectedClass.locations[j].startTime, subjectClasses[i].selectedClass.locations[j].endTime)} style={{backgroundColor: cellColor}}>
                     <div style={{textAlign: "center", fontWeight: "bold", display: "flex", justifyContent: "center"}}>
                         <h4 style={{maxWidth: "6rem", padding: 0, margin: 0}}>
-                            {subjectClasses[i].name}
+                            {subjectClasses[i].subject.name}
                         </h4>
                     </div>
-                    <div style={{textAlign: "center"}}>{subjectClasses[i].times[j].classNumber}</div>
-                    <div style={{textAlign: "center"}}>{subjectClasses[i].times[j].mode}</div>
+                    <div style={{textAlign: "center"}}>{subjectClasses[i].selectedClass.locations[j].classNumber}</div>
+                    <div style={{textAlign: "center"}}>{subjectClasses[i].selectedClass.locations[j].mode}</div>
                 </td>
             );
         }
