@@ -26,6 +26,31 @@ export function getTimeDemandValue(timeDemand: string){
     }
 }
 
+export function sortByNameDesc(a: Subject,b: Subject){
+    return b.name.localeCompare(a.name);
+}
+export function sortByNameAsc(a: Subject,b: Subject){
+    return a.name.localeCompare(b.name);
+}
+
+export function sortByCreditsDesc(a: Subject,b: Subject){
+    return b.credits - a.credits;
+}
+export function sortByCreditsAsc(a: Subject,b: Subject){
+    return  a.credits-b.credits;
+}
+export function sortByDifficultyDesc(a: Subject,b: Subject){
+    return  getDifficultyValue(b.difficulty) - getDifficultyValue(a.difficulty);
+}
+export function sortByDifficultyAsc(a: Subject,b: Subject){
+    return  getDifficultyValue(a.difficulty) - getDifficultyValue(b.difficulty);
+}
+export function sortByTimeDemandDesc(a: Subject,b: Subject){
+    return  getTimeDemandValue(b.timeDemand) - getTimeDemandValue(a.timeDemand);
+}
+export function sortByTimeDemandAsc(a: Subject,b: Subject){
+    return  getTimeDemandValue(a.timeDemand) - getTimeDemandValue(b.timeDemand);
+}
 
 export interface Subject {
     id: string,

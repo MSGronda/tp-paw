@@ -2,13 +2,25 @@ import {useState} from "react";
 import classes from "../SemesterBuilder/semester_builder.module.css";
 import {Navbar} from "../../components/navbar/navbar.tsx";
 import {ActionIcon, Card, Divider, Select, UnstyledButton} from "@mantine/core";
-import {Subject, getDifficultyValue, getTimeDemandValue} from "../../models/Subject.ts";
+import {
+    Subject,
+    getDifficultyValue,
+    getTimeDemandValue,
+    sortByNameDesc,
+    sortByCreditsDesc,
+    sortByDifficultyDesc,
+    sortByTimeDemandDesc,
+    sortByNameAsc,
+    sortByCreditsAsc,
+    sortByTimeDemandAsc,
+    sortByDifficultyAsc
+} from "../../models/Subject.ts";
 import BuilderSubjectCard from "../../components/builder-subject-card/builder_subject_card.tsx";
 import BuilderSelectedCard from "../../components/builder-selected-card/builder_selected_card.tsx";
 import {SelectedSubject, selectedSubjectToSubject, subjectToSelectedSubject} from "../../models/SelectedSubject.ts";
 import DifficultyChip from "../../components/difficulty-chip/difficulty-chip.tsx";
 import TimeDemandChip from "../../components/time-demand-chip/time-demand-chip.tsx";
-import {IconCalendarEvent, IconList, IconX} from "@tabler/icons-react";
+import {IconArrowNarrowDown, IconArrowNarrowUp, IconCalendarEvent, IconList, IconX} from "@tabler/icons-react";
 import WeeklySchedule from "../../components/schedule/weekly-schedule.tsx";
 import BuilderSelectClassCard from "../../components/builder-select-class-card/builder_select_class_card.tsx";
 import Class from "../../models/Class.ts";
@@ -160,7 +172,7 @@ const ROWS = 29
 
 export default function SemesterBuilder() {
     // Available
-    const [available, setAvailable] = useState<Subject[]>(dummySubjects);
+    const [available, setAvailable] = useState<Subject[]>(dummySubjects.sort(sortByNameAsc));
 
     // Select class - para cuando tenes que elegir comision de materia
     const [selectClass, setSelectClass] = useState<Subject>();
@@ -181,6 +193,9 @@ export default function SemesterBuilder() {
     // Conditional rendering
     const [showSchedule, setShowSchedule] = useState(false);
     const [showClassSelect, setShowClassSelect] = useState(false);
+
+    const [ascendingSort, setAscendingSort] = useState(true);
+    const [sortingType, setSortingType] = useState("Name")
 
     const selectSubject = (id: string) => {
         const selected = available.find((subject) => subject.id == id);
@@ -308,6 +323,52 @@ export default function SemesterBuilder() {
         return true;
     }
 
+    // Sorting
+    const sortDirectionButton = () => {
+        setAscendingSort(!ascendingSort);
+        sortAvailable(sortingType);
+    }
+    const sortAvailable = (value: string | null) => {
+        let sorter: (a: Subject, b: Subject) => number;
+
+        switch (value){
+            case "Name":
+                if(ascendingSort)
+                    sorter = sortByNameDesc;
+                else
+                    sorter = sortByNameAsc;
+                break;
+            case "Credits":
+                if(ascendingSort)
+                    sorter = sortByCreditsDesc;
+                else
+                    sorter = sortByCreditsAsc;
+                break;
+            case "Difficulty":
+                if(ascendingSort)
+                    sorter = sortByDifficultyDesc;
+                else
+                    sorter = sortByDifficultyAsc;
+                break;
+            case "Time Demand":
+                if(ascendingSort)
+                    sorter = sortByTimeDemandDesc;
+                else
+                    sorter = sortByTimeDemandAsc;
+                break;
+            default:
+                if(ascendingSort)
+                    sorter = sortByNameDesc;
+                else
+                    sorter = sortByNameAsc;
+        }
+        setSortingType(value ? value : "Name");
+
+        const newAvailable = [...available].sort(sorter)
+        setAvailable(newAvailable);
+    }
+
+
     return (
         <div className={classes.general_area}>
             <Navbar />
@@ -320,11 +381,25 @@ export default function SemesterBuilder() {
                         <Card.Section>
                             <div className={classes.available_header}>
                                 <h4 className={classes.section_titles}>Available Subjects</h4>
-                                <Select
-                                    data={['Name', 'Credits', 'Difficulty', 'Time Demand']}
-                                    defaultValue="Name"
-                                    allowDeselect={false}
-                                />
+                                <div className={classes.available_sorting}>
+                                    <Select
+                                        data={['Name', 'Credits', 'Difficulty', 'Time Demand']}
+                                        defaultValue="Name"
+                                        allowDeselect={false}
+                                        onChange={(value) => sortAvailable(value)}
+                                        style={{paddingRight: "0.5rem", width: "10rem"}}
+                                    />
+                                    <ActionIcon variant="default">
+                                        {
+                                            !ascendingSort ?
+                                                <IconArrowNarrowUp style={{ width: '70%', height: '70%' }} stroke={1.5} onClick={sortDirectionButton}/>
+                                                :
+                                                <IconArrowNarrowDown style={{ width: '70%', height: '70%' }} stroke={1.5} onClick={sortDirectionButton}/>
+                                        }
+                                    </ActionIcon>
+
+                                </div>
+
                             </div>
                             <Divider/>
                         </Card.Section>

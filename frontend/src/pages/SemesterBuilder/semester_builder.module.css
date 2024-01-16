@@ -51,6 +51,11 @@
     grid-template-columns: repeat(2, 1fr);
     overflow-y: auto;
 }
+.available_sorting {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
 
 /* Selected Classes */
 .selected_card {
