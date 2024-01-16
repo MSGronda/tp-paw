@@ -1,7 +1,7 @@
 import {useState} from "react";
 import classes from "../SemesterBuilder/semester_builder.module.css";
 import {Navbar} from "../../components/navbar/navbar.tsx";
-import {ActionIcon, Card, Divider, Select} from "@mantine/core";
+import {ActionIcon, Card, Divider, Select, UnstyledButton} from "@mantine/core";
 import {Subject, getDifficultyValue, getTimeDemandValue} from "../../models/Subject.ts";
 import BuilderSubjectCard from "../../components/builder-subject-card/builder_subject_card.tsx";
 import BuilderSelectedCard from "../../components/builder-selected-card/builder_selected_card.tsx";
@@ -127,6 +127,33 @@ const dummySubjects: Subject[] = [
     }
 ]
 const dummySelected: SelectedSubject[] = []
+const dummyUnlockables: Subject[] = [
+    {
+        id: "11.18",
+        name: "Cacona",
+        department: "Informatica",
+        credits: 6,
+        classes: [],
+        difficulty: "HARD",
+        timeDemand: "LOW",
+        reviewCount: 5,
+        prerequisites: ["11.15", "11.19"]
+    },
+
+]
+const dummyDone: Subject[] = [
+    {
+        id: "11.19",
+        name: "Cacona done",
+        department: "Informatica",
+        credits: 6,
+        classes: [],
+        difficulty: "HARD",
+        timeDemand: "LOW",
+        reviewCount: 5,
+        prerequisites: []
+    },
+]
 
 const COLS = 7
 const ROWS = 29
@@ -135,7 +162,7 @@ export default function SemesterBuilder() {
     // Available
     const [available, setAvailable] = useState<Subject[]>(dummySubjects);
 
-    // Select class
+    // Select class - para cuando tenes que elegir comision de materia
     const [selectClass, setSelectClass] = useState<Subject>();
 
     // Selected
@@ -146,7 +173,10 @@ export default function SemesterBuilder() {
     const [totalCredits, setTotalCredits] = useState(0);
     const [timeDemand, setTimeDemand] = useState(0);
     const [difficulty, setDifficulty] = useState(0);
-    const [unlocked, setUnlocked] = useState<Subject[]>([]);
+
+    // Unlocking of subjects
+    const [doneSubjects, setDoneSubject] = useState<Subject[]>(dummyDone);
+    const [unlockables, setUnlockables] = useState<Subject[]>(dummyUnlockables);
 
     // Conditional rendering
     const [showSchedule, setShowSchedule] = useState(false);
@@ -263,6 +293,19 @@ export default function SemesterBuilder() {
             }
         }
         return viable;
+    }
+
+    // Unlockable checkers
+    const subjectUnlocked = (subject: Subject): boolean => {
+        for(const prereq of subject.prerequisites){
+
+            // TODO: quizas usar un Set / Bloom filter
+
+            if(!doneSubjects.find((s) => s.id == prereq) && !selectedSubjects.find((s) => s.subject.id == prereq)){
+                return false;
+            }
+        }
+        return true;
     }
 
     return (
@@ -423,6 +466,14 @@ export default function SemesterBuilder() {
                                         <Divider />
                                     </Card.Section>
                                     <div className={classes.unlockable_area}>
+                                        {
+                                            unlockables.map((subject) =>
+                                                subjectUnlocked(subject) ?
+                                                <UnstyledButton style={{padding: "1rem", color: "#4a90e2"}} component={"a"} href={`/subject/${subject.id}`}>{subject.name}</UnstyledButton>
+                                                :
+                                                <></>
+                                            )
+                                        }
                                     </div>
                                 </Card>
                             </div>

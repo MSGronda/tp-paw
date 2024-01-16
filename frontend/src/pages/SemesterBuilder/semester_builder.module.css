@@ -78,6 +78,13 @@
     align-items: center;
 }
 .unlockable_area {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
     min-height: 30rem;
+}
+.unlock_button {
+    padding: 0.5rem;
+    color: #4a90e2;
 }
 
