@@ -24,7 +24,7 @@ export default function Search() {
         const res = await subjectService.getSubjectsByName(searchValue, pageNumber);
         const data = handleService(res, navigate);
         if (res) {
-            setSubjects(data);
+            setSubjects(data.subjects);
             setMaxPage(res.maxPage || 1);
         }
         setLoading(false);

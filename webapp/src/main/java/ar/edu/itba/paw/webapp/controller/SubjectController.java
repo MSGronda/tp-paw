@@ -6,6 +6,7 @@ import ar.edu.itba.paw.models.exceptions.*;
 import ar.edu.itba.paw.services.*;
 import ar.edu.itba.paw.webapp.controller.utils.PaginationLinkBuilder;
 import ar.edu.itba.paw.webapp.dto.SubjectDto;
+import ar.edu.itba.paw.webapp.dto.SubjectsFiltersDto;
 import ar.edu.itba.paw.webapp.form.SubjectClassTimeForm;
 import ar.edu.itba.paw.webapp.form.SubjectForm;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +18,7 @@ import javax.ws.rs.core.*;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 
@@ -89,8 +91,6 @@ public class SubjectController {
         if(subjectsDtos.isEmpty())
             return Response.noContent().build();
 
-        Response.ResponseBuilder responseBuilder = Response.ok(new GenericEntity<List<SubjectDto>>(subjectsDtos){});
-
         if (query != null ) {
             int lastPage = subjectService.getTotalPagesForSearch(
                     user,
@@ -101,8 +101,12 @@ public class SubjectController {
                     timeDemand,
                     orderBy
             );
+            Map<String, List<String>> filters = subjectService.getRelevantFiltersForSearch(user, query, credits, department, difficulty, timeDemand, orderBy);
+            Response.ResponseBuilder responseBuilder = Response.ok(new SubjectsFiltersDto(subjectsDtos, filters));
             PaginationLinkBuilder.getResponsePaginationLinks(responseBuilder, uriInfo, page, lastPage);
+            return responseBuilder.build();
         }
+        Response.ResponseBuilder responseBuilder = Response.ok(new GenericEntity<List<SubjectDto>>(subjectsDtos){});
         return responseBuilder.build();
     }
 
