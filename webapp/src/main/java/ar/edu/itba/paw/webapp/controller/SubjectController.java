@@ -84,23 +84,25 @@ public class SubjectController {
 
         // TODO: @MC, acordate de arreglar esto para el caso que de available, unLockable, done, future, etc
 
-//        int lastPage = subjectService.getTotalPagesForSearch(
-//            user,
-//            query,
-//            credits,
-//            department,
-//            difficulty,
-//            timeDemand,
-//            orderBy
-//        );
-
         final List<SubjectDto> subjectsDtos = subs.stream().map(subject -> SubjectDto.fromSubject(uriInfo, subject)).collect(Collectors.toList());
 
         if(subjectsDtos.isEmpty())
             return Response.noContent().build();
 
         Response.ResponseBuilder responseBuilder = Response.ok(new GenericEntity<List<SubjectDto>>(subjectsDtos){});
-//        PaginationLinkBuilder.getResponsePaginationLinks(responseBuilder, uriInfo, page, lastPage);
+
+        if (query != null ) {
+            int lastPage = subjectService.getTotalPagesForSearch(
+                    user,
+                    query,
+                    credits,
+                    department,
+                    difficulty,
+                    timeDemand,
+                    orderBy
+            );
+            PaginationLinkBuilder.getResponsePaginationLinks(responseBuilder, uriInfo, page, lastPage);
+        }
         return responseBuilder.build();
     }
 
