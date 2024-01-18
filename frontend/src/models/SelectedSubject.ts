@@ -7,18 +7,10 @@ export interface SelectedSubject {
     selectedClass: Class
 }
 
-export function subjectToSelectedSubject(subject: Subject, className: string): SelectedSubject {
-    const c = subject.classes.find((Class) => Class.idClass == className);
+export function subjectToSelectedSubject(subject: Subject, c: Class): SelectedSubject {
     return {
         subject: subject,
-        selectedClass: c != undefined ? c :
-        // Esto nunca deberia ocurrir
-        {
-            idSubject: "",
-            idClass: "",
-            professors: [],
-            locations: []
-        }
+        selectedClass: c
     }
 }
 

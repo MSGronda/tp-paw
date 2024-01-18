@@ -120,19 +120,14 @@ export default function SemesterBuilder() {
     const updateDifficulty = (delta: number) => {
         setDifficulty(difficulty + delta)
     }
-    const selectClassCallback = (idClass: string) => {
+    const selectClassCallback = (selectedClass: Class) => {
         if(!selectClass){
-            return;
-        }
-
-        const selectedClass = selectClass.classes.find((c) => c.idClass == idClass)
-        if(!selectedClass){
             return;
         }
 
         // Agrego a selected
         const newSelected = [...selectedSubjects]
-        newSelected.push(subjectToSelectedSubject(selectClass, idClass))
+        newSelected.push(subjectToSelectedSubject(selectClass, selectedClass))
         setSelectedSubjects(newSelected)
 
         setShowClassSelect(false);
@@ -180,6 +175,10 @@ export default function SemesterBuilder() {
     // Schedule checkers
     const subjectEnabled = (subject: Subject): boolean => {
         // Para cada comision, me fijo si es viable (no tiene conflictos en los horarios)
+        if(subject.classes.length == 0){
+            return true;
+        }
+
         for(const sc of subject.classes){
             if(classEnabled(sc)){
                 return true;    // Con que una comision sea viable, toda la materia es viable
@@ -333,6 +332,17 @@ export default function SemesterBuilder() {
                                 <Divider/>
                             </Card.Section>
                             <div className={classes.selected_list}>
+                                {
+                                    selectClass && (!selectClass?.classes || !selectClass?.classes.length || selectClass.classes.length == 0)
+                                    ?
+                                        <BuilderSelectClassCard
+                                            subjectClass={createEmptySubjectClass(selectClass)}
+                                            addClassCallback={selectClassCallback}
+                                            enabled={classEnabled(createEmptySubjectClass(selectClass))}
+                                        />
+                                    :
+                                        <></>
+                                }
                                 {selectClass?.classes.map((subjectClass) => (
                                     <BuilderSelectClassCard
                                         subjectClass={subjectClass}
@@ -538,4 +548,13 @@ function isOverlapped(day: number, startTime: string, endTime: string, scheduleA
         }
     }
     return false;
+}
+
+function createEmptySubjectClass(subject: Subject) : Class {
+    return {
+        idSubject: subject.id,
+        idClass: "",
+        professors: [],
+        locations: []
+    }
 }

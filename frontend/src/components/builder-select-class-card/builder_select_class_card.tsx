@@ -9,7 +9,7 @@ import Class from "../../models/Class.ts";
 
 interface BuilderSelectClassCardProps {
     subjectClass: Class;
-    addClassCallback: (idClass: string) => void;
+    addClassCallback: (c: Class) => void;
     enabled: boolean;
 }
 
@@ -28,7 +28,7 @@ export default function BuilderSelectClassCard(props: BuilderSelectClassCardProp
             <Card.Section >
                 <div className={classes.selection_row}>
                     <h4 style={{color: getTextColor()}} className={classes.card_title}>{subjectClass.idClass}</h4>
-                    <ActionIcon variant="default" onClick={() => {addClassCallback(subjectClass.idClass)}} disabled={!enabled}>
+                    <ActionIcon variant="default" onClick={() => {addClassCallback(subjectClass)}} disabled={!enabled}>
                         <IconCheck style={{ width: '70%', height: '70%' }} stroke={1.5} />
                     </ActionIcon>
                 </div>
