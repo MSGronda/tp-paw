@@ -3,7 +3,9 @@ package ar.edu.itba.paw.webapp.dto;
 import ar.edu.itba.paw.models.Subject;
 
 import javax.ws.rs.core.UriInfo;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 public class SubjectDto {
@@ -15,6 +17,7 @@ public class SubjectDto {
     private String difficulty;
     private String timeDemand;
     private Integer reviewCount;
+    private List<Subject> prerequisites;
 
     public static SubjectDto fromSubject(final UriInfo uriInfo, final Subject subject){
         final SubjectDto subjectDto =  new SubjectDto();
@@ -24,12 +27,21 @@ public class SubjectDto {
         subjectDto.department = subject.getDepartment();
         subjectDto.credits = subject.getCredits();
         subjectDto.classes = subject.getClasses().stream().map(subjectClass -> ClassDto.fromClass(uriInfo, subjectClass)).collect(Collectors.toList());
+        subjectDto.prerequisites = new ArrayList<>(subject.getPrerequisites());
 
         subjectDto.difficulty = subject.getReviewStats().getDifficulty().name();
         subjectDto.timeDemand = subject.getReviewStats().getTimeDemanding().name();
         subjectDto.reviewCount = subject.getReviewStats().getReviewCount();
 
         return subjectDto;
+    }
+
+    public List<Subject> getPrerequisites() {
+        return prerequisites;
+    }
+
+    public void setPrerequisites(List<Subject> prerequisites) {
+        this.prerequisites = prerequisites;
     }
 
     public String getId() {

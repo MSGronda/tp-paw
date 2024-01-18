@@ -1,4 +1,4 @@
-import {useState} from "react";
+import {useEffect, useState} from "react";
 import classes from "../SemesterBuilder/semester_builder.module.css";
 import {Navbar} from "../../components/navbar/navbar.tsx";
 import {ActionIcon, Card, Divider, Select, UnstyledButton} from "@mantine/core";
@@ -25,6 +25,9 @@ import WeeklySchedule from "../../components/schedule/weekly-schedule.tsx";
 import BuilderSelectClassCard from "../../components/builder-select-class-card/builder_select_class_card.tsx";
 import Class from "../../models/Class.ts";
 import {t} from "i18next";
+import {subjectService, userService} from '../../services';
+import {handleService} from "../../handlers/serviceHandler.tsx";
+import {useNavigate} from "react-router-dom";
 
 const dummySubjects: Subject[] = [
     {
@@ -172,8 +175,23 @@ const COLS = 7
 const ROWS = 29
 
 export default function SemesterBuilder() {
+    // Navigation
+    const navigate = useNavigate();
+
     // Available
-    const [available, setAvailable] = useState<Subject[]>(dummySubjects.sort(sortByNameAsc));
+    const [available, setAvailable] = useState<Subject[]>([]);
+    const getAvailable = async () => {
+        const userId = userService.getUserId();
+        if(!userId)
+            navigate('/login');
+
+        const resp = await subjectService.getAvailableSubjects(userId);
+        const data = handleService(resp, navigate);
+        setAvailable(data)
+    }
+    useEffect( () => {
+         getAvailable()
+    }, [available]);
 
     // Select class - para cuando tenes que elegir comision de materia
     const [selectClass, setSelectClass] = useState<Subject>();
@@ -188,8 +206,33 @@ export default function SemesterBuilder() {
     const [difficulty, setDifficulty] = useState(0);
 
     // Unlocking of subjects
-    const [doneSubjects, setDoneSubject] = useState<Subject[]>(dummyDone);
-    const [unlockables, setUnlockables] = useState<Subject[]>(dummyUnlockables);
+    const [doneSubjects, setDoneSubjects] = useState<Subject[]>([]);
+    const getDone = async () => {
+        const userId = userService.getUserId();
+        if(!userId)
+            navigate('/login');
+
+        const resp = await subjectService.getDoneSubjects(userId);
+        const data = handleService(resp, navigate);
+        setDoneSubjects(data)
+    }
+    useEffect( () => {
+        getDone()
+    }, [doneSubjects]);
+
+    const [unlockables, setUnlockables] = useState<Subject[]>([]);
+    const getUnlockable = async () => {
+        const userId = userService.getUserId();
+        if(!userId)
+            navigate('/login');
+
+        const resp = await subjectService.getUnlockableSubjects(userId);
+        const data = handleService(resp, navigate);
+        setUnlockables(data)
+    }
+    useEffect( () => {
+        getUnlockable()
+    }, [unlockables]);
 
     // Conditional rendering
     const [showSchedule, setShowSchedule] = useState(false);
@@ -583,7 +626,6 @@ function readjustWithCredits(average: number, credits: number){
 
     return Math.min(ret,3);
 }
-
 function calcDifficulty(difficultyValue: number, selectedLength: number, totalCredits: number){
     let finalValue = 0;
 
@@ -604,7 +646,6 @@ function calcDifficulty(difficultyValue: number, selectedLength: number, totalCr
     }
     return "NO-INFO";
 }
-
 function calcTimeDemand(difficultyValue: number, selectedLength: number, totalCredits: number){
     let finalValue = 0;
     if(selectedLength != 0){

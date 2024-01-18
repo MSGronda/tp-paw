@@ -29,16 +29,36 @@ export class SubjectService {
         }
     }
 
-    async getSubjectsUserCan(userId: number) {
+    async getUserSubject(config: any) {
         try{
-            const config: any = {};
-            config.params = {
-                available: userId
-            };
             const res = await axiosService.authAxiosWrapper(axiosService.GET, `${path}`, config);
             return handleResponse(res);
         } catch (error: any) {
             return handleResponse(error.response);
         }
+    }
+
+    async getAvailableSubjects(userId: number) {
+        const config: any = {};
+        config.params = {
+            available: userId
+        }
+        return this.getUserSubject(config);
+    }
+
+    async getDoneSubjects(userId: number) {
+        const config: any = {};
+        config.params = {
+            done: userId
+        }
+        return this.getUserSubject(config);
+    }
+
+    async getUnlockableSubjects(userId: number) {
+        const config: any = {};
+        config.params = {
+            unLockable: userId
+        }
+        return this.getUserSubject(config);
     }
 }
