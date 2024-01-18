@@ -1,6 +1,6 @@
 
 //TODO cambiar constantes   
-export const handleService = (response: any, navigate: any, defaultValue=undefined) => {
+export const handleService = (response: any, navigate: any, defaultValue= undefined) => {
     if (response){
         if( response.failure ){
             if (response.status === 204){

@@ -29,148 +29,6 @@ import {subjectService, userService} from '../../services';
 import {handleService} from "../../handlers/serviceHandler.tsx";
 import {useNavigate} from "react-router-dom";
 
-const dummySubjects: Subject[] = [
-    {
-        id: "11.15",
-        name: "Metodos Numericos Avanzados",
-        department: "Informatica",
-        credits: 6,
-        classes: [
-            {
-                idSubject: "11.15",
-                professors: ["Hola"],
-                idClass: "A",
-                locations: [
-                    {
-                        day: 1,
-                        startTime: "8:00",
-                        endTime: "10:00",
-                        classNumber: "101F",
-                        building: "SDF",
-                        mode: "Presencial"
-                    },
-                    {
-                        day: 2,
-                        startTime: "8:00",
-                        endTime: "10:00",
-                        classNumber: "101F",
-                        building: "SDF",
-                        mode: "Presencial"
-                    }
-                ]
-            }
-        ],
-        difficulty: "HARD",
-        timeDemand: "LOW",
-        reviewCount: 5,
-        prerequisites: ["11.14"]
-    },
-    {
-        id: "11.16",
-        name: "Redes de Informacion",
-        department: "Informatica",
-        credits: 6,
-        classes: [
-            {
-                idSubject: "11.16",
-                professors: ["Hola"],
-                idClass: "Z",
-                locations: [
-                    {
-                        day: 4,
-                        startTime: "8:00",
-                        endTime: "10:00",
-                        classNumber: "101F",
-                        building: "SDF",
-                        mode: "Presencial"
-                    },
-                    {
-                        day: 6,
-                        startTime: "8:00",
-                        endTime: "10:00",
-                        classNumber: "101F",
-                        building: "SDF",
-                        mode: "Presencial"
-                    }
-                ]
-            }
-        ],
-        difficulty: "HARD",
-        timeDemand: "HIGH",
-        reviewCount: 3,
-        prerequisites: ["11.15"]
-    },
-    {
-        id: "11.17",
-        name: "Formacion para Emprendedores",
-        department: "Economia",
-        credits: 3,
-        classes: [ {
-            idSubject: "11.17",
-            professors: ["Hola"],
-            idClass: "A",
-            locations: [
-                {
-                    day: 2,
-                    startTime: "10:00",
-                    endTime: "12:00",
-                    classNumber: "101F",
-                    building: "SDF",
-                    mode: "Presencial"
-                },
-            ],
-        },
-        {
-                idSubject: "11.17",
-                professors: ["Hola"],
-                idClass: "B",
-                locations: [
-                    {
-                        day: 2,
-                        startTime: "8:00",
-                        endTime: "10:00",
-                        classNumber: "101F",
-                        building: "SDF",
-                        mode: "Presencial"
-                    },
-                ],
-            }
-        ],
-        difficulty: "HARD",
-        timeDemand: "LOW",
-        reviewCount: 11,
-        prerequisites: []
-    }
-]
-const dummySelected: SelectedSubject[] = []
-const dummyUnlockables: Subject[] = [
-    {
-        id: "11.18",
-        name: "Cacona",
-        department: "Informatica",
-        credits: 6,
-        classes: [],
-        difficulty: "HARD",
-        timeDemand: "LOW",
-        reviewCount: 5,
-        prerequisites: ["11.15", "11.19"]
-    },
-
-]
-const dummyDone: Subject[] = [
-    {
-        id: "11.19",
-        name: "Cacona done",
-        department: "Informatica",
-        credits: 6,
-        classes: [],
-        difficulty: "HARD",
-        timeDemand: "LOW",
-        reviewCount: 5,
-        prerequisites: []
-    },
-]
-
 const COLS = 7
 const ROWS = 29
 
@@ -187,17 +45,17 @@ export default function SemesterBuilder() {
 
         const resp = await subjectService.getAvailableSubjects(userId);
         const data = handleService(resp, navigate);
-        setAvailable(data)
+        setAvailable(data != "" ? data : []); // TODO: cambiar esto a algo mejor
     }
     useEffect( () => {
          getAvailable()
-    }, [available]);
+    }, []);
 
     // Select class - para cuando tenes que elegir comision de materia
     const [selectClass, setSelectClass] = useState<Subject>();
 
     // Selected
-    const [selectedSubjects, setSelectedSubjects] = useState<SelectedSubject[]>(dummySelected);
+    const [selectedSubjects, setSelectedSubjects] = useState<SelectedSubject[]>([]);
     const [scheduleArray, setScheduleArray] = useState<number[]>(new Array(ROWS * COLS).fill(0));
 
     // Overview
@@ -214,11 +72,11 @@ export default function SemesterBuilder() {
 
         const resp = await subjectService.getDoneSubjects(userId);
         const data = handleService(resp, navigate);
-        setDoneSubjects(data)
+        setDoneSubjects(data != "" ? data : []); // TODO: cambiar esto a algo mejor
     }
     useEffect( () => {
         getDone()
-    }, [doneSubjects]);
+    }, []);
 
     const [unlockables, setUnlockables] = useState<Subject[]>([]);
     const getUnlockable = async () => {
@@ -228,11 +86,11 @@ export default function SemesterBuilder() {
 
         const resp = await subjectService.getUnlockableSubjects(userId);
         const data = handleService(resp, navigate);
-        setUnlockables(data)
+        setUnlockables(data != "" ? data : []); // TODO: cambiar esto a algo mejor
     }
     useEffect( () => {
         getUnlockable()
-    }, [unlockables]);
+    }, []);
 
     // Conditional rendering
     const [showSchedule, setShowSchedule] = useState(false);
