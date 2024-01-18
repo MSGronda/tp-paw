@@ -405,6 +405,23 @@ public class UserServiceImpl implements UserService {
         userDao.clearSemester(currentUser);
     }
 
+    @Transactional
+    @Override
+    public void replaceUserSemester(final User currentUser, final Long userId, final List<String> subjectIds, final List<String> classIds){
+        if(currentUser.getId() != userId){
+            throw new UnauthorizedException();
+        }
+        if(subjectIds.size() != classIds.size()){
+            throw new InvalidUserSemesterIds();
+        }
+        userDao.clearSemester(currentUser);
+
+        for(int i=0; i<subjectIds.size(); i++){
+            addToCurrentSemester(currentUser, subjectIds.get(i), classIds.get(i));
+        }
+    }
+
+
     @Override
     public String getSemesterSubmitRedirectUrl(final User user) {
         final List<String> subjectIds = user.getUserSemester().stream()

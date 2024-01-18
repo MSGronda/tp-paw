@@ -28,6 +28,8 @@ import {t} from "i18next";
 import {subjectService, userService} from '../../services';
 import {handleService} from "../../handlers/serviceHandler.tsx";
 import {useNavigate} from "react-router-dom";
+import FloatingButton from "../../components/floating-button/floating-button.tsx";
+import {UserPlan} from "../../models/UserPlan.ts";
 
 const COLS = 7
 const ROWS = 29
@@ -56,6 +58,24 @@ export default function SemesterBuilder() {
 
     // Selected
     const [selectedSubjects, setSelectedSubjects] = useState<SelectedSubject[]>([]);
+    const getUserPlan = async () => {
+        const userId = userService.getUserId();
+        if(!userId)
+            navigate('/login');
+
+        const respSubjects = await subjectService.getUserPlanSubjects(userId);
+        const dataSubjects = handleService(respSubjects, navigate);
+
+        const respPlan = await userService.getUserPlan(userId);
+        const dataPlan = handleService(respPlan, navigate);
+
+        setSelectedSubjects(createSelectedSubjects(dataPlan, dataSubjects)); // TODO: cambiar esto a algo mejor
+    }
+    useEffect( () => {
+        getUserPlan()
+    }, []);
+
+
     const [scheduleArray, setScheduleArray] = useState<number[]>(new Array(ROWS * COLS).fill(0));
 
     // Overview
@@ -269,6 +289,17 @@ export default function SemesterBuilder() {
         setAvailable(newAvailable);
     }
 
+    // Save schedule
+    const saveSchedule = async () => {
+        const userId = userService.getUserId();
+        if(!userId)
+            navigate('/login');
+
+        await userService.setUserSemester(userId, selectedSubjects);
+
+        navigate('/home');
+    }
+
 
     return (
         <div className={classes.general_area}>
@@ -470,6 +501,7 @@ export default function SemesterBuilder() {
                     <></>
                 }
             </div>
+            <FloatingButton text={"Done"} onClick={saveSchedule}/>
         </div>
     )
 }
@@ -557,4 +589,21 @@ function createEmptySubjectClass(subject: Subject) : Class {
         professors: [],
         locations: []
     }
+}
+
+function createSelectedSubjects(userPlan: UserPlan, subjects: Subject[]): SelectedSubject[] {
+    const selected: SelectedSubject[] = [];
+    subjects.forEach((subject) => {
+
+        const subjectClassPair = userPlan.classes.entry.find((t) => t.key == subject.id)
+
+        const idClass = subjectClassPair ? subjectClassPair.value : "";
+
+        const c = subject.classes.find((c) => c.idClass == idClass);
+        selected.push({
+            subject: subject,
+            selectedClass:  c ? c : createEmptySubjectClass(subject) // No deberia ocurrir este caso pero bueno
+        })
+    })
+    return selected;
 }

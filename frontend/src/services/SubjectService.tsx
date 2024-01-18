@@ -1,5 +1,6 @@
-import { axiosService } from "."
+import {axiosService, subjectService} from "."
 import { handleResponse } from "../handlers/responseHandler";
+import {SelectedSubject} from "../models/SelectedSubject.ts";
 
 
 const path = "/subjects"
@@ -58,6 +59,14 @@ export class SubjectService {
         const config: any = {};
         config.params = {
             unLockable: userId
+        }
+        return this.getUserSubject(config);
+    }
+
+    async getUserPlanSubjects(userId: number) {
+        const config: any = {};
+        config.params = {
+            plan: userId
         }
         return this.getUserSubject(config);
     }

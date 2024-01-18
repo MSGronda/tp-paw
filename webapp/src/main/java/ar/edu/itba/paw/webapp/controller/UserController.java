@@ -114,6 +114,19 @@ public class UserController {
         return Response.ok(UserSemesterDto.fromUser(uriInfo, currentUser)).build();
     }
 
+    @PUT
+    @Path("/{id}/plan")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces("application/vnd.user-plan.v1+json")
+    public Response replaceUserSemester(
+            @PathParam("id") final Long id,
+            @Valid final UserSemesterForm userSemesterForm
+    ){
+        final User currentUser = authUserService.getCurrentUser();
+        userService.replaceUserSemester(currentUser, id, userSemesterForm.getIdSub(), userSemesterForm.getIdClass());
+        return Response.ok(UserSemesterDto.fromUser(uriInfo, currentUser)).build();
+    }
+
     @PATCH
     @Path("/{id}/plan")
     @Consumes(MediaType.APPLICATION_JSON)

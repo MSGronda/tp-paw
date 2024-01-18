@@ -57,6 +57,8 @@ public interface UserService {
             final List<String> classIds
     );
 
+    void replaceUserSemester(final User currentUser, final Long userId, final List<String> subjectIds, final List<String> classIds);
+
     void createUserSemester(final User currentUser, final Long userId, final List<String> subjectIds, final List<String> classIds);
 
     void deleteUserSemester(final User currentUser, final Long userId);
