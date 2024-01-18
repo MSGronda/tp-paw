@@ -112,5 +112,11 @@ export const TRANSLATIONS_ES = {
         emptyProfessors: "Ninguno",
         difficulty: "Dificultad",
         time: "Tiempo a Dedicar",
+        classCode: "Comisión",
+        classDay: "Día",
+        classTime: "Horarios de clase",
+        classMode: "Modalidad",
+        classBuilding: "Edificio",
+        classNumber: "Número de clase",
     }
 }

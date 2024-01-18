@@ -112,5 +112,11 @@ export const TRANSLATIONS_EN = {
         emptyProfessors: "None",
         difficulty: "Difficulty",
         time: "Time Demanding",
+        classCode: "Class Code",
+        classDay: "Day",
+        classTime: "Class Times",
+        classMode: "Class Mode",
+        classBuilding: "Class Building",
+        classNumber: "Class Number"
     }
 }

@@ -7,12 +7,50 @@ import {Card, Tabs, Text, rem, Table, Badge} from '@mantine/core';
 import {IconPhoto} from "@tabler/icons-react";
 import {Subject} from "../../models/Subject.ts";
 import {Navbar} from "../../components/navbar/navbar.tsx";
+import Class from "../../models/Class.ts";
+import ClassTime from "../../models/ClassTime.ts";
 
 
 
 export function SubjectInfo() {
     const { t } = useTranslation();
     const iconStyle = { width: rem(12), height: rem(12) };
+    const classTime: ClassTime = {
+        day: 1,
+        startTime: "12:00",
+        endTime: "14:00",
+        classNumber: "102R",
+        building: "SDR",
+        mode: "Presencial",
+    };
+    const classTime2: ClassTime = {
+        day: 3,
+        startTime: "10:00",
+        endTime: "12:00",
+        classNumber: "203F",
+        building: "SDF",
+        mode: "Presencial",
+    };
+    const classTime3: ClassTime = {
+        day: 5,
+        startTime: "8:00",
+        endTime: "10:00",
+        classNumber: "-",
+        building: "-",
+        mode: "Virtual",
+    };
+    const subjectClass: Class = {
+        idSubject: "12.09",
+        idClass: "S",
+        professors: ["John Doe","Magnus Mefisto","Melaco Motoda"],
+        locations: [classTime, classTime2, classTime3],
+    };
+    const subjectClass2: Class = {
+        idSubject: "12.09",
+        idClass: "S1",
+        professors: ["Random Name","Magnus Mefisto","Ugly Uhhh Dude"],
+        locations: [classTime, classTime2, classTime3],
+    };
     const subject: Subject = {
         id: "12.09",
         name: "Química",
@@ -22,6 +60,7 @@ export function SubjectInfo() {
         timeDemand: "HIGH",
         reviewCount: 0,
         department: "Ciencias Exactas y Naturales",
+        classes: [subjectClass, subjectClass2],
     }
     const prereqs: Subject[] = [subject, subject, subject];
     const professors: string[] = ["John Doe","Magnus Mefisto","Melaco Motoda","John Johnson","Juan Johnson","asadasd, asdADA"];
@@ -112,6 +151,40 @@ export function SubjectInfo() {
                                     </Table.Tbody>
                                 </Table>
                             </Tabs.Panel>
+
+                            <Tabs.Panel value="times-panel">
+                                <Table>
+                                    <Table.Thead>
+                                        <Table.Tr>
+                                            <Table.Th><Text fw={600}>{t("Subject.classCode")}</Text></Table.Th>
+                                            <Table.Th><Text fw={600}>{t("Subject.classDay")}</Text></Table.Th>
+                                            <Table.Th><Text fw={600}>{t("Subject.classTime")}</Text></Table.Th>
+                                            <Table.Th><Text fw={600}>{t("Subject.classMode")}</Text></Table.Th>
+                                            <Table.Th><Text fw={600}>{t("Subject.classNumber")}</Text></Table.Th>
+                                        </Table.Tr>
+                                    </Table.Thead>
+                                    <Table.Thead>
+                                        {subject.classes.map((item) => (
+                                            item.locations.map((classtime, index) => (
+                                                <Table.Tr>
+                                                    <Table.Td>
+                                                        { index === 0 ? item.idClass : ""}
+                                                    </Table.Td>
+                                                    { classtime.day >= 1 && classtime.day <= 7 ?
+                                                        <Table.Td>{t(getDayOfTheWeek(classtime.day))}</Table.Td> :
+                                                        <Table.Td> - </Table.Td>
+                                                    }
+                                                    <Table.Td>{classtime.startTime} - {classtime.endTime}</Table.Td>
+                                                    <Table.Td>{classtime.mode}</Table.Td>
+                                                    <Table.Td>{classtime.building}</Table.Td>
+                                                    <Table.Td>{classtime.classNumber}</Table.Td>
+                                                </Table.Tr>
+                                            ))
+                                        ))}
+                                    </Table.Thead>
+                                </Table>
+
+                            </Tabs.Panel>
                         </Tabs>
                     </Card>
                 </div>
@@ -157,5 +230,9 @@ function getProfessors(professors: string[]){
         }
     )
     return professorsComponents;
+}
+
+function getDayOfTheWeek(day: number){
+    return "TimeTable.day"+day;
 }
 
