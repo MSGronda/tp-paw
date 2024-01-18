@@ -108,5 +108,9 @@ export const TRANSLATIONS_ES = {
         credits: "Créditos",
         prerequisites: "Correlativas",
         emptyPrerequisites: "Ninguna",
+        professors: "Profesores",
+        emptyProfessors: "Ninguno",
+        difficulty: "Dificultad",
+        time: "Tiempo a Dedicar",
     }
 }

@@ -100,7 +100,7 @@ export const TRANSLATIONS_EN = {
         day6: "Saturday",
         day7: "Sunday"
     },
-    Subejct: {
+    Subject: {
         general: "General Information",
         times: "Class Times",
         classProf: "Class Professors",
@@ -108,5 +108,9 @@ export const TRANSLATIONS_EN = {
         credits: "Credits",
         prerequisites: "Prerequisites",
         emptyPrerequisites: "None",
+        professors: "Professors",
+        emptyProfessors: "None",
+        difficulty: "Difficulty",
+        time: "Time Demanding",
     }
 }
