@@ -24,6 +24,7 @@ import {IconArrowNarrowDown, IconArrowNarrowUp, IconCalendarEvent, IconList, Ico
 import WeeklySchedule from "../../components/schedule/weekly-schedule.tsx";
 import BuilderSelectClassCard from "../../components/builder-select-class-card/builder_select_class_card.tsx";
 import Class from "../../models/Class.ts";
+import {t} from "i18next";
 
 const dummySubjects: Subject[] = [
     {
@@ -195,7 +196,7 @@ export default function SemesterBuilder() {
     const [showClassSelect, setShowClassSelect] = useState(false);
 
     const [ascendingSort, setAscendingSort] = useState(true);
-    const [sortingType, setSortingType] = useState("Name")
+    const [sortingType, setSortingType] = useState(t("Builder.sortName"));
 
     const selectSubject = (id: string) => {
         const selected = available.find((subject) => subject.id == id);
@@ -380,11 +381,11 @@ export default function SemesterBuilder() {
                     <Card className={classes.available_card} withBorder>
                         <Card.Section>
                             <div className={classes.available_header}>
-                                <h4 className={classes.section_titles}>Available Subjects</h4>
+                                <h4 className={classes.section_titles}>{t("Builder.available")}</h4>
                                 <div className={classes.available_sorting}>
                                     <Select
-                                        data={['Name', 'Credits', 'Difficulty', 'Time Demand']}
-                                        defaultValue="Name"
+                                        data={[t("Builder.sortName"), t("Builder.sortCredits"), t("Builder.sortDifficulty"), t("Builder.sortTimeDemand")]}
+                                        defaultValue={t("Builder.sortName")}
                                         allowDeselect={false}
                                         onChange={(value) => sortAvailable(value)}
                                         style={{paddingRight: "0.5rem", width: "10rem"}}
@@ -423,7 +424,7 @@ export default function SemesterBuilder() {
                         <Card className={classes.available_card} withBorder>
                             <Card.Section>
                                 <div className={classes.available_header}>
-                                    <h4 className={classes.section_titles}>Select a class for {selectClass?.name}</h4>
+                                    <h4 className={classes.section_titles}>{t("Builder.selectClass")} {selectClass?.name}</h4>
                                     <ActionIcon variant="default" >
                                         <IconX style={{ width: '70%', height: '70%' }} stroke={1.5} onClick={closeClassSelect}/>
                                     </ActionIcon>
@@ -450,7 +451,7 @@ export default function SemesterBuilder() {
                         <Card className={classes.schedule_card} withBorder>
                             <Card.Section>
                                 <div className={classes.selected_header}>
-                                    <h4 className={classes.section_titles}>Your timetable</h4>
+                                    <h4 className={classes.section_titles}>{t("Builder.timeTable")}</h4>
                                     <ActionIcon variant="default" onClick={showScheduleAction}>
                                         <IconList style={{ width: '70%', height: '70%' }} stroke={1.5} />
                                     </ActionIcon>
@@ -471,7 +472,7 @@ export default function SemesterBuilder() {
                     <Card className={classes.selected_card} withBorder>
                         <Card.Section>
                             <div className={classes.selected_header}>
-                                <h4 className={classes.section_titles}>Selected Subjects</h4>
+                                <h4 className={classes.section_titles}>{t("Builder.selected")}</h4>
                                 <ActionIcon variant="default" onClick={showScheduleAction}>
                                     <IconCalendarEvent style={{ width: '70%', height: '70%' }} stroke={1.5} />
                                 </ActionIcon>
@@ -498,7 +499,7 @@ export default function SemesterBuilder() {
                     <Card className={classes.selected_card} withBorder>
                         <Card.Section>
                             <div className={classes.selected_header}>
-                                <h4 className={classes.section_titles}>Your semester overview</h4>
+                                <h4 className={classes.section_titles}>{t("Builder.overview")}</h4>
                             </div>
                             <Divider/>
                         </Card.Section>
@@ -506,7 +507,7 @@ export default function SemesterBuilder() {
                             <div className={classes.info_card}>
                                 <Card  withBorder>
                                     <div className={classes.info_row}>
-                                        <span style={{paddingRight: '0.5rem'}}>Number of credits</span>
+                                        <span style={{paddingRight: '0.5rem'}}>{t("Builder.overviewCredits")}</span>
                                         <Divider orientation="vertical" />
                                         <span style={{paddingLeft: '0.5rem'}}>{totalCredits}</span>
                                     </div>
@@ -515,7 +516,7 @@ export default function SemesterBuilder() {
                             <div className={classes.info_card}>
                                 <Card  withBorder>
                                     <div className={classes.info_row}>
-                                        <span style={{paddingRight: '0.5rem'}}>Time Demand</span>
+                                        <span style={{paddingRight: '0.5rem'}}>{t("Builder.overviewTimeDemand")}</span>
                                         <Divider orientation="vertical" />
                                         <div style={{paddingLeft: '0.5rem'}}>
                                             <TimeDemandChip numReviews={5} timeDemand={calcTimeDemand(timeDemand, selectedSubjects.length, totalCredits)}/>
@@ -526,7 +527,7 @@ export default function SemesterBuilder() {
                             <div className={classes.info_card}>
                                 <Card  withBorder>
                                     <div className={classes.info_row}>
-                                        <span style={{paddingRight: '0.5rem'}}>Overall difficulty</span>
+                                        <span style={{paddingRight: '0.5rem'}}>{t("Builder.overviewDifficulty")}</span>
                                         <Divider orientation="vertical" />
                                         <div style={{paddingLeft: '0.5rem'}}>
                                             <DifficultyChip numReviews={5} difficulty={calcDifficulty(difficulty, selectedSubjects.length, totalCredits)}/>
@@ -537,7 +538,7 @@ export default function SemesterBuilder() {
                             <div className={classes.info_card}>
                                 <Card withBorder>
                                     <Card.Section>
-                                        <p className={classes.subsection_title}>By doing this semester you unlock</p>
+                                        <p className={classes.subsection_title}>{t("Builder.unlock")}</p>
                                         <Divider />
                                     </Card.Section>
                                     <div className={classes.unlockable_area}>

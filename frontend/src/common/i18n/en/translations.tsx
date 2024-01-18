@@ -118,5 +118,24 @@ export const TRANSLATIONS_EN = {
         classMode: "Class Mode",
         classBuilding: "Class Building",
         classNumber: "Class Number"
+    },
+    Builder: {
+        title: "Semester Builder",
+        available: "Available Subjects",
+        selectClass: "Select a class for",
+        timeTable: "Your timetable",
+        selected: "Selected subjects",
+        overview: "Your semester overview",
+
+        sortName: "Name",
+        sortCredits: "Credits",
+        sortDifficulty: "Difficulty",
+        sortTimeDemand: "Time Demand",
+
+        overviewCredits: "Number of credits",
+        overviewDifficulty: "Time demand",
+        overviewTimeDemand: "Overall difficulty",
+
+        unlock: "By doing this semester you unlock",
     }
 }

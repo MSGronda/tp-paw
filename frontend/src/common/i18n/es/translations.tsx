@@ -118,5 +118,23 @@ export const TRANSLATIONS_ES = {
         classMode: "Modalidad",
         classBuilding: "Edificio",
         classNumber: "Número de clase",
+    },
+    Builder: {
+        title: "Constructor de Semester",
+        available: "Materias Disponibles",
+        selectClass: "Seleccionar Comisión para",
+        selected: "Materias seleccionadas",
+        overview: "Tu panorama del cuatrimestre",
+        timeTable: "Tus horarios",
+        sortName: "Nombre",
+        sortCredits: "Creditos",
+        sortDifficulty: "Dificultad",
+        sortTimeDemand: "Demanda de Tiempo",
+
+        overviewCredits: "Cantidad de créditos",
+        overviewDifficulty: "Dificultad general",
+        overviewTimeDemand: "Demanda de tiempo",
+
+        unlock: "Al completar este cuatrimestre, desbloqueas",
     }
 }
