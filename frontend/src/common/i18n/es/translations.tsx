@@ -121,6 +121,10 @@ export const TRANSLATIONS_ES = {
         review: "Dejar Reseña",
         electives: "Electivas",
         year: "Año",
+        progressTooltip: "Muestra tu progreso indicando si ya cursaste la materia",
+        progressDone: "Cursada",
+        progressPending: "Pendiente...",
+        alreadyReviewed: "Ya hiciste una reseña",
     },
     Builder: {
         title: "Constructor de Semester",

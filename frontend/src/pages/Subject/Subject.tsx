@@ -3,7 +3,7 @@ import AuthContext from "../../context/AuthContext.tsx";
 import Landing from "../Landing/landing.tsx";
 import {useTranslation} from "react-i18next";
 import classes from "./Subject.module.css";
-import {Card, Tabs, Text, rem, Table, Badge, Button, Breadcrumbs, Anchor} from '@mantine/core';
+import {Card, Tabs, Text, rem, Table, Badge, Button, Breadcrumbs, Anchor, Tooltip, Group} from '@mantine/core';
 import {IconPhoto} from "@tabler/icons-react";
 import {Subject} from "../../models/Subject.ts";
 import {Navbar} from "../../components/navbar/navbar.tsx";
@@ -64,12 +64,14 @@ export function SubjectInfo() {
     }
     const prereqs: Subject[] = [subject, subject, subject];
     const professors: string[] = ["John Doe","Magnus Mefisto","Melaco Motoda","John Johnson","Juan Johnson","asadasd, asdADA"];
-    const didReview: boolean = false;
+    const didReview: boolean = true;
     const degree: any = {
         id:1,
         name:"Ingenieria Informatica",
     };
     const year: number = 1;
+    const progress : string = "DONE";
+    const reviews: any[] = [];
     return (
         <>
             <Navbar/>
@@ -226,20 +228,41 @@ export function SubjectInfo() {
                         </Tabs>
                     </Card>
                 </div>
+                <br/>
                 <div className={classes.reviewProgessArea}>
                     <div className={classes.reviewAndProgress}>
-                        {
-                            didReview? <Button variant="filled" size="lg" radius="xl" disabled>{t("Subject.review")}</Button> :
-                            <Button variant="filled" size="lg" radius="xl">
-                                <a href={"/review/" + subject.id}><Text c="white">{t("Subject.review")}</Text></a>
-                            </Button>
-                        }
-                        <form>
-                            <input type="hidden" name="idSub" id="idSub" value="{subject.id}"/>
-                            <input type="hidden" name="progress" id="progress" value="{progress.value}"/>
-                        </form>
+                        <Group>
+                            {
+                                didReview? <Button className={classes.button} variant="filled" size="lg" radius="xl" disabled>{t("Subject.review")}</Button> :
+                                    <Button variant="filled" size="lg" radius="xl">
+                                        <a href={"/review/" + subject.id}><Text c="white">{t("Subject.review")}</Text></a>
+                                    </Button>
+                            }
+                            <form>
+                                <input type="hidden" name="idSub" id="idSub" value="{subject.id}"/>
+                                <input type="hidden" name="progress" id="progress" value="{progress.value}"/>
+                                <Tooltip label={t("Subject.progressTooltip")}>
+                                    {progress === "DONE" ?
+                                        <Button variant="filled" size="lg" radius="xl">
+                                            <Text c={"white"}>{t("Subject.progressDone")}</Text>
+                                        </Button>:
+                                        <Button variant="filled" size="lg" radius="xl" className={classes.pendingButton}>
+                                            <Text c={"white"}>{t("Subject.progressPending")}</Text>
+                                        </Button>
+                                    }
+                                </Tooltip>
+                            </form>
+                        </Group>
                     </div>
                 </div>
+                {didReview &&
+                    <div className={classes.textCenter}>
+                        <Text>{t("Subject.alreadyReviewed")}</Text>
+                    </div>
+                }
+                <br/>
+                <hr className={classes.hrSeparator}/>
+                { }
             </div>
         </>
     );

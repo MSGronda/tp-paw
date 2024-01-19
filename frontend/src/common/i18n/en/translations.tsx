@@ -121,6 +121,10 @@ export const TRANSLATIONS_EN = {
         review: "Review Subject",
         electives: "Electives",
         year: "Year",
+        progressTooltip: "Show your progress by indicating wheter you have passed a subject",
+        progressDone: "Completed",
+        progressPending: "Pending...",
+        alreadyReviewed: "You already made a review",
     },
     Builder: {
         title: "Semester Builder",
