@@ -183,7 +183,29 @@ export function SubjectInfo() {
                                         ))}
                                     </Table.Thead>
                                 </Table>
+                            </Tabs.Panel>
 
+                            <Tabs.Panel value="professors-panel">
+                                <Table>
+                                    <Table.Thead>
+                                        <Table.Tr>
+                                            <Table.Th>{t("Subject.classCode")}</Table.Th>
+                                            <Table.Th>{t("Subject.classProf")}</Table.Th>
+                                        </Table.Tr>
+                                    </Table.Thead>
+                                    <Table.Tbody>
+                                        {subject.classes.map((item) => (
+                                            <Table.Tr>
+                                                <Table.Td>{item.idClass}</Table.Td>
+                                                <Table.Td>
+                                                    {item.professors.map((professor) => (
+                                                        <Badge color="blue">{professor}</Badge>
+                                                    ))}
+                                                </Table.Td>
+                                            </Table.Tr>
+                                        ))}
+                                    </Table.Tbody>
+                                </Table>
                             </Tabs.Panel>
                         </Tabs>
                     </Card>
