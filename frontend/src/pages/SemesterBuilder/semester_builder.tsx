@@ -1,7 +1,7 @@
 import {useEffect, useState} from "react";
 import classes from "../SemesterBuilder/semester_builder.module.css";
 import {Navbar} from "../../components/navbar/navbar.tsx";
-import {ActionIcon, Card, Divider, Select, UnstyledButton} from "@mantine/core";
+import {ActionIcon, Card, Divider, rem, Select, UnstyledButton} from "@mantine/core";
 import {
     Subject,
     getDifficultyValue,
@@ -20,7 +20,14 @@ import BuilderSelectedCard from "../../components/builder-selected-card/builder_
 import {SelectedSubject, selectedSubjectToSubject, subjectToSelectedSubject} from "../../models/SelectedSubject.ts";
 import DifficultyChip from "../../components/difficulty-chip/difficulty-chip.tsx";
 import TimeDemandChip from "../../components/time-demand-chip/time-demand-chip.tsx";
-import {IconArrowNarrowDown, IconArrowNarrowUp, IconCalendarEvent, IconList, IconX} from "@tabler/icons-react";
+import {
+    IconArrowNarrowDown,
+    IconArrowNarrowUp,
+    IconCalendarEvent,
+    IconCheck,
+    IconList,
+    IconX
+} from "@tabler/icons-react";
 import WeeklySchedule from "../../components/schedule/weekly-schedule.tsx";
 import BuilderSelectClassCard from "../../components/builder-select-class-card/builder_select_class_card.tsx";
 import Class from "../../models/Class.ts";
@@ -30,9 +37,11 @@ import {handleService} from "../../handlers/serviceHandler.tsx";
 import {useNavigate} from "react-router-dom";
 import FloatingButton from "../../components/floating-button/floating-button.tsx";
 import {UserPlan} from "../../models/UserPlan.ts";
+import FloatingMessage from "../../components/floating-message/floating_message.tsx";
 
 const COLS = 7
 const ROWS = 29
+
 
 export default function SemesterBuilder() {
     // Navigation
@@ -294,14 +303,25 @@ export default function SemesterBuilder() {
     }
 
     // Save schedule
+    const [savedSuccessfully, setSavedSuccessfully] = useState(false);
+    const [savedUnsuccessfully, setSavedUnsuccessfully] = useState(false);
+    const saveFailIcon = <IconX style={{ width: rem(20), height: rem(20) }} />;
+    const saveSuccessIcon = <IconCheck style={{ width: rem(20), height: rem(20) }} />;
+
     const saveSchedule = async () => {
         const userId = userService.getUserId();
         if(!userId)
             navigate('/login');
 
-        await userService.setUserSemester(userId, selectedSubjects);
-
-        navigate('/home');
+        const resp = await userService.setUserSemester(userId, selectedSubjects);
+        if(resp && resp.status == 202){
+            setSavedSuccessfully(true);
+            setTimeout(() => {setSavedSuccessfully(false)}, 3000);
+        }
+        else{
+            setSavedUnsuccessfully(true);
+            setTimeout(() => {setSavedUnsuccessfully(false)}, 3000);
+        }
     }
 
 
@@ -508,7 +528,23 @@ export default function SemesterBuilder() {
                     <></>
                 }
             </div>
-            <FloatingButton text={"Done"} onClick={saveSchedule}/>
+
+            {/* Floating buttons and messages */}
+
+            <FloatingButton text={t('Builder.save')} onClick={saveSchedule} bottom={'6rem'} right={'2rem'} color={"blue.7"}/>
+            <FloatingButton text={t('Builder.done')} onClick={()=> {navigate('/home')}} bottom={'2rem'} right={'2rem'} color={"green.7"}/>
+            {
+                savedSuccessfully ?
+                <FloatingMessage header={t('Builder.saveSuccessTitle')} text={t('Builder.saveSuccessBody')} bottom={"2rem"} color={"teal"} icon={saveSuccessIcon}/>
+                :
+                <></>
+            }
+            {
+                savedUnsuccessfully ?
+                <FloatingMessage header={t('Builder.saveFailTitle')} text={t('Builder.saveFailBody')} bottom={"2rem"} color={"red"} icon={saveFailIcon}/>
+                :
+                <></>
+            }
         </div>
     )
 }

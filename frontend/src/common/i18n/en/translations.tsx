@@ -138,7 +138,13 @@ export const TRANSLATIONS_EN = {
         overviewCredits: "Number of credits",
         overviewDifficulty: "Time demand",
         overviewTimeDemand: "Overall difficulty",
-
         unlock: "By doing this semester you unlock",
+
+        done: "Done",
+        save: "Save",
+        saveSuccessTitle: "Saved!",
+        saveSuccessBody: "Your semester has been saved!",
+        saveFailTitle: "Failed!",
+        saveFailBody: "Your semester wasn't able to be saved!",
     }
 }

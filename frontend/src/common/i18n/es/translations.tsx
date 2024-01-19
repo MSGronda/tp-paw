@@ -137,7 +137,13 @@ export const TRANSLATIONS_ES = {
         overviewCredits: "Cantidad de créditos",
         overviewDifficulty: "Dificultad general",
         overviewTimeDemand: "Demanda de tiempo",
-
         unlock: "Al completar este cuatrimestre, desbloqueas",
+
+        done: "Volver",
+        save: "Guardar",
+        saveSuccessTitle: "¡Guardado!",
+        saveSuccessBody: "¡Tu semestre se guardo exitosamente!",
+        saveFailTitle: "¡Error!",
+        saveFailBody: "¡Tu semestre nos se ha podido guardar!",
     }
 }

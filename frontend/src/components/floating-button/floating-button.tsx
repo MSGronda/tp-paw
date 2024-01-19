@@ -4,13 +4,16 @@ import { Button } from '@mantine/core';
 interface FloatingButtonProps {
     text: string;
     onClick: () => void;
+    bottom: string;
+    right: string;
+    color: string;
 }
 
 const FloatingButton = (props: FloatingButtonProps) => {
-    const {text, onClick} = props;
+    const {text, onClick, bottom, right, color} = props;
     return (
-        <div style={{ position: 'fixed', bottom: '2rem', right: '2rem', zIndex: 1000 }}>
-            <Button onClick={onClick} size="xl" color={"green.7"}>
+        <div style={{ position: 'fixed', bottom: bottom, right: right, zIndex: 1000 }}>
+            <Button  onClick={onClick} size="xl" color={color}>
                 {text}
             </Button>
         </div>

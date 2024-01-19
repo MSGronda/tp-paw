@@ -124,7 +124,7 @@ public class UserController {
     ){
         final User currentUser = authUserService.getCurrentUser();
         userService.replaceUserSemester(currentUser, id, userSemesterForm.getIdSub(), userSemesterForm.getIdClass());
-        return Response.ok(UserSemesterDto.fromUser(uriInfo, currentUser)).build();
+        return Response.accepted().build();
     }
 
     @PATCH
