@@ -1,7 +1,5 @@
-import {axiosService, subjectService} from "."
+import {axiosService} from "."
 import { handleResponse } from "../handlers/responseHandler";
-import {SelectedSubject} from "../models/SelectedSubject.ts";
-
 
 const path = "/subjects"
 

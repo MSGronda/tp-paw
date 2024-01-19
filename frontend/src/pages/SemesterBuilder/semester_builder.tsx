@@ -47,11 +47,8 @@ export default function SemesterBuilder() {
 
         const resp = await subjectService.getAvailableSubjects(userId);
         const data = handleService(resp, navigate);
-        setAvailable(data != "" ? data : []); // TODO: cambiar esto a algo mejor
+        setAvailable(removeInvalidSubjects(data != "" ? data : [])); // TODO: cambiar esto a algo mejor
     }
-    useEffect( () => {
-         getAvailable()
-    }, []);
 
     // Select class - para cuando tenes que elegir comision de materia
     const [selectClass, setSelectClass] = useState<Subject>();
@@ -71,10 +68,6 @@ export default function SemesterBuilder() {
 
         setSelectedSubjects(createSelectedSubjects(dataPlan, dataSubjects)); // TODO: cambiar esto a algo mejor
     }
-    useEffect( () => {
-        getUserPlan()
-    }, []);
-
 
     const [scheduleArray, setScheduleArray] = useState<number[]>(new Array(ROWS * COLS).fill(0));
 
@@ -94,9 +87,6 @@ export default function SemesterBuilder() {
         const data = handleService(resp, navigate);
         setDoneSubjects(data != "" ? data : []); // TODO: cambiar esto a algo mejor
     }
-    useEffect( () => {
-        getDone()
-    }, []);
 
     const [unlockables, setUnlockables] = useState<Subject[]>([]);
     const getUnlockable = async () => {
@@ -106,10 +96,17 @@ export default function SemesterBuilder() {
 
         const resp = await subjectService.getUnlockableSubjects(userId);
         const data = handleService(resp, navigate);
-        setUnlockables(data != "" ? data : []); // TODO: cambiar esto a algo mejor
+        setUnlockables(data && data.length ? data : []); // TODO: cambiar esto a algo mejor
     }
+
+    // API Calls
+
     useEffect( () => {
+        getDone()
+        getAvailable()
         getUnlockable()
+        getUserPlan()
+
     }, []);
 
     // Conditional rendering
@@ -193,12 +190,20 @@ export default function SemesterBuilder() {
     }
 
     // Schedule checkers
+    const alreadySignedUp = (subject: Subject): boolean => {
+        for(const ss of selectedSubjects){
+            if(ss.subject.id == subject.id){
+                return true;
+            }
+        }
+        return false;
+    }
+
     const subjectEnabled = (subject: Subject): boolean => {
         // Para cada comision, me fijo si es viable (no tiene conflictos en los horarios)
         if(subject.classes.length == 0){
             return true;
         }
-
         for(const sc of subject.classes){
             if(classEnabled(sc)){
                 return true;    // Con que una comision sea viable, toda la materia es viable
@@ -337,11 +342,14 @@ export default function SemesterBuilder() {
                         </Card.Section>
                         <div className={classes.available_subjects_list}>
                             {available.map((subject) => (
+                                !alreadySignedUp(subject) ?
                                 <BuilderSubjectCard
                                     subject={subject}
                                     selectionCallback={selectSubject}
                                     enabled={subjectEnabled(subject)}
                                 />
+                                    :
+                                <></>
                             ))}
                         </div>
                     </Card>
@@ -606,4 +614,8 @@ function createSelectedSubjects(userPlan: UserPlan, subjects: Subject[]): Select
         })
     })
     return selected;
+}
+
+function removeInvalidSubjects(subjects: Subject[]) {
+    return subjects.filter((subject) => subject.credits != 0);
 }
