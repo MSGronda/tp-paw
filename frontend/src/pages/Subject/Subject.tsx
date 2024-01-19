@@ -3,7 +3,7 @@ import AuthContext from "../../context/AuthContext.tsx";
 import Landing from "../Landing/landing.tsx";
 import {useTranslation} from "react-i18next";
 import classes from "./Subject.module.css";
-import {Card, Tabs, Text, rem, Table, Badge} from '@mantine/core';
+import {Card, Tabs, Text, rem, Table, Badge, Button, Breadcrumbs, Anchor} from '@mantine/core';
 import {IconPhoto} from "@tabler/icons-react";
 import {Subject} from "../../models/Subject.ts";
 import {Navbar} from "../../components/navbar/navbar.tsx";
@@ -64,14 +64,30 @@ export function SubjectInfo() {
     }
     const prereqs: Subject[] = [subject, subject, subject];
     const professors: string[] = ["John Doe","Magnus Mefisto","Melaco Motoda","John Johnson","Juan Johnson","asadasd, asdADA"];
+    const didReview: boolean = false;
+    const degree: any = {
+        id:1,
+        name:"Ingenieria Informatica",
+    };
+    const year: number = 1;
     return (
         <>
             <Navbar/>
             <div className={classes.container}>
-
                 <div className={classes.background}>
                     <div className={classes.breadcrumbArea}>
-
+                        {degree !== null?
+                            <Breadcrumbs separator="→">
+                                <Anchor href={"/degree/" + degree.id}>
+                                    {degree.name}
+                                </Anchor>
+                                {year === 0?
+                                    <Anchor href={"/degree/" + degree.id + "?tab=electives"}>{t("Subject.electives")}</Anchor>:
+                                    <Anchor href={"/degree/" + degree.id + "?tab=" + year}>{t("Subject.year")} {year}</Anchor>
+                                }
+                            </Breadcrumbs>:
+                            <></>
+                        }
                     </div>
                     <div className={classes.editDeleteButtons}>
                         <Text size="xl" fw={500}> {subject.name} - {subject.id}</Text>
@@ -210,7 +226,20 @@ export function SubjectInfo() {
                         </Tabs>
                     </Card>
                 </div>
-
+                <div className={classes.reviewProgessArea}>
+                    <div className={classes.reviewAndProgress}>
+                        {
+                            didReview? <Button variant="filled" size="lg" radius="xl" disabled>{t("Subject.review")}</Button> :
+                            <Button variant="filled" size="lg" radius="xl">
+                                <a href={"/review/" + subject.id}><Text c="white">{t("Subject.review")}</Text></a>
+                            </Button>
+                        }
+                        <form>
+                            <input type="hidden" name="idSub" id="idSub" value="{subject.id}"/>
+                            <input type="hidden" name="progress" id="progress" value="{progress.value}"/>
+                        </form>
+                    </div>
+                </div>
             </div>
         </>
     );

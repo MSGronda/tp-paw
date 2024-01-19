@@ -118,6 +118,9 @@ export const TRANSLATIONS_ES = {
         classMode: "Modalidad",
         classBuilding: "Edificio",
         classNumber: "Número de clase",
+        review: "Dejar Reseña",
+        electives: "Electivas",
+        year: "Año",
     },
     Builder: {
         title: "Constructor de Semester",

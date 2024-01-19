@@ -117,7 +117,10 @@ export const TRANSLATIONS_EN = {
         classTime: "Class Times",
         classMode: "Class Mode",
         classBuilding: "Class Building",
-        classNumber: "Class Number"
+        classNumber: "Class Number",
+        review: "Review Subject",
+        electives: "Electives",
+        year: "Year",
     },
     Builder: {
         title: "Semester Builder",

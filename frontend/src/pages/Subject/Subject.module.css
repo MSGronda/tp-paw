@@ -6,7 +6,7 @@
     background-color: #efefef;
 }
 
-.breadcrumb-area{
+.breadcrumbArea{
     padding-top: 1rem;
     padding-bottom: 2rem;
 }
@@ -24,7 +24,7 @@
     flex-direction: column;
 }
 
-.edit-delete-buttons {
+.editDeleteButtons {
     display: flex;
     flex-direction: row;
     justify-content: space-between;
@@ -32,11 +32,22 @@
     padding-bottom: 2rem;
 }
 
-.main-body{
+.mainBody{
     width: 100%;
     height: 100%;
     flex-direction: column;
     background-color: #efefef;
     flex: content;
     padding-bottom: 2rem;
+}
+
+.reviewProgressArea{
+    display: flex;
+    flex-direction: column;
+}
+
+.reviewAndProgress{
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
