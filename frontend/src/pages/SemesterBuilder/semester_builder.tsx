@@ -75,6 +75,22 @@ export default function SemesterBuilder() {
     const [totalCredits, setTotalCredits] = useState(0);
     const [timeDemand, setTimeDemand] = useState(0);
     const [difficulty, setDifficulty] = useState(0);
+    const updateOVerviewStats = () => {
+        let credits = 0;
+        let diff = 0;
+        let td = 0;
+        for(const ss of selectedSubjects){
+            credits += ss.subject.credits;
+            diff += getDifficultyValue(ss.subject.difficulty);
+            td += getTimeDemandValue(ss.subject.timeDemand);
+        }
+        setTotalCredits(credits);
+        setDifficulty(diff);
+        setTimeDemand(td);
+    }
+    useEffect(() => {
+        updateOVerviewStats()
+    }, [selectedSubjects])
 
     // Unlocking of subjects
     const [doneSubjects, setDoneSubjects] = useState<Subject[]>([]);
@@ -126,15 +142,7 @@ export default function SemesterBuilder() {
         setSelectClass(undefined);
         setShowClassSelect(false);
     }
-    const updateCredits = (delta: number) => {
-        setTotalCredits(totalCredits + delta);
-    }
-    const updateTimeDemand = (delta: number) => {
-        setTimeDemand(timeDemand + delta);
-    }
-    const updateDifficulty = (delta: number) => {
-        setDifficulty(difficulty + delta)
-    }
+
     const selectClassCallback = (selectedClass: Class) => {
         if(!selectClass){
             return;
@@ -150,11 +158,6 @@ export default function SemesterBuilder() {
         // Elimino de available
         const newAvailable = [...available]
         setAvailable(newAvailable.filter((s) => s.id != selectClass.id))
-
-        // Update los stats
-        updateCredits(selectClass.credits);
-        updateDifficulty(getDifficultyValue(selectClass.difficulty))
-        updateTimeDemand(getTimeDemandValue(selectClass.timeDemand))
 
         // Update schedule array
         updateScheduleArray(selectedClass, 1);
@@ -174,11 +177,6 @@ export default function SemesterBuilder() {
         // Elimino de selectedSubjects
         const newSelected = [...selectedSubjects]
         setSelectedSubjects(newSelected.filter((s) => s.subject.id != id))
-
-        // Update los stats
-        updateCredits(-selectedSubject.subject.credits);
-        updateDifficulty(-getDifficultyValue(selectedSubject.subject.difficulty))
-        updateTimeDemand(-getTimeDemandValue(selectedSubject.subject.timeDemand))
 
         // Update schedule array
         updateScheduleArray(selectedSubject.selectedClass, 0);
