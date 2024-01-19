@@ -127,7 +127,7 @@ export default function SemesterBuilder() {
     const [showSchedule, setShowSchedule] = useState(false);
     const [showClassSelect, setShowClassSelect] = useState(false);
 
-    const [ascendingSort, setAscendingSort] = useState(true);
+    const [ascendingSort, setAscendingSort] = useState(false);
     const [sortingType, setSortingType] = useState(t("Builder.sortName"));
 
     const selectSubject = (id: string) => {
@@ -156,7 +156,7 @@ export default function SemesterBuilder() {
         setShowClassSelect(false);
 
         // Elimino de available
-        const newAvailable = [...available]
+        const newAvailable = [...available];
         setAvailable(newAvailable.filter((s) => s.id != selectClass.id))
 
         // Update schedule array
@@ -171,8 +171,11 @@ export default function SemesterBuilder() {
 
         // Agrego a available
         const newAvailable = [...available]
-        newAvailable.push(selectedSubjectToSubject(selectedSubject))
-        setAvailable(newAvailable)
+        const newSubject = selectedSubjectToSubject(selectedSubject);
+        if(!newAvailable.find((s) => s.id == newSubject.id)){
+            newAvailable.push(newSubject);
+        }
+        setAvailable(newAvailable.sort(getSorter(sortingType)))
 
         // Elimino de selectedSubjects
         const newSelected = [...selectedSubjects]
@@ -250,43 +253,43 @@ export default function SemesterBuilder() {
         setAscendingSort(!ascendingSort);
         sortAvailable(sortingType);
     }
-    const sortAvailable = (value: string | null) => {
-        let sorter: (a: Subject, b: Subject) => number;
-
-        switch (value){
+    const getSorter = (value: string | null): (a: Subject, b: Subject) => number => {
+        switch (value) {
             case "Name":
-                if(ascendingSort)
-                    sorter = sortByNameDesc;
+                if (ascendingSort)
+                    return sortByNameDesc;
                 else
-                    sorter = sortByNameAsc;
-                break;
+                    return sortByNameAsc;
+
             case "Credits":
-                if(ascendingSort)
-                    sorter = sortByCreditsDesc;
+                if (ascendingSort)
+                    return sortByCreditsDesc;
                 else
-                    sorter = sortByCreditsAsc;
-                break;
+                    return sortByCreditsAsc;
+
             case "Difficulty":
-                if(ascendingSort)
-                    sorter = sortByDifficultyDesc;
+                if (ascendingSort)
+                    return sortByDifficultyDesc;
                 else
-                    sorter = sortByDifficultyAsc;
-                break;
+                    return sortByDifficultyAsc;
+
             case "Time Demand":
-                if(ascendingSort)
-                    sorter = sortByTimeDemandDesc;
+                if (ascendingSort)
+                    return sortByTimeDemandDesc;
                 else
-                    sorter = sortByTimeDemandAsc;
-                break;
+                    return sortByTimeDemandAsc;
+
             default:
-                if(ascendingSort)
-                    sorter = sortByNameDesc;
+                if (ascendingSort)
+                    return sortByNameDesc;
                 else
-                    sorter = sortByNameAsc;
+                    return sortByNameAsc;
         }
+    }
+    const sortAvailable = (value: string | null) => {
         setSortingType(value ? value : "Name");
 
-        const newAvailable = [...available].sort(sorter)
+        const newAvailable = [...available].sort(getSorter(value))
         setAvailable(newAvailable);
     }
 
@@ -324,7 +327,7 @@ export default function SemesterBuilder() {
                                     />
                                     <ActionIcon variant="default">
                                         {
-                                            !ascendingSort ?
+                                            ascendingSort ?
                                                 <IconArrowNarrowUp style={{ width: '70%', height: '70%' }} stroke={1.5} onClick={sortDirectionButton}/>
                                                 :
                                                 <IconArrowNarrowDown style={{ width: '70%', height: '70%' }} stroke={1.5} onClick={sortDirectionButton}/>
