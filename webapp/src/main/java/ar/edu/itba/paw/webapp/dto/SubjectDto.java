@@ -17,7 +17,7 @@ public class SubjectDto {
     private String difficulty;
     private String timeDemand;
     private Integer reviewCount;
-    private List<Subject> prerequisites;
+    private List<String> prerequisites;
 
     public static SubjectDto fromSubject(final UriInfo uriInfo, final Subject subject){
         final SubjectDto subjectDto =  new SubjectDto();
@@ -27,7 +27,7 @@ public class SubjectDto {
         subjectDto.department = subject.getDepartment();
         subjectDto.credits = subject.getCredits();
         subjectDto.classes = subject.getClasses().stream().map(subjectClass -> ClassDto.fromClass(uriInfo, subjectClass)).collect(Collectors.toList());
-        subjectDto.prerequisites = new ArrayList<>(subject.getPrerequisites());
+        subjectDto.prerequisites = subject.getPrerequisites().stream().map(Subject::getId).collect(Collectors.toList());
 
         subjectDto.difficulty = subject.getReviewStats().getDifficulty().name();
         subjectDto.timeDemand = subject.getReviewStats().getTimeDemanding().name();
@@ -36,11 +36,11 @@ public class SubjectDto {
         return subjectDto;
     }
 
-    public List<Subject> getPrerequisites() {
+    public List<String> getPrerequisites() {
         return prerequisites;
     }
 
-    public void setPrerequisites(List<Subject> prerequisites) {
+    public void setPrerequisites(List<String> prerequisites) {
         this.prerequisites = prerequisites;
     }
 

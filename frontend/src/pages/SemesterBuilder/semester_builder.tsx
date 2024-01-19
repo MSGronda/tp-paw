@@ -66,7 +66,7 @@ export default function SemesterBuilder() {
         const respPlan = await userService.getUserPlan(userId);
         const dataPlan = handleService(respPlan, navigate);
 
-        setSelectedSubjects(createSelectedSubjects(dataPlan, dataSubjects)); // TODO: cambiar esto a algo mejor
+        setSelectedSubjects(createSelectedSubjects(dataPlan, dataSubjects));
     }
 
     const [scheduleArray, setScheduleArray] = useState<number[]>(new Array(ROWS * COLS).fill(0));
@@ -96,17 +96,15 @@ export default function SemesterBuilder() {
 
         const resp = await subjectService.getUnlockableSubjects(userId);
         const data = handleService(resp, navigate);
-        setUnlockables(data && data.length ? data : []); // TODO: cambiar esto a algo mejor
+        setUnlockables(data != "" ? data : []); // TODO: cambiar esto a algo mejor
     }
 
     // API Calls
-
     useEffect( () => {
         getDone()
         getAvailable()
         getUnlockable()
         getUserPlan()
-
     }, []);
 
     // Conditional rendering
@@ -515,7 +513,6 @@ export default function SemesterBuilder() {
 }
 
 // = = = = = Overview calculations = = = = =
-
 function readjustWithCredits(average: number, credits: number){
     let ret = average;
 
@@ -575,7 +572,6 @@ function calcTimeDemand(difficultyValue: number, selectedLength: number, totalCr
 }
 
 //  = = = = = Schedule checkers = = = = =
-
 function timeStringToNumber(time: string) {
     return (parseInt(time.split(":")[0]) - 8)*2 + (parseInt(time.split(":")[1]) === 30 ? 1 : 0);
 }
@@ -590,6 +586,8 @@ function isOverlapped(day: number, startTime: string, endTime: string, scheduleA
     return false;
 }
 
+
+//  = = = = = Misc. = = = = =
 function createEmptySubjectClass(subject: Subject) : Class {
     return {
         idSubject: subject.id,
@@ -598,7 +596,6 @@ function createEmptySubjectClass(subject: Subject) : Class {
         locations: []
     }
 }
-
 function createSelectedSubjects(userPlan: UserPlan, subjects: Subject[]): SelectedSubject[] {
     const selected: SelectedSubject[] = [];
     subjects.forEach((subject) => {
@@ -615,7 +612,6 @@ function createSelectedSubjects(userPlan: UserPlan, subjects: Subject[]): Select
     })
     return selected;
 }
-
 function removeInvalidSubjects(subjects: Subject[]) {
     return subjects.filter((subject) => subject.credits != 0);
 }
