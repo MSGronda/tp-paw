@@ -10,6 +10,7 @@ import Profile from './pages/Profile/profile.tsx';
 import Search from './pages/Search/search.tsx';
 import SemesterBuilder from "./pages/SemesterBuilder/semester_builder.tsx";
 import {SubjectInfo} from "./pages/Subject/Subject.tsx";
+import FinishSemester from "./pages/FinishSemester/finish_semester.tsx";
 
 
 
@@ -50,6 +51,10 @@ const router = createBrowserRouter([
     {
         path: '/builder',
         element: <SemesterBuilder/>
+    },
+    {
+        path: '/builder/finish',
+        element: <FinishSemester/>
     },
     {
         path: '/subject/:id',

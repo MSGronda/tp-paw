@@ -1,0 +1,40 @@
+.general_area {
+    background-color: #efefef;
+    height: 100vh;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+.card_area {
+    width: 25rem;
+    height: 35rem;
+}
+.section_title{
+    padding: 1rem 1rem;
+    margin: 0;
+}
+.subject_list {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+.subject_row {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem;
+}
+.subject_name {
+    font-size: 1.1rem;
+}
+
+.button_row {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem;
+}

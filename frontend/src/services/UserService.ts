@@ -45,4 +45,7 @@ export class UserService {
             return handleResponse(error.response);
         }
     }
+    async completeSemester(subjects: string[]) {
+
+    }
 }
