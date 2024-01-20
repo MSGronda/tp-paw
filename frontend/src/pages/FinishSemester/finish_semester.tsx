@@ -9,31 +9,7 @@ import {t} from "i18next";
 import {IconX} from "@tabler/icons-react";
 import {rem} from "@mantine/core";
 import {handleService} from "../../handlers/serviceHandler.tsx";
-
-const dummySubjects: Subject[] = [
-    {
-        id: "11.11",
-        name: "Cacona I",
-        department: "Departamento de Cacona",
-        credits: 6,
-        classes: [],
-        difficulty: "EASY",
-        timeDemand: "NORMAL",
-        reviewCount: 5,
-        prerequisites: []
-    },
-    {
-        id: "11.12",
-        name: "Cacona II",
-        department: "Departamento de Cacona",
-        credits: 6,
-        classes: [],
-        difficulty: "EASY",
-        timeDemand: "NORMAL",
-        reviewCount: 5,
-        prerequisites: []
-    },
-]
+import Title from "../../components/title/title.tsx";
 
 export default function FinishSemester() {
     // Navigation
@@ -94,10 +70,10 @@ export default function FinishSemester() {
 
     return (
         <div className={classes.general_area}>
-
+            <Title text={t("BuilderFinish.title")}/>
                 <Card className={classes.card_area}>
                     <Card.Section>
-                        <h3 className={classes.section_title}>Select the subjects you passed</h3>
+                        <h3 className={classes.section_title}>{t("BuilderFinish.select")}</h3>
                         <Divider />
                     </Card.Section>
                     <div className={classes.subject_list}>
@@ -116,10 +92,10 @@ export default function FinishSemester() {
                         <Divider />
                         <div className={classes.button_row}>
                             <Button size={"md"} variant={"default"}>
-                                Cancel
+                                {t("BuilderFinish.cancel")}
                             </Button>
                             <Button onClick={submit} size={"md"} color={"green.7"}>
-                                Submit
+                                {t("BuilderFinish.submit")}
                             </Button>
                         </div>
                     </Card.Section>
@@ -129,7 +105,7 @@ export default function FinishSemester() {
 
             {
                 savedUnsuccessfully ?
-                    <FloatingMessage header={t('Builder.saveFailTitle')} text={t('Builder.saveFailBody')} bottom={"2rem"} color={"red"} icon={saveFailIcon}/>
+                    <FloatingMessage header={t('BuilderFinish.saveFailTitle')} text={t('BuilderFinish.saveFailBody')} bottom={"2rem"} color={"red"} icon={saveFailIcon}/>
                     :
                     <></>
             }

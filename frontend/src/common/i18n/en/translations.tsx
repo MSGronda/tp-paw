@@ -150,5 +150,13 @@ export const TRANSLATIONS_EN = {
         saveSuccessBody: "Your semester has been saved!",
         saveFailTitle: "Failed!",
         saveFailBody: "Your semester wasn't able to be saved!",
+    },
+    BuilderFinish: {
+        title: "Finish Semester",
+        select: "Select the subjects you passed",
+        cancel: "Cancel",
+        submit: "Submit",
+        saveFailTitle: "Failed!",
+        saveFailBody: "Failed to save subject progress!"
     }
 }

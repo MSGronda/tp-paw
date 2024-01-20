@@ -38,6 +38,7 @@ import {useNavigate} from "react-router-dom";
 import FloatingButton from "../../components/floating-button/floating-button.tsx";
 import {UserPlan} from "../../models/UserPlan.ts";
 import FloatingMessage from "../../components/floating-message/floating_message.tsx";
+import Title from "../../components/title/title.tsx";
 
 const COLS = 7
 const ROWS = 29
@@ -327,6 +328,7 @@ export default function SemesterBuilder() {
 
     return (
         <div className={classes.general_area}>
+            <Title text={t('Builder.title')}/>
             <Navbar />
             <div className={classes.container_95}>
 
