@@ -2,7 +2,12 @@ import classes from "./finish_semester.module.css";
 import {Button, Card, Checkbox, Divider} from "@mantine/core";
 import {useState} from "react";
 import {Subject} from "../../models/Subject.ts";
-import {subjectService, userService} from "../../services";
+import {userService} from "../../services";
+import {useNavigate} from "react-router-dom";
+import FloatingMessage from "../../components/floating-message/floating_message.tsx";
+import {t} from "i18next";
+import {IconX} from "@tabler/icons-react";
+import {rem} from "@mantine/core";
 
 const dummySubjects: Subject[] = [
     {
@@ -30,8 +35,14 @@ const dummySubjects: Subject[] = [
 ]
 
 export default function FinishSemester() {
+    // Navigation
+    const navigate = useNavigate();
+
     const [subjects, setSubjects] = useState<Subject[]>(dummySubjects);
-    const [completedSubjects, setCompletedSubjects] = useState<string[]>([]);
+    const [completedSubjects, setCompletedSubjects] = useState<string[]>([])
+    const [savedUnsuccessfully, setSavedUnsuccessfully] = useState(false);
+
+    const saveFailIcon = <IconX style={{ width: rem(20), height: rem(20) }} />;
 
     const addCompleted = (checked: boolean, id: string) => {
         if(!checked){
@@ -47,8 +58,18 @@ export default function FinishSemester() {
         }
     }
     const submit = async () => {
-        const resp = await userService.completeSemester(completedSubjects);
+        const userId = userService.getUserId();
+        if(!userId)
+            navigate('/login')
 
+        const resp = await userService.completeSemester(userId, completedSubjects);
+        if(resp && resp.status == 202){
+            navigate('/home');
+        }
+        else {
+            setSavedUnsuccessfully(true);
+            setTimeout(() => {setSavedUnsuccessfully(false)}, 3000);
+        }
     }
 
     return (
@@ -83,6 +104,15 @@ export default function FinishSemester() {
                         </div>
                     </Card.Section>
                 </Card>
+
+            {/* Floating messages */}
+
+            {
+                savedUnsuccessfully ?
+                    <FloatingMessage header={t('Builder.saveFailTitle')} text={t('Builder.saveFailBody')} bottom={"2rem"} color={"red"} icon={saveFailIcon}/>
+                    :
+                    <></>
+            }
         </div>
     )
 }

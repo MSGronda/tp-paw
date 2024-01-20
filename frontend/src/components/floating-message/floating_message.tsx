@@ -12,7 +12,7 @@ export default function FloatingMessage (props: FloatingMessageProps) {
     const style = {
         root: {
             // Adjust the width and height as needed
-            width: '20rem',
+            width: '25rem',
             height: '5rem',
         },
         title: {
@@ -24,7 +24,7 @@ export default function FloatingMessage (props: FloatingMessageProps) {
     }
 
     return (
-        <div style={{ position: 'fixed', bottom: bottom, right: '50%', zIndex: 1000 }}>
+        <div style={{ position: 'fixed', bottom: bottom, right: '38.3%', zIndex: 1000 }}>
             <>
             <Notification icon={icon} color={color} title={header} withCloseButton={false} withBorder styles={style}>
                 {text}

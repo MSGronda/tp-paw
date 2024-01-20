@@ -45,7 +45,16 @@ export class UserService {
             return handleResponse(error.response);
         }
     }
-    async completeSemester(subjects: string[]) {
-
+    async completeSemester(usedId: number, subjects: string[]) {
+        const data = {
+            type: 3,
+            passedSubjectIds: subjects
+        }
+        try{
+            const res = await axiosService.authAxiosWrapper(axiosService.PATCH, `${path}/${usedId}/plan`, {}, data);
+            return handleResponse(res);
+        } catch (error: any) {
+            return handleResponse(error.response);
+        }
     }
 }
