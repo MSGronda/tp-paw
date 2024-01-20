@@ -1,13 +1,14 @@
 import classes from "./finish_semester.module.css";
 import {Button, Card, Checkbox, Divider} from "@mantine/core";
-import {useState} from "react";
+import {useEffect, useState} from "react";
 import {Subject} from "../../models/Subject.ts";
-import {userService} from "../../services";
+import {subjectService, userService} from "../../services";
 import {useNavigate} from "react-router-dom";
 import FloatingMessage from "../../components/floating-message/floating_message.tsx";
 import {t} from "i18next";
 import {IconX} from "@tabler/icons-react";
 import {rem} from "@mantine/core";
+import {handleService} from "../../handlers/serviceHandler.tsx";
 
 const dummySubjects: Subject[] = [
     {
@@ -38,7 +39,24 @@ export default function FinishSemester() {
     // Navigation
     const navigate = useNavigate();
 
-    const [subjects, setSubjects] = useState<Subject[]>(dummySubjects);
+    const [subjects, setSubjects] = useState<Subject[]>([]);
+    const getSubjects = async () => {
+        const userId = userService.getUserId();
+        if(!userId)
+            navigate('/login')
+
+        const resp = await subjectService.getUserPlanSubjects(userId)
+        const data = handleService(resp, navigate);
+
+        if(data == ""){
+            navigate('/home');
+        }
+        setSubjects(data);
+    }
+    useEffect(() => {
+        getSubjects()
+    }, []);
+
     const [completedSubjects, setCompletedSubjects] = useState<string[]>([])
     const [savedUnsuccessfully, setSavedUnsuccessfully] = useState(false);
 
@@ -62,10 +80,12 @@ export default function FinishSemester() {
         if(!userId)
             navigate('/login')
 
-        const resp = await userService.completeSemester(userId, completedSubjects);
-        if(resp && resp.status == 202){
+        const respSemester = await userService.completeSemester(userId);
+        const respProgress = await userService.setFinishedSubjects(userId, completedSubjects, [])
+        if(respSemester && respSemester.status == 202 && respProgress && respProgress.status == 202){
             navigate('/home');
         }
+
         else {
             setSavedUnsuccessfully(true);
             setTimeout(() => {setSavedUnsuccessfully(false)}, 3000);
