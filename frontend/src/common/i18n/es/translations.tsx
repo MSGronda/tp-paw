@@ -84,7 +84,13 @@ export const TRANSLATIONS_ES = {
         change_degree: "Cambiar carrera"
     },
     Search: {
-        not_found: "No pudimos encontrar una materia que coincida con: {{query}}"
+        not_found: "No pudimos encontrar una materia que coincida con: {{query}}",
+        filter: "Filtrar",
+        filterCredits: "Créditos",
+        filterDepartment: "Departamento",
+        filterDifficulty: "Dificultad",
+        filterTimeDemand: "Demanda de Tiempo",
+        filterOrderBy: "Ordenar por",
     },
     TimeTable: {
         day: "Día",

@@ -14,12 +14,18 @@ export class SubjectService {
         }
     }
 
-    async getSubjectsByName(name: string, page: number){
+    async getSubjectsByName(name: string, page: number, credits: number | null, department: string | null, difficulty: number | null, timeDemand: number | null, orderBy: string | null, dir: string | null){
         try{
             let config: any = {}; // Add type annotation to config object
             config.params = { // Access 'params' property directly
                 q: name,
-                page: page
+                page: page,
+                credits: credits,
+                department: department,
+                difficulty: difficulty,
+                timeDemand: timeDemand,
+                orderBy: orderBy,
+                dir: dir
             };
             const res = await axiosService.authAxiosWrapper(axiosService.GET, `${path}`, config);
             return handleResponse(res);

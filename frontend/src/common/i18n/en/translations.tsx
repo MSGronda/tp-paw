@@ -84,7 +84,13 @@ export const TRANSLATIONS_EN = {
         change_degree: "Change degree"
     },
     Search: {
-        not_found: "We could not find a subject that matched: {{query}}"
+        not_found: "We could not find a subject that matched: {{query}}",
+        filter: "Filter",
+        filterCredits: "Credits",
+        filterDepartment: "Department",
+        filterDifficulty: "Difficulty",
+        filterTimeDemand: "Time Demand",
+        filterOrderBy: "Order By",
     },
     TimeTable: {
         day: "Day",
