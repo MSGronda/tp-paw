@@ -120,9 +120,10 @@ export default function Search() {
             newQueryString = queryParams
                 ? `${queryParams}&${type}=${encodedFilter}&dir=asc`
                 : `${type}=${encodedFilter}&dir=asc`;
-            // setShowAscArrow(true);
-            // console.log(showAscArrow)
         } else {
+            if( (department !== null && selectedFilter === department) || (credits !== null && selectedFilter === credits) || (difficulty !== null && selectedFilter === difficulty) || (timeDemand !== null && selectedFilter === timeDemand)){
+                return;
+            }
             // Construct the new query string
             newQueryString = queryParams
                 ? `${queryParams}&${type}=${encodedFilter}`
