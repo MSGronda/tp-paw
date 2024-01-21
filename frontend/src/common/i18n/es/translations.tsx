@@ -91,6 +91,8 @@ export const TRANSLATIONS_ES = {
         filterDifficulty: "Dificultad",
         filterTimeDemand: "Demanda de Tiempo",
         filterOrderBy: "Ordenar por",
+        filterAZ: "A-Z",
+        filterId: "ID",
     },
     TimeTable: {
         day: "Día",

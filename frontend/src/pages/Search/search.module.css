@@ -101,3 +101,20 @@
     width: 100%;
     padding-top: 5rem;
 }
+
+.orderBy_button {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    align-items: center;
+}
+
+.arrowButtonIcon{
+    color: grey;
+    cursor: pointer;
+    width: 20px;
+    height: 20px;
+    margin-left: 1rem;
+    padding-top: 5px;
+
+}
