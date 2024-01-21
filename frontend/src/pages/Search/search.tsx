@@ -135,6 +135,18 @@ export default function Search() {
         window.location.reload();
     };
 
+    const closeFilter = (type: string) => {
+        const currentUrl = new URL(window.location.href);
+
+        // Get the existing query parameters
+        const queryParams = new URLSearchParams(currentUrl.search);
+
+        queryParams.delete(type);
+
+        window.history.pushState({}, '', `${currentUrl.pathname}?${queryParams.toString()}${currentUrl.hash}`);
+        window.location.reload();
+    }
+
 
     const handlePageChange = (newPage: number) => {
         // Update the URL with the new page number when pagination changes
@@ -174,7 +186,10 @@ export default function Search() {
                                             <h5>{t("Search.filterDepartment")}</h5>
                                             {((filters[1]['value'] as string[]) || []).map((element: string) => (
                                                 <>
+                                                    <div className={classes.orderBy_button}>
                                                     <span id={element} onClick={() => handleFilterClick("department", element)} className={classes.filter_option_button}>{element}</span>
+                                                    {department !== null ? <CloseButton onClick={() => closeFilter("department")} variant="transparent" className={classes.closeButton}/> : <></>}
+                                                    </div>
                                                     <br />
                                                 </>
                                             ))}
@@ -184,7 +199,10 @@ export default function Search() {
                                             <h5>{t("Search.filterCredits")}</h5>
                                             {((filters[0]['value'] as string[]) || []).map((element: string) => (
                                                 <>
+                                                    <div className={classes.orderBy_button}>
                                                     <span id={element} onClick={() => handleFilterClick("credits", element)} className={classes.filter_option_button}  >{element}</span>
+                                                    {credits !== null ? <CloseButton onClick={() => closeFilter("credits")} variant="transparent" className={classes.closeButton}/> : <></>}
+                                                    </div>
                                                     <br />
                                                 </>
                                             ))}
@@ -194,7 +212,10 @@ export default function Search() {
                                             <h5>{t("Search.filterDifficulty")}</h5>
                                             {((filters[2]['value'] as string[]) || []).map((element: string) => (
                                                 <>
+                                                    <div className={classes.orderBy_button}>
                                                     <span id={element} onClick={() => handleFilterClick("difficulty", element)} className={classes.filter_option_button}  >{element}</span>
+                                                    {difficulty !== null ? <CloseButton onClick={() => closeFilter("difficulty")} variant="transparent" className={classes.closeButton}/> : <></>}
+                                                    </div>
                                                     <br />
                                                 </>
                                             ))}
@@ -204,7 +225,10 @@ export default function Search() {
                                             <h5>{t("Search.filterTimeDemand")}</h5>
                                             {((filters[3]['value'] as string[]) || []).map((element: string) => (
                                                 <>
+                                                    <div className={classes.orderBy_button}>
                                                     <span id={element} onClick={() => handleFilterClick("time", element)} className={classes.filter_option_button}  >{element}</span>
+                                                    {timeDemand !== null ? <CloseButton onClick={() => closeFilter("time")} variant="transparent" className={classes.closeButton}/> : <></>}
+                                                    </div>
                                                     <br />
                                                 </>
                                             ))}
