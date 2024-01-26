@@ -9,7 +9,7 @@ import { PrivateRoute } from './PrivateRoute.tsx';
 import Profile from './pages/Profile/profile.tsx';
 import Search from './pages/Search/search.tsx';
 import SemesterBuilder from "./pages/SemesterBuilder/semester_builder.tsx";
-import {SubjectInfo} from "./pages/Subject/Subject.tsx";
+import {SubjectInfo, SubjectScreen} from "./pages/Subject/Subject.tsx";
 
 
 
@@ -53,7 +53,7 @@ const router = createBrowserRouter([
     },
     {
         path: '/subject/:id',
-        element: <SubjectInfo/>
+        element: <SubjectScreen/>
     }
 ]);
 
