@@ -1,81 +1,105 @@
-import {useContext} from "react";
+import React, {useContext, useEffect, useState} from "react";
 import AuthContext from "../../context/AuthContext.tsx";
 import Landing from "../Landing/landing.tsx";
 import {useTranslation} from "react-i18next";
 import classes from "./Subject.module.css";
-import {Card, Tabs, Text, rem, Table, Badge, Button, Breadcrumbs, Anchor, Tooltip, Group} from '@mantine/core';
-import {IconPhoto} from "@tabler/icons-react";
+import {
+    Card,
+    Tabs,
+    Text,
+    rem,
+    Table,
+    Badge,
+    Button,
+    Breadcrumbs,
+    Anchor,
+    Tooltip,
+    Group,
+    Combobox,
+    useCombobox,
+} from '@mantine/core';
+import {IconArrowDown, IconArrowsSort, IconArrowUp, IconPhoto} from "@tabler/icons-react";
 import {Subject} from "../../models/Subject.ts";
 import {Navbar} from "../../components/navbar/navbar.tsx";
-import Class from "../../models/Class.ts";
-import ClassTime from "../../models/ClassTime.ts";
-
+import {useLocation, useNavigate} from "react-router-dom";
+import ReviewCard from "../../components/review-card/review-card.tsx";
+import {subjectService,reviewService} from "../../services";
+import {handleService} from "../../handlers/serviceHandler.tsx";
+import {Review} from "../../models/Review.ts";
 
 
 export function SubjectInfo() {
     const { t } = useTranslation();
+
     const iconStyle = { width: rem(12), height: rem(12) };
-    const classTime: ClassTime = {
-        day: 1,
-        startTime: "12:00",
-        endTime: "14:00",
-        classNumber: "102R",
-        building: "SDR",
-        mode: "Presencial",
-    };
-    const classTime2: ClassTime = {
-        day: 3,
-        startTime: "10:00",
-        endTime: "12:00",
-        classNumber: "203F",
-        building: "SDF",
-        mode: "Presencial",
-    };
-    const classTime3: ClassTime = {
-        day: 5,
-        startTime: "8:00",
-        endTime: "10:00",
-        classNumber: "-",
-        building: "-",
-        mode: "Virtual",
-    };
-    const subjectClass: Class = {
-        idSubject: "12.09",
-        idClass: "S",
-        professors: ["John Doe","Magnus Mefisto","Melaco Motoda"],
-        locations: [classTime, classTime2, classTime3],
-    };
-    const subjectClass2: Class = {
-        idSubject: "12.09",
-        idClass: "S1",
-        professors: ["Random Name","Magnus Mefisto","Ugly Uhhh Dude"],
-        locations: [classTime, classTime2, classTime3],
-    };
-    const subject: Subject = {
-        id: "12.09",
-        name: "Química",
-        credits: 3,
-        difficulty: "",
-        prerequisites: [],
-        timeDemand: "HIGH",
-        reviewCount: 0,
-        department: "Ciencias Exactas y Naturales",
-        classes: [subjectClass, subjectClass2],
+    const iconSort = <IconArrowsSort size={14} />;
+
+    const subjectInfo = {id:"12.09",name:"Química"};
+    const navigate = useNavigate();
+    const [subject, setSubject] = useState({} as Subject);
+    const [loading, setLoading] = useState(true);
+    const [reviews, setReviews] = useState([{} as Review]);
+    const location = useLocation();
+    const orderParams = new URLSearchParams(location.search);
+    const order = orderParams.get('order');
+    const dir = orderParams.get('dir');
+    let page: number;
+    if(orderParams.get('page') === null){
+        page = 1;
+    } else {
+        page = parseInt(orderParams.get('page') as string,10);
     }
-    const prereqs: Subject[] = [subject, subject, subject];
-    const professors: string[] = ["John Doe","Magnus Mefisto","Melaco Motoda","John Johnson","Juan Johnson","asadasd, asdADA"];
+    const INITIAL_PAGE = 1;
+    const INITIAL_ORDER: string = "difficulty";
+    const INITAL_DIR: string = "asc";
+
+    const searchSubject = async (subjectId: string) => {
+        const res = await subjectService.getSubjectById(subjectId);
+        const data = handleService(res, navigate);
+        if (res) {
+            setSubject(data);
+        }
+    }
+
+    const getReviewsFromSubject = async (subjectId: string, page: number, order: string, dir: string) => {
+        const res = await reviewService.getReviewsBySubject(subjectId,page,order,dir);
+        const data = handleService(res, navigate);
+        if (res) {
+            setReviews(data);
+        }
+        setLoading(false);
+    }
     const didReview: boolean = true;
+
+    useEffect(() => {
+        searchSubject(subjectInfo.id);
+        document.title = subjectInfo.name;
+        if(order === null && dir === null && page === null){
+            getReviewsFromSubject(subjectInfo.id,INITIAL_PAGE,INITIAL_ORDER,INITAL_DIR);
+        } else {
+            getReviewsFromSubject(subjectInfo.id,page,order? order : "",dir? dir : "");
+        }
+
+    }, []);
+
+    // Degree Lookup
     const degree: any = {
         id:1,
         name:"Ingenieria Informatica",
     };
+
     const year: number = 1;
     const progress : string = "DONE";
-    const reviews: any[] = [];
+
+    const combobox = useCombobox({
+        onDropdownClose: () => combobox.resetSelectedOption(),
+    });
+    const [value, setValue] = useState<string | null>(null)
     return (
         <>
             <Navbar/>
-            <div className={classes.container}>
+            {loading ? <div /> :
+                <div className={classes.container}>
                 <div className={classes.background}>
                     <div className={classes.breadcrumbArea}>
                         {degree !== null?
@@ -92,7 +116,7 @@ export function SubjectInfo() {
                         }
                     </div>
                     <div className={classes.editDeleteButtons}>
-                        <Text size="xl" fw={500}> {subject.name} - {subject.id}</Text>
+                        <Text size="xl" fw={500}> {subject.name} - {subject?.id}</Text>
                         <></>
                     </div>
                     <Card className={classes.mainBody}>
@@ -117,15 +141,15 @@ export function SubjectInfo() {
                                         <Table.Tr>
                                             <Table.Th>{t("Subject.prerequisites")}</Table.Th>
                                             <Table.Td>
-                                                {prereqs.length === 0? <>{t("Subject.emptyPrerequisites")}</> : <></>}
-                                                {getSubjectPrereqs(prereqs)}
+                                                {subject.prerequisites && subject.prerequisites.length === 0? <>{t("Subject.emptyPrerequisites")}</> : <></>}
+                                                {getSubjectPrereqs(subject.prerequisites)}
                                             </Table.Td>
                                         </Table.Tr>
                                         <Table.Tr>
                                             <Table.Th>{t("Subject.professors")}</Table.Th>
                                             <Table.Td>
-                                                {professors.length === 0? <>{t("Subject.emptyProfessors")}</> : <></>}
-                                                {getProfessors(professors)}
+                                                {subject.classes && subject.classes.length === 0? <>{t("Subject.emptyProfessors")}</> : <></>}
+                                                {getProfessors(subject)}
                                             </Table.Td>
                                         </Table.Tr>
                                         <Table.Tr>
@@ -136,7 +160,7 @@ export function SubjectInfo() {
                                                         switch (subject.difficulty) {
                                                             case "EASY":
                                                                 return <Badge color="green"> {t("SubjectCard.easy")} </Badge>;
-                                                            case "NORMAL":
+                                                            case "MEDIUM":
                                                                 return <Badge color="blue"> {t("SubjectCard.normal")} </Badge>;
                                                             case "HARD":
                                                                 return <Badge color="red"> {t("SubjectCard.hard")} </Badge>;
@@ -182,7 +206,7 @@ export function SubjectInfo() {
                                         </Table.Tr>
                                     </Table.Thead>
                                     <Table.Thead>
-                                        {subject.classes.map((item) => (
+                                        { subject.classes?.map((item) => (
                                             item.locations.map((classtime, index) => (
                                                 <Table.Tr>
                                                     <Table.Td>
@@ -212,7 +236,7 @@ export function SubjectInfo() {
                                         </Table.Tr>
                                     </Table.Thead>
                                     <Table.Tbody>
-                                        {subject.classes.map((item) => (
+                                        {subject.classes?.map((item) => (
                                             <Table.Tr>
                                                 <Table.Td>{item.idClass}</Table.Td>
                                                 <Table.Td>
@@ -235,11 +259,11 @@ export function SubjectInfo() {
                             {
                                 didReview? <Button className={classes.button} variant="filled" size="lg" radius="xl" disabled>{t("Subject.review")}</Button> :
                                     <Button variant="filled" size="lg" radius="xl">
-                                        <a href={"/review/" + subject.id}><Text c="white">{t("Subject.review")}</Text></a>
+                                        <a href={"/review/" + subject?.id}><Text c="white">{t("Subject.review")}</Text></a>
                                     </Button>
                             }
                             <form>
-                                <input type="hidden" name="idSub" id="idSub" value="{subject.id}"/>
+                                <input type="hidden" name="idSub" id="idSub" value="{subject?.id}"/>
                                 <input type="hidden" name="progress" id="progress" value="{progress.value}"/>
                                 <Tooltip label={t("Subject.progressTooltip")}>
                                     {progress === "DONE" ?
@@ -262,8 +286,75 @@ export function SubjectInfo() {
                 }
                 <br/>
                 <hr className={classes.hrSeparator}/>
-                { }
+                {
+                    reviews.length !== 0 &&
+                    <div className={classes.filter}>
+                        {loading? <></> : <CurrentFilterComponent order={order? order: ""} dir={dir? dir: ""}/>}
+                        <Combobox
+                            store={combobox}
+                            width={200}
+                            onOptionSubmit={(val) => {
+                                setOrderParameters(val);
+                                setValue(val);
+                                combobox.closeDropdown();
+                            }}
+                        >
+                            <Combobox.Target>
+                                <Button leftSection={iconSort} variant={"light"} className={classes.filterDropdown} size="md" onClick={() => combobox.toggleDropdown()}>{t("Subject.sort")}</Button>
+                            </Combobox.Target>
+
+                            <Combobox.Dropdown>
+                                <Combobox.Options>
+                                    {
+                                    <>
+                                        <Combobox.Option value={"ascending-difficulty"} key={"ascending-difficulty"}>
+                                            <div>
+                                                {t("Subject.ascDiff")}
+                                            </div>
+                                        </Combobox.Option>
+                                        <Combobox.Option value={"descending-difficulty"} key={"descending-difficulty"}>
+                                            <div >
+                                                {t("Subject.descDiff")}
+                                            </div>
+                                        </Combobox.Option>
+                                        <Combobox.Option value={"ascending-time"} key={"ascending-time"}>
+                                            <div>
+                                                {t("Subject.ascTime")}
+                                            </div>
+                                        </Combobox.Option>
+                                        <Combobox.Option value={"descending-time"} key={"descending-time"}>
+                                            <div>
+                                                {t("Subject.descTime")}
+                                            </div>
+                                        </Combobox.Option>
+                                    </>
+                                    }
+                                </Combobox.Options>
+                            </Combobox.Dropdown>
+                        </Combobox>
+                    </div>
+                }
+                <div className={classes.noReviewsTitle}>
+                    {
+                        reviews.length === 0 &&
+                        <Text fw={700} size={"xl"}>{t("Subject.noreviews")}</Text>
+                    }
+                </div>
+                <div className={classes.reviewsColumn}>
+                    {
+                        reviews.map((review) => (
+                            <ReviewCard subjectId={subject?.id}
+                                        subjectName={subject?.name}
+                                        difficulty={review.difficulty}
+                                        timeDemand={review.timeDemand}
+                                        text={review.text}
+                                        key={review.id}
+                            />
+                        ))
+                    }
+                </div>
             </div>
+            }
         </>
     );
 }
@@ -276,12 +367,15 @@ export function SubjectScreen() {
     );
 }
 
-function getSubjectPrereqs(prereqs: Subject[]){
+function getSubjectPrereqs(prereqs: string[]){
     const prereqsComponents: JSX.Element[] = [];
     let i = 0;
+    if(prereqs === null || prereqs === undefined){
+        return <></>;
+    }
     prereqs.forEach((item) => {
             prereqsComponents.push(
-                <a href={"/subject/" + item.id}>{item.name}</a>
+                <a href={"/subject/" + item}>{item}</a>
             );
             if (i !== prereqs.length - 1) {
                 prereqsComponents.push(
@@ -294,15 +388,19 @@ function getSubjectPrereqs(prereqs: Subject[]){
     return prereqsComponents;
 }
 
-function getProfessors(professors: string[]){
+function getProfessors(subject: Subject){
     const professorsComponents: JSX.Element[] = [];
-    professors.forEach((professor) => {
+    if(subject.classes === null || subject.classes === undefined){
+        return <></>;
+    }
+    subject.classes.forEach((classItem) => {
+        classItem.professors.forEach((professor: string) => {
             professorsComponents.push(
                 <Badge color="blue">{professor}</Badge>
             );
             professorsComponents.push(<> </>);
-        }
-    )
+        })
+    })
     return professorsComponents;
 }
 
@@ -310,3 +408,41 @@ function getDayOfTheWeek(day: number){
     return "TimeTable.day"+day;
 }
 
+interface CurrentFilterComponentProps {
+    order: string;
+    dir: string;
+}
+const CurrentFilterComponent: React.FC<CurrentFilterComponentProps> = ({order,dir}) => {
+    const { t } = useTranslation();
+
+    if(order === "" && dir === ""){
+        return <Text>{t("Subject.currentFilter") + ": " + t("Subject.orderDifficulty") + " " + t("Subject.directionAsc")}</Text>;
+    }
+    if(order === "difficulty" && dir === "desc"){
+        return <Text>{t("Subject.currentFilter") + ": " + t("Subject.orderDifficulty") + " " + t("Subject.directionDesc")}</Text>;
+    } else if(order === "timeDemand" && dir === "asc"){
+        return <Text>{t("Subject.currentFilter") + ": " + t("Subject.orderTimeDemand") + " " + t("Subject.directionAsc")}</Text>;
+    } else if(order === "timeDemand" && dir === "desc"){
+        return <Text>{t("Subject.currentFilter") + ": " + t("Subject.orderTimeDemand") + " " + t("Subject.directionDesc")}</Text>;
+    } else {
+        return <Text>{t("Subject.currentFilter") + ": " + t("Subject.orderDifficulty") + " " + t("Subject.directionAsc")}</Text>;
+    }
+};
+
+const setOrderParameters = (value: string) => {
+    const orderParams = new URLSearchParams();
+    if(value === "ascending-difficulty"){
+        orderParams.set('order', 'difficulty');
+        orderParams.set('dir', 'asc');
+    } else if(value === "descending-difficulty"){
+        orderParams.set('order', 'difficulty');
+        orderParams.set('dir', 'desc');
+    } else if(value === "ascending-time"){
+        orderParams.set('order', 'timeDemand');
+        orderParams.set('dir', 'asc');
+    } else if(value === "descending-time"){
+        orderParams.set('order', 'timeDemand');
+        orderParams.set('dir', 'desc');
+    }
+    window.location.search = orderParams.toString();
+}
