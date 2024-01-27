@@ -6,12 +6,11 @@ const path = "/reviews"
 
 export class ReviewService{
 
-    async getReviewsBySubject(subjectId: string,userId: bigint,page: number, orderBy: string,dir: string){
+    async getReviewsBySubject(subjectId: string,page: number, orderBy: string,dir: string){
         try{
             let config: any = {};
             config.params = {
                 subjectId: subjectId,
-                userId: userId,
                 page: page,
                 orderBy: orderBy,
                 dir: dir
