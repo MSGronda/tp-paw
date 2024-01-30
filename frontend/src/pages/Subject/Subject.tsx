@@ -43,7 +43,7 @@ export function SubjectInfo() {
     const [maxPage, setMaxPage] = useState(1);
     const location = useLocation();
     const orderParams = new URLSearchParams(location.search);
-    const order = orderParams.get('order');
+    const orderBy = orderParams.get('orderBy');
     const dir = orderParams.get('dir');
     const page: number = orderParams.get('page') === null ? 1 : parseInt(orderParams.get('page') as string,10);
 
@@ -59,8 +59,8 @@ export function SubjectInfo() {
         }
     }
 
-    const getReviewsFromSubject = async (subjectId: string, page: number, order: string, dir: string) => {
-        const res = await reviewService.getReviewsBySubject(subjectId,page,order,dir);
+    const getReviewsFromSubject = async (subjectId: string, page: number, orderBy: string, dir: string) => {
+        const res = await reviewService.getReviewsBySubject(subjectId,page,orderBy,dir);
         const data = handleService(res, navigate);
         if (res) {
             setReviews(data);
@@ -77,10 +77,10 @@ export function SubjectInfo() {
     useEffect(() => {
         searchSubject(subjectInfo.id);
         document.title = subjectInfo.name;
-        if(order === null && dir === null && page === null){
+        if(orderBy === null && dir === null && page === null){
             getReviewsFromSubject(subjectInfo.id,INITIAL_PAGE,INITIAL_ORDER,INITAL_DIR);
         } else {
-            getReviewsFromSubject(subjectInfo.id,page,order? order : "",dir? dir : "");
+            getReviewsFromSubject(subjectInfo.id,page,orderBy? orderBy : "",dir? dir : "");
         }
         setMaxPage(1 + subject.reviewCount/10);
     }, []);
@@ -292,7 +292,7 @@ export function SubjectInfo() {
                 {
                     reviews.length !== 0 &&
                     <div className={classes.filter}>
-                        {loading? <></> : <CurrentFilterComponent order={order? order: ""} dir={dir? dir: ""}/>}
+                        {loading? <></> : <CurrentFilterComponent orderBy={orderBy? orderBy: ""} dir={dir? dir: ""}/>}
                         <Combobox
                             store={combobox}
                             width={200}
@@ -413,20 +413,20 @@ function getDayOfTheWeek(day: number){
 }
 
 interface CurrentFilterComponentProps {
-    order: string;
+    orderBy: string;
     dir: string;
 }
-const CurrentFilterComponent: React.FC<CurrentFilterComponentProps> = ({order,dir}) => {
+const CurrentFilterComponent: React.FC<CurrentFilterComponentProps> = ({orderBy,dir}) => {
     const { t } = useTranslation();
 
-    if(order === "" && dir === ""){
+    if(orderBy === "" && dir === ""){
         return <Text>{t("Subject.currentFilter") + ": " + t("Subject.orderDifficulty") + " " + t("Subject.directionAsc")}</Text>;
     }
-    if(order === "difficulty" && dir === "desc"){
+    if(orderBy === "difficulty" && dir === "desc"){
         return <Text>{t("Subject.currentFilter") + ": " + t("Subject.orderDifficulty") + " " + t("Subject.directionDesc")}</Text>;
-    } else if(order === "timeDemand" && dir === "asc"){
+    } else if(orderBy === "timeDemand" && dir === "asc"){
         return <Text>{t("Subject.currentFilter") + ": " + t("Subject.orderTimeDemand") + " " + t("Subject.directionAsc")}</Text>;
-    } else if(order === "timeDemand" && dir === "desc"){
+    } else if(orderBy === "timeDemand" && dir === "desc"){
         return <Text>{t("Subject.currentFilter") + ": " + t("Subject.orderTimeDemand") + " " + t("Subject.directionDesc")}</Text>;
     } else {
         return <Text>{t("Subject.currentFilter") + ": " + t("Subject.orderDifficulty") + " " + t("Subject.directionAsc")}</Text>;
@@ -436,16 +436,16 @@ const CurrentFilterComponent: React.FC<CurrentFilterComponentProps> = ({order,di
 const setOrderParameters = (value: string) => {
     const orderParams = new URLSearchParams();
     if(value === "ascending-difficulty"){
-        orderParams.set('order', 'difficulty');
+        orderParams.set('orderBy', 'difficulty');
         orderParams.set('dir', 'asc');
     } else if(value === "descending-difficulty"){
-        orderParams.set('order', 'difficulty');
+        orderParams.set('orderBy', 'difficulty');
         orderParams.set('dir', 'desc');
     } else if(value === "ascending-time"){
-        orderParams.set('order', 'timeDemand');
+        orderParams.set('orderBy', 'timedemanding');
         orderParams.set('dir', 'asc');
     } else if(value === "descending-time"){
-        orderParams.set('order', 'timeDemand');
+        orderParams.set('orderBy', 'timedemanding');
         orderParams.set('dir', 'desc');
     }
     window.location.search = orderParams.toString();
