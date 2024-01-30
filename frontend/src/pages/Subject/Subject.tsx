@@ -18,7 +18,7 @@ import {
     Combobox,
     useCombobox,
 } from '@mantine/core';
-import {IconArrowDown, IconArrowsSort, IconArrowUp, IconPhoto} from "@tabler/icons-react";
+import {IconArrowsSort, IconPhoto} from "@tabler/icons-react";
 import {Subject} from "../../models/Subject.ts";
 import {Navbar} from "../../components/navbar/navbar.tsx";
 import {useLocation, useNavigate} from "react-router-dom";
@@ -26,6 +26,7 @@ import ReviewCard from "../../components/review-card/review-card.tsx";
 import {subjectService,reviewService} from "../../services";
 import {handleService} from "../../handlers/serviceHandler.tsx";
 import {Review} from "../../models/Review.ts";
+import PaginationComponent from "../../components/pagination/pagination.tsx";
 
 
 export function SubjectInfo() {
@@ -39,16 +40,13 @@ export function SubjectInfo() {
     const [subject, setSubject] = useState({} as Subject);
     const [loading, setLoading] = useState(true);
     const [reviews, setReviews] = useState([{} as Review]);
+    const [maxPage, setMaxPage] = useState(1);
     const location = useLocation();
     const orderParams = new URLSearchParams(location.search);
     const order = orderParams.get('order');
     const dir = orderParams.get('dir');
-    let page: number;
-    if(orderParams.get('page') === null){
-        page = 1;
-    } else {
-        page = parseInt(orderParams.get('page') as string,10);
-    }
+    const page: number = orderParams.get('page') === null ? 1 : parseInt(orderParams.get('page') as string,10);
+
     const INITIAL_PAGE = 1;
     const INITIAL_ORDER: string = "difficulty";
     const INITAL_DIR: string = "asc";
@@ -69,7 +67,12 @@ export function SubjectInfo() {
         }
         setLoading(false);
     }
-    const didReview: boolean = true;
+
+    const handlePageChange = (newPage: number) => {
+        const queryParams = new URLSearchParams(window.location.search);
+        queryParams.set('page', newPage.toString());
+        window.location.search = queryParams.toString();
+    }
 
     useEffect(() => {
         searchSubject(subjectInfo.id);
@@ -79,7 +82,7 @@ export function SubjectInfo() {
         } else {
             getReviewsFromSubject(subjectInfo.id,page,order? order : "",dir? dir : "");
         }
-
+        setMaxPage(1 + subject.reviewCount/10);
     }, []);
 
     // Degree Lookup
@@ -87,7 +90,7 @@ export function SubjectInfo() {
         id:1,
         name:"Ingenieria Informatica",
     };
-
+    const didReview: boolean = true;
     const year: number = 1;
     const progress : string = "DONE";
 
@@ -352,6 +355,7 @@ export function SubjectInfo() {
                             />
                         ))
                     }
+                    <PaginationComponent page={page} lastPage={maxPage} setPage={handlePageChange}/>
                 </div>
             </div>
             }
