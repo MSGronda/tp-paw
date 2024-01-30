@@ -24,7 +24,7 @@ public class UserSemesterDto {
             planDto.classes.put(sc.getSubject().getId(), sc.getClassId());
         }
 
-        planDto.planSubjects = uriInfo.getBaseUriBuilder().path("subjects").queryParam("userPlan", String.valueOf(user.getId())).build();
+        planDto.planSubjects = uriInfo.getBaseUriBuilder().path("subjects").queryParam("plan", String.valueOf(user.getId())).build();
 
         planDto.subjectProgress = uriInfo.getBaseUriBuilder().path("users").path(String.valueOf(user.getId())).path("progress").build();
 

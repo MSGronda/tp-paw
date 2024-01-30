@@ -45,4 +45,28 @@ export class UserService {
             return handleResponse(error.response);
         }
     }
+    async completeSemester(usedId: number) {
+        const semesterData = {
+            type: 3,
+        }
+        try{
+            const res = await axiosService.authAxiosWrapper(axiosService.PATCH, `${path}/${usedId}/plan`, {}, semesterData);
+            return handleResponse(res);
+        } catch (error: any) {
+            return handleResponse(error.response);
+        }
+    }
+
+    async setFinishedSubjects(usedId: number, passed: string[], notPassed: string[]) {
+        const progressData = {
+            newPassedSubjects: passed,
+            newNotPassedSubjects: notPassed
+        }
+        try{
+            const res = await axiosService.authAxiosWrapper(axiosService.PATCH, `${path}/${usedId}/progress`, {}, progressData);
+            return handleResponse(res);
+        } catch (error: any) {
+            return handleResponse(error.response);
+        }
+    }
 }

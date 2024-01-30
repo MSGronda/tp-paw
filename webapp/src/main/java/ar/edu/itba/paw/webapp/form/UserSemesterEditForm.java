@@ -14,8 +14,6 @@ public class UserSemesterEditForm {
 
     private List<String> classIds;
 
-    private List<String> passedSubjectIds;
-
     public UserSemesterEditType getEditType() {
         return UserSemesterEditType.parse(type);
     }
@@ -42,13 +40,5 @@ public class UserSemesterEditForm {
 
     public void setClassIds(List<String> classIds) {
         this.classIds = classIds;
-    }
-
-    public List<String> getPassedSubjectIds() {
-        return passedSubjectIds;
-    }
-
-    public void setPassedSubjectIds(List<String> passedSubjectIds) {
-        this.passedSubjectIds = passedSubjectIds;
     }
 }

@@ -6,6 +6,7 @@ export class AxiosService {
     PUT = 1;
     POST = 2;
     DELETE = 3;
+    PATCH = 4;
 
     async authAxiosWrapper(action: any, path: any, config: any, data = {}) {
         if(!config.hasOwnProperty('headers'))
@@ -28,6 +29,8 @@ export class AxiosService {
                 return await axios.post(aux, data, config);
             case this.DELETE:
                 return await axios.delete(aux, config);
+            case this.PATCH:
+                return await  axios.patch(aux, data, config)
             default:
                 break;
         }

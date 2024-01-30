@@ -168,5 +168,13 @@ export const TRANSLATIONS_ES = {
         saveSuccessBody: "¡Tu semestre se guardo exitosamente!",
         saveFailTitle: "¡Error!",
         saveFailBody: "¡Tu semestre nos se ha podido guardar!",
+    },
+    BuilderFinish: {
+        title: "Finalizar Semester",
+        select: "Seleccione las materias que aprobó",
+        cancel: "Cancelar",
+        submit: "Enviar",
+        saveFailTitle: "¡Error!",
+        saveFailBody: "¡Tu progreso nos se ha podido guardar"
     }
 }
