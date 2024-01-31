@@ -1,6 +1,4 @@
-import React, {useContext, useEffect, useState} from "react";
-import AuthContext from "../../context/AuthContext.tsx";
-import Landing from "../Landing/landing.tsx";
+import React, {useEffect, useState} from "react";
 import {useTranslation} from "react-i18next";
 import classes from "./Subject.module.css";
 import {
@@ -29,7 +27,7 @@ import {Review} from "../../models/Review.ts";
 import PaginationComponent from "../../components/pagination/pagination.tsx";
 
 
-export function SubjectInfo() {
+export function SubjectPage() {
     const iconStyle = { width: rem(12), height: rem(12) };
     const iconSort = <IconArrowsSort size={14} />;
 
@@ -358,19 +356,13 @@ export function SubjectInfo() {
                             />
                         ))
                     }
-                    <PaginationComponent page={page} lastPage={maxPage} setPage={handlePageChange}/>
+                    { reviews &&
+                        <PaginationComponent page={page} lastPage={maxPage} setPage={handlePageChange}/>
+                    }
                 </div>
             </div>
             }
         </>
-    );
-}
-
-export function SubjectScreen() {
-    const authContext = useContext(AuthContext);
-    const isLoggedIn = authContext.isAuthenticated;
-    return (
-        isLoggedIn ? <SubjectInfo/> : <Landing/>
     );
 }
 

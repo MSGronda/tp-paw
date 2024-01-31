@@ -9,7 +9,7 @@ import { PrivateRoute } from './PrivateRoute.tsx';
 import Profile from './pages/Profile/profile.tsx';
 import Search from './pages/Search/search.tsx';
 import SemesterBuilder from "./pages/SemesterBuilder/semester_builder.tsx";
-import {SubjectInfo, SubjectScreen} from "./pages/Subject/Subject.tsx";
+import {SubjectPage} from "./pages/Subject/Subject.tsx";
 import FinishSemester from "./pages/FinishSemester/finish_semester.tsx";
 import ConfirmEmail from "./pages/ConfirmEmail/confirmEmail.tsx";
 
@@ -63,7 +63,7 @@ const router = createBrowserRouter([
     },
     {
         path: '/subject/:id',
-        element: <SubjectScreen/>
+        element: <PrivateRoute component={SubjectPage} roles={['USER']}/>
     }
 ]);
 
