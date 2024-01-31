@@ -55,7 +55,7 @@ public class MailServiceImpl implements MailService {
     @Override
     public void sendVerification(final User to, final String verificationToken) {
         final Map<String, Object> mailModel = new HashMap<>();
-        mailModel.put("url", baseUrl + "/verification/confirm?token=" + verificationToken);
+        mailModel.put("url", baseUrl + "/confirm?token=" + verificationToken);
         sendMail(to, "verification", mailModel);
     }
 

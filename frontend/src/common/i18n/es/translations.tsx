@@ -26,6 +26,17 @@ export const TRANSLATIONS_ES = {
         title: "Registro completado!",
         body: "Ya estás registrado! Te enviamos un correo para confirmar tu email. Por favor revisá tu casilla."
     },
+    ConfirmEmail: {
+        InvalidToken: {
+            title: "Link de confirmación inválido",
+            body: "El link que usaste es inválido o ya ha sido usado."
+        },
+        Confirmed: {
+            title: "Email confirmado",
+            body: "Tu email fue confirmado! Ahora podes ingresar con tu usuario.",
+            login: "Login"
+        }
+    },
     Login: {
         title: "Ingresar",
         email: "Correo Electrónico",
