@@ -21,7 +21,7 @@ import {
 import {IconArrowsSort, IconPhoto} from "@tabler/icons-react";
 import {Subject} from "../../models/Subject.ts";
 import {Navbar} from "../../components/navbar/navbar.tsx";
-import {useLocation, useNavigate} from "react-router-dom";
+import {useLocation, useNavigate, useParams} from "react-router-dom";
 import ReviewCard from "../../components/review-card/review-card.tsx";
 import {subjectService,reviewService} from "../../services";
 import {handleService} from "../../handlers/serviceHandler.tsx";
@@ -30,18 +30,19 @@ import PaginationComponent from "../../components/pagination/pagination.tsx";
 
 
 export function SubjectInfo() {
-    const { t } = useTranslation();
-
     const iconStyle = { width: rem(12), height: rem(12) };
     const iconSort = <IconArrowsSort size={14} />;
 
-    const subjectInfo = {id:"12.09",name:"Química"};
+    const { t } = useTranslation();
+    const location = useLocation();
+    const subjectInfo = location.state? location.state : {} as Subject;
+    const subjectId = useParams();
     const navigate = useNavigate();
     const [subject, setSubject] = useState({} as Subject);
     const [loading, setLoading] = useState(true);
     const [reviews, setReviews] = useState([{} as Review]);
     const [maxPage, setMaxPage] = useState(1);
-    const location = useLocation();
+
     const orderParams = new URLSearchParams(location.search);
     const orderBy = orderParams.get('orderBy');
     const dir = orderParams.get('dir');
@@ -75,14 +76,16 @@ export function SubjectInfo() {
     }
 
     useEffect(() => {
-        searchSubject(subjectInfo.id);
-        document.title = subjectInfo.name;
-        if(orderBy === null && dir === null && page === null){
-            getReviewsFromSubject(subjectInfo.id,INITIAL_PAGE,INITIAL_ORDER,INITAL_DIR);
-        } else {
-            getReviewsFromSubject(subjectInfo.id,page,orderBy? orderBy : "",dir? dir : "");
+        if(subjectId.id !== undefined){
+            searchSubject(subjectId.id);
+            document.title = subjectInfo.name;
+            if(orderBy === null && dir === null && page === null){
+                getReviewsFromSubject(subjectId.id,INITIAL_PAGE,INITIAL_ORDER,INITAL_DIR);
+            } else {
+                getReviewsFromSubject(subjectId.id,page,orderBy? orderBy : "",dir? dir : "");
+            }
+            setMaxPage(1 + subject.reviewCount/10);
         }
-        setMaxPage(1 + subject.reviewCount/10);
     }, []);
 
     // Degree Lookup
@@ -344,7 +347,7 @@ export function SubjectInfo() {
                     }
                 </div>
                 <div className={classes.reviewsColumn}>
-                    {
+                    { reviews &&
                         reviews.map((review) => (
                             <ReviewCard subjectId={subject?.id}
                                         subjectName={subject?.name}
