@@ -25,7 +25,7 @@ export class AxiosService {
             case this.PUT:
                 return await axios.put(aux, data, config)
             case this.POST:
-                config.headers['Content-Type'] =  'application/vnd.unimart.api.v1+json'
+                // config.headers['Content-Type'] =  'application/vnd.unimart.api.v1+json'
                 return await axios.post(aux, data, config);
             case this.DELETE:
                 return await axios.delete(aux, config);

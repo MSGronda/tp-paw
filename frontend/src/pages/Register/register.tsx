@@ -9,6 +9,8 @@ import {
     validatePassword,
     validateUsername
 } from "../../utils/register_utils.ts";
+import AuthService, {RegisterForm} from "../../services/AuthService.ts";
+import RegisterComplete from "./registerComplete.tsx";
 
 export default function Register() {
     const { t } = useTranslation();
@@ -28,23 +30,31 @@ export default function Register() {
     const [usernameError, setUsernameError] = useState('');
     const [passwordError, setPasswordError] = useState('');
     const [confirmPasswordError, setConfirmPasswordError] = useState('');
+    
+    const [registerComplete, setRegisterComplete] = useState(false);
 
     // Handle form submission
-    const handleFormSubmit = (e: { preventDefault: () => void; }) => {
+    function handleFormSubmit(e: { preventDefault: () => void; })  {
         e.preventDefault();
 
-        // Call validation functions
-        const isEmailValid = validateEmail(email, setEmailError);
-        const isUsernameValid = validateUsername(username, setUsernameError);
-        const isPasswordValid = validatePassword(password, setPasswordError);
-        const isConfirmPasswordValid = validateConfirmPassword(confirmPassword, password, setConfirmPasswordError);
-
-        // Determine if the submit button should be disabled
-        const isSubmitDisabled = !isEmailValid || !isUsernameValid || !isPasswordValid || !isConfirmPasswordValid;
-    };
+                
+        const form: RegisterForm = {
+            email,
+            name: username,
+            password,
+            passwordConfirmation: confirmPassword
+        }
+        AuthService.register(form).then((res) => {
+            if(!res) return; //error
+            
+            setRegisterComplete(true);
+        })
+    }
 
     const isSubmitDisabled = !email || !username || !password || !confirmPassword || !!emailError || !!usernameError || !!passwordError || !!confirmPasswordError;
 
+    if(registerComplete) return <RegisterComplete />;
+    
     return (
         <div className={classes.fullsize}>
             <Default_Navbar />

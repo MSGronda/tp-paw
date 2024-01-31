@@ -22,6 +22,10 @@ export const TRANSLATIONS_EN = {
         confirm_password_error: "Passwords do not match",
         register: "Register"
     },
+    RegisterComplete: {
+        title: "Registration successful",
+        body: "You have successfully registered! We sent you an email to confirm your address. Please check your inbox."
+    },
     Login: {
         title: "Login",
         email: "Email",

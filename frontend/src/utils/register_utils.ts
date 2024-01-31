@@ -13,7 +13,7 @@ export const validateEmail = (value: string, setErrorFunction: Function) => {
 
 // Function to validate username
 export const validateUsername = (value: string, setErrorFunction: Function) => {
-    if (!value || value.length === 0) {
+    if (!value || value.length == 0 || value.length > 20) {
         setErrorFunction(t("Register.username_error"));
         return false;
     } else {
@@ -24,7 +24,7 @@ export const validateUsername = (value: string, setErrorFunction: Function) => {
 
 // Function to validate password
 export const validatePassword = (value: string, setErrorFunction: Function) => {
-    if (!value || value.length === 0) {
+    if (!value || value.length == 0 || value.length > 25) {
         setErrorFunction(t("Register.password_error"));
         return false;
     } else {

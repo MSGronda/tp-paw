@@ -22,6 +22,10 @@ export const TRANSLATIONS_ES = {
         confirm_password_error: "Las contraseñas no coinciden",
         register: "Registrarse"
     },
+    RegisterComplete: {
+        title: "Registro completado!",
+        body: "Ya estás registrado! Te enviamos un correo para confirmar tu email. Por favor revisá tu casilla."
+    },
     Login: {
         title: "Ingresar",
         email: "Correo Electrónico",

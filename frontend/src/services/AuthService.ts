@@ -33,6 +33,27 @@ const logout = () => {
     sessionStorage.removeItem('token');
 };
 
+export interface RegisterForm {
+    name: string;
+    email: string;
+    password: string;
+    passwordConfirmation: string;
+}
+const register = async (form: RegisterForm) => {
+    try {
+        const res = await axiosService.axiosWrapper(axiosService.POST, USER_PATH, {}, form);
+        if(!res || res.status !== 201){
+            console.error("Unable to register");
+            return false;
+        }
+        
+        return true;
+    } catch (err) {
+        console.error(err);
+        return false;
+    }
+};
+
 const getCurrentUser = () => {
     let user = localStorage.getItem('user')
     if(user){
@@ -43,6 +64,7 @@ const getCurrentUser = () => {
 
 export default {
     login,
+    register,
     getCurrentUser,
     logout
 };
