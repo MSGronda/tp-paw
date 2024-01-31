@@ -3,6 +3,7 @@ package ar.edu.itba.paw.webapp.controller;
 import ar.edu.itba.paw.models.User;
 import ar.edu.itba.paw.models.exceptions.*;
 import ar.edu.itba.paw.services.*;
+import ar.edu.itba.paw.webapp.controller.utils.PATCH;
 import ar.edu.itba.paw.webapp.dto.UserProgressDto;
 import ar.edu.itba.paw.webapp.dto.UserSemesterDto;
 import ar.edu.itba.paw.webapp.dto.UserDto;
