@@ -19,9 +19,7 @@ function SubjectCard(props: SubjectCardProps): JSX.Element {
     const { name, id, credits, prerequisites, progress, difficulty, timeDemand, numReviews } = props;
 
     return (
-        <Link to={{pathname:`/subject/${id}`,
-                    state: {name:name, id:id},
-                    }}>
+        <Link to={{pathname:`/subject/${id}`}}>
             <Card className={classes.card_area}>
                 <h3>{name} - {id}</h3>
                 <div className={classes.badge_row}>

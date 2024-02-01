@@ -33,7 +33,6 @@ export function SubjectPage() {
 
     const { t } = useTranslation();
     const location = useLocation();
-    const subjectInfo = location.state? location.state : {} as Subject;
     const subjectId = useParams();
     const navigate = useNavigate();
     const [subject, setSubject] = useState({} as Subject);
@@ -76,14 +75,24 @@ export function SubjectPage() {
     useEffect(() => {
         if(subjectId.id !== undefined){
             searchSubject(subjectId.id);
-            document.title = subjectInfo.name;
+        }
+    }, []);
+
+    useEffect(() => {
+        if(subject.name !== undefined) {
+            document.title = subject.name;
+        }
+    }, [subject]);
+
+    useEffect(() => {
+        if(subjectId.id !== undefined){
             if(orderBy === null && dir === null && page === null){
                 getReviewsFromSubject(subjectId.id,INITIAL_PAGE,INITIAL_ORDER,INITAL_DIR);
             } else {
                 getReviewsFromSubject(subjectId.id,page,orderBy? orderBy : "",dir? dir : "");
             }
-            setMaxPage(1 + subject.reviewCount/10);
         }
+        setMaxPage(1 + subject.reviewCount/10);
     }, []);
 
     // Degree Lookup
@@ -98,7 +107,6 @@ export function SubjectPage() {
     const combobox = useCombobox({
         onDropdownClose: () => combobox.resetSelectedOption(),
     });
-    const [value, setValue] = useState<string | null>(null)
     return (
         <>
             <Navbar/>
@@ -299,7 +307,6 @@ export function SubjectPage() {
                             width={200}
                             onOptionSubmit={(val) => {
                                 setOrderParameters(val);
-                                setValue(val);
                                 combobox.closeDropdown();
                             }}
                         >

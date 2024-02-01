@@ -63,7 +63,7 @@ const router = createBrowserRouter([
     },
     {
         path: '/subject/:id',
-        element: <PrivateRoute component={SubjectPage} roles={['USER']}/>
+        element: <PrivateRoute component={SubjectPage} roles={['ADMIN','USER']}/>
     }
 ]);
 
