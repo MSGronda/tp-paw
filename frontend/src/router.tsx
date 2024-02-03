@@ -12,6 +12,7 @@ import SemesterBuilder from "./pages/SemesterBuilder/semester_builder.tsx";
 import {SubjectPage} from "./pages/Subject/Subject.tsx";
 import FinishSemester from "./pages/FinishSemester/finish_semester.tsx";
 import ConfirmEmail from "./pages/ConfirmEmail/confirmEmail.tsx";
+import Review from './pages/ReviewSubject/review.tsx';
 
 
 
@@ -64,6 +65,11 @@ const router = createBrowserRouter([
     {
         path: '/subject/:id',
         element: <PrivateRoute component={SubjectPage} roles={['ADMIN','USER']}/>
+    },
+    {
+        path: '/review/:subjectCode',
+        element: <Review/>
+        //element: <PrivateRoute component={Review} roles={['ADMIN', 'USER']}/>
     }
 ]);
 

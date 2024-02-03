@@ -191,5 +191,21 @@ export const TRANSLATIONS_ES = {
         submit: "Enviar",
         saveFailTitle: "¡Error!",
         saveFailBody: "¡Tu progreso nos se ha podido guardar"
+    },
+    Review: {
+        title: "Dejá tu reseña de {{subjectName}}",
+        review: "Escribí tu reseña", 
+        easy: "Fácil",
+        medium: "Normal",
+        hard: "Difícil",
+        option: "Seleccioná la dificultad",
+        difficultyHelp: "¿Fueron los temas complicados de entender?",
+        lowTimeDemand: "Demanda de poco tiempo",
+        mediumTimeDemand: "Demanda de tiempo normal",
+        highTimeDemand: "Requiere mucho tiempo",
+        timeDemandHelp: "¿Tuviste que invertir mucho tiempo cada semana para mantenerte al día con los temas?",
+        public: "Público",
+        anonymous: "Anónimo",
+        submit: "Publicar!",
     }
 }

@@ -192,5 +192,21 @@ export const TRANSLATIONS_EN = {
         submit: "Submit",
         saveFailTitle: "Failed!",
         saveFailBody: "Failed to save subject progress!"
+    },
+    Review: {
+        title: "Review {{subjectName}}",
+        review: "Write your review",
+        easy: "Easy",
+        medium: "Medium",
+        hard: "Hard",
+        option: "Select an option",
+        difficultyHelp: "Were the topics in the subject complex to understand?",
+        lowTimeDemand: "Low time demanding",
+        mediumTimeDemand: "Normal time demand",
+        highTimeDemand: "Very time demanding",
+        timeDemandHelp: "Were you required to put a lot of time every week to keep up with the topics?",
+        public: "Public",
+        anonymous: "Anonymous",
+        submit: "Submit!",
     }
 }

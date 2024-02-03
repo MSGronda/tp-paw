@@ -4,10 +4,10 @@ import { useTranslation } from 'react-i18next';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { subjectService } from '../../services';
 import { handleService } from '../../handlers/serviceHandler';
-import { JSXElementConstructor, ReactElement, ReactNode, ReactPortal, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import SubjectCard from '../../components/subject-card/subject-card';
 import PaginationComponent from '../../components/pagination/pagination';
-import { ActionIcon, Button, CloseButton, Divider } from '@mantine/core';
+import { Button, CloseButton, Divider } from '@mantine/core';
 import { IconAdjustments, IconArrowNarrowDown, IconArrowNarrowUp } from '@tabler/icons-react';
 
 export default function Search() {
