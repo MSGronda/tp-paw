@@ -1,12 +1,29 @@
 import { MantineProvider } from '@mantine/core';
-import { RouterProvider } from 'react-router-dom';
-import router from './router';
+import {
+  BrowserRouter as Router,
+  Route,
+  Routes,
+  Navigate,
+} from "react-router-dom";
+
 // core styles are required for all packages
 import '@mantine/core/styles.css';
 import { useTranslation } from 'react-i18next';
 import { useEffect } from 'react';
 import { AuthContextProvider } from './context/AuthContext';
 import './App.css'
+import { HomeScreen } from './pages/HomeScreen/Home';
+import { AnonymousRoute } from './AnonymousRoute';
+import Register from './pages/Register/register';
+import ConfirmEmail from './pages/ConfirmEmail/confirmEmail';
+import Login from './pages/Login/login';
+import { PrivateRoute } from './PrivateRoute';
+import Search from './pages/Search/search';
+import Profile from './pages/Profile/profile';
+import SemesterBuilder from './pages/SemesterBuilder/semester_builder';
+import FinishSemester from './pages/FinishSemester/finish_semester';
+import { SubjectPage } from './pages/Subject/Subject';
+import Review from './pages/ReviewSubject/review';
 
 export default function App() {
 
@@ -19,7 +36,22 @@ export default function App() {
   return (
     <MantineProvider>
       <AuthContextProvider>
-      <RouterProvider router={router}/>
+      {/* <RouterProvider router={router}/> */}
+      <Router basename="/paw-2023a-06">
+        <Routes>
+          <Route path="/" element={<HomeScreen/>}/>
+          <Route path="register" element={<AnonymousRoute component={Register}/>}/>
+          <Route path="confirm" element={<AnonymousRoute component={ConfirmEmail}/>}/>
+          <Route path="login" element={<AnonymousRoute component={Login}/>}/>
+          <Route path="search" element={<PrivateRoute component={Search} roles={['ADMIN', 'USER']}/>}/>
+          <Route path="profile" element={<PrivateRoute component={Profile} roles={['ADMIN', 'USER']}/>}/>
+          <Route path="builder" element={<PrivateRoute component={SemesterBuilder} roles={['ADMIN', 'USER']}/>}/>
+          <Route path="builder/finish" element={<PrivateRoute component={FinishSemester} roles={['ADMIN', 'USER']}/>}/>
+          <Route path="subject/:id" element={<PrivateRoute component={SubjectPage} roles={['ADMIN', 'USER']}/>}/>
+          <Route path="review/:id" element={<PrivateRoute component={Review} roles={['ADMIN', 'USER']}/>}/>
+
+        </Routes>
+      </Router>
       </AuthContextProvider>
     </MantineProvider>
   );

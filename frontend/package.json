@@ -1,5 +1,6 @@
 {
   "name": "frontend",
+  "homepage": "/paw-2023a-06",
   "private": true,
   "version": "0.0.0",
   "type": "module",
@@ -46,6 +47,7 @@
     "postcss-preset-mantine": "^1.9.0",
     "postcss-simple-vars": "^7.0.1",
     "typescript": "^5.0.2",
-    "vite": "^4.4.5"
+    "vite": "^4.4.5",
+    "vite-plugin-rewrite-all": "^1.0.2"
   }
 }
