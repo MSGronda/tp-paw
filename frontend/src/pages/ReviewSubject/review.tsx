@@ -12,7 +12,7 @@ export default function Review() {
 
     const { id } = useParams()
     const { state } = useLocation()
-    const subjectName = state.name //TODO cambiar cuando se pase el nombre desde subject
+    const subjectName = state.name
 
 
     const navigate = useNavigate();
@@ -20,12 +20,47 @@ export default function Review() {
     const [review, setReview] = useState("")
     const [difficultyValue, setDifficultyValue] = useState("-1")
     const [timeDemandValue, setTimeDemandValue] = useState("-1")
-    const [AnonymousValue, setAnonymousValue] = useState("-1")
+    const [AnonymousValue, setAnonymousValue] = useState("")
+
+    const [reviewError, setReviewError] = useState(true)
+    const [difficultyError, setDifficultyError] = useState(true)
+    const [timeDemandError, setTimeDemandError] = useState(true)
+    const [AnonymousError, setAnonymousError] = useState(true)
+
+
+    useEffect(() => {
+        if (review === "") {
+            setReviewError(true)
+        }
+        else {
+            setReviewError(false)
+        }
+
+        if (difficultyValue === "-1") {
+            setDifficultyError(true)
+        } else {
+            setDifficultyError(false)
+        }
+
+        if (timeDemandValue === "-1") {
+            setTimeDemandError(true)
+        } else {
+            setTimeDemandError(false)
+        }
+
+        if (AnonymousValue === "") {
+            setAnonymousError(true)
+        }else {
+            setAnonymousError(false)
+        }
+    }, [review, difficultyValue, timeDemandValue, AnonymousValue])
+
+    const isSubmitDisabled = reviewError || difficultyError || timeDemandError || AnonymousError;
+
+    
 
     const handleReviewSubmit = async (e: { preventDefault: () => void; }) => {
         e.preventDefault();
-
-        //validateText(review, setReviewError);
 
         if( id === undefined) {
             return;
@@ -106,14 +141,9 @@ export default function Review() {
 
                         <br />
                         <br />
-                        <Button type='submit' color='green.7'>
+                        <Button type='submit' color='green.7' disabled={isSubmitDisabled}>
                             {t("Review.submit")}
                         </Button>
-
-
-
-
-
                     </form>
                 </div>
             </div>
