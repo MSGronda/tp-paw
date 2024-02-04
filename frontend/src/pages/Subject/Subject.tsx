@@ -19,7 +19,7 @@ import {
 import {IconArrowsSort, IconPhoto} from "@tabler/icons-react";
 import {Subject} from "../../models/Subject.ts";
 import {Navbar} from "../../components/navbar/navbar.tsx";
-import {useLocation, useNavigate, useParams} from "react-router-dom";
+import {Link, useLocation, useNavigate, useParams} from "react-router-dom";
 import ReviewCard from "../../components/review-card/review-card.tsx";
 import {subjectService,reviewService} from "../../services";
 import {handleService} from "../../handlers/serviceHandler.tsx";
@@ -100,7 +100,7 @@ export function SubjectPage() {
         id:1,
         name:"Ingenieria Informatica",
     };
-    const didReview: boolean = true;
+    const didReview: boolean = false;
     const year: number = 1;
     const progress : string = "DONE";
 
@@ -271,7 +271,7 @@ export function SubjectPage() {
                             {
                                 didReview? <Button className={classes.button} variant="filled" size="lg" radius="xl" disabled>{t("Subject.review")}</Button> :
                                     <Button variant="filled" size="lg" radius="xl">
-                                        <a href={"/review/" + subject?.id}><Text c="white">{t("Subject.review")}</Text></a>
+                                        <Link to={{ pathname: `/review/` + subject?.id}}><Text c="white">{t("Subject.review")}</Text></Link>
                                     </Button>
                             }
                             <form>
