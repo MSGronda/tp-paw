@@ -198,7 +198,7 @@ export const TRANSLATIONS_ES = {
         easy: "Fácil",
         medium: "Normal",
         hard: "Difícil",
-        option: "Seleccioná la dificultad",
+        option: "Seleccioná una opción",
         difficultyHelp: "¿Fueron los temas complicados de entender?",
         lowTimeDemand: "Demanda de poco tiempo",
         mediumTimeDemand: "Demanda de tiempo normal",
