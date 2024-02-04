@@ -1,49 +1,38 @@
 import classes from './review.module.css';
 import { Navbar } from "../../components/navbar/navbar";
 import { useTranslation } from 'react-i18next';
-import { handleService } from '../../handlers/serviceHandler';
 import { useNavigate, useParams } from 'react-router-dom';
-import { subjectService } from '../../services';
 import { useEffect, useState } from 'react';
-import { Button, SegmentedControl, TextInput, Textarea } from '@mantine/core';
+import { Button, SegmentedControl, Textarea } from '@mantine/core';
+import { reviewService } from "../../services";
 
 
 export default function Review() {
     const { t } = useTranslation();
 
-    const { subjectCode } = useParams()
-    console.log(subjectCode)
+    const { id } = useParams()
+    console.log(id)
     const navigate = useNavigate();
 
     const [review, setReview] = useState("")
     const [difficultyValue, setDifficultyValue] = useState("0")
     const [timeDemandValue, setTimeDemandValue] = useState("0")
-    const [AnonymousValue, setAnonymousValue] = useState("0")
-    // useEffect(() => {
-    //     if(!id || /\d{2}\.\d{2}/.test(id)){
-    //         console.log("esoty aca")
-    //         navigate(-1);
-    //     }
-    // }, [id, navigate])
+    const [AnonymousValue, setAnonymousValue] = useState("false")
 
     const subjectName = "Materia" //TODO cambiar cuando se pase el nombre desde subject
 
-    // const searchSubject = async (id: string) => {
-    //     const res = await subjectService.getSubjectById(id);
-    //     const data = handleService(res, navigate)
-    //     if(res){
-    //         setSubject(data);
-    //         console.log(data);
-    //     }
-    // }
-
-    // useEffect(() => {
-    //     if(id)
-    //         searchSubject(id);
-    // }, [])
-
     const handleReviewSubmit = async (e: { preventDefault: () => void; }) => {
         e.preventDefault();
+
+        //validateText(review, setReviewError);
+
+        if( id === undefined) {
+            return;
+        }
+        const res = await reviewService.publishReview(id, review, parseInt(difficultyValue) , parseInt(timeDemandValue), AnonymousValue === "true");
+        console.log(res)
+
+        navigate('/subject/' + id)
     }
 
 
@@ -109,8 +98,8 @@ export default function Review() {
                             value={AnonymousValue}
                             onChange={setAnonymousValue}
                             data={[
-                                { value: "0", label: t("Review.public") },
-                                { value: "1", label: t("Review.anonymous") },
+                                { value: "false", label: t("Review.public") },
+                                { value: "true", label: t("Review.anonymous") },
                             ]}
                         />
 

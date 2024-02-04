@@ -21,4 +21,20 @@ export class ReviewService{
             return handleResponse(error.response);
         }
     }
+
+    async publishReview(subjectId: string, review: string, difficulty: number, timeDemand: number, anonymous: boolean){
+        try{
+            const data = {
+                subjectId: subjectId,
+                text: review,
+                difficulty: difficulty,
+                timeDemanding: timeDemand,
+                anonymous: anonymous
+            }
+            const res = await axiosService.authAxiosWrapper(axiosService.POST, `${path}`, {}, data);
+            return handleResponse(res);
+        } catch (error: any) {
+            return handleResponse(error.response);
+        }
+    }
 }
