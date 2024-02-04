@@ -271,7 +271,7 @@ export function SubjectPage() {
                             {
                                 didReview? <Button className={classes.button} variant="filled" size="lg" radius="xl" disabled>{t("Subject.review")}</Button> :
                                     <Button variant="filled" size="lg" radius="xl">
-                                        <Link to={{ pathname: `/review/` + subject?.id}}><Text c="white">{t("Subject.review")}</Text></Link>
+                                        <Link to={{pathname: `/review/` + subject?.id}} state={{ name: subject.name}}><Text c="white">{t("Subject.review")}</Text></Link>
                                     </Button>
                             }
                             <form>

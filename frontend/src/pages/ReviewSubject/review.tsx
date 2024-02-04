@@ -1,7 +1,7 @@
 import classes from './review.module.css';
 import { Navbar } from "../../components/navbar/navbar";
 import { useTranslation } from 'react-i18next';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { Button, SegmentedControl, Textarea } from '@mantine/core';
 import { reviewService } from "../../services";
@@ -11,15 +11,16 @@ export default function Review() {
     const { t } = useTranslation();
 
     const { id } = useParams()
-    console.log(id)
+    const { state } = useLocation()
+    const subjectName = state.name //TODO cambiar cuando se pase el nombre desde subject
+
+
     const navigate = useNavigate();
 
     const [review, setReview] = useState("")
-    const [difficultyValue, setDifficultyValue] = useState("0")
-    const [timeDemandValue, setTimeDemandValue] = useState("0")
-    const [AnonymousValue, setAnonymousValue] = useState("false")
-
-    const subjectName = "Materia" //TODO cambiar cuando se pase el nombre desde subject
+    const [difficultyValue, setDifficultyValue] = useState("-1")
+    const [timeDemandValue, setTimeDemandValue] = useState("-1")
+    const [AnonymousValue, setAnonymousValue] = useState("-1")
 
     const handleReviewSubmit = async (e: { preventDefault: () => void; }) => {
         e.preventDefault();
