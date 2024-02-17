@@ -1,4 +1,4 @@
-import axios from "../api"
+import axiosInstance from "../api"
 
 
 export class AxiosService {
@@ -21,16 +21,16 @@ export class AxiosService {
         const aux = path
         switch (action) {
             case this.GET:
-                return await axios.get(aux, config);
+                return await axiosInstance.get(aux, config);
             case this.PUT:
-                return await axios.put(aux, data, config)
+                return await axiosInstance.put(aux, data, config)
             case this.POST:
                 // config.headers['Content-Type'] =  'application/vnd.unimart.api.v1+json'
-                return await axios.post(aux, data, config);
+                return await axiosInstance.post(aux, data, config);
             case this.DELETE:
-                return await axios.delete(aux, config);
+                return await axiosInstance.delete(aux, config);
             case this.PATCH:
-                return await  axios.patch(aux, data, config)
+                return await  axiosInstance.patch(aux, data, config)
             default:
                 break;
         }
