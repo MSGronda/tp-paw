@@ -6,7 +6,37 @@
 }
 
 .center{
-    min-height: 100%;
+    width: min(max(800px, 90%), 100%);
+    padding-left: 2rem;
+    padding-right: 2rem;
+    align-self: center;
+    justify-self: center;
+    margin: 0 auto;
+}
+
+.dashboard-area {
+    display: flex;
+    flex-direction: row;
+    align-items: stretch;
+    min-height: 94vh;
+    margin: auto 0;
+}
+
+.overviewArea {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 1rem;
+    min-height: 70vh;
+    margin: auto;
+}
+
+.future-subjects-area {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+
+    padding: 0 1rem 2rem 1rem;
+    gap: 1rem;
 }
 
 .dashboard{
@@ -36,6 +66,41 @@
     background-color: #efefef;
 }
 
-.card-width{
+.cardWidth{
     width: 100%
+}
+
+.statRow{
+    flex: 1 0 auto;
+    display: flex;
+    flex-direction: row;
+    gap: 1rem;
+}
+
+.progressCard {
+    flex: auto;
+    min-width: 25vw;
+}
+
+.progressCard::part(base) {
+    height: 100%;
+}
+
+.progressCard::part(header) {
+    padding-top: 0;
+    padding-bottom: 0;
+}
+
+.progressCard::part(body) {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+}
+
+.columnCenter {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
 }

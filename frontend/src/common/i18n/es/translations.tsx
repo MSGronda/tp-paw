@@ -59,7 +59,14 @@ export const TRANSLATIONS_ES = {
         futureSubjects: "Materias futuras",
         pastSubjects: "Materias aprobadas",
         completedCredits: "Créditos Aprobados",
-        totalCredits: "Total de créditos en tu carrera"
+        totalCredits: "Total de créditos en tu carrera",
+        overallProgress: "Progreso General",
+        completedCreditsByYear: "Progreso por año",
+        firstYear: "Primer Año",
+        secondYear: "Segundo Año",
+        thirdYear: "Tercer Año",
+        fourthYear: "Cuarto Año",
+        fifthYear: "Quinto Año",
     },
     SubjectCard: {
         credits: "{{n}} creditos",
