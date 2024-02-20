@@ -13,6 +13,7 @@ import {SubjectPage} from "./pages/Subject/Subject.tsx";
 import FinishSemester from "./pages/FinishSemester/finish_semester.tsx";
 import ConfirmEmail from "./pages/ConfirmEmail/confirmEmail.tsx";
 import Review from './pages/ReviewSubject/review.tsx';
+import MultiReview from "./pages/MultiReview/multi-review.tsx";
 
 
 
@@ -70,6 +71,10 @@ const router = createBrowserRouter([
         path: '/review/:subjectCode',
         element: <Review/>
         //element: <PrivateRoute component={Review} roles={['ADMIN', 'USER']}/>
+    },
+    {
+        path: '/multi-review',
+        element: <MultiReview/>
     }
 ]);
 

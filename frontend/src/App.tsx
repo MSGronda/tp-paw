@@ -3,7 +3,6 @@ import {
   BrowserRouter as Router,
   Route,
   Routes,
-  Navigate,
 } from "react-router-dom";
 
 // core styles are required for all packages
@@ -23,7 +22,8 @@ import Profile from './pages/Profile/profile';
 import SemesterBuilder from './pages/SemesterBuilder/semester_builder';
 import FinishSemester from './pages/FinishSemester/finish_semester';
 import { SubjectPage } from './pages/Subject/Subject';
-import Review from './pages/ReviewSubject/review';
+import MultiReview from "./pages/MultiReview/multi-review.tsx";
+import ReviewSubject from "./pages/ReviewSubject/review";
 
 export default function App() {
 
@@ -48,8 +48,8 @@ export default function App() {
           <Route path="builder" element={<PrivateRoute component={SemesterBuilder} roles={['ADMIN', 'USER']}/>}/>
           <Route path="builder/finish" element={<PrivateRoute component={FinishSemester} roles={['ADMIN', 'USER']}/>}/>
           <Route path="subject/:id" element={<PrivateRoute component={SubjectPage} roles={['ADMIN', 'USER']}/>}/>
-          <Route path="review/:id" element={<PrivateRoute component={Review} roles={['ADMIN', 'USER']}/>}/>
-
+          <Route path="review/:id" element={<PrivateRoute component={ReviewSubject} roles={['ADMIN', 'USER']}/>}/>
+          <Route path="multi-review" element={<PrivateRoute component={MultiReview} roles={['ADMIN', 'USER']}/>}/>
         </Routes>
       </Router>
       </AuthContextProvider>

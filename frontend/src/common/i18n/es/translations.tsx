@@ -214,5 +214,9 @@ export const TRANSLATIONS_ES = {
         public: "Público",
         anonymous: "Anónimo",
         submit: "Publicar!",
+    },
+    MultiReview: {
+        progressText: "{{c}} de {{l}} reseñas",
+        skip: "Saltar"
     }
 }
