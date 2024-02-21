@@ -13,12 +13,16 @@ const login = async (mail: string, password: string, rememberMe: boolean) => {
             console.error("Unable to login");
             return false;
         }
-        const token = response.headers.authorization.split(" ")[1];
+        
+        const token = response.headers.authorization;
+        const refresh = response.headers['x-refresh'];
         
         if (rememberMe){
             localStorage.setItem('token', token);
+            localStorage.setItem('refresh', refresh);
         } else{
             sessionStorage.setItem('token', token);
+            sessionStorage.setItem('refresh', refresh);
         }
         if (response.data) localStorage.setItem('user', JSON.stringify(response.data));
         return token;
@@ -31,7 +35,9 @@ const login = async (mail: string, password: string, rememberMe: boolean) => {
 const logout = () => {
     localStorage.removeItem('user');
     localStorage.removeItem('token');
+    localStorage.removeItem('refresh');
     sessionStorage.removeItem('token');
+    sessionStorage.removeItem('refresh');
 };
 
 export interface RegisterForm {
