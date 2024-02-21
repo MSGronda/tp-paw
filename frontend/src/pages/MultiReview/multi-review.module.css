@@ -52,4 +52,22 @@
     /* display: flex; */
     font-size: small;
     color: grey;
+    padding-left: 0.5rem;
 }
+
+.general_area{
+    display: flex;
+    flex-direction: column;
+}
+
+.sub_area{
+    display: flex;
+    flex-direction: column;
+    padding: 1rem 0;
+
+}
+
+.button_row{
+    display: flex;
+}
+

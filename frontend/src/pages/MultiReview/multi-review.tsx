@@ -1,6 +1,6 @@
 import {useLocation, useNavigate} from "react-router-dom";
 import classes from './multi-review.module.css';
-import {useEffect, useState} from "react";
+import {useEffect,  useState} from "react";
 import {Subject} from "../../models/Subject.ts";
 import {reviewService, subjectService} from "../../services";
 import {handleService} from "../../handlers/serviceHandler.tsx";
@@ -16,9 +16,9 @@ export default function MultiReview() {
     
     // Review Info
     const [review, setReview] = useState("")
-    const [difficultyValue, setDifficultyValue] = useState("-1")
-    const [timeDemandValue, setTimeDemandValue] = useState("-1")
-    const [AnonymousValue, setAnonymousValue] = useState("");
+    const [difficultyValue, setDifficultyValue] = useState("-1");
+    const [timeDemandValue, setTimeDemandValue] = useState("-1");
+    const [anonymousValue, setAnonymousValue] = useState("");
 
     // Subject Info
     const [subjects, setSubjects] = useState<Subject[]>([]);
@@ -69,17 +69,32 @@ export default function MultiReview() {
             setTimeDemandError(false)
         }
 
-        if (AnonymousValue === "") {
+        if (anonymousValue === "") {
             setAnonymousError(true)
         }else {
             setAnonymousError(false)
         }
-    }, [review, difficultyValue, timeDemandValue, AnonymousValue])
+    }, [review, difficultyValue, timeDemandValue, anonymousValue])
     const isSubmitDisabled = reviewError || difficultyError || timeDemandError || AnonymousError;
 
     const nextReview = () => {
-        if(currentPos < subjects.length) {
+        if(currentPos + 1 < subjects.length) {
             setCurrentPos(currentPos + 1);
+
+            // Resetear los valores
+            setReview("");
+
+            // Confia en mi que funciona y lo *tengo* que hacer
+
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
+            setDifficultyValue(null);
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
+            setTimeDemandValue(null);
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
+            setAnonymousValue(null);
         }
         else {
             navigate("/");
@@ -91,7 +106,7 @@ export default function MultiReview() {
         if(subjects.length == 0){
             return;
         }
-        await reviewService.publishReview(subjects[currentPos].id, review, parseInt(difficultyValue) , parseInt(timeDemandValue), AnonymousValue === "true");
+        await reviewService.publishReview(subjects[currentPos].id, review, parseInt(difficultyValue) , parseInt(timeDemandValue), anonymousValue === "true");
         nextReview();
     }
 
@@ -118,69 +133,86 @@ export default function MultiReview() {
                     <h1 className={classes.title}> {t("Review.title", {subjectName: subjects[currentPos].name})} </h1>
 
                     <form onSubmit={handleReviewSubmit} className={classes.form}>
-                        <Textarea
-                            value={review}
-                            onChange={(e) => setReview(e.currentTarget.value)}
-                            label={t("Review.review")}
-                            className={classes.review_input}
-                            minRows={5}
-                            maxRows={8}
-                            autosize
-                        />
-                        <br />
-                        <span>{t("Review.option")}</span>
-                        <br />
-                        <SegmentedControl
-                            radius="sm"
-                            size="sm"
-                            color='blue'
-                            value={difficultyValue}
-                            onChange={setDifficultyValue}
-                            data={[
-                                { value: "0", label: t("Review.easy") },
-                                { value: "1", label: t("Review.medium") },
-                                { value: "2", label: t("Review.hard") }
-                            ]}
-                        />
-                        <br />
-                        <span  className={classes.help}>{t("Review.difficultyHelp")}</span>
-                        <br />
-                        <br />
-                        <SegmentedControl
-                            radius="sm"
-                            size="sm"
-                            color='blue'
-                            value={timeDemandValue}
-                            onChange={setTimeDemandValue}
-                            data={[
-                                { value: "0", label: t("Review.lowTimeDemand") },
-                                { value: "1", label: t("Review.mediumTimeDemand") },
-                                { value: "2", label: t("Review.highTimeDemand") }
-                            ]}
-                        />
-                        <br />
-                        <span  className={classes.help}>{t("Review.timeDemandHelp")}</span>
-                        <br />
-                        <br />
-                        <SegmentedControl
-                            radius="sm"
-                            size="sm"
-                            color='blue'
-                            value={AnonymousValue}
-                            onChange={setAnonymousValue}
-                            data={[
-                                { value: "false", label: t("Review.public") },
-                                { value: "true", label: t("Review.anonymous") },
-                            ]}
-                        />
-                        <br />
-                        <br />
-                        <Button variant="default" onClick={nextReview}>
-                            {t("MultiReview.skip")}
-                        </Button>
-                        <Button type='submit' color='green.7' disabled={isSubmitDisabled}>
-                            {t("Review.submit")}
-                        </Button>
+                        <div className={classes.general_area}>
+                            <Textarea
+                                value={review}
+                                onChange={(e) => setReview(e.currentTarget.value)}
+                                label={t("Review.review")}
+                                className={classes.review_input}
+                                minRows={5}
+                                maxRows={8}
+                                autosize
+                            />
+
+                            <span style={{paddingTop: "1rem"}}>{t("Review.option")}</span>
+
+                            <div className={classes.sub_area}>
+                                <div>
+                                    <SegmentedControl
+                                        radius="sm"
+                                        size="sm"
+                                        color='blue'
+                                        value={difficultyValue}
+                                        onChange={setDifficultyValue}
+                                        data={[
+                                            { value: "0", label: t("Review.easy") },
+                                            { value: "1", label: t("Review.medium") },
+                                            { value: "2", label: t("Review.hard") }
+                                        ]}
+                                        fullWidth={false}
+                                    />
+                                </div>
+                                <span  className={classes.help}>{t("Review.difficultyHelp")}</span>
+                            </div>
+
+                            <div className={classes.sub_area}>
+                                <div>
+                                    <SegmentedControl
+                                        radius="sm"
+                                        size="sm"
+                                        color='blue'
+                                        value={timeDemandValue}
+                                        onChange={setTimeDemandValue}
+                                        data={[
+                                            { value: "0", label: t("Review.lowTimeDemand") },
+                                            { value: "1", label: t("Review.mediumTimeDemand") },
+                                            { value: "2", label: t("Review.highTimeDemand") }
+                                        ]}
+                                    />
+                                </div>
+
+                                <span className={classes.help}>{t("Review.timeDemandHelp")}</span>
+                            </div>
+
+
+                            <div className={classes.sub_area}>
+                                <div>
+                                    <SegmentedControl
+                                        radius="sm"
+                                        size="sm"
+                                        color='blue'
+                                        value={anonymousValue}
+                                        onChange={setAnonymousValue}
+                                        data={[
+                                            { value: "false", label: t("Review.public") },
+                                            { value: "true", label: t("Review.anonymous") },
+                                        ]}
+                                    />
+                                </div>
+                                <span className={classes.help}>{t("Review.publicHelp")}</span>
+                            </div>
+
+                            <div className={classes.button_row}>
+                                <div style={{paddingRight: "1rem"}}>
+                                    <Button variant="default" onClick={nextReview}>
+                                        {t("MultiReview.skip")}
+                                    </Button>
+                                </div>
+                                <Button type='submit' color='green.7' disabled={isSubmitDisabled}>
+                                    {t("Review.submit")}
+                                </Button>
+                            </div>
+                        </div>
                     </form>
                 </div>
             </div>

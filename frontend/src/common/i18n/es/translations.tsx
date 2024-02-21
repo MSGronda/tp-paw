@@ -225,6 +225,7 @@ export const TRANSLATIONS_ES = {
         timeDemandHelp: "¿Tuviste que invertir mucho tiempo cada semana para mantenerte al día con los temas?",
         public: "Público",
         anonymous: "Anónimo",
+        publicHelp: "Other users will be able to view that this review is yours",
         submit: "Publicar!",
     },
     MultiReview: {
