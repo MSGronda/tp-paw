@@ -85,7 +85,7 @@ export default function Home() {
                                                             <Link to={{pathname:`subject` + subject.id}}>
 
                                                             </Link>
-                                                        )}
+                                                        ))}
                                                     </div>
                                                 </Card>
                                             </div>
