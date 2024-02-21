@@ -1,24 +1,25 @@
-import {subject1} from '../mocks/index.js';
+import {subject1, subject2} from '../mocks/index.js';
 import { expect, test } from 'vitest'
 import { subjectService } from '../../services/index.tsx';
 import {afterEach, vi} from 'vitest';
 import axiosInstance from '../../api.tsx';
+import initializeLocalStorageMock from '../mocks/localStorageMock';
 
-// Define a mock for localStorage and sessionStorage
-const localStorageMock = (() => {
-    let store = {};
-    return {
-      getItem: key => store[key],
-      setItem: (key, value) => { store[key] = value.toString() },
-      removeItem: key => { delete store[key] },
-      clear: () => { store = {} }
-    };
-  })();
-  
-global.localStorage = localStorageMock;
-global.sessionStorage = localStorageMock;
+initializeLocalStorageMock();
+
+
+afterEach(() => {
+  mockedGet.mockClear();
+  mockedPost.mockClear();
+  mockedDelete.mockClear();
+  mockedPatch.mockClear();
+  localStorage.clear();
+})
 
 const mockedGet = vi.spyOn(axiosInstance, "get")
+const mockedPost = vi.spyOn(axiosInstance, "post")
+const mockedDelete = vi.spyOn(axiosInstance, "delete")
+const mockedPatch = vi.spyOn(axiosInstance, "patch")
 
 
 test("It should return the subject with id = 31.08", async () => {
@@ -31,13 +32,50 @@ test("It should return the subject with id = 31.08", async () => {
     });
 
     const response = await subjectService.getSubjectById("31.08")
-    console.log(response);
 
     expect(response.data).toEqual(subject1);
     expect(response.failure).toBeFalsy();
-    //expect().toHaveBeenCalledTimes(1);
-    //expect(mock.history).toHaveBeenCalledWith("/subjects/31.08");
+    expect(mockedGet).toHaveBeenCalledTimes(1);
     
+});
+
+
+test("It should return a list of subjects", async () => {
+
+    mockedGet.mockResolvedValueOnce({ 
+        status: 200,
+        data: [subject1, subject2], 
+        failure: false,
+        headers: {}
+    });
+
+    const response = await subjectService.getSubjectsByName("Sistemas", 1, null, null, null, null, null, null)
+    console.log(response)
+
+    expect(response.data.length).toBe(2);
+    expect(response.data).toEqual([subject1, subject2]);
+    expect(response.failure).toBeFalsy();
+    expect(mockedGet).toHaveBeenCalledTimes(1);
+    
+});
+
+test("It should return a list with subjects of 6 credits", async () => {
+
+  mockedGet.mockResolvedValueOnce({ 
+      status: 200,
+      data: [subject2], 
+      failure: false,
+      headers: {}
+  });
+
+  const response = await subjectService.getSubjectsByName("Sistemas", 1, 6, null, null, null, null, null)
+  console.log(response)
+
+  expect(response.data.length).toBe(1);
+  expect(response.data).toEqual([subject2]);
+  expect(response.failure).toBeFalsy();
+  expect(mockedGet).toHaveBeenCalledTimes(1);
+  
 });
 
 
