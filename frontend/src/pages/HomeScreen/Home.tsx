@@ -17,6 +17,9 @@ import SubjectCard from "../../components/subject-card/subject-card.tsx";
 import { useContext } from 'react';
 import AuthContext from '../../context/AuthContext.tsx';
 import Landing from '../Landing/landing.tsx';
+import {Subject} from "../../models/Subject.ts";
+import TimeTable from "../../components/time-table/time-table.tsx";
+import {Link} from "react-router-dom";
 
 
 export default function Home() {
@@ -40,6 +43,8 @@ export default function Home() {
         { "id": "72.45", credits:6, difficulty:"easy","name": "Protocolos de Comunicacion",numReviews:732,prerequisites:["72.38"],timeDemand:"low",progress:"incomplete" },
         { "id": "72.46", credits:6, difficulty:"easy","name": "Metodos Numericos Avanzados",numReviews:732,prerequisites:["72.38"],timeDemand:"low",progress:"incomplete" },
     ];
+
+    const userSemester: Subject[] = [];
     return (
         <>
             <Navbar/>
@@ -63,7 +68,32 @@ export default function Home() {
                             </Tabs.List>
 
                             <Tabs.Panel value="current-semester">
-                                Gallery tab content
+                                <div className={classes.currentSemesterArea}>
+                                    {
+                                        userSemester.length === 0?
+                                        <>
+                                            <div className={classes.timeTableArea}>
+                                                <TimeTable />
+                                            </div>
+                                            <div className={classes.currentSemesterClassArea}>
+                                                <Card className={classes.currentSemesterCard}>
+                                                    <Card.Section>
+                                                        <h4>{t("Home.currentSemester")}</h4>
+                                                    </Card.Section>
+                                                    <div className={classes.currentSemesterSubjectInfoList}>
+                                                        {userSemester.map((subject) => (
+                                                            <Link to={{pathname:`subject` + subject.id}}>
+
+                                                            </Link>
+                                                        )}
+                                                    </div>
+                                                </Card>
+                                            </div>
+                                        </>
+                                            :
+                                            <></>
+                                    }
+                                </div>
                             </Tabs.Panel>
 
                             <Tabs.Panel value="overview">

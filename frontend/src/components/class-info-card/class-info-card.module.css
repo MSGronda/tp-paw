@@ -1,0 +1,27 @@
+.classCard{
+    padding-top: 0.5rem;
+    width: 100%;
+}
+.classCard::part(base){
+    width: 100%;
+}
+.classCard::part(body){
+    padding: 0.1rem;
+}
+.classCard::part(header){
+    padding-top: 0;
+    padding-bottom: 0;
+}
+.classCard-name{
+    margin: 0.5rem;
+}
+.icon {
+    padding-top: .5rem;
+    font-size: 1rem;
+}
+.chooser {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+}
