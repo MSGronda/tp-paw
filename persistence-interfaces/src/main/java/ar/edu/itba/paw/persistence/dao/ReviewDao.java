@@ -32,4 +32,6 @@ public interface ReviewDao {
 
     List<Review> getAllSubjectReviews(final Subject subject, final int page, final ReviewOrderField orderBy, final OrderDir dir);
     int getTotalPagesForSubjectReviews(final Subject subject);
+
+    List<Review> getReviewFromSubjectAndUser(final Subject subject, final User user);
 }

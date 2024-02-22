@@ -22,6 +22,20 @@ export class ReviewService{
         }
     }
 
+    async getReviewFromSubjectAndUser(subjectId: string, userId: number){
+        try{
+            let config: any = {};
+            config.params = {
+                subjectId: subjectId,
+                userId: userId
+            };
+            const res = await axiosService.authAxiosWrapper(axiosService.GET,`${path}`,config);
+            return handleResponse(res);
+        } catch (error: any){
+            return handleResponse(error.response);
+        }
+    }
+
     async publishReview(subjectId: string, review: string, difficulty: number, timeDemand: number, anonymous: boolean){
         try{
             const data = {

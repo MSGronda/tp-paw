@@ -204,4 +204,12 @@ public class ReviewJpaDao implements ReviewDao {
                 .append(" ")
                 .append(dirToUse.getQueryString());
     }
+
+    @Override
+    public List<Review> getReviewFromSubjectAndUser(final Subject subject, final User user) {
+        return em.createQuery("from Review where subject = :subject and user = :user", Review.class)
+                .setParameter("subject", subject)
+                .setParameter("user", user)
+                .getResultList();
+    }
 }

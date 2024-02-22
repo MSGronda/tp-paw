@@ -1,6 +1,7 @@
-import React, {useEffect, useState} from "react";
+import React, {useContext, useEffect, useState} from "react";
 import {useTranslation} from "react-i18next";
 import classes from "./Subject.module.css";
+import AuthContext from "../../context/AuthContext";
 import {
     Card,
     Tabs,
@@ -35,9 +36,12 @@ export function SubjectPage() {
     const location = useLocation();
     const subjectId = useParams();
     const navigate = useNavigate();
+    const { userId } = useContext(AuthContext);
+    
     const [subject, setSubject] = useState({} as Subject);
     const [loading, setLoading] = useState(true);
     const [reviews, setReviews] = useState([{} as Review]);
+    const [didUserReview, setDidUserReview] = useState(true);
     const [maxPage, setMaxPage] = useState(1);
 
     const orderParams = new URLSearchParams(location.search);
@@ -66,6 +70,14 @@ export function SubjectPage() {
         setLoading(false);
     }
 
+    const getReviewFromUser = async (subjectId: string, userId: number) => {
+        const res = await reviewService.getReviewFromSubjectAndUser(subjectId,userId);
+        const data = handleService(res, navigate);
+        if( res ){
+            data.length === 0 ? setDidUserReview(false) : setDidUserReview(true);
+        }
+    }
+
     const handlePageChange = (newPage: number) => {
         const queryParams = new URLSearchParams(window.location.search);
         queryParams.set('page', newPage.toString());
@@ -86,6 +98,9 @@ export function SubjectPage() {
 
     useEffect(() => {
         if(subjectId.id !== undefined){
+            if(userId !== undefined)
+                getReviewFromUser(subjectId.id, userId);
+
             if(orderBy === null && dir === null && page === null){
                 getReviewsFromSubject(subjectId.id,INITIAL_PAGE,INITIAL_ORDER,INITAL_DIR);
             } else {
@@ -100,7 +115,6 @@ export function SubjectPage() {
         id:1,
         name:"Ingenieria Informatica",
     };
-    const didReview: boolean = false;
     const year: number = 1;
     const progress : string = "DONE";
 
@@ -269,7 +283,7 @@ export function SubjectPage() {
                     <div className={classes.reviewAndProgress}>
                         <Group>
                             {
-                                didReview? <Button className={classes.button} variant="filled" size="lg" radius="xl" disabled>{t("Subject.review")}</Button> :
+                                didUserReview? <Button className={classes.button} variant="filled" size="lg" radius="xl" disabled>{t("Subject.review")}</Button> :
                                     <Button variant="filled" size="lg" radius="xl">
                                         <Link to={{pathname: `/review/` + subject?.id}} state={{ name: subject.name}}><Text c="white">{t("Subject.review")}</Text></Link>
                                     </Button>
@@ -291,7 +305,7 @@ export function SubjectPage() {
                         </Group>
                     </div>
                 </div>
-                {didReview &&
+                {didUserReview &&
                     <div className={classes.textCenter}>
                         <Text>{t("Subject.alreadyReviewed")}</Text>
                     </div>

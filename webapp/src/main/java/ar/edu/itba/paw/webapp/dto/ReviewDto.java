@@ -6,6 +6,7 @@ import java.net.URI;
 public class ReviewDto {
     private Long id;
     private String subjectId;
+    private Long userId;
     private String difficulty;
     private String timeDemand;
     private String text;
@@ -26,6 +27,7 @@ public class ReviewDto {
         reviewDto.anonymous = review.isAnonymous();
         reviewDto.upVotes = review.getUpvotes();
         reviewDto.downVotes = review.getDownvotes();
+        reviewDto.userId = review.getUser().getId();
 
         reviewDto.votes = uriInfo.getBaseUriBuilder().path("reviews").path(String.valueOf(reviewDto.id)).path("votes").build();
 
@@ -50,6 +52,14 @@ public class ReviewDto {
 
     public String getDifficulty() {
         return difficulty;
+    }
+
+    public Long getUserId() {
+        return userId;
+    }
+
+    public void setUserId(Long userId) {
+        this.userId = userId;
     }
 
     public void setDifficulty(String difficulty) {

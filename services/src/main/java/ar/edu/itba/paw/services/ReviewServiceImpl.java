@@ -60,7 +60,14 @@ public class ReviewServiceImpl implements ReviewService {
 
             if(page > getTotalPagesForUserReviews(user.get()) || page < 1) throw new InvalidPageNumberException();
 
-            return reviewDao.getAllUserReviews(user.get(), page, ReviewOrderField.parse(orderBy), OrderDir.parse(dir));
+            if(subjectId == null){
+                return reviewDao.getAllUserReviews(user.get(), page, ReviewOrderField.parse(orderBy), OrderDir.parse(dir));
+            }
+            else{
+                Optional<Subject> subject = subjectService.findById(subjectId);
+                if(!subject.isPresent()) throw new SubjectNotFoundException();
+                return reviewDao.getReviewFromSubjectAndUser(subject.get(), user.get());
+            }
         }
         else if(subjectId != null){
             Optional<Subject> subject = subjectService.findById(subjectId);

@@ -22,14 +22,15 @@ export interface AuthContextInterface {
 const AuthContext = React.createContext<AuthContextInterface>({
     isAuthenticated: false,
     profileImage: "",
-    updateProfileImage: () => {},
-    logoutHandler: () => {},
-    loginHandler: async () => {},
-    setToken: () => {},
-    setRefreshToken: () => {},
+    updateProfileImage: () => { },
+    logoutHandler: () => { },
+    loginHandler: async () => { },
+    setToken: () => { },
+    setRefreshToken: () => { },
+    userId: undefined,
 });
 
-export const AuthContextProvider = ({children}: { children: React.ReactNode}) => {
+export const AuthContextProvider = ({ children }: { children: React.ReactNode }) => {
     const isInLocalStorage = localStorage.hasOwnProperty("token");
     const isInSessionStorage = sessionStorage.hasOwnProperty("token");
     const [isAuthenticated, setIsAuthenticated] = useState<boolean>(isInLocalStorage || isInSessionStorage);
@@ -61,16 +62,15 @@ export const AuthContextProvider = ({children}: { children: React.ReactNode}) =>
     //     }
     // });
 
-    // const [userId, setUserId] = useState<number | undefined>(() => {
-    //     try {
-    //       return parseInt(jwtDecode<CustomJwtPayload>(token as string)
-    //         .userUrl.split("/")
-    //         .pop() as string)
-    //     } catch (error) {
-    //       if (isAuthenticated)
-    //         console.error(error);
-    //     }
-    //   });
+    const [userId, setUserId] = useState<number | undefined>(() => {
+        try {
+            // console.log(jwtDecode<CustomJwtPayload>(token as string))
+            return JSON.parse(localStorage.getItem("user") as string).id
+        } catch (error) {
+            if (isAuthenticated)
+                console.error(error);
+        }
+    });
 
     const logoutHandler = () => {
         localStorage.removeItem("token");
@@ -87,7 +87,7 @@ export const AuthContextProvider = ({children}: { children: React.ReactNode}) =>
 
 
     const loginHandler = async (authKey: string, refreshToken?: string) => {
-        try{
+        try {
             setAuthKey(authKey);
             setRefreshTokenKey(refreshToken);
             setIsAuthenticated(true);
@@ -111,11 +111,11 @@ export const AuthContextProvider = ({children}: { children: React.ReactNode}) =>
             value={{
                 isAuthenticated,
                 logoutHandler,
-                loginHandler, 
+                loginHandler,
                 authKey,
                 refreshToken,
                 // role,
-                // userId,
+                userId,
                 // email,
                 profileImage,
                 updateProfileImage,
