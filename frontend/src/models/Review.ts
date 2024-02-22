@@ -7,5 +7,6 @@ export interface Review {
     downVotes: number,
     upVotes: number,
     id: number,
-    votes: string
+    votes: string,
+    userId: number
 }

@@ -18,6 +18,20 @@ export class UserService {
         return JSON.parse(userData).id;
     }
 
+    async getUsersThatReviewedSubject(subjectId: string, page: number){
+        try{
+            let config: any = {};
+            config.params = {
+                subjectId: subjectId,
+                page: page
+            };
+            const res = await axiosService.authAxiosWrapper(axiosService.GET,`${path}/subjectReviews`,config);
+            return handleResponse(res);
+        } catch (error: any){
+            return handleResponse(error.response);
+        }
+    }
+
     async getUserPlan(userId: number) {
         try{
             const res = await axiosService.authAxiosWrapper(axiosService.GET, `${path}/${userId}/plan`, {});

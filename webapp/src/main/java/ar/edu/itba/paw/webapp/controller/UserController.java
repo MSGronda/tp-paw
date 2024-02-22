@@ -15,11 +15,10 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import javax.ws.rs.*;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.UriInfo;
+import javax.ws.rs.core.*;
 import java.net.URI;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Path("users")
 @Component
@@ -79,6 +78,22 @@ public class UserController {
     public Response getCurrentUser(){
         final User user = authUserService.getCurrentUser();
         return Response.ok(UserDto.fromUser(uriInfo, user)).build();
+    }
+
+    //TODO - revisar si esta bien endpoint
+    @GET
+    @Path("/subjectReviews")
+    @Produces("application/vnd.user.v1+json")
+    public Response getUsersThatReviewed(
+            @QueryParam("subjectId") final String subjectId,
+            @QueryParam("page") @DefaultValue("0") final Integer page
+    ){
+        final List<User> users = userService.getUsersThatReviewedSubject(subjectId, page);
+        if( users.isEmpty() ){
+            return Response.noContent().build();
+        }
+        final List<UserDto> userDtos = users.stream().map(u -> UserDto.fromUser(uriInfo, u)).collect(Collectors.toList());
+        return Response.ok(new GenericEntity<List<UserDto>>(userDtos){}).build();
     }
 
     @GET

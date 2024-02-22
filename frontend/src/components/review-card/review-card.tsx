@@ -3,18 +3,21 @@ import classes from './review-card.module.css';
 import { IconThumbDown, IconThumbUp, IconTrash } from "@tabler/icons-react";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
+import { Link } from "react-router-dom";
 
 interface ReviewCardProps {
   subjectId: string;
-  subjectName: string;
+  subjectName: string | undefined;
   text: string;
   timeDemand: string;
   difficulty: string;
+  userId: number;
+  userName: string | undefined;
 }
 
 function ReviewCard(props: ReviewCardProps): JSX.Element {
     const { t } = useTranslation();
-    const { subjectId, subjectName, text, timeDemand, difficulty } = props;
+    const { subjectId, subjectName, text, timeDemand, difficulty, userId, userName } = props;
 
     const [showMore, setShowMore] = useState(false);
     const toggleShowMore = () => {
@@ -27,9 +30,15 @@ function ReviewCard(props: ReviewCardProps): JSX.Element {
     return (
         <Card className={classes.card}>
         <div slot="header" className={classes.header}>
-            <a className={classes.username_redirect} href={"/subject/" + subjectId}>
-            {subjectId} - {subjectName}
-            </a>
+            {subjectName !== undefined? 
+                <Link className={classes.username_redirect} to={"/subject/" + subjectId}>
+                {subjectId} - {subjectName}
+                </Link>
+                :
+                <Link className={classes.username_redirect} to={"/user/" + userId}>
+                {userName}
+                </Link>
+            }
             <ActionIcon variant="outline" color="red">
             <IconTrash />
             </ActionIcon>

@@ -22,10 +22,11 @@ import {Subject} from "../../models/Subject.ts";
 import {Navbar} from "../../components/navbar/navbar.tsx";
 import {Link, useLocation, useNavigate, useParams} from "react-router-dom";
 import ReviewCard from "../../components/review-card/review-card.tsx";
-import {subjectService,reviewService} from "../../services";
+import {subjectService,reviewService, userService} from "../../services";
 import {handleService} from "../../handlers/serviceHandler.tsx";
 import {Review} from "../../models/Review.ts";
 import PaginationComponent from "../../components/pagination/pagination.tsx";
+import { User } from "../../models/User.ts";
 
 
 export function SubjectPage() {
@@ -37,11 +38,12 @@ export function SubjectPage() {
     const subjectId = useParams();
     const navigate = useNavigate();
     const { userId } = useContext(AuthContext);
-    
+
     const [subject, setSubject] = useState({} as Subject);
     const [loading, setLoading] = useState(true);
     const [reviews, setReviews] = useState([{} as Review]);
     const [didUserReview, setDidUserReview] = useState(true);
+    const [users, setUsers] = useState([{} as User]);
     const [maxPage, setMaxPage] = useState(1);
 
     const orderParams = new URLSearchParams(location.search);
@@ -68,6 +70,15 @@ export function SubjectPage() {
             setReviews(data);
         }
         setLoading(false);
+    }
+
+    const getUsersFromReviews = async (subjectId: string, page: number) => {
+        const res = await userService.getUsersThatReviewedSubject(subjectId,page);
+        const data = handleService(res, navigate);
+        if(res){
+            console.log(data);
+            setUsers(data);
+        }
     }
 
     const getReviewFromUser = async (subjectId: string, userId: number) => {
@@ -98,9 +109,11 @@ export function SubjectPage() {
 
     useEffect(() => {
         if(subjectId.id !== undefined){
-            if(userId !== undefined)
+            if(userId !== undefined){
                 getReviewFromUser(subjectId.id, userId);
-
+                getUsersFromReviews(subjectId.id, page);
+            }
+                
             if(orderBy === null && dir === null && page === null){
                 getReviewsFromSubject(subjectId.id,INITIAL_PAGE,INITIAL_ORDER,INITAL_DIR);
             } else {
@@ -109,6 +122,16 @@ export function SubjectPage() {
         }
         setMaxPage(1 + subject.reviewCount/10);
     }, []);
+
+    const findUserName = (userId: number) => {
+        let userName = "";
+        users.forEach((user) => {
+            if(user.id === userId){
+                userName = user.username;
+            }
+        })
+        return userName;
+    }
 
     // Degree Lookup
     const degree: any = {
@@ -369,11 +392,13 @@ export function SubjectPage() {
                     { reviews &&
                         reviews.map((review) => (
                             <ReviewCard subjectId={subject?.id}
-                                        subjectName={subject?.name}
+                                        subjectName={undefined}
                                         difficulty={review.difficulty}
                                         timeDemand={review.timeDemand}
                                         text={review.text}
                                         key={review.id}
+                                        userId={review.userId}
+                                        userName={findUserName(review.userId)}
                             />
                         ))
                     }

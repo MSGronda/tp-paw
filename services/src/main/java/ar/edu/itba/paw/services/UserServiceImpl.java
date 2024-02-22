@@ -10,6 +10,7 @@ import ar.edu.itba.paw.services.enums.UserSemesterEditType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -38,6 +39,8 @@ public class UserServiceImpl implements UserService {
     private final MailService mailService;
     private final PasswordEncoder passwordEncoder;
 
+    private final ReviewService reviewService;
+
     private static final int MAX_IMAGE_SIZE = 1024 * 1024 * 5;
     private static final Logger LOGGER = LoggerFactory.getLogger(UserServiceImpl.class);
 
@@ -50,7 +53,8 @@ public class UserServiceImpl implements UserService {
             final SubjectService subjectService,
             final DegreeService degreeService,
             final MailService mailService,
-            final PasswordEncoder passwordEncoder
+            final PasswordEncoder passwordEncoder,
+            @Lazy final ReviewService reviewService
     ) {
         this.userDao = userDao;
         this.recDao = recDao;
@@ -60,6 +64,7 @@ public class UserServiceImpl implements UserService {
         this.degreeService = degreeService;
         this.mailService = mailService;
         this.passwordEncoder = passwordEncoder;
+        this.reviewService = reviewService;
     }
 
     @Override
@@ -561,5 +566,17 @@ public class UserServiceImpl implements UserService {
         if(degreeId != null && subjectIds != null) {
             updateUserDegreeAndSubjectProgress(user, degreeService.findById(degreeId).orElseThrow(DegreeNotFoundException::new), subjectIds.toString());
         }
+    }
+
+    @Override
+    public List<User> getUsersThatReviewedSubject(final String subjectId, final int page){
+        List<User> userList = new ArrayList<>();
+        if( subjectId != null && page != 0){
+            List<Review> reviews = reviewService.get(null, subjectId, page, "difficulty", "desc");
+            for( Review review : reviews){
+                userList.add(review.getUser());
+            }
+        }
+        return userList;
     }
 }
