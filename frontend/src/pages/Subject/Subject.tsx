@@ -399,6 +399,7 @@ export function SubjectPage() {
                                         key={review.id}
                                         userId={review.userId}
                                         userName={findUserName(review.userId)}
+                                        anonymous={review.anonymous}
                             />
                         ))
                     }

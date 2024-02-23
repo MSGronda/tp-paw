@@ -13,11 +13,12 @@ interface ReviewCardProps {
   difficulty: string;
   userId: number;
   userName: string | undefined;
+  anonymous: boolean;
 }
 
 function ReviewCard(props: ReviewCardProps): JSX.Element {
     const { t } = useTranslation();
-    const { subjectId, subjectName, text, timeDemand, difficulty, userId, userName } = props;
+    const { subjectId, subjectName, text, timeDemand, difficulty, userId, userName, anonymous } = props;
 
     const [showMore, setShowMore] = useState(false);
     const toggleShowMore = () => {
@@ -35,9 +36,14 @@ function ReviewCard(props: ReviewCardProps): JSX.Element {
                 {subjectId} - {subjectName}
                 </Link>
                 :
-                <Link className={classes.username_redirect} to={"/user/" + userId}>
-                {userName}
-                </Link>
+                <>{
+                !anonymous? 
+                    <Link className={classes.username_redirect} to={"/user/" + userId}>
+                    {userName}
+                    </Link>
+                    :
+                    <>{t("Review.anonymous")}</>
+                }</>
             }
             <ActionIcon variant="outline" color="red">
             <IconTrash />
