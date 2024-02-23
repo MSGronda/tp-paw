@@ -105,7 +105,7 @@
     align-items: center;
 }
 
-.current-semester-area {
+.currentSemesterArea {
     display: flex;
     flex-direction: row;
     justify-content: center;
@@ -114,24 +114,103 @@
     width: 100%;
 }
 
-.time-table-area {
+.timeTableArea {
     height: 100%;
     width: 100%;
     overflow-y: auto;
 }
 
-.current-semester-class-area {
+.currentSemesterClassArea {
     padding: 0.5rem 0.2rem;
     width: 45%;
     height: 100%;
 }
 
-.current-semester-card {
+.currentSemesterCard {
     width: 100%;
 }
 
-.current-semester-subject-info-list {
+.currentSemesterSubjectInfoList {
     height: 95%;
     overflow-y: auto;
     flex: 1;
+}
+
+.emptyTabArea {
+    align-self: center;
+    justify-self: center;
+    justify-content: center;
+    align-items: center;
+    max-width: 30rem;
+    padding-bottom: 1rem;
+}
+
+.emptyTabInfo {
+    font-weight: normal;
+    font-size: 1.7rem;
+}
+
+.semesterEditArea{
+    position: fixed;
+    bottom: 1.5rem;
+    right: 1.5rem;
+    display: flex;
+    flex-direction: column;
+}
+
+.containter{
+    width: min(max(800px, 90%), 100%);
+    padding-left: 2rem;
+    padding-right: 2rem;
+    align-self: center;
+    justify-self: center;
+    margin: 0 auto;
+    background-color: #efefef;
+}
+
+.dashboardArea {
+    display: flex;
+    flex-direction: row;
+    align-items: stretch;
+    min-height: 94vh;
+    margin: auto 0;
+}
+
+.choosingArea {
+    width: 100%;
+    padding: 0.5rem;
+    min-height: 100%;
+}
+
+.tabs::part(base) {
+    min-height: 100%;
+}
+
+.tabs::part(body) {
+    min-height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: start;
+    align-items: center;
+    margin: 1rem
+}
+
+.tabs::part(tabs) {
+    padding: 0;
+    --padding: 0;
+    margin: 0;
+}
+
+.tabs::part(nav) {
+    position: sticky;
+    z-index: 10;
+    top: 0;
+    background: #efefef;
+    padding-bottom: 0.05rem;
+}
+
+.background {
+    background: #efefef;
+    min-width: 100%;
+    min-height: 100%;
 }

@@ -18,7 +18,9 @@ export default function TimeTable(){
                         <th>{t("Home.classDay6")}</th>
                     </tr>
                 </thead>
-                <tbody/>
+                <tbody id="weekly-schedule">
+
+                </tbody>
             </table>
         </div>
     );

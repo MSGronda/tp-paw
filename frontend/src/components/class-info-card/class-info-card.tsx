@@ -3,9 +3,13 @@ import {Card} from "@mantine/core";
 import classes from "./class-info-card.module.css";
 import {Subject} from "../../models/Subject.ts";
 
+interface ClassInfoCardProps {
+    subject: Subject;
+}
 
-export default function ClassInfoCard(subject:Subject) {
+export default function ClassInfoCard(props: ClassInfoCardProps): JSX.Element {
     const { t } = useTranslation();
+    const subject = props.subject;
     return(
         <Card className={classes.classCard}>
             <div className={classes.chooser}>
@@ -23,9 +27,13 @@ export default function ClassInfoCard(subject:Subject) {
                     </tr>
                     </thead>
                     <tbody>
-                        {subject.classes.map((classTime) => (
+                        {subject.classes[0].locations.map((classTime) => (
                             <tr>
-                                
+                                {classTime.day >= 1 && classTime.day <= 7? <td>{t("Home.classDay" + classTime.day)}</td> : <td>-</td>}
+                                <td>{classTime.startTime} - {classTime.endTime}</td>
+                                <td>{classTime.classNumber}</td>
+                                <td>{classTime.building}</td>
+                                <td>{classTime.mode}</td>
                             </tr>
                         ))}
                     </tbody>

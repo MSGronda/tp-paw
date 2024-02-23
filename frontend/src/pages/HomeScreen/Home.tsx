@@ -1,4 +1,5 @@
 import {
+    Button,
     Card,
     Divider,
     Flex,
@@ -11,7 +12,7 @@ import {
 import { BarChart } from '@mantine/charts';
 import {Navbar } from "../../components/navbar/navbar";
 import classes from './home.module.css';
-import {IconMessageCircle, IconPhoto, IconSettings} from "@tabler/icons-react";
+import {IconCheck, IconMessageCircle, IconPencil, IconPhoto, IconSettings} from "@tabler/icons-react";
 import {useTranslation} from "react-i18next";
 import SubjectCard from "../../components/subject-card/subject-card.tsx";
 import { useContext } from 'react';
@@ -20,6 +21,9 @@ import Landing from '../Landing/landing.tsx';
 import {Subject} from "../../models/Subject.ts";
 import TimeTable from "../../components/time-table/time-table.tsx";
 import {Link} from "react-router-dom";
+import ClassInfoCard from '../../components/class-info-card/class-info-card.tsx';
+import Class from '../../models/Class.ts';
+import ClassTime from '../../models/ClassTime.ts';
 
 
 export default function Home() {
@@ -44,14 +48,16 @@ export default function Home() {
         { "id": "72.46", credits:6, difficulty:"easy","name": "Metodos Numericos Avanzados",numReviews:732,prerequisites:["72.38"],timeDemand:"low",progress:"incomplete" },
     ];
 
-    const userSemester: Subject[] = [];
+    const userSemester: Subject[] = [
+        {id: "72.40", name: "Ingeniería en Software II", department: "Ohio Department", credits:3, classes: [{idSubject: "72.40", idClass: "1", professors: ["Juan Martín Sotuyo Dodero"], locations: [{day: 1, startTime: "19:00", endTime: "22:00", classNumber: "701F", building: "Sede Distrito Financiero", mode: "Presencial"} as ClassTime]} as Class], difficulty: "1", timeDemand: "0", reviewCount: 3, prerequisites: ["72.37"]} as Subject,
+    ];
     return (
-        <>
+        <div className={classes.background}>
             <Navbar/>
-            <div className={classes.fullsize}>
-                <div className={classes.center}>
-                    <div className={classes.dashboardArea}>
-                        <Tabs defaultValue="current-semester" className={classes.dashboard}>
+            <div className={classes.containter}>
+                <div className={classes.dashboardArea}>
+                    <div className={classes.choosingArea}>
+                        <Tabs defaultValue="current-semester" className={classes.tabs}>
                             <Tabs.List>
                                 <Tabs.Tab value="current-semester" leftSection={<IconPhoto style={iconStyle} />}>
                                     {t("Home.currentSemester")}
@@ -70,30 +76,53 @@ export default function Home() {
                             <Tabs.Panel value="current-semester">
                                 <div className={classes.currentSemesterArea}>
                                     {
-                                        userSemester.length === 0?
-                                        <>
+                                        userSemester.length !== 0?
+                                        <div>
                                             <div className={classes.timeTableArea}>
-                                                <TimeTable />
+                                            <TimeTable />
                                             </div>
                                             <div className={classes.currentSemesterClassArea}>
                                                 <Card className={classes.currentSemesterCard}>
                                                     <Card.Section>
                                                         <h4>{t("Home.currentSemester")}</h4>
                                                     </Card.Section>
-                                                    <div className={classes.currentSemesterSubjectInfoList}>
-                                                        {userSemester.map((subject) => (
-                                                            <Link to={{pathname:`subject` + subject.id}}>
-
-                                                            </Link>
-                                                        ))}
-                                                    </div>
+                                                    <Card.Section>
+                                                        <div className={classes.currentSemesterSubjectInfoList}>
+                                                            {userSemester.map((subject) => (
+                                                                <Link to={{pathname:`subject/` + subject.id}}>
+                                                                    <ClassInfoCard subject={subject}/>
+                                                                </Link>
+                                                            ))}
+                                                        </div>
+                                                    </Card.Section>
                                                 </Card>
                                             </div>
-                                        </>
+                                        </div>
                                             :
-                                            <></>
+                                        <div className={classes.emptyTabArea}>
+                                            <h3 className={classes.emptyTabInfo}>
+                                                {t("Home.emptySemester")}
+                                                <Link to={{pathname:`/builder`}}>
+                                                    {t("Home.emptySemesterLink")}
+                                                </Link>
+                                            </h3>
+                                        </div>
                                     }
                                 </div>
+                                {userSemester.length !== 0 && 
+                                    <div className={classes.semesterEditArea}>
+                                        <Link to={{pathname: `/builder/finish`}}>
+                                            <Button size='lg' color="green" rightSection={<IconCheck size={20} />} className={classes.semesterEditButton}>
+                                                {t("Home.finishCurrentSemester")}
+                                            </Button>
+                                        </Link>
+                                        <Link to={{pathname: `/builder`}}>
+                                            <Button size='lg' variant='default'  rightSection={<IconPencil size={20} />} className={classes.semesterEditButton}>
+                                                {t("Home.editCurrentSemester")}
+                                            </Button>
+                                        </Link>
+                                    </div>
+                                }
                             </Tabs.Panel>
 
                             <Tabs.Panel value="overview">
@@ -189,7 +218,7 @@ export default function Home() {
                     </div>
                 </div>
             </div>
-        </>
+        </div>
 
     );
 }

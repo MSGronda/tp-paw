@@ -78,6 +78,10 @@ export const TRANSLATIONS_EN = {
         builderClass: "Class",
         builderBuilding: "Building",
         builderMode: "Mode",
+        emptySemester: "It seems like you don't have an active semester. You can build one using the",
+        emptySemesterLink: " semester builder.",
+        finishCurrentSemester: "Finish semester",
+        editCurrentSemester: "Edit semester"
     },
     SubjectCard: {
         credits: "{{n}} credits",

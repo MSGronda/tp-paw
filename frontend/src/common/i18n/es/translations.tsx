@@ -79,6 +79,10 @@ export const TRANSLATIONS_ES = {
         builderClass: "Clase",
         builderBuilding: "Edificio",
         builderMode: "Modalidad",
+        emptySemester: "No tienes un cuatrimestre actual. Podes construir uno usando el",
+        emptySemesterLink: " constructor de cuatrimestre.",
+        finishCurrentSemester: "Finalizar cuatrimestre",
+        editCurrentSemester: "Editar cuatrimestre",
     },
     SubjectCard: {
         credits: "{{n}} creditos",
