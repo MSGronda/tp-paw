@@ -231,5 +231,10 @@ export const TRANSLATIONS_ES = {
     MultiReview: {
         progressText: "{{c}} de {{l}} reseñas",
         skip: "Saltar"
+    },
+    ReviewCards: {
+        doyouwish: "Esta acción no es revertible. ¿Deseas eliminar esta reseña?",
+        confirm: "Confirmar",
+        cancel: "Cancelar"
     }
 }

@@ -231,5 +231,10 @@ export const TRANSLATIONS_EN = {
     MultiReview: {
         progressText: "{{c}} of {{l}} reviews",
         skip: "Skip",
+    },
+    ReviewCards: {
+        doyouwish: "This action cannot be undone. Do you wish to delete the review?",
+        confirm: "Confirm",
+        cancel: "Cancel",
     }
 }
