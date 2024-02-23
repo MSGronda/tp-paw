@@ -76,7 +76,6 @@ export function SubjectPage() {
         const res = await userService.getUsersThatReviewedSubject(subjectId,page);
         const data = handleService(res, navigate);
         if(res){
-            console.log(data);
             setUsers(data);
         }
     }
@@ -397,9 +396,10 @@ export function SubjectPage() {
                                         timeDemand={review.timeDemand}
                                         text={review.text}
                                         key={review.id}
-                                        userId={review.userId}
+                                        UserId={review.userId}
                                         userName={findUserName(review.userId)}
                                         anonymous={review.anonymous}
+                                        id={review.id}
                             />
                         ))
                     }
