@@ -15,20 +15,48 @@ import classes from './home.module.css';
 import {IconCheck, IconMessageCircle, IconPencil, IconPhoto, IconSettings} from "@tabler/icons-react";
 import {useTranslation} from "react-i18next";
 import SubjectCard from "../../components/subject-card/subject-card.tsx";
-import { useContext } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import AuthContext from '../../context/AuthContext.tsx';
 import Landing from '../Landing/landing.tsx';
 import {Subject} from "../../models/Subject.ts";
 import TimeTable from "../../components/time-table/time-table.tsx";
-import {Link} from "react-router-dom";
+import {Link, useNavigate} from "react-router-dom";
 import ClassInfoCard from '../../components/class-info-card/class-info-card.tsx';
 import Class from '../../models/Class.ts';
 import ClassTime from '../../models/ClassTime.ts';
+import { subjectService, userService } from '../../services/index.tsx';
+import { handleService } from '../../handlers/serviceHandler.tsx';
 
 
 export default function Home() {
     const { t } = useTranslation();
+    const navigate = useNavigate();
     const iconStyle = { width: rem(12), height: rem(12) };
+
+    const [pastSubjects, setPastSubjects] = useState([]);
+    const [futureSubjects, setFutureSubjects] = useState([]);
+
+    const searchPastSubjects = async (userId: number) => {
+        const res = await subjectService.getDoneSubjects(userId);
+        const data = handleService(res,navigate);
+        if(res) {
+            setPastSubjects(data);
+        }
+    }
+
+    const searchFutureSubjects = async (userId: number) => {
+        const res = await subjectService.getUnlockableSubjects(userId);
+        const data = handleService(res,navigate);
+        if(res) {
+            setFutureSubjects(data);
+        }
+    }
+
+    useEffect(() => {
+        const userId = userService.getUserId();
+        searchPastSubjects(userId);
+        searchFutureSubjects(userId);
+    },[]);
 
     const data = [
         { year: t("Home.firstYear"), progress: 100},
@@ -36,16 +64,6 @@ export default function Home() {
         { year: t("Home.thirdYear"), progress: 100},
         { year: t("Home.fourthYear"), progress: 50},
         { year: t("Home.fifthYear"), progress: 7},
-    ];
-
-    let subjectsArray: { id: string, credits: number, difficulty: string, name: string, numReviews: number, prerequisites: [string], timeDemand: string, progress: string}[] = [
-        { "id": "72.40", credits:6, difficulty:"easy","name": "Ingenieria en Software II",numReviews:732,prerequisites:["72.38"],timeDemand:"low",progress:"incomplete" },
-        { "id": "72.41", credits:6, difficulty:"easy","name": "Gestion de Proyectos Informaticos",numReviews:732,prerequisites:["72.38"],timeDemand:"low",progress:"incomplete" },
-        { "id": "72.42", credits:6, difficulty:"easy","name": "Progrmacion de Objetos Distribuidos",numReviews:732,prerequisites:["72.38"],timeDemand:"low",progress:"incomplete" },
-        { "id": "72.43", credits:6, difficulty:"easy","name": "Base de Datos 2",numReviews:732,prerequisites:["72.38"],timeDemand:"low",progress:"incomplete" },
-        { "id": "72.44", credits:6, difficulty:"easy","name": "Proyecto Aplicacion Web",numReviews:732,prerequisites:["72.38"],timeDemand:"low",progress:"incomplete" },
-        { "id": "72.45", credits:6, difficulty:"easy","name": "Protocolos de Comunicacion",numReviews:732,prerequisites:["72.38"],timeDemand:"low",progress:"incomplete" },
-        { "id": "72.46", credits:6, difficulty:"easy","name": "Metodos Numericos Avanzados",numReviews:732,prerequisites:["72.38"],timeDemand:"low",progress:"incomplete" },
     ];
 
     const userSemester: Subject[] = [
@@ -205,13 +223,13 @@ export default function Home() {
 
                             <Tabs.Panel value="future-subjects" >
                                 <Grid gutter="sm" columns={12} className={classes.futureSubjectsArea}>
-                                    {getSubjectsCards(subjectsArray).map((item) => <Grid.Col span={3}>{item}</Grid.Col>)}
+                                    {getSubjectsCards(futureSubjects).map((item) => <Grid.Col span={3}>{item}</Grid.Col>)}
                                 </Grid>
                             </Tabs.Panel>
 
                             <Tabs.Panel value="past-subjects">
                                 <Grid gutter="sm">
-                                    {getSubjectsCards(subjectsArray).map((item) => <Grid.Col span={3}>{item}</Grid.Col>)}
+                                    {getSubjectsCards(pastSubjects).map((item) => <Grid.Col span={3}>{item}</Grid.Col>)}
                                 </Grid>
                             </Tabs.Panel>
                         </Tabs>
