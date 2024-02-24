@@ -94,10 +94,8 @@ export const AuthContextProvider = ({ children }: { children: React.ReactNode })
             //console.log(jwtDecode<CustomJwtPayload>(authKey as string))
             // setEmail(jwtDecode<CustomJwtPayload>(authKey as string).sub as string);
             // setRole(jwtDecode<CustomJwtPayload>(authKey as string).roles as string);
-            // const id = jwtDecode<CustomJwtPayload>(token as string)
-            //             .userUrl.split("/")
-            //             .pop();
-            // if (id) setUserId(parseInt(id));
+            const id = JSON.parse(localStorage.getItem("user") as string).id
+            if (id) setUserId(parseInt(id));
         } catch (e) {
             console.error(e);
         }

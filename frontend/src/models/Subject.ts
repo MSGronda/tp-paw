@@ -3,24 +3,24 @@ import Class from "./Class.ts";
 export function getDifficultyValue(difficulty: string){
     switch (difficulty){
         case 'EASY':
-            return 1;
-        case 'NORMAL':
-            return 2;
-        case 'HARD':
-            return 3;
-        default:
             return 0;
+        case 'NORMAL':
+            return 1;
+        case 'HARD':
+            return 2;
+        default:
+            return -1;
     }
 }
 
 export function getTimeDemandValue(timeDemand: string){
     switch (timeDemand){
         case 'LOW':
-            return 1;
+            return 0;
         case 'MEDIUM':
-            return 2;
+            return 1;
         case 'HIGH':
-            return 3;
+            return 2;
         default:
             return 0;
     }

@@ -391,7 +391,7 @@ export function SubjectPage() {
                     { reviews &&
                         reviews.map((review) => (
                             <ReviewCard subjectId={subject?.id}
-                                        subjectName={undefined}
+                                        subjectName={subject.name}
                                         difficulty={review.difficulty}
                                         timeDemand={review.timeDemand}
                                         text={review.text}
@@ -400,6 +400,7 @@ export function SubjectPage() {
                                         userName={findUserName(review.userId)}
                                         anonymous={review.anonymous}
                                         id={review.id}
+                                        forSubject={true}
                             />
                         ))
                     }

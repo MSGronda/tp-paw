@@ -17,12 +17,15 @@ interface ReviewCardProps {
     userName: string | undefined;
     anonymous: boolean;
     id: number
+    forSubject: boolean
 }
 
 function ReviewCard(props: ReviewCardProps): JSX.Element {
     const { t } = useTranslation();
     const { userId } = useContext(AuthContext)
-    const { subjectId, subjectName, text, timeDemand, difficulty, UserId, userName, anonymous, id } = props;
+    console.log(userId)
+    const { subjectId, subjectName, text, timeDemand, difficulty, UserId, userName, anonymous, id, forSubject } = props;
+    console.log(UserId)
 
     const [openedTooltip, setOpenedTooltip] = useState(false);
     const [showMore, setShowMore] = useState(false);
@@ -41,7 +44,7 @@ function ReviewCard(props: ReviewCardProps): JSX.Element {
     return (
         <Card className={classes.card}>
             <div slot="header" className={classes.header}>
-                {subjectName !== undefined ?
+                {forSubject === false ?
                     <Link className={classes.username_redirect} to={"/subject/" + subjectId}>
                         {subjectId} - {subjectName}
                     </Link>
@@ -58,7 +61,7 @@ function ReviewCard(props: ReviewCardProps): JSX.Element {
                 <div>
                     {
                         userId === UserId &&
-                        <Link to={`review/${subjectId}/edit/${id}`}>
+                        <Link to={`/review/${subjectId}/edit/${id}`} state={{text: text, timeDemand: timeDemand, difficulty: difficulty, anonymous: anonymous, subjectName: subjectName, fromSubject: forSubject}}>
                             <ActionIcon variant="transparent" color="grey" style={{marginRight: '0.7rem'}}>
                                 <IconEdit />
                             </ActionIcon>

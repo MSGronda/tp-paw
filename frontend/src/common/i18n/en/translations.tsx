@@ -231,6 +231,7 @@ export const TRANSLATIONS_EN = {
         anonymous: "Anonymous",
         publicHelp: "Otros usuarios podran ver que esta reseña es tuya",
         submit: "Submit!",
+        editSubmit: "Edit review"
     },
     MultiReview: {
         progressText: "{{c}} of {{l}} reviews",
