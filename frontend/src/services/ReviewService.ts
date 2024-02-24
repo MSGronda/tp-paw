@@ -51,4 +51,13 @@ export class ReviewService{
             return handleResponse(error.response);
         }
     }
+
+    async deleteReview(reviewId: number){
+        try{
+            const res = await axiosService.authAxiosWrapper(axiosService.DELETE, `${path}/${reviewId}`);
+            return handleResponse(res);
+        } catch (error: any) {
+            return handleResponse(error.response);
+        }
+    }
 }

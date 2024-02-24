@@ -5,6 +5,7 @@ import { useContext, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
 import AuthContext from "../../context/AuthContext";
+import { reviewService } from "../../services";
 
 interface ReviewCardProps {
     subjectId: string;
@@ -31,6 +32,11 @@ function ReviewCard(props: ReviewCardProps): JSX.Element {
 
     const truncatedText = text.substring(0, 500);
     const remainingText = text.substring(500);
+
+    const deleteAction = async (reviewId: number) => {
+        reviewService.deleteReview(reviewId)
+        window.location.reload()
+    }
 
     return (
         <Card className={classes.card}>
@@ -68,7 +74,7 @@ function ReviewCard(props: ReviewCardProps): JSX.Element {
                                         <div style={{ paddingTop: '1rem' }} className={classes.row}>
                                             <Button
                                                 style={{ marginRight: '1rem' }}
-                                                onClick={() => console.log('delete')}
+                                                onClick={() => deleteAction(id)}
                                                 variant="outline"
                                                 color="black"
                                             >
