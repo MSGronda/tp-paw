@@ -1,8 +1,6 @@
 package ar.edu.itba.paw.services;
 
-import ar.edu.itba.paw.models.Degree;
-import ar.edu.itba.paw.models.Subject;
-import ar.edu.itba.paw.models.User;
+import ar.edu.itba.paw.models.*;
 import ar.edu.itba.paw.models.enums.OrderDir;
 import ar.edu.itba.paw.models.enums.SubjectFilterField;
 import ar.edu.itba.paw.models.enums.SubjectOrderField;
@@ -15,6 +13,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
 
+import java.time.LocalTime;
 import java.util.*;
 
 import static org.junit.Assert.assertEquals;
@@ -24,114 +23,155 @@ import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
 public class SubjectServiceImplTest {
+    private static final Subject testSubject = Subject.builder().id("31.08").name("Sistemas de Representación").department("Ciencias Exactas y Naturales").credits(3).build();
+    private static final Subject testSubject2 = Subject.builder().id("72.34").name("Algebra").department("Matematica").credits(9).build();
+    private static final Degree testDegree = Degree.builder().id(1).build();
+    private static final DegreeSubject testDegreeSubject = new DegreeSubject(testDegree, testSubject, 1);
 
-    private static final String ID = "31.08";
+    private static final long userId = 1;
+    private static final User testUser = User.builder().id(userId).build();
 
-    private static final String NAME = "Sistemas de Representación";
+    // Pagination and order
+    private static final int defaultPage = 1;
+    private static final String defaultOrderBy = "name";
+    private static final String defaultDir = "asc";
 
-    private static final String DEPARTMENT = "Ciencias Exactas y Naturales";
-
-    private static final Integer CREDITS = 3;
-
-    private static final String ID2 = "72.34";
-
-    private static final String NAME2 = "Algebra";
-
-    private static final String DEPARTMENT2 = "Matematica";
-
-    private static final Integer CREDITS2 = 9;
 
     @Mock
     private SubjectDao subjectDao;
-
     @Mock
-    private User user;
-
+    private DegreeService degreeService;
     @Mock
-    private Degree userDegree;
-
+    private ProfessorService professorService;
     @InjectMocks
     private SubjectServiceImpl subjectService;
 
+
+    // Tests nuevos
     @Test
-    public void testFindById() {
-        when(subjectDao.findById(eq(ID))).thenReturn(Optional.of(
-                Subject.builder()
-                        .id(ID)
-                        .name(NAME)
-                        .department(DEPARTMENT)
-                        .credits(CREDITS)
-                        .build()
+    public void testFindSubjectByDegreeAndSemester() {
+        final long degreeId = 1;
+        final long semesterId = 1;
+        when(degreeService.findById(degreeId)).thenReturn(Optional.of(
+                Degree.builderFrom(testDegree).subjects(new ArrayList<>(Collections.singletonList(testDegreeSubject))).build()
         ));
 
-        final Optional<Subject> subject = subjectService.findById(ID);
+        final List<Subject> subjects = subjectService.get(testUser, degreeId, semesterId, null, null, null, null, null, null, null, null, null, null, defaultPage, defaultOrderBy, defaultDir);
 
-        assertTrue(subject.isPresent());
-        assertEquals(ID, subject.get().getId());
-        assertEquals(NAME, subject.get().getName());
-        assertEquals(DEPARTMENT, subject.get().getDepartment());
-        assertEquals(CREDITS, subject.get().getCredits());
+        assertEquals(1, subjects.size());
+        assertTrue(subjects.containsAll(new ArrayList<>(Collections.singletonList(testSubject))));
     }
 
     @Test
-    public void testGetAll() {
-        final Subject subject1 = Subject.builder()
-                .id(ID)
-                .name(NAME)
-                .department(DEPARTMENT)
-                .credits(CREDITS)
-                .build();
+    public void testFindSubjectsUserCanDo() {
+        when(subjectDao.findAllThatUserCanDo(testUser, defaultPage, SubjectOrderField.parse(defaultOrderBy), OrderDir.parse(defaultDir))).thenReturn(
+            new ArrayList<>(Collections.singletonList(testSubject))
+        );
 
-        final Subject subject2 = Subject.builder()
-                .id(ID2)
-                .name(NAME2)
-                .department(DEPARTMENT2)
-                .credits(CREDITS2)
-                .build();
+        final List<Subject> subjects = subjectService.get(testUser, null, null, userId, null, null, null, null, null, null, null, null, null, defaultPage, defaultOrderBy, defaultDir);
 
-        final List<Subject> resultList = Arrays.asList(subject1, subject2);
-
-        when(subjectDao.getAll(1, SubjectOrderField.ID,  OrderDir.DESCENDING)).thenReturn(resultList);
-
-        final List<Subject> subjects = subjectService.getAll(1, "id",  "desc");
-
-        assertEquals(2, subjects.size());
-        assertTrue(subjects.contains(subject1));
-        assertTrue(subjects.contains(subject2));
+        assertEquals(1, subjects.size());
+        assertTrue(subjects.containsAll(new ArrayList<>(Collections.singletonList(testSubject))));
     }
 
     @Test
-    public void testFindByNameFiltered() {
-        final Map<SubjectFilterField, String> filterMap = new HashMap<>();
-        filterMap.put(SubjectFilterField.DEPARTMENT, DEPARTMENT);
+    public void testFindUnlockableSubjectsForUser() {
+        when(subjectDao.findAllThatUserCouldUnlock(testUser, defaultPage, SubjectOrderField.parse(defaultOrderBy), OrderDir.parse(defaultDir))).thenReturn(
+                new ArrayList<>(Collections.singletonList(testSubject))
+        );
 
-        final SubjectOrderField orderBy = SubjectOrderField.NAME;
-        final OrderDir dir = OrderDir.ASCENDING;
+        final List<Subject> subjects = subjectService.get(testUser, null, null, null, userId, null, null, null, null, null, null, null, null, defaultPage, defaultOrderBy, defaultDir);
 
-        final Subject subject1 = Subject.builder()
-                .id(ID)
-                .name(NAME)
-                .department(DEPARTMENT)
-                .credits(CREDITS)
-                .build();
-
-        final List<Subject> resultList = Collections.singletonList(subject1);
-
-        Mockito.lenient().when(userDegree.getId()).thenReturn(1L);
-        Mockito.lenient().when(user.getDegree()).thenReturn(userDegree);
-
-        when(subjectDao.search(eq(user), eq(NAME), eq(1), eq(filterMap), eq(orderBy), eq(dir))).thenReturn(resultList);
-        when(subjectDao.getTotalPagesForSearch(eq(user), eq(NAME), eq(filterMap), eq(orderBy))).thenReturn(1);
-
-        final List<Subject> actual = subjectService.search(user, NAME, 1, "name", "asc", null, DEPARTMENT, null, null);
-
-        assertEquals(1, actual.size());
-        assertEquals(ID, actual.get(0).getId());
-        assertEquals(DEPARTMENT, actual.get(0).getDepartment());
-        assertEquals(NAME, actual.get(0).getName());
-        assertEquals(CREDITS, actual.get(0).getCredits());
+        assertEquals(1, subjects.size());
+        assertTrue(subjects.containsAll(new ArrayList<>(Collections.singletonList(testSubject))));
     }
 
+    @Test
+    public void testFindDoneSubjects() {
+        when(subjectDao.findAllThatUserHasDone(testUser, defaultPage, SubjectOrderField.parse(defaultOrderBy), OrderDir.parse(defaultDir))).thenReturn(
+                new ArrayList<>(Collections.singletonList(testSubject))
+        );
+
+        final List<Subject> subjects = subjectService.get(testUser, null, null, null, null, userId, null, null, null, null, null, null, null, defaultPage, defaultOrderBy, defaultDir);
+
+        assertEquals(1, subjects.size());
+        assertTrue(subjects.containsAll(new ArrayList<>(Collections.singletonList(testSubject))));
+    }
+
+    @Test
+    public void testFindNotDoneSubjects() {
+        when(subjectDao.findAllThatUserHasNotDone(testUser, defaultPage, SubjectOrderField.parse(defaultOrderBy), OrderDir.parse(defaultDir))).thenReturn(
+                new ArrayList<>(Collections.singletonList(testSubject))
+        );
+
+        final List<Subject> subjects = subjectService.get(testUser, null, null, null, null, null, userId, null, null, null, null, null, null, defaultPage, defaultOrderBy, defaultDir);
+
+        assertEquals(1, subjects.size());
+        assertTrue(subjects.containsAll(new ArrayList<>(Collections.singletonList(testSubject))));
+    }
+
+    @Test
+    public void testSubjectSearchByName() {
+        final String name = "Sistemas";
+        final Map<SubjectFilterField, String> filterMap = subjectService.getFilterMap(null, null, null, null);
+        final List<Subject> expected = new ArrayList<>(Collections.singletonList(testSubject));
+        when(subjectDao.getTotalPagesForSearch(testUser, name, filterMap, SubjectOrderField.parse(defaultOrderBy))).thenReturn(1);
+        when(subjectDao.search(testUser, name, defaultPage, filterMap, SubjectOrderField.parse(defaultOrderBy),OrderDir.parse(defaultDir)))
+            .thenReturn(expected);
+
+        final List<Subject> subjects = subjectService.get(testUser, null, null,  null, null, null, null, null, name, null, null, null, null, defaultPage, defaultOrderBy, defaultDir);
+
+        assertEquals(1, subjects.size());
+        assertTrue(subjects.containsAll(expected));
+    }
+
+    @Test
+    public void testSubjectCreation() {
+        final List<Long> degreeIds = new ArrayList<>(Collections.singletonList(1L));
+        final List<Integer> semesterIds = new ArrayList<>(Collections.singletonList(1));
+        final List<String> requirementIds = new ArrayList<>(Collections.singletonList(testSubject2.getId()));
+        final List<String> professors = new ArrayList<>();
+        when(subjectDao.create(testSubject)).thenReturn(testSubject);
+
+        final Subject createdSubject = subjectService.create(Subject.builderFrom(testSubject), degreeIds, semesterIds, requirementIds, professors);
+
+        assertEquals(testSubject, createdSubject);
+    }
+
+    @Test
+    public void testCreateSubjectWithExistingId() {
+        final List<Long> degreeIds = new ArrayList<>(Collections.singletonList(1L));
+        final List<Integer> semesterIds = new ArrayList<>(Collections.singletonList(1));
+        final List<String> requirementIds = new ArrayList<>(Collections.singletonList(testSubject2.getId()));
+        final List<String> professors = new ArrayList<>();
+        when(subjectDao.create(testSubject)).thenReturn(testSubject);
+
+        final Subject createdSubject = subjectService.create(Subject.builderFrom(testSubject), degreeIds, semesterIds, requirementIds, professors);
+
+        assertEquals(testSubject, createdSubject);
+    }
+
+    @Test
+    public void testEditSubject() {
+        final String name = "Diseño";
+        final String department = "Departamento de Diseño";
+        final int credits = 6;
+        final List<String> requirementIds = new ArrayList<>(Collections.singletonList(testSubject2.getId()));
+        final Set<Subject> prereqs = new HashSet<>(Collections.singletonList(testSubject2));
+
+        when(subjectService.findById(testSubject2.getId())).thenReturn(Optional.of(testSubject2));
+        when(subjectDao.editSubject(testSubject, name, department, credits, prereqs))
+                .thenReturn(Subject.builder().id(testSubject.getId()).name(name).department(department).credits(credits).prerequisites(prereqs).build());
+
+        final Subject editedSubject = subjectService.editSubject(testSubject, name, department, credits, requirementIds);
+
+        assertEquals(testSubject.getId(), editedSubject.getId());
+        assertEquals(name, editedSubject.getName());
+        assertEquals(department, editedSubject.getDepartment());
+        assertEquals(credits, editedSubject.getCredits().intValue());
+    }
+
+    // Tests viejos
     @Test
     public void testUpdateUnreviewedNotificationTime() {
         subjectService.updateUnreviewedNotificationTime();

@@ -22,11 +22,16 @@ public class Degree {
     private int totalCredits;
 
     private static final int ELECTIVE_ID = -1;
+    private static final long REPLACE_ID = -1;
+
 
     public Degree(Builder builder) {
         this.name = builder.name;
         this.totalCredits = builder.totalCredits;
         this.subjects = builder.subjects;
+        if(builder.id != REPLACE_ID){
+            this.id = builder.id;
+        }
     }
 
     protected Degree() {}
@@ -124,6 +129,8 @@ public class Degree {
     public static class Builder {
         private String name;
         private int totalCredits;
+        private long id = REPLACE_ID;
+
         private List<DegreeSubject> subjects;
 
         private Builder() {
@@ -148,6 +155,11 @@ public class Degree {
             this.subjects = subjects;
             return this;
         }
+        public Builder id(final long id){
+            this.id = id;
+            return this;
+        }
+
         public String getName() {
             return name;
         }

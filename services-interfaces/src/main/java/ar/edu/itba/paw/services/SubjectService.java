@@ -97,7 +97,7 @@ public interface SubjectService {
 
     void delete(final User user, final String subjectId);
 
-    void editSubject(
+    Subject editSubject(
             final Subject subject,
             final String name,
             final String department,

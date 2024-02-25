@@ -37,7 +37,7 @@ public class SubjectServiceImpl implements SubjectService {
 
         degreeService.addSubjectToDegrees(sub, degreeIds, semesters);
 
-        professorService.addSubjectToProfessors(sub,professors);
+        professorService.addSubjectToProfessors(sub, professors);
 
         subjectDao.addPrerequisites(sub, requirementIds);
 
@@ -113,7 +113,7 @@ public class SubjectServiceImpl implements SubjectService {
 
     @Override
     @Transactional
-    public void editSubject(
+    public Subject editSubject(
             final Subject subject,
             final String name,
             final String department,
@@ -122,7 +122,7 @@ public class SubjectServiceImpl implements SubjectService {
     ){
         final Set<Subject> prereqs = new HashSet<>();
         requirementIds.forEach(id -> findById(id).ifPresent(prereqs::add));
-        subjectDao.editSubject(
+        return subjectDao.editSubject(
                 subject,
                 name,
                 department,
@@ -366,7 +366,7 @@ public class SubjectServiceImpl implements SubjectService {
         }
     }
 
-    private Map<SubjectFilterField, String> getFilterMap(
+    protected Map<SubjectFilterField, String> getFilterMap(
             final Integer credits,
             final String department,
             final Integer difficulty,
