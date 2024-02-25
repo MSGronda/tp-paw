@@ -129,12 +129,12 @@ public class ReviewServiceImpl implements ReviewService {
 
     @Transactional
     @Override
-    public void update(final Review.Builder reviewBuilder) throws UnauthorizedException {
+    public Review update(final Review.Builder reviewBuilder) throws UnauthorizedException {
         final User user = authUserService.getCurrentUser();
         if(!user.isEditor() && !reviewBuilder.getUser().equals(user))
             throw new UnauthorizedException();
 
-        reviewDao.update(reviewBuilder);
+        return reviewDao.update(reviewBuilder);
     }
 
     @Transactional
@@ -176,6 +176,4 @@ public class ReviewServiceImpl implements ReviewService {
 
         return reviewVotes;
     }
-
-
 }

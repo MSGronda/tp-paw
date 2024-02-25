@@ -27,7 +27,7 @@ public interface ReviewService {
     boolean didUserReview(final Subject subject, final User user);
     boolean canUserEditReview(final User user, final Review review);
 
-    void update(final Review.Builder review) throws UnauthorizedException;
+    Review update(final Review.Builder review) throws UnauthorizedException;
     void delete(final Review review) throws UnauthorizedException;
     void delete(final long reviewId);
     List<ReviewVote> getVotes(final Long reviewId, final Long userId, final int page);

@@ -28,6 +28,10 @@ public class ProfessorServiceImplTest {
     @InjectMocks
     private ProfessorServiceImpl professorService;
 
+
+    // Todos los metodos son pasamanos.
+
+
     @Test
     public void testFindById() {
         final Professor professor1 = new Professor(NAME);
