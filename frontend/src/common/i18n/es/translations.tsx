@@ -231,7 +231,11 @@ export const TRANSLATIONS_ES = {
         anonymous: "Anónimo",
         publicHelp: "Other users will be able to view that this review is yours",
         submit: "Publicar!",
-        editSubmit: "Editar reseña"
+        editSubmit: "Editar reseña",
+        editSuccess: "¡Tu reseña se editó exitosamente!",
+        editFailure: "Ocurrió un error, por favor intentá de nuevo más tarde",
+        deleteSuccess: "¡Tu reseña se eliminó exitosamente!",
+        deleteFailure: "Ocurrió un error, por favor intentá de nuevo más tarde",
     },
     MultiReview: {
         progressText: "{{c}} de {{l}} reseñas",

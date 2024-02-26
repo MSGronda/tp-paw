@@ -3,7 +3,7 @@ import classes from './review-card.module.css';
 import { IconEdit, IconPencil, IconThumbDown, IconThumbUp, IconTrash } from "@tabler/icons-react";
 import { useContext, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import AuthContext from "../../context/AuthContext";
 import { reviewService } from "../../services";
 
@@ -23,12 +23,11 @@ interface ReviewCardProps {
 function ReviewCard(props: ReviewCardProps): JSX.Element {
     const { t } = useTranslation();
     const { userId } = useContext(AuthContext)
-    console.log(userId)
     const { subjectId, subjectName, text, timeDemand, difficulty, UserId, userName, anonymous, id, forSubject } = props;
-    console.log(UserId)
 
     const [openedTooltip, setOpenedTooltip] = useState(false);
     const [showMore, setShowMore] = useState(false);
+    const navigate = useNavigate();
     const toggleShowMore = () => {
         setShowMore(!showMore);
     };
@@ -37,7 +36,8 @@ function ReviewCard(props: ReviewCardProps): JSX.Element {
     const remainingText = text.substring(500);
 
     const deleteAction = async (reviewId: number) => {
-        reviewService.deleteReview(reviewId)
+        const res = await reviewService.deleteReview(reviewId)
+        localStorage.setItem('reviewDeleted', JSON.stringify(!res?.failure))
         window.location.reload()
     }
 

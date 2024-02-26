@@ -4,7 +4,7 @@ export function getDifficultyValue(difficulty: string){
     switch (difficulty){
         case 'EASY':
             return 0;
-        case 'NORMAL':
+        case 'MEDIUM':
             return 1;
         case 'HARD':
             return 2;

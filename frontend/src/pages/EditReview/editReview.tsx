@@ -18,9 +18,6 @@ export default function EditReview() {
     const subjectName = state.subjectName
     const fromSubject = state.fromSubject
 
-    console.log(state)
-    console.log(getDifficultyValue(state.difficulty).toString())
-
     const [review, setReview] = useState(state.text)
     const [difficultyValue, setDifficultyValue] = useState(getDifficultyValue(state.difficulty).toString())
     const [timeDemandValue, setTimeDemandValue] = useState(getTimeDemandValue(state.timeDemand).toString() )
@@ -46,7 +43,7 @@ export default function EditReview() {
         const res = await reviewService.editReview(parseInt(reviewId), review, parseInt(difficultyValue), parseInt(timeDemandValue), AnonymousValue === "true", subjectId)
 
         if( fromSubject ){
-            navigate(`/subject/${subjectId}`)
+            navigate(`/subject/${subjectId}`, { state: { reviewUpdated: !res?.failure}})
         }else{
             navigate(`/profile`)
         }
