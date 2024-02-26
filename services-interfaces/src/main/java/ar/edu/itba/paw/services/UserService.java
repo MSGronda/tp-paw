@@ -11,8 +11,8 @@ import java.util.Optional;
 
 public interface UserService {
     Optional<User> getRelevantUser(final Long available, final Long unLockable, final Long done, final Long future, final Long plan);
-    User create(final User user, final byte[] profilePic) throws EmailAlreadyTakenException;
-    User create(final User user) throws EmailAlreadyTakenException;
+    User create(final User user, final byte[] profilePic);
+    User create(final User user);
 
     Optional<User> findById(final long id);
     Optional<User> findByEmail(final String email);
@@ -29,7 +29,7 @@ public interface UserService {
             final User user,
             final String newPassword,
             final String oldPasswordInput
-    ) throws OldPasswordDoesNotMatchException;
+    );
 
     void editProfile(final User user, final String username);
     void updateProfilePicture(final User user, final byte[] image) throws InvalidImageSizeException;

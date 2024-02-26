@@ -95,8 +95,7 @@ public class UserServiceImpl implements UserService {
 
     @Transactional
     @Override
-    public User create(final User user, final byte[] profilePic)
-            throws EmailAlreadyTakenException, DegreeNotFoundException {
+    public User create(final User user, final byte[] profilePic) {
 
         final Image image = imageDao.create(profilePic);
         final String confirmToken = generateConfirmToken();
@@ -126,8 +125,7 @@ public class UserServiceImpl implements UserService {
 
     @Transactional
     @Override
-    public User create(final User user)
-            throws EmailAlreadyTakenException, DegreeNotFoundException {
+    public User create(final User user) {
 
         final byte[] defaultImg;
         try {
@@ -236,7 +234,7 @@ public class UserServiceImpl implements UserService {
             final User user,
             final String password,
             final String oldPasswordInput
-    ) throws OldPasswordDoesNotMatchException {
+    ) {
         if (!passwordEncoder.matches(oldPasswordInput, user.getPassword())) {
             LOGGER.debug("Old password does not match with input");
             throw new OldPasswordDoesNotMatchException();
@@ -515,7 +513,7 @@ public class UserServiceImpl implements UserService {
         LOGGER.info("Auto login for user {}", user.getId());
     }
 
-    private String generateConfirmToken() {
+    protected String generateConfirmToken() {
         final SecureRandom random = new SecureRandom();
         final byte[] bytes = new byte[20];
         random.nextBytes(bytes);
