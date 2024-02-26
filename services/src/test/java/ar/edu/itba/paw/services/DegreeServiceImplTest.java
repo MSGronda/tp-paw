@@ -1,89 +1,87 @@
 package ar.edu.itba.paw.services;
 
 import ar.edu.itba.paw.models.Degree;
+import ar.edu.itba.paw.models.DegreeSemester;
+import ar.edu.itba.paw.models.DegreeSubject;
 import ar.edu.itba.paw.models.Subject;
 import ar.edu.itba.paw.persistence.dao.DegreeDao;
+import ar.edu.itba.paw.persistence.dao.SubjectDao;
+import ar.edu.itba.paw.services.enums.OperationType;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
-
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
-import java.util.OptionalInt;
-
+import java.util.*;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
-/*
+
+
 @RunWith(MockitoJUnitRunner.class)
 public class DegreeServiceImplTest {
-    private static final String NAME = "name";
-    private static final String NAME2 = "name2";
+    private final Subject testSubject = Subject.builder().id("11.15").build();
+    private final Subject testSubject2 = Subject.builder().id("11.16").build();
+    private final Degree testDegree = Degree.builder().id(1).name("Ing. Informatica").totalCredits(240).build();
 
     @Mock
-    private DegreeDao degreeDao;
-
+    private SubjectDao subjectDao;
     @InjectMocks
     private DegreeServiceImpl degreeService;
 
+    // Tests nuevos
     @Test
-    public void findById() {
-        final Degree degree = new Degree(NAME);
+    public void testAddSemesters() {
+        final Map<Integer, List<String>> semesters = new HashMap<>();
+        final int firstSemester = 1;
+        final int secondSemester = 2;
+        semesters.put(firstSemester, new ArrayList<>(Collections.singletonList(testSubject.getId())));
+        semesters.put(secondSemester, new ArrayList<>(Collections.singletonList(testSubject2.getId())));
+        when(subjectDao.findById(testSubject.getId())).thenReturn(Optional.of(testSubject));
+        when(subjectDao.findById(testSubject2.getId())).thenReturn(Optional.of(testSubject2));
 
-        when(degreeDao.findById(1)).thenReturn(Optional.of(degree));
+        degreeService.addSemestersToDegree(testDegree, semesters);
 
-        final Optional<Degree> actual = degreeService.findById(1);
-
-        assertTrue(actual.isPresent());
-        assertEquals(NAME, actual.get().getName());
+        assertEquals(2, testDegree.getDegreeSubjects().size());
+        assertEquals(testDegree.getSemesters().get(firstSemester - 1).getSubjects(), new ArrayList<>(Collections.singletonList(testSubject)));
+        assertEquals(testDegree.getSemesters().get(secondSemester - 1).getSubjects(), new ArrayList<>(Collections.singletonList(testSubject2)));
     }
 
     @Test
-    public void findByName() {
-        final Degree degree = new Degree(NAME);
+    public void testDeleteSemester() {
+        final int semester = 1;
+        testDegree.getDegreeSubjects().add(new DegreeSubject(testDegree, testSubject, semester));
 
-        when(degreeDao.findByName(NAME)).thenReturn(Optional.of(degree));
+        degreeService.deleteSemesterFromDegree(testDegree, semester);
 
-        final Optional<Degree> actual = degreeService.findByName(NAME);
-
-        assertTrue(actual.isPresent());
-        assertEquals(NAME, actual.get().getName());
+        assertEquals(0, testDegree.getSemesters().size());
     }
 
     @Test
-    public void getAll() {
-        final Degree degree1 = new Degree(NAME);
-        final Degree degree2 = new Degree(NAME2);
+    public void testAddSubjectToSemester() {
+        final int semester = 2;
+        final String subjectId = testSubject.getId();
+        when(subjectDao.findById(subjectId)).thenReturn(Optional.of(testSubject));
 
-        when(degreeDao.getAll()).thenReturn(Arrays.asList(degree1, degree2));
+        degreeService.editDegreeSemester(testDegree, new AbstractMap.SimpleEntry<>(OperationType.Add, new AbstractMap.SimpleEntry<>(semester, subjectId)));
 
-        final List<Degree> actual = degreeService.getAll();
-
-        assertEquals(2, actual.size());
-        assertEquals(NAME, actual.get(0).getName());
-        assertEquals(NAME2, actual.get(1).getName());
+        final DegreeSemester expected = new DegreeSemester(2, new ArrayList<>(Collections.singletonList(testSubject)));
+        assertEquals(testDegree.getSemesters(), new ArrayList<>(Collections.singletonList(expected)));
     }
 
     @Test
-    public void findSubjectYearForParentDegree() {
-        final Degree degree = new Degree(NAME);
-        final Subject subject = Subject.builder()
-                .id("00.01")
-                .name("Subject")
-                .build();
-        subject.getDegrees().add(degree);
+    public void testRemoveSubjectFromSemester() {
+        final int semester = 1;
+        final String subjectId = testSubject2.getId();
+        testDegree.getDegreeSubjects().add(new DegreeSubject(testDegree, testSubject2, semester));
+        when(subjectDao.findById(subjectId)).thenReturn(Optional.of(testSubject2));
 
-        when(degreeDao.findSubjectSemesterForDegree(eq(subject), eq(degree))).thenReturn(OptionalInt.of(2));
+        degreeService.editDegreeSemester(testDegree, new AbstractMap.SimpleEntry<>(OperationType.Remove, new AbstractMap.SimpleEntry<>(semester, subjectId)));
 
-        final OptionalInt actual = degreeService.findSubjectYearForParentDegree(subject, null);
-
-        assertTrue(actual.isPresent());
-        assertEquals(1, actual.getAsInt());
+        assertTrue(testDegree.getSemesters().isEmpty());
     }
+
+    // El resto son todos pasamanos.
 }
 
- */
+

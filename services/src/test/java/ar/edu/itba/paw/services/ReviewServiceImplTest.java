@@ -91,6 +91,7 @@ public class ReviewServiceImplTest {
         when(reviewService.findById(testReview.getId())).thenReturn(Optional.empty());
 
         final ReviewVote reviewVote = reviewService.voteReview(testReview.getId(), ReviewVoteType.DOWNVOTE);
+        Assert.fail("Should have thrown ReviewNotFoundException");
     }
 
     @Test
@@ -113,5 +114,6 @@ public class ReviewServiceImplTest {
         when(authUserService.getCurrentUser()).thenReturn(User.builder().id(2).build());
 
         final Review updatedReview = reviewService.update(Review.builderFrom(testReview));
+        Assert.fail("Should have thrown UnauthorizedException");
     }
 }

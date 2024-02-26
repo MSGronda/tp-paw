@@ -23,13 +23,13 @@ import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
 public class SubjectServiceImplTest {
-    private static final Subject testSubject = Subject.builder().id("31.08").name("Sistemas de Representación").department("Ciencias Exactas y Naturales").credits(3).build();
-    private static final Subject testSubject2 = Subject.builder().id("72.34").name("Algebra").department("Matematica").credits(9).build();
-    private static final Degree testDegree = Degree.builder().id(1).build();
-    private static final DegreeSubject testDegreeSubject = new DegreeSubject(testDegree, testSubject, 1);
+    private final Subject testSubject = Subject.builder().id("31.08").name("Sistemas de Representación").department("Ciencias Exactas y Naturales").credits(3).build();
+    private final Subject testSubject2 = Subject.builder().id("72.34").name("Algebra").department("Matematica").credits(9).build();
+    private final Degree testDegree = Degree.builder().id(1).build();
+    private final DegreeSubject testDegreeSubject = new DegreeSubject(testDegree, testSubject, 1);
 
     private static final long userId = 1;
-    private static final User testUser = User.builder().id(userId).build();
+    private final User testUser = User.builder().id(userId).build();
 
     // Pagination and order
     private static final int defaultPage = 1;
