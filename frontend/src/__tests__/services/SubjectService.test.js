@@ -50,7 +50,7 @@ test("It should return a list of subjects", async () => {
     });
 
     const response = await subjectService.getSubjectsByName("Sistemas", 1, null, null, null, null, null, null)
-    console.log(response)
+
 
     expect(response.data.length).toBe(2);
     expect(response.data).toEqual([subject1, subject2]);
@@ -69,7 +69,6 @@ test("It should return a list with subjects of 6 credits", async () => {
   });
 
   const response = await subjectService.getSubjectsByName("Sistemas", 1, 6, null, null, null, null, null)
-  console.log(response)
 
   expect(response.data.length).toBe(1);
   expect(response.data).toEqual([subject2]);
@@ -77,6 +76,23 @@ test("It should return a list with subjects of 6 credits", async () => {
   expect(mockedGet).toHaveBeenCalledTimes(1);
   
 });
+
+test("It should return a list of subjects that a user has done", async () => {
+
+    mockedGet.mockResolvedValueOnce({ 
+        status: 200,
+        data: [subject1, subject2], 
+        failure: false,
+        headers: {}
+    });
+    
+    const response = await subjectService.getDoneSubjects(43)
+  
+    expect(response.data.length).toBe(2);
+    expect(response.data).toEqual([subject1, subject2]);
+    expect(response.failure).toBeFalsy();
+    expect(mockedGet).toHaveBeenCalledTimes(1);
+})
 
 
 

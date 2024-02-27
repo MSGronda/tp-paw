@@ -12,3 +12,15 @@ export const subject2 = {
     department: "Ciencias exactas y Naturales",
     credits: 6
 }
+
+export const user1 = {
+    id: 43,
+    email: "pablo@gmail.com",
+    username: "pablito"
+}
+
+export const user2 = {
+    id: 44,
+    email: "esteban@gmail.com",
+    username: "esteban"
+}
