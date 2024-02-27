@@ -24,3 +24,23 @@ export const user2 = {
     email: "esteban@gmail.com",
     username: "esteban"
 }
+
+export const review1 = {
+    id: 1,
+    subjectId: "31.08",
+    userId: 43,
+    review: "Muy buena materia",
+    timeDemanding: 1,
+    difficulty: 1,
+    anonymous: false
+}
+
+export const review2 = {
+    id: 2,
+    subjectId: "31.08",
+    userId: 42,
+    review: "No me gusto nada, muy complicada",
+    timeDemanding: 1,
+    difficulty: 2,
+    anonymous: true
+}
