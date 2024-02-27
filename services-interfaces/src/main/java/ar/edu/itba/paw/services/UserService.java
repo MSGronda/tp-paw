@@ -21,9 +21,7 @@ public interface UserService {
     void resendVerificationEmail(final String email) throws UserNotFoundException;
 
     void updateSingleSubjectProgress(final User user, final Subject subject, final SubjectProgress progress);
-    void updateSingleSubjectProgress(final User user, final String subjectId, final SubjectProgress progress);
     void updateMultipleSubjectProgress(final User user, final List<String> subIds, final SubjectProgress progress);
-    void updateMultipleSubjectProgress(final User user, final String subIds, final SubjectProgress progress);
 
     void changePassword(
             final User user,
@@ -64,12 +62,9 @@ public interface UserService {
     void deleteUserSemester(final User currentUser, final Long userId);
     String getSemesterSubmitRedirectUrl(final User user);
     void finishSemester(final User user, final List<String> subjectIds);
+    void clearDegree(final User user);
 
-   void updateUserDegreeAndSubjectProgress(final User user, final Degree degree, final String subjectIds);
-
-   void clearDegree(final User user);
-
-   void updateUser(final Long userId, final User user, final String username, final String oldPassword, final String newPassword, final Long degreeId, final List<String> subjectIds) throws OldPasswordDoesNotMatchException;
+    void updateUser(final Long userId, final User user, final String username, final String oldPassword, final String newPassword, final Long degreeId, final List<String> subjectIds) throws OldPasswordDoesNotMatchException;
 
     void updateMultipleSubjectProgress(final User currentUser, final Long id, final List<String> newPassedSubjects, final List<String> newNotPassedSubjects);
 

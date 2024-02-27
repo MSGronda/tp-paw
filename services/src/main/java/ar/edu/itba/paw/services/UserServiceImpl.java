@@ -187,25 +187,11 @@ public class UserServiceImpl implements UserService {
 
     @Transactional
     @Override
-    public void updateSingleSubjectProgress(final User user, final String subjectId, final SubjectProgress progress) {
-        final Subject subject = subjectService.findById(subjectId).orElseThrow(SubjectNotFoundException::new);
-
-        updateSingleSubjectProgress(user, subject, progress);
-    }
-
-    @Transactional
-    @Override
     public void updateMultipleSubjectProgress(final User user, final List<String> subIds, final SubjectProgress progress) {
         if (subIds.isEmpty()) {
             return;
         }
         userDao.updateSubjectProgressList(user, subIds, progress);
-    }
-
-    @Transactional
-    @Override
-    public void updateMultipleSubjectProgress(final User user, final String subIds, final SubjectProgress progress) {
-        updateMultipleSubjectProgress(user, parseJsonList(subIds), progress);
     }
 
     @Transactional
@@ -488,12 +474,9 @@ public class UserServiceImpl implements UserService {
         final Role role = rolesService.findByName(Role.RoleEnum.EDITOR.getName()).orElseThrow(IllegalStateException::new);
         addRole(toMakeModerator, role);
     }
-
     @Transactional
-    @Override
-    public void updateUserDegreeAndSubjectProgress(final User user, final Degree degree, final String subjectIds) {
+    public void updateDegree(final User user, final Degree degree) {
         userDao.updateUserDegree(user, degree);
-        updateMultipleSubjectProgress(user, parseJsonList(subjectIds), SubjectProgress.DONE);
     }
 
     @Transactional
@@ -531,24 +514,6 @@ public class UserServiceImpl implements UserService {
 
         return token;
     }
-
-    private List<String> parseJsonList(String stringifyString) {
-        String trimmedInput = stringifyString.replace("[", "").replace("]", "");
-        String[] elements = trimmedInput.split(",");
-
-        List<String> parsedList = new ArrayList<>();
-        if (elements[0].equals("")) {
-            return parsedList;
-        }
-        for (String element : elements) {
-            // Remove quotes around each element
-            String parsedElement = element.replace("\"", "");
-            parsedList.add(parsedElement);
-        }
-
-        return parsedList;
-    }
-
     @Transactional
     @Override
     public void updateUser(final Long userId, final User user, final String username, final String oldPassword, final String newPassword, final Long degreeId, final List<String> subjectIds) throws OldPasswordDoesNotMatchException{
@@ -561,8 +526,11 @@ public class UserServiceImpl implements UserService {
         if( oldPassword != null && newPassword != null) {
             changePassword(user, newPassword, oldPassword);
         }
-        if(degreeId != null && subjectIds != null) {
-            updateUserDegreeAndSubjectProgress(user, degreeService.findById(degreeId).orElseThrow(DegreeNotFoundException::new), subjectIds.toString());
+        if(degreeId != null) {
+            updateDegree(user, degreeService.findById(degreeId).orElseThrow(DegreeNotFoundException::new));
+        }
+        if(subjectIds != null){
+            updateMultipleSubjectProgress(user, subjectIds, SubjectProgress.DONE);
         }
     }
 

@@ -1,12 +1,10 @@
 package ar.edu.itba.paw.services;
 
 import ar.edu.itba.paw.models.*;
-import ar.edu.itba.paw.models.exceptions.EmailAlreadyTakenException;
-import ar.edu.itba.paw.models.exceptions.InvalidImageSizeException;
-import ar.edu.itba.paw.models.exceptions.OldPasswordDoesNotMatchException;
-import ar.edu.itba.paw.models.exceptions.UserSemesterAlreadyContainsSubjectException;
+import ar.edu.itba.paw.models.exceptions.*;
 import ar.edu.itba.paw.persistence.dao.ImageDao;
 import ar.edu.itba.paw.persistence.dao.UserDao;
+import ar.edu.itba.paw.services.enums.UserSemesterEditType;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -136,4 +134,15 @@ public class UserServiceImplTest {
 
         userService.removeFromCurrentSemester(testUser,  testSubject.getId(), classId);
     }
+
+    @Test(expected = InvalidUserSemesterIds.class)
+    public void testInvalidEditUserSemester() {
+        final List<String> subjectIds = new ArrayList<>(Collections.singletonList("11.15"));
+        final List<String> classIds = new ArrayList<>();
+
+        userService.editUserSemester(testUser, testUser.getId(), UserSemesterEditType.ADD_SUBJECT, subjectIds, classIds);
+
+        Assert.fail("InvalidUserSemesterIds must be thrown");
+    }
+
 }
