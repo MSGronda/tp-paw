@@ -27,6 +27,9 @@ public class TestConfig {
     @Value("classpath:hsqldb.sql")
     private Resource hsqldbSql;
 
+    @Value("classpath:mock_data.sql")
+    private Resource mockData;
+
     @Bean
     public DataSource dataSource() {
         final SimpleDriverDataSource ds = new SimpleDriverDataSource();
@@ -58,6 +61,7 @@ public class TestConfig {
     private DatabasePopulator databasePopulator() {
         final ResourceDatabasePopulator populator = new ResourceDatabasePopulator();
         populator.addScript(hsqldbSql);
+        populator.addScript(mockData);
 
         return populator;
     }
@@ -70,16 +74,16 @@ public class TestConfig {
     @Bean
 //    @DependsOn("flyway")
     public LocalContainerEntityManagerFactoryBean entityManagerFactory() {
-        final LocalContainerEntityManagerFactoryBean factoryBean = new
-                LocalContainerEntityManagerFactoryBean();
+        final LocalContainerEntityManagerFactoryBean factoryBean = new LocalContainerEntityManagerFactoryBean();
         factoryBean.setPackagesToScan("ar.edu.itba.paw.models");
         factoryBean.setDataSource(dataSource());
+
         final JpaVendorAdapter vendorAdapter = new HibernateJpaVendorAdapter();
         factoryBean.setJpaVendorAdapter(vendorAdapter);
+
         final Properties properties = new Properties();
         properties.setProperty("hibernate.hbm2ddl.auto", "update");
-        properties.setProperty("hibernate.dialect",
-                "org.hibernate.dialect.HSQLDialect");
+        properties.setProperty("hibernate.dialect", "org.hibernate.dialect.HSQLDialect");
 
 
         properties.setProperty("hibernate.show_sql", "true");
