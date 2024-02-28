@@ -83,4 +83,13 @@ export class UserService {
             return handleResponse(error.response);
         }
     }
+
+    async getUserProgress(userId: number) {
+        try{
+            const res = await axiosService.authAxiosWrapper(axiosService.GET, `${path}/${userId}/progress`, {});
+            return handleResponse(res);
+        } catch (error: any) {
+            return handleResponse(error.response);
+        }
+    }
 }

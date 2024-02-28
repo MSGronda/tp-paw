@@ -51,6 +51,7 @@ export function SubjectPage() {
     const [deleteShowAlert, setDeleteShowAlert] = useState(false);
     const [editReviewValue, setEditReviewValue] = useState<Boolean>();
     const [deletedReviewValue, setDeletedReviewValue] = useState<Boolean>();
+    const [progress, setProgress] = useState("PENDING");
 
     const orderParams = new URLSearchParams(location.search);
     const orderBy = orderParams.get('orderBy');
@@ -103,6 +104,18 @@ export function SubjectPage() {
         window.location.search = queryParams.toString();
     }
 
+    const getUserProgress = async (userId: number) => {
+        const res = await userService.getUserProgress(userId);
+        const data = handleService(res, navigate);
+        if (res && subjectId.id !== undefined) {
+            for(let i=0;i < data.subjectProgress.entry.length;i+=1) {
+                if(data.subjectProgress.entry[i].key === subjectId.id) {
+                    setProgress(data.subjectProgress.entry[i].value);
+                }
+            }
+        }
+    }
+
     useEffect(() => {
         if (subjectId.id !== undefined) {
             searchSubject(subjectId.id);
@@ -140,6 +153,13 @@ export function SubjectPage() {
         }
     }, []);
 
+    useEffect(() => {
+        if(userId !== undefined){
+            getUserProgress(userId);
+        }
+
+    },[])
+
     const findUserName = (userId: number) => {
         let userName = "";
         users.forEach((user) => {
@@ -156,7 +176,6 @@ export function SubjectPage() {
         name: "Ingenieria Informatica",
     };
     const year: number = 1;
-    const progress: string = "DONE";
 
     const combobox = useCombobox({
         onDropdownClose: () => combobox.resetSelectedOption(),
@@ -374,10 +393,20 @@ export function SubjectPage() {
                                     <input type="hidden" name="progress" id="progress" value="{progress.value}" />
                                     <Tooltip label={t("Subject.progressTooltip")}>
                                         {progress === "DONE" ?
-                                            <Button variant="filled" size="lg" radius="xl">
+                                            <Button variant="filled" size="lg" radius="xl" onClick={() =>
+                                                {
+                                                    if(userId !== undefined && subjectId.id !== undefined) {
+                                                        setSubjectProgress(userId, subjectId.id, "PENDING") 
+                                                    }
+                                                } }>
                                                 <Text c={"white"}>{t("Subject.progressDone")}</Text>
                                             </Button> :
-                                            <Button variant="filled" size="lg" radius="xl" className={classes.pendingButton}>
+                                            <Button variant="filled" size="lg" radius="xl" className={classes.pendingButton} onClick={() =>
+                                                {
+                                                    if(userId !== undefined && subjectId.id !== undefined) {
+                                                        setSubjectProgress(userId, subjectId.id, "DONE") 
+                                                    }
+                                                } }>
                                                 <Text c={"white"}>{t("Subject.progressPending")}</Text>
                                             </Button>
                                         }
@@ -551,4 +580,8 @@ const setOrderParameters = (value: string) => {
         orderParams.set('dir', 'desc');
     }
     window.location.search = orderParams.toString();
+}
+
+const setSubjectProgress = (userId: number, subjectId: string, newProgressState: string) => {
+    newProgressState === "DONE"? userService.setFinishedSubjects(userId, new Array(subjectId), []) : userService.setFinishedSubjects(userId, [], new Array(subjectId));
 }
