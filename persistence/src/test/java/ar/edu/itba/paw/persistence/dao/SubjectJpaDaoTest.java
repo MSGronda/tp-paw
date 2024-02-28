@@ -1,11 +1,12 @@
 package ar.edu.itba.paw.persistence.dao;
 
-import ar.edu.itba.paw.models.Degree;
-import ar.edu.itba.paw.models.Subject;
-import ar.edu.itba.paw.models.User;
+import ar.edu.itba.paw.models.*;
 import ar.edu.itba.paw.models.enums.OrderDir;
 import ar.edu.itba.paw.models.enums.SubjectOrderField;
+import ar.edu.itba.paw.models.exceptions.SubjectClassIdAlreadyExistsException;
+import ar.edu.itba.paw.models.exceptions.SubjectNotFoundException;
 import ar.edu.itba.paw.persistence.config.TestConfig;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -18,8 +19,10 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.sql.DataSource;
-import java.util.List;
-import java.util.Optional;
+import javax.xml.bind.annotation.XmlRootElement;
+import java.time.LocalTime;
+import java.util.*;
+
 import static org.junit.Assert.*;
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -34,7 +37,6 @@ public class SubjectJpaDaoTest {
     private static final SubjectOrderField DEFAULT_ORDER = SubjectOrderField.ID;
     private  static final OrderDir DEFAULT_DIR = OrderDir.ASCENDING;
 
-
     @Autowired
     private DataSource dataSource;
     @PersistenceContext
@@ -44,7 +46,7 @@ public class SubjectJpaDaoTest {
     @Autowired
     private SubjectJpaDao subjectJpaDao;
 
-    @Rollback
+
     @Before
     public void setup() {
         jdbcTemplate = new JdbcTemplate(dataSource);
@@ -118,4 +120,77 @@ public class SubjectJpaDaoTest {
         assertTrue(subjects.contains(subject2));
     }
 
+    @Rollback
+    @Test
+    public void testAddPrerequisites() {
+        subjectJpaDao.addPrerequisites(subject, new ArrayList<>(Collections.singletonList(subject2.getId())));
+
+        assertTrue(subject.getPrerequisites().contains(subject2));
+    }
+
+    @Rollback
+    @Test(expected = SubjectNotFoundException.class)
+    public void testAddInvalidPrerequisite() {
+        subjectJpaDao.addPrerequisites(subject, new ArrayList<>(Collections.singleton("Invalid")));
+
+        Assert.fail("SubjectNotFoundException must be thrown");
+    }
+
+    @Rollback
+    @Test
+    public void testAddClass() {
+        final String classCode = "A";
+        subjectJpaDao.addClassToSubject(subject, classCode);
+
+        assertTrue(subject.getClassById(classCode).isPresent());
+    }
+
+    @Rollback
+    @Test(expected = SubjectClassIdAlreadyExistsException.class)
+    public void testAddClassThatAlreadyExists() {
+        subjectJpaDao.addClassToSubject(subject, "A");
+        subjectJpaDao.addClassToSubject(subject, "A");
+
+        Assert.fail("SubjectClassIdAlreadyExistsException should be thrown.");
+    }
+
+    @Rollback
+    @Test
+    public void testEditSubject() {
+        final String newName = "New Name";
+        final String newDepartment = "Department";
+        final Integer newCredits = 6;
+        final Set<Subject> newPrerequisites = new HashSet<>(Collections.singletonList(subject2));
+
+        final Subject newSub = subjectJpaDao.editSubject(subject, newName, newDepartment, newCredits, newPrerequisites);
+
+        assertEquals(newName, newSub.getName());
+        assertEquals(newDepartment, newSub.getDepartment());
+        assertEquals(newCredits, newSub.getCredits());
+        assertEquals(newPrerequisites, newSub.getPrerequisites());
+    }
+
+
+    @Rollback
+    @Test
+    public void testAddClassTimes() {
+        final SubjectClass subjectClass = subjectJpaDao.addClassToSubject(subject, "A");
+        final List<Integer> days = new ArrayList<>(Collections.singletonList(1));
+        final List<LocalTime> startTimes = new ArrayList<>(Collections.singletonList(LocalTime.MIDNIGHT));
+        final List<LocalTime> endTimes = new ArrayList<>(Collections.singletonList(LocalTime.NOON));
+        final List<String> locations = new ArrayList<>(Collections.singletonList("201F"));
+        final List<String> buildings = new ArrayList<>(Collections.singletonList("Financiero"));
+        final List<String> modes = new ArrayList<>(Collections.singletonList("In Person"));
+
+        final List<SubjectClassTime> classTimes = subjectJpaDao.addClassTimesToClass(subjectClass, days, startTimes, endTimes, locations, buildings, modes);
+
+        assertEquals(1, classTimes.size());
+        final SubjectClassTime newSubjectClassTime = classTimes.get(0);
+        assertEquals(days.get(0).intValue(), newSubjectClassTime.getDay());
+        assertEquals(startTimes.get(0), newSubjectClassTime.getStartTime());
+        assertEquals(endTimes.get(0), newSubjectClassTime.getEndTime());
+        assertEquals(locations.get(0), newSubjectClassTime.getClassLoc());
+        assertEquals(buildings.get(0), newSubjectClassTime.getBuilding());
+        assertEquals(modes.get(0), newSubjectClassTime.getMode());
+    }
 }

@@ -4,7 +4,9 @@ import ar.edu.itba.paw.models.*;
 import ar.edu.itba.paw.models.enums.OrderDir;
 import ar.edu.itba.paw.models.enums.SubjectFilterField;
 import ar.edu.itba.paw.models.enums.SubjectOrderField;
+import ar.edu.itba.paw.models.exceptions.SubjectClassIdAlreadyExistsException;
 import ar.edu.itba.paw.models.exceptions.SubjectIdAlreadyExistsException;
+import ar.edu.itba.paw.models.exceptions.SubjectNotFoundException;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
@@ -33,7 +35,7 @@ public class SubjectJpaDao implements SubjectDao {
     @Override
     public void addPrerequisites(final Subject sub, final List<String> correlativesList) {
         for (String requirement : correlativesList) {
-            final Subject requiredSubject = em.find(Subject.class, requirement);
+            final Subject requiredSubject = findById(requirement).orElseThrow(SubjectNotFoundException::new);
             sub.getPrerequisites().add(requiredSubject);
         }
     }
@@ -41,13 +43,18 @@ public class SubjectJpaDao implements SubjectDao {
     @Override
     public SubjectClass addClassToSubject(final Subject subject, final String classCode) {
         final SubjectClass subjectClass = new SubjectClass(classCode, subject);
+
+        if(subject.getClasses().contains(subjectClass)){
+            throw new SubjectClassIdAlreadyExistsException();
+        }
+
         subject.getClasses().add(subjectClass);
         em.persist(subjectClass);
         return subjectClass;
     }
 
     @Override
-    public void addClassTimesToClass(
+    public List<SubjectClassTime> addClassTimesToClass(
             final SubjectClass subjectClass,
             final List<Integer> days,
             final List<LocalTime> startTimes,
@@ -56,6 +63,7 @@ public class SubjectJpaDao implements SubjectDao {
             final List<String> buildings,
             final List<String> modes
     ) {
+        final List<SubjectClassTime> classTimes = new ArrayList<>();
         for (int i = 0; i < days.size(); i++) {
             final SubjectClassTime subjectClassTime;
             if (startTimes.get(i).isAfter(endTimes.get(i))) {
@@ -79,8 +87,10 @@ public class SubjectJpaDao implements SubjectDao {
                         modes.get(i)
                 );
             }
+            classTimes.add(subjectClassTime);
             em.persist(subjectClassTime);
         }
+        return classTimes;
     }
 
     @Override

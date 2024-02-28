@@ -65,7 +65,7 @@ public interface SubjectDao {
 
     SubjectClass addClassToSubject(final Subject subject, final String classCode);
 
-    void addClassTimesToClass(
+    List<SubjectClassTime> addClassTimesToClass(
             final SubjectClass subjectClass,
             final List<Integer> days,
             final List<LocalTime> startTimes,
