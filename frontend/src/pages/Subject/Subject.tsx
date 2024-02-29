@@ -253,9 +253,9 @@ export function SubjectPage() {
                         <Card className={classes.mainBody}>
                             <Tabs defaultValue="general">
                                 <Tabs.List>
-                                    <Tabs.Tab value="general" leftSection={<IconPhoto style={iconStyle} />}> {t("Subject.general")}  </Tabs.Tab>
-                                    <Tabs.Tab value="times-panel" leftSection={<IconPhoto style={iconStyle} />}> {t("Subject.times")} </Tabs.Tab>
-                                    <Tabs.Tab value="professors-panel" leftSection={<IconPhoto style={iconStyle} />}> {t("Subject.classProf")} </Tabs.Tab>
+                                    <Tabs.Tab value="general"> {t("Subject.general")}  </Tabs.Tab>
+                                    <Tabs.Tab value="times-panel"> {t("Subject.times")} </Tabs.Tab>
+                                    <Tabs.Tab value="professors-panel"> {t("Subject.classProf")} </Tabs.Tab>
                                 </Tabs.List>
 
                                 <Tabs.Panel value="general">
