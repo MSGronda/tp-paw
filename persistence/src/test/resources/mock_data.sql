@@ -10,6 +10,10 @@ VALUES ('11.15', 'Test Subject', 'Informatica', 6);
 INSERT INTO subjects(id, subname, department, credits)
 VALUES ('11.16', 'Test Subject 2', 'Informatica', 3);
 
+INSERT INTO subjects(id, subname, department, credits)
+VALUES ('11.18', 'Test Subject 4', 'Informatica', 5);
+
+
 INSERT INTO subjectsdegrees(idsub, semester, iddeg)
 VALUES ('11.15', 1, 1);
 

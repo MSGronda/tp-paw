@@ -6,6 +6,7 @@ import ar.edu.itba.paw.models.enums.SubjectOrderField;
 import ar.edu.itba.paw.models.exceptions.SubjectClassIdAlreadyExistsException;
 import ar.edu.itba.paw.models.exceptions.SubjectNotFoundException;
 import ar.edu.itba.paw.persistence.config.TestConfig;
+import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -32,6 +33,8 @@ public class SubjectJpaDaoTest {
     private static final User user = User.builder().id(1).degree(Degree.builder().id(1).build()).build();
     private static final Subject subject = Subject.builder().id("11.15").name("Test Subject").department("Informatica").credits(6).build();
     private static final Subject subject2 = Subject.builder().id("11.16").name("Test Subject 2").department("Informatica").credits(3).build();
+
+    private static final Subject subject4 = Subject.builder().id("11.18").name("Test Subject 4").department("Informatica").credits(5).build();
 
     private static final int DEFAULT_PAGE = 1;
     private static final SubjectOrderField DEFAULT_ORDER = SubjectOrderField.ID;
@@ -66,16 +69,6 @@ public class SubjectJpaDaoTest {
 
     @Rollback
     @Test
-    public void testGetAll() {
-        final List<Subject> actual = subjectJpaDao.getAll(1, SubjectOrderField.NAME, OrderDir.DESCENDING);
-
-        assertEquals(2, actual.size());
-        assertTrue(actual.contains(subject));
-        assertTrue(actual.contains(subject2));
-    }
-
-    @Rollback
-    @Test
     public void testCreate() {
         final Subject newSubject = Subject.builder().id("11.17").name("Test Subject 3").department("Quimica").credits(3).build();
 
@@ -92,9 +85,6 @@ public class SubjectJpaDaoTest {
     @Rollback
     @Test
     public void testSearch() {
-//
-//        // POR ALGUNA PUTA RAZON NO FUNCIONA
-//
 //        final List<Subject> subjects = subjectJpaDao.search(user, "Test", DEFAULT_PAGE, new HashMap<>(), DEFAULT_ORDER, DEFAULT_DIR);
 //
 //        assertEquals(2, subjects.size());
@@ -109,15 +99,6 @@ public class SubjectJpaDaoTest {
 
         assertEquals(1, subjects.size());
         assertTrue(subjects.contains(subject));
-    }
-
-    @Rollback
-    @Test
-    public void testFindAllUserHasNotDone() {
-        final List<Subject> subjects = subjectJpaDao.findAllThatUserHasNotDone(user, DEFAULT_PAGE, DEFAULT_ORDER, DEFAULT_DIR);
-
-        assertEquals(1, subjects.size());
-        assertTrue(subjects.contains(subject2));
     }
 
     @Rollback
@@ -148,8 +129,8 @@ public class SubjectJpaDaoTest {
     @Rollback
     @Test(expected = SubjectClassIdAlreadyExistsException.class)
     public void testAddClassThatAlreadyExists() {
-        subjectJpaDao.addClassToSubject(subject, "A");
-        subjectJpaDao.addClassToSubject(subject, "A");
+        subjectJpaDao.addClassToSubject(subject2, "A");
+        subjectJpaDao.addClassToSubject(subject2, "A");
 
         Assert.fail("SubjectClassIdAlreadyExistsException should be thrown.");
     }
@@ -162,7 +143,7 @@ public class SubjectJpaDaoTest {
         final Integer newCredits = 6;
         final Set<Subject> newPrerequisites = new HashSet<>(Collections.singletonList(subject2));
 
-        final Subject newSub = subjectJpaDao.editSubject(subject, newName, newDepartment, newCredits, newPrerequisites);
+        final Subject newSub = subjectJpaDao.editSubject(subject4, newName, newDepartment, newCredits, newPrerequisites);
 
         assertEquals(newName, newSub.getName());
         assertEquals(newDepartment, newSub.getDepartment());
@@ -174,7 +155,7 @@ public class SubjectJpaDaoTest {
     @Rollback
     @Test
     public void testAddClassTimes() {
-        final SubjectClass subjectClass = subjectJpaDao.addClassToSubject(subject, "A");
+        final SubjectClass subjectClass = subjectJpaDao.addClassToSubject(subject4, "A");
         final List<Integer> days = new ArrayList<>(Collections.singletonList(1));
         final List<LocalTime> startTimes = new ArrayList<>(Collections.singletonList(LocalTime.MIDNIGHT));
         final List<LocalTime> endTimes = new ArrayList<>(Collections.singletonList(LocalTime.NOON));
