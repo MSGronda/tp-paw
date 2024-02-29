@@ -116,6 +116,11 @@ export function SubjectPage() {
         }
     }
 
+    const setSubjectProgress = (userId: number, subjectId: string, newProgressState: string) => {
+        newProgressState === "DONE"? userService.setFinishedSubjects(userId, new Array(subjectId), []) : userService.setFinishedSubjects(userId, [], new Array(subjectId));
+        setProgress(newProgressState);
+    }
+
     useEffect(() => {
         if (subjectId.id !== undefined) {
             searchSubject(subjectId.id);
@@ -580,8 +585,4 @@ const setOrderParameters = (value: string) => {
         orderParams.set('dir', 'desc');
     }
     window.location.search = orderParams.toString();
-}
-
-const setSubjectProgress = (userId: number, subjectId: string, newProgressState: string) => {
-    newProgressState === "DONE"? userService.setFinishedSubjects(userId, new Array(subjectId), []) : userService.setFinishedSubjects(userId, [], new Array(subjectId));
 }
