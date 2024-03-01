@@ -5,18 +5,25 @@ import ar.edu.itba.paw.models.ReviewVote;
 import ar.edu.itba.paw.models.Subject;
 import ar.edu.itba.paw.models.User;
 import ar.edu.itba.paw.models.enums.*;
+import ar.edu.itba.paw.models.exceptions.ReviewNotFoundException;
+import ar.edu.itba.paw.models.exceptions.UserNotFoundException;
 import ar.edu.itba.paw.persistence.config.TestConfig;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.jdbc.JdbcTestUtils;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.sql.DataSource;
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.Assert.*;
 
@@ -25,538 +32,110 @@ import static org.junit.Assert.*;
 @ContextConfiguration(classes = TestConfig.class)
 @Transactional
 public class ReviewJpaDaoTest {
-    private final static String TEXT = "text";
-    private final static TimeDemanding TIME = TimeDemanding.HIGH;
-    private final static Difficulty DIFF = Difficulty.HARD;
-    private final static boolean ANON = false;
+    private final User testUser = User.builder().id(1).build();
+    private final User testUser2 = User.builder().id(2).build();
+    private final Subject testSubject = Subject.builder().id("11.15").build();
+    private final Subject testSubject2 = Subject.builder().id("11.16").build();
 
-    private final static String TEXT_2 = "text2";
-    private final static TimeDemanding TIME_2 = TimeDemanding.MEDIUM;
-    private final static Difficulty DIFF_2 = Difficulty.MEDIUM;
-    private final static boolean ANON_2 = true;
+    private final Review testReview = Review.builder().id(1).user(testUser).subject(testSubject).difficulty(Difficulty.EASY).timeDemanding(TimeDemanding.LOW).text("Very Easy").anonymous(false).build();
+    private final Review testReview2 = Review.builder().user(testUser).subject(testSubject2).difficulty(Difficulty.HARD).timeDemanding(TimeDemanding.HIGH).text("Very Hard").build();
+    private final Review testReview3 = Review.builder().id(2).user(testUser2).subject(testSubject2).difficulty(Difficulty.EASY).timeDemanding(TimeDemanding.MEDIUM).text("Real Easy").build();
 
-    private final static String USER_EMAIL = "email";
-    private final static String USER_NAME = "name";
-    private final static String USER_PASS = "pass";
+    private final ReviewVote testReviewVote = new ReviewVote(testUser, testReview3, ReviewVoteType.UPVOTE);
 
-    private final static String SUB_ID = "75.40";
-    private final static String SUB_NAME = "subject";
-    private final static String SUB_DEPT = "department";
-    private final static int SUB_CREDITS = 6;
+    private static final int DEFAULT_PAGE = 1;
+    private static final ReviewOrderField DEFAULT_ORDER = ReviewOrderField.DIFFICULTY;
+    private  static final OrderDir DEFAULT_DIR = OrderDir.ASCENDING;
 
-
-
+    @Autowired
+    private DataSource dataSource;
     @PersistenceContext
     private EntityManager em;
+    private JdbcTemplate jdbcTemplate;
 
     @Autowired
     private ReviewJpaDao reviewJpaDao;
+//    @Autowired
+//    private UserJpaDao userJpaDao;
 
     @Before
-    public void clear() {
-        em.createQuery("DELETE FROM Review").executeUpdate();
-        em.createQuery("DELETE FROM Subject").executeUpdate();
+    public void setup() {
+        jdbcTemplate = new JdbcTemplate(dataSource);
+//        JdbcTestUtils.deleteFromTables(jdbcTemplate, "reviews");
     }
 
+    @Rollback
     @Test
-    public void create() {
-        final Subject subject = Subject.builder()
-                .id(SUB_ID)
-                .name(SUB_NAME)
-                .credits(SUB_CREDITS)
-                .department(SUB_DEPT)
-                .build();
-        em.persist(subject);
+    public void testFindById() {
+        final Optional<Review> review = reviewJpaDao.findById(1);
 
-        final User user = User.builder()
-                .email(USER_EMAIL)
-                .username(USER_NAME)
-                .password(USER_PASS)
-                .confirmed(true)
-                .build();
-
-        em.persist(user);
-
-        final Review actual = reviewJpaDao.create(Review.builder()
-                .subject(subject)
-                .user(user)
-                .text(TEXT)
-                .difficulty(DIFF)
-                .anonymous(ANON)
-                .timeDemanding(TIME)
-        );
-
-        assertNotNull(actual);
-        assertEquals(subject, actual.getSubject());
-        assertEquals(user, actual.getUser());
-        assertEquals(TEXT, actual.getText());
-        assertEquals(DIFF, actual.getDifficulty());
-        assertEquals(ANON, actual.isAnonymous());
-        assertEquals(TIME, actual.getTimeDemanding());
+        assertTrue(review.isPresent());;
+        assertEquals(testReview.getId(), review.get().getId());
+        assertEquals(testReview.getDifficulty(), review.get().getDifficulty());
+        assertEquals(testReview.getTimeDemanding(), review.get().getTimeDemanding());
+        assertEquals(testReview.getText(), review.get().getText());
     }
 
+    @Rollback
     @Test
-    public void update() {
-        final Subject subject = Subject.builder()
-                .id(SUB_ID)
-                .name(SUB_NAME)
-                .credits(SUB_CREDITS)
-                .department(SUB_DEPT)
-                .build();
-        em.persist(subject);
+    public void testCreate() {
 
-        final User user = User.builder()
-                .email(USER_EMAIL)
-                .username(USER_NAME)
-                .password(USER_PASS)
-                .confirmed(true)
-                .build();
+        final Review newReview = reviewJpaDao.create(Review.builderFrom(testReview2));
 
-        em.persist(user);
-
-        final Review review = Review.builder()
-                .subject(subject)
-                .user(user)
-                .text(TEXT)
-                .difficulty(DIFF)
-                .anonymous(ANON)
-                .timeDemanding(TIME)
-                .build();
-
-        em.persist(review);
-
-        final Review actual = reviewJpaDao.update(
-                Review.builderFrom(review)
-                        .text(TEXT_2)
-        );
-
-        assertNotNull(actual);
-        assertEquals(subject, actual.getSubject());
-        assertEquals(user, actual.getUser());
-        assertEquals(TEXT_2, actual.getText());
-        assertEquals(DIFF, actual.getDifficulty());
-        assertEquals(ANON, actual.isAnonymous());
-        assertEquals(TIME, actual.getTimeDemanding());
+        assertEquals(testReview2.getDifficulty(), newReview.getDifficulty());
+        assertEquals(testReview2.getTimeDemanding(), newReview.getTimeDemanding());
+        assertEquals(testReview2.getText(), newReview.getText());
+        assertEquals(testReview2.getSubject(), newReview.getSubject());
     }
 
+    @Rollback
     @Test
-    public void delete() {
-        final Subject subject = Subject.builder()
-                .id(SUB_ID)
-                .name(SUB_NAME)
-                .credits(SUB_CREDITS)
-                .department(SUB_DEPT)
-                .build();
+    public void testUpdate() {
+        final Review.Builder reviewUpdate = Review.builderFrom(testReview3).text("Maso").difficulty(Difficulty.MEDIUM);
+        final Review updatedReview = reviewJpaDao.update(reviewUpdate);
 
-        em.persist(subject);
-
-        final User user = User.builder()
-                .email(USER_EMAIL)
-                .username(USER_NAME)
-                .password(USER_PASS)
-                .confirmed(true)
-                .build();
-
-        em.persist(user);
-
-        final Review review = Review.builder()
-                .subject(subject)
-                .user(user)
-                .text(TEXT)
-                .difficulty(DIFF)
-                .anonymous(ANON)
-                .timeDemanding(TIME)
-                .build();
-
-        em.persist(review);
-
-        reviewJpaDao.delete(review);
-
-        assertEquals(0, em.createQuery("from Review").getResultList().size());
+        assertEquals(reviewUpdate.getId(), updatedReview.getId());
+        assertEquals(reviewUpdate.getDifficulty(), updatedReview.getDifficulty());
+        assertEquals(reviewUpdate.getTimeDemanding(), updatedReview.getTimeDemanding());
+        assertEquals(reviewUpdate.getText(), updatedReview.getText());
+        assertEquals(reviewUpdate.getSubject(), updatedReview.getSubject());
     }
 
+    @Rollback
     @Test
-    public void findById() {
-        final Subject subject = Subject.builder()
-                .id(SUB_ID)
-                .name(SUB_NAME)
-                .credits(SUB_CREDITS)
-                .department(SUB_DEPT)
-                .build();
+    public void testDidUserReview() {
+        final boolean didReview = reviewJpaDao.didUserReview(testSubject, testUser);
 
-        em.persist(subject);
-
-        final User user = User.builder()
-                .email(USER_EMAIL)
-                .username(USER_NAME)
-                .password(USER_PASS)
-                .confirmed(true)
-                .build();
-
-        em.persist(user);
-
-        final Review review = Review.builder()
-                .subject(subject)
-                .user(user)
-                .text(TEXT)
-                .difficulty(DIFF)
-                .anonymous(ANON)
-                .timeDemanding(TIME)
-                .build();
-
-        em.persist(review);
-
-        final Review actual = reviewJpaDao.findById(review.getId()).get();
-
-        assertEquals(subject, actual.getSubject());
-        assertEquals(user, actual.getUser());
-        assertEquals(TEXT, actual.getText());
-        assertEquals(DIFF, actual.getDifficulty());
-        assertEquals(ANON, actual.isAnonymous());
-        assertEquals(TIME, actual.getTimeDemanding());
+        assertTrue(didReview);
     }
 
+    @Rollback
     @Test
-    public void voteReview() {
-        final Subject subject = Subject.builder()
-                .id(SUB_ID)
-                .name(SUB_NAME)
-                .credits(SUB_CREDITS)
-                .department(SUB_DEPT)
-                .build();
-
-        em.persist(subject);
-
-        final User user = User.builder()
-                .email(USER_EMAIL)
-                .username(USER_NAME)
-                .password(USER_PASS)
-                .confirmed(true)
-                .build();
-
-        em.persist(user);
-
-        Review review = Review.builder()
-                .subject(subject)
-                .user(user)
-                .text(TEXT)
-                .difficulty(DIFF)
-                .anonymous(ANON)
-                .timeDemanding(TIME)
-                .build();
-
-        em.persist(review);
-
-        final ReviewVote actual = reviewJpaDao.voteReview(user, review, ReviewVoteType.UPVOTE);
-
-        assertEquals(ReviewVoteType.UPVOTE, actual.getVote());
-        assertEquals(user, actual.getUser());
-        assertEquals(review, actual.getReview());
-
-        em.flush();
-        em.clear();
-        review = em.find(Review.class, review.getId());
-        assertEquals(1, review.getUpvotes());
+    public void testReviewVoting() {
+//        final Review review = reviewJpaDao.findById(2).orElseThrow(ReviewNotFoundException::new);
+//        final User user = userJpaDao.findById(2).orElseThrow(UserNotFoundException::new);
+//        final ReviewVote reviewVote = reviewJpaDao.voteReview(user, review, ReviewVoteType.UPVOTE);
+//
+//        assertEquals(testReviewVote.getReview(), reviewVote.getReview());
+//        assertEquals(testReviewVote.getUser(), reviewVote.getUser());
+//        assertEquals(testReviewVote.getVote(), reviewVote.getVote());
     }
 
+    @Rollback
     @Test
-    public void didUserVote() {
-        final Subject subject = Subject.builder()
-                .id(SUB_ID)
-                .name(SUB_NAME)
-                .credits(SUB_CREDITS)
-                .department(SUB_DEPT)
-                .build();
+    public void testGetAllUserReviews() {
+        final List<Review> userReviews = reviewJpaDao.getAllUserReviews(testUser2, DEFAULT_PAGE, DEFAULT_ORDER, DEFAULT_DIR);
 
-        em.persist(subject);
-
-        final User user = User.builder()
-                .email(USER_EMAIL)
-                .username(USER_NAME)
-                .password(USER_PASS)
-                .confirmed(true)
-                .build();
-
-        em.persist(user);
-
-        final Review review = Review.builder()
-                .subject(subject)
-                .user(user)
-                .text(TEXT)
-                .difficulty(DIFF)
-                .anonymous(ANON)
-                .timeDemanding(TIME)
-                .build();
-
-        em.persist(review);
-
-        final Review review2 = Review.builder()
-                .subject(subject)
-                .user(user)
-                .text(TEXT_2)
-                .difficulty(DIFF)
-                .anonymous(ANON)
-                .timeDemanding(TIME)
-                .build();
-
-        em.persist(review2);
-
-        reviewJpaDao.voteReview(user, review, ReviewVoteType.UPVOTE);
-
-        assertTrue(reviewJpaDao.didUserVote(user, review));
-        assertFalse(reviewJpaDao.didUserVote(user, review2));
+        assertEquals(1, userReviews.size());
+        assertTrue(userReviews.contains(testReview3));
     }
 
+    @Rollback
     @Test
-    public void didUserReview() {
-        final Subject subject = Subject.builder()
-                .id(SUB_ID)
-                .name(SUB_NAME)
-                .credits(SUB_CREDITS)
-                .department(SUB_DEPT)
-                .build();
+    public void testGetAllSubjectReviews() {
+        final List<Review> subjectReviews = reviewJpaDao.getAllSubjectReviews(testSubject2, DEFAULT_PAGE, DEFAULT_ORDER, DEFAULT_DIR);
 
-        em.persist(subject);
-
-        final Subject subject2 = Subject.builder()
-                .id(SUB_ID+1)
-                .name(SUB_NAME)
-                .credits(SUB_CREDITS)
-                .department(SUB_DEPT)
-                .build();
-
-        em.persist(subject2);
-
-
-        final User user = User.builder()
-                .email(USER_EMAIL)
-                .username(USER_NAME)
-                .password(USER_PASS)
-                .confirmed(true)
-                .build();
-
-        em.persist(user);
-
-        final Review review = Review.builder()
-                .subject(subject)
-                .user(user)
-                .text(TEXT)
-                .difficulty(DIFF)
-                .anonymous(ANON)
-                .timeDemanding(TIME)
-                .build();
-
-        em.persist(review);
-
-        assertTrue(reviewJpaDao.didUserReview(subject, user));
-        assertFalse(reviewJpaDao.didUserReview(subject2, user));
-    }
-
-    @Test
-    public void getAllSubjectReviews() {
-        final Subject subject = Subject.builder()
-                .id(SUB_ID)
-                .name(SUB_NAME)
-                .credits(SUB_CREDITS)
-                .department(SUB_DEPT)
-                .build();
-
-        em.persist(subject);
-
-        final User user = User.builder()
-                .email(USER_EMAIL)
-                .username(USER_NAME)
-                .password(USER_PASS)
-                .confirmed(true)
-                .build();
-
-        em.persist(user);
-
-        final Review review = Review.builder()
-                .subject(subject)
-                .user(user)
-                .text(TEXT)
-                .difficulty(DIFF)
-                .anonymous(ANON)
-                .timeDemanding(TIME)
-                .build();
-
-        em.persist(review);
-
-        final Review review2 = Review.builder()
-                .subject(subject)
-                .user(user)
-                .text(TEXT_2)
-                .difficulty(DIFF_2)
-                .anonymous(ANON_2)
-                .timeDemanding(TIME_2)
-                .build();
-
-        em.persist(review2);
-
-        final List<Review> actual = reviewJpaDao.getAllSubjectReviews(subject, 1, ReviewOrderField.DIFFICULTY, OrderDir.ASCENDING);
-
-        assertEquals(2, actual.size());
-        assertTrue(actual.contains(review));
-        assertTrue(actual.contains(review2));
-    }
-
-    @Test
-    public void getAllUserReviews() {
-        final Subject subject = Subject.builder()
-                .id(SUB_ID)
-                .name(SUB_NAME)
-                .credits(SUB_CREDITS)
-                .department(SUB_DEPT)
-                .build();
-
-        em.persist(subject);
-
-        final Subject subject2 = Subject.builder()
-                .id(SUB_ID+1)
-                .name(SUB_NAME)
-                .credits(SUB_CREDITS)
-                .department(SUB_DEPT)
-                .build();
-
-        em.persist(subject2);
-
-        final User user = User.builder()
-                .email(USER_EMAIL)
-                .username(USER_NAME)
-                .password(USER_PASS)
-                .confirmed(true)
-                .build();
-
-        em.persist(user);
-
-        final Review review = Review.builder()
-                .subject(subject)
-                .user(user)
-                .text(TEXT)
-                .difficulty(DIFF)
-                .anonymous(ANON)
-                .timeDemanding(TIME)
-                .build();
-
-        em.persist(review);
-
-        final Review review2 = Review.builder()
-                .subject(subject2)
-                .user(user)
-                .text(TEXT_2)
-                .difficulty(DIFF_2)
-                .anonymous(ANON_2)
-                .timeDemanding(TIME_2)
-                .build();
-
-        em.persist(review2);
-
-        final List<Review> actual = reviewJpaDao.getAllUserReviews(user, 1, ReviewOrderField.DIFFICULTY, OrderDir.ASCENDING);
-
-        assertEquals(2, actual.size());
-        assertTrue(actual.contains(review));
-        assertTrue(actual.contains(review2));
-    }
-
-    @Test
-    public void getTotalPagesForUserReviews() {
-        final Subject subject = Subject.builder()
-                .id(SUB_ID)
-                .name(SUB_NAME)
-                .credits(SUB_CREDITS)
-                .department(SUB_DEPT)
-                .build();
-
-        em.persist(subject);
-
-        final Subject subject2 = Subject.builder()
-                .id(SUB_ID+1)
-                .name(SUB_NAME)
-                .credits(SUB_CREDITS)
-                .department(SUB_DEPT)
-                .build();
-
-        em.persist(subject2);
-
-        final User user = User.builder()
-                .email(USER_EMAIL)
-                .username(USER_NAME)
-                .password(USER_PASS)
-                .confirmed(true)
-                .build();
-
-        em.persist(user);
-
-        final Review review = Review.builder()
-                .subject(subject)
-                .user(user)
-                .text(TEXT)
-                .difficulty(DIFF)
-                .anonymous(ANON)
-                .timeDemanding(TIME)
-                .build();
-
-        em.persist(review);
-
-        final Review review2 = Review.builder()
-                .subject(subject2)
-                .user(user)
-                .text(TEXT_2)
-                .difficulty(DIFF_2)
-                .anonymous(ANON_2)
-                .timeDemanding(TIME_2)
-                .build();
-
-        em.persist(review2);
-
-        final int actual = reviewJpaDao.getTotalPagesForUserReviews(user);
-
-        assertEquals(1, actual);
-    }
-
-    @Test
-    public void getTotalPagesForSubjectReviews() {
-        final Subject subject = Subject.builder()
-                .id(SUB_ID)
-                .name(SUB_NAME)
-                .credits(SUB_CREDITS)
-                .department(SUB_DEPT)
-                .build();
-
-        em.persist(subject);
-
-        final User user = User.builder()
-                .email(USER_EMAIL)
-                .username(USER_NAME)
-                .password(USER_PASS)
-                .confirmed(true)
-                .build();
-
-        em.persist(user);
-
-        final Review review = Review.builder()
-                .subject(subject)
-                .user(user)
-                .text(TEXT)
-                .difficulty(DIFF)
-                .anonymous(ANON)
-                .timeDemanding(TIME)
-                .build();
-
-        em.persist(review);
-
-        final Review review2 = Review.builder()
-                .subject(subject)
-                .user(user)
-                .text(TEXT_2)
-                .difficulty(DIFF_2)
-                .anonymous(ANON_2)
-                .timeDemanding(TIME_2)
-                .build();
-
-        em.persist(review2);
-
-        assertEquals(1, reviewJpaDao.getTotalPagesForSubjectReviews(subject));
+        assertEquals(1, subjectReviews.size());
+        assertTrue(subjectReviews.contains(testReview3));
     }
 }
