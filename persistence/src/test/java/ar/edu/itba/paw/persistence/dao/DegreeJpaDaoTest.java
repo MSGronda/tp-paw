@@ -3,6 +3,7 @@ package ar.edu.itba.paw.persistence.dao;
 import ar.edu.itba.paw.models.Degree;
 import ar.edu.itba.paw.models.Subject;
 import ar.edu.itba.paw.persistence.config.TestConfig;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -27,7 +28,7 @@ import static org.junit.Assert.assertTrue;
 @ContextConfiguration(classes = TestConfig.class)
 @Transactional
 public class DegreeJpaDaoTest {
-//    private static final Subject testSubject = Subject.builder().id("11.15").name("Test Subject").department("Informatica").credits(6).build();
+    private static final Subject testSubject = Subject.builder().id("11.15").name("Test Subject").department("Informatica").credits(6).build();
 
     private final Degree testDegree = Degree.builder().id(1).name("Ing. Informatica").totalCredits(240).build();
     private final Degree testDegree2 = Degree.builder().name("Ing. Quimica").totalCredits(250).build();
@@ -47,6 +48,12 @@ public class DegreeJpaDaoTest {
     @Before
     public void setup() {
         jdbcTemplate = new JdbcTemplate(dataSource);
+//        jdbcTemplate.execute("ALTER SEQUENCE degrees_id_seq RESTART WITH 3;");
+    }
+
+    @After
+    public void cleanUp() {
+        jdbcTemplate.execute("ALTER SEQUENCE degrees_id_seq RESTART WITH 3;");
     }
 
     @Rollback
@@ -111,6 +118,7 @@ public class DegreeJpaDaoTest {
 //        final List<Integer> semesterIds = new ArrayList<>(Collections.singletonList(semesterId));
 //
 //        degreeJpaDao.addSubjectToDegrees(testSubject, degreeIds, semesterIds);
+//        em.flush();
 //
 //        assertEquals(1, JdbcTestUtils.countRowsInTableWhere(
 //                jdbcTemplate,

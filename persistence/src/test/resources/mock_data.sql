@@ -33,3 +33,6 @@ VALUES (1, 1, '11.15', 0, 0, 'Very Easy', false);
 
 INSERT INTO reviews(id, iduser, idsub, easy, timedemanding, revtext, useranonymous)
 VALUES (2, 2, '11.16', 0, 1, 'Real Easy', false);
+
+INSERT INTO professors (id, profname)
+VALUES (1, 'Paula Daurat')

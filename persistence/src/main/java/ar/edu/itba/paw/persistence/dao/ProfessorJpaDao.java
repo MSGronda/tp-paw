@@ -15,8 +15,9 @@ public class ProfessorJpaDao implements ProfessorDao {
     private EntityManager em;
 
     @Override
-    public void create(Professor professor) {
+    public Professor create(Professor professor) {
         em.persist(professor);
+        return professor;
     }
 
     private Professor getOrGenerateProfessor(final String profName){

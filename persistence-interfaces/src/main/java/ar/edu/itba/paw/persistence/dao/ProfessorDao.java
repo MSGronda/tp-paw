@@ -13,7 +13,7 @@ public interface ProfessorDao {
 
     Optional<Professor> findById(final long id);
 
-    void create(Professor professor);
+    Professor create(Professor professor);
 
     Optional<Professor> getByName(final String name);
 

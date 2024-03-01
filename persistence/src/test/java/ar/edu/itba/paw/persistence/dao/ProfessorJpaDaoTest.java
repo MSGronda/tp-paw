@@ -2,109 +2,108 @@ package ar.edu.itba.paw.persistence.dao;
 
 import ar.edu.itba.paw.models.Professor;
 import ar.edu.itba.paw.models.Subject;
-import ar.edu.itba.paw.models.SubjectClass;
 import ar.edu.itba.paw.persistence.config.TestConfig;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.test.annotation.ProfileValueSource;
+import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.jdbc.JdbcTestUtils;
 import org.springframework.transaction.annotation.Transactional;
-
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-
+import javax.sql.DataSource;
 import java.util.*;
-
 import static org.junit.Assert.*;
 
-@SuppressWarnings("OptionalGetWithoutIsPresent")
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = TestConfig.class)
 @Transactional
 public class ProfessorJpaDaoTest {
-    private final static String NAME = "name";
-    private final static String NAME_2 = "name2";
-    private final static String SUBJECT_CODE = "10.01";
-    private final static String SUBJECT_NAME = "Informatica General";
-    private final static String DEPARTMENT_NAME = "Informatica";
-    private final static String CLASS_ID = "A";
-    private final static String CLASS_ID2 = "S";
 
+    private final Subject testSubject = Subject.builder().id("11.15").build();
+
+    private final Professor testProfessor1 = new Professor( "Paula Daurat");
+    private final Professor testProfessor2 = new Professor("New Professor");
+
+    @Autowired
+    private DataSource dataSource;
     @PersistenceContext
     private EntityManager em;
+    private JdbcTemplate jdbcTemplate;
 
     @Autowired
     private ProfessorJpaDao professorJpaDao;
 
     @Before
-    public void clear() {
-        em.createQuery("DELETE FROM Professor").executeUpdate();
+    public void setup() {
+        jdbcTemplate = new JdbcTemplate(dataSource);
+        jdbcTemplate.execute("ALTER SEQUENCE professors_id_seq RESTART WITH 2;");
     }
 
+    @Rollback
     @Test
-    public void findById() {
-        final Professor professor = new Professor(NAME);
-        em.persist(professor);
+    public void testFindById() {
 
-        final Professor actual = professorJpaDao.findById(professor.getId()).get();
-        assertEquals(professor.getId(), actual.getId());
-        assertEquals(professor.getName(), actual.getName());
+        final Optional<Professor> professor = professorJpaDao.findById(1);
+
+        assertTrue(professor.isPresent());
+        assertEquals(testProfessor1.getName(), professor.get().getName());
     }
 
+    @Rollback
     @Test
-    public void getAll() {
-        final Professor professor = new Professor(NAME);
-        final Professor professor2 = new Professor(NAME_2);
-        em.persist(professor);
-        em.persist(professor2);
+    public void testFindByName() {
 
-        final List<Professor> actual = professorJpaDao.getAll();
-        assertEquals(2, actual.size());
-        assertTrue(actual.contains(professor));
-        assertTrue(actual.contains(professor2));
+        final Optional<Professor> professor = professorJpaDao.getByName(testProfessor1.getName());
+
+        assertTrue(professor.isPresent());
+        assertEquals(testProfessor1.getName(), professor.get().getName());
     }
 
+    @Rollback
     @Test
-    public void addSubjectToProfessors(){
-        final List<String> professorList = new ArrayList<>();
-        final Professor professor = new Professor(NAME);
-        final Professor professor2 = new Professor(NAME_2);
-        final Subject sub = Subject.builder().id(SUBJECT_CODE).name(SUBJECT_NAME).credits(9).department(DEPARTMENT_NAME).build();
+    public void testGetAll() {
 
-        professorList.add(professor.getName());
-        professorList.add(professor2.getName());
-        em.persist(professor);
-        em.persist(professor2);
+        final List<Professor> professors = professorJpaDao.getAll();
 
-        professorJpaDao.addSubjectToProfessors(sub,professorList);
-
-        assertEquals(professor.getSubjects().get(0),sub);
-        assertEquals(professor2.getSubjects().get(0),sub);
+        assertEquals(1, professors.size());
     }
 
+    @Rollback
     @Test
-    public void addSubjectToProfessors2(){
-        final List<String> professorList = new ArrayList<>();
-        final Subject sub = Subject.builder().id(SUBJECT_CODE).name(SUBJECT_NAME).credits(9).department(DEPARTMENT_NAME).build();
+    public void testCreateProfessor() {
 
-        em.persist(sub);
+        final Professor newProfessor = professorJpaDao.create(testProfessor2);
+        em.flush();
 
-        professorList.add(NAME);
-        professorList.add(NAME_2);
-
-        professorJpaDao.addSubjectToProfessors(sub,professorList);
-
-        Optional<Professor> maybeProfessor = em.createQuery("from Professor as p where p.name = :name", Professor.class)
-                .setParameter("name",NAME).getResultList().stream().findFirst();
-        Optional<Professor> maybeProfessor2 = em.createQuery("from Professor as p where p.name = :name", Professor.class)
-                .setParameter("name",NAME_2).getResultList().stream().findFirst();
-
-        assertTrue(maybeProfessor.isPresent());
-        assertTrue(maybeProfessor2.isPresent());
-
-        assertEquals(maybeProfessor.get().getSubjects().get(0),sub);
-        assertEquals(maybeProfessor2.get().getSubjects().get(0),sub);
+        assertEquals(testProfessor2.getName(), newProfessor.getName());
+        assertEquals(1, JdbcTestUtils.countRowsInTableWhere(
+                jdbcTemplate,
+                "professors",
+                "profname = '" + testProfessor2.getName() + "'"
+        ));
     }
+
+
+    @Rollback
+    @Test
+    public void testAddSubjectToProfessors() {
+
+        professorJpaDao.addSubjectToProfessors(testSubject, new ArrayList<>(Collections.singletonList(testProfessor1.getName())));
+        em.flush();
+
+        assertEquals(1, JdbcTestUtils.countRowsInTableWhere(
+                jdbcTemplate,
+                "professorssubjects",
+                "idprof = " + 1 + " AND idsub = '" + testSubject.getId() + "'"
+        ));
+    }
+
+
 }
