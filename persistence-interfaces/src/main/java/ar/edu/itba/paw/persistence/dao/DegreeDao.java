@@ -21,9 +21,9 @@ public interface DegreeDao {
 
     void addSubjectToDegrees(final Subject subject, List<Long> degreeIds, final List<Integer> semesters);
 
-    void editName(final Degree degree, final String name);
+    Degree editName(final Degree degree, final String name);
 
-    void editTotalCredits(final Degree degree, final int totalCredits);
+    Degree editTotalCredits(final Degree degree, final int totalCredits);
 
     void delete(Degree degree);
 

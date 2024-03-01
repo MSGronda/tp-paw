@@ -39,13 +39,15 @@ public class DegreeJpaDao implements DegreeDao {
     }
 
     @Override
-    public void editName(final Degree degree, final String name) {
+    public Degree editName(final Degree degree, final String name) {
         degree.setName(name);
+        return degree;
     }
 
     @Override
-    public void editTotalCredits(final Degree degree, final int totalCredits) {
+    public Degree editTotalCredits(final Degree degree, final int totalCredits) {
         degree.setTotalCredits(totalCredits);
+        return degree;
     }
 
     @Override

@@ -1,250 +1,123 @@
 package ar.edu.itba.paw.persistence.dao;
 
 import ar.edu.itba.paw.models.Degree;
-import ar.edu.itba.paw.models.DegreeSubject;
 import ar.edu.itba.paw.models.Subject;
 import ar.edu.itba.paw.persistence.config.TestConfig;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.jdbc.JdbcTestUtils;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-
+import javax.sql.DataSource;
 import java.util.*;
 
-import static org.junit.Assert.*;
-/*
-@SuppressWarnings("OptionalGetWithoutIsPresent")
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
+
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = TestConfig.class)
 @Transactional
 public class DegreeJpaDaoTest {
-    private final static String DEGREE_NAME = "degree";
-    private final static String DEGREE2_NAME = "degree2";
+//    private static final Subject testSubject = Subject.builder().id("11.15").name("Test Subject").department("Informatica").credits(6).build();
 
-    private final static String SUB_ID = "id";
-    private final static String SUB_NAME = "sub";
-    private final static String SUB_DEPARTMENT = "dep";
-    private final static int SUB_CREDITS = 3;
+    private final Degree testDegree = Degree.builder().id(1).name("Ing. Informatica").totalCredits(240).build();
+    private final Degree testDegree2 = Degree.builder().name("Ing. Quimica").totalCredits(250).build();
+    private final Degree testDegree3 = Degree.builder().id(2).name("Ing. Mecanica").totalCredits(240).build();
 
-
+    @Autowired
+    private DataSource dataSource;
     @PersistenceContext
     private EntityManager em;
+
+    private JdbcTemplate jdbcTemplate;
 
     @Autowired
     private DegreeJpaDao degreeJpaDao;
 
+
     @Before
-    public void clear() {
-        em.createQuery("DELETE FROM Subject").executeUpdate();
-        em.createQuery("DELETE FROM Degree").executeUpdate();
-        em.createQuery("DELETE FROM DegreeSubject").executeUpdate();
+    public void setup() {
+        jdbcTemplate = new JdbcTemplate(dataSource);
     }
 
+    @Rollback
     @Test
-    public void create() {
-        final Degree deg = degreeJpaDao.create(DEGREE_NAME);
+    public void testFindById() {
+        final Optional<Degree> degree = degreeJpaDao.findById(testDegree.getId());
 
-        assertNotNull(deg);
-        assertEquals(DEGREE_NAME, deg.getName());
+        assertTrue(degree.isPresent());
+        assertEquals(testDegree.getId(), degree.get().getId());
+        assertEquals(testDegree.getName(), degree.get().getName());
+        assertEquals(testDegree.getTotalCredits(), degree.get().getTotalCredits());
     }
 
+    @Rollback
     @Test
-    public void findById() {
-        final Degree deg = new Degree(DEGREE_NAME);
-        em.persist(deg);
+    public void testFindByName() {
+        final Optional<Degree> degree = degreeJpaDao.findByName(testDegree.getName());
 
-        assertEquals(deg, degreeJpaDao.findById(deg.getId()).get());
+        assertTrue(degree.isPresent());
+        assertEquals(testDegree.getId(), degree.get().getId());
+        assertEquals(testDegree.getName(), degree.get().getName());
+        assertEquals(testDegree.getTotalCredits(), degree.get().getTotalCredits());
     }
 
+    @Rollback
     @Test
-    public void findByName() {
-        final Degree deg = new Degree(DEGREE_NAME);
-        em.persist(deg);
+    public void testCreateDegree() {
+        final Degree newDegree = degreeJpaDao.create(testDegree2);
 
-        assertEquals(deg, degreeJpaDao.findByName(DEGREE_NAME).get());
+        assertEquals(testDegree2.getName(), newDegree.getName());
+        assertEquals(testDegree2.getTotalCredits(), newDegree.getTotalCredits());
+        assertEquals(1, JdbcTestUtils.countRowsInTableWhere(jdbcTemplate,"degrees","id = " + testDegree3.getId()));
     }
 
+    @Rollback
     @Test
-    public void getAll() {
-        final Degree deg1 = new Degree(DEGREE_NAME);
-        final Degree deg2 = new Degree(DEGREE2_NAME);
-        em.persist(deg1);
-        em.persist(deg2);
+    public void testEditName() {
+        final String newName = "Ingenieria Mecanica";
 
-        final List<Degree> degs = degreeJpaDao.getAll();
+        final Degree editedDegree = degreeJpaDao.editName(testDegree3, newName);
 
-        assertEquals(2, degs.size());
-        assertTrue(degs.contains(deg1));
-        assertTrue(degs.contains(deg2));
+        assertEquals(testDegree3.getId(), editedDegree.getId());
+        assertEquals(newName, editedDegree.getName());
     }
 
+    @Rollback
     @Test
-    public void findSubjectSemesterForDegree() {
-        final Degree deg = new Degree(DEGREE_NAME);
-        em.persist(deg);
+    public void testEditTotalCredits() {
+        final int newTotalCredits = 245;
 
-        final Subject sub = Subject.builder()
-                .id(SUB_ID)
-                .name(SUB_NAME)
-                .credits(SUB_CREDITS)
-                .department(SUB_DEPARTMENT)
-                .build();
+        final Degree editedDegree = degreeJpaDao.editTotalCredits(testDegree3, newTotalCredits);
 
-        em.persist(sub);
-
-        final DegreeSubject degSub = new DegreeSubject(deg, sub, 1);
-        em.persist(degSub);
-
-        assertEquals(OptionalInt.of(1), degreeJpaDao.findSubjectSemesterForDegree(sub, deg));
+        assertEquals(testDegree3.getId(), editedDegree.getId());
+        assertEquals(newTotalCredits, editedDegree.getTotalCredits());
     }
 
+    @Rollback
     @Test
-    public void addSubjectToDegrees() {
-        final Degree deg = new Degree(DEGREE_NAME);
-        em.persist(deg);
-        final Degree deg2 = new Degree(DEGREE2_NAME);
-        em.persist(deg2);
-
-        final Subject sub = Subject.builder()
-                .id(SUB_ID)
-                .name(SUB_NAME)
-                .credits(SUB_CREDITS)
-                .department(SUB_DEPARTMENT)
-                .build();
-
-        em.persist(sub);
-        final List<Long> degreeIds = new ArrayList<>();
-        degreeIds.add(deg.getId());
-        degreeIds.add(deg2.getId());
-        final List<Integer> semesters = new ArrayList<>();
-        semesters.add(1);
-        semesters.add(4);
-
-        degreeJpaDao.addSubjectToDegrees(sub, degreeIds, semesters);
-
-        assertEquals(1, deg.getDegreeSubjects().size());
-        assertEquals(1, deg2.getDegreeSubjects().size());
-
-        assertEquals(sub, deg.getDegreeSubjects().get(0).getSubject());
-        assertEquals(sub, deg2.getDegreeSubjects().get(0).getSubject());
-
-        assertEquals(1, deg.getDegreeSubjects().get(0).getSemester());
-        assertEquals(4, deg2.getDegreeSubjects().get(0).getSemester());
-
-        assertEquals(deg, deg.getDegreeSubjects().get(0).getDegree());
-        assertEquals(deg2, deg2.getDegreeSubjects().get(0).getDegree());
-
-        assertEquals(sub, deg.getDegreeSubjects().get(0).getSubject());
-        assertEquals(sub, deg2.getDegreeSubjects().get(0).getSubject());
-    }
-
-    @Test
-    public void updateInsertSubjectToDegrees() {
-        final Degree deg = new Degree(DEGREE_NAME);
-        em.persist(deg);
-        final Degree deg2 = new Degree(DEGREE2_NAME);
-        em.persist(deg2);
-
-        final Subject sub = Subject.builder()
-                .id(SUB_ID)
-                .name(SUB_NAME)
-                .credits(SUB_CREDITS)
-                .department(SUB_DEPARTMENT)
-                .build();
-
-        em.persist(sub);
-        final List<Degree> degreeIds = new ArrayList<>();
-        degreeIds.add(deg);
-        degreeIds.add(deg2);
-        final List<Integer> semesters = new ArrayList<>();
-        semesters.add(1);
-        semesters.add(4);
-
-        degreeJpaDao.updateInsertSubjectToDegrees(sub, degreeIds, semesters);
-
-        assertEquals(1, deg.getDegreeSubjects().size());
-        assertEquals(1, deg2.getDegreeSubjects().size());
-
-        assertEquals(sub, deg.getDegreeSubjects().get(0).getSubject());
-        assertEquals(sub, deg2.getDegreeSubjects().get(0).getSubject());
-
-        assertEquals(1, deg.getDegreeSubjects().get(0).getSemester());
-        assertEquals(4, deg2.getDegreeSubjects().get(0).getSemester());
-
-        assertEquals(deg, deg.getDegreeSubjects().get(0).getDegree());
-        assertEquals(deg2, deg2.getDegreeSubjects().get(0).getDegree());
-
-        assertEquals(sub, deg.getDegreeSubjects().get(0).getSubject());
-        assertEquals(sub, deg2.getDegreeSubjects().get(0).getSubject());
-
-    }
-
-    @Test
-    public void updateUpdateSubjectToDegrees() {
-        final Degree deg = new Degree(DEGREE_NAME);
-        em.persist(deg);
-        final Degree deg2 = new Degree(DEGREE2_NAME);
-        em.persist(deg2);
-
-        final Subject sub = Subject.builder()
-                .id(SUB_ID)
-                .name(SUB_NAME)
-                .credits(SUB_CREDITS)
-                .department(SUB_DEPARTMENT)
-                .build();
-
-        em.persist(sub);
-
-        final List<DegreeSubject> degSubjects = new ArrayList<>();
-        final DegreeSubject degSub = new DegreeSubject(deg, sub, 1);
-        final DegreeSubject degSub2 = new DegreeSubject(deg2, sub, 5);
-        degSubjects.add(degSub);
-        degSubjects.add(degSub2);
-
-        final List<Integer> semesters = new ArrayList<>();
-        semesters.add(2);
-        semesters.add(3);
-
-        degreeJpaDao.updateUpdateSubjectToDegrees(sub, degSubjects, semesters);
-
-        assertEquals(2, degSub.getSemester());
-        assertEquals(3, degSub2.getSemester());
-    }
-
-    @Test
-    public void updateDeleteSubjectToDegrees() {
-        final Degree deg = new Degree(DEGREE_NAME);
-        em.persist(deg);
-        final Degree deg2 = new Degree(DEGREE2_NAME);
-        em.persist(deg2);
-
-        final Subject sub = Subject.builder()
-                .id(SUB_ID)
-                .name(SUB_NAME)
-                .credits(SUB_CREDITS)
-                .department(SUB_DEPARTMENT)
-                .build();
-
-        em.persist(sub);
-
-        final List<DegreeSubject> degSubjects = new ArrayList<>();
-        final DegreeSubject degSub = new DegreeSubject(deg, sub, 1);
-        final DegreeSubject degSub2 = new DegreeSubject(deg2, sub, 5);
-        degSubjects.add(degSub);
-        degSubjects.add(degSub2);
-
-        degreeJpaDao.updateDeleteSubjectToDegrees(sub, degSubjects);
-
-        assertEquals(0, deg.getDegreeSubjects().size());
-        assertEquals(0, deg2.getDegreeSubjects().size());
+    public void testAddSubjectToDegree() {
+//        final int semesterId = 1;
+//        final List<Long> degreeIds = new ArrayList<>(Collections.singletonList(testDegree3.getId()));
+//        final List<Integer> semesterIds = new ArrayList<>(Collections.singletonList(semesterId));
+//
+//        degreeJpaDao.addSubjectToDegrees(testSubject, degreeIds, semesterIds);
+//
+//        assertEquals(1, JdbcTestUtils.countRowsInTableWhere(
+//                jdbcTemplate,
+//                "subjectsdegrees",
+//                "iddeg = " + testDegree3.getId() + " AND semester = " + semesterId + " AND idsub = '" + testSubject.getId() + "'"
+//        ));
     }
 }
 
 
- */
