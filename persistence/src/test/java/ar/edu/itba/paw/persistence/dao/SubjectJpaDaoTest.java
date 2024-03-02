@@ -6,6 +6,10 @@ import ar.edu.itba.paw.models.enums.SubjectOrderField;
 import ar.edu.itba.paw.models.exceptions.SubjectClassIdAlreadyExistsException;
 import ar.edu.itba.paw.models.exceptions.SubjectNotFoundException;
 import ar.edu.itba.paw.persistence.config.TestConfig;
+import ar.edu.itba.paw.persistence.mock.DegreeMockData;
+import ar.edu.itba.paw.persistence.mock.PageMockData;
+import ar.edu.itba.paw.persistence.mock.SubjectMockData;
+import ar.edu.itba.paw.persistence.mock.UserMockData;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -16,6 +20,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.jdbc.JdbcTestUtils;
 import org.springframework.transaction.annotation.Transactional;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -30,15 +35,6 @@ import static org.junit.Assert.*;
 @ContextConfiguration(classes = TestConfig.class)
 @Transactional
 public class SubjectJpaDaoTest {
-    private static final User user = User.builder().id(1).degree(Degree.builder().id(1).build()).build();
-    private static final Subject subject = Subject.builder().id("11.15").name("Test Subject").department("Informatica").credits(6).build();
-    private static final Subject subject2 = Subject.builder().id("11.16").name("Test Subject 2").department("Informatica").credits(3).build();
-
-    private static final Subject subject4 = Subject.builder().id("11.18").name("Test Subject 4").department("Informatica").credits(5).build();
-
-    private static final int DEFAULT_PAGE = 1;
-    private static final SubjectOrderField DEFAULT_ORDER = SubjectOrderField.ID;
-    private  static final OrderDir DEFAULT_DIR = OrderDir.ASCENDING;
 
     @Autowired
     private DataSource dataSource;
@@ -58,13 +54,13 @@ public class SubjectJpaDaoTest {
     @Rollback
     @Test
     public void testFindById() {
-        final Optional<Subject> actual = subjectJpaDao.findById(subject.getId());
+        final Optional<Subject> actual = subjectJpaDao.findById(SubjectMockData.SUB1_ID);
 
         assertTrue(actual.isPresent());
-        assertEquals(subject.getId(), actual.get().getId());
-        assertEquals(subject.getName(), actual.get().getName());
-        assertEquals(subject.getDepartment(), actual.get().getDepartment());
-        assertEquals(subject.getCredits(), actual.get().getCredits());
+        assertEquals(SubjectMockData.SUB1_ID, actual.get().getId());
+        assertEquals(SubjectMockData.SUB1_NAME, actual.get().getName());
+        assertEquals(SubjectMockData.SUB1_DEPARTMENT, actual.get().getDepartment());
+        assertEquals(SubjectMockData.SUB1_CREDITS, actual.get().getCredits().intValue());
     }
 
     @Rollback
@@ -80,38 +76,51 @@ public class SubjectJpaDaoTest {
         assertEquals(persistedSubject.getName(), newSubject.getName());
         assertEquals(persistedSubject.getDepartment(), newSubject.getDepartment());
         assertEquals(persistedSubject.getCredits(), newSubject.getCredits());
+        assertEquals(1, JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, "subjects", "id = '" + newSubject.getId() + "'"));
     }
 
     @Rollback
     @Test
     public void testSearch() {
-//        final List<Subject> subjects = subjectJpaDao.search(user, "Test", DEFAULT_PAGE, new HashMap<>(), DEFAULT_ORDER, DEFAULT_DIR);
+//        final User user = User.builder().id(1).degree(DegreeMockData.getDegree1()).build();
 //
-//        assertEquals(2, subjects.size());
-//        assertTrue(subjects.contains(subject));
-//        assertTrue(subjects.contains(subject2));
+//        final List<Subject> subjects = subjectJpaDao.search(user, "Test", PageMockData.DEFAULT_PAGE, new HashMap<>(), PageMockData.DEFAULT_ORDER_SUBJECT, PageMockData.DEFAULT_DIR);
+//
+//        assertEquals(3, subjects.size());
+//        assertTrue(subjects.contains(SubjectMockData.getSubject1()));
+//        assertTrue(subjects.contains(SubjectMockData.getSubject2()));
+//        assertTrue(subjects.contains(SubjectMockData.getSubject3()));
     }
 
     @Rollback
     @Test
     public void testFindAllUserHasDone() {
-        final List<Subject> subjects = subjectJpaDao.findAllThatUserHasDone(user, DEFAULT_PAGE, DEFAULT_ORDER, DEFAULT_DIR);
+        final List<Subject> subjects = subjectJpaDao.findAllThatUserHasDone(UserMockData.getUser1(), PageMockData.DEFAULT_PAGE, PageMockData.DEFAULT_ORDER_SUBJECT, PageMockData.DEFAULT_DIR);
 
         assertEquals(1, subjects.size());
-        assertTrue(subjects.contains(subject));
+        assertTrue(subjects.contains(SubjectMockData.getSubject1()));
     }
 
     @Rollback
     @Test
     public void testAddPrerequisites() {
-        subjectJpaDao.addPrerequisites(subject, new ArrayList<>(Collections.singletonList(subject2.getId())));
+        final Subject subject = em.find(Subject.class, SubjectMockData.SUB1_ID);
 
-        assertTrue(subject.getPrerequisites().contains(subject2));
+        subjectJpaDao.addPrerequisites(subject, new ArrayList<>(Collections.singletonList(SubjectMockData.SUB2_ID)));
+        em.flush();
+
+        assertTrue(subject.getPrerequisites().contains(SubjectMockData.getSubject2()));
+        assertEquals(1, JdbcTestUtils.countRowsInTableWhere(
+                jdbcTemplate,
+                "prereqsubjects",
+                "idsub = '" + subject.getId() + "' AND idprereq = '" + SubjectMockData.SUB2_ID + "'"
+        ));
     }
 
     @Rollback
     @Test(expected = SubjectNotFoundException.class)
     public void testAddInvalidPrerequisite() {
+        final Subject subject = SubjectMockData.getSubject1();
         subjectJpaDao.addPrerequisites(subject, new ArrayList<>(Collections.singleton("Invalid")));
 
         Assert.fail("SubjectNotFoundException must be thrown");
@@ -121,16 +130,26 @@ public class SubjectJpaDaoTest {
     @Test
     public void testAddClass() {
         final String classCode = "A";
+        final Subject subject = em.find(Subject.class, SubjectMockData.SUB1_ID);
+
         subjectJpaDao.addClassToSubject(subject, classCode);
+        em.flush();
 
         assertTrue(subject.getClassById(classCode).isPresent());
+        assertEquals(1, JdbcTestUtils.countRowsInTableWhere(
+                jdbcTemplate,
+                "class",
+                "idsub = '" + subject.getId() + "' AND idclass = '" + classCode + "'"
+        ));
     }
 
     @Rollback
     @Test(expected = SubjectClassIdAlreadyExistsException.class)
     public void testAddClassThatAlreadyExists() {
-        subjectJpaDao.addClassToSubject(subject2, "A");
-        subjectJpaDao.addClassToSubject(subject2, "A");
+        final Subject subject = em.find(Subject.class, SubjectMockData.SUB1_ID);
+
+        subjectJpaDao.addClassToSubject(subject, "A");
+        subjectJpaDao.addClassToSubject(subject, "A");
 
         Assert.fail("SubjectClassIdAlreadyExistsException should be thrown.");
     }
@@ -141,9 +160,9 @@ public class SubjectJpaDaoTest {
         final String newName = "New Name";
         final String newDepartment = "Department";
         final Integer newCredits = 6;
-        final Set<Subject> newPrerequisites = new HashSet<>(Collections.singletonList(subject2));
+        final Set<Subject> newPrerequisites = new HashSet<>(Collections.singletonList(SubjectMockData.getSubject2()));
 
-        final Subject newSub = subjectJpaDao.editSubject(subject4, newName, newDepartment, newCredits, newPrerequisites);
+        final Subject newSub = subjectJpaDao.editSubject(SubjectMockData.getSubject3(), newName, newDepartment, newCredits, newPrerequisites);
 
         assertEquals(newName, newSub.getName());
         assertEquals(newDepartment, newSub.getDepartment());
@@ -155,7 +174,8 @@ public class SubjectJpaDaoTest {
     @Rollback
     @Test
     public void testAddClassTimes() {
-        final SubjectClass subjectClass = subjectJpaDao.addClassToSubject(subject4, "A");
+        final Subject subject = em.find(Subject.class, SubjectMockData.SUB3_ID);
+        final SubjectClass subjectClass = subjectJpaDao.addClassToSubject(subject, "A");
         final List<Integer> days = new ArrayList<>(Collections.singletonList(1));
         final List<LocalTime> startTimes = new ArrayList<>(Collections.singletonList(LocalTime.MIDNIGHT));
         final List<LocalTime> endTimes = new ArrayList<>(Collections.singletonList(LocalTime.NOON));
@@ -164,6 +184,7 @@ public class SubjectJpaDaoTest {
         final List<String> modes = new ArrayList<>(Collections.singletonList("In Person"));
 
         final List<SubjectClassTime> classTimes = subjectJpaDao.addClassTimesToClass(subjectClass, days, startTimes, endTimes, locations, buildings, modes);
+        em.flush();
 
         assertEquals(1, classTimes.size());
         final SubjectClassTime newSubjectClassTime = classTimes.get(0);
@@ -173,5 +194,10 @@ public class SubjectJpaDaoTest {
         assertEquals(locations.get(0), newSubjectClassTime.getClassLoc());
         assertEquals(buildings.get(0), newSubjectClassTime.getBuilding());
         assertEquals(modes.get(0), newSubjectClassTime.getMode());
+        assertEquals(1, JdbcTestUtils.countRowsInTableWhere(
+                jdbcTemplate,
+                "classloctime",
+                "idloctime = " + newSubjectClassTime.getId()
+        ));
     }
 }

@@ -3,6 +3,8 @@ package ar.edu.itba.paw.persistence.dao;
 import ar.edu.itba.paw.models.Professor;
 import ar.edu.itba.paw.models.Subject;
 import ar.edu.itba.paw.persistence.config.TestConfig;
+import ar.edu.itba.paw.persistence.mock.ProfessorMockData;
+import ar.edu.itba.paw.persistence.mock.SubjectMockData;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -25,12 +27,6 @@ import static org.junit.Assert.*;
 @ContextConfiguration(classes = TestConfig.class)
 @Transactional
 public class ProfessorJpaDaoTest {
-
-    private final Subject testSubject = Subject.builder().id("11.15").build();
-
-    private final Professor testProfessor1 = new Professor( "Paula Daurat");
-    private final Professor testProfessor2 = new Professor("New Professor");
-
     @Autowired
     private DataSource dataSource;
     @PersistenceContext
@@ -53,17 +49,17 @@ public class ProfessorJpaDaoTest {
         final Optional<Professor> professor = professorJpaDao.findById(1);
 
         assertTrue(professor.isPresent());
-        assertEquals(testProfessor1.getName(), professor.get().getName());
+        assertEquals(ProfessorMockData.PROF1_NAME, professor.get().getName());
     }
 
     @Rollback
     @Test
     public void testFindByName() {
 
-        final Optional<Professor> professor = professorJpaDao.getByName(testProfessor1.getName());
+        final Optional<Professor> professor = professorJpaDao.getByName(ProfessorMockData.PROF1_NAME);
 
         assertTrue(professor.isPresent());
-        assertEquals(testProfessor1.getName(), professor.get().getName());
+        assertEquals(ProfessorMockData.PROF1_NAME, professor.get().getName());
     }
 
     @Rollback
@@ -78,15 +74,16 @@ public class ProfessorJpaDaoTest {
     @Rollback
     @Test
     public void testCreateProfessor() {
+        final Professor professorToCreate = new Professor("New Professor");
 
-        final Professor newProfessor = professorJpaDao.create(testProfessor2);
+        final Professor newProfessor = professorJpaDao.create(professorToCreate);
         em.flush();
 
-        assertEquals(testProfessor2.getName(), newProfessor.getName());
+        assertEquals(professorToCreate.getName(), newProfessor.getName());
         assertEquals(1, JdbcTestUtils.countRowsInTableWhere(
                 jdbcTemplate,
                 "professors",
-                "profname = '" + testProfessor2.getName() + "'"
+                "profname = '" + professorToCreate.getName() + "'"
         ));
     }
 
@@ -95,13 +92,13 @@ public class ProfessorJpaDaoTest {
     @Test
     public void testAddSubjectToProfessors() {
 
-        professorJpaDao.addSubjectToProfessors(testSubject, new ArrayList<>(Collections.singletonList(testProfessor1.getName())));
+        professorJpaDao.addSubjectToProfessors(SubjectMockData.getSubject1(), new ArrayList<>(Collections.singletonList(ProfessorMockData.PROF1_NAME)));
         em.flush();
 
         assertEquals(1, JdbcTestUtils.countRowsInTableWhere(
                 jdbcTemplate,
                 "professorssubjects",
-                "idprof = " + 1 + " AND idsub = '" + testSubject.getId() + "'"
+                "idprof = " + 1 + " AND idsub = '" + SubjectMockData.SUB1_ID + "'"
         ));
     }
 

@@ -2,7 +2,10 @@ package ar.edu.itba.paw.persistence.dao;
 
 import ar.edu.itba.paw.models.Degree;
 import ar.edu.itba.paw.models.Subject;
+import ar.edu.itba.paw.models.exceptions.SubjectClassNotFoundException;
 import ar.edu.itba.paw.persistence.config.TestConfig;
+import ar.edu.itba.paw.persistence.mock.DegreeMockData;
+import ar.edu.itba.paw.persistence.mock.SubjectMockData;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -28,11 +31,6 @@ import static org.junit.Assert.assertTrue;
 @ContextConfiguration(classes = TestConfig.class)
 @Transactional
 public class DegreeJpaDaoTest {
-    private static final Subject testSubject = Subject.builder().id("11.15").name("Test Subject").department("Informatica").credits(6).build();
-
-    private final Degree testDegree = Degree.builder().id(1).name("Ing. Informatica").totalCredits(240).build();
-    private final Degree testDegree2 = Degree.builder().name("Ing. Quimica").totalCredits(250).build();
-    private final Degree testDegree3 = Degree.builder().id(2).name("Ing. Mecanica").totalCredits(240).build();
 
     @Autowired
     private DataSource dataSource;
@@ -44,48 +42,44 @@ public class DegreeJpaDaoTest {
     @Autowired
     private DegreeJpaDao degreeJpaDao;
 
-
     @Before
     public void setup() {
         jdbcTemplate = new JdbcTemplate(dataSource);
-//        jdbcTemplate.execute("ALTER SEQUENCE degrees_id_seq RESTART WITH 3;");
-    }
-
-    @After
-    public void cleanUp() {
         jdbcTemplate.execute("ALTER SEQUENCE degrees_id_seq RESTART WITH 3;");
     }
 
     @Rollback
     @Test
     public void testFindById() {
-        final Optional<Degree> degree = degreeJpaDao.findById(testDegree.getId());
+        final Optional<Degree> degree = degreeJpaDao.findById(DegreeMockData.DEG1_ID);
 
         assertTrue(degree.isPresent());
-        assertEquals(testDegree.getId(), degree.get().getId());
-        assertEquals(testDegree.getName(), degree.get().getName());
-        assertEquals(testDegree.getTotalCredits(), degree.get().getTotalCredits());
+        assertEquals(DegreeMockData.DEG1_ID, degree.get().getId());
+        assertEquals(DegreeMockData.DEG1_NAME, degree.get().getName());
+        assertEquals(DegreeMockData.DEG1_CREDITS, degree.get().getTotalCredits());
     }
 
     @Rollback
     @Test
     public void testFindByName() {
-        final Optional<Degree> degree = degreeJpaDao.findByName(testDegree.getName());
+        final Optional<Degree> degree = degreeJpaDao.findByName(DegreeMockData.DEG1_NAME);
 
         assertTrue(degree.isPresent());
-        assertEquals(testDegree.getId(), degree.get().getId());
-        assertEquals(testDegree.getName(), degree.get().getName());
-        assertEquals(testDegree.getTotalCredits(), degree.get().getTotalCredits());
+        assertEquals(DegreeMockData.DEG1_ID, degree.get().getId());
+        assertEquals(DegreeMockData.DEG1_NAME, degree.get().getName());
+        assertEquals(DegreeMockData.DEG1_CREDITS, degree.get().getTotalCredits());
     }
 
     @Rollback
     @Test
     public void testCreateDegree() {
-        final Degree newDegree = degreeJpaDao.create(testDegree2);
+        final Degree degreeToCreate = Degree.builder().name("Ing. Quimica").totalCredits(250).build();
+        final Degree newDegree = degreeJpaDao.create(degreeToCreate);
+        em.flush();
 
-        assertEquals(testDegree2.getName(), newDegree.getName());
-        assertEquals(testDegree2.getTotalCredits(), newDegree.getTotalCredits());
-        assertEquals(1, JdbcTestUtils.countRowsInTableWhere(jdbcTemplate,"degrees","id = " + testDegree3.getId()));
+        assertEquals(degreeToCreate.getName(), newDegree.getName());
+        assertEquals(degreeToCreate.getTotalCredits(), newDegree.getTotalCredits());
+        assertEquals(1, JdbcTestUtils.countRowsInTableWhere(jdbcTemplate,"degrees","id = " + newDegree.getId()));
     }
 
     @Rollback
@@ -93,9 +87,9 @@ public class DegreeJpaDaoTest {
     public void testEditName() {
         final String newName = "Ingenieria Mecanica";
 
-        final Degree editedDegree = degreeJpaDao.editName(testDegree3, newName);
+        final Degree editedDegree = degreeJpaDao.editName(DegreeMockData.getDegree2(), newName);
 
-        assertEquals(testDegree3.getId(), editedDegree.getId());
+        assertEquals(DegreeMockData.DEG2_ID, editedDegree.getId());
         assertEquals(newName, editedDegree.getName());
     }
 
@@ -104,27 +98,28 @@ public class DegreeJpaDaoTest {
     public void testEditTotalCredits() {
         final int newTotalCredits = 245;
 
-        final Degree editedDegree = degreeJpaDao.editTotalCredits(testDegree3, newTotalCredits);
+        final Degree editedDegree = degreeJpaDao.editTotalCredits(DegreeMockData.getDegree2(), newTotalCredits);
 
-        assertEquals(testDegree3.getId(), editedDegree.getId());
+        assertEquals(DegreeMockData.DEG2_ID, editedDegree.getId());
         assertEquals(newTotalCredits, editedDegree.getTotalCredits());
     }
 
     @Rollback
     @Test
     public void testAddSubjectToDegree() {
-//        final int semesterId = 1;
-//        final List<Long> degreeIds = new ArrayList<>(Collections.singletonList(testDegree3.getId()));
-//        final List<Integer> semesterIds = new ArrayList<>(Collections.singletonList(semesterId));
-//
-//        degreeJpaDao.addSubjectToDegrees(testSubject, degreeIds, semesterIds);
-//        em.flush();
-//
-//        assertEquals(1, JdbcTestUtils.countRowsInTableWhere(
-//                jdbcTemplate,
-//                "subjectsdegrees",
-//                "iddeg = " + testDegree3.getId() + " AND semester = " + semesterId + " AND idsub = '" + testSubject.getId() + "'"
-//        ));
+        final int semesterId = 1;
+        final List<Long> degreeIds = new ArrayList<>(Collections.singletonList(DegreeMockData.DEG2_ID));
+        final List<Integer> semesterIds = new ArrayList<>(Collections.singletonList(semesterId));
+        final Subject subject = em.find(Subject.class, SubjectMockData.SUB1_ID);
+
+        degreeJpaDao.addSubjectToDegrees(subject, degreeIds, semesterIds);
+        em.flush();
+
+        assertEquals(1, JdbcTestUtils.countRowsInTableWhere(
+                jdbcTemplate,
+                "subjectsdegrees",
+                "iddeg = " + DegreeMockData.DEG2_ID + " AND semester = " + semesterId + " AND idsub = '" + SubjectMockData.SUB1_ID + "'"
+        ));
     }
 }
 
