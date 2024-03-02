@@ -1,0 +1,32 @@
+.container50 {
+    width: min(max(800px, 50%), 100%);
+    padding-left: 2rem;
+    padding-right: 2rem;
+    align-self: center;
+    justify-self: center;
+    margin: 0 auto;
+}
+
+.background {
+    background: #efefef;
+    min-width: 100%;
+    min-height: 100%;
+}
+
+.flex {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: left;
+}
+
+.title {
+    font-size: xx-large;
+    display: flex;
+    justify-content: left;
+}
+
+.form{
+    width: 80%;
+    background: #efefef;
+}

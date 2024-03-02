@@ -245,5 +245,11 @@ export const TRANSLATIONS_EN = {
         doyouwish: "This action cannot be undone. Do you wish to delete the review?",
         confirm: "Confirm",
         cancel: "Cancel",
+    },
+    CreateSubject: {
+        title: "New Subject",
+        id: "Subject ID",
+        idHelp: "Must be 4 numbers in the format: ##.##",
+        name: "Subject Name"
     }
 }

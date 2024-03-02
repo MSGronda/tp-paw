@@ -245,5 +245,11 @@ export const TRANSLATIONS_ES = {
         doyouwish: "Esta acción no es revertible. ¿Deseas eliminar esta reseña?",
         confirm: "Confirmar",
         cancel: "Cancelar"
+    },
+    CreateSubject: {
+        title: "Nueva materia",
+        id: "Código de materia",
+        idHelp: "Deben ser 4 números en el formato: ##.##",
+        name: "Nombre de la materia"
     }
 }
