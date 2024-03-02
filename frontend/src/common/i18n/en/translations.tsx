@@ -250,6 +250,9 @@ export const TRANSLATIONS_EN = {
         title: "New Subject",
         id: "Subject ID",
         idHelp: "Must be 4 numbers in the format: ##.##",
-        name: "Subject Name"
+        name: "Subject Name",
+        idError: "A subject with this code already exists",
+        department: "Department",
+        credits: "Credits",
     }
 }

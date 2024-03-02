@@ -250,6 +250,9 @@ export const TRANSLATIONS_ES = {
         title: "Nueva materia",
         id: "Código de materia",
         idHelp: "Deben ser 4 números en el formato: ##.##",
-        name: "Nombre de la materia"
+        name: "Nombre de la materia",
+        idError: "Una materia con este código ya existe",
+        department: "Departamento",
+        credits: "Créditos",
     }
 }
