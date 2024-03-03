@@ -13,9 +13,10 @@ public class RecoveryJpaDao implements RecoveryDao {
     private EntityManager em;
 
     @Override
-    public void create(final String token, final User user) {
+    public RecoveryToken create(final String token, final User user) {
         final RecoveryToken recToken = new RecoveryToken(token, user);
         em.persist(recToken);
+        return recToken;
     }
 
     @Override

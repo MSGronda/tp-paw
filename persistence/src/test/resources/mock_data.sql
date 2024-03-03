@@ -48,3 +48,6 @@ VALUES (1, 'USER');
 
 INSERT INTO roles (id, name)
 VALUES (2, 'EDITOR');
+
+INSERT INTO recoverytoken (token, userid, created)
+VALUES ('1234567', 2, now());

@@ -3,88 +3,79 @@ package ar.edu.itba.paw.persistence.dao;
 import ar.edu.itba.paw.models.RecoveryToken;
 import ar.edu.itba.paw.models.User;
 import ar.edu.itba.paw.persistence.config.TestConfig;
+import ar.edu.itba.paw.persistence.mock.RecoveryMockData;
+import ar.edu.itba.paw.persistence.mock.UserMockData;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.jdbc.JdbcTestUtils;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.sql.DataSource;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
+import java.util.Optional;
 
-@SuppressWarnings("OptionalGetWithoutIsPresent")
+import static org.junit.Assert.*;
+
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = TestConfig.class)
 @Transactional
 public class RecoveryJpaDaoTest {
-    private final static String RECOVERY_TOKEN = "rec_token";
-
-    private final static String USERNAME = "username";
-    private final static String PASSWORD = "password";
-    private final static String EMAIL = "e@mail.com";
-
+    @Autowired
+    private DataSource dataSource;
     @PersistenceContext
     private EntityManager em;
+    private JdbcTemplate jdbcTemplate;
 
     @Autowired
     private RecoveryJpaDao recoveryJpaDao;
 
+
     @Before
-    public void clear() {
-        em.createQuery("DELETE FROM RecoveryToken").executeUpdate();
-        em.createQuery("DELETE FROM User").executeUpdate();
-        em.createQuery("DELETE FROM Role").executeUpdate();
+    public void setup() {
+        jdbcTemplate = new JdbcTemplate(dataSource);
     }
 
     @Test
     public void create() {
-        final User user = User.builder()
-                .username(USERNAME)
-                .password(PASSWORD)
-                .email(EMAIL)
-                .build();
+        final String tokenToCreate = "48845";
+        final User user = em.find(User.class, UserMockData.USER1_ID);
 
-        em.persist(user);
+        final RecoveryToken recoveryToken = recoveryJpaDao.create(tokenToCreate, user);
+        em.flush();
 
-        recoveryJpaDao.create(RECOVERY_TOKEN, user);
-
-        assertEquals(user, em.find(RecoveryToken.class, RECOVERY_TOKEN).getUser());
+        assertEquals(tokenToCreate, recoveryToken.getToken());
+        assertEquals(user, recoveryToken.getUser());
+        assertEquals(1, JdbcTestUtils.countRowsInTableWhere(
+                jdbcTemplate,
+                "recoverytoken",
+                "token = '" + tokenToCreate + "' AND userid = " + UserMockData.USER1_ID
+                ));
     }
 
     @Test
     public void findUserByToken() {
-        final User user = User.builder()
-                .username(USERNAME)
-                .password(PASSWORD)
-                .email(EMAIL)
-                .build();
+        final User expectedUser = em.find(User.class, UserMockData.USER2_ID);
 
-        em.persist(user);
+        final Optional<User> user = recoveryJpaDao.findUserByToken(RecoveryMockData.TOKEN);
 
-        recoveryJpaDao.create(RECOVERY_TOKEN, user);
-
-        assertEquals(user, recoveryJpaDao.findUserByToken(RECOVERY_TOKEN).get());
+        assertTrue(user.isPresent());
+        assertEquals(expectedUser, user.get());
     }
 
     @Test
     public void delete() {
-        final User user = User.builder()
-                .username(USERNAME)
-                .password(PASSWORD)
-                .email(EMAIL)
-                .build();
+        final RecoveryToken tokenToDelete = em.find(RecoveryToken.class, RecoveryMockData.TOKEN);
 
-        em.persist(user);
+        recoveryJpaDao.delete(tokenToDelete);
+        em.flush();
 
-        final RecoveryToken recoveryToken = new RecoveryToken(RECOVERY_TOKEN, user);
-        em.persist(recoveryToken);
-
-        recoveryJpaDao.delete(recoveryToken);
-        assertNull(em.find(RecoveryToken.class, RECOVERY_TOKEN));
+        assertEquals(0, JdbcTestUtils.countRowsInTable(jdbcTemplate,"recoverytoken"));
     }
 }
