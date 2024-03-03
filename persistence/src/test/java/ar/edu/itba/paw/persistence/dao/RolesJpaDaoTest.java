@@ -2,77 +2,73 @@ package ar.edu.itba.paw.persistence.dao;
 
 import ar.edu.itba.paw.models.Role;
 import ar.edu.itba.paw.persistence.config.TestConfig;
+import ar.edu.itba.paw.persistence.mock.RoleMockData;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.sql.DataSource;
 
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.Assert.*;
 
-@SuppressWarnings("ALL")
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = TestConfig.class)
 @Transactional
 public class RolesJpaDaoTest {
-    private final static long ID_1 = 1L;
-    private final static String NAME_1 = "name";
-    private final static long ID_2 = 2L;
-    private final static String NAME_2 = "name2";
 
+    @Autowired
+    private DataSource dataSource;
     @PersistenceContext
     private EntityManager em;
+    private JdbcTemplate jdbcTemplate;
 
     @Autowired
     private RolesJpaDao rolesJpaDao;
 
     @Before
-    public void clear() {
-        em.createQuery("DELETE FROM Role").executeUpdate();
+    public void setUp() {
+        jdbcTemplate = new JdbcTemplate(dataSource);
     }
 
+    @Rollback
     @Test
-    public void findById() {
-        final Role role = new Role(ID_1,NAME_1);
-        em.persist(role);
+    public void testFindById() {
+        final Optional<Role> role = rolesJpaDao.findById(RoleMockData.USER_ROLE_ID);
 
-        final Role actual = rolesJpaDao.findById(role.getId()).get();
-
-        assertNotNull(actual);
-        assertEquals(NAME_1, actual.getName());
-        assertEquals(ID_1, actual.getId());
+        assertTrue(role.isPresent());
+        assertEquals(RoleMockData.USER_ROLE_ID, role.get().getId());
+        assertEquals(RoleMockData.USER_ROLE_NAME, role.get().getName());
     }
 
+    @Rollback
     @Test
-    public void findByName() {
-        final Role role = new Role(ID_1,NAME_1);
-        em.persist(role);
+    public void testFindByName() {
+        final Optional<Role> role = rolesJpaDao.findByName(RoleMockData.EDITOR_ROLE_NAME);
 
-        final Role actual = rolesJpaDao.findByName(NAME_1).get();
-
-        assertNotNull(actual);
-        assertEquals(NAME_1, actual.getName());
-        assertEquals(ID_1, actual.getId());
+        assertTrue(role.isPresent());
+        assertEquals(RoleMockData.EDITOR_ROLE_ID, role.get().getId());
+        assertEquals(RoleMockData.EDITOR_ROLE_NAME, role.get().getName());
     }
 
+    @Rollback
     @Test
-    public void getAll() {
-        final Role role1 = new Role(ID_1,NAME_1);
-        final Role role2 = new Role(ID_2,NAME_2);
-        em.persist(role1);
-        em.persist(role2);
+    public void testGetAll() {
+        final List<Role> roles = rolesJpaDao.getAll();
 
-        final List<Role> actual = rolesJpaDao.getAll();
-
-        assertEquals(2, actual.size());
-        assertTrue(actual.contains(role1));
-        assertTrue(actual.contains(role2));
+        assertEquals(2, roles.size());
+        assertTrue(roles.contains(RoleMockData.getUserRole()));
+        assertTrue(roles.contains(RoleMockData.getEditorRole()));
     }
+
 }
