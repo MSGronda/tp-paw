@@ -19,6 +19,8 @@ public class SubjectMockData {
     public static final String SUB3_DEPARTMENT = "department";
     public static final int SUB3_CREDITS = 5;
 
+    public static final String SUB2_CLASS1_ID = "A";
+
     public static Subject getSubject1() {
         return Subject.builder().id(SUB1_ID).name(SUB1_NAME).department(SUB1_DEPARTMENT).credits(SUB1_CREDITS).build();
     }

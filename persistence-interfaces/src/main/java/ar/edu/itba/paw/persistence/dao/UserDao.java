@@ -9,7 +9,7 @@ import java.util.Locale;
 import java.util.Optional;
 
 public interface UserDao {
-    User create(final User.Builder user) throws EmailAlreadyTakenException;
+    User create(final User.Builder user);
 
     Optional<User> findById(final long id);
     Optional<User> findByEmail(final String email);

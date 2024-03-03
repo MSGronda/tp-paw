@@ -57,5 +57,9 @@ public class Role {
         public String getName() {
             return name;
         }
+
+        public Role getRole() {
+            return new Role(id, name);
+        }
     }
 }

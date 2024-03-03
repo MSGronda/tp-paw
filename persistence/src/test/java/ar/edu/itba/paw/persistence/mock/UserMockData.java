@@ -8,12 +8,14 @@ public class UserMockData {
     public static final String USER1_PASSWORD = "aaaa";
     public static final String USER1_USERNAME = "Test User";
     public static final long USER1_DEGREEID = 1;
+    public static final String USER1_TOKEN = "aaaa";
 
     public static final long USER2_ID = 2;
     public static final String USER2_EMAIL = "invalid2@mail.com";
     public static final String USER2_PASSWORD = "bbbb";
     public static final String USER2_USERNAME = "Test User 2";
     public static final long USER2_DEGREEID = 1;
+    public static final String USER2_TOKEN = "bbbb";
 
 
     public static User getUser1() {
