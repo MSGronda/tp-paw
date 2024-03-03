@@ -2,69 +2,75 @@ package ar.edu.itba.paw.persistence.dao;
 
 import ar.edu.itba.paw.models.Image;
 import ar.edu.itba.paw.persistence.config.TestConfig;
+import ar.edu.itba.paw.persistence.mock.ImageMockData;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.jdbc.JdbcTestUtils;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.sql.DataSource;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import java.util.Optional;
 
-@SuppressWarnings("OptionalGetWithoutIsPresent")
+import static org.junit.Assert.*;
+
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = TestConfig.class)
 @Transactional
 public class ImageJpaDaoTest {
-    private static final byte[] IMAGE = new byte[]{1, 2, 3, 4, 5};
-    private static final byte[] IMAGE2 = new byte[]{5, 4, 3, 2, 1};
-
-    private final static String USERNAME = "username";
-    private final static String PASSWORD = "password";
-    private final static String EMAIL = "e@mail.com";
-
+    @Autowired
+    private DataSource dataSource;
     @PersistenceContext
     private EntityManager em;
+    private JdbcTemplate jdbcTemplate;
 
     @Autowired
     private ImageJpaDao imageJpaDao;
 
     @Before
-    public void clear() {
-        em.createQuery("DELETE FROM Image").executeUpdate();
+    public void setUp() {
+        jdbcTemplate = new JdbcTemplate(dataSource);
+        jdbcTemplate.execute("ALTER SEQUENCE images_id_seq RESTART WITH 2;");
     }
 
+    @Rollback
     @Test
-    public void create() {
-        final Image image = imageJpaDao.create(IMAGE);
+    public void testFindById() {
+        final Optional<Image> image = imageJpaDao.findById(ImageMockData.IMG1_ID);
 
-        assertNotNull(image);
-        assertEquals(IMAGE, image.getImage());
-        assertEquals(image, em.find(Image.class, image.getId()));
+        assertTrue(image.isPresent());
+        assertArrayEquals(ImageMockData.IMG1_DATA, image.get().getImage());
     }
 
+    @Rollback
     @Test
-    public void update() {
-        final Image image = new Image(IMAGE);
-        em.persist(image);
+    public void testCreateImage() {
+        final byte[] imageData = {1,2,3};
 
-        imageJpaDao.update(image, IMAGE2);
+        final Image createdImage = imageJpaDao.create(imageData);
+        em.flush();
 
-        assertEquals(IMAGE2, image.getImage());
+        assertArrayEquals(imageData, createdImage.getImage());
+        assertEquals(1, JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, "images", "id = " + createdImage.getId()));
     }
 
+    @Rollback
     @Test
-    public void findById() {
-        final Image image = new Image(IMAGE);
-        em.persist(image);
+    public void testUpdateImage() {
+        final byte[] newImageData = {1,2,3};
+        final Image image = em.find(Image.class, ImageMockData.IMG1_ID);
 
-        final Image actual = imageJpaDao.findById(image.getId()).get();
-        assertEquals(image.getId(), actual.getId());
-        assertEquals(image.getImage(), actual.getImage());
+        final Image updatedImage = imageJpaDao.update(image, newImageData);
+
+        assertArrayEquals(newImageData, updatedImage.getImage());
     }
+
 }

@@ -10,5 +10,5 @@ public interface ImageDao {
     Optional<Image> findById(final long id);
 
     Image create(final byte[] image);
-    void update(final Image image, final byte[] newImage);
+    Image update(final Image image, final byte[] newImage);
 }

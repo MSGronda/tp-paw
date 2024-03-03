@@ -20,8 +20,9 @@ public class ImageJpaDao implements ImageDao {
     }
 
     @Override
-    public void update(final Image image, byte[] newImage) {
+    public Image update(final Image image, byte[] newImage) {
         image.setImage(newImage);
+        return image;
     }
 
     @Override
