@@ -267,6 +267,26 @@ export const TRANSLATIONS_ES = {
         createProfessor: "Crear Profesor",
         professorName: "Nombre del profesor",
         professorLastName: "Apellido del profesor",
-        next: "Siguiente"
+        next: "Siguiente",
+        previous: "Previous",
+        generalInfo: "Información general",
+        classes: "Comisiones",
+        addClasses: "Agregar comisiones",
+        class: "Comisión",
+        professors: "Profesores",
+        day: "Día",
+        timeStart: "Comienzo",
+        timeEnd: "Fin",
+        mode: "Modalidad",
+        building: "Sede",
+        classroom: "Aula",
+        day1: "Lunes",
+        day2: "Martes",
+        day3: "Miércoles",
+        day4: "Jueves",
+        day5: "Viernes",
+        day6: "Sábado",
+        day7: "Domingo",
+        createSubject: "Crear materia"
     }
 }
