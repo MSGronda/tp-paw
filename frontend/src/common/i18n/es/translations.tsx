@@ -254,5 +254,19 @@ export const TRANSLATIONS_ES = {
         idError: "Una materia con este código ya existe",
         department: "Departamento",
         credits: "Créditos",
+        degree: "Carreras",
+        addDegree: "Agregar carrera",
+        degreeModalDegree: "Carrera",
+        semesterOption: "Cuatrimestre {{number}}",
+        elective: "Electiva",
+        semester: "Cuatrimestre",
+        add: "Agregar",
+        prerequisites: "Correlativas",
+        optional: "Opcional",
+        professor: "Profesor",
+        createProfessor: "Crear Profesor",
+        professorName: "Nombre del profesor",
+        professorLastName: "Apellido del profesor",
+        next: "Siguiente"
     }
 }
