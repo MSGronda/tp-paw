@@ -94,5 +94,73 @@ test("It should return a list of subjects that a user has done", async () => {
     expect(mockedGet).toHaveBeenCalledTimes(1);
 })
 
+test("It should return a list of subjects that the user has available", async() => {
+    
+        mockedGet.mockResolvedValueOnce({ 
+            status: 200,
+            data: [subject1, subject2], 
+            failure: false,
+            headers: {}
+        });
+    
+        const response = await subjectService.getAvailableSubjects(43)
+   
+        expect(response.data.length).toBe(2);
+        expect(response.data).toEqual([subject1, subject2]);
+        expect(response.failure).toBeFalsy();
+        expect(mockedGet).toHaveBeenCalledTimes(1);
+        expect(mockedGet).toHaveBeenCalledWith("/subjects", expect.objectContaining({params: {available: 43}}))
+})
+
+test("It should return a list of subjects that the user has done", async() => {
+    mockedGet.mockResolvedValueOnce({
+        status: 200,
+        data: [subject1, subject2],
+        failure: false,
+        headers: {}
+    })
+
+
+    const response = await subjectService.getDoneSubjects(43)
+    expect(response.data.length).toBe(2);
+    expect(response.data).toEqual([subject1, subject2]);
+    expect(response.failure).toBeFalsy();
+    expect(mockedGet).toHaveBeenCalledTimes(1);
+    expect(mockedGet).toHaveBeenCalledWith("/subjects", expect.objectContaining({params: {done: 43}}))
+})
+
+
+test("It should return a list of subjects that are unlockable", async() => {
+    mockedGet.mockResolvedValueOnce({
+        status: 200,
+        data: [subject1, subject2],
+        failure: false,
+        headers: {}
+    })
+
+    const response = await subjectService.getUnlockableSubjects(43)
+    expect(response.data.length).toBe(2);
+    expect(response.data).toEqual([subject1, subject2]);
+    expect(response.failure).toBeFalsy();
+    expect(mockedGet).toHaveBeenCalledTimes(1);
+    expect(mockedGet).toHaveBeenCalledWith("/subjects", expect.objectContaining({params: {unLockable: 43}}))
+})
+
+test("It should return a list of subjects that are in the user's plan", async() => {
+    mockedGet.mockResolvedValueOnce({
+        status: 200,
+        data: [subject1, subject2],
+        failure: false,
+        headers: {}
+    })
+
+    const response = await subjectService.getUserPlanSubjects(43)
+    expect(response.data.length).toBe(2);
+    expect(response.data).toEqual([subject1, subject2]);
+    expect(response.failure).toBeFalsy();
+    expect(mockedGet).toHaveBeenCalledTimes(1);
+    expect(mockedGet).toHaveBeenCalledWith("/subjects", expect.objectContaining({params: {plan: 43}}))
+})
+
 
 
