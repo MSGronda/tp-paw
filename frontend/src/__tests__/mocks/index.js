@@ -16,7 +16,8 @@ export const subject2 = {
 export const user1 = {
     id: 43,
     email: "pablo@gmail.com",
-    username: "pablito"
+    username: "pablito",
+    password: "123456789"
 }
 
 export const user2 = {
@@ -43,4 +44,46 @@ export const review2 = {
     timeDemanding: 1,
     difficulty: 2,
     anonymous: true
+}
+
+const classTime1 = {
+    day: 1,
+    startTime: "08:00",
+    endTime: "11:00",
+    classNumber: "201T",
+    building: "SDT",
+    mode: "Presencial"
+}
+
+const classTime2 = {
+    day: 3,
+    startTime: "14:00",
+    endTime: "17:00",
+    classNumber: "702F",
+    building: "SDF",
+    mode: "Presencial"
+}
+
+export const class1 = {
+    idSubject: "31.08",
+    idClass: "201T",
+    professors: ["Juan", "Carlos"],
+    locations: [classTime1]
+}
+
+export const class2 = {
+    idSubject: "31.00",
+    idClass: "702F",
+    professors: ["Maria", "Luz"],
+    locations: [classTime2]
+}
+
+export const selectedSubject1 = {
+    subject: subject1,
+    selectedClass: class1
+}
+
+export const selectedSubject2 = {
+    subject: subject2,
+    selectedClass: class2
 }

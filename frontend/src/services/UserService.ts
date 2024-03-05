@@ -40,7 +40,7 @@ export class UserService {
             return handleResponse(error.response);
         }
     }
-    async setUserSemester(usedId: number, subjects: SelectedSubject[]) {
+    async setUserSemester(userId: number, subjects: SelectedSubject[]) {
         const subs: string[] = [];
         const classes: string[] = [];
 
@@ -53,31 +53,31 @@ export class UserService {
             idClass: classes
         }
         try{
-            const res = await axiosService.authAxiosWrapper(axiosService.PUT, `${path}/${usedId}/plan`, {}, data);
+            const res = await axiosService.authAxiosWrapper(axiosService.PUT, `${path}/${userId}/plan`, {}, data);
             return handleResponse(res);
         } catch (error: any) {
             return handleResponse(error.response);
         }
     }
-    async completeSemester(usedId: number) {
+    async completeSemester(userId: number) {
         const semesterData = {
             type: 3,
         }
         try{
-            const res = await axiosService.authAxiosWrapper(axiosService.PATCH, `${path}/${usedId}/plan`, {}, semesterData);
+            const res = await axiosService.authAxiosWrapper(axiosService.PATCH, `${path}/${userId}/plan`, {}, semesterData);
             return handleResponse(res);
         } catch (error: any) {
             return handleResponse(error.response);
         }
     }
 
-    async setFinishedSubjects(usedId: number, passed: string[], notPassed: string[]) {
+    async setFinishedSubjects(userId: number, passed: string[], notPassed: string[]) {
         const progressData = {
             newPassedSubjects: passed,
             newNotPassedSubjects: notPassed
         }
         try{
-            const res = await axiosService.authAxiosWrapper(axiosService.PATCH, `${path}/${usedId}/progress`, {}, progressData);
+            const res = await axiosService.authAxiosWrapper(axiosService.PATCH, `${path}/${userId}/progress`, {}, progressData);
             return handleResponse(res);
         } catch (error: any) {
             return handleResponse(error.response);

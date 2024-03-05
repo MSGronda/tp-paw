@@ -45,7 +45,6 @@ afterEach(() => {
     });
 
     const response = await reviewService.getReviewsBySubject("31.08", 1, "difficulty", "desc")
-    console.log(response)
     expect(response.data).toBeUndefined();
     expect(response.failure).toBeTruthy();
     expect(mockedGet).toHaveBeenCalledTimes(1);
@@ -53,9 +52,7 @@ afterEach(() => {
   });
 
   test("It should fail", async () => {
-    mockedGet.mockRejectedValueOnce({ 
-        
-    });
+    mockedGet.mockRejectedValueOnce({});
 
     const response = await reviewService.getReviewsBySubject("31.08", 1, "difficulty", "desc")
     expect(response).toBeUndefined();
@@ -114,7 +111,6 @@ afterEach(() => {
     });
 
     const response = await reviewService.editReview(43, "Muy buena materiaa", 1, 1, false, "31.08")
-    console.log(response)
     expect(response.data).toEqual(review1);
     expect(response.failure).toBeFalsy();
     expect(mockedPut).toHaveBeenCalledTimes(1);
