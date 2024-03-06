@@ -1,5 +1,6 @@
 package ar.edu.itba.paw.webapp.security.filters;
 
+import ar.edu.itba.paw.models.Role;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
@@ -11,6 +12,9 @@ import org.springframework.stereotype.Component;
 
 import javax.crypto.SecretKey;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
 
 @Component
 public class JwtUtils {
@@ -20,16 +24,31 @@ public class JwtUtils {
     @Autowired
     private Environment environment;
 
-    public String generateToken(String email) {
-        final Claims claims = Jwts.claims()
-                .subject(email)
-                .expiration(new Date(System.currentTimeMillis() + EXPIRATION_TIME))
-                .build();
+    public String generateToken(String email, Set<Role> roles, long userId) {
+//        final Claims claims = Jwts.claims()
+//                .subject(email)
+//                .expiration(new Date(System.currentTimeMillis() + EXPIRATION_TIME))
+//                .build();
+
+        Map <String, Object> claimsMap = new HashMap<>();
+        claimsMap.put("role", getRole(roles));
+        claimsMap.put("userId", userId);
 
         return Jwts.builder()
-                .claims(claims)
+                .setClaims(claimsMap)
+                .setSubject(email)
+                .setExpiration(new Date(System.currentTimeMillis() + EXPIRATION_TIME))
                 .signWith(getSigningKey())
                 .compact();
+    }
+
+    private String getRole(Set<Role> roles){
+        for( Role role: roles){
+            if( role.getName().equals("EDITOR")){
+                return "EDITOR";
+            }
+        }
+        return "USER";
     }
 
     public String generateRefreshToken(String email) {

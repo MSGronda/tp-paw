@@ -1,6 +1,7 @@
 package ar.edu.itba.paw.webapp.security.filters;
 
 import ar.edu.itba.paw.models.User;
+import ar.edu.itba.paw.models.exceptions.UserNotFoundException;
 import ar.edu.itba.paw.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -75,6 +76,7 @@ public class JwtFilter extends OncePerRequestFilter {
             filterChain.doFilter(req, res);
             return;
         }
+        final User userDetails = userService.findByEmail(email).orElseThrow(UserNotFoundException::new);
 
         if (jwtUtils.isRefreshToken(token)) {
             final User uniUser = userService.findByEmail(email).orElse(null);
@@ -83,7 +85,7 @@ public class JwtFilter extends OncePerRequestFilter {
                 return;
             }
 
-            res.setHeader(HttpHeaders.AUTHORIZATION, "Bearer " + jwtUtils.generateToken(email));
+            res.setHeader(HttpHeaders.AUTHORIZATION, "Bearer " + jwtUtils.generateToken(email, userDetails.getRoles(), userDetails.getId()));
         }
 
         final UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
@@ -132,7 +134,7 @@ public class JwtFilter extends OncePerRequestFilter {
             return;
         }
 
-        res.setHeader(HttpHeaders.AUTHORIZATION, "Bearer " + jwtUtils.generateToken(email));
+        res.setHeader(HttpHeaders.AUTHORIZATION, "Bearer " + jwtUtils.generateToken(email, user.getRoles(), user.getId()));
         res.setHeader("X-Refresh", "Bearer " + jwtUtils.generateRefreshToken(email));
 
         authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(req));
