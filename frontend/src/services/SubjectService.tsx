@@ -43,18 +43,20 @@ export class SubjectService {
         }
     }
 
-    async getAvailableSubjects(userId: number) {
+    async getAvailableSubjects(userId: number, page: number = 1) {
         const config: any = {};
         config.params = {
-            available: userId
+            available: userId,
+            page: page
         }
         return this.getUserSubject(config);
     }
 
-    async getDoneSubjects(userId: number) {
+    async getDoneSubjects(userId: number, page: number = 1) {
         const config: any = {};
         config.params = {
-            done: userId
+            done: userId,
+            page: page,
         }
         return this.getUserSubject(config);
     }
@@ -62,7 +64,7 @@ export class SubjectService {
     async getUnlockableSubjects(userId: number) {
         const config: any = {};
         config.params = {
-            unLockable: userId
+            unLockable: userId,
         }
         return this.getUserSubject(config);
     }

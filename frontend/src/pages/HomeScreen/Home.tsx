@@ -5,6 +5,7 @@ import {
     Flex,
     Grid,
     Group,
+    Pagination,
     rem, RingProgress,
     Tabs,
     Text
@@ -33,30 +34,52 @@ export default function Home() {
     const navigate = useNavigate();
     const iconStyle = { width: rem(12), height: rem(12) };
 
+    const INITIAL_PAGE = 1;
+
     const [pastSubjects, setPastSubjects] = useState([]);
     const [futureSubjects, setFutureSubjects] = useState([]);
+    const [currentPastSubjectsPage, setCurrentPastSubjectsPage] = useState(INITIAL_PAGE);
+    const [currentFutureSubjectsPage, setCurrentFutureSubjectsPage] = useState(INITIAL_PAGE);
+    const [maxPage, setMaxPage] = useState(3); //Set default max page to 1
+    const [activeTab, setActiveTab] = useState<string | null>("current-semester");
 
-    const searchPastSubjects = async (userId: number) => {
-        const res = await subjectService.getDoneSubjects(userId);
+    
+
+
+    const searchPastSubjects = async (userId: number, page: number) => {
+        const res = await subjectService.getDoneSubjects(userId,page);
         const data = handleService(res,navigate);
         if(res) {
             setPastSubjects(data);
         }
     }
 
-    const searchFutureSubjects = async (userId: number) => {
-        const res = await subjectService.getUnlockableSubjects(userId);
+    const searchFutureSubjects = async (userId: number, page: number) => {
+        const res = await subjectService.getAvailableSubjects(userId,page);
         const data = handleService(res,navigate);
         if(res) {
             setFutureSubjects(data);
         }
     }
 
+    const getSubjectsCards = (subjects: any) => {
+        let content = [];
+        for (let subject of subjects) {
+            content.push(<SubjectCard id={subject.id} credits={subject.credits} difficulty={subject.difficulty} name={subject.name} numReviews={subject.numReviews} prerequisites={subject.prerequisites} timeDemand={subject.timeDemand} progress={subject.progress} />);
+        }
+        return content;
+    };
+    
     useEffect(() => {
         const userId = userService.getUserId();
-        searchPastSubjects(userId);
-        searchFutureSubjects(userId);
-    },[]);
+        searchFutureSubjects(userId,currentFutureSubjectsPage);
+    },[currentFutureSubjectsPage]);
+
+    useEffect(() => {
+        const userId = userService.getUserId();
+        searchPastSubjects(userId,currentPastSubjectsPage);
+    },[currentPastSubjectsPage]);
+
 
     const data = [
         { year: t("Home.firstYear"), progress: 100},
@@ -75,7 +98,7 @@ export default function Home() {
             <div className={classes.containter}>
                 <div className={classes.dashboardArea}>
                     <div className={classes.choosingArea}>
-                        <Tabs defaultValue="current-semester" className={classes.tabs}>
+                        <Tabs value={activeTab} className={classes.tabs} onChange={(value) => setActiveTab(value)}>
                             <Tabs.List>
                                 <Tabs.Tab value="current-semester" leftSection={<IconPhoto style={iconStyle} />}>
                                     {t("Home.currentSemester")}
@@ -222,15 +245,25 @@ export default function Home() {
                             </Tabs.Panel>
 
                             <Tabs.Panel value="future-subjects" >
+                                <Flex gap="xl" align="center" direction="column" mih={50}>
                                 <Grid gutter="sm" columns={12} className={classes.futureSubjectsArea}>
                                     {getSubjectsCards(futureSubjects).map((item) => <Grid.Col span={3}>{item}</Grid.Col>)}
                                 </Grid>
+                                <Flex justify="center" align="center">
+                                    <Pagination value={currentFutureSubjectsPage} total={maxPage} onChange={setCurrentFutureSubjectsPage} />
+                                </Flex>
+                                </Flex>
                             </Tabs.Panel>
 
                             <Tabs.Panel value="past-subjects">
+                                <Flex gap="xl" align="center" direction="column" mih={50}>
                                 <Grid gutter="sm">
                                     {getSubjectsCards(pastSubjects).map((item) => <Grid.Col span={3}>{item}</Grid.Col>)}
                                 </Grid>
+                                <Flex justify="center" align="center">
+                                    <Pagination value={currentPastSubjectsPage} total={maxPage} onChange={setCurrentPastSubjectsPage} />
+                                </Flex>
+                                </Flex>
                             </Tabs.Panel>
                         </Tabs>
                     </div>
@@ -248,13 +281,7 @@ export function HomeScreen() {
         isLoggedIn ? <Home/> : <Landing/>
     );
 }
-const getSubjectsCards = subjects => {
-    let content = [];
-    for (let subject of subjects) {
-        content.push(<SubjectCard id={subject.id} credits={subject.credits} difficulty={subject.difficulty} name={subject.name} numReviews={subject.numReviews} prerequisites={subject.prerequisites} timeDemand={subject.timeDemand} progress={subject.progress} />);
-    }
-    return content;
-};
+
 function getCompletedCredits() {
     return 133;
 }
