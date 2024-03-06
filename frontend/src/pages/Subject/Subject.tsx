@@ -350,7 +350,7 @@ export function SubjectPage() {
                                                         <Table.Td>{classtime.startTime} - {classtime.endTime}</Table.Td>
                                                         <Table.Td>{classtime.mode}</Table.Td>
                                                         <Table.Td>{classtime.building}</Table.Td>
-                                                        <Table.Td>{classtime.classNumber}</Table.Td>
+                                                        <Table.Td>{classtime.location}</Table.Td>
                                                     </Table.Tr>
                                                 ))
                                             ))}

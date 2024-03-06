@@ -40,7 +40,7 @@ export default function BuilderSelectedCard(props: BuilderClassTimeCardProps): J
                         <tr>
                             <td>{getDayName(time.day)}</td>
                             <td>{time.startTime} - {time.endTime}</td>
-                            <td>{time.classNumber}</td>
+                            <td>{time.location}</td>
                             <td>{time.building}</td>
                             <td>{time.mode}</td>
                         </tr>

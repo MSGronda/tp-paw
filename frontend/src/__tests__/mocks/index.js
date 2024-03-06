@@ -50,7 +50,7 @@ const classTime1 = {
     day: 1,
     startTime: "08:00",
     endTime: "11:00",
-    classNumber: "201T",
+    location: "201T",
     building: "SDT",
     mode: "Presencial"
 }
@@ -59,7 +59,7 @@ const classTime2 = {
     day: 3,
     startTime: "14:00",
     endTime: "17:00",
-    classNumber: "702F",
+    location: "702F",
     building: "SDF",
     mode: "Presencial"
 }

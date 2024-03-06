@@ -81,7 +81,7 @@ export default function WeeklySchedule(props: WeeklyScheduleProps) {
                             {subjectClasses[i].subject.name}
                         </h4>
                     </div>
-                    <div style={{textAlign: "center"}}>{subjectClasses[i].selectedClass.locations[j].classNumber}</div>
+                    <div style={{textAlign: "center"}}>{subjectClasses[i].selectedClass.locations[j].location}</div>
                     <div style={{textAlign: "center"}}>{subjectClasses[i].selectedClass.locations[j].mode}</div>
                 </td>
             );

@@ -3,7 +3,7 @@ export default interface ClassTime {
     day: number
     startTime: string
     endTime: string
-    classNumber: string
+    location: string
     building: string
     mode: string
 }

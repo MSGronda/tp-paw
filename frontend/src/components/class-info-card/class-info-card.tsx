@@ -31,7 +31,7 @@ export default function ClassInfoCard(props: ClassInfoCardProps): JSX.Element {
                             <tr>
                                 {classTime.day >= 1 && classTime.day <= 7? <td>{t("Home.classDay" + classTime.day)}</td> : <td>-</td>}
                                 <td>{classTime.startTime} - {classTime.endTime}</td>
-                                <td>{classTime.classNumber}</td>
+                                <td>{classTime.location}</td>
                                 <td>{classTime.building}</td>
                                 <td>{classTime.mode}</td>
                             </tr>

@@ -67,7 +67,7 @@ export default function Home() {
     ];
 
     const userSemester: Subject[] = [
-        {id: "72.40", name: "Ingeniería en Software II", department: "Ohio Department", credits:3, classes: [{idSubject: "72.40", idClass: "1", professors: ["Juan Martín Sotuyo Dodero"], locations: [{day: 1, startTime: "19:00", endTime: "22:00", classNumber: "701F", building: "Sede Distrito Financiero", mode: "Presencial"} as ClassTime]} as Class], difficulty: "1", timeDemand: "0", reviewCount: 3, prerequisites: ["72.37"]} as Subject,
+        {id: "72.40", name: "Ingeniería en Software II", department: "Ohio Department", credits:3, classes: [{idSubject: "72.40", idClass: "1", professors: ["Juan Martín Sotuyo Dodero"], locations: [{day: 1, startTime: "19:00", endTime: "22:00", location: "701F", building: "Sede Distrito Financiero", mode: "Presencial"} as ClassTime]} as Class], difficulty: "1", timeDemand: "0", reviewCount: 3, prerequisites: ["72.37"]} as Subject,
     ];
     return (
         <div className={classes.background}>
