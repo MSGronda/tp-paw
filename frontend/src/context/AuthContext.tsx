@@ -10,7 +10,7 @@ export interface AuthContextInterface {
     loginHandler: (token: string, refreshToken?: string) => Promise<void>;
     authKey?: string | undefined;
     refreshToken?: string | undefined;
-    // role?: string | undefined;
+    role: string | undefined;
     userId?: number | undefined;
     profileImage: String;
     updateProfileImage: (image: String) => void;
@@ -28,6 +28,7 @@ const AuthContext = React.createContext<AuthContextInterface>({
     setToken: () => { },
     setRefreshToken: () => { },
     userId: undefined,
+    role: undefined
 });
 
 export const AuthContextProvider = ({ children }: { children: React.ReactNode }) => {
@@ -52,15 +53,16 @@ export const AuthContextProvider = ({ children }: { children: React.ReactNode })
     // });
 
     //TODO revisar
-    // const [role, setRole] = useState<string | undefined>(() => {
-    //     try {
-    //         return jwtDecode<CustomJwtPayload>(token as string).authorization as string;
-    //     } catch (error) {
-    //         if (isAuthenticated) {
-    //             console.error(error);
-    //         }
-    //     }
-    // });
+    const [role, setRole] = useState<string | undefined>(() => {
+        try {
+            //return jwtDecode<CustomJwtPayload>(token as string).authorization as string;
+            return JSON.parse(localStorage.getItem("user") as string).roles
+        } catch (error) {
+            if (isAuthenticated) {
+                console.error(error);
+            }
+        }
+    });
 
     const [userId, setUserId] = useState<number | undefined>(() => {
         try {
@@ -81,8 +83,8 @@ export const AuthContextProvider = ({ children }: { children: React.ReactNode })
         setAuthKey(undefined);
         setRefreshTokenKey(undefined);
         // setEmail(undefined);
-        // setRole(undefined);
-        // setUserId(undefined);
+        setRole(undefined);
+        setUserId(undefined);
     }
 
 
@@ -94,6 +96,8 @@ export const AuthContextProvider = ({ children }: { children: React.ReactNode })
             //console.log(jwtDecode<CustomJwtPayload>(authKey as string))
             // setEmail(jwtDecode<CustomJwtPayload>(authKey as string).sub as string);
             // setRole(jwtDecode<CustomJwtPayload>(authKey as string).roles as string);
+            const roles = JSON.parse(localStorage.getItem("user") as string).roles
+            if (roles) setRole(roles);
             const id = JSON.parse(localStorage.getItem("user") as string).id
             if (id) setUserId(parseInt(id));
         } catch (e) {
@@ -112,7 +116,7 @@ export const AuthContextProvider = ({ children }: { children: React.ReactNode })
                 loginHandler,
                 authKey,
                 refreshToken,
-                // role,
+                role,
                 userId,
                 // email,
                 profileImage,

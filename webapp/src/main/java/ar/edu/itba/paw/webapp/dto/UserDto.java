@@ -1,9 +1,12 @@
 package ar.edu.itba.paw.webapp.dto;
 
+import ar.edu.itba.paw.models.Role;
 import ar.edu.itba.paw.models.User;
 
 import javax.ws.rs.core.UriInfo;
 import java.net.URI;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class UserDto {
     private Long id;
@@ -14,6 +17,8 @@ public class UserDto {
 
     //private Locale locale
     private URI degree;
+
+    private List<String> roles;
     //TODO - ROLES ?
     private URI reviews;
 
@@ -33,7 +38,7 @@ public class UserDto {
         userDto.email = user.getEmail();
         userDto.username = user.getUsername();
         userDto.image = uriInfo.getBaseUriBuilder().path("images").path(String.valueOf(user.getImageId())).build();
-        
+        userDto.roles = user.getRoles().stream().map(Role::getName).collect(Collectors.toList());
         userDto.degree = uriInfo.getBaseUriBuilder().path("degrees").path(String.valueOf(user.getDegree().getId())).build();
         userDto.reviews = uriInfo.getBaseUriBuilder().path("reviews").queryParam("userId", user.getId()).build();
         //TODO - CHECK THIS
@@ -104,5 +109,13 @@ public class UserDto {
 
     public void setCreditsDone(int creditsDone) {
         this.creditsDone = creditsDone;
+    }
+
+    public List<String> getRoles() {
+        return roles;
+    }
+
+    public void setRoles(List<String> roles) {
+        this.roles = roles;
     }
 }
