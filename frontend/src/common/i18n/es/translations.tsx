@@ -113,7 +113,7 @@ export const TRANSLATIONS_ES = {
         rights: "© 2023 Equipo Uni, Todos los derechos reservados."
     },
     Profile: {
-        email: "email:",
+        email: "Corre electrónico:",
         username: "Nombre de usuario:",
         reviews: "Reseñas por el usuario",
         loggeduser: "Tu perfil",

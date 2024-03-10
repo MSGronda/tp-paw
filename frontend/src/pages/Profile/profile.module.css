@@ -15,7 +15,7 @@
     flex: 1 0 auto;
     display: flex;
     flex-direction: column;
-    margin-top: -3rem;
+    margin-top: 3rem;
 }
 .header {
     display: flex;

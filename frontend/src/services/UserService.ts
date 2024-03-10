@@ -18,6 +18,18 @@ export class UserService {
         return JSON.parse(userData).id;
     }
 
+    getUserData() {
+        let userData;
+        if (localStorage.getItem("user") != null)
+            userData = localStorage.getItem("user");
+        else if (sessionStorage.getItem("user") != null)
+            userData = sessionStorage.getItem("user");
+        if (!userData) {
+            return;
+        }
+        return JSON.parse(userData);
+    }
+
     async getUsersThatReviewedSubject(subjectId: string, page: number){
         try{
             let config: any = {};

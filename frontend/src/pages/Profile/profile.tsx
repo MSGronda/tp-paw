@@ -3,9 +3,15 @@ import { Navbar } from "../../components/navbar/navbar";
 import { Footer } from "../../components/footer/footer";
 import { useTranslation } from "react-i18next";
 import classes from './profile.module.css';
+import {User} from "../../models/User.ts";
+import {useContext, useState} from "react";
+import AuthContext from "../../context/AuthContext.tsx";
+import {userService} from "../../services";
 
 export default function Profile() {
     const { t } = useTranslation();
+    const user = userService.getUserData()
+
     return (
         <div className={classes.fullsize}>
             <Navbar/>
@@ -13,7 +19,7 @@ export default function Profile() {
                 <div className={classes.header}>
                     <div className={classes.image_container}>
                         <Avatar
-                            src="https://raw.githubusercontent.com/mantinedev/mantine/master/.demo/avatars/avatar-8.png"
+                            src={user.profileImage}
                             size={120}
                             radius={120}
                             mx="auto"
@@ -25,6 +31,13 @@ export default function Profile() {
                                 {t("Profile.loggeduser")}
                             </Text>
                         </div>
+                        { user.role === "moderator" &&
+                            <div>
+                                <Text fz="lg" fw={500} mt="md">
+                                    {t("Profile.moderator")}
+                                </Text>
+                            </div>
+                        }
                         <div className={classes.logout_button}>
                             <Button variant="filled" radius="md">{t("Profile.logout")}</Button>
                         </div>
@@ -37,16 +50,16 @@ export default function Profile() {
                                 {t("Profile.username")}
                             </Text>
                             <Text>
-                                Jane Fingerlicker
+                                {user.username}
                             </Text>
                         </div>
                         <Divider size="sm"/>
                         <div>
                             <Text>
-                                {t("Profie.email")}
+                                {t("Profile.email")}
                             </Text>
                             <Text>
-                                mrojaspelliccia@itba.edu.ar
+                                {user.email}
                             </Text>
                         </div>
                         <Divider size="sm"/>
@@ -60,6 +73,9 @@ export default function Profile() {
                     
 
                 </Paper>
+                <br></br>
+                <Divider></Divider>
+                <br></br>
             </div>
             <Footer/>
         </div>

@@ -3,4 +3,6 @@ export interface User {
     id: number,
     username: string,
     email: string,
+    profileImage: string,
+    role: string
 }
