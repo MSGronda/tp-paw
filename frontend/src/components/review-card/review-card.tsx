@@ -21,6 +21,23 @@ interface ReviewCardProps {
     forSubject: boolean
     upvotes: number
     downvotes: number
+    voteValue: VoteValue
+}
+enum VoteValue {
+    UpVote = 1,
+    DownVote = -1,
+
+}
+
+function GetVoteValue(voteValue: VoteValue): number {
+    switch (voteValue) {
+        case VoteValue.UpVote:
+            return 1;
+        case VoteValue.DownVote:
+            return -1;
+        default:
+            return 0;
+    }
 }
 
 function ReviewCard(props: ReviewCardProps): JSX.Element {
@@ -32,6 +49,7 @@ function ReviewCard(props: ReviewCardProps): JSX.Element {
     const [didUserUpVote, setDidUserUpVote] = useState(false);
     const [didUserDownVote, setDidUserDownVote] = useState(false);
     const [loading,  toggle ] = useState(false);
+
 
     const navigate = useNavigate();
     const toggleShowMore = () => {
@@ -46,8 +64,8 @@ function ReviewCard(props: ReviewCardProps): JSX.Element {
         localStorage.setItem('reviewDeleted', JSON.stringify(!res?.failure))
         window.location.reload()
     }
-    const voteAction = async (reviewId: number, vote: number) => {
-        const res = await reviewService.voteReview(reviewId, vote)
+    const voteAction = async (reviewId: number, vote: VoteValue) => {
+        const res = await reviewService.voteReview(reviewId, GetVoteValue(vote))
         localStorage.setItem('reviewVoted', JSON.stringify(!res?.failure))
         toggle(true)
     }
@@ -186,7 +204,7 @@ function ReviewCard(props: ReviewCardProps): JSX.Element {
                 <span>{upvotes}</span>
                 { !(didUserUpVote)  ?
                     <ActionIcon variant="outline" className={classes.like_button}
-                            onClick={ () => voteAction(id,1) }
+                            onClick={ () => voteAction(id,VoteValue.UpVote) }
                                 loading={loading}>
                         <IconThumbUp />
                     </ActionIcon> :
@@ -199,7 +217,7 @@ function ReviewCard(props: ReviewCardProps): JSX.Element {
                 <span>{downvotes}</span>
                 { !(didUserDownVote ) ?
                     <ActionIcon variant="outline" className={classes.like_button}
-                                onClick={() => voteAction(id,-1)}
+                                onClick={() => voteAction(id, VoteValue.DownVote )}
                                 loading={loading}>
                         <IconThumbDown />
                     </ActionIcon> :
