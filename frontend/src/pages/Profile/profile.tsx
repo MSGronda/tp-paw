@@ -3,9 +3,6 @@ import { Navbar } from "../../components/navbar/navbar";
 import { Footer } from "../../components/footer/footer";
 import { useTranslation } from "react-i18next";
 import classes from './profile.module.css';
-import {User} from "../../models/User.ts";
-import {useContext, useState} from "react";
-import AuthContext from "../../context/AuthContext.tsx";
 import {userService} from "../../services";
 
 export default function Profile() {

@@ -19,7 +19,7 @@ public class UserDto {
     private URI degree;
 
     private List<String> roles;
-    //TODO - ROLES ?
+
     private URI reviews;
 
     //TODO - ReviewVote

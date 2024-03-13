@@ -93,7 +93,7 @@ export function SubjectPage() {
     const getReviewFromUser = async (subjectId: string, userId: number) => {
         const res = await reviewService.getReviewFromSubjectAndUser(subjectId, userId);
         const data = handleService(res, navigate);
-        if (res) {
+        if (data) {
             data.length === 0 ? setDidUserReview(false) : setDidUserReview(true);
         }
     }
@@ -494,6 +494,10 @@ export function SubjectPage() {
                                     anonymous={review.anonymous}
                                     id={review.id}
                                     forSubject={true}
+                                            upvotes = {review.upVotes}
+                                            downvotes = {review.downVotes}
+
+
                                 />
                             ))
                         }

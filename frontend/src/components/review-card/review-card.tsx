@@ -1,11 +1,12 @@
 import { ActionIcon, Badge, Button, Card, Divider, Group, Tooltip } from "@mantine/core";
 import classes from './review-card.module.css';
 import { IconEdit, IconPencil, IconThumbDown, IconThumbUp, IconTrash } from "@tabler/icons-react";
-import { useContext, useState } from "react";
+import {useContext, useEffect, useState} from "react";
 import { useTranslation } from "react-i18next";
 import { Link, useNavigate } from "react-router-dom";
 import AuthContext from "../../context/AuthContext";
 import { reviewService } from "../../services";
+import {useDisclosure} from "@mantine/hooks";
 
 interface ReviewCardProps {
     subjectId: string;
@@ -18,15 +19,20 @@ interface ReviewCardProps {
     anonymous: boolean;
     id: number
     forSubject: boolean
+    upvotes: number
+    downvotes: number
 }
 
 function ReviewCard(props: ReviewCardProps): JSX.Element {
     const { t } = useTranslation();
     const { userId } = useContext(AuthContext)
-    const { subjectId, subjectName, text, timeDemand, difficulty, UserId, userName, anonymous, id, forSubject } = props;
-
+    const { subjectId, subjectName, text, timeDemand, difficulty, UserId, userName, anonymous, id, forSubject, upvotes, downvotes } = props;
     const [openedTooltip, setOpenedTooltip] = useState(false);
     const [showMore, setShowMore] = useState(false);
+    const [didUserUpVote, setDidUserUpVote] = useState(false);
+    const [didUserDownVote, setDidUserDownVote] = useState(false);
+    const [loading,  toggle ] = useState(false);
+
     const navigate = useNavigate();
     const toggleShowMore = () => {
         setShowMore(!showMore);
@@ -40,6 +46,39 @@ function ReviewCard(props: ReviewCardProps): JSX.Element {
         localStorage.setItem('reviewDeleted', JSON.stringify(!res?.failure))
         window.location.reload()
     }
+    const voteAction = async (reviewId: number, vote: number) => {
+        const res = await reviewService.voteReview(reviewId, vote)
+        localStorage.setItem('reviewVoted', JSON.stringify(!res?.failure))
+        toggle(true)
+    }
+
+    const unVoteAction = async (reviewId: number, userId: number | undefined) => {
+        const res = await reviewService.unVoteReview(reviewId, userId)
+        localStorage.setItem('reviewUnVoted', JSON.stringify(!res?.failure))
+        toggle(true)
+    }
+
+    const getVoteFromUser = async (reviewId:number, userId:number) => {
+        const res = await reviewService.getVotes(reviewId)
+        const vote = res?.data.find((v: { userId: number; }) => v.userId === userId)
+        if(vote !== undefined) {
+            if(vote.vote === 1) {
+                setDidUserUpVote(true)
+                setDidUserDownVote(false)
+            } else if(vote.vote === -1) {
+                setDidUserUpVote(false)
+                setDidUserDownVote(true)
+            }
+        }
+    }
+
+    useEffect(() => {
+        if(userId !== undefined) {
+            if(id !== undefined) {
+                getVoteFromUser(id, userId)
+            }
+        }
+    })
 
     return (
         <Card className={classes.card}>
@@ -144,8 +183,32 @@ function ReviewCard(props: ReviewCardProps): JSX.Element {
             </div>
             <Divider className={classes.divider} />
             <div slot="footer" className={classes.like_buttons}>
-                <ActionIcon variant="outline" className={classes.like_button}><IconThumbUp /></ActionIcon>
-                <ActionIcon variant="outline" className={classes.like_button}><IconThumbDown /></ActionIcon>
+                <span>{upvotes}</span>
+                { !(didUserUpVote)  ?
+                    <ActionIcon variant="outline" className={classes.like_button}
+                            onClick={ () => voteAction(id,1) }
+                                loading={loading}>
+                        <IconThumbUp />
+                    </ActionIcon> :
+                    <ActionIcon variant="filled" className={classes.like_button}
+                            onClick={ () => unVoteAction(id, userId)}
+                                loading={loading}>
+                        <IconThumbUp />
+                    </ActionIcon>
+                }
+                <span>{downvotes}</span>
+                { !(didUserDownVote ) ?
+                    <ActionIcon variant="outline" className={classes.like_button}
+                                onClick={() => voteAction(id,-1)}
+                                loading={loading}>
+                        <IconThumbDown />
+                    </ActionIcon> :
+                    <ActionIcon variant="filled" className={classes.like_button}
+                                onClick={() => unVoteAction(id, userId)}
+                                loading={loading}>
+                        <IconThumbDown />
+                    </ActionIcon>
+                }
             </div>
         </Card>
     );
