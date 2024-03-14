@@ -1,12 +1,12 @@
-import { ActionIcon, Badge, Button, Card, Divider, Group, Tooltip } from "@mantine/core";
+import { ActionIcon, Badge, Button, Card, Divider, Tooltip } from "@mantine/core";
 import classes from './review-card.module.css';
-import { IconEdit, IconPencil, IconThumbDown, IconThumbUp, IconTrash } from "@tabler/icons-react";
+import { IconEdit, IconThumbDown, IconThumbUp, IconTrash } from "@tabler/icons-react";
 import {useContext, useEffect, useState} from "react";
 import { useTranslation } from "react-i18next";
 import { Link, useNavigate } from "react-router-dom";
 import AuthContext from "../../context/AuthContext";
 import { reviewService } from "../../services";
-import {useDisclosure} from "@mantine/hooks";
+
 
 interface ReviewCardProps {
     subjectId: string;
@@ -48,7 +48,8 @@ function ReviewCard(props: ReviewCardProps): JSX.Element {
     const [showMore, setShowMore] = useState(false);
     const [didUserUpVote, setDidUserUpVote] = useState(false);
     const [didUserDownVote, setDidUserDownVote] = useState(false);
-    const [loading,  toggle ] = useState(false);
+    const [upVotes, setUpVotes] = useState(upvotes)
+    const [downVotes, setDownVotes] = useState(downvotes)
 
 
     const navigate = useNavigate();
@@ -67,13 +68,25 @@ function ReviewCard(props: ReviewCardProps): JSX.Element {
     const voteAction = async (reviewId: number, vote: VoteValue) => {
         const res = await reviewService.voteReview(reviewId, GetVoteValue(vote))
         localStorage.setItem('reviewVoted', JSON.stringify(!res?.failure))
-        toggle(true)
+        if (vote === VoteValue.UpVote) {
+            setDidUserDownVote(false)
+            setDidUserUpVote(true)
+        } else  {
+            setDidUserDownVote(true)
+            setDidUserUpVote(false)
+        }
+        await fetchVotes()
     }
 
     const unVoteAction = async (reviewId: number, userId: number | undefined) => {
         const res = await reviewService.unVoteReview(reviewId, userId)
         localStorage.setItem('reviewUnVoted', JSON.stringify(!res?.failure))
-        toggle(true)
+        if (didUserUpVote) {
+            setDidUserUpVote(false)
+        } else {
+            setDidUserDownVote(false)
+        }
+        await fetchVotes()
     }
 
     const getVoteFromUser = async (reviewId:number, userId:number) => {
@@ -89,6 +102,27 @@ function ReviewCard(props: ReviewCardProps): JSX.Element {
             }
         }
     }
+    const fetchVotes = async () => {
+        try {
+            const res= await reviewService.getVotes(id)
+            const data = res?.data
+            let upVotes = 0
+            let downVotes = 0
+            data.forEach((vote: { vote: number; }) => {
+                if(vote.vote === 1) {
+                    upVotes++
+                } else if(vote.vote === -1) {
+                    downVotes++
+                }
+            })
+            setUpVotes(upVotes)
+            setDownVotes(downVotes)
+
+        }
+        catch (error) {
+            console.log('Error fetching votes', error)
+        }
+    }
 
     useEffect(() => {
         if(userId !== undefined) {
@@ -97,6 +131,13 @@ function ReviewCard(props: ReviewCardProps): JSX.Element {
             }
         }
     })
+    useEffect( () => {
+
+        const voteFetchInterval = setInterval(fetchVotes, 30000)
+
+        return () => clearInterval(voteFetchInterval)
+    })
+
 
     return (
         <Card className={classes.card}>
@@ -201,29 +242,29 @@ function ReviewCard(props: ReviewCardProps): JSX.Element {
             </div>
             <Divider className={classes.divider} />
             <div slot="footer" className={classes.like_buttons}>
-                <span>{upvotes}</span>
+                <span>{upVotes}</span>
                 { !(didUserUpVote)  ?
                     <ActionIcon variant="outline" className={classes.like_button}
                             onClick={ () => voteAction(id,VoteValue.UpVote) }
-                                loading={loading}>
+                    >
                         <IconThumbUp />
                     </ActionIcon> :
                     <ActionIcon variant="filled" className={classes.like_button}
                             onClick={ () => unVoteAction(id, userId)}
-                                loading={loading}>
+                    >
                         <IconThumbUp />
                     </ActionIcon>
                 }
-                <span>{downvotes}</span>
+                <span>{downVotes}</span>
                 { !(didUserDownVote ) ?
                     <ActionIcon variant="outline" className={classes.like_button}
                                 onClick={() => voteAction(id, VoteValue.DownVote )}
-                                loading={loading}>
+                    >
                         <IconThumbDown />
                     </ActionIcon> :
                     <ActionIcon variant="filled" className={classes.like_button}
                                 onClick={() => unVoteAction(id, userId)}
-                                loading={loading}>
+                    >
                         <IconThumbDown />
                     </ActionIcon>
                 }
