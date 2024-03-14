@@ -101,7 +101,9 @@ export const TRANSLATIONS_EN = {
         home: "Home",
         curriculum: "Curriculum",
         semesterbuilder: "Semester Builder",
-        profile: "Profile"
+        profile: "Profile",
+        degrees: "Degrees",
+        createSubject: "Create new subject"
     },
     ReviewCard: {
         showMore: "Show more",

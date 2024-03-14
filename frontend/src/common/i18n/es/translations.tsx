@@ -102,7 +102,9 @@ export const TRANSLATIONS_ES = {
         home: "Inicio",
         curriculum: "Plan de Estudios",
         semesterbuilder: "Armador de Cuatrimestre",
-        profile: "Perfil"
+        profile: "Perfil",
+        degrees: "Carreras",
+        createSubject: "Crear nueva materia"
     },
     ReviewCard: {
         showMore: "Mostrar más",

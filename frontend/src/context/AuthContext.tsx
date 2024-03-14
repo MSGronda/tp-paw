@@ -2,7 +2,7 @@ import { useState } from "react";
 import React from "react";
 import { jwtDecode, JwtPayload } from "jwt-decode";
 
-type CustomJwtPayload = JwtPayload & { roles: string; userId: number; exp: number };
+type CustomJwtPayload = JwtPayload & { role: string; userId: number; exp: number };
 
 export interface AuthContextInterface {
     isAuthenticated: boolean;
@@ -56,7 +56,7 @@ export const AuthContextProvider = ({ children }: { children: React.ReactNode })
 
     const [role, setRole] = useState<string | undefined>(() => {
         try {
-            return jwtDecode<CustomJwtPayload>(token as string).roles as string;
+            return jwtDecode<CustomJwtPayload>(token as string).role as string;
         } catch (error) {
             if (isAuthenticated) {
                 console.error(error);
@@ -93,7 +93,7 @@ export const AuthContextProvider = ({ children }: { children: React.ReactNode })
             setRefreshTokenKey(refreshToken);
             setIsAuthenticated(true);
             setEmail(jwtDecode<CustomJwtPayload>(authKey as string).sub as string);
-            setRole(jwtDecode<CustomJwtPayload>(authKey as string).roles as string);
+            setRole(jwtDecode<CustomJwtPayload>(authKey as string).role as string);
             setUserId(jwtDecode<CustomJwtPayload>(authKey as string).userId);
         } catch (e) {
             console.error(e);

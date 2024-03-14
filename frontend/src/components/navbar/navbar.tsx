@@ -1,21 +1,23 @@
-import { Autocomplete, Group, Burger, rem, Input } from '@mantine/core';
-import { useDisclosure } from '@mantine/hooks';
+import {  Group, rem, Input, Button } from '@mantine/core';
 import { IconSearch } from '@tabler/icons-react';
 import classes from './navbar.module.css';
 import UniLogo from '../../images/uni.png'
 import { useTranslation } from "react-i18next";
 import { useNavigate } from 'react-router-dom';
-import React from 'react';
+import React, { useContext } from 'react';
+import AuthContext from '../../context/AuthContext';
 
 
 export function Navbar() {
   const { t } = useTranslation();
+  const { role } = useContext(AuthContext);
 
   const links = [
     { link: '/', label: t('Navbar.home') },
     { link: '/curriculum', label: t('Navbar.curriculum') },
     { link: '/builder', label: t('Navbar.semesterbuilder') },
-    { link: '/profile', label: t('Navbar.profile') },
+    { link: '/degrees', label: t('Navbar.degrees') },
+    { link: '/create-subject', label: t('Navbar.createSubject') },
   ];
 
   const navigate = useNavigate();
@@ -35,7 +37,10 @@ export function Navbar() {
     navigate('/');
   }
 
-  const items = links.map((link, index) => (
+  // Filter links based on role
+  const filteredLinks = role === 'EDITOR' ? links : links.slice(0, -2);
+
+  const items = filteredLinks.map((link, index) => (
     <a
       key={index}
       href={link.link}
@@ -70,6 +75,14 @@ export function Navbar() {
           <Group ml={50} gap={5} className={classes.links} visibleFrom="sm">
             {items}
           </Group>
+          <Button
+            onClick={(event) => {
+              event.preventDefault();
+              navigate('/profile');
+            }}
+          >
+            {t('Navbar.profile')}
+          </Button>
         </Group>
       </div>
     </header>
