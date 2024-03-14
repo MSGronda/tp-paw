@@ -290,5 +290,9 @@ export const TRANSLATIONS_ES = {
         day6: "Sábado",
         day7: "Domingo",
         createSubject: "Crear materia"
+    },
+    Degrees: {
+        title: "Carreras",
+        createNew: "Crear nueva carrera",
     }
 }

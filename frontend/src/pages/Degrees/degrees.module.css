@@ -1,0 +1,36 @@
+.fullsize{
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    background-color: #efefef;
+    height: 100vh;
+}
+
+.container_70 {
+    width: min(max(800px, 70%), 100%);
+    padding-left: 2rem;
+    padding-right: 2rem;
+    align-self: center;
+    justify-self: center;
+    margin: 0 auto;
+}
+
+.card_basic {
+    width: 100%;
+    transition: transform 0.2s ease-in-out;
+    margin-top: 1rem;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+.card_basic h3 {
+    font-style: normal;
+    font-weight: 500;
+    margin: 1rem;
+}
+
+.card_basic:hover {
+    cursor: pointer;
+    transform: scale(1.02);
+}

@@ -26,6 +26,7 @@ import MultiReview from "./pages/MultiReview/multi-review.tsx";
 import ReviewSubject from "./pages/ReviewSubject/review";
 import EditReview from './pages/EditReview/editReview.tsx';
 import { CreateSubject } from './pages/CreateSubject/CreateSubject.tsx';
+import Degrees from './pages/Degrees/Degrees.tsx';
 
 export default function App() {
 
@@ -54,6 +55,7 @@ export default function App() {
           <Route path="review/:subjectId/edit/:reviewId" element={<PrivateRoute component={EditReview} roles={['ADMIN', 'USER']}/>}/>
           <Route path="multi-review" element={<PrivateRoute component={MultiReview} roles={['ADMIN', 'USER']}/>}/>
           <Route path="create-subject" element={<PrivateRoute component={CreateSubject} roles={['ADMIN']}/>}></Route>
+          <Route path="degrees" element={<PrivateRoute component={Degrees} roles={['ADMIN']}/>}></Route>
         </Routes>
       </Router>
       </AuthContextProvider>
