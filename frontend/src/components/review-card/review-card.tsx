@@ -21,7 +21,6 @@ interface ReviewCardProps {
     forSubject: boolean
     upvotes: number
     downvotes: number
-    voteValue: VoteValue
 }
 enum VoteValue {
     UpVote = 1,
