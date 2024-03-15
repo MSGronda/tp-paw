@@ -90,8 +90,8 @@ export function SubjectPage() {
     const getReviewFromUser = async (subjectId: string, userId: number) => {
         const res = await reviewService.getReviewFromSubjectAndUser(subjectId, userId);
         const data = handleService(res, navigate);
-        if (data) {
-            data.length === 0 ? setDidUserReview(false) : setDidUserReview(true);
+        if (res) {
+            res.status === 204 ? setDidUserReview(false) : setDidUserReview(true);
         }
     }
 
