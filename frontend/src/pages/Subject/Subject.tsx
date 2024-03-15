@@ -11,12 +11,10 @@ import {
     Badge,
     Button,
     Breadcrumbs,
-    Anchor,
     Tooltip,
     Group,
     Combobox,
     useCombobox,
-    Alert,
     Notification,
 } from '@mantine/core';
 import { IconArrowsSort, IconCheck, IconPhoto, IconX } from "@tabler/icons-react";
@@ -32,7 +30,6 @@ import { User } from "../../models/User.ts";
 
 
 export function SubjectPage() {
-    const iconStyle = { width: rem(12), height: rem(12) };
     const iconSort = <IconArrowsSort size={14} />;
 
     const { t } = useTranslation();
@@ -62,7 +59,7 @@ export function SubjectPage() {
     const INITIAL_ORDER: string = "difficulty";
     const INITAL_DIR: string = "asc";
 
-    const {state} = location;
+    const { state } = location;
 
 
     const searchSubject = async (subjectId: string) => {
@@ -108,8 +105,8 @@ export function SubjectPage() {
         const res = await userService.getUserProgress(userId);
         const data = handleService(res, navigate);
         if (res && subjectId.id !== undefined) {
-            for(let i=0;i < data.subjectProgress.entry.length;i+=1) {
-                if(data.subjectProgress.entry[i].key === subjectId.id) {
+            for (let i = 0; i < data.subjectProgress.entry.length; i += 1) {
+                if (data.subjectProgress.entry[i].key === subjectId.id) {
                     setProgress(data.subjectProgress.entry[i].value);
                 }
             }
@@ -117,7 +114,7 @@ export function SubjectPage() {
     }
 
     const setSubjectProgress = (userId: number, subjectId: string, newProgressState: string) => {
-        newProgressState === "DONE"? userService.setFinishedSubjects(userId, new Array(subjectId), []) : userService.setFinishedSubjects(userId, [], new Array(subjectId));
+        newProgressState === "DONE" ? userService.setFinishedSubjects(userId, new Array(subjectId), []) : userService.setFinishedSubjects(userId, [], new Array(subjectId));
         setProgress(newProgressState);
     }
 
@@ -147,11 +144,11 @@ export function SubjectPage() {
             }
         }
         setMaxPage(1 + subject.reviewCount / 10);
-        if (state && state.reviewUpdated !== undefined ) {
+        if (state && state.reviewUpdated !== undefined) {
             setEditShowAlert(true);
             setEditReviewValue(state.reviewUpdated);
         }
-        if( localStorage.hasOwnProperty('reviewDeleted')){
+        if (localStorage.hasOwnProperty('reviewDeleted')) {
             setDeleteShowAlert(true);
             setDeletedReviewValue(localStorage.getItem('reviewDeleted') === "true");
             localStorage.removeItem('reviewDeleted');
@@ -159,11 +156,11 @@ export function SubjectPage() {
     }, []);
 
     useEffect(() => {
-        if(userId !== undefined){
+        if (userId !== undefined) {
             getUserProgress(userId);
         }
 
-    },[])
+    }, [])
 
     const findUserName = (userId: number) => {
         let userName = "";
@@ -197,7 +194,7 @@ export function SubjectPage() {
                                     icon={<IconCheck />}
                                     color="teal"
                                     title={t("Review.editSuccess")}
-                                    onClose={() => {setEditShowAlert(false); }}
+                                    onClose={() => { setEditShowAlert(false); }}
                                 />
                             )
                         ) : (
@@ -206,7 +203,7 @@ export function SubjectPage() {
                                     icon={<IconX />}
                                     color="red"
                                     title={t("Review.editFailure")}
-                                    onClose={() => {setEditShowAlert(false); state.reviewUpdated = undefined}}
+                                    onClose={() => { setEditShowAlert(false); state.reviewUpdated = undefined }}
                                 />
                             )
                         )}
@@ -235,12 +232,12 @@ export function SubjectPage() {
                         <div className={classes.breadcrumbArea}>
                             {degree !== null ?
                                 <Breadcrumbs separator="→">
-                                    <Anchor href={"/degree/" + degree.id}>
+                                    <Link to={"/degree/" + degree.id}>
                                         {degree.name}
-                                    </Anchor>
+                                    </Link>
                                     {year === 0 ?
-                                        <Anchor href={"/degree/" + degree.id + "?tab=electives"}>{t("Subject.electives")}</Anchor> :
-                                        <Anchor href={"/degree/" + degree.id + "?tab=" + year}>{t("Subject.year")} {year}</Anchor>
+                                        <Link to={"/degree/" + degree.id + "?tab=electives"}>{t("Subject.electives")}</Link> :
+                                        <Link to={"/degree/" + degree.id + "?tab=" + year}>{t("Subject.year")} {year}</Link>
                                     }
                                 </Breadcrumbs> :
                                 <></>
@@ -398,20 +395,18 @@ export function SubjectPage() {
                                     <input type="hidden" name="progress" id="progress" value="{progress.value}" />
                                     <Tooltip label={t("Subject.progressTooltip")}>
                                         {progress === "DONE" ?
-                                            <Button variant="filled" size="lg" radius="xl" onClick={() =>
-                                                {
-                                                    if(userId !== undefined && subjectId.id !== undefined) {
-                                                        setSubjectProgress(userId, subjectId.id, "PENDING") 
-                                                    }
-                                                } }>
+                                            <Button variant="filled" size="lg" radius="xl" onClick={() => {
+                                                if (userId !== undefined && subjectId.id !== undefined) {
+                                                    setSubjectProgress(userId, subjectId.id, "PENDING")
+                                                }
+                                            }}>
                                                 <Text c={"white"}>{t("Subject.progressDone")}</Text>
                                             </Button> :
-                                            <Button variant="filled" size="lg" radius="xl" className={classes.pendingButton} onClick={() =>
-                                                {
-                                                    if(userId !== undefined && subjectId.id !== undefined) {
-                                                        setSubjectProgress(userId, subjectId.id, "DONE") 
-                                                    }
-                                                } }>
+                                            <Button variant="filled" size="lg" radius="xl" className={classes.pendingButton} onClick={() => {
+                                                if (userId !== undefined && subjectId.id !== undefined) {
+                                                    setSubjectProgress(userId, subjectId.id, "DONE")
+                                                }
+                                            }}>
                                                 <Text c={"white"}>{t("Subject.progressPending")}</Text>
                                             </Button>
                                         }
@@ -494,8 +489,8 @@ export function SubjectPage() {
                                     anonymous={review.anonymous}
                                     id={review.id}
                                     forSubject={true}
-                                            upvotes = {review.upVotes}
-                                            downvotes = {review.downVotes}
+                                    upvotes={review.upVotes}
+                                    downvotes={review.downVotes}
 
 
                                 />
