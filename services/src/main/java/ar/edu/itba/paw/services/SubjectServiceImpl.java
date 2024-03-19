@@ -5,6 +5,7 @@ import ar.edu.itba.paw.models.enums.*;
 import ar.edu.itba.paw.models.exceptions.*;
 import ar.edu.itba.paw.persistence.dao.SubjectDao;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalTime;
@@ -17,11 +18,19 @@ public class SubjectServiceImpl implements SubjectService {
     private final DegreeService degreeService;
     private final ProfessorService professorService;
 
+    private final ReviewService reviewService;
+
     @Autowired
-    public SubjectServiceImpl(final SubjectDao subjectDao, DegreeService degreeService, ProfessorService professorService){
+    public SubjectServiceImpl(
+            final SubjectDao subjectDao,
+            final DegreeService degreeService,
+            final ProfessorService professorService,
+            @Lazy final ReviewService reviewService
+    ){
         this.subjectDao = subjectDao;
         this.degreeService = degreeService;
         this.professorService = professorService;
+        this.reviewService = reviewService;
     }
 
     @Transactional
@@ -394,5 +403,18 @@ public class SubjectServiceImpl implements SubjectService {
     @Override
     public void updateUnreviewedNotificationTime() {
         subjectDao.updateUnreviewedNotificationTime();
+    }
+
+    @Override
+    public List<Subject> getSubjectsThatUserReviewed(final Long userId, final Integer page){
+        List<Subject> subjectList = new ArrayList<>();
+        if( userId != null && page != 0){
+            List<Review> reviews = reviewService.get(userId, null, page, "difficulty", "desc" );
+            for( Review review : reviews){
+                subjectList.add(review.getSubject());
+            }
+        }
+
+        return subjectList;
     }
 }

@@ -128,4 +128,9 @@ public interface SubjectService {
             final List<List<String>> buildings,
             final List<List<String>> modes
     );
+
+    List<Subject> getSubjectsThatUserReviewed(
+            final Long userId,
+            final Integer page
+    );
 }

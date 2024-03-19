@@ -84,7 +84,6 @@ public class SubjectController {
             dir
         );
 
-        // TODO: @MC, acordate de arreglar esto para el caso que de available, unLockable, done, future, etc
 
         final List<SubjectDto> subjectsDtos = subs.stream().map(subject -> SubjectDto.fromSubject(uriInfo, subject)).collect(Collectors.toList());
 
@@ -108,6 +107,21 @@ public class SubjectController {
         }
         Response.ResponseBuilder responseBuilder = Response.ok(new GenericEntity<List<SubjectDto>>(subjectsDtos){});
         return responseBuilder.build();
+    }
+
+    @GET
+    @Path("/userReviews")
+    @Produces("application/vnd.user.v1+json")
+    public Response getSubjectsThatUserReviewed(
+            @QueryParam("userId") final Long userId,
+            @QueryParam("page") @DefaultValue("0") final Integer page
+    ){
+        final List<Subject> subjects = subjectService.getSubjectsThatUserReviewed(userId, page);
+        if( subjects.isEmpty()) {
+            return Response.noContent().build();
+        }
+        final List<SubjectDto> subjectDtos = subjects.stream().map(s -> SubjectDto.fromSubject(uriInfo, s)).collect(Collectors.toList());
+        return Response.ok(new GenericEntity<List<SubjectDto>>(subjectDtos){}).build();
     }
 
     @POST
