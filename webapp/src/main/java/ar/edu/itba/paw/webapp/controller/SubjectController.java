@@ -58,6 +58,8 @@ public class SubjectController {
             @QueryParam("difficulty") final Integer difficulty,
             @QueryParam("timeDemand") final Integer timeDemand,
 
+            @QueryParam("userReviews") final Long userReviews,
+
             @QueryParam("page") @DefaultValue("1") final int page,
             @QueryParam("orderBy") @DefaultValue("name") final String orderBy,
             @QueryParam("dir") @DefaultValue("asc") final String dir
@@ -79,6 +81,7 @@ public class SubjectController {
             department,
             difficulty,
             timeDemand,
+            userReviews,
             page,
             orderBy,
             dir
@@ -107,21 +110,6 @@ public class SubjectController {
         }
         Response.ResponseBuilder responseBuilder = Response.ok(new GenericEntity<List<SubjectDto>>(subjectsDtos){});
         return responseBuilder.build();
-    }
-
-    @GET
-    @Path("/userReviews")
-    @Produces("application/vnd.user.v1+json")
-    public Response getSubjectsThatUserReviewed(
-            @QueryParam("userId") final Long userId,
-            @QueryParam("page") @DefaultValue("0") final Integer page
-    ){
-        final List<Subject> subjects = subjectService.getSubjectsThatUserReviewed(userId, page);
-        if( subjects.isEmpty()) {
-            return Response.noContent().build();
-        }
-        final List<SubjectDto> subjectDtos = subjects.stream().map(s -> SubjectDto.fromSubject(uriInfo, s)).collect(Collectors.toList());
-        return Response.ok(new GenericEntity<List<SubjectDto>>(subjectDtos){}).build();
     }
 
     @POST

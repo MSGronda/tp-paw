@@ -204,6 +204,7 @@ public class SubjectServiceImpl implements SubjectService {
             final String department,
             final Integer difficulty,
             final Integer timeDemand,
+            final Long userReviews,
             final int page,
             final String orderBy,
             final String dir
@@ -234,6 +235,9 @@ public class SubjectServiceImpl implements SubjectService {
         }
         if(query != null){
             return search(user, query, page, orderBy, dir, credits, department, difficulty, timeDemand);
+        }
+        if(userReviews != null){
+            return getSubjectsThatUserReviewed(userReviews, page);
         }
         return getAll(page,orderBy, dir);
     }

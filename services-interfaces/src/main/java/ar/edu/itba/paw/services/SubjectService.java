@@ -46,6 +46,7 @@ public interface SubjectService {
             final String department,
             final Integer difficulty,
             final Integer timeDemand,
+            final Long userReviews,
             final int page,
             final String orderBy,
             final String dir
