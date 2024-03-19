@@ -69,4 +69,6 @@ public interface UserService {
     void updateMultipleSubjectProgress(final User currentUser, final Long id, final List<String> newPassedSubjects, final List<String> newNotPassedSubjects);
 
     List<User> getUsersThatReviewedSubject(final String subjectId, final int page);
+
+    List<User> getUsers(final String subjectId, final int page);
 }

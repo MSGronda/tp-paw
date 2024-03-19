@@ -37,7 +37,7 @@ export class UserService {
                 subjectId: subjectId,
                 page: page
             };
-            const res = await axiosService.authAxiosWrapper(axiosService.GET,`${path}/subjectReviews`,config);
+            const res = await axiosService.authAxiosWrapper(axiosService.GET,`${path}`,config);
             return handleResponse(res);
         } catch (error: any){
             return handleResponse(error.response);

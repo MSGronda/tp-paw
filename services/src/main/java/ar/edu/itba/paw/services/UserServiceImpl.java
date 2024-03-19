@@ -41,6 +41,8 @@ public class UserServiceImpl implements UserService {
 
     private final ReviewService reviewService;
 
+    private final AuthUserService authUserService;
+
     private static final int MAX_IMAGE_SIZE = 1024 * 1024 * 5;
     private static final Logger LOGGER = LoggerFactory.getLogger(UserServiceImpl.class);
 
@@ -54,7 +56,8 @@ public class UserServiceImpl implements UserService {
             final DegreeService degreeService,
             final MailService mailService,
             final PasswordEncoder passwordEncoder,
-            @Lazy final ReviewService reviewService
+            @Lazy final ReviewService reviewService,
+            @Lazy final AuthUserService authUserService
     ) {
         this.userDao = userDao;
         this.recDao = recDao;
@@ -65,6 +68,7 @@ public class UserServiceImpl implements UserService {
         this.mailService = mailService;
         this.passwordEncoder = passwordEncoder;
         this.reviewService = reviewService;
+        this.authUserService = authUserService;
     }
 
     @Override
@@ -537,12 +541,22 @@ public class UserServiceImpl implements UserService {
     @Override
     public List<User> getUsersThatReviewedSubject(final String subjectId, final int page){
         List<User> userList = new ArrayList<>();
-        if( subjectId != null && page != 0){
+        if( page != 0){
             List<Review> reviews = reviewService.get(null, subjectId, page, "difficulty", "desc");
             for( Review review : reviews){
                 userList.add(review.getUser());
             }
         }
+        return userList;
+    }
+
+    @Override
+    public List<User> getUsers(final String subjectId, final int page){
+        if(subjectId != null){
+            return getUsersThatReviewedSubject(subjectId, page);
+        }
+        List<User> userList = new ArrayList<>();
+        userList.add(authUserService.getCurrentUser());
         return userList;
     }
 }
