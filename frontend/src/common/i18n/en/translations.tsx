@@ -294,5 +294,10 @@ export const TRANSLATIONS_EN = {
     Degrees: {
         title: "Degrees",
         createNew: "Create new degree",
+    },
+    User: {
+        makeModerator: "Make moderator",
+        noReviews: "No reviews yet!",
+        userReviews: "User reviews",
     }
 }

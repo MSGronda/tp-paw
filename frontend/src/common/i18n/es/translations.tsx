@@ -294,5 +294,10 @@ export const TRANSLATIONS_ES = {
     Degrees: {
         title: "Carreras",
         createNew: "Crear nueva carrera",
+    },
+    User: {
+        makeModerator: "Hacer moderador",
+        noReviews: "¡No hay reseñas!",
+        userReviews: "Reseñas del usuario",
     }
 }

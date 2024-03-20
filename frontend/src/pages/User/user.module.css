@@ -1,0 +1,97 @@
+.fullsize {
+    width: 100%;
+    flex-direction: column;
+    background-color: #efefef;
+    flex: content;
+    height: 100%;
+}
+
+.body {
+    width: min(max(800px, 50%), 100%);
+    padding-left: 2rem;
+    padding-right: 2rem;
+    align-self: center;
+    justify-self: center;
+    margin: 0 auto;
+    background-color: #efefef;
+    flex: 1 0 auto;
+    display: flex;
+    flex-direction: column;
+    margin-top: 3rem;
+}
+
+.container{
+    width: 100%;
+    min-height: 100px;
+    justify-content: center;
+    align-content: space-between;
+    background-color: #efefef;
+}
+
+.header {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+.image_container {
+    position: relative;
+    display: inline-block;
+}
+
+.title {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    margin-left: 2rem;
+    width: 100%;
+}
+
+.editor_text {
+    margin-left: 1rem;
+    color: #4e90e2;
+    font-weight: normal;
+}
+
+.moderator-tag {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+.reviewsColumn{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem 2rem 3rem;
+    gap: 1rem;
+}
+
+.hrSeparator{
+    width: 40%;
+}
+
+.noReviewsTitle{
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    /* min-height: 100px; */
+    align-content: space-between;
+}
+
+.filter {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+}
+
+.filterDropdown{
+    margin-left: 5%;
+}
+
+.userReviews{
+    font-weight: bold;
+    margin-right: 5%;
+}

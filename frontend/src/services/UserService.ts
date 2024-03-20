@@ -104,4 +104,13 @@ export class UserService {
             return handleResponse(error.response);
         }
     }
+
+    async getUserById(userId: number) {
+        try{
+            const res = await axiosService.authAxiosWrapper(axiosService.GET, `${path}/${userId}`, {});
+            return handleResponse(res);
+        } catch (error: any) {
+            return handleResponse(error.response);
+        }
+    }
 }
