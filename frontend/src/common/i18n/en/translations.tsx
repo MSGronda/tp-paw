@@ -299,5 +299,10 @@ export const TRANSLATIONS_EN = {
         makeModerator: "Make moderator",
         noReviews: "No reviews yet!",
         userReviews: "User reviews",
+        degree: "Degree",
+        noDegree: "Not selected",
+        currentSemester: "Current semester",
+        completedCredits: "Completed credits",
+        outOf: "out of",
     }
 }

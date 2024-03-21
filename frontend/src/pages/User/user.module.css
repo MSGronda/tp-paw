@@ -95,3 +95,11 @@
     font-weight: bold;
     margin-right: 5%;
 }
+
+.planTable {
+    width: 50%;
+}
+
+.userName {
+    font-size: xx-large;
+}

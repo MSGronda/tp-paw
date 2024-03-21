@@ -3,15 +3,14 @@ import { reviewService, subjectService, userService } from "../../services";
 import classes from './user.module.css';
 import { useContext, useEffect, useState } from "react";
 import { Navbar } from "../../components/navbar/navbar";
-import { useNavigate, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import AuthContext from "../../context/AuthContext";
 import { Review } from "../../models/Review";
 import { Subject } from "../../models/Subject";
-import { Avatar, Button, Card, Combobox, Text, useCombobox } from "@mantine/core";
+import { Avatar, Button, Card, Combobox, Table, Text, useCombobox } from "@mantine/core";
 import type { User } from "../../models/User";
 import ReviewCard from "../../components/review-card/review-card";
 import { IconArrowsSort } from "@tabler/icons-react";
-
 
 
 export default function User() {
@@ -22,6 +21,7 @@ export default function User() {
     const [loadingUser, setLoadingUser] = useState(true);
     const [loadingReviews, setLoadingReviews] = useState(true);
     const [user, setUser] = useState({} as User);
+    const [planSubjects, setPlanSubjects] = useState([{} as Subject]);
     const [reviews, setReviews] = useState([{} as Review]);
     const [subjects, setSubjects] = useState([{} as Subject]);
 
@@ -45,11 +45,19 @@ export default function User() {
         setLoadingUser(false);
     }
 
+    const getUserPlan = async () => {
+        const res = await subjectService.getUserPlanSubjects(Number(id));
+        if (res?.data) {
+            setPlanSubjects(res.data);
+        }
+    }
+
     const getReviewsFromUser = async (userId: number, page: number, orderBy: string, dir: string) => {
         const res = await reviewService.getReviewsFromUser(userId, page, orderBy, dir);
         if (res?.data) {
             setReviews(res.data);
         }
+        setLoadingReviews(false);
     }
 
     const getSubjectsFromReviews = async (userId: number, page: number) => {
@@ -70,6 +78,7 @@ export default function User() {
             navigate('/profile');
         } else {
             getUser();
+            getUserPlan();
         }
     }, [id, userId]);
 
@@ -82,7 +91,7 @@ export default function User() {
             }
             getSubjectsFromReviews(Number(id), page);
         }
-        setLoadingReviews(false);
+
     }, []);
 
     const isModerator = () => {
@@ -120,14 +129,14 @@ export default function User() {
                                     <div className={classes.image_container}>
                                         <Avatar
                                             src={user.profileImage}
-                                            size={120}
-                                            radius={120}
+                                            size={100}
+                                            radius={100}
                                             mx="auto"
                                         />
                                     </div>
                                     <div className={classes.title}>
                                         <div className={classes.moderator_tag}>
-                                            <h1>
+                                            <h1 className={classes.userName}>
                                                 {user.username}
                                             </h1>
                                         </div>
@@ -140,13 +149,48 @@ export default function User() {
                                         }
                                     </div>
                                     {role === "EDITOR" && !isModerator() &&
-                                        <div className={classes.moderator_tag}>
-                                            <Button variant="outlined">
+                                        <div className={classes.moderator_tag} >
+                                            <Button variant="outline">
                                                 {t("User.makeModerator")}
                                             </Button>
                                         </div>
                                     }
                                 </div>
+                                <br />
+                                <Table className={classes.planTable}>
+                                    <Table.Tbody>
+                                        <Table.Tr>
+                                            <Table.Td>{t("User.degree")}</Table.Td>
+                                            <Table.Td>
+                                                {true ?
+                                                    t("User.noDegree")//Agregar el user degree despues
+                                                    :
+                                                    t("User.noDegree")
+                                                }
+                                            </Table.Td>
+                                        </Table.Tr>
+                                        {
+                                            planSubjects.length > 0 && planSubjects.map((subject, index) => (
+                                                <Table.Tr>
+                                                    <Table.Td>
+                                                        {index == 0 && t("User.currentSemester")}
+                                                    </Table.Td>
+                                                    <Table.Td>
+                                                        <Link to={"/subjects/" + subject.id}>{subject.name}</Link>
+                                                    </Table.Td>
+                                                </Table.Tr>
+                                            ))
+                                        }{
+                                            true &&
+                                            <Table.Tr>
+                                                <Table.Td>{t("User.completedCredits")}</Table.Td>
+                                                {/*TODO agregar total credits de degree*/}
+                                                <Table.Td>{user.creditsDone} {t("User.outOf")} {}</Table.Td>
+                                            </Table.Tr>
+                                        }
+
+                                    </Table.Tbody>
+                                </Table>
                             </Card>
                         </div>
                         <br />
@@ -201,14 +245,14 @@ export default function User() {
                         }
                         <div className={classes.noReviewsTitle}>
                             {
-                                reviews.length === 0? 
-                                <Text fw={700} size={"xl"}>{t("User.noreviews")}</Text>
-                                : <></>
+                                reviews.length === 0 ?
+                                    <Text fw={700} size={"xl"}>{t("User.noreviews")}</Text>
+                                    : <></>
                             }
                         </div>
                         <div className={classes.reviewsColumn}>
                             {
-                                reviews.length > 0 && reviews.map((review) => (
+                                !loadingReviews && reviews.length > 0 && reviews.map((review) => (
                                     !review.anonymous &&
                                     <ReviewCard
                                         key={review.id}
