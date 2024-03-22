@@ -16,7 +16,7 @@ public class UserDto {
     private URI image;
 
     //private Locale locale
-    private URI degree;
+    private Long degreeId;
 
     private List<String> roles;
 
@@ -39,7 +39,7 @@ public class UserDto {
         userDto.username = user.getUsername();
         userDto.image = uriInfo.getBaseUriBuilder().path("images").path(String.valueOf(user.getImageId())).build();
         userDto.roles = user.getRoles().stream().map(Role::getName).collect(Collectors.toList());
-        userDto.degree = uriInfo.getBaseUriBuilder().path("degrees").path(String.valueOf(user.getDegree().getId())).build();
+        userDto.degreeId = user.getDegree().getId();
         userDto.reviews = uriInfo.getBaseUriBuilder().path("reviews").queryParam("userId", user.getId()).build();
         //TODO - CHECK THIS
         userDto.userSemester = uriInfo.getBaseUriBuilder().path("users").path(String.valueOf(user.getId())).path("plan").build();
@@ -79,12 +79,12 @@ public class UserDto {
         this.image = image;
     }
 
-    public URI getDegree() {
-        return degree;
+    public Long getDegreeId() {
+        return degreeId;
     }
 
-    public void setDegree(URI degree) {
-        this.degree = degree;
+    public void setDegreeId(Long degreeId) {
+        this.degreeId = degreeId;
     }
 
     public URI getReviews() {

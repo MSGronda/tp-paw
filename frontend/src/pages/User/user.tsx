@@ -1,5 +1,5 @@
 import { useTranslation } from "react-i18next";
-import { reviewService, subjectService, userService } from "../../services";
+import { degreeService, reviewService, subjectService, userService } from "../../services";
 import classes from './user.module.css';
 import { useContext, useEffect, useState } from "react";
 import { Navbar } from "../../components/navbar/navbar";
@@ -11,6 +11,7 @@ import { Avatar, Button, Card, Combobox, Table, Text, useCombobox } from "@manti
 import type { User } from "../../models/User";
 import ReviewCard from "../../components/review-card/review-card";
 import { IconArrowsSort } from "@tabler/icons-react";
+import { Degree } from "../../models/Degree";
 
 
 export default function User() {
@@ -22,6 +23,7 @@ export default function User() {
     const [loadingReviews, setLoadingReviews] = useState(true);
     const [user, setUser] = useState({} as User);
     const [planSubjects, setPlanSubjects] = useState([{} as Subject]);
+    const [degree, setDegree] = useState({} as Degree);
     const [reviews, setReviews] = useState([{} as Review]);
     const [subjects, setSubjects] = useState([{} as Subject]);
 
@@ -41,6 +43,7 @@ export default function User() {
         const res = await userService.getUserById(Number(id));
         if (res?.data) {
             setUser(res.data);
+            getUserDegree(res.data.degreeId);
         }
         setLoadingUser(false);
     }
@@ -49,6 +52,14 @@ export default function User() {
         const res = await subjectService.getUserPlanSubjects(Number(id));
         if (res?.data) {
             setPlanSubjects(res.data);
+        }
+    }
+
+    const getUserDegree = async(degreeId: number | undefined) => {
+        if( degreeId === undefined) return;
+        const res = await degreeService.getDegreeById(degreeId);
+        if(res?.data){
+            setDegree(res.data)
         }
     }
 
@@ -162,8 +173,8 @@ export default function User() {
                                         <Table.Tr>
                                             <Table.Td>{t("User.degree")}</Table.Td>
                                             <Table.Td>
-                                                {true ?
-                                                    t("User.noDegree")//Agregar el user degree despues
+                                                {degree.name ?
+                                                    degree.name
                                                     :
                                                     t("User.noDegree")
                                                 }
@@ -171,7 +182,7 @@ export default function User() {
                                         </Table.Tr>
                                         {
                                             planSubjects.length > 0 && planSubjects.map((subject, index) => (
-                                                <Table.Tr>
+                                                <Table.Tr key={subject.id + index}>
                                                     <Table.Td>
                                                         {index == 0 && t("User.currentSemester")}
                                                     </Table.Td>
@@ -185,7 +196,7 @@ export default function User() {
                                             <Table.Tr>
                                                 <Table.Td>{t("User.completedCredits")}</Table.Td>
                                                 {/*TODO agregar total credits de degree*/}
-                                                <Table.Td>{user.creditsDone} {t("User.outOf")} {}</Table.Td>
+                                                <Table.Td>{user.creditsDone} {t("User.outOf")} {degree.totalCredits}</Table.Td>
                                             </Table.Tr>
                                         }
 

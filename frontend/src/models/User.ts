@@ -4,5 +4,6 @@ export interface User {
     username: string,
     email: string,
     profileImage: string,
-    roles: string[]
+    roles: string[],
+    degreeId: number | undefined
 }
