@@ -297,6 +297,7 @@ export const TRANSLATIONS_ES = {
     },
     User: {
         makeModerator: "Hacer moderador",
+        moderator: "MODERADOR",
         noReviews: "¡No hay reseñas!",
         userReviews: "Reseñas del usuario",
         degree: "Carrera",

@@ -22,6 +22,7 @@ export default function User() {
     const [loadingUser, setLoadingUser] = useState(true);
     const [loadingReviews, setLoadingReviews] = useState(true);
     const [user, setUser] = useState({} as User);
+    const [isModerator, setIsModerator] = useState(false);
     const [planSubjects, setPlanSubjects] = useState([{} as Subject]);
     const [degree, setDegree] = useState({} as Degree);
     const [reviews, setReviews] = useState([{} as Review]);
@@ -43,6 +44,7 @@ export default function User() {
         const res = await userService.getUserById(Number(id));
         if (res?.data) {
             setUser(res.data);
+            setIsModerator(checkModerator(res.data.roles));
             getUserDegree(res.data.degreeId);
         }
         setLoadingUser(false);
@@ -55,10 +57,10 @@ export default function User() {
         }
     }
 
-    const getUserDegree = async(degreeId: number | undefined) => {
-        if( degreeId === undefined) return;
+    const getUserDegree = async (degreeId: number | undefined) => {
+        if (degreeId === undefined) return;
         const res = await degreeService.getDegreeById(degreeId);
-        if(res?.data){
+        if (res?.data) {
             setDegree(res.data)
         }
     }
@@ -105,13 +107,14 @@ export default function User() {
 
     }, []);
 
-    const isModerator = () => {
-        user.roles.forEach((role) => {
-            if (role === "EDITOR") {
-                return true;
+    const checkModerator = (roles: string[]) => {
+        let isModerator = false;
+        roles.forEach((role) => {
+            if (role === 'EDITOR') {
+                isModerator = true;
             }
         });
-        return false;
+        return isModerator;
     }
 
     const findSubjectName = (subjectId: string) => {
@@ -150,18 +153,16 @@ export default function User() {
                                             <h1 className={classes.userName}>
                                                 {user.username}
                                             </h1>
+                                            {isModerator &&
+                                                <h2 className={classes.editor_text}>
+                                                    {t("User.moderator")}
+                                                </h2>
+                                            }
                                         </div>
-                                        {isModerator() &&
-                                            <div>
-                                                <Text className={classes.editor_text} fz="lg" fw={500} mt="md">
-                                                    {t("Profile.moderator")}
-                                                </Text>
-                                            </div>
-                                        }
                                     </div>
-                                    {role === "EDITOR" && !isModerator() &&
+                                    {role === "EDITOR" && !isModerator &&
                                         <div className={classes.moderator_tag} >
-                                            <Button variant="outline">
+                                            <Button variant="outline"> {/* TODO Ver endpoint de make moderator y conectarlo*/}
                                                 {t("User.makeModerator")}
                                             </Button>
                                         </div>
@@ -181,7 +182,7 @@ export default function User() {
                                             </Table.Td>
                                         </Table.Tr>
                                         {
-                                            planSubjects.length > 0 && planSubjects.map((subject, index) => (
+                                            degree.name && planSubjects.length > 0 && planSubjects.map((subject, index) => (
                                                 <Table.Tr key={subject.id + index}>
                                                     <Table.Td>
                                                         {index == 0 && t("User.currentSemester")}
@@ -192,7 +193,7 @@ export default function User() {
                                                 </Table.Tr>
                                             ))
                                         }{
-                                            true &&
+                                            degree.name &&
                                             <Table.Tr>
                                                 <Table.Td>{t("User.completedCredits")}</Table.Td>
                                                 {/*TODO agregar total credits de degree*/}

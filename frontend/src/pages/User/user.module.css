@@ -48,12 +48,13 @@
 }
 
 .editor_text {
-    margin-left: 1rem;
+    margin-left: 2rem;
+    font-size: xx-large;
     color: #4e90e2;
-    font-weight: normal;
+    font-weight: 500;
 }
 
-.moderator-tag {
+.moderator_tag {
     display: flex;
     flex-direction: row;
     align-items: center;

@@ -297,6 +297,7 @@ export const TRANSLATIONS_EN = {
     },
     User: {
         makeModerator: "Make moderator",
+        moderator: "MODERATOR",
         noReviews: "No reviews yet!",
         userReviews: "User reviews",
         degree: "Degree",
