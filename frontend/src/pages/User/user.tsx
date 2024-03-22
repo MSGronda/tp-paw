@@ -23,10 +23,10 @@ export default function User() {
     const [loadingReviews, setLoadingReviews] = useState(true);
     const [user, setUser] = useState({} as User);
     const [isModerator, setIsModerator] = useState(false);
-    const [planSubjects, setPlanSubjects] = useState([{} as Subject]);
+    const [planSubjects, setPlanSubjects] = useState<Subject[]>([]);
     const [degree, setDegree] = useState({} as Degree);
-    const [reviews, setReviews] = useState([{} as Review]);
-    const [subjects, setSubjects] = useState([{} as Subject]);
+    const [reviews, setReviews] = useState<Review[]>([]);
+    const [subjects, setSubjects] = useState<Subject[]>([]);
 
     const { id } = useParams();
     const { userId, role } = useContext(AuthContext);
@@ -258,7 +258,7 @@ export default function User() {
                         <div className={classes.noReviewsTitle}>
                             {
                                 reviews.length === 0 ?
-                                    <Text fw={700} size={"xl"}>{t("User.noreviews")}</Text>
+                                    <Text fw={700} size={"xl"}>{t("User.noReviews")}</Text>
                                     : <></>
                             }
                         </div>
