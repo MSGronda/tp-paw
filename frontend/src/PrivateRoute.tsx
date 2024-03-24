@@ -1,6 +1,7 @@
 import { Navigate, useLocation } from 'react-router-dom'
 import AuthContext from "./context/AuthContext";
 import { useContext } from "react";
+import {userService} from "./services";
 
 interface Props {
   component: React.ComponentType
@@ -11,6 +12,11 @@ interface Props {
 export const PrivateRoute: React.FC<Props> = ({ component: RouteComponent, roles }) => {
   const { isAuthenticated /*, role*/} = useContext(AuthContext);
   const location = useLocation();
+  const user = userService.getCachedUser();
+  
+  if(isAuthenticated && user && !user.degreeId && location.pathname !== "/onboarding") {
+    return <Navigate to={"/onboarding"}/>
+  }
 
   if (isAuthenticated /*&& roles.includes(role as string)*/) {
     return <RouteComponent />

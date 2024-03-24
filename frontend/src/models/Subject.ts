@@ -62,4 +62,5 @@ export interface Subject {
     timeDemand: string,
     reviewCount: number,
     prerequisites: string[]
+    semester?: number
 }

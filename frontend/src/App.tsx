@@ -28,6 +28,8 @@ import EditReview from './pages/EditReview/editReview.tsx';
 import { CreateSubject } from './pages/CreateSubject/CreateSubject.tsx';
 import Degrees from './pages/Degrees/Degrees.tsx';
 import User from './pages/User/user.tsx';
+import Onboarding from "./pages/Onboarding/onboarding.tsx";
+import {AnyRoute} from "./AnyRoute.tsx";
 
 export default function App() {
 
@@ -36,17 +38,18 @@ export default function App() {
     const lng = navigator.language;
     i18n.changeLanguage(lng);
   }, []);
-  
+
   return (
     <MantineProvider>
       <AuthContextProvider>
       {/* <RouterProvider router={router}/> */}
       <Router basename="/paw-2023a-06">
         <Routes>
-          <Route path="/" element={<HomeScreen/>}/>
+          <Route path="/" element={<AnyRoute component={HomeScreen}/>}/>
           <Route path="register" element={<AnonymousRoute component={Register}/>}/>
           <Route path="confirm" element={<AnonymousRoute component={ConfirmEmail}/>}/>
           <Route path="login" element={<AnonymousRoute component={Login}/>}/>
+          <Route path="onboarding" element={<PrivateRoute component={Onboarding} roles={['ADMIN', 'USER']}/>} />
           <Route path="search" element={<PrivateRoute component={Search} roles={['ADMIN', 'USER']}/>}/>
           <Route path="profile" element={<PrivateRoute component={Profile} roles={['ADMIN', 'USER']}/>}/>
           <Route path="builder" element={<PrivateRoute component={SemesterBuilder} roles={['ADMIN', 'USER']}/>}/>

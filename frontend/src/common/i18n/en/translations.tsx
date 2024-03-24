@@ -37,6 +37,20 @@ export const TRANSLATIONS_EN = {
             login: "Login"
         }
     },
+    Onboarding: {
+        back: "Back",
+        next: "Next",
+        finish: "Finish",
+        DegreeSelection: {
+            title: "What degree are you studying?",
+            select: "Select your degree"
+        },
+        SubjectSelection: {
+            title: "Select the subjects you already passed",
+            semester: "Semester {{n}}",
+            electives: "Electives"
+        }
+    },
     Login: {
         title: "Login",
         email: "Email",

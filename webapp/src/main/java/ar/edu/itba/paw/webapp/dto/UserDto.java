@@ -39,11 +39,10 @@ public class UserDto {
         userDto.username = user.getUsername();
         userDto.image = uriInfo.getBaseUriBuilder().path("images").path(String.valueOf(user.getImageId())).build();
         userDto.roles = user.getRoles().stream().map(Role::getName).collect(Collectors.toList());
-        if( user.getDegree() != null) {
+
+        if( user.getDegree() != null)
             userDto.degreeId = user.getDegree().getId();
-        }else {
-            userDto.degreeId = null;
-        }
+
         userDto.reviews = uriInfo.getBaseUriBuilder().path("reviews").queryParam("userId", user.getId()).build();
         //TODO - CHECK THIS
         userDto.userSemester = uriInfo.getBaseUriBuilder().path("users").path(String.valueOf(user.getId())).path("plan").build();

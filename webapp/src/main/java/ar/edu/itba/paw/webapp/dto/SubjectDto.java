@@ -3,9 +3,7 @@ package ar.edu.itba.paw.webapp.dto;
 import ar.edu.itba.paw.models.Subject;
 
 import javax.ws.rs.core.UriInfo;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 public class SubjectDto {
@@ -18,6 +16,7 @@ public class SubjectDto {
     private String timeDemand;
     private Integer reviewCount;
     private List<String> prerequisites;
+    private Integer semester;
 
     public static SubjectDto fromSubject(final UriInfo uriInfo, final Subject subject){
         final SubjectDto subjectDto =  new SubjectDto();
@@ -33,6 +32,12 @@ public class SubjectDto {
         subjectDto.timeDemand = subject.getReviewStats().getTimeDemanding().name();
         subjectDto.reviewCount = subject.getReviewStats().getReviewCount();
 
+        return subjectDto;
+    }
+    
+    public static SubjectDto fromSubjectWithSemesters(final UriInfo uriInfo, final Subject subject, final long degreeId) {
+        final SubjectDto subjectDto = fromSubject(uriInfo, subject);
+        subjectDto.semester = subject.getSemester(degreeId);
         return subjectDto;
     }
 
@@ -106,5 +111,13 @@ public class SubjectDto {
 
     public void setReviewCount(Integer reviewCount) {
         this.reviewCount = reviewCount;
+    }
+
+    public Integer getSemester() {
+        return semester;
+    }
+
+    public void setSemester(Integer semester) {
+        this.semester = semester;
     }
 }

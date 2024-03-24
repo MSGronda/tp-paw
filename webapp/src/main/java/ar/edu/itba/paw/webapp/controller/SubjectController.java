@@ -7,7 +7,6 @@ import ar.edu.itba.paw.services.*;
 import ar.edu.itba.paw.webapp.controller.utils.PaginationLinkBuilder;
 import ar.edu.itba.paw.webapp.dto.SubjectDto;
 import ar.edu.itba.paw.webapp.dto.SubjectsFiltersDto;
-import ar.edu.itba.paw.webapp.form.SubjectClassTimeForm;
 import ar.edu.itba.paw.webapp.form.SubjectForm;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -15,8 +14,6 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import javax.validation.Valid;
 import javax.ws.rs.*;
 import javax.ws.rs.core.*;
-import java.time.LocalTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -87,9 +84,13 @@ public class SubjectController {
             dir
         );
 
-
-        final List<SubjectDto> subjectsDtos = subs.stream().map(subject -> SubjectDto.fromSubject(uriInfo, subject)).collect(Collectors.toList());
-
+        final List<SubjectDto> subjectsDtos;
+        if(degree != null && semester == null){
+            subjectsDtos = subs.stream().map(subject -> SubjectDto.fromSubjectWithSemesters(uriInfo, subject, degree)).collect(Collectors.toList());
+        } else {
+            subjectsDtos = subs.stream().map(subject -> SubjectDto.fromSubject(uriInfo, subject)).collect(Collectors.toList());
+        }
+        
         if(subjectsDtos.isEmpty())
             return Response.noContent().build();
 

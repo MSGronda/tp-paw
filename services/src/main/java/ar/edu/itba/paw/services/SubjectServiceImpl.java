@@ -218,6 +218,14 @@ public class SubjectServiceImpl implements SubjectService {
 
             return semesters.get(Math.toIntExact(semester) - 1).getSubjects();
         }
+        if(degree != null) {
+            final Degree deg = degreeService.findById(degree).orElseThrow(DegreeNotFoundException::new);
+            final List<DegreeSemester> semesters = deg.getSemesters();
+            final List<Subject> subjects = semesters.stream().flatMap(s -> s.getSubjects().stream()).collect(Collectors.toList());
+            subjects.addAll(deg.getElectives());
+            
+            return subjects;
+        }
         if(available != null){
             return findAllThatUserCanDo(user, page, orderBy, dir);
         }

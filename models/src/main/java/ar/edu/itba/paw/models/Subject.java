@@ -119,6 +119,15 @@ public class Subject {
     public Set<Degree> getDegrees() {
         return degrees;
     }
+    
+    public Integer getSemester(final long degreeId) {
+        for(final DegreeSubject ds : degreeSubjects){
+            if(ds.getDegree().getId() == degreeId){
+                return ds.getSemester();
+            }
+        }
+        return null;
+    }
 
     public Integer getCredits() {
         return credits;

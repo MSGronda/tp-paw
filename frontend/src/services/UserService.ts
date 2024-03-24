@@ -1,6 +1,7 @@
 import {SelectedSubject} from "../models/SelectedSubject.ts";
 import {axiosService} from "./index.tsx";
 import {handleResponse} from "../handlers/responseHandler.tsx";
+import {User} from "../models/User.ts";
 
 const path = "/users"
 
@@ -112,5 +113,38 @@ export class UserService {
         } catch (error: any) {
             return handleResponse(error.response);
         }
+    }
+    
+    getCachedUser(): User|null {
+        const stored = localStorage.getItem("user");
+        return stored ? JSON.parse(stored) : null;
+    }
+    
+    async updateCachedUser() {
+        const user = await this.getUser();
+        localStorage.setItem("user", JSON.stringify(user));
+    }
+    
+    async getUser() {
+        const userId = this.getUserId();
+        const res = await axiosService.authAxiosWrapper(axiosService.GET, `${path}/${userId}`, {});
+        if(!res || res.status !== 200) {
+            throw new Error("Unable to get user");
+        }
+        return res.data;
+    }
+    
+    async setDegreeAndSubjects(degreeId: number, subjectIds: string[]) {
+        const userId = this.getUserId();
+        const res = await axiosService.authAxiosWrapper(axiosService.PATCH, `${path}/${userId}`, {}, {
+            degreeId,
+            subjectIds
+        });
+        
+        if(!res || res.status !== 200) {
+            throw new Error("Unable to set degree and subjects");
+        }
+        
+        await this.updateCachedUser();
     }
 }

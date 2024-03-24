@@ -37,6 +37,20 @@ export const TRANSLATIONS_ES = {
             login: "Login"
         }
     },
+    Onboarding: {
+        back: "Volver",
+        next: "Siguiente",
+        finish: "Finalizar",
+        DegreeSelection: {
+            title: "¿Qué carrera estás estudiando?",
+            select: "Seleccioná tu carrera"
+        },
+        SubjectSelection: {
+            title: "Seleccioná las materias que ya aprobaste",
+            semester: "{{n}}° Cuatrimestre",
+            electives: "Electivas"
+        }
+    },
     Login: {
         title: "Ingresar",
         email: "Correo Electrónico",

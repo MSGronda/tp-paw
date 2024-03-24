@@ -1,0 +1,26 @@
+.fullsize{
+    width: 100%;
+    min-height: 100vh;
+    padding-bottom: 1rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: #efefef;
+}
+
+.center{
+    width: 70%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.padding{
+    padding-bottom: 0.8rem;
+}
+
+.title {
+    font-size: 2rem;
+    font-weight: bold;
+    padding-bottom: 0.5rem;
+}
