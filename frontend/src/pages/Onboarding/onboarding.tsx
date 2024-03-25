@@ -1,7 +1,7 @@
 import {useEffect, useState} from "react";
-import {getDegrees, getSubjectsBySemester} from "../../services/DegreeService.ts";
 import Degree from "../../models/Degree.ts";
 import {Button, Center, Combobox, Group, InputBase, Loader, Transition, useCombobox} from "@mantine/core";
+import {degreeService, subjectService} from "../../services";
 
 import classes from './onboarding.module.css';
 import {Default_Navbar} from "../../components/default-navbar/default_navbar.tsx";
@@ -102,7 +102,7 @@ function DegreeSelectionStep({onSelectDegree, selectedDegree}: DegreeSelectionPr
   const [degrees, setDegrees] = useState<Degree[] | null>(null);
 
   useEffect(() => {
-    getDegrees().then(res => setDegrees(res))
+    degreeService.getDegrees().then(res => setDegrees(res?.data))
       .catch(err => console.log(err));
   }, []);
 
@@ -164,7 +164,7 @@ function SubjectSelectionStep({degree, onChangeSelected}: SubjectSelectionProps)
   const [subjectsBySemester, setSubjectsBySemester] = useState<Record<number, Subject[]>>({});
 
   useEffect(() => {
-    getSubjectsBySemester(degree.id).then(res => setSubjectsBySemester(res))
+    subjectService.getSubjectsBySemester(degree.id).then(res => setSubjectsBySemester(res))
       .catch(err => console.log(err));
   }, [degree.id]);
 

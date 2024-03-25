@@ -1,5 +1,6 @@
 import {axiosService} from "."
 import { handleResponse } from "../handlers/responseHandler";
+import {Subject} from "../models/Subject.ts";
 
 const path = "/subjects"
 
@@ -28,6 +29,7 @@ export class SubjectService {
                 dir: dir
             };
             const res = await axiosService.authAxiosWrapper(axiosService.GET, `${path}`, config);
+            console.log(res)
             return handleResponse(res);
         } catch (error: any) {
             return handleResponse(error.response);
@@ -89,5 +91,33 @@ export class SubjectService {
             plan: userId
         }
         return this.getUserSubject(config);
+    }
+
+    async getSubjects() {
+        try{
+            const res = await axiosService.authAxiosWrapper(axiosService.GET, `${path}`, {});
+            return handleResponse(res);
+        } catch (error: any) {
+            return handleResponse(error.response);
+        }
+    }
+    async getSubjectsBySemester(degreeId: number): Promise<Record<number,Subject[]>> {
+        const res = await axiosService.authAxiosWrapper(axiosService.GET, `/subjects?degree=${degreeId}`);
+        if (!res || res.status !== 200) {
+            throw new Error("Unable to get subjects")
+        }
+
+        const bySemester: Record<number, Subject[]> = {};
+        res.data.forEach((subject: Subject) => {
+            if(!subject.semester) return;
+
+            if (!bySemester[subject.semester]) {
+                bySemester[subject.semester] = [];
+            }
+
+            bySemester[subject.semester].push(subject);
+        });
+
+        return bySemester;
     }
 }

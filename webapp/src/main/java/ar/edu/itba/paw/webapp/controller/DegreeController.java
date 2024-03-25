@@ -89,7 +89,7 @@ public class DegreeController {
         // TODO: CHECK si es correcto hacerlo aca
         final URI uri = uriInfo.getBaseUriBuilder().path("degrees").path(String.valueOf(degree.getId())).build();
 
-        return Response.created(uri).build();
+        return Response.created(uri).entity(DegreeDto.fromDegree(uriInfo, degree)) .build();
     }
 
 

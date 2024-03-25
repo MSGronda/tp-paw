@@ -319,5 +319,18 @@ export const TRANSLATIONS_ES = {
         currentSemester: "Cuatrimestre actual",
         completedCredits: "Créditos aprobados",
         outOf: "de",
+    },
+    CreateDegree: {
+        title: "Crear Carrera",
+        name: "Nombre de la Carrera",
+        credits: "Créditos Totales",
+        generalInfo: "Información General",
+        subjects: "Materias",
+        addSemester: "Agregar Cuatrimestre",
+        semester: "Cuatrimestre",
+        semesterNumber: "Número {{n}}",
+        subjectNumber: "Materia nro {{n}}",
+        nothingFound: "No se encontraron materias",
+        createDegree: "Crear Carrera"
     }
 }

@@ -319,5 +319,19 @@ export const TRANSLATIONS_EN = {
         currentSemester: "Current semester",
         completedCredits: "Completed credits",
         outOf: "out of",
+    },
+    CreateDegree: {
+        title: "Create Degree",
+        name: "Degree Name",
+        credits: "Total Credits",
+        generalInfo: "General Information",
+        subjects: "Subjects",
+        addSemester: "Add Semester",
+        semester: "Semester",
+        semesterNumber: "Number {{n}} asd",
+        subjectNumber: "Subjects",
+        nothingFound: "No subjects found",
+        createDegree: "Create Degree"
+
     }
 }

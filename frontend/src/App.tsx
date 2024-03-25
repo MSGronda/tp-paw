@@ -28,6 +28,7 @@ import EditReview from './pages/EditReview/editReview.tsx';
 import { CreateSubject } from './pages/CreateSubject/CreateSubject.tsx';
 import Degrees from './pages/Degrees/Degrees.tsx';
 import User from './pages/User/user.tsx';
+import {CreateDegree} from "./pages/CreateDegree/createDegree.tsx";
 import Onboarding from "./pages/Onboarding/onboarding.tsx";
 import {AnyRoute} from "./AnyRoute.tsx";
 
@@ -60,6 +61,7 @@ export default function App() {
           <Route path="multi-review" element={<PrivateRoute component={MultiReview} roles={['ADMIN', 'USER']}/>}/>
           <Route path="create-subject" element={<PrivateRoute component={CreateSubject} roles={['ADMIN']}/>}></Route>
           <Route path="degrees" element={<PrivateRoute component={Degrees} roles={['ADMIN']}/>}></Route>
+          <Route path="create-degree" element={<PrivateRoute component={CreateDegree} roles={['ADMIN']}/>}></Route>
           <Route path="user/:id" element={<PrivateRoute component={User} roles={['ADMIN', 'USER']}/>}></Route>
         </Routes>
       </Router>

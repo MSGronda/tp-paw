@@ -3,7 +3,7 @@ import classes from './review-card.module.css';
 import { IconEdit, IconThumbDown, IconThumbUp, IconTrash } from "@tabler/icons-react";
 import {useContext, useEffect, useState} from "react";
 import { useTranslation } from "react-i18next";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import AuthContext from "../../context/AuthContext";
 import { reviewService } from "../../services";
 
@@ -49,9 +49,6 @@ function ReviewCard(props: ReviewCardProps): JSX.Element {
     const [didUserDownVote, setDidUserDownVote] = useState(false);
     const [upVotes, setUpVotes] = useState(upvotes)
     const [downVotes, setDownVotes] = useState(downvotes)
-
-
-    const navigate = useNavigate();
     const toggleShowMore = () => {
         setShowMore(!showMore);
     };
@@ -74,6 +71,7 @@ function ReviewCard(props: ReviewCardProps): JSX.Element {
             setDidUserDownVote(true)
             setDidUserUpVote(false)
         }
+        console.log("vote")
         await fetchVotes()
     }
 
@@ -104,13 +102,18 @@ function ReviewCard(props: ReviewCardProps): JSX.Element {
     const fetchVotes = async () => {
         try {
             const res= await reviewService.getVotes(id)
+            if(res?.status === 204) {
+                setUpVotes(0)
+                setDownVotes(0)
+                return
+            }
             const data = res?.data
             let upVotes = 0
             let downVotes = 0
             data.forEach((vote: { vote: number; }) => {
-                if(vote.vote === 1) {
+                if (vote.vote === 1) {
                     upVotes++
-                } else if(vote.vote === -1) {
+                } else if (vote.vote === -1) {
                     downVotes++
                 }
             })
@@ -241,37 +244,36 @@ function ReviewCard(props: ReviewCardProps): JSX.Element {
             </div>
             <Divider className={classes.divider} />
             <div slot="footer" className={classes.like_buttons}>
-                <span>{upVotes}</span>
-                { !(didUserUpVote)  ?
+                {!(didUserUpVote) ?
                     <ActionIcon variant="outline" className={classes.like_button}
-                            onClick={ () => voteAction(id,VoteValue.UpVote) }
+                                onClick={() => voteAction(id, VoteValue.UpVote)}
                     >
-                        <IconThumbUp />
-                    </ActionIcon> :
-                    <ActionIcon variant="filled" className={classes.like_button}
-                            onClick={ () => unVoteAction(id, userId)}
-                    >
-                        <IconThumbUp />
-                    </ActionIcon>
-                }
-                <span>{downVotes}</span>
-                { !(didUserDownVote ) ?
-                    <ActionIcon variant="outline" className={classes.like_button}
-                                onClick={() => voteAction(id, VoteValue.DownVote )}
-                    >
-                        <IconThumbDown />
+                        <IconThumbUp/>
                     </ActionIcon> :
                     <ActionIcon variant="filled" className={classes.like_button}
                                 onClick={() => unVoteAction(id, userId)}
                     >
-                        <IconThumbDown />
+                        <IconThumbUp/>
                     </ActionIcon>
                 }
+                <span>{upVotes}</span>
+                {!(didUserDownVote) ?
+                    <ActionIcon variant="outline" className={classes.like_button}
+                                onClick={() => voteAction(id, VoteValue.DownVote)}
+                    >
+                        <IconThumbDown/>
+                    </ActionIcon> :
+                    <ActionIcon variant="filled" className={classes.like_button}
+                                onClick={() => unVoteAction(id, userId)}
+                    >
+                        <IconThumbDown/>
+                    </ActionIcon>
+                }
+                <span>{downVotes}</span>
             </div>
         </Card>
     );
 }
-
 
 
 export default ReviewCard;
