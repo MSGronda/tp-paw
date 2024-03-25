@@ -10,7 +10,7 @@ interface Props {
 
 export const AnyRoute: React.FC<Props> = ({component: RouteComponent}) => {
   const {isAuthenticated} = useContext(AuthContext);
-  const user = userService.getCachedUser();
+  const user = userService.getUserData();
 
   if (isAuthenticated && user && !user.degreeId && location.pathname !== "/onboarding") {
     return <Navigate to={"/onboarding"}/>

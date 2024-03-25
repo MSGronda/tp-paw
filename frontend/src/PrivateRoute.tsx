@@ -12,7 +12,7 @@ interface Props {
 export const PrivateRoute: React.FC<Props> = ({ component: RouteComponent, roles }) => {
   const { isAuthenticated /*, role*/} = useContext(AuthContext);
   const location = useLocation();
-  const user = userService.getCachedUser();
+  const user = userService.getUserData();
   
   if(isAuthenticated && user && !user.degreeId && location.pathname !== "/onboarding") {
     return <Navigate to={"/onboarding"}/>

@@ -4,8 +4,7 @@ import { parseLinkHeader } from "@web3-storage/parse-link-header";
 export const handleResponse = (response: any) => {
     if(response){
         if(response.status >= 200 && response.status < 300){
-            let parsed;
-            parsed = parseLinkHeader(response.headers.link);
+            const parsed = parseLinkHeader(response.headers.link);
             if (!parsed) {
                 return {
                     headers: response.headers,
@@ -29,5 +28,8 @@ export const handleResponse = (response: any) => {
             status: response.status,
             failure: true
         };
+    }
+    return {
+        failure: true
     }
 }

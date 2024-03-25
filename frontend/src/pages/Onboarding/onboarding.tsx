@@ -47,7 +47,7 @@ export default function Onboarding() {
     }
   }
 
-  if (userService.getCachedUser()?.degreeId) {
+  if (userService.getUserData()?.degreeId) {
     return <Navigate to={"/"}/>
   }
 

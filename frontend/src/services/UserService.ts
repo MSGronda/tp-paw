@@ -8,27 +8,17 @@ const path = "/users"
 export class UserService {
 
     getUserId() {
-        let userData;
-        if (localStorage.getItem("user") != null)
-            userData = localStorage.getItem("user");
-        else if (sessionStorage.getItem("user") != null)
-            userData = sessionStorage.getItem("user");
-        if (!userData) {
-            return;
-        }
-        return JSON.parse(userData).id;
+        return this.getUserData()?.id;
     }
 
-    getUserData() {
+    getUserData(): User|null {
         let userData;
         if (localStorage.getItem("user") != null)
             userData = localStorage.getItem("user");
         else if (sessionStorage.getItem("user") != null)
             userData = sessionStorage.getItem("user");
-        if (!userData) {
-            return;
-        }
-        return JSON.parse(userData);
+        
+        return userData ? JSON.parse(userData) : null;
     }
 
     async getUsersThatReviewedSubject(subjectId: string, page: number){
@@ -115,23 +105,20 @@ export class UserService {
         }
     }
     
-    getCachedUser(): User|null {
-        const stored = localStorage.getItem("user");
-        return stored ? JSON.parse(stored) : null;
-    }
-    
     async updateCachedUser() {
-        const user = await this.getUser();
-        localStorage.setItem("user", JSON.stringify(user));
+        let user = await this.getUser();
+        if(user.failure) throw new Error("Unable to get user data");
+        user = user.data;
+        
+        if(localStorage.getItem("user"))
+            localStorage.setItem("user", JSON.stringify(user));
+        else
+            sessionStorage.setItem("user", JSON.stringify(user));
     }
     
     async getUser() {
         const userId = this.getUserId();
-        const res = await axiosService.authAxiosWrapper(axiosService.GET, `${path}/${userId}`, {});
-        if(!res || res.status !== 200) {
-            throw new Error("Unable to get user");
-        }
-        return res.data;
+        return await this.getUserById(userId!);
     }
     
     async setDegreeAndSubjects(degreeId: number, subjectIds: string[]) {
