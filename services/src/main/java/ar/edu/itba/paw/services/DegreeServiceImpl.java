@@ -8,6 +8,8 @@ import ar.edu.itba.paw.models.exceptions.SubjectNotFoundException;
 import ar.edu.itba.paw.persistence.dao.DegreeDao;
 import ar.edu.itba.paw.persistence.dao.SubjectDao;
 import ar.edu.itba.paw.services.enums.OperationType;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,6 +19,7 @@ import java.util.stream.Collectors;
 
 @Service
 public class DegreeServiceImpl implements DegreeService {
+    private static final Logger LOGGER = LoggerFactory.getLogger(DegreeServiceImpl.class);
     private final DegreeDao degreeDao;
     private final SubjectDao subjectDao;
 
@@ -55,11 +58,12 @@ public class DegreeServiceImpl implements DegreeService {
                     Optional<Subject> maybeSubject = subjectDao.findById(subjectId);
 
                     if (maybeSubject.isPresent()) {
-                        Subject subject = maybeSubject.get();
+                        final Subject subject = maybeSubject.get();
                         DegreeSubject degreeSubject = new DegreeSubject(degree, subject, entry.getKey());
 
                         if (!degree.getDegreeSubjects().contains(degreeSubject)) {
                             degree.getDegreeSubjects().add(degreeSubject);
+                            LOGGER.info("Added subject with id: {} to degree with id: {}", subject.getId(), degree.getId());
                         }
 
                     }
@@ -112,10 +116,12 @@ public class DegreeServiceImpl implements DegreeService {
         if(op.getKey() == OperationType.Add){
             if(!degree.getDegreeSubjects().contains(ds)){
                 degree.getDegreeSubjects().add(ds);
+                LOGGER.info("Added subject with id: {} to degree with id: {}", subject.getId(), degree.getId());
             }
         }
         else if(op.getKey() == OperationType.Remove){
             degree.getDegreeSubjects().remove(ds);
+            LOGGER.info("Removed subject with id: {} from degree with id: {}", subject.getId(), degree.getId());
         }
     }
 

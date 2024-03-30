@@ -9,6 +9,8 @@ import ar.edu.itba.paw.models.enums.ReviewOrderField;
 import ar.edu.itba.paw.models.enums.ReviewVoteType;
 import ar.edu.itba.paw.models.exceptions.*;
 import ar.edu.itba.paw.persistence.dao.ReviewDao;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,6 +21,7 @@ import java.util.Optional;
 
 @Service
 public class ReviewServiceImpl implements ReviewService {
+    private static final Logger LOGGER = LoggerFactory.getLogger(ReviewServiceImpl.class);
     private final ReviewDao reviewDao;
     private final AuthUserService authUserService;
     private final SubjectService subjectService;
@@ -57,6 +60,7 @@ public class ReviewServiceImpl implements ReviewService {
             Optional<User> user = userService.findById(userId);
 
             if(!user.isPresent()) throw new UserNotFoundException();
+
 
             if(page > getTotalPagesForUserReviews(user.get()) || page < 1) throw new InvalidPageNumberException();
 
@@ -111,6 +115,7 @@ public class ReviewServiceImpl implements ReviewService {
         final User user = authUserService.getCurrentUser();
 
         if(userId != user.getId()){
+            LOGGER.warn("Unauthorized user with id: {} attempted to delete review vote with id: {}", userId, reviewId);
             throw new UnauthorizedException();
         }
 
@@ -129,10 +134,12 @@ public class ReviewServiceImpl implements ReviewService {
 
     @Transactional
     @Override
-    public Review update(final Review.Builder reviewBuilder) throws UnauthorizedException {
+    public Review update(final Review.Builder reviewBuilder) {
         final User user = authUserService.getCurrentUser();
-        if(!user.isEditor() && !reviewBuilder.getUser().equals(user))
+        if(!user.isEditor() && !reviewBuilder.getUser().equals(user)){
+            LOGGER.warn("Unauthorized user with id: {} attempted to update review with id: {}", user.getId(), reviewBuilder.getId());
             throw new UnauthorizedException();
+        }
 
         return reviewDao.update(reviewBuilder);
     }
@@ -141,8 +148,10 @@ public class ReviewServiceImpl implements ReviewService {
     @Override
     public void delete(final Review review) throws UnauthorizedException {
         final User user = authUserService.getCurrentUser();
-        if(!user.isEditor() && !review.getUser().equals(user))
+        if(!user.isEditor() && !review.getUser().equals(user)){
+            LOGGER.warn("Unauthorized user with id: {} attempted to delete review with id: {}", user.getId(), review.getId());
             throw new UnauthorizedException();
+        }
 
         reviewDao.delete(review);
     }

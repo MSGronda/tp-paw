@@ -4,6 +4,8 @@ import ar.edu.itba.paw.models.*;
 import ar.edu.itba.paw.models.enums.*;
 import ar.edu.itba.paw.models.exceptions.*;
 import ar.edu.itba.paw.persistence.dao.SubjectDao;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
@@ -14,10 +16,10 @@ import java.util.stream.Collectors;
 
 @Service
 public class SubjectServiceImpl implements SubjectService {
+    private static final Logger LOGGER = LoggerFactory.getLogger(SubjectServiceImpl.class);
     private final SubjectDao subjectDao;
     private final DegreeService degreeService;
     private final ProfessorService professorService;
-
     private final ReviewService reviewService;
 
     @Autowired
@@ -113,8 +115,10 @@ public class SubjectServiceImpl implements SubjectService {
     @Transactional
     @Override
     public void delete(final User user, final String subjectId) {
-        if(!user.isEditor())
+        if(!user.isEditor()){
+            LOGGER.warn("Unauthorized user with id: {} attempted to delete subject with id: {}", user.getId(), subjectId);
             throw new UnauthorizedException();
+        }
 
         final Subject subject = findById(subjectId).orElseThrow(SubjectNotFoundException::new);
         subjectDao.delete(subject);

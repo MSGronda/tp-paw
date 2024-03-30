@@ -113,7 +113,6 @@ public class UserServiceImpl implements UserService {
                             .imageId(image.getId())
             );
         } catch (final EmailAlreadyTakenException e) {
-            LOGGER.debug("User email {} already taken", user.getEmail());
             throw e;
         }
 
@@ -136,7 +135,7 @@ public class UserServiceImpl implements UserService {
             final File file = ResourceUtils.getFile("classpath:images/default_user.png");
             defaultImg = Files.readAllBytes(file.toPath());
         } catch (IOException e) {
-            LOGGER.error("Failed to read default image");
+            LOGGER.error("Failed to read default user image");
             throw new IllegalStateException("Failed to read default image");
         }
 
@@ -226,7 +225,7 @@ public class UserServiceImpl implements UserService {
             final String oldPasswordInput
     ) {
         if (!passwordEncoder.matches(oldPasswordInput, user.getPassword())) {
-            LOGGER.debug("Old password does not match with input");
+            LOGGER.warn("User with id: {} failed to change password: not matching", user.getId());
             throw new OldPasswordDoesNotMatchException();
         }
 
@@ -249,7 +248,7 @@ public class UserServiceImpl implements UserService {
     public void recoverPassword(final String token, final String newPassword) throws InvalidTokenException {
         final Optional<User> maybeUser = recDao.findUserByToken(token);
         if (!maybeUser.isPresent()) {
-            LOGGER.info("Invalid token when trying to recover password");
+            LOGGER.info("Invalid token when trying to recover password for token: {}", token);
             throw new InvalidTokenException();
         }
 
@@ -272,7 +271,7 @@ public class UserServiceImpl implements UserService {
     public void confirmUser(final String token) throws InvalidTokenException {
         final Optional<User> optUser = userDao.findByConfirmToken(token);
         if (!optUser.isPresent()) {
-            LOGGER.info("Invalid token when trying to confirm user");
+            LOGGER.warn("Invalid token when trying to confirm user for token: {}", token);
             throw new InvalidTokenException();
         }
         final User user = optUser.get();
@@ -286,7 +285,7 @@ public class UserServiceImpl implements UserService {
     public void setLocale(final User user, final Locale locale) {
         if(!user.getLocale().equals(locale)){
             userDao.setLocale(user, locale);
-            LOGGER.debug("Set locale for user {} to '{}'", user.getId(), locale);
+            LOGGER.info("Set locale for user with id: {} to '{}'", user.getId(), locale);
         }
     }
 
@@ -297,7 +296,7 @@ public class UserServiceImpl implements UserService {
 
         final Map<String, SubjectClass> classes = subject.getClassesById();
         if (!classes.containsKey(classId)) {
-            LOGGER.debug("No class in subject {} for id {}", subjectId, classId);
+            LOGGER.warn("Unable to find class in subject with id: {} for id: {}", subjectId, classId);
             throw new SubjectClassNotFoundException();
         }
 
@@ -379,7 +378,7 @@ public class UserServiceImpl implements UserService {
 
         final Map<String, SubjectClass> classes = subject.getClassesById();
         if (!classes.containsKey(classId)) {
-            LOGGER.debug("No class in subject {} for id {}", subjectId, classId);
+            LOGGER.debug("Unable to find class for subject with id: {} for id: {}", subjectId, classId);
             throw new SubjectClassNotFoundException();
         }
         final SubjectClass subjectClass = classes.get(classId);
@@ -497,7 +496,7 @@ public class UserServiceImpl implements UserService {
 
         final Authentication auth = new UsernamePasswordAuthenticationToken(user.getEmail(), user.getPassword(), authorities);
         SecurityContextHolder.getContext().setAuthentication(auth);
-        LOGGER.info("Auto login for user {}", user.getId());
+        LOGGER.debug("Auto login for user with id: {}", user.getId());
     }
 
     protected String generateConfirmToken() {
