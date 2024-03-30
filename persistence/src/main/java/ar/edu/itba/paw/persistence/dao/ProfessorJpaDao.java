@@ -3,6 +3,8 @@ package ar.edu.itba.paw.persistence.dao;
 import ar.edu.itba.paw.models.Professor;
 import ar.edu.itba.paw.models.Subject;
 import ar.edu.itba.paw.models.SubjectClass;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -11,12 +13,14 @@ import java.util.*;
 
 @Repository
 public class ProfessorJpaDao implements ProfessorDao {
+    private final static Logger LOGGER = LoggerFactory.getLogger(ProfessorJpaDao.class);
     @PersistenceContext
     private EntityManager em;
 
     @Override
-    public Professor create(Professor professor) {
+    public Professor create(final Professor professor) {
         em.persist(professor);
+        LOGGER.info("Created professor with id: {}", professor.getId());
         return professor;
     }
 
@@ -26,6 +30,7 @@ public class ProfessorJpaDao implements ProfessorDao {
         if(!maybeProfessor.isPresent()){
             professor = new Professor(profName);
             em.persist(professor);
+            LOGGER.info("Created professor with id: {}", professor.getId());
         }else{
             professor = maybeProfessor.get();
         }
@@ -39,6 +44,7 @@ public class ProfessorJpaDao implements ProfessorDao {
 
             if(!professor.getSubjects().contains(subject)){
                 professor.getSubjects().add(subject);
+                LOGGER.info("Added professor with id: {} to subject with id: {}", professor.getId(), subject.getId());
             }
         }
     }
@@ -50,6 +56,7 @@ public class ProfessorJpaDao implements ProfessorDao {
 
             if( !subjectClass.getProfessors().contains(professor)) {
                 subjectClass.getProfessors().add(professor);
+                LOGGER.info("Added professor with id: {} to subjectClass with id: {}", professor.getId(), subjectClass.getClassId());
             }
         }
     }
@@ -61,6 +68,7 @@ public class ProfessorJpaDao implements ProfessorDao {
             newProfessors.add(getOrGenerateProfessor(profName));
         }
         subject.setProfessors(newProfessors);
+        LOGGER.info("Replaced professors of subject with id: {}", subject.getId());
     }
 
     @Override
@@ -70,6 +78,7 @@ public class ProfessorJpaDao implements ProfessorDao {
             newProfessors.add(getOrGenerateProfessor(profName));
         }
         subjectClass.setProfessors(newProfessors);
+        LOGGER.info("Replaced professors of subjectClass with id: {}", subjectClass.getClassId());
     }
 
     @Override

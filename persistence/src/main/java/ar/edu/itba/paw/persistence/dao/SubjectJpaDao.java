@@ -7,6 +7,8 @@ import ar.edu.itba.paw.models.enums.SubjectOrderField;
 import ar.edu.itba.paw.models.exceptions.SubjectClassIdAlreadyExistsException;
 import ar.edu.itba.paw.models.exceptions.SubjectIdAlreadyExistsException;
 import ar.edu.itba.paw.models.exceptions.SubjectNotFoundException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
@@ -19,8 +21,8 @@ import java.util.stream.Collectors;
 
 @Repository
 public class SubjectJpaDao implements SubjectDao {
+    private final static Logger LOGGER = LoggerFactory.getLogger(SubjectJpaDao.class);
     private static final int PAGE_SIZE = 20;
-
     @PersistenceContext
     private EntityManager em;
 
@@ -29,6 +31,7 @@ public class SubjectJpaDao implements SubjectDao {
         if (findById(subject.getId()).isPresent())
             throw new SubjectIdAlreadyExistsException();
         em.persist(subject);
+        LOGGER.info("Created subject with id: {}", subject.getId());
         return subject;
     }
 
@@ -50,6 +53,7 @@ public class SubjectJpaDao implements SubjectDao {
 
         subject.getClasses().add(subjectClass);
         em.persist(subjectClass);
+        LOGGER.info("Added subject class with id: {} to subject with id: {}", subjectClass.getClassId(), subject.getId());
         return subjectClass;
     }
 
@@ -89,15 +93,18 @@ public class SubjectJpaDao implements SubjectDao {
             }
             classTimes.add(subjectClassTime);
             em.persist(subjectClassTime);
+            LOGGER.info("Added class times with id: {} to subject class with id: {}", subjectClassTime.getId(), subjectClass.getClassId());
         }
         return classTimes;
     }
 
     @Override
     public void delete(final Subject subject){
+        final String id = subject.getId();
         em.createQuery("delete from Subject where id = :id")
                 .setParameter("id", subject.getId())
                 .executeUpdate();
+        LOGGER.info("Deleted subject with id: {}", id);
     }
 
     @Override
@@ -118,7 +125,9 @@ public class SubjectJpaDao implements SubjectDao {
 
     private void clearClassTimes(final SubjectClass subjectClass){
         subjectClass.getClassTimes().removeIf(subjectClassTime -> {
+                    final long id = subjectClassTime.getId();
                     em.remove(subjectClassTime);
+                    LOGGER.info("Removed class time with id: {} from subject class with id: {}", id, subjectClass.getClassId());
                     return true;
                 }
         );
@@ -151,6 +160,7 @@ public class SubjectJpaDao implements SubjectDao {
 
             classTimes.add(subjectClassTime);
             em.persist(subjectClassTime);
+            LOGGER.info("Added class time with id: {} to subject class with id: {}", subjectClassTime.getId(), subjectClass.getClassId());
         }
         subjectClass.setClassTimes(classTimes);
     }
@@ -159,7 +169,9 @@ public class SubjectJpaDao implements SubjectDao {
     public void removeSubjectClassIfNotPresent(final Subject subject, final List<String> classCodes){
         subject.getClasses().removeIf(subjectClass -> {
                     if (!classCodes.contains(subjectClass.getClassId())){
+                        final String id = subjectClass.getClassId();
                         em.remove(subjectClass);
+                        LOGGER.info("Removed subject class with id: {} to subject with id: {}", id, subject.getId());
                         return true;
                     }
                     return false;

@@ -3,6 +3,8 @@ package ar.edu.itba.paw.persistence.dao;
 import ar.edu.itba.paw.models.*;
 import ar.edu.itba.paw.models.enums.SubjectProgress;
 import ar.edu.itba.paw.models.exceptions.EmailAlreadyTakenException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -11,6 +13,7 @@ import java.util.*;
 
 @Repository
 public class UserJpaDao implements UserDao {
+    private final static Logger LOGGER = LoggerFactory.getLogger(UserJpaDao.class);
     @PersistenceContext
     private EntityManager em;
 
@@ -18,12 +21,17 @@ public class UserJpaDao implements UserDao {
     public User create(final User.Builder userBuilder) throws EmailAlreadyTakenException {
         final User user = userBuilder.build();
 
-        if (!user.getVerificationToken().isPresent())
+        if (!user.getVerificationToken().isPresent()){
+            LOGGER.warn("Attempted to create user without verification token for user: {}!", user.getUsername());   // Username es un atributo publico
             throw new IllegalArgumentException("Confirm token must be present");
-        if(findByEmail(user.getEmail()).isPresent() || findUnverifiedByEmail(user.getEmail()).isPresent())
+        }
+        if(findByEmail(user.getEmail()).isPresent() || findUnverifiedByEmail(user.getEmail()).isPresent()){
+            LOGGER.warn("Attempted to create user with existing mail for user: {}!", user.getUsername());   // Username es un atributo publico
             throw new EmailAlreadyTakenException();
+        }
 
         em.persist(user);
+        LOGGER.info("Created user with id: {}", user.getId());
         return user;
     }
 

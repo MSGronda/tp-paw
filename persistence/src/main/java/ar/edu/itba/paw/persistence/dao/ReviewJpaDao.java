@@ -8,6 +8,8 @@ import ar.edu.itba.paw.models.enums.OrderDir;
 import ar.edu.itba.paw.models.enums.ReviewOrderField;
 import ar.edu.itba.paw.models.enums.ReviewVoteType;
 import org.hibernate.Query;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -16,8 +18,8 @@ import java.util.stream.Collectors;
 
 @Repository
 public class ReviewJpaDao implements ReviewDao {
+    private final static Logger LOGGER = LoggerFactory.getLogger(ReviewJpaDao.class);
     private static final int PAGE_SIZE = 10;
-
     @PersistenceContext
     private EntityManager em;
 
@@ -25,6 +27,8 @@ public class ReviewJpaDao implements ReviewDao {
     public Review create(final Review.Builder reviewBuilder) {
         final Review review = reviewBuilder.build();
         em.persist(review);
+
+        LOGGER.info("Created review with id: {}", review.getId());
         return review;
     }
 
@@ -36,12 +40,15 @@ public class ReviewJpaDao implements ReviewDao {
         r.setText(updated.getText());
         r.setDifficulty(updated.getDifficulty());
         r.setTimeDemanding(updated.getTimeDemanding());
+        LOGGER.info("Updated review with id: {}", reviewBuilder.getId());
         return r;
     }
 
     @Override
     public void delete(final Review review) {
+        final long id = review.getId();
         em.remove(review);
+        LOGGER.info("Deleted review with id: {}", id);
     }
 
     @Override

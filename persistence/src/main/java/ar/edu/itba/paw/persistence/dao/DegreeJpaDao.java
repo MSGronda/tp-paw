@@ -9,16 +9,20 @@ import javax.persistence.PersistenceContext;
 import java.util.List;
 import java.util.Optional;
 import java.util.OptionalInt;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Repository
 public class DegreeJpaDao implements DegreeDao {
+    private final static Logger LOGGER = LoggerFactory.getLogger(DegreeJpaDao.class);
+
     @PersistenceContext
     private EntityManager em;
 
     @Override
     public Degree create(final Degree degree) {
-
         em.persist(degree);
+        LOGGER.info("Created degree with id: {}", degree.getId());
         return degree;
     }
 
@@ -35,7 +39,9 @@ public class DegreeJpaDao implements DegreeDao {
 
     @Override
     public void delete(final Degree degree) {
+        final long id = degree.getId();
         em.remove(degree);
+        LOGGER.info("Deleted degree with id: {}", id);
     }
 
     @Override
