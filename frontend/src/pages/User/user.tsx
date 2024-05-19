@@ -12,6 +12,7 @@ import type { User } from "../../models/User";
 import ReviewCard from "../../components/review-card/review-card";
 import { IconArrowsSort } from "@tabler/icons-react";
 import { Degree } from "../../models/Degree";
+import PaginationComponent from "../../components/pagination/pagination";
 
 
 export default function User() {
@@ -27,6 +28,7 @@ export default function User() {
     const [degree, setDegree] = useState({} as Degree);
     const [reviews, setReviews] = useState<Review[]>([]);
     const [subjects, setSubjects] = useState<Subject[]>([]);
+    const [maxPage, setMaxPage] = useState(1);
 
     const { id } = useParams();
     const { userId, role } = useContext(AuthContext);
@@ -69,6 +71,7 @@ export default function User() {
         const res = await reviewService.getReviewsFromUser(userId, page, orderBy, dir);
         if (res?.data) {
             setReviews(res.data);
+            setMaxPage(res.maxPage || 1);
         }
         setLoadingReviews(false);
     }
@@ -282,6 +285,9 @@ export default function User() {
                                         downvotes={review.downVotes}
                                     />
                                 ))
+                            }
+                            { reviews && maxPage > 1 && 
+                                <PaginationComponent page={page} lastPage={maxPage} setPage={handlePageChange} />
                             }
 
                         </div>

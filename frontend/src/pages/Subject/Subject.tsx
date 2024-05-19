@@ -40,7 +40,7 @@ export function SubjectPage() {
 
     const [subject, setSubject] = useState({} as Subject);
     const [loading, setLoading] = useState(true);
-    const [reviews, setReviews] = useState([{} as Review]);
+    const [reviews, setReviews] = useState<Review[]>([]);
     const [didUserReview, setDidUserReview] = useState(true);
     const [users, setUsers] = useState([{} as User]);
     const [maxPage, setMaxPage] = useState(1);

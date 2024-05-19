@@ -1,4 +1,4 @@
-export default interface Degree {
+export interface Degree {
   id: number;
   name: string;
   semesterSubjectURLs: string[],

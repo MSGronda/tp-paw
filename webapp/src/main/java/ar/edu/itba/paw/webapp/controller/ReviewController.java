@@ -2,10 +2,13 @@ package ar.edu.itba.paw.webapp.controller;
 
 import ar.edu.itba.paw.models.Review;
 import ar.edu.itba.paw.models.ReviewVote;
+import ar.edu.itba.paw.models.User;
 import ar.edu.itba.paw.models.exceptions.*;
 import ar.edu.itba.paw.services.AuthUserService;
 import ar.edu.itba.paw.services.ReviewService;
 import ar.edu.itba.paw.services.SubjectService;
+import ar.edu.itba.paw.services.UserService;
+import ar.edu.itba.paw.webapp.controller.utils.PaginationLinkBuilder;
 import ar.edu.itba.paw.webapp.dto.ReviewDto;
 import ar.edu.itba.paw.webapp.dto.ReviewVoteDto;
 import ar.edu.itba.paw.webapp.form.ReviewForm;
@@ -30,6 +33,9 @@ public class ReviewController {
     private ReviewService reviewService;
     @Autowired
     private AuthUserService authUserService;
+
+    @Autowired
+    private UserService userService;
     @Context
     private UriInfo uriInfo;
 
@@ -48,6 +54,15 @@ public class ReviewController {
             return Response.noContent().build();
 
         final List<ReviewDto> reviewDtos = reviews.stream().map(review -> ReviewDto.fromReview(uriInfo, review)).collect(Collectors.toList());
+
+        if (userId != null){
+            final User user = userService.findById(userId).orElseThrow(UserNotFoundException::new);
+            int lastPage = reviewService.getTotalPagesForUserReviews(user);
+
+            Response.ResponseBuilder responseBuilder = Response.ok(new GenericEntity<List<ReviewDto>>(reviewDtos){});
+            PaginationLinkBuilder.getResponsePaginationLinks(responseBuilder, uriInfo, page, lastPage);
+            return responseBuilder.build();
+        }
 
         return Response.ok(new GenericEntity<List<ReviewDto>>(reviewDtos){}).build();
     }
