@@ -1,4 +1,4 @@
-.fullsize{
+.fullsize {
     width: 100%;
     display: flex;
     flex-direction: column;
@@ -16,21 +16,41 @@
 }
 
 .card_basic {
-    width: 100%;
     transition: transform 0.2s ease-in-out;
-    margin-top: 1rem;
+    position: relative;
     display: flex;
-    flex-direction: row;
+    justify-content: space-between;
     align-items: center;
+    padding: 1rem;
+    margin-bottom: 1rem;
 }
 
 .card_basic h3 {
     font-style: normal;
     font-weight: 500;
-    margin: 1rem;
+    margin: 0;
+    flex-grow: 1;
 }
 
 .card_basic:hover {
     cursor: pointer;
     transform: scale(1.02);
+}
+
+.card {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+}
+
+.wrap_card {
+    display: flex;
+    align-content: center;
+    flex-direction: row;
+    align-items: center;
+}
+
+.max_width {
+    width: 100%;
 }

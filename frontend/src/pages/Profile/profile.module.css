@@ -1,9 +1,11 @@
 .fullsize {
-    width: 100%;
+    display: flex;
     flex-direction: column;
+    min-height: 100vh;
+    width: 100%;
     background-color: #efefef;
-    flex: content;
 }
+
 .body {
     width: min(max(800px, 50%), 100%);
     padding-left: 2rem;
@@ -17,15 +19,18 @@
     flex-direction: column;
     margin-top: 3rem;
 }
+
 .header {
     display: flex;
     flex-direction: row;
     align-items: center;
 }
+
 .image_container {
     position: relative;
     display: inline-block;
 }
+
 .title {
     display: flex;
     flex-direction: row;
@@ -33,12 +38,17 @@
     margin-left: 2rem;
     width: 100%;
 }
+
 .moderator_tag {
     display: flex;
     flex-direction: row;
 }
-.logoutbutton {
+
+.logout_button {
     display: flex;
     align-items: center;
 }
 
+.spacing {
+    margin-top: 2rem;
+}

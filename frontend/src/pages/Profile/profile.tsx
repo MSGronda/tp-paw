@@ -23,56 +23,46 @@ export default function Profile() {
                         />
                     </div>
                     <div className={classes.title}>
-                        <div className={classes.moderator_tag}>  
+                        <div className={classes.moderator_tag}>
                             <Text fz="lg" fw={500} mt="md">
                                 {t("Profile.loggeduser")}
                             </Text>
                         </div>
-                        { user.role === "moderator" &&
+                        {user.role === "moderator" && (
                             <div>
                                 <Text fz="lg" fw={500} mt="md">
                                     {t("Profile.moderator")}
                                 </Text>
                             </div>
-                        }
+                        )}
                         <div className={classes.logout_button}>
-                            <Button variant="filled" radius="md">{t("Profile.logout")}</Button>
+                            <Button variant="filled" radius="md">
+                                {t("Profile.logout")}
+                            </Button>
                         </div>
-                    </div>   
-                </div>
-                <Paper radius="md" withBorder p="lg" bg="var(--mantine-color-body)">          
-                    <div className={classes.table_area}>
-                        <div>
-                            <Text>
-                                {t("Profile.username")}
-                            </Text>
-                            <Text>
-                                {user.username}
-                            </Text>
-                        </div>
-                        <Divider size="sm"/>
-                        <div>
-                            <Text>
-                                {t("Profile.email")}
-                            </Text>
-                            <Text>
-                                {user.email}
-                            </Text>
-                        </div>
-                        <Divider size="sm"/>
-                        <Button>
-                            {t("Profile.change_password")}
-                        </Button>
-                        <Button>
-                            {t("Profile.change_degree")}
-                        </Button>
                     </div>
-                    
-
-                </Paper>
-                <br></br>
-                <Divider></Divider>
-                <br></br>
+                </div>
+                <div className={classes.spacing}> {/* Wrapper for spacing */}
+                    <Paper radius="md" withBorder p="lg" bg="var(--mantine-color-body)">
+                        <div className={classes.table_area}>
+                            <div>
+                                <Text>{t("Profile.username")}</Text>
+                                <Text>{user.username}</Text>
+                            </div>
+                            <Divider size="sm"/>
+                            <div>
+                                <Text>{t("Profile.email")}</Text>
+                                <Text>{user.email}</Text>
+                            </div>
+                            <Divider size="sm"/>
+                            <Button>{t("Profile.change_password")}</Button>
+                            <Button>{t("Profile.change_degree")}</Button>
+                        </div>
+                    </Paper>
+                </div>
+                <br/>
+                <Divider/>
+                <br/>
             </div>
             <Footer/>
         </div>

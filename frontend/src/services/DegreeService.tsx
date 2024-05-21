@@ -49,6 +49,15 @@ export class DegreeService {
         }
     }
 
+    async deleteDegree(degreeId: number) {
+        try {
+            const res = await axiosService.authAxiosWrapper(axiosService.DELETE, `${path}/${degreeId}`, {});
+            return handleResponse(res);
+        } catch (error: any) {
+            return handleResponse(error.response);
+        }
+    }
+
 
 
 
