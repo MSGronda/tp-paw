@@ -6,8 +6,6 @@ import { useEffect, useState } from 'react';
 import { handleService } from '../../handlers/serviceHandler';
 import { useNavigate } from 'react-router-dom';
 import { Card } from '@mantine/core';
-import { IconPlus } from '@tabler/icons-react';
-import { Footer } from '../../components/footer/footer';
 
 
 
@@ -45,16 +43,10 @@ export default function Degrees() {
                                 <h3>{degree.name}</h3>
                             </Card>
                         ))}
-                        <Card className={classes.card_basic} onClick={() => navigate("/create-degree")}>
-                            <h3>
-                                {t('Degrees.createNew')}
-                            </h3>
-                            <IconPlus/>
-                        </Card>
                     </>
                 }
             </div>
-            
         </div>
+
     )
 }

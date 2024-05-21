@@ -118,7 +118,9 @@ export const TRANSLATIONS_ES = {
         semesterbuilder: "Armador de Cuatrimestre",
         profile: "Perfil",
         degrees: "Carreras",
-        createSubject: "Crear nueva materia"
+        createSubject: "Crear nueva materia",
+        createDegree: "Crear nueva carrera",
+        editorTools: "Herramientas de Editor"
     },
     ReviewCard: {
         showMore: "Mostrar más",

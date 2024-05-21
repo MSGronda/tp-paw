@@ -117,7 +117,9 @@ export const TRANSLATIONS_EN = {
         semesterbuilder: "Semester Builder",
         profile: "Profile",
         degrees: "Degrees",
-        createSubject: "Create new subject"
+        createSubject: "Create new subject",
+        createDegree: "Create new degree",
+        editorTools: "Editor Tools"
     },
     ReviewCard: {
         showMore: "Show more",
