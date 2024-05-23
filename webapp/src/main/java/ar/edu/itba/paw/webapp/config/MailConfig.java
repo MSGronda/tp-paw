@@ -20,7 +20,7 @@ public class MailConfig {
 
     @Bean
     public JavaMailSender javaMailSender() {
-        JavaMailSenderImpl mailSender = new JavaMailSenderImpl();
+        final JavaMailSenderImpl mailSender = new JavaMailSenderImpl();
 
         mailSender.setHost(environment.getRequiredProperty("mail.host"));
         mailSender.setPort(Integer.parseInt(environment.getRequiredProperty("mail.port")));
@@ -38,11 +38,12 @@ public class MailConfig {
 
     @Bean
     public ITemplateResolver thymeleafTemplateResolver() {
-        ClassLoaderTemplateResolver templateResolver = new ClassLoaderTemplateResolver();
+        final ClassLoaderTemplateResolver templateResolver = new ClassLoaderTemplateResolver();
         templateResolver.setPrefix("/mail/");
         templateResolver.setSuffix(".html");
         templateResolver.setTemplateMode("HTML");
         templateResolver.setCharacterEncoding("UTF-8");
+        templateResolver.setCacheable(false);
         return templateResolver;
     }
 

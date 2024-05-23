@@ -54,7 +54,7 @@ import java.util.concurrent.TimeUnit;
 public class WebConfig extends WebMvcConfigurerAdapter {
 
     private static final long MAX_UPLOAD_SIZE = 1024 * 1024 * 100L;
-
+    private static final int MESSAGE_SOURCE_CACHE_SECONDS = 5;
     private static final Logger LOGGER = LoggerFactory.getLogger(WebConfig.class);
 
     @Autowired
@@ -97,7 +97,7 @@ public class WebConfig extends WebMvcConfigurerAdapter {
     public MessageSource messageSource() {
         final ReloadableResourceBundleMessageSource ms = new ReloadableResourceBundleMessageSource();
 
-        ms.setCacheSeconds((int) TimeUnit.MINUTES.toSeconds(5));
+        ms.setCacheSeconds((int) TimeUnit.MINUTES.toSeconds(MESSAGE_SOURCE_CACHE_SECONDS));
         ms.setBasename("classpath:i18n/messages");
         ms.setDefaultEncoding(StandardCharsets.UTF_8.name());
 
@@ -149,7 +149,7 @@ public class WebConfig extends WebMvcConfigurerAdapter {
 
     @Bean
     public FormattingConversionService mvcConversionService() {
-        DefaultFormattingConversionService conversionService = new DefaultFormattingConversionService();
+        final DefaultFormattingConversionService conversionService = new DefaultFormattingConversionService();
         conversionService.addConverter(new StringToLocalTimeConverter());
         return conversionService;
     }
