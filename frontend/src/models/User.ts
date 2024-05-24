@@ -5,5 +5,5 @@ export interface User {
     email: string,
     profileImage: string,
     roles: string[],
-    degreeId: number | undefined
+    degreeId: number | undefined,
 }

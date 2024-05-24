@@ -131,11 +131,12 @@ export const TRANSLATIONS_ES = {
         rights: "© 2023 Equipo Uni, Todos los derechos reservados."
     },
     Profile: {
-        email: "Corre electrónico:",
+        email: "Correo electrónico:",
         username: "Nombre de usuario:",
         reviews: "Reseñas por el usuario",
         loggeduser: "Tu perfil",
         logout: "Cerrar sesión",
+        moderator: "MODERADOR",
         change_password: "Cambiar constraseña",
         change_degree: "Cambiar carrera"
     },

@@ -32,6 +32,13 @@
     display: flex;
     flex-direction: row;
     align-items: center;
+    justify-content: center;
+    margin-bottom: 1rem;
+}
+
+.header p {
+    margin-top: 0 !important;
+    padding-top: 0 !important;
 }
 
 .image_container {
@@ -103,4 +110,34 @@
 
 .userName {
     font-size: xx-large;
+}
+
+.dataRow {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    margin: 0.5rem 0;
+}
+
+.dataTable {
+    box-shadow: none !important;
+    table-layout: fixed;
+}
+
+.dataTable td {
+    height: 48px;
+    border: 0;
+}
+
+.dataTable tr {
+    border-bottom: 1px solid #e0e0e0 !important;
+}
+
+/* Edit button cell */
+.dataTable tr td:last-child {
+    text-align: right;
+}
+
+.dataTable tr:last-child {
+    border-bottom: none !important;
 }

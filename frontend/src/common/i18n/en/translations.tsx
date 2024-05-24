@@ -131,10 +131,11 @@ export const TRANSLATIONS_EN = {
     },
     Profile: {
         email: "Email:",
-        username: "Username",
+        username: "Username:",
         reviews:"User reviews:",
         loggeduser: "My profile",
         logout: "Logout",
+        moderator: "MODERATOR",
         change_password: "Change password",
         change_degree: "Change degree"
     },
