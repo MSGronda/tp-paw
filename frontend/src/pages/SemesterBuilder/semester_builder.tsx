@@ -77,7 +77,12 @@ export default function SemesterBuilder() {
         const respPlan = await userService.getUserPlan(userId);
         const dataPlan = handleService(respPlan, navigate);
 
-        setSelectedSubjects(createSelectedSubjects(dataPlan, dataSubjects));
+        const subjects = createSelectedSubjects(dataPlan, dataSubjects);
+
+        // Tenemos que setear el arreglo con 1 si es que ya tenia materias anotadas
+        replaceScheduleArray(subjects)
+
+        setSelectedSubjects(subjects);
     }
 
     const [scheduleArray, setScheduleArray] = useState<number[]>(new Array(ROWS * COLS).fill(0));
@@ -214,12 +219,29 @@ export default function SemesterBuilder() {
         if(subject.classes.length == 0){
             return true;
         }
+        if(subject.name == "Química"){
+            console.log("A")
+        }
         for(const sc of subject.classes){
             if(classEnabled(sc)){
                 return true;    // Con que una comision sea viable, toda la materia es viable
             }
         }
         return false;
+    }
+
+    const replaceScheduleArray = (subjectClasses: SelectedSubject[]) => {
+        const newScheduleArray = new Array(ROWS * COLS).fill(0);
+        for(const subjectClass of subjectClasses){
+            for(const time of subjectClass.selectedClass.locations){
+                const startTimeValue = timeStringToNumber(time.startTime);
+                const endTimeValue = timeStringToNumber(time.endTime);
+                for(let i = startTimeValue; i < endTimeValue; i++){
+                    newScheduleArray[time.day + i * COLS] = 1;
+                }
+            }
+        }
+        setScheduleArray(newScheduleArray);
     }
     const updateScheduleArray = (subjectClass: Class, value: number) => {
 
@@ -535,7 +557,7 @@ export default function SemesterBuilder() {
             {/* Floating buttons and messages */}
 
             <FloatingButton text={t('Builder.save')} onClick={saveSchedule} bottom={'6rem'} right={'2rem'} color={"blue.7"}/>
-            <FloatingButton text={t('Builder.done')} onClick={()=> {navigate('/home')}} bottom={'2rem'} right={'2rem'} color={"green.7"}/>
+            <FloatingButton text={t('Builder.done')} onClick={()=> {navigate('/')}} bottom={'2rem'} right={'2rem'} color={"green.7"}/>
             {
                 savedSuccessfully ?
                 <FloatingMessage header={t('Builder.saveSuccessTitle')} text={t('Builder.saveSuccessBody')} bottom={"2rem"} color={"teal"} icon={saveSuccessIcon}/>
@@ -613,7 +635,7 @@ function calcTimeDemand(difficultyValue: number, selectedLength: number, totalCr
 
 //  = = = = = Schedule checkers = = = = =
 function timeStringToNumber(time: string) {
-    return (parseInt(time.split(":")[0]) - 8)*2 + (parseInt(time.split(":")[1]) === 30 ? 1 : 0);
+    return (parseInt(time.split(":")[0]) - 8) * 2 + (parseInt(time.split(":")[1]) === 30 ? 1 : 0);
 }
 function isOverlapped(day: number, startTime: string, endTime: string, scheduleArray: number[]){
     const startTimeValue = timeStringToNumber(startTime);
