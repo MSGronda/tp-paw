@@ -13,7 +13,14 @@ import {
 import { BarChart } from '@mantine/charts';
 import {Navbar } from "../../components/navbar/navbar";
 import classes from './home.module.css';
-import {IconCheck, IconMessageCircle, IconPencil, IconPhoto, IconSettings} from "@tabler/icons-react";
+import {
+    IconCalendarEvent,
+    IconCheck,
+    IconMessageCircle,
+    IconPencil,
+    IconPhoto,
+    IconSettings
+} from "@tabler/icons-react";
 import {useTranslation} from "react-i18next";
 import SubjectCard from "../../components/subject-card/subject-card.tsx";
 import { useContext, useEffect, useState } from 'react';
@@ -27,7 +34,23 @@ import Class from '../../models/Class.ts';
 import ClassTime from '../../models/ClassTime.ts';
 import { subjectService, userService } from '../../services/index.tsx';
 import { handleService } from '../../handlers/serviceHandler.tsx';
+import {SelectedSubject} from "../../models/SelectedSubject.ts";
+import {createSelectedSubjects} from "../../utils/user_plan_utils.ts";
+import PastSubjectCard from "../../components/past-subject-card/past-subject-card.tsx";
+import {t} from "i18next";
+import {ActionIcon} from "@mantine/core/lib";
+import WeeklySchedule from "../../components/schedule/weekly-schedule.tsx";
 
+const COLS = 7
+const ROWS = 29
+
+export function HomeScreen() {
+    const authContext = useContext(AuthContext);
+    const isLoggedIn = authContext.isAuthenticated;
+    return (
+        isLoggedIn ? <Home/> : <Landing/>
+    );
+}
 
 export default function Home() {
     const { t } = useTranslation();
@@ -36,24 +59,42 @@ export default function Home() {
 
     const INITIAL_PAGE = 1;
 
-    const [pastSubjects, setPastSubjects] = useState([]);
-    const [futureSubjects, setFutureSubjects] = useState([]);
-    const [currentPastSubjectsPage, setCurrentPastSubjectsPage] = useState(INITIAL_PAGE);
-    const [currentFutureSubjectsPage, setCurrentFutureSubjectsPage] = useState(INITIAL_PAGE);
-    const [maxPage, setMaxPage] = useState(3); //Set default max page to 1
     const [activeTab, setActiveTab] = useState<string | null>("current-semester");
+    const [maxPage, setMaxPage] = useState(3); //Set default max page to 1
 
-    
 
+    // = = = Current semester = = =
+    const [userSemester, setUserSemester] = useState<SelectedSubject[]>([]);
 
-    const searchPastSubjects = async (userId: number, page: number) => {
-        const res = await subjectService.getDoneSubjects(userId,page);
-        const data = handleService(res,navigate);
-        if(res) {
-            setPastSubjects(data);
-        }
+    const getUserSemester = async () => {
+        const userId = userService.getUserId();
+        if(!userId)
+            navigate('/login');
+
+        const respSubjects = await subjectService.getUserPlanSubjects(userId);
+        const dataSubjects = handleService(respSubjects, navigate);
+
+        const respPlan = await userService.getUserPlan(userId);
+        const dataPlan = handleService(respPlan, navigate);
+
+        setUserSemester(createSelectedSubjects(dataPlan, dataSubjects));
     }
 
+    // = = = Overview = = =
+    const [completedCredits, setCompletedCredits] = useState(0);
+    const [totalCreditsInDegree, setTotalCreditsInDegree] = useState(0);
+    const [overallProgress, setOverallProgress] = useState(0.0);
+    const [progressByYear, setProgressByYear] = useState([
+        { year: t("Home.firstYear"), progress: 0},
+        { year: t("Home.secondYear"), progress: 0},
+        { year: t("Home.thirdYear"), progress: 0},
+        { year: t("Home.fourthYear"), progress: 0},
+        { year: t("Home.fifthYear"), progress: 0},
+    ])
+
+    // = = = Future subjects = = =
+    const [futureSubjects, setFutureSubjects] = useState<Subject[]>([]);
+    const [currentFutureSubjectsPage, setCurrentFutureSubjectsPage] = useState(INITIAL_PAGE);
     const searchFutureSubjects = async (userId: number, page: number) => {
         const res = await subjectService.getAvailableSubjects(userId,page);
         const data = handleService(res,navigate);
@@ -62,36 +103,34 @@ export default function Home() {
         }
     }
 
-    const getSubjectsCards = (subjects: any) => {
-        let content = [];
-        for (let subject of subjects) {
-            content.push(<SubjectCard id={subject.id} credits={subject.credits} difficulty={subject.difficulty} name={subject.name} numReviews={subject.numReviews} prerequisites={subject.prerequisites} timeDemand={subject.timeDemand} progress={subject.progress} />);
+    // = = = Past subjects = = =
+    const [pastSubjects, setPastSubjects] = useState<Subject[]>([]);
+    const [currentPastSubjectsPage, setCurrentPastSubjectsPage] = useState(INITIAL_PAGE);
+    const searchPastSubjects = async (userId: number, page: number) => {
+        const res = await subjectService.getDoneSubjects(userId,page);
+        const data = handleService(res,navigate);
+        if(res) {
+            setPastSubjects(data);
         }
-        return content;
-    };
-    
+    }
+
+    // = = = API calls = = =
+
+    useEffect(() => {
+        getUserSemester();           // TODO: uncomment
+    }, []);
+
     useEffect(() => {
         const userId = userService.getUserId();
-        searchFutureSubjects(userId,currentFutureSubjectsPage);
+        searchFutureSubjects(userId, currentFutureSubjectsPage);
     },[currentFutureSubjectsPage]);
 
     useEffect(() => {
         const userId = userService.getUserId();
-        searchPastSubjects(userId,currentPastSubjectsPage);
+        searchPastSubjects(userId, currentPastSubjectsPage);
     },[currentPastSubjectsPage]);
 
 
-    const data = [
-        { year: t("Home.firstYear"), progress: 100},
-        { year: t("Home.secondYear"), progress: 82},
-        { year: t("Home.thirdYear"), progress: 100},
-        { year: t("Home.fourthYear"), progress: 50},
-        { year: t("Home.fifthYear"), progress: 7},
-    ];
-
-    const userSemester: Subject[] = [
-        {id: "72.40", name: "Ingeniería en Software II", department: "Ohio Department", credits:3, classes: [{idSubject: "72.40", idClass: "1", professors: ["Juan Martín Sotuyo Dodero"], locations: [{day: 1, startTime: "19:00", endTime: "22:00", location: "701F", building: "Sede Distrito Financiero", mode: "Presencial"} as ClassTime]} as Class], difficulty: "1", timeDemand: "0", reviewCount: 3, prerequisites: ["72.37"]} as Subject,
-    ];
     return (
         <div className={classes.background}>
             <Navbar/>
@@ -114,32 +153,42 @@ export default function Home() {
                                 </Tabs.Tab>
                             </Tabs.List>
 
-                            <Tabs.Panel value="current-semester">
-                                <div className={classes.currentSemesterArea}>
-                                    {
-                                        userSemester.length !== 0?
-                                        <div>
+                            <Tabs.Panel value="current-semester" h="100%" w="100%">
+                                <Flex h="100%" w="100%" justify="center" align="center">
+                                    { userSemester.length !== 0?
+                                        <div className={classes.currentSemesterArea}>
+
                                             <div className={classes.timeTableArea}>
-                                            <TimeTable />
+                                                <WeeklySchedule rows={ROWS} cols={COLS} subjectClasses={userSemester}/>
                                             </div>
+
                                             <div className={classes.currentSemesterClassArea}>
-                                                <Card className={classes.currentSemesterCard}>
-                                                    <Card.Section>
-                                                        <h4>{t("Home.currentSemester")}</h4>
+                                                <Card  padding={0}>
+                                                    <Card.Section w="100%">
+                                                        <h4 style={{margin: "0.75rem"}} className={classes.section_titles}>{t("Home.thisSemester")}</h4>
+                                                        <Divider/>
                                                     </Card.Section>
                                                     <Card.Section>
-                                                        <div className={classes.currentSemesterSubjectInfoList}>
-                                                            {userSemester.map((subject) => (
-                                                                <Link to={{pathname:`subject/` + subject.id}}>
-                                                                    <ClassInfoCard subject={subject}/>
-                                                                </Link>
-                                                            ))}
+                                                        <div style={{display: "flex", flexDirection: "column", alignItems: "center", width: "100%", height: "100%"}}>
+                                                            <div style={{maxHeight: "80vh", overflowY: "auto", flex: "1", width: "100%"}}>
+                                                                {userSemester.map((subject) => (
+                                                                    <div style={{padding: "0.5rem 0.5rem"}}>
+                                                                        <Link  to={{pathname:`subject/` + subject.subject.id}}>
+                                                                            <ClassInfoCard subject={subject.subject}/>
+                                                                        </Link>
+                                                                    </div>
+
+                                                                ))}
+                                                            </div>
                                                         </div>
+
                                                     </Card.Section>
+
                                                 </Card>
                                             </div>
+
                                         </div>
-                                            :
+                                        :
                                         <div className={classes.emptyTabArea}>
                                             <h3 className={classes.emptyTabInfo}>
                                                 {t("Home.emptySemester")}
@@ -149,21 +198,21 @@ export default function Home() {
                                             </h3>
                                         </div>
                                     }
-                                </div>
-                                {userSemester.length !== 0 && 
-                                    <div className={classes.semesterEditArea}>
-                                        <Link to={{pathname: `/builder/finish`}}>
-                                            <Button size='lg' color="green" rightSection={<IconCheck size={20} />} className={classes.semesterEditButton}>
-                                                {t("Home.finishCurrentSemester")}
-                                            </Button>
-                                        </Link>
-                                        <Link to={{pathname: `/builder`}}>
-                                            <Button size='lg' variant='default'  rightSection={<IconPencil size={20} />} className={classes.semesterEditButton}>
-                                                {t("Home.editCurrentSemester")}
-                                            </Button>
-                                        </Link>
-                                    </div>
-                                }
+                                    {userSemester.length !== 0 &&
+                                        <div className={classes.semesterEditArea}>
+                                            <Link to={{pathname: `/builder/finish`}}>
+                                                <Button size='lg' color="green" rightSection={<IconCheck size={20} />} className={classes.semesterEditButton}>
+                                                    {t("Home.finishCurrentSemester")}
+                                                </Button>
+                                            </Link>
+                                            <Link to={{pathname: `/builder`}}>
+                                                <Button size='lg' variant='default'  rightSection={<IconPencil size={20} />} className={classes.semesterEditButton}>
+                                                    {t("Home.editCurrentSemester")}
+                                                </Button>
+                                            </Link>
+                                        </div>
+                                    }
+                                </Flex>
                             </Tabs.Panel>
 
                             <Tabs.Panel value="overview">
@@ -189,7 +238,7 @@ export default function Home() {
                                                         </Text>
                                                         <Divider orientation="vertical"/>
                                                         <Text fw={700}>
-                                                            {getCompletedCredits()}
+                                                            {completedCredits}
                                                         </Text>
                                                     </Group>
                                                 </div>
@@ -200,7 +249,7 @@ export default function Home() {
                                                         </Text>
                                                         <Divider orientation="vertical"/>
                                                         <Text fw={700}>
-                                                            {getTotalCredits()}
+                                                            {totalCreditsInDegree}
                                                         </Text>
                                                     </Group>
                                                 </div>
@@ -218,10 +267,10 @@ export default function Home() {
                                                     thickness={19}
                                                     roundCaps
                                                     sections={[
-                                                        { value: 40, color: 'blue' },
+                                                        { value: overallProgress, color: 'blue' },
                                                     ]}
                                                 />
-                                                <h4>33%{/*userProgressPercentage*/}</h4>
+                                                <h4>{overallProgress} %</h4>
                                             </div>
                                         </Card>
                                         <Card className={classes.progressCard}>
@@ -231,7 +280,8 @@ export default function Home() {
                                             <div className={classes.chartContainer}>
                                                 <BarChart
                                                     h={300}
-                                                    data={data}
+                                                    withTooltip={false}
+                                                    data={progressByYear}
                                                     dataKey="year"
                                                     unit="%"
                                                     series={[
@@ -244,25 +294,55 @@ export default function Home() {
                                 </div>
                             </Tabs.Panel>
 
-                            <Tabs.Panel value="future-subjects" >
-                                <Flex gap="xl" align="center" direction="column" mih={50}>
-                                <Grid gutter="sm" columns={12} className={classes.futureSubjectsArea}>
-                                    {getSubjectsCards(futureSubjects).map((item) => <Grid.Col span={3}>{item}</Grid.Col>)}
-                                </Grid>
-                                <Flex justify="center" align="center">
-                                    <Pagination value={currentFutureSubjectsPage} total={maxPage} onChange={setCurrentFutureSubjectsPage} />
-                                </Flex>
+                            <Tabs.Panel value="future-subjects"  h="90%">
+                                <Flex gap="xl" align="center" justify="center" direction="column" mih={50} w="100%">
+                                    <Flex maw="85%" pt="1.5rem" mih="80%">
+                                        <Grid gutter="sm" columns={5}>
+                                            {
+                                                futureSubjects.map((subject) =>
+                                                    <Grid.Col span={1} key={subject.id} >
+                                                        <SubjectCard
+                                                            id={subject.id}
+                                                            credits={subject.credits}
+                                                            difficulty={subject.difficulty}
+                                                            name={subject.name}
+                                                            numReviews={subject.reviewCount}
+                                                            prerequisites={subject.prerequisites}
+                                                            timeDemand={subject.timeDemand}
+                                                            progress={""}
+                                                        />
+                                                    </Grid.Col>
+                                                )
+                                            }
+                                        </Grid>
+                                    </Flex>
+
+                                    <Flex justify="center" align="center">
+                                        <Pagination value={currentFutureSubjectsPage} total={maxPage} onChange={setCurrentFutureSubjectsPage} />
+                                    </Flex>
                                 </Flex>
                             </Tabs.Panel>
 
-                            <Tabs.Panel value="past-subjects">
-                                <Flex gap="xl" align="center" direction="column" mih={50}>
-                                <Grid gutter="sm">
-                                    {getSubjectsCards(pastSubjects).map((item) => <Grid.Col span={3}>{item}</Grid.Col>)}
-                                </Grid>
-                                <Flex justify="center" align="center">
-                                    <Pagination value={currentPastSubjectsPage} total={maxPage} onChange={setCurrentPastSubjectsPage} />
-                                </Flex>
+                            <Tabs.Panel value="past-subjects" h="90%">
+                                <Flex gap="xl" align="center" justify="center" direction="column" h="100%" w="100%">
+                                    <Flex maw="85%" pt="1.5rem" mih="80%">
+                                        <Grid gutter="sm" columns={5} >
+                                            {
+                                                pastSubjects.map((subject) =>
+                                                    <Grid.Col span={1} key={subject.id} >
+                                                        <PastSubjectCard
+                                                            id={subject.id}
+                                                            credits={subject.credits}
+                                                            name={subject.name}
+                                                        />
+                                                    </Grid.Col>
+                                                )
+                                            }
+                                        </Grid>
+                                    </Flex>
+                                    <Flex justify="center" align="center">
+                                        <Pagination value={currentFutureSubjectsPage} total={maxPage} onChange={setCurrentFutureSubjectsPage} />
+                                    </Flex>
                                 </Flex>
                             </Tabs.Panel>
                         </Tabs>
@@ -272,20 +352,6 @@ export default function Home() {
         </div>
 
     );
+
 }
 
-export function HomeScreen() {
-    const authContext = useContext(AuthContext);
-    const isLoggedIn = authContext.isAuthenticated;
-    return (
-        isLoggedIn ? <Home/> : <Landing/>
-    );
-}
-
-function getCompletedCredits() {
-    return 133;
-}
-
-function getTotalCredits() {
-    return 244;
-}

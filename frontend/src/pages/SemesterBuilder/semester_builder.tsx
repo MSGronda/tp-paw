@@ -39,6 +39,7 @@ import FloatingButton from "../../components/floating-button/floating-button.tsx
 import {UserPlan} from "../../models/UserPlan.ts";
 import FloatingMessage from "../../components/floating-message/floating_message.tsx";
 import Title from "../../components/title/title.tsx";
+import {createEmptySubjectClass, createSelectedSubjects} from "../../utils/user_plan_utils.ts";
 
 const COLS = 7
 const ROWS = 29
@@ -627,30 +628,8 @@ function isOverlapped(day: number, startTime: string, endTime: string, scheduleA
 
 
 //  = = = = = Misc. = = = = =
-function createEmptySubjectClass(subject: Subject) : Class {
-    return {
-        idSubject: subject.id,
-        idClass: "",
-        professors: [],
-        locations: []
-    }
-}
-function createSelectedSubjects(userPlan: UserPlan, subjects: Subject[]): SelectedSubject[] {
-    const selected: SelectedSubject[] = [];
-    subjects.forEach((subject) => {
 
-        const subjectClassPair = userPlan.classes.entry.find((t) => t.key == subject.id)
 
-        const idClass = subjectClassPair ? subjectClassPair.value : "";
-
-        const c = subject.classes.find((c) => c.idClass == idClass);
-        selected.push({
-            subject: subject,
-            selectedClass:  c ? c : createEmptySubjectClass(subject) // No deberia ocurrir este caso pero bueno
-        })
-    })
-    return selected;
-}
 function removeInvalidSubjects(subjects: Subject[]) {
     return subjects.filter((subject) => subject.credits != 0);
 }
