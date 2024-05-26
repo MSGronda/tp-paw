@@ -6,7 +6,7 @@ import {
     Grid,
     Group,
     Pagination,
-    rem, RingProgress,
+    RingProgress,
     Tabs,
     Text
 } from '@mantine/core';
@@ -14,12 +14,8 @@ import { BarChart } from '@mantine/charts';
 import {Navbar } from "../../components/navbar/navbar";
 import classes from './home.module.css';
 import {
-    IconCalendarEvent,
     IconCheck,
-    IconMessageCircle,
     IconPencil,
-    IconPhoto,
-    IconSettings
 } from "@tabler/icons-react";
 import {useTranslation} from "react-i18next";
 import SubjectCard from "../../components/subject-card/subject-card.tsx";
@@ -27,18 +23,13 @@ import { useContext, useEffect, useState } from 'react';
 import AuthContext from '../../context/AuthContext.tsx';
 import Landing from '../Landing/landing.tsx';
 import {Subject} from "../../models/Subject.ts";
-import TimeTable from "../../components/time-table/time-table.tsx";
 import {Link, useNavigate} from "react-router-dom";
 import ClassInfoCard from '../../components/class-info-card/class-info-card.tsx';
-import Class from '../../models/Class.ts';
-import ClassTime from '../../models/ClassTime.ts';
 import { subjectService, userService } from '../../services/index.tsx';
 import { handleService } from '../../handlers/serviceHandler.tsx';
 import {SelectedSubject} from "../../models/SelectedSubject.ts";
 import {createSelectedSubjects} from "../../utils/user_plan_utils.ts";
 import PastSubjectCard from "../../components/past-subject-card/past-subject-card.tsx";
-import {t} from "i18next";
-import {ActionIcon} from "@mantine/core/lib";
 import WeeklySchedule from "../../components/schedule/weekly-schedule.tsx";
 
 const COLS = 7
@@ -55,13 +46,11 @@ export function HomeScreen() {
 export default function Home() {
     const { t } = useTranslation();
     const navigate = useNavigate();
-    const iconStyle = { width: rem(12), height: rem(12) };
 
     const INITIAL_PAGE = 1;
 
     const [activeTab, setActiveTab] = useState<string | null>("current-semester");
     const [maxPage, setMaxPage] = useState(3); //Set default max page to 1
-
 
     // = = = Current semester = = =
     const [userSemester, setUserSemester] = useState<SelectedSubject[]>([]);
@@ -139,16 +128,16 @@ export default function Home() {
                     <div className={classes.choosingArea}>
                         <Tabs value={activeTab} className={classes.tabs} onChange={(value) => setActiveTab(value)}>
                             <Tabs.List>
-                                <Tabs.Tab value="current-semester" leftSection={<IconPhoto style={iconStyle} />}>
+                                <Tabs.Tab value="current-semester">
                                     {t("Home.currentSemester")}
                                 </Tabs.Tab>
-                                <Tabs.Tab value="overview" leftSection={<IconMessageCircle style={iconStyle} />}>
+                                <Tabs.Tab value="overview">
                                     {t("Home.overview")}
                                 </Tabs.Tab>
-                                <Tabs.Tab value="future-subjects" leftSection={<IconSettings style={iconStyle} />}>
+                                <Tabs.Tab value="future-subjects">
                                     {t("Home.futureSubjects")}
                                 </Tabs.Tab>
-                                <Tabs.Tab value="past-subjects" leftSection={<IconSettings style={iconStyle} />}>
+                                <Tabs.Tab value="past-subjects">
                                     {t("Home.pastSubjects")}
                                 </Tabs.Tab>
                             </Tabs.List>
@@ -170,11 +159,11 @@ export default function Home() {
                                                     </Card.Section>
                                                     <Card.Section>
                                                         <div style={{display: "flex", flexDirection: "column", alignItems: "center", width: "100%", height: "100%"}}>
-                                                            <div style={{maxHeight: "80vh", overflowY: "auto", flex: "1", width: "100%"}}>
+                                                            <div style={{maxHeight: "80vh" ,minHeight: "80vh", overflowY: "auto", flex: "1", width: "100%"}}>
                                                                 {userSemester.map((subject) => (
                                                                     <div style={{padding: "0.5rem 0.5rem"}}>
                                                                         <Link  to={{pathname:`subject/` + subject.subject.id}}>
-                                                                            <ClassInfoCard subject={subject.subject}/>
+                                                                            <ClassInfoCard subject={subject.subject} subjectClass={subject.selectedClass}/>
                                                                         </Link>
                                                                     </div>
 
@@ -200,14 +189,14 @@ export default function Home() {
                                     }
                                     {userSemester.length !== 0 &&
                                         <div className={classes.semesterEditArea}>
-                                            <Link to={{pathname: `/builder/finish`}}>
-                                                <Button size='lg' color="green" rightSection={<IconCheck size={20} />} className={classes.semesterEditButton}>
-                                                    {t("Home.finishCurrentSemester")}
-                                                </Button>
-                                            </Link>
                                             <Link to={{pathname: `/builder`}}>
                                                 <Button size='lg' variant='default'  rightSection={<IconPencil size={20} />} className={classes.semesterEditButton}>
                                                     {t("Home.editCurrentSemester")}
+                                                </Button>
+                                            </Link>
+                                            <Link to={{pathname: `/builder/finish`}}>
+                                                <Button size='lg' color="green" rightSection={<IconCheck size={20} />} className={classes.semesterEditButton}>
+                                                    {t("Home.finishCurrentSemester")}
                                                 </Button>
                                             </Link>
                                         </div>

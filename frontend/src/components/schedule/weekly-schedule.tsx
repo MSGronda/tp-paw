@@ -36,6 +36,9 @@ function findEventByIdx(rowIdx: number, colIdx: number, subjectClasses: Selected
             }
         }
     }
+    if((rowIdx == 7 || rowIdx == 6) && colIdx == 5){
+        console.log("Aaa")
+    }
     return [EMPTY_CELL, EMPTY_CELL];
 }
 

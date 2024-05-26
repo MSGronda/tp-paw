@@ -4,7 +4,7 @@ import "../../common/table-style.css";
 import {IconCheck} from "@tabler/icons-react";
 import ClassTime from "../../models/ClassTime.ts";
 import {t} from "i18next";
-import getDayName from "../../common/timeTable.ts";
+import getDayName from "../../utils/time_table.ts";
 
 interface BuilderClassTimeCardProps {
     className: string;

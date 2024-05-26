@@ -98,6 +98,10 @@
     right: 1.5rem;
     display: flex;
     flex-direction: column;
+    align-items: center;
+}
+.semesterEditButton{
+    margin: 0.2rem 0;
 }
 
 .containter{
