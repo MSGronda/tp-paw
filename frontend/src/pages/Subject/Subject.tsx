@@ -17,16 +17,17 @@ import {
     useCombobox,
     Notification,
 } from '@mantine/core';
-import { IconArrowsSort, IconCheck, IconPhoto, IconX } from "@tabler/icons-react";
+import { IconArrowsSort, IconCheck, IconX } from "@tabler/icons-react";
 import { Subject } from "../../models/Subject.ts";
 import { Navbar } from "../../components/navbar/navbar.tsx";
 import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
 import ReviewCard from "../../components/review-card/review-card.tsx";
-import { subjectService, reviewService, userService } from "../../services";
+import {subjectService, reviewService, userService, degreeService} from "../../services";
 import { handleService } from "../../handlers/serviceHandler.tsx";
 import { Review } from "../../models/Review.ts";
 import PaginationComponent from "../../components/pagination/pagination.tsx";
 import { User } from "../../models/User.ts";
+import { Degree } from "../../models/Degree.ts";
 
 
 export function SubjectPage() {
@@ -39,6 +40,8 @@ export function SubjectPage() {
     const { userId } = useContext(AuthContext);
 
     const [subject, setSubject] = useState({} as Subject);
+    const [subjectYear, setSubjectYear] = useState(0);
+    const [degree, setDegree] = useState({} as Degree);
     const [loading, setLoading] = useState(true);
     const [reviews, setReviews] = useState<Review[]>([]);
     const [didUserReview, setDidUserReview] = useState(true);
@@ -50,16 +53,15 @@ export function SubjectPage() {
     const [deletedReviewValue, setDeletedReviewValue] = useState<Boolean>();
     const [progress, setProgress] = useState("PENDING");
 
-    const orderParams = new URLSearchParams(location.search);
-    const orderBy = orderParams.get('orderBy');
-    const dir = orderParams.get('dir');
-    const page: number = orderParams.get('page') === null ? 1 : parseInt(orderParams.get('page') as string, 10);
-
     const INITIAL_PAGE = 1;
     const INITIAL_ORDER: string = "difficulty";
     const INITAL_DIR: string = "asc";
 
     const { state } = location;
+    const orderParams = new URLSearchParams(location.search);
+    const orderBy = orderParams.get('orderBy');
+    const dir = orderParams.get('dir');
+    const page: number = orderParams.get('page') === null ? INITIAL_PAGE : parseInt(orderParams.get('page') as string, 10);
 
 
     const searchSubject = async (subjectId: string) => {
@@ -113,6 +115,22 @@ export function SubjectPage() {
         }
     }
 
+    const getSubjectYear = async (subjectId: string)=> {
+        const res = await degreeService.getSubjectYear(subjectId);
+        const data = handleService(res, navigate);
+        if (res) {
+            setSubjectYear(data.semester);
+        }
+    }
+
+    const getDegree = async (subjectId: string)=> {
+        const res = await degreeService.getDegreeForSubject(subjectId);
+        const data = handleService(res, navigate);
+        if (res) {
+            setDegree(data);
+        }
+    }
+
     const setSubjectProgress = (userId: number, subjectId: string, newProgressState: string) => {
         newProgressState === "DONE" ? userService.setFinishedSubjects(userId, new Array(subjectId), []) : userService.setFinishedSubjects(userId, [], new Array(subjectId));
         setProgress(newProgressState);
@@ -155,12 +173,26 @@ export function SubjectPage() {
         }
     }, []);
 
+    // UserProgress Lookup
     useEffect(() => {
         if (userId !== undefined) {
             getUserProgress(userId);
         }
+    }, []);
 
-    }, [])
+    // Subject Year Lookup
+    useEffect( () => {
+        if(subjectId.id !== undefined) {
+            getSubjectYear(subjectId.id);
+        }
+    }, []);
+
+    // Degree Lookup
+    useEffect(() => {
+        if(subjectId.id !== undefined) {
+            getDegree(subjectId.id);
+        }
+    }, []);
 
     const findUserName = (userId: number) => {
         let userName = "";
@@ -171,13 +203,6 @@ export function SubjectPage() {
         })
         return userName;
     }
-
-    // Degree Lookup
-    const degree: any = {
-        id: 1,
-        name: "Ingenieria Informatica",
-    };
-    const year: number = 1;
 
     const combobox = useCombobox({
         onDropdownClose: () => combobox.resetSelectedOption(),
@@ -230,14 +255,14 @@ export function SubjectPage() {
                         }
 
                         <div className={classes.breadcrumbArea}>
-                            {degree !== null ?
+                            {degree !== {} ?
                                 <Breadcrumbs separator="→">
                                     <Link to={"/degree/" + degree.id}>
                                         {degree.name}
                                     </Link>
-                                    {year === 0 ?
+                                    {subjectYear === 0 ?
                                         <Link to={"/degree/" + degree.id + "?tab=electives"}>{t("Subject.electives")}</Link> :
-                                        <Link to={"/degree/" + degree.id + "?tab=" + year}>{t("Subject.year")} {year}</Link>
+                                        <Link to={"/degree/" + degree.id + "?tab=" + subjectYear}>{t("Subject.year")} {subjectYear}</Link>
                                     }
                                 </Breadcrumbs> :
                                 <></>
