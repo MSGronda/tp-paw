@@ -18,7 +18,7 @@ import {
     Notification,
 } from '@mantine/core';
 import { IconArrowsSort, IconCheck, IconX } from "@tabler/icons-react";
-import { Subject } from "../../models/Subject.ts";
+import {SimpleSubject, Subject} from "../../models/Subject.ts";
 import { Navbar } from "../../components/navbar/navbar.tsx";
 import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
 import ReviewCard from "../../components/review-card/review-card.tsx";
@@ -42,6 +42,7 @@ export function SubjectPage() {
     const [subject, setSubject] = useState({} as Subject);
     const [subjectYear, setSubjectYear] = useState(0);
     const [degree, setDegree] = useState({} as Degree);
+    const [prerequisites, setPrerequisites] = useState([{} as SimpleSubject]);
     const [loading, setLoading] = useState(true);
     const [reviews, setReviews] = useState<Review[]>([]);
     const [didUserReview, setDidUserReview] = useState(true);
@@ -136,6 +137,18 @@ export function SubjectPage() {
         setProgress(newProgressState);
     }
 
+    const getPrerequisites = async (subjectIds: string[]) => {
+        const subjects = [];
+        for (const subjectId of subjectIds) {
+            const res = await subjectService.getSubjectById(subjectId.toString());
+            const data = handleService(res, navigate);
+            if (res) {
+                subjects.push({id: data.id, name: data.name});
+            }
+        }
+        setPrerequisites(subjects);
+    }
+
     useEffect(() => {
         if (subjectId.id !== undefined) {
             searchSubject(subjectId.id);
@@ -193,6 +206,13 @@ export function SubjectPage() {
             getDegree(subjectId.id);
         }
     }, []);
+
+    // Prerequisites Names Lookup
+    useEffect(() => {
+        if(subject !== undefined) {
+            getPrerequisites(subject.prerequisites);
+        }
+    }, [subject]);
 
     const findUserName = (userId: number) => {
         let userName = "";
@@ -255,7 +275,7 @@ export function SubjectPage() {
                         }
 
                         <div className={classes.breadcrumbArea}>
-                            {degree !== {} ?
+                            {degree !== null ?
                                 <Breadcrumbs separator="→">
                                     <Link to={"/degree/" + degree.id}>
                                         {degree.name}
@@ -294,8 +314,12 @@ export function SubjectPage() {
                                             <Table.Tr>
                                                 <Table.Th>{t("Subject.prerequisites")}</Table.Th>
                                                 <Table.Td>
-                                                    {subject.prerequisites && subject.prerequisites.length === 0 ? <>{t("Subject.emptyPrerequisites")}</> : <></>}
-                                                    {getSubjectPrereqs(subject.prerequisites)}
+                                                    {prerequisites && prerequisites.length === 0 ? <>{t("Subject.emptyPrerequisites")}</> : <></>}
+                                                    {   prerequisites && subject.prerequisites && prerequisites.length === subject.prerequisites.length ?
+                                                        prerequisites.map((subjectId) => (
+                                                            <><Link to={"/subject/" + subjectId.id} >{subjectId.name}</Link><>, </></>
+                                                        )) : <></>
+                                                    }
                                                 </Table.Td>
                                             </Table.Tr>
                                             <Table.Tr>
@@ -539,7 +563,7 @@ function getSubjectPrereqs(prereqs: string[]) {
     }
     prereqs.forEach((item) => {
         prereqsComponents.push(
-            <a href={"/subject/" + item}>{item}</a>
+            <Link to={"/subject/" + item} >{item}</Link>
         );
         if (i !== prereqs.length - 1) {
             prereqsComponents.push(
@@ -547,8 +571,7 @@ function getSubjectPrereqs(prereqs: string[]) {
             );
         }
         i++;
-    }
-    )
+    })
     return prereqsComponents;
 }
 

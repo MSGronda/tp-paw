@@ -64,3 +64,8 @@ export interface Subject {
     prerequisites: string[]
     semester?: number
 }
+
+export interface SimpleSubject {
+    id: string,
+    name: string
+}
