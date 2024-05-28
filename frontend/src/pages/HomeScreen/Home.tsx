@@ -50,7 +50,6 @@ export default function Home() {
     const INITIAL_PAGE = 1;
 
     const [activeTab, setActiveTab] = useState<string | null>("current-semester");
-    const [maxPage, setMaxPage] = useState(3); //Set default max page to 1
 
     // = = = Current semester = = =
     const [userSemester, setUserSemester] = useState<SelectedSubject[]>([]);
@@ -84,9 +83,10 @@ export default function Home() {
     // = = = Future subjects = = =
     const [futureSubjects, setFutureSubjects] = useState<Subject[]>([]);
     const [currentFutureSubjectsPage, setCurrentFutureSubjectsPage] = useState(INITIAL_PAGE);
+    const [futureSubjectsMaxPage, setFutureSubjectsMaxPage] = useState(1);
     const searchFutureSubjects = async (userId: number, page: number) => {
         const res = await subjectService.getAvailableSubjects(userId,page);
-        const data = handleService(res,navigate);
+        const data = handleService(res, navigate);
         if(res) {
             setFutureSubjects(data);
         }
@@ -95,6 +95,7 @@ export default function Home() {
     // = = = Past subjects = = =
     const [pastSubjects, setPastSubjects] = useState<Subject[]>([]);
     const [currentPastSubjectsPage, setCurrentPastSubjectsPage] = useState(INITIAL_PAGE);
+    const [pastSubjectsMaxPage, setPastSubjectsMaxPage] = useState(1);
     const searchPastSubjects = async (userId: number, page: number) => {
         const res = await subjectService.getDoneSubjects(userId,page);
         const data = handleService(res,navigate);
@@ -142,7 +143,7 @@ export default function Home() {
                                 </Tabs.Tab>
                             </Tabs.List>
 
-                            <Tabs.Panel value="current-semester" h="100%" w="100%">
+                            <Tabs.Panel value="current-semester" w="100%">
                                 <Flex h="100%" w="100%" justify="center" align="center">
                                     { userSemester.length !== 0?
                                         <div className={classes.currentSemesterArea}>
@@ -285,8 +286,8 @@ export default function Home() {
 
                             <Tabs.Panel value="future-subjects"  h="90%">
                                 <Flex gap="xl" align="center" justify="center" direction="column" mih={50} w="100%">
-                                    <Flex maw="85%" pt="1.5rem" mih="80%">
-                                        <Grid gutter="sm" columns={5}>
+                                    <Flex w="85%" pt="1.5rem" mih="80%">
+                                        <Grid w="100%" gutter="sm" columns={5}>
                                             {
                                                 futureSubjects.map((subject) =>
                                                     <Grid.Col span={1} key={subject.id} >
@@ -307,15 +308,15 @@ export default function Home() {
                                     </Flex>
 
                                     <Flex justify="center" align="center">
-                                        <Pagination value={currentFutureSubjectsPage} total={maxPage} onChange={setCurrentFutureSubjectsPage} />
+                                        <Pagination value={currentFutureSubjectsPage} total={futureSubjectsMaxPage} onChange={setCurrentFutureSubjectsPage} />
                                     </Flex>
                                 </Flex>
                             </Tabs.Panel>
 
                             <Tabs.Panel value="past-subjects" h="90%">
                                 <Flex gap="xl" align="center" justify="center" direction="column" h="100%" w="100%">
-                                    <Flex maw="85%" pt="1.5rem" mih="80%">
-                                        <Grid gutter="sm" columns={5} >
+                                    <Flex w="85%" pt="1.5rem" mih="80%">
+                                        <Grid w="100%" gutter="sm" columns={6} >
                                             {
                                                 pastSubjects.map((subject) =>
                                                     <Grid.Col span={1} key={subject.id} >
@@ -330,7 +331,7 @@ export default function Home() {
                                         </Grid>
                                     </Flex>
                                     <Flex justify="center" align="center">
-                                        <Pagination value={currentFutureSubjectsPage} total={maxPage} onChange={setCurrentFutureSubjectsPage} />
+                                        <Pagination value={currentPastSubjectsPage} total={pastSubjectsMaxPage} onChange={setCurrentPastSubjectsPage} />
                                     </Flex>
                                 </Flex>
                             </Tabs.Panel>

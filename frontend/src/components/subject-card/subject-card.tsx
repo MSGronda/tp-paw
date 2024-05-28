@@ -21,7 +21,7 @@ function SubjectCard(props: SubjectCardProps): JSX.Element {
     return (
         <Link to={{pathname:`/subject/${id}`}}>
             <Card className={classes.card_area}>
-                <h3>{name} - {id}</h3>
+                <h4 style={{height: "20%"}}>{name} - {id}</h4>
                 <div className={classes.badge_row}>
                     <Badge className={classes.badge_row_elem} color={'blue.7'}>{t("SubjectCard.credits", {n: credits})}</Badge>
                     <Tooltip multiline label={
