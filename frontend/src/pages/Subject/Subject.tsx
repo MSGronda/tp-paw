@@ -6,7 +6,6 @@ import {
     Card,
     Tabs,
     Text,
-    rem,
     Table,
     Badge,
     Button,
@@ -153,7 +152,7 @@ export function SubjectPage() {
         if (subjectId.id !== undefined) {
             searchSubject(subjectId.id);
         }
-    }, []);
+    }, [subjectId.id]);
 
     useEffect(() => {
         if (subject.name !== undefined) {
@@ -184,35 +183,35 @@ export function SubjectPage() {
             setDeletedReviewValue(localStorage.getItem('reviewDeleted') === "true");
             localStorage.removeItem('reviewDeleted');
         }
-    }, []);
+    }, [subjectId.id]);
 
     // UserProgress Lookup
     useEffect(() => {
         if (userId !== undefined) {
             getUserProgress(userId);
         }
-    }, []);
+    }, [userId]);
 
     // Subject Year Lookup
     useEffect( () => {
         if(subjectId.id !== undefined) {
             getSubjectYear(subjectId.id);
         }
-    }, []);
+    }, [subjectId.id]);
 
     // Degree Lookup
     useEffect(() => {
         if(subjectId.id !== undefined) {
             getDegree(subjectId.id);
         }
-    }, []);
+    }, [subjectId.id]);
 
     // Prerequisites Names Lookup
     useEffect(() => {
-        if(subject !== undefined) {
+        if(subject.prerequisites !== undefined) {
             getPrerequisites(subject.prerequisites);
         }
-    }, [subject]);
+    }, [subject.prerequisites]);
 
     const findUserName = (userId: number) => {
         let userName = "";
@@ -295,9 +294,9 @@ export function SubjectPage() {
                         <Card className={classes.mainBody}>
                             <Tabs defaultValue="general">
                                 <Tabs.List>
-                                    <Tabs.Tab value="general"> {t("Subject.general")}  </Tabs.Tab>
-                                    <Tabs.Tab value="times-panel"> {t("Subject.times")} </Tabs.Tab>
-                                    <Tabs.Tab value="professors-panel"> {t("Subject.classProf")} </Tabs.Tab>
+                                    <Tabs.Tab key={"general"} value="general"> {t("Subject.general")}  </Tabs.Tab>
+                                    <Tabs.Tab key={"times-panel"} value="times-panel"> {t("Subject.times")} </Tabs.Tab>
+                                    <Tabs.Tab key={"professors-panel"} value="professors-panel"> {t("Subject.classProf")} </Tabs.Tab>
                                 </Tabs.List>
 
                                 <Tabs.Panel value="general">
@@ -316,8 +315,8 @@ export function SubjectPage() {
                                                 <Table.Td>
                                                     {prerequisites && prerequisites.length === 0 ? <>{t("Subject.emptyPrerequisites")}</> : <></>}
                                                     {   prerequisites && subject.prerequisites && prerequisites.length === subject.prerequisites.length ?
-                                                        prerequisites.map((subjectId) => (
-                                                            <><Link to={"/subject/" + subjectId.id} >{subjectId.name}</Link><>, </></>
+                                                        prerequisites.map((simpleSubject, index) => (
+                                                            <Link key={index} to={{pathname:`/subject/${simpleSubject.id}`}}>{simpleSubject.name}, </Link>
                                                         )) : <></>
                                                     }
                                                 </Table.Td>
@@ -555,25 +554,6 @@ export function SubjectPage() {
     );
 }
 
-function getSubjectPrereqs(prereqs: string[]) {
-    const prereqsComponents: JSX.Element[] = [];
-    let i = 0;
-    if (prereqs === null || prereqs === undefined) {
-        return <></>;
-    }
-    prereqs.forEach((item) => {
-        prereqsComponents.push(
-            <Link to={"/subject/" + item} >{item}</Link>
-        );
-        if (i !== prereqs.length - 1) {
-            prereqsComponents.push(
-                <> , </>
-            );
-        }
-        i++;
-    })
-    return prereqsComponents;
-}
 
 function getProfessors(subject: Subject) {
     const professorsComponents: JSX.Element[] = [];
