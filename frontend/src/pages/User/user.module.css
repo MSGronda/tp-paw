@@ -3,7 +3,7 @@
     flex-direction: column;
     background-color: #efefef;
     flex: content;
-    height: 100%;
+    min-height: 100vh;
 }
 
 .body {
@@ -12,6 +12,8 @@
     padding-right: 2rem;
     align-self: center;
     justify-self: center;
+    align-items: center;
+    justify-content: center;
     margin: 0 auto;
     background-color: #efefef;
     flex: 1 0 auto;
@@ -32,8 +34,9 @@
     display: flex;
     flex-direction: row;
     align-items: center;
-    justify-content: center;
+    justify-content: space-between;
     margin-bottom: 1rem;
+    width: 100%;
 }
 
 .header p {
@@ -43,7 +46,18 @@
 
 .image_container {
     position: relative;
-    display: inline-block;
+}
+
+.imageEditButton {
+    position: absolute;
+    bottom: -5px;
+    right: -5px;
+    opacity: 80%;
+    transition: opacity 0.2s;
+}
+
+.imageEditButton:hover {
+    opacity: 100%;
 }
 
 .title {
@@ -140,4 +154,40 @@
 
 .dataTable tr:last-child {
     border-bottom: none !important;
+}
+
+.modal {
+    padding: 0.5rem;
+}
+
+.dropzoneWrapper {
+    position: relative;
+    margin-bottom: 30px;
+}
+
+.pictureDropzone {
+    border: 1px dashed #202020;
+    border-radius: 2rem;
+    padding: 24px 24px 50px;
+    
+    transition: background 0.25s;
+}
+
+.pictureDropzone:hover, .pictureDropzone:focus, .pictureDropzone:active, .pictureDropzone::drop {
+    background: #efefef;
+}
+
+.dropzoneDrop {
+    background: #efefef;
+}
+
+.pictureUpload {
+    position: absolute;
+    width: 250px;
+    left: calc(50% - 125px);
+    bottom: -20px;
+}
+
+.picturePreview {
+    border-radius: 100%;
 }

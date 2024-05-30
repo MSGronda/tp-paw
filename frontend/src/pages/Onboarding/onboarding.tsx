@@ -1,5 +1,4 @@
 import {useEffect, useState} from "react";
-import Degree from "../../models/Degree.ts";
 import {Button, Center, Combobox, Group, InputBase, Loader, Transition, useCombobox} from "@mantine/core";
 import {degreeService, subjectService} from "../../services";
 
@@ -14,6 +13,7 @@ import {Subject} from "../../models/Subject.ts";
 import {userService} from "../../services";
 import {Navigate, useNavigate} from "react-router-dom";
 import {useTranslation} from "react-i18next";
+import {Degree} from "../../models/Degree.ts";
 
 enum Step {
   DegreeSelection,

@@ -3,7 +3,7 @@ export interface User {
     id: number,
     username: string,
     email: string,
-    profileImage: string,
+    image: string,
     roles: string[],
     degreeId: number | undefined,
 }

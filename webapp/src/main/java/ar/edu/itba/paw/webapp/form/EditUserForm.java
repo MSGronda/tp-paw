@@ -20,8 +20,6 @@ public class EditUserForm {
     @Size(min = 8, max = 25)
     private String newPassword;
 
-    private String newPasswordConfirmation;
-
     private Long degreeId;
 
     private List<String> subjectIds;
@@ -49,24 +47,11 @@ public class EditUserForm {
     public void setUserName(String userName) {
         this.userName = userName;
     }
-
-    @AssertTrue
-    public boolean isPasswordConfirmationEqual() {
-        return Objects.equals(newPassword, newPasswordConfirmation);
-    }
-
     public void setNewPassword(String newPassword) {
         this.newPassword = newPassword;
     }
     public String getNewPassword(){
         return newPassword;
-    }
-
-    public void setNewPasswordConfirmation(String passwordConfirmation) {
-        this.newPasswordConfirmation = passwordConfirmation;
-    }
-    public String getNewPasswordConfirmation() {
-        return newPasswordConfirmation;
     }
 
     public String getOldPassword() {

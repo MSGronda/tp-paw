@@ -1,32 +1,42 @@
 import {useTranslation} from "react-i18next";
 import {degreeService, reviewService, subjectService, userService} from "../../services";
 import classes from './user.module.css';
-import {useContext, useEffect, useState} from "react";
+import {useContext, useEffect, useRef, useState} from "react";
 import {Navbar} from "../../components/navbar/navbar";
 import {Link, useNavigate, useParams} from "react-router-dom";
 import AuthContext from "../../context/AuthContext";
 import {Review} from "../../models/Review";
 import {Subject} from "../../models/Subject";
 import {
+  Alert,
   Avatar,
   Button,
-  Card,
-  Combobox,
-  Divider,
-  Group,
-  Loader,
-  Paper,
-  Space,
+  Card, Center,
+  Combobox, Group,
+  Input, InputBase,
+  Loader, Modal, Paper, PasswordInput, rem,
   Table,
-  Text,
-  useCombobox
+  Text, TextInput, useCombobox
 } from "@mantine/core";
 import type {User} from "../../models/User";
 import ReviewCard from "../../components/review-card/review-card";
-import {IconArrowsSort, IconPencil} from "@tabler/icons-react";
+import {
+  IconArrowsSort,
+  IconCloudUpload,
+  IconDownload,
+  IconExclamationCircle,
+  IconLock,
+  IconPencil,
+  IconX
+} from "@tabler/icons-react";
 import {Degree} from "../../models/Degree";
 import PaginationComponent from "../../components/pagination/pagination";
 import {isModerator} from "../../utils/userUtils.ts";
+import {useDisclosure} from "@mantine/hooks";
+import {useForm} from "@mantine/form";
+import {validateConfirmPassword, validatePassword, validateUsername} from "../../utils/register_utils.ts";
+import authService from "../../services/AuthService.ts";
+import {Dropzone, MIME_TYPES} from "@mantine/dropzone";
 
 
 export default function User() {
@@ -107,22 +117,22 @@ export default function User() {
     if (!isProfile && id == userId) {
       navigate('/profile');
     } else {
-      getUser();
-      getUserPlan();
+      getUser().catch((e) => console.error(e));
+      getUserPlan().catch((e) => console.error(e));
     }
   }, [id, userId]);
 
   useEffect(() => {
     if (id != null) {
       if (page == null || orderBy == null || dir == null) {
-        getReviewsFromUser(Number(id), INITIAL_PAGE, INITIAL_ORDER, INITAL_DIR);
+        getReviewsFromUser(Number(id), INITIAL_PAGE, INITIAL_ORDER, INITAL_DIR).catch((e) => console.error(e));
       } else {
-        getReviewsFromUser(Number(id), page, orderBy, dir);
+        getReviewsFromUser(Number(id), page, orderBy, dir).catch((e) => console.error(e));
       }
-      getSubjectsFromReviews(Number(id), page);
+      getSubjectsFromReviews(Number(id), page).catch((e) => console.error(e));
     }
 
-  }, []);
+  }, [dir, id, orderBy, page]);
 
   const findSubjectName = (subjectId: string) => {
     let subjectName = "";
@@ -293,38 +303,43 @@ function UserSection({user, degree, plan}: { user?: User, degree?: Degree, plan?
   if (!user || !degree || !plan) return <></>;
 
   return <>
-    <Card>
-      <div className={classes.header}>
-        <div className={classes.image_container}>
-          <Avatar
-            src={user.profileImage}
-            size={100}
-            radius={100}
-            mx="auto"
-          />
-        </div>
-        <div className={classes.title}>
-          <div className={classes.moderator_tag}>
-            <h1 className={classes.userName}>
-              {user.username}
-            </h1>
-            {isModerator(user) &&
-                <h2 className={classes.editor_text}>
-                  {t("User.moderator")}
-                </h2>
-            }
-          </div>
-        </div>
-        {role === "EDITOR" && !isModerator(user) &&
-            <div className={classes.moderator_tag}>
-                <Button variant="outline"> {/* TODO Ver endpoint de make moderator y conectarlo*/}
-                  {t("User.makeModerator")}
-                </Button>
-            </div>
-        }
+    <div className={classes.header}>
+      <div className={classes.image_container}>
+        <Avatar
+          src={user.image}
+          size={100}
+          radius="100%"
+          
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-ignore
+          imageProps={{"object-fit": "cover"}}
+          
+          mx="auto"
+        />
       </div>
-      <br/>
-      <Table className={classes.planTable}>
+      <div className={classes.title}>
+        <div className={classes.moderator_tag}>
+          <h1 className={classes.userName}>
+            {user.username}
+          </h1>
+          {isModerator(user) &&
+              <h2 className={classes.editor_text}>
+                {t("User.moderator")}
+              </h2>
+          }
+        </div>
+      </div>
+      {role === "EDITOR" && !isModerator(user) &&
+          <div className={classes.moderator_tag}>
+              <Button variant="outline"> {/* TODO Ver endpoint de make moderator y conectarlo*/}
+                {t("User.makeModerator")}
+              </Button>
+          </div>
+      }
+    </div>
+    <br/>
+    <Card py="md" px="lg" w="30rem">
+      <Table className={classes.dataTable}>
         <Table.Tbody>
           <Table.Tr>
             <Table.Td>{t("User.degree")}</Table.Td>
@@ -365,10 +380,29 @@ function UserSection({user, degree, plan}: { user?: User, degree?: Degree, plan?
 function ProfileSection({user}: { user?: User }) {
   const {t} = useTranslation();
 
+  const [openedPassModal, {open: openPassModal, close: closePassModal}] = useDisclosure(false);
+  const [openedDegreeModal, {open: openDegreeModal, close: closeDegreeModal}] = useDisclosure(false);
+  const [openedUsernameModal, {open: openUsernameModal, close: closeUsernameModal}] = useDisclosure(false);
+  const [openedPictureModal, {open: openPictureModal, close: closePictureModal}] = useDisclosure(false);
+  
+  const [degree, setDegree] = useState<Degree|null>(null);
+
+  useEffect(() => {
+    if(!user || !user.degreeId) return;
+    
+    degreeService.getDegreeById(user.degreeId).then(res => {
+      if(res.failure) {
+        console.error("Unable to get degree: ", res.status);
+        return;
+      }
+      setDegree(res.data as Degree);
+    });
+  }, [user]);
+
   if (!user) return <Loader/>;
 
-  const EditButton = () => (
-    <Button variant="outline" w="42px" h="32px" p="0">
+  const EditButton = (props: { onClick?: () => void, className?: string, filled?: boolean }) => (
+    <Button variant={props.filled ? "filled" : "outline"} w="42px" h="32px" p="0" {...props}>
       <IconPencil size="18px"/>
     </Button>
   );
@@ -377,11 +411,17 @@ function ProfileSection({user}: { user?: User }) {
     <div className={classes.header}>
       <div className={classes.image_container}>
         <Avatar
-          src={user.profileImage}
+          src={user.image}
+          radius="100%"
+
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-ignore
+          imageProps={{"object-fit": "cover"}}
+          
           size={120}
-          radius={120}
           mx="auto"
         />
+        <EditButton className={classes.imageEditButton} filled onClick={openPictureModal}/>
       </div>
       <div className={classes.title}>
         <div className={classes.moderator_tag}>
@@ -396,7 +436,7 @@ function ProfileSection({user}: { user?: User }) {
             </Text>
           </div>
         )}
-        <Button variant="filled" radius="md" my="auto">
+        <Button variant="filled" radius="md" my="auto" onClick={() => { authService.logout(); window.location.reload(); }}>
           {t("Profile.logout")}
         </Button>
       </div>
@@ -406,23 +446,386 @@ function ProfileSection({user}: { user?: User }) {
         <Table className={classes.dataTable}>
           <Table.Tbody>
             <Table.Tr>
-              <Table.Td><Text fw="500">{t("Profile.username")}</Text> </Table.Td>
-              <Table.Td><Text>{user.username}</Text></Table.Td>
-              <Table.Td><EditButton/></Table.Td>
-            </Table.Tr>
-            <Table.Tr>
               <Table.Td><Text fw="500">{t("Profile.email")}</Text></Table.Td>
               <Table.Td><Text>{user.email}</Text></Table.Td>
-              <Table.Td><EditButton/></Table.Td>
+              <Table.Td></Table.Td>
+            </Table.Tr>
+            <Table.Tr>
+              <Table.Td><Text fw="500">{t("Profile.username")}</Text> </Table.Td>
+              <Table.Td><Text>{user.username}</Text></Table.Td>
+              <Table.Td><EditButton onClick={openUsernameModal}/></Table.Td>
+            </Table.Tr>
+            <Table.Tr>
+              <Table.Td><Text fw="500">{t("Profile.password")}</Text></Table.Td>
+              <Table.Td><Text>**********</Text></Table.Td>
+              <Table.Td><EditButton onClick={openPassModal}/></Table.Td>
+            </Table.Tr>
+            <Table.Tr>
+              <Table.Td><Text fw="500">{t("Profile.degree")}</Text></Table.Td>
+              <Table.Td><Text>{degree?.name}</Text></Table.Td>
+              <Table.Td><EditButton onClick={openDegreeModal}/></Table.Td>
             </Table.Tr>
           </Table.Tbody>
         </Table>
-        <Space h="md"/>
-        <Group justify="center">
-          <Button variant="outline">{t("Profile.change_password")}</Button>
-          <Button variant="outline">{t("Profile.change_degree")}</Button>
-        </Group>
       </Paper>
     </div>
+    <ChangePassModal opened={openedPassModal} onClose={closePassModal}/>
+    <ChangeDegreeModal opened={openedDegreeModal} onClose={closeDegreeModal}/>
+    <ChangeUserModal opened={openedUsernameModal} onClose={closeUsernameModal}/>
+    <ChangePictureModal opened={openedPictureModal} onClose={closePictureModal}/>
+  </>;
+}
+
+function ChangePassModal({opened, onClose}: { opened: boolean, onClose: () => void }) {
+  const {t} = useTranslation();
+  const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState<string|null>(null);
+
+  function valPass(pass: string, oldPass: string): string | null {
+    let error: string | null = null;
+    validatePassword(pass, (err: string) => error = err);
+    
+    error = error || pass === oldPass ? t('Profile.samePassError') : null;
+    
+    return error == "" ? null : error;
+  }
+
+  function valConfirmPass(pass: string, confirm: string): string | null {
+    let error: string | null = null;
+    validateConfirmPassword(pass, confirm, (err: string) => error = err);
+    return error == "" ? null : error;
+  }
+
+  const form = useForm({
+    validateInputOnBlur: true,
+    initialValues: {
+      oldPass: "",
+      newPass: "",
+      confirmNewPass: ""
+    },
+    validate: {
+      oldPass: (val) => val.length > 0 ? null : " ",
+      newPass: (val, values) => valPass(val, values.oldPass),
+      confirmNewPass: (val, values) => valConfirmPass(values.newPass, val)
+    }
+  });
+
+  async function onFormSubmit(values: typeof form.values) {
+    setSubmitting(true);
+    setError(null);
+    
+    const res = await userService.changePassword(values.oldPass, values.newPass);
+    if(res.failure) {
+      let err = t('Profile.changePassError');
+      if(res.status === 409) {
+        err = t('Profile.wrongOldPass');
+        form.setFieldError('oldPass', err);
+      } else {
+        setError(err);
+      }
+      
+      console.error("Error: ", res.status);
+    } 
+    
+    setSubmitting(false);
+  }
+
+  const icon = <IconLock width="1.2rem" stroke={1.5}/>;
+
+  return <>
+    <Modal opened={opened} onClose={onClose} title={t("Profile.change_password")} centered>
+      <div className={classes.modal}>
+        <Alert mb="lg" variant="light" color="red" title="Error" icon={<IconExclamationCircle/>} hidden={!error}>
+          {error}
+        </Alert>
+        <form onSubmit={form.onSubmit(onFormSubmit, (e) => console.error(e))}>
+          <PasswordInput
+            withAsterisk
+            label={t("Profile.oldPass")}
+            leftSection={icon}
+            {...form.getInputProps('oldPass')}
+          />
+          <PasswordInput
+            withAsterisk
+            label={t("Profile.newPass")}
+            leftSection={icon}
+            {...form.getInputProps('newPass')}
+          />
+          <PasswordInput
+            withAsterisk
+            label={t("Profile.confirmNewPass")}
+            leftSection={icon}
+            {...form.getInputProps('confirmNewPass')}
+          />
+          <Center mt="md">
+            <Button type="submit" variant="filled" color="green" disabled={submitting}>
+              {t("Profile.submit")}
+            </Button>
+          </Center>
+        </form>
+      </div>
+    </Modal>
+  </>;
+}
+
+function ChangeDegreeModal({opened, onClose}: { opened: boolean, onClose: () => void }) {
+  const {t} = useTranslation();
+
+  const [degrees, setDegrees] = useState<Degree[]>([]);
+  const [selected, setSelected] = useState<Degree | null>(null);
+  const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState<boolean>(false);
+
+  const user = userService.getUserData();
+  const curDegId = user?.degreeId;
+
+  const combobox = useCombobox({
+    onDropdownClose: () => combobox.resetSelectedOption(),
+    onDropdownOpen: (eventSource) => {
+      if (eventSource === 'keyboard') {
+        combobox.selectActiveOption();
+      } else {
+        combobox.updateSelectedOptionIndex('active');
+      }
+    },
+  });
+
+  useEffect(() => {
+    degreeService.getDegrees().then(res => {
+      if (res.failure) {
+        console.error("Unable to get degrees");
+        return;
+      }
+
+      const degrees = res.data as Degree[];
+      const currentDegree = degrees.find(d => d.id === user?.degreeId);
+
+      setDegrees(degrees);
+
+      if (currentDegree) setSelected(currentDegree);
+    });
+  }, [user?.degreeId]);
+
+  async function submit() {
+    setSubmitting(true);
+    setError(false);
+    
+    const res = await userService.changeDegree(selected!.id);
+    
+    if(res.failure) {
+      setError(true);
+      console.error("Error: ", res.status);
+    }
+    
+    setSubmitting(false);
+  }
+  
+  return <>
+    <Modal opened={opened} onClose={onClose} title={t("Profile.change_degree")} centered>
+      <div className={classes.modal}>
+        {degrees.length == 0 ? <Center><Loader/></Center> : <>
+          <Alert mb="lg" variant="light" color="red" title="Error" icon={<IconExclamationCircle/>} hidden={!error}>
+            {t('Profile.changeDegreeError')}
+          </Alert>
+          <Combobox
+            store={combobox}
+            resetSelectionOnOptionHover
+            // withinPortal={false}
+            onOptionSubmit={(val) => {
+              const selected = degrees.find(d => d.id.toString() === val) ?? null;
+              setSelected(selected);
+              combobox.updateSelectedOptionIndex('active');
+              combobox.closeDropdown();
+            }}
+          >
+            <Combobox.Target targetType="button">
+              <InputBase
+                component="button"
+                type="button"
+                pointer
+                rightSection={<Combobox.Chevron/>}
+                rightSectionPointerEvents="none"
+                onClick={() => combobox.toggleDropdown()}
+              >
+                {selected?.name ??
+                    <Input.Placeholder>{t('Profile.chooseDegree')}</Input.Placeholder>
+                }
+              </InputBase>
+            </Combobox.Target>
+
+            <Combobox.Dropdown>
+              <Combobox.Options>
+                {degrees.map(degree => (
+                  <Combobox.Option value={degree.id.toString()} key={degree.id} active={selected?.id === degree.id}>
+                    {degree.name}
+                  </Combobox.Option>
+                ))}
+              </Combobox.Options>
+            </Combobox.Dropdown>
+          </Combobox>
+          <Text c="red" fz="sm" p="sm"><b>{t('Profile.warning')}</b>{t('Profile.changeDegreeWarning')}</Text>
+          <Center>
+            <Button color="green" onClick={() => submit()} disabled={submitting || selected?.id === curDegId}>
+              {t("Profile.submit")}
+            </Button>
+          </Center>
+        </>
+        }
+      </div>
+    </Modal>
+  </>;
+}
+
+function ChangeUserModal({opened, onClose}: { opened: boolean, onClose: () => void }) {
+  const {t} = useTranslation();
+  const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState<boolean>(false);
+  
+  const user = userService.getUserData();
+  
+  function valUsername(username: string): string | null {
+    let error: string | null = null;
+    validateUsername(username, (err: string) => error = err);
+    return error == "" ? null : error;
+  }
+  
+  async function onSubmit(values: typeof form.values) {
+    setSubmitting(true);
+    setError(false);
+    
+    const res = await userService.changeUsername(values.username);
+    if(res.failure) {
+      setError(true);
+      console.error("Error: ", res.status);
+    }
+    
+    setSubmitting(false);
+  }
+  
+  const form = useForm({
+    validateInputOnBlur: true,
+    initialValues: {
+      username: ""
+    },
+    validate: {
+      username: (val) => valUsername(val)
+    }
+  });
+
+  return <>
+    <Modal opened={opened} onClose={onClose} title={t("Profile.change_username")} centered>
+      <div className={classes.modal}>
+        { error &&
+          <Alert mb="lg" variant="light" color="red" title="Error" icon={<IconExclamationCircle/>} hidden={!error}>
+            {t('Profile.changeUsernameError')}
+          </Alert>
+        }
+        <form onSubmit={form.onSubmit(onSubmit)}>
+          <TextInput
+            withAsterisk
+            label={t("Profile.newUsername")}
+            placeholder={user?.username}
+            {...form.getInputProps('username')}
+          />
+          <Center mt="md">
+            <Button disabled={submitting} type="submit" color="green">{t("Profile.submit")}</Button>
+          </Center>
+        </form>
+      </div>
+    </Modal>
+  </>;
+}
+
+function ChangePictureModal({opened, onClose}: { opened: boolean, onClose: () => void }) {
+  const { t } = useTranslation();
+  
+  const [file, setFile] = useState<File | null>(null);
+  const [submitting, setSubmitting] = useState(false);
+  
+  const openRef = useRef<() => void>(null);
+  
+  function onDrop(files: File[]) {
+    if(files.length !== 1) {
+      console.error("Invalid file count: ", files.length);
+      return;
+    }
+    
+    const file = files[0];
+    setFile(file);
+  }
+  
+  function submit() {
+    if(!file) return;
+    
+    setSubmitting(true);
+    
+    userService.changePicture(file).then(res => {
+      if(res.failure) {
+        console.error("Error: ", res.status);
+        return;
+      }
+    }).finally(() => setSubmitting(false));
+  }
+  
+  return <>
+    <Modal opened={opened} onClose={onClose} title={t('Profile.change_picture')} size="lg" centered>
+      <div className={classes.dropzoneWrapper}>
+        <Dropzone 
+          onDrop={onDrop}
+          openRef={openRef}
+          className={classes.pictureDropzone}
+          radius="md"
+          accept={[MIME_TYPES.jpeg, MIME_TYPES.png]}
+          maxFiles={1}
+          maxSize={1024 * 1024 * 5}
+          disabled={submitting}
+          m="xl"
+        >
+          <div style={{pointerEvents: 'none'}}>
+            <Group justify="center">
+              <Dropzone.Accept>
+                <IconDownload
+                  style={{ width: rem(50), height: rem(50) }}
+                  color="blue"
+                  stroke={1.5}
+                />
+              </Dropzone.Accept>
+              <Dropzone.Reject>
+                <IconX
+                  style={{ width: rem(50), height: rem(50) }}
+                  color="red"
+                  stroke={1.5}
+                />
+              </Dropzone.Reject>
+              <Dropzone.Idle>
+                { file ?
+                  <Avatar size="100px" src={URL.createObjectURL(file)}/>
+                  : <IconCloudUpload style={{ width: rem(50), height: rem(50) }} stroke={1.5} />
+                }
+              </Dropzone.Idle>
+            </Group>
+            
+            <Text ta="center" fw={700} fz="lg" mt="xl">
+              <Dropzone.Accept>{t('Profile.pictureDrop')}</Dropzone.Accept>
+              <Dropzone.Reject>{t('Profile.pictureReject')}</Dropzone.Reject>
+              <Dropzone.Idle>{t('Profile.pictureIdle')}</Dropzone.Idle>
+            </Text>
+            <Text ta="center" fz="sm" mt="xs" c="dimmed">
+              {t('Profile.pictureHint')}
+            </Text>
+          </div>
+        </Dropzone>
+        
+        <Button disabled={submitting} className={classes.pictureUpload} size="md" radius="xl" onClick={() => openRef?.current?.()}>
+          {t('Profile.pictureButton')}
+        </Button>
+      </div>
+
+      <Center mt="50px" mb="10px">
+        <Button disabled={submitting} size="lg" color="green" onClick={submit}>
+          {t('Profile.submit')}
+        </Button>
+      </Center>
+    </Modal>
   </>;
 }
