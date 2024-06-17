@@ -186,7 +186,7 @@ export const TRANSLATIONS_ES = {
         day6: "Sabado",
         day7: "Domingo"
     },
-    Subejct: {
+    Subject: {
         general: "Información General",
         times: "Horarios de Clase",
         classProf: "Profesores",
