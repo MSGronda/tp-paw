@@ -544,7 +544,7 @@ export function SubjectPage() {
                                 />
                             ))
                         }
-                        {reviews &&
+                        {reviews && maxPage > 1 &&
                             <PaginationComponent page={page} lastPage={maxPage} setPage={handlePageChange} />
                         }
                     </div>
