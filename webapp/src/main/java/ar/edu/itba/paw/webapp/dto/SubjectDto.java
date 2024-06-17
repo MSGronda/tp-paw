@@ -35,9 +35,11 @@ public class SubjectDto {
         return subjectDto;
     }
     
-    public static SubjectDto fromSubjectWithSemesters(final UriInfo uriInfo, final Subject subject, final long degreeId) {
+    public static SubjectDto fromSubjectWithSemesters(final UriInfo uriInfo, final Subject subject, final Long degreeId, final Long semester) {
         final SubjectDto subjectDto = fromSubject(uriInfo, subject);
-        subjectDto.semester = subject.getSemester(degreeId);
+        if (degreeId != null && semester == null){
+            subjectDto.semester = subject.getSemester(degreeId);
+        }
         return subjectDto;
     }
 

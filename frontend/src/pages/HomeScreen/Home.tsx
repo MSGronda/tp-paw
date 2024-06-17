@@ -65,7 +65,7 @@ export default function Home() {
         const respPlan = await userService.getUserPlan(userId);
         const dataPlan = handleService(respPlan, navigate);
 
-        setUserSemester(createSelectedSubjects(dataPlan, dataSubjects));
+        setUserSemester(createSelectedSubjects(dataPlan, dataSubjects.subjects));
     }
 
     // = = = Overview = = =
@@ -88,7 +88,7 @@ export default function Home() {
         const res = await subjectService.getAvailableSubjects(userId,page);
         const data = handleService(res, navigate);
         if(res) {
-            setFutureSubjects(data);
+            setFutureSubjects(data.subjects);
         }
     }
 
@@ -100,7 +100,7 @@ export default function Home() {
         const res = await subjectService.getDoneSubjects(userId,page);
         const data = handleService(res,navigate);
         if(res) {
-            setPastSubjects(data);
+            setPastSubjects(data.subjects);
         }
     }
 

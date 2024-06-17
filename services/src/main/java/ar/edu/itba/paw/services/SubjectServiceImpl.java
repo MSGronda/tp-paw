@@ -316,7 +316,7 @@ public class SubjectServiceImpl implements SubjectService {
             final Integer difficulty,
             final Integer time
     ) {
-        if(page < 1 || page > getTotalPagesForSearch(user, name, credits, department, difficulty, time, orderBy))
+        if(page < 1 || page > getTotalPages(user, name, credits, department, difficulty, time, orderBy))
             throw new InvalidPageNumberException();
 
         final OrderDir orderDir = OrderDir.parse(dir);
@@ -329,7 +329,7 @@ public class SubjectServiceImpl implements SubjectService {
     }
 
     @Override
-    public int getTotalPagesForSearch(
+    public int getTotalPages(
             final User user,
             final String name,
             final Integer credits,
@@ -338,6 +338,9 @@ public class SubjectServiceImpl implements SubjectService {
             final Integer time,
             final String orderBy
     ){
+        if (name == null ){
+            return 1;
+        }
         if(user.isEditor()){
             return subjectDao.getTotalPagesForSearchAll(
                     name,
@@ -354,7 +357,7 @@ public class SubjectServiceImpl implements SubjectService {
     }
 
     @Override
-    public Map<String, List<String>> getRelevantFiltersForSearch(
+    public Map<String, List<String>> getRelevantFilters(
             final User user,
             final String name,
             final Integer credits,
@@ -363,6 +366,8 @@ public class SubjectServiceImpl implements SubjectService {
             final Integer time,
             final String orderBy
     ) {
+        if (name == null)
+            return new HashMap<>();
         if(user.isEditor()){
             return subjectDao.getRelevantFiltersForSearch(
                     name, getFilterMap(credits, department, difficulty, time),

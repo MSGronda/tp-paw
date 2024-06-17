@@ -58,7 +58,7 @@ export default function SemesterBuilder() {
 
         const resp = await subjectService.getAvailableSubjects(userId);
         const data = handleService(resp, navigate);
-        setAvailable(removeInvalidSubjects(data != "" ? data : [])); // TODO: cambiar esto a algo mejor
+        setAvailable(removeInvalidSubjects(data.subjects != "" ? data.subjects : [])); // TODO: cambiar esto a algo mejor
     }
 
     // Select class - para cuando tenes que elegir comision de materia
@@ -77,7 +77,7 @@ export default function SemesterBuilder() {
         const respPlan = await userService.getUserPlan(userId);
         const dataPlan = handleService(respPlan, navigate);
 
-        const subjects = createSelectedSubjects(dataPlan, dataSubjects);
+        const subjects = createSelectedSubjects(dataPlan, dataSubjects.subjects);
 
         // Tenemos que setear el arreglo con 1 si es que ya tenia materias anotadas
         replaceScheduleArray(subjects)
@@ -117,7 +117,7 @@ export default function SemesterBuilder() {
 
         const resp = await subjectService.getDoneSubjects(userId);
         const data = handleService(resp, navigate);
-        setDoneSubjects(data != "" ? data : []); // TODO: cambiar esto a algo mejor
+        setDoneSubjects(data.subjects != "" ? data.subjects : []); // TODO: cambiar esto a algo mejor
     }
 
     const [unlockables, setUnlockables] = useState<Subject[]>([]);
@@ -128,7 +128,7 @@ export default function SemesterBuilder() {
 
         const resp = await subjectService.getUnlockableSubjects(userId);
         const data = handleService(resp, navigate);
-        setUnlockables(data != "" ? data : []); // TODO: cambiar esto a algo mejor
+        setUnlockables(data.subjects != "" ? data.subjects : []); // TODO: cambiar esto a algo mejor
     }
 
     // API Calls

@@ -27,7 +27,7 @@ export default function FinishSemester() {
         if(data == ""){
             navigate('/home');
         }
-        setSubjects(data);
+        setSubjects(data.subjects);
     }
     useEffect(() => {
         getSubjects()
