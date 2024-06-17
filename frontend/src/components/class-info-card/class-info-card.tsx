@@ -17,7 +17,7 @@ export default function ClassInfoCard(props: ClassInfoCardProps): JSX.Element {
     return(
         <Card className={classes.classCard} withBorder>
             <Card.Section>
-                <h5 style={{margin: "0.3rem"}}>{subject.name} - {subjectClass.idClass}</h5>
+                <h5 style={{margin: "0.4rem"}}>{subject.name} - {subjectClass.idClass}</h5>
                 <Divider/>
             </Card.Section>
             <Card.Section>

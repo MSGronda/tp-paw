@@ -24,11 +24,14 @@ function SubjectCard(props: SubjectCardProps): JSX.Element {
                 <h4 style={{height: "20%"}}>{name} - {id}</h4>
                 <div className={classes.badge_row}>
                     <Badge className={classes.badge_row_elem} color={'blue.7'}>{t("SubjectCard.credits", {n: credits})}</Badge>
-                    <Tooltip multiline label={
-                        prerequisites.map((prerequisite, index) => (<div key={index}>{prerequisite}</div>))
-                    }>
-                        <Badge className={classes.badge_row_elem} color={'orange.7'}>{t("SubjectCard.prerequisites", {n: prerequisites.length})}</Badge>
-                    </Tooltip>
+                    {
+                        prerequisites.length > 0 ?
+                            <Tooltip multiline label={prerequisites.map((prerequisite, index) => (<div key={index}>{prerequisite}</div>))}>
+                                <Badge className={classes.badge_row_elem} color={'orange.7'}>{t("SubjectCard.prerequisites", {n: prerequisites.length})}</Badge>
+                            </Tooltip>
+                        : null
+                    }
+
                     { progress === 'DONE' ?
                         <Tooltip label={t("SubjectCard.done_tooltip")}>
                             <IconCheck className={classes.badge_row_elem} stroke={1.0} />

@@ -107,7 +107,7 @@ export default function Home() {
     // = = = API calls = = =
 
     useEffect(() => {
-        getUserSemester();           // TODO: uncomment
+        getUserSemester();
     }, []);
 
     useEffect(() => {
