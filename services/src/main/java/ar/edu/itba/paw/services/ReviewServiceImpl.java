@@ -91,6 +91,15 @@ public class ReviewServiceImpl implements ReviewService {
     }
 
     @Override
+    public int getTotalPages(Long userId, String subjetId) {
+        if ( userId != null ){
+            return getTotalPagesForUserReviews(userService.findById(userId).orElseThrow(UserNotFoundException::new));
+        }else {
+            return getTotalPagesForSubjectReviews(subjectService.findById(subjetId).orElseThrow(SubjectNotFoundException::new));
+        }
+    }
+
+    @Override
     public int getTotalPagesForUserReviews(final User user){
         return reviewDao.getTotalPagesForUserReviews(user);
     }
