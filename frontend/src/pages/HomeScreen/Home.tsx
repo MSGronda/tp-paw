@@ -25,12 +25,13 @@ import Landing from '../Landing/landing.tsx';
 import {Subject} from "../../models/Subject.ts";
 import {Link, useNavigate} from "react-router-dom";
 import ClassInfoCard from '../../components/class-info-card/class-info-card.tsx';
-import { subjectService, userService } from '../../services/index.tsx';
+import {degreeService, subjectService, userService} from '../../services/index.tsx';
 import { handleService } from '../../handlers/serviceHandler.tsx';
 import {SelectedSubject} from "../../models/SelectedSubject.ts";
 import {createSelectedSubjects} from "../../utils/user_plan_utils.ts";
 import PastSubjectCard from "../../components/past-subject-card/past-subject-card.tsx";
 import WeeklySchedule from "../../components/schedule/weekly-schedule.tsx";
+import {User} from "../../models/User.ts";
 
 const COLS = 7
 const ROWS = 29
@@ -51,35 +52,57 @@ export default function Home() {
 
     const [activeTab, setActiveTab] = useState<string | null>("current-semester");
 
-    // = = = Current semester = = =
-    const [userSemester, setUserSemester] = useState<SelectedSubject[]>([]);
-
-    const getUserSemester = async () => {
-        const userId = userService.getUserId();
-        if(!userId)
+    const [user, setUser] = useState<User>();
+    const getUserData = async () => {
+        const userData = await userService.getUser();
+        if(!userData)
             navigate('/login');
 
-        const respSubjects = await subjectService.getUserPlanSubjects(userId);
+        const user = handleService(userData, navigate)
+        setUser(user);
+
+
+        // User semester
+        const respSubjects = await subjectService.getUserPlanSubjects(user.id);
         const dataSubjects = handleService(respSubjects, navigate);
 
-        const respPlan = await userService.getUserPlan(userId);
+        const respPlan = await userService.getUserPlan(user.id);
         const dataPlan = handleService(respPlan, navigate);
 
         setUserSemester(createSelectedSubjects(dataPlan, dataSubjects.subjects));
+
+        // User degree
+        const degreeData = await degreeService.getDegreeById(user.id);
+        const degree = handleService(degreeData, navigate)
+        setTotalCreditsInDegree(degree.totalCredits)
+        setOverallProgress((user.creditsDone / degree.totalCredits) * 100)
     }
 
+    // = = = Current semester = = =
+    const [userSemester, setUserSemester] = useState<SelectedSubject[]>([]);
+
     // = = = Overview = = =
-    const [completedCredits, setCompletedCredits] = useState(0);
     const [totalCreditsInDegree, setTotalCreditsInDegree] = useState(0);
     const [overallProgress, setOverallProgress] = useState(0.0);
-    const [progressByYear, setProgressByYear] = useState([
-        { year: t("Home.firstYear"), progress: 0},
-        { year: t("Home.secondYear"), progress: 0},
-        { year: t("Home.thirdYear"), progress: 0},
-        { year: t("Home.fourthYear"), progress: 0},
-        { year: t("Home.fifthYear"), progress: 0},
-    ])
 
+    const progressByYearList = () => {
+        const resp = [
+            { year: t("Home.firstYear"), progress: 0 },
+            { year: t("Home.secondYear"), progress: 0},
+            { year: t("Home.thirdYear"), progress: 0},
+            { year: t("Home.fourthYear"), progress: 0},
+            { year: t("Home.fifthYear"), progress: 0},
+        ]
+        if(user && user.progressByYear){
+            let i = 0;
+            for (const progress of user?.progressByYear){
+                resp[i++].progress = progress;
+            }
+        }
+        return resp;
+    }
+    
+    
     // = = = Future subjects = = =
     const [futureSubjects, setFutureSubjects] = useState<Subject[]>([]);
     const [currentFutureSubjectsPage, setCurrentFutureSubjectsPage] = useState(INITIAL_PAGE);
@@ -107,7 +130,7 @@ export default function Home() {
     // = = = API calls = = =
 
     useEffect(() => {
-        getUserSemester();
+        getUserData();
     }, []);
 
     useEffect(() => {
@@ -228,7 +251,7 @@ export default function Home() {
                                                         </Text>
                                                         <Divider orientation="vertical"/>
                                                         <Text fw={700}>
-                                                            {completedCredits}
+                                                            {user?.creditsDone}
                                                         </Text>
                                                     </Group>
                                                 </div>
@@ -260,7 +283,7 @@ export default function Home() {
                                                         { value: overallProgress, color: 'blue' },
                                                     ]}
                                                 />
-                                                <h4>{overallProgress} %</h4>
+                                                <h4>{overallProgress.toFixed(1)} %</h4>
                                             </div>
                                         </Card>
                                         <Card className={classes.progressCard}>
@@ -271,7 +294,7 @@ export default function Home() {
                                                 <BarChart
                                                     h={300}
                                                     withTooltip={false}
-                                                    data={progressByYear}
+                                                    data={progressByYearList()}
                                                     dataKey="year"
                                                     unit="%"
                                                     series={[
@@ -340,8 +363,8 @@ export default function Home() {
                 </div>
             </div>
         </div>
-
     );
-
 }
+
+
 

@@ -5,48 +5,44 @@ import ar.edu.itba.paw.models.User;
 
 import javax.ws.rs.core.UriInfo;
 import java.net.URI;
+import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 public class UserDto {
     private Long id;
     private String email;
     private String username;
-
     private URI image;
-
-    //private Locale locale
     private Long degreeId;
-
     private List<String> roles;
-
+    private List<Double> progressByYear;
+    private int creditsDone;
     private URI reviews;
-
-    //TODO - ReviewVote
-
     private URI userSemester;
 
-    //TODO - Recovery Token ?
-
-    private int creditsDone;
-
     public static UserDto fromUser(final UriInfo uriInfo, final User user){
-        if( user == null)
+        if(user == null)
             return null;
+
         final UserDto userDto = new UserDto();
+
         userDto.id = user.getId();
         userDto.email = user.getEmail();
         userDto.username = user.getUsername();
         userDto.image = uriInfo.getBaseUriBuilder().path("images").path(String.valueOf(user.getImageId())).build();
         userDto.roles = user.getRoles().stream().map(Role::getName).collect(Collectors.toList());
 
-        if( user.getDegree() != null)
+        if(user.getDegree() != null)
             userDto.degreeId = user.getDegree().getId();
 
-        userDto.reviews = uriInfo.getBaseUriBuilder().path("reviews").queryParam("userId", user.getId()).build();
-        //TODO - CHECK THIS
-        userDto.userSemester = uriInfo.getBaseUriBuilder().path("users").path(String.valueOf(user.getId())).path("plan").build();
         userDto.creditsDone = user.getCreditsDone();
+        userDto.progressByYear = user.getTotalProgressPercentagePerYear().entrySet().stream().sorted(Map.Entry.comparingByKey()).map(Map.Entry::getValue).collect(Collectors.toList());
+
+        userDto.reviews = uriInfo.getBaseUriBuilder().path("reviews").queryParam("userId", user.getId()).build();
+        userDto.userSemester = uriInfo.getBaseUriBuilder().path("users").path(String.valueOf(user.getId())).path("plan").build();        //TODO - CHECK THIS
+
         return userDto;
     }
 
@@ -97,28 +93,28 @@ public class UserDto {
     public void setReviews(URI reviews) {
         this.reviews = reviews;
     }
-
     public URI getUserSemester() {
         return userSemester;
     }
-
     public void setUserSemester(URI userSemester) {
         this.userSemester = userSemester;
     }
-
     public int getCreditsDone() {
         return creditsDone;
     }
-
     public void setCreditsDone(int creditsDone) {
         this.creditsDone = creditsDone;
     }
-
     public List<String> getRoles() {
         return roles;
     }
-
     public void setRoles(List<String> roles) {
         this.roles = roles;
+    }
+    public List<Double> getProgressByYear() {
+        return progressByYear;
+    }
+    public void setProgressByYear(List<Double> progressByYear) {
+        this.progressByYear = progressByYear;
     }
 }
