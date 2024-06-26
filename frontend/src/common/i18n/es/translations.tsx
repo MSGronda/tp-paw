@@ -332,6 +332,9 @@ export const TRANSLATIONS_ES = {
     Degrees: {
         title: "Carreras",
         createNew: "Crear nueva carrera",
+        delete: "Eliminar",
+        cancel: "Cancelar",
+        areYouSure: "¿Estás seguro que deseas eliminar esta carrera?",
     },
     User: {
         makeModerator: "Hacer moderador",

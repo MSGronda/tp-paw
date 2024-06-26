@@ -334,6 +334,9 @@ export const TRANSLATIONS_EN = {
     Degrees: {
         title: "Degrees",
         createNew: "Create new degree",
+        delete: "Delete",
+        cancel: "Cancel",
+        areYouSure: "Are you sure you want to delete this degree?",
     },
     User: {
         makeModerator: "Make moderator",

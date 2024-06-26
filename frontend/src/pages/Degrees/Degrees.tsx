@@ -6,7 +6,7 @@ import { degreeService } from "../../services";
 import { useEffect, useState } from 'react';
 import { handleService } from '../../handlers/serviceHandler';
 import { useNavigate } from 'react-router-dom';
-import {ActionIcon, Card} from '@mantine/core';
+import {ActionIcon, Button, Card, Tooltip} from '@mantine/core';
 import {IconTrash} from "@tabler/icons-react";
 
 
@@ -18,22 +18,28 @@ export default function Degrees() {
 
     const [degrees, setDegrees] = useState<any>([]);
     const [loading, setLoading] = useState(true);
+    const [openedTooltips, setOpenedTooltips] = useState<{ [key: number]: boolean}>({});
 
     const searchDegrees = async () => {
         const res = await degreeService.getDegrees();
         const data = handleService(res, navigate);
         if (res) {
-            console.log(data);
             setDegrees(data);
         }
         setLoading(false);
-        console.log(degrees);
     }
 
     const handleDeleteDegree = async (id: number) => {
         const res = await degreeService.deleteDegree(id);
         handleService(res, navigate);
         searchDegrees();
+    }
+
+    const toggleTooltip = (id: number) => {
+        setOpenedTooltips(prevState => ({
+            ...prevState,
+            [id]: !prevState[id]
+        }));
     }
 
     useEffect(() => {
@@ -56,16 +62,49 @@ export default function Degrees() {
                             >
                                 <div className={classes.card}>
                                     <h3>{degree.name}</h3>
-                                    <ActionIcon
-                                        variant="white"
-                                        color="red"
-                                        onClick={(e) => {
-                                            e.stopPropagation();
-                                            handleDeleteDegree(degree.id);
-                                        }}
-                                    >
-                                        <IconTrash />
-                                    </ActionIcon>
+                                    <Tooltip label={
+                                        <div className={classes.clickable}>
+                                            <Card>
+                                                <div className={classes.column_center}>
+                                                    <span>{t("Degrees.areYouSure")}</span>
+                                                    <div style={{ paddingTop: '1rem'}} className={classes.row}>
+                                                        <Button
+                                                            style={{ marginRight: '1rem' }}
+                                                            onClick={(e) => {
+                                                                e.stopPropagation();
+                                                                handleDeleteDegree(degree.id);
+                                                            }}
+                                                            variant='outline'
+                                                            color='red'
+                                                        >
+                                                            {t("Degrees.delete")}
+                                                        </Button>
+                                                        <Button
+                                                            onClick={(e) => {
+                                                                e.stopPropagation();
+                                                                toggleTooltip(degree.id)
+                                                            }}
+                                                            variant='outline'
+                                                            color='black'
+                                                        >
+                                                            {t("Degrees.cancel")}
+                                                        </Button>
+                                                    </div>
+                                                </div>
+                                            </Card>
+                                        </div>
+                                    } opened={openedTooltips[degree.id] || false} position='top' color='white' className={classes.outline}>
+                                        <ActionIcon
+                                            variant="white"
+                                            color="red"
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                toggleTooltip(degree.id);
+                                            }}
+                                        >
+                                            <IconTrash />
+                                        </ActionIcon>
+                                    </Tooltip>
                                 </div>
                             </Card>
                         ))}
