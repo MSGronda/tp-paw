@@ -11,6 +11,7 @@ import {useNavigate} from "react-router-dom";
 import AuthService from "../../services/AuthService.ts";
 import AuthContext from "../../context/AuthContext.tsx";
 import React from "react";
+import Title from "../../components/title/title.tsx";
 
 export default function Login(){
 
@@ -52,6 +53,7 @@ export default function Login(){
 
     return (
         <div className={classes.fullsize}>
+            <Title text={t("Login.title")} />
             <Default_Navbar />
             <div className={classes.center}>
                 <h2>{t("Login.title")}</h2>

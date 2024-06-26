@@ -5,6 +5,7 @@ import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { Button, SegmentedControl, Textarea } from '@mantine/core';
 import { reviewService } from "../../services";
+import Title from '../../components/title/title';
 
 
 export default function Review() {
@@ -73,6 +74,7 @@ export default function Review() {
 
     return (
         <div className={classes.fullsize}>
+            <Title text={t("Review.title", { subjectName})}/>
             <Navbar />
             <div className={classes.container_50}>
                 <div className={classes.flex}>

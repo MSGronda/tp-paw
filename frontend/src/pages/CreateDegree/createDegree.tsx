@@ -8,6 +8,7 @@ import {useDisclosure} from "@mantine/hooks";
 import {degreeService, subjectService} from "../../services";
 import {handleService} from "../../handlers/serviceHandler.tsx";
 import {IconTrash} from "@tabler/icons-react";
+import Title from "../../components/title/title.tsx";
 
 export function CreateDegree() {
     const { t } = useTranslation();
@@ -101,6 +102,7 @@ export function CreateDegree() {
 
     return (
         <div className={classes.background}>
+            <Title text={t("CreateDegree.title")}/>
             <Navbar />
             <div className={classes.container50}>
                 <h1 className={classes.title}>{t("CreateDegree.title")}</h1>

@@ -9,6 +9,7 @@ import SubjectCard from '../../components/subject-card/subject-card';
 import PaginationComponent from '../../components/pagination/pagination';
 import { Button, CloseButton, Divider } from '@mantine/core';
 import { IconAdjustments, IconArrowNarrowDown, IconArrowNarrowUp } from '@tabler/icons-react';
+import Title from '../../components/title/title';
 
 export default function Search() {
     const location = useLocation();
@@ -168,6 +169,7 @@ export default function Search() {
 
     return (
         <div className={classes.fullsize}>
+            <Title text={t("Search") + " " + query}/>
             <Navbar />
             <div className={classes.container_70}>
                 <div>

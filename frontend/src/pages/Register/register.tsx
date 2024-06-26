@@ -11,6 +11,7 @@ import {
 } from "../../utils/register_utils.ts";
 import AuthService, {RegisterForm} from "../../services/AuthService.ts";
 import RegisterComplete from "./registerComplete.tsx";
+import Title from '../../components/title/title.tsx';
 
 export default function Register() {
     const { t } = useTranslation();
@@ -57,6 +58,7 @@ export default function Register() {
     
     return (
         <div className={classes.fullsize}>
+            <Title text={t("Register.title")} />
             <Default_Navbar />
             <div className={classes.center}>
                 <h2>{t("Register.title")}</h2>

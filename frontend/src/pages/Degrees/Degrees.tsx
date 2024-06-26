@@ -8,8 +8,7 @@ import { handleService } from '../../handlers/serviceHandler';
 import { useNavigate } from 'react-router-dom';
 import {ActionIcon, Button, Card, Tooltip} from '@mantine/core';
 import {IconTrash} from "@tabler/icons-react";
-
-
+import Title from '../../components/title/title';
 
 
 export default function Degrees() {
@@ -48,6 +47,7 @@ export default function Degrees() {
 
     return (
         <div className={classes.fullsize}>
+            <Title text={t("Degrees.title")}/>
             <Navbar />
             <div className={classes.container_70}>
                 {!loading && (

@@ -7,6 +7,7 @@ import {handleService} from "../../handlers/serviceHandler.tsx";
 import {Progress} from "@mantine/core";
 import {Button, SegmentedControl, Textarea} from "@mantine/core";
 import {useTranslation} from "react-i18next";
+import Title from "../../components/title/title.tsx";
 
 
 export default function MultiReview() {
@@ -116,6 +117,7 @@ export default function MultiReview() {
     }, [])
 
     return <div className={classes.fullsize}>
+        <Title text={t("MultiReview.title")}/>
         <div className={classes.progress_area}>
             <Progress
                 radius="md"

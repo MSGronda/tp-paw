@@ -29,6 +29,7 @@ export const TRANSLATIONS_ES = {
         body: "Ya estás registrado! Te enviamos un correo para confirmar tu email. Por favor revisá tu casilla."
     },
     ConfirmEmail: {
+        title: "Confirmar Email",
         InvalidToken: {
             title: "Link de confirmación inválido",
             body: "El link que usaste es inválido o ya ha sido usado."
@@ -70,6 +71,7 @@ export const TRANSLATIONS_ES = {
 
     },
     Home: {
+        title: "Inicio",
         currentSemester: "Cuatrimestre Actual",
         overview: "Panorama",
         futureSubjects: "Materias futuras",
@@ -162,6 +164,7 @@ export const TRANSLATIONS_ES = {
         pictureReject: "Solo archivos .png y .jpg de hasta 5MB.",
     },
     Search: {
+        search: "Buscar",
         not_found: "No pudimos encontrar una materia que coincida con: {{query}}",
         filter: "Filtrar",
         filterCredits: "Créditos",
@@ -278,6 +281,7 @@ export const TRANSLATIONS_ES = {
         deleteFailure: "Ocurrió un error, por favor intentá de nuevo más tarde",
     },
     MultiReview: {
+        title: "Reseñá materias",
         progressText: "{{c}} de {{l}} reseñas",
         skip: "Saltar"
     },
@@ -288,6 +292,7 @@ export const TRANSLATIONS_ES = {
     },
     CreateSubject: {
         title: "Nueva materia",
+        pageTitle: "Crear Materia",
         id: "Código de materia",
         idHelp: "Deben ser 4 números en el formato: ##.##",
         name: "Nombre de la materia",

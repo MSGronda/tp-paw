@@ -6,6 +6,7 @@ import {useTranslation} from "react-i18next";
 import {Button} from "@mantine/core";
 
 import classes from './confirmEmail.module.css';
+import Title from "../../components/title/title.tsx";
 
 export default function ConfirmEmail() {
     const [params] = useSearchParams();
@@ -38,6 +39,7 @@ export default function ConfirmEmail() {
 function InvalidToken() {
     const {t} = useTranslation();
     return <div className={classes.fullsize}>
+        <Title text={t('ConfirmEmail.title')}></Title>
         <Default_Navbar/>
         <div className={classes.center}>
             <h1>{t('ConfirmEmail.InvalidToken.title')}</h1>

@@ -7,6 +7,8 @@ import { Button, SegmentedControl, Textarea } from "@mantine/core";
 import { Navbar } from "../../components/navbar/navbar";
 import classes from './editReview.module.css';
 import { getDifficultyValue, getTimeDemandValue } from "../../models/Subject";
+import { Helmet } from "react-helmet";
+import Title from "../../components/title/title";
 
 
 export default function EditReview() {
@@ -52,6 +54,7 @@ export default function EditReview() {
 
     return (
         <div className={classes.fullsize}>
+            <Title text={t("Review.editSubmit")}/>
             <Navbar />
             <div className={classes.container_50}>
                 <div className={classes.flex}>

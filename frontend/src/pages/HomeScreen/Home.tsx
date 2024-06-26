@@ -32,6 +32,7 @@ import {createSelectedSubjects} from "../../utils/user_plan_utils.ts";
 import PastSubjectCard from "../../components/past-subject-card/past-subject-card.tsx";
 import WeeklySchedule from "../../components/schedule/weekly-schedule.tsx";
 import {User} from "../../models/User.ts";
+import Title from '../../components/title/title.tsx';
 
 const COLS = 7
 const ROWS = 29
@@ -146,6 +147,7 @@ export default function Home() {
 
     return (
         <div className={classes.background}>
+            <Title text={t("Home.title")}/>
             <Navbar/>
             <div className={classes.containter}>
                 <div className={classes.dashboardArea}>

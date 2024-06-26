@@ -17,6 +17,7 @@ import {
 } from "@mantine/core";
 import { TimeInput } from "@mantine/dates";
 import { useState } from "react";
+import Title from "../../components/title/title";
 
 export function CreateSubject() {
   const { t } = useTranslation();
@@ -144,6 +145,7 @@ export function CreateSubject() {
 
   return (
     <div className={classes.background}>
+      <Title text={t("CreateSubject.pageTitle")}/>
       <Modal
         opened={openedDegreeModal}
         onClose={() => setOpenedDegreeModal(false)}

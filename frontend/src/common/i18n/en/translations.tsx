@@ -29,6 +29,7 @@ export const TRANSLATIONS_EN = {
         body: "You have successfully registered! We sent you an email to confirm your address. Please check your inbox."
     },
     ConfirmEmail: {
+        title: "Confirm Email",
         InvalidToken: {
             title: "Invalid confirmation link",
             body: "The link you used to confirm your email is invalid or has already been used."
@@ -69,6 +70,7 @@ export const TRANSLATIONS_EN = {
         invalid_credentials: "The credentials provided are invalid"
     },
     Home: {
+        title: "Home",
         currentSemester: "Current Semester",
         overview: "Overview",
         futureSubjects: "Future Subjects",
@@ -163,6 +165,7 @@ export const TRANSLATIONS_EN = {
         pictureReject: "Only .png and .jpeg less than 5MB."
     },
     Search: {
+        title: "Search",
         not_found: "We could not find a subject that matched: {{query}}",
         filter: "Filter",
         filterCredits: "Credits",
@@ -280,6 +283,7 @@ export const TRANSLATIONS_EN = {
         deleteFailure: "An error occured, please try again later",
     },
     MultiReview: {
+        title: "Review subjects",
         progressText: "{{c}} of {{l}} reviews",
         skip: "Skip",
     },
@@ -290,6 +294,7 @@ export const TRANSLATIONS_EN = {
     },
     CreateSubject: {
         title: "New Subject",
+        pageTitle: "Create Subject",
         id: "Subject ID",
         idHelp: "Must be 4 numbers in the format: ##.##",
         name: "Subject Name",
