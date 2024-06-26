@@ -34,11 +34,12 @@ public class UserDto {
         userDto.image = uriInfo.getBaseUriBuilder().path("images").path(String.valueOf(user.getImageId())).build();
         userDto.roles = user.getRoles().stream().map(Role::getName).collect(Collectors.toList());
 
-        if(user.getDegree() != null)
+        if(user.getDegree() != null) {
             userDto.degreeId = user.getDegree().getId();
+            userDto.progressByYear = user.getTotalProgressPercentagePerYear().entrySet().stream().sorted(Map.Entry.comparingByKey()).map(Map.Entry::getValue).collect(Collectors.toList());
+        }
 
         userDto.creditsDone = user.getCreditsDone();
-        userDto.progressByYear = user.getTotalProgressPercentagePerYear().entrySet().stream().sorted(Map.Entry.comparingByKey()).map(Map.Entry::getValue).collect(Collectors.toList());
 
         userDto.reviews = uriInfo.getBaseUriBuilder().path("reviews").queryParam("userId", user.getId()).build();
         userDto.userSemester = uriInfo.getBaseUriBuilder().path("users").path(String.valueOf(user.getId())).path("plan").build();        //TODO - CHECK THIS
