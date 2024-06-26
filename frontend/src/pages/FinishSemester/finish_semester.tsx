@@ -25,7 +25,7 @@ export default function FinishSemester() {
         const data = handleService(resp, navigate);
 
         if(data == ""){
-            navigate('/home');
+            navigate('/');
         }
         setSubjects(data);
     }
@@ -59,7 +59,7 @@ export default function FinishSemester() {
         const respSemester = await userService.completeSemester(userId);
         const respProgress = await userService.setFinishedSubjects(userId, completedSubjects, [])
         if(respSemester && respSemester.status == 202 && respProgress && respProgress.status == 202){
-            navigate('/home');
+            navigate('/');
         }
 
         else {

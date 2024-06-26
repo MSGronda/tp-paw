@@ -330,7 +330,6 @@ export const TRANSLATIONS_EN = {
         subjects: "Subjects",
         addSemester: "Add Semester",
         semester: "Semester",
-        semesterNumber: "Number {{n}} asd",
         subjectNumber: "Subjects",
         nothingFound: "No subjects found",
         createDegree: "Create Degree"

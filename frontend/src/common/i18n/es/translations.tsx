@@ -330,8 +330,7 @@ export const TRANSLATIONS_ES = {
         subjects: "Materias",
         addSemester: "Agregar Cuatrimestre",
         semester: "Cuatrimestre",
-        semesterNumber: "Número {{n}}",
-        subjectNumber: "Materia nro {{n}}",
+        subjectNumber: "Materias",
         nothingFound: "No se encontraron materias",
         createDegree: "Crear Carrera"
     }

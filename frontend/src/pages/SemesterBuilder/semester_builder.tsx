@@ -534,7 +534,7 @@ export default function SemesterBuilder() {
             {/* Floating buttons and messages */}
 
             <FloatingButton text={t('Builder.save')} onClick={saveSchedule} bottom={'6rem'} right={'2rem'} color={"blue.7"}/>
-            <FloatingButton text={t('Builder.done')} onClick={()=> {navigate('/home')}} bottom={'2rem'} right={'2rem'} color={"green.7"}/>
+            <FloatingButton text={t('Builder.done')} onClick={()=> {navigate('/')}} bottom={'2rem'} right={'2rem'} color={"green.7"}/>
             {
                 savedSuccessfully ?
                 <FloatingMessage header={t('Builder.saveSuccessTitle')} text={t('Builder.saveSuccessBody')} bottom={"2rem"} color={"teal"} icon={saveSuccessIcon}/>
