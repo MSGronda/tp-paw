@@ -1,9 +1,10 @@
 export interface User {
-    creditsDone: number,
     id: number,
     username: string,
     email: string,
-    profileImage: string,
+    image: string,
     roles: string[],
-    degreeId: number | undefined
+    degreeId: number | undefined,
+    creditsDone: number,
+    progressByYear: number[]
 }

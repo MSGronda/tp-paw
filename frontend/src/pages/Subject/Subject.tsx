@@ -6,7 +6,6 @@ import {
     Card,
     Tabs,
     Text,
-    rem,
     Table,
     Badge,
     Button,
@@ -17,16 +16,17 @@ import {
     useCombobox,
     Notification,
 } from '@mantine/core';
-import { IconArrowsSort, IconCheck, IconPhoto, IconX } from "@tabler/icons-react";
-import { Subject } from "../../models/Subject.ts";
+import { IconArrowsSort, IconCheck, IconX } from "@tabler/icons-react";
+import {SimpleSubject, Subject} from "../../models/Subject.ts";
 import { Navbar } from "../../components/navbar/navbar.tsx";
 import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
 import ReviewCard from "../../components/review-card/review-card.tsx";
-import { subjectService, reviewService, userService } from "../../services";
+import {subjectService, reviewService, userService, degreeService} from "../../services";
 import { handleService } from "../../handlers/serviceHandler.tsx";
 import { Review } from "../../models/Review.ts";
 import PaginationComponent from "../../components/pagination/pagination.tsx";
 import { User } from "../../models/User.ts";
+import { Degree } from "../../models/Degree.ts";
 
 
 export function SubjectPage() {
@@ -39,6 +39,9 @@ export function SubjectPage() {
     const { userId } = useContext(AuthContext);
 
     const [subject, setSubject] = useState({} as Subject);
+    const [subjectYear, setSubjectYear] = useState(0);
+    const [degree, setDegree] = useState({} as Degree);
+    const [prerequisites, setPrerequisites] = useState([{} as SimpleSubject]);
     const [loading, setLoading] = useState(true);
     const [reviews, setReviews] = useState<Review[]>([]);
     const [didUserReview, setDidUserReview] = useState(true);
@@ -50,16 +53,15 @@ export function SubjectPage() {
     const [deletedReviewValue, setDeletedReviewValue] = useState<Boolean>();
     const [progress, setProgress] = useState("PENDING");
 
-    const orderParams = new URLSearchParams(location.search);
-    const orderBy = orderParams.get('orderBy');
-    const dir = orderParams.get('dir');
-    const page: number = orderParams.get('page') === null ? 1 : parseInt(orderParams.get('page') as string, 10);
-
     const INITIAL_PAGE = 1;
     const INITIAL_ORDER: string = "difficulty";
     const INITAL_DIR: string = "asc";
 
     const { state } = location;
+    const orderParams = new URLSearchParams(location.search);
+    const orderBy = orderParams.get('orderBy');
+    const dir = orderParams.get('dir');
+    const page: number = orderParams.get('page') === null ? INITIAL_PAGE : parseInt(orderParams.get('page') as string, 10);
 
 
     const searchSubject = async (subjectId: string) => {
@@ -113,16 +115,44 @@ export function SubjectPage() {
         }
     }
 
+    const getSubjectYear = async (subjectId: string)=> {
+        const res = await degreeService.getSubjectYear(subjectId);
+        const data = handleService(res, navigate);
+        if (res) {
+            setSubjectYear(data.semester);
+        }
+    }
+
+    const getDegree = async (subjectId: string)=> {
+        const res = await degreeService.getDegreeForSubject(subjectId);
+        const data = handleService(res, navigate);
+        if (res) {
+            setDegree(data);
+        }
+    }
+
     const setSubjectProgress = (userId: number, subjectId: string, newProgressState: string) => {
         newProgressState === "DONE" ? userService.setFinishedSubjects(userId, new Array(subjectId), []) : userService.setFinishedSubjects(userId, [], new Array(subjectId));
         setProgress(newProgressState);
+    }
+
+    const getPrerequisites = async (subjectIds: string[]) => {
+        const subjects = [];
+        for (const subjectId of subjectIds) {
+            const res = await subjectService.getSubjectById(subjectId.toString());
+            const data = handleService(res, navigate);
+            if (res) {
+                subjects.push({id: data.id, name: data.name});
+            }
+        }
+        setPrerequisites(subjects);
     }
 
     useEffect(() => {
         if (subjectId.id !== undefined) {
             searchSubject(subjectId.id);
         }
-    }, []);
+    }, [subjectId.id]);
 
     useEffect(() => {
         if (subject.name !== undefined) {
@@ -153,14 +183,35 @@ export function SubjectPage() {
             setDeletedReviewValue(localStorage.getItem('reviewDeleted') === "true");
             localStorage.removeItem('reviewDeleted');
         }
-    }, []);
+    }, [subjectId.id]);
 
+    // UserProgress Lookup
     useEffect(() => {
         if (userId !== undefined) {
             getUserProgress(userId);
         }
+    }, [userId]);
 
-    }, [])
+    // Subject Year Lookup
+    useEffect( () => {
+        if(subjectId.id !== undefined) {
+            getSubjectYear(subjectId.id);
+        }
+    }, [subjectId.id]);
+
+    // Degree Lookup
+    useEffect(() => {
+        if(subjectId.id !== undefined) {
+            getDegree(subjectId.id);
+        }
+    }, [subjectId.id]);
+
+    // Prerequisites Names Lookup
+    useEffect(() => {
+        if(subject.prerequisites !== undefined) {
+            getPrerequisites(subject.prerequisites);
+        }
+    }, [subject.prerequisites]);
 
     const findUserName = (userId: number) => {
         let userName = "";
@@ -171,13 +222,6 @@ export function SubjectPage() {
         })
         return userName;
     }
-
-    // Degree Lookup
-    const degree: any = {
-        id: 1,
-        name: "Ingenieria Informatica",
-    };
-    const year: number = 1;
 
     const combobox = useCombobox({
         onDropdownClose: () => combobox.resetSelectedOption(),
@@ -235,9 +279,9 @@ export function SubjectPage() {
                                     <Link to={"/degree/" + degree.id}>
                                         {degree.name}
                                     </Link>
-                                    {year === 0 ?
+                                    {subjectYear === 0 ?
                                         <Link to={"/degree/" + degree.id + "?tab=electives"}>{t("Subject.electives")}</Link> :
-                                        <Link to={"/degree/" + degree.id + "?tab=" + year}>{t("Subject.year")} {year}</Link>
+                                        <Link to={"/degree/" + degree.id + "?tab=" + subjectYear}>{t("Subject.year")} {subjectYear}</Link>
                                     }
                                 </Breadcrumbs> :
                                 <></>
@@ -250,9 +294,9 @@ export function SubjectPage() {
                         <Card className={classes.mainBody}>
                             <Tabs defaultValue="general">
                                 <Tabs.List>
-                                    <Tabs.Tab value="general"> {t("Subject.general")}  </Tabs.Tab>
-                                    <Tabs.Tab value="times-panel"> {t("Subject.times")} </Tabs.Tab>
-                                    <Tabs.Tab value="professors-panel"> {t("Subject.classProf")} </Tabs.Tab>
+                                    <Tabs.Tab key={"general"} value="general"> {t("Subject.general")}  </Tabs.Tab>
+                                    <Tabs.Tab key={"times-panel"} value="times-panel"> {t("Subject.times")} </Tabs.Tab>
+                                    <Tabs.Tab key={"professors-panel"} value="professors-panel"> {t("Subject.classProf")} </Tabs.Tab>
                                 </Tabs.List>
 
                                 <Tabs.Panel value="general">
@@ -269,8 +313,12 @@ export function SubjectPage() {
                                             <Table.Tr>
                                                 <Table.Th>{t("Subject.prerequisites")}</Table.Th>
                                                 <Table.Td>
-                                                    {subject.prerequisites && subject.prerequisites.length === 0 ? <>{t("Subject.emptyPrerequisites")}</> : <></>}
-                                                    {getSubjectPrereqs(subject.prerequisites)}
+                                                    {prerequisites && prerequisites.length === 0 ? <>{t("Subject.emptyPrerequisites")}</> : <></>}
+                                                    {   prerequisites && subject.prerequisites && prerequisites.length === subject.prerequisites.length ?
+                                                        prerequisites.map((simpleSubject, index) => (
+                                                            <Link key={index} to={{pathname:`/subject/${simpleSubject.id}`}}>{simpleSubject.name}, </Link>
+                                                        )) : <></>
+                                                    }
                                                 </Table.Td>
                                             </Table.Tr>
                                             <Table.Tr>
@@ -496,7 +544,7 @@ export function SubjectPage() {
                                 />
                             ))
                         }
-                        {reviews &&
+                        {reviews && maxPage > 1 &&
                             <PaginationComponent page={page} lastPage={maxPage} setPage={handlePageChange} />
                         }
                     </div>
@@ -506,26 +554,6 @@ export function SubjectPage() {
     );
 }
 
-function getSubjectPrereqs(prereqs: string[]) {
-    const prereqsComponents: JSX.Element[] = [];
-    let i = 0;
-    if (prereqs === null || prereqs === undefined) {
-        return <></>;
-    }
-    prereqs.forEach((item) => {
-        prereqsComponents.push(
-            <a href={"/subject/" + item}>{item}</a>
-        );
-        if (i !== prereqs.length - 1) {
-            prereqsComponents.push(
-                <> , </>
-            );
-        }
-        i++;
-    }
-    )
-    return prereqsComponents;
-}
 
 function getProfessors(subject: Subject) {
     const professorsComponents: JSX.Element[] = [];

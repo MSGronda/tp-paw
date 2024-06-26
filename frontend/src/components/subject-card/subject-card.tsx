@@ -21,14 +21,17 @@ function SubjectCard(props: SubjectCardProps): JSX.Element {
     return (
         <Link to={{pathname:`/subject/${id}`}}>
             <Card className={classes.card_area}>
-                <h3>{name} - {id}</h3>
+                <h4 style={{height: "20%"}}>{name} - {id}</h4>
                 <div className={classes.badge_row}>
                     <Badge className={classes.badge_row_elem} color={'blue.7'}>{t("SubjectCard.credits", {n: credits})}</Badge>
-                    <Tooltip multiline label={
-                        prerequisites.map((prerequisite, index) => (<div key={index}>{prerequisite}</div>))
-                    }>
-                        <Badge className={classes.badge_row_elem} color={'orange.7'}>{t("SubjectCard.prerequisites", {n: prerequisites.length})}</Badge>
-                    </Tooltip>
+                    {
+                        prerequisites.length > 0 ?
+                            <Tooltip multiline label={prerequisites.map((prerequisite, index) => (<div key={index}>{prerequisite}</div>))}>
+                                <Badge className={classes.badge_row_elem} color={'orange.7'}>{t("SubjectCard.prerequisites", {n: prerequisites.length})}</Badge>
+                            </Tooltip>
+                        : null
+                    }
+
                     { progress === 'DONE' ?
                         <Tooltip label={t("SubjectCard.done_tooltip")}>
                             <IconCheck className={classes.badge_row_elem} stroke={1.0} />
@@ -49,7 +52,7 @@ function SubjectCard(props: SubjectCardProps): JSX.Element {
                     { numReviews > 0 && timeDemand == 'HIGH' ? <Badge className={classes.badge_row_elem} color={'red.7'}>{t("SubjectCard.high")}</Badge> : null }
 
                     { numReviews > 0 ? <span>{t("SubjectCard.reviews", {n: numReviews})}</span> : null }
-                    { numReviews == 0 ? <Badge color={'gray.7'}>{t("SubjectCard.done_tooltip")}</Badge> : null }
+                    { numReviews == 0 ? <Badge color={'gray.7'}>{t("SubjectCard.no_reviews")}</Badge> : null }
                 </div>
             </Card>
         </Link>

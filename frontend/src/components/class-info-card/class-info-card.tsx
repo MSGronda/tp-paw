@@ -1,21 +1,26 @@
 import {useTranslation} from "react-i18next";
-import {Card} from "@mantine/core";
+import {Card, Divider} from "@mantine/core";
 import classes from "./class-info-card.module.css";
 import {Subject} from "../../models/Subject.ts";
+import Class from "../../models/Class.ts";
 
 interface ClassInfoCardProps {
     subject: Subject;
+    subjectClass: Class
 }
 
 export default function ClassInfoCard(props: ClassInfoCardProps): JSX.Element {
     const { t } = useTranslation();
     const subject = props.subject;
+    const subjectClass = props.subjectClass;
+
     return(
-        <Card className={classes.classCard}>
-            <div className={classes.chooser}>
-                <h5 className={classes.classCardName}>{subject.name} - {subject.id}</h5>
-            </div>
-            <div>
+        <Card className={classes.classCard} withBorder>
+            <Card.Section>
+                <h5 style={{margin: "0.4rem"}}>{subject.name} - {subjectClass.idClass}</h5>
+                <Divider/>
+            </Card.Section>
+            <Card.Section>
                 <table>
                     <thead>
                     <tr>
@@ -38,7 +43,7 @@ export default function ClassInfoCard(props: ClassInfoCardProps): JSX.Element {
                         ))}
                     </tbody>
                 </table>
-            </div>
+            </Card.Section>
         </Card>
     );
 }

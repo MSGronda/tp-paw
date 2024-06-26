@@ -55,16 +55,19 @@ public class ReviewController {
 
         final List<ReviewDto> reviewDtos = reviews.stream().map(review -> ReviewDto.fromReview(uriInfo, review)).collect(Collectors.toList());
 
-        if (userId != null){
-            final User user = userService.findById(userId).orElseThrow(UserNotFoundException::new);
-            int lastPage = reviewService.getTotalPagesForUserReviews(user);
+        int lastPage = reviewService.getTotalPages(userId, subjectId);
+        Response.ResponseBuilder responseBuilder = Response.ok(new GenericEntity<List<ReviewDto>>(reviewDtos){});
+        PaginationLinkBuilder.getResponsePaginationLinks(responseBuilder, uriInfo, page, lastPage);
+        return responseBuilder.build();
 
-            Response.ResponseBuilder responseBuilder = Response.ok(new GenericEntity<List<ReviewDto>>(reviewDtos){});
-            PaginationLinkBuilder.getResponsePaginationLinks(responseBuilder, uriInfo, page, lastPage);
-            return responseBuilder.build();
-        }
-
-        return Response.ok(new GenericEntity<List<ReviewDto>>(reviewDtos){}).build();
+//        if (userId != null){
+//            final User user = userService.findById(userId).orElseThrow(UserNotFoundException::new);
+//            int lastPage = reviewService.getTotalPagesForUserReviews(user);
+//
+//
+//        }
+//
+//        return Response.ok(new GenericEntity<List<ReviewDto>>(reviewDtos){}).build();
     }
 
     @POST

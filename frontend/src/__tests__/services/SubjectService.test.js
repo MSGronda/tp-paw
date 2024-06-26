@@ -77,22 +77,6 @@ test("It should return a list with subjects of 6 credits", async () => {
   
 });
 
-test("It should return a list of subjects that a user has done", async () => {
-
-    mockedGet.mockResolvedValueOnce({ 
-        status: 200,
-        data: [subject1, subject2], 
-        failure: false,
-        headers: {}
-    });
-    
-    const response = await subjectService.getDoneSubjects(43)
-  
-    expect(response.data.length).toBe(2);
-    expect(response.data).toEqual([subject1, subject2]);
-    expect(response.failure).toBeFalsy();
-    expect(mockedGet).toHaveBeenCalledTimes(1);
-})
 
 test("It should return a list of subjects that the user has available", async() => {
     
@@ -109,7 +93,7 @@ test("It should return a list of subjects that the user has available", async() 
         expect(response.data).toEqual([subject1, subject2]);
         expect(response.failure).toBeFalsy();
         expect(mockedGet).toHaveBeenCalledTimes(1);
-        expect(mockedGet).toHaveBeenCalledWith("/subjects", expect.objectContaining({params: {available: 43}}))
+        expect(mockedGet).toHaveBeenCalledWith("/subjects", expect.objectContaining({params: {available: 43, page: 1}}))
 })
 
 test("It should return a list of subjects that the user has done", async() => {
@@ -126,7 +110,7 @@ test("It should return a list of subjects that the user has done", async() => {
     expect(response.data).toEqual([subject1, subject2]);
     expect(response.failure).toBeFalsy();
     expect(mockedGet).toHaveBeenCalledTimes(1);
-    expect(mockedGet).toHaveBeenCalledWith("/subjects", expect.objectContaining({params: {done: 43}}))
+    expect(mockedGet).toHaveBeenCalledWith("/subjects", expect.objectContaining({params: {done: 43, page: 1}}))
 })
 
 

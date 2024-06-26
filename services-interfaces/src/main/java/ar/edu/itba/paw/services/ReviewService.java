@@ -33,4 +33,6 @@ public interface ReviewService {
     List<ReviewVote> getVotes(final Long reviewId, final Long userId, final int page);
 
     void deleteReviewVote(final long reviewId, final long userId);
+
+    int getTotalPages(Long userId, String subjectId);
 }

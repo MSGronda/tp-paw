@@ -1,9 +1,14 @@
 package ar.edu.itba.paw.webapp.controller;
 
 import ar.edu.itba.paw.models.Degree;
+import ar.edu.itba.paw.models.Subject;
+import ar.edu.itba.paw.models.User;
 import ar.edu.itba.paw.models.exceptions.DegreeNotFoundException;
+import ar.edu.itba.paw.models.exceptions.SemesterNotFoundException;
+import ar.edu.itba.paw.models.exceptions.SubjectNotFoundException;
 import ar.edu.itba.paw.services.AuthUserService;
 import ar.edu.itba.paw.services.DegreeService;
+import ar.edu.itba.paw.services.SubjectService;
 import ar.edu.itba.paw.webapp.dto.DegreeDto;
 import ar.edu.itba.paw.webapp.dto.SemesterDto;
 import ar.edu.itba.paw.webapp.form.DegreeForm;
@@ -27,6 +32,8 @@ public class DegreeController {
     private DegreeService degreeService;
     @Autowired
     private AuthUserService authUserService;
+    @Autowired
+    private SubjectService subjectService;
     @Context
     private UriInfo uriInfo;
 
@@ -186,6 +193,31 @@ public class DegreeController {
         degreeService.deleteSemesterFromDegree(degree, id);
 
         return Response.status(Response.Status.NO_CONTENT.getStatusCode()).build();
+    }
+
+    @GET
+    @Path("/{subjectId}/year")
+    public Response getSubjectYearForParentDegree(
+            @PathParam("subjectId") final String subjectId
+    ) {
+        final Subject subject = subjectService.findById(String.valueOf(subjectId)).orElseThrow(SubjectNotFoundException::new);
+        final User user = authUserService.getCurrentUser();
+        final Degree degree = degreeService.findParentDegree(subject, user).orElseThrow(DegreeNotFoundException::new);
+        final int semesterId = degreeService.findSubjectYearForParentDegree(subject, user).orElseThrow(SemesterNotFoundException::new);
+
+        return Response.ok(SemesterDto.fromSemester(uriInfo, degree, semesterId)).build();
+    }
+
+    @GET
+    @Path("/{subjectId}/degree")
+    public Response getDegreeForSubject(
+            @PathParam("subjectId") final String subjectId
+    ) {
+        final Subject subject = subjectService.findById(String.valueOf(subjectId)).orElseThrow(SubjectNotFoundException::new);
+        final User user = authUserService.getCurrentUser();
+        final Degree degree = degreeService.findParentDegree(subject, user).orElseThrow(DegreeNotFoundException::new);
+
+        return Response.ok(DegreeDto.fromDegree(uriInfo, degree)).build();
     }
 
 }

@@ -2,9 +2,6 @@ package ar.edu.itba.paw.services;
 
 import ar.edu.itba.paw.models.Subject;
 import ar.edu.itba.paw.models.User;
-import ar.edu.itba.paw.models.exceptions.SubjectNotFoundException;
-import ar.edu.itba.paw.models.exceptions.UnauthorizedException;
-import ar.edu.itba.paw.models.exceptions.SubjectIdAlreadyExistsException;
 
 import java.time.LocalTime;
 import java.util.List;
@@ -68,7 +65,7 @@ public interface SubjectService {
             final Integer time
     );
 
-    int getTotalPagesForSearch(
+    int getTotalPages(
             final User user,
             final String name,
             final Integer credits,
@@ -78,7 +75,7 @@ public interface SubjectService {
             final String orderBy
     );
 
-    Map<String, List<String>> getRelevantFiltersForSearch(
+    Map<String, List<String>> getRelevantFilters(
             final User user,
             final String name,
             final Integer credits,

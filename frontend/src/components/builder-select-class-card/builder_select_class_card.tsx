@@ -3,7 +3,7 @@ import classes from "./builder_select_class_card.module.css"
 import "../../common/table-style.css";
 import {IconCheck} from "@tabler/icons-react";
 import {t} from "i18next";
-import getDayName from "../../common/timeTable.ts";
+import getDayName from "../../utils/time_table.ts";
 import Class from "../../models/Class.ts";
 
 

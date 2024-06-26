@@ -18,7 +18,6 @@ import ConfirmEmail from './pages/ConfirmEmail/confirmEmail';
 import Login from './pages/Login/login';
 import { PrivateRoute } from './PrivateRoute';
 import Search from './pages/Search/search';
-import Profile from './pages/Profile/profile';
 import SemesterBuilder from './pages/SemesterBuilder/semester_builder';
 import FinishSemester from './pages/FinishSemester/finish_semester';
 import { SubjectPage } from './pages/Subject/Subject';
@@ -52,7 +51,7 @@ export default function App() {
           <Route path="login" element={<AnonymousRoute component={Login}/>}/>
           <Route path="onboarding" element={<PrivateRoute component={Onboarding} roles={['ADMIN', 'USER']}/>} />
           <Route path="search" element={<PrivateRoute component={Search} roles={['ADMIN', 'USER']}/>}/>
-          <Route path="profile" element={<PrivateRoute component={Profile} roles={['ADMIN', 'USER']}/>}/>
+          <Route path="profile" element={<PrivateRoute component={User} roles={['ADMIN', 'USER']}/>}/>
           <Route path="builder" element={<PrivateRoute component={SemesterBuilder} roles={['ADMIN', 'USER']}/>}/>
           <Route path="builder/finish" element={<PrivateRoute component={FinishSemester} roles={['ADMIN', 'USER']}/>}/>
           <Route path="subject/:id" element={<PrivateRoute component={SubjectPage} roles={['ADMIN', 'USER']}/>}/>

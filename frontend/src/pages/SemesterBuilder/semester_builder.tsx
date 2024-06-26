@@ -39,6 +39,7 @@ import FloatingButton from "../../components/floating-button/floating-button.tsx
 import {UserPlan} from "../../models/UserPlan.ts";
 import FloatingMessage from "../../components/floating-message/floating_message.tsx";
 import Title from "../../components/title/title.tsx";
+import {createEmptySubjectClass, createSelectedSubjects} from "../../utils/user_plan_utils.ts";
 
 const COLS = 7
 const ROWS = 29
@@ -57,7 +58,7 @@ export default function SemesterBuilder() {
 
         const resp = await subjectService.getAvailableSubjects(userId);
         const data = handleService(resp, navigate);
-        setAvailable(removeInvalidSubjects(data != "" ? data : [])); // TODO: cambiar esto a algo mejor
+        setAvailable(removeInvalidSubjects(data.subjects != "" ? data.subjects : [])); // TODO: cambiar esto a algo mejor
     }
 
     // Select class - para cuando tenes que elegir comision de materia
@@ -76,7 +77,12 @@ export default function SemesterBuilder() {
         const respPlan = await userService.getUserPlan(userId);
         const dataPlan = handleService(respPlan, navigate);
 
-        setSelectedSubjects(createSelectedSubjects(dataPlan, dataSubjects));
+        const subjects = createSelectedSubjects(dataPlan, dataSubjects.subjects);
+
+        // Tenemos que setear el arreglo con 1 si es que ya tenia materias anotadas
+        replaceScheduleArray(subjects)
+
+        setSelectedSubjects(subjects);
     }
 
     const [scheduleArray, setScheduleArray] = useState<number[]>(new Array(ROWS * COLS).fill(0));
@@ -111,7 +117,7 @@ export default function SemesterBuilder() {
 
         const resp = await subjectService.getDoneSubjects(userId);
         const data = handleService(resp, navigate);
-        setDoneSubjects(data != "" ? data : []); // TODO: cambiar esto a algo mejor
+        setDoneSubjects(data.subjects != "" ? data.subjects : []); // TODO: cambiar esto a algo mejor
     }
 
     const [unlockables, setUnlockables] = useState<Subject[]>([]);
@@ -122,7 +128,7 @@ export default function SemesterBuilder() {
 
         const resp = await subjectService.getUnlockableSubjects(userId);
         const data = handleService(resp, navigate);
-        setUnlockables(data != "" ? data : []); // TODO: cambiar esto a algo mejor
+        setUnlockables(data.subjects != "" ? data.subjects : []); // TODO: cambiar esto a algo mejor
     }
 
     // API Calls
@@ -213,12 +219,29 @@ export default function SemesterBuilder() {
         if(subject.classes.length == 0){
             return true;
         }
+        if(subject.name == "Química"){
+            console.log("A")
+        }
         for(const sc of subject.classes){
             if(classEnabled(sc)){
                 return true;    // Con que una comision sea viable, toda la materia es viable
             }
         }
         return false;
+    }
+
+    const replaceScheduleArray = (subjectClasses: SelectedSubject[]) => {
+        const newScheduleArray = new Array(ROWS * COLS).fill(0);
+        for(const subjectClass of subjectClasses){
+            for(const time of subjectClass.selectedClass.locations){
+                const startTimeValue = timeStringToNumber(time.startTime);
+                const endTimeValue = timeStringToNumber(time.endTime);
+                for(let i = startTimeValue; i < endTimeValue; i++){
+                    newScheduleArray[time.day + i * COLS] = 1;
+                }
+            }
+        }
+        setScheduleArray(newScheduleArray);
     }
     const updateScheduleArray = (subjectClass: Class, value: number) => {
 
@@ -612,7 +635,7 @@ function calcTimeDemand(difficultyValue: number, selectedLength: number, totalCr
 
 //  = = = = = Schedule checkers = = = = =
 function timeStringToNumber(time: string) {
-    return (parseInt(time.split(":")[0]) - 8)*2 + (parseInt(time.split(":")[1]) === 30 ? 1 : 0);
+    return (parseInt(time.split(":")[0]) - 8) * 2 + (parseInt(time.split(":")[1]) === 30 ? 1 : 0);
 }
 function isOverlapped(day: number, startTime: string, endTime: string, scheduleArray: number[]){
     const startTimeValue = timeStringToNumber(startTime);
@@ -627,30 +650,8 @@ function isOverlapped(day: number, startTime: string, endTime: string, scheduleA
 
 
 //  = = = = = Misc. = = = = =
-function createEmptySubjectClass(subject: Subject) : Class {
-    return {
-        idSubject: subject.id,
-        idClass: "",
-        professors: [],
-        locations: []
-    }
-}
-function createSelectedSubjects(userPlan: UserPlan, subjects: Subject[]): SelectedSubject[] {
-    const selected: SelectedSubject[] = [];
-    subjects.forEach((subject) => {
 
-        const subjectClassPair = userPlan.classes.entry.find((t) => t.key == subject.id)
 
-        const idClass = subjectClassPair ? subjectClassPair.value : "";
-
-        const c = subject.classes.find((c) => c.idClass == idClass);
-        selected.push({
-            subject: subject,
-            selectedClass:  c ? c : createEmptySubjectClass(subject) // No deberia ocurrir este caso pero bueno
-        })
-    })
-    return selected;
-}
 function removeInvalidSubjects(subjects: Subject[]) {
     return subjects.filter((subject) => subject.credits != 0);
 }

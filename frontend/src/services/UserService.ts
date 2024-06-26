@@ -2,6 +2,7 @@ import {SelectedSubject} from "../models/SelectedSubject.ts";
 import {axiosService} from "./index.tsx";
 import {handleResponse} from "../handlers/responseHandler.tsx";
 import {User} from "../models/User.ts";
+import authService from "./AuthService.ts";
 
 const path = "/users"
 
@@ -133,5 +134,98 @@ export class UserService {
         }
         
         await this.updateCachedUser();
+    }
+    
+    async changePassword(oldPassword: string, newPassword: string) {
+        try {
+            const body = {
+                oldPassword,
+                newPassword
+            }
+            const res = await axiosService.authAxiosWrapper(
+              axiosService.PATCH,
+              `${path}/${this.getUserId()}`,
+              {},
+              body
+            );
+            
+            authService.logout();
+            window.location.reload();
+            
+            return handleResponse(res);
+        } catch(e: any) {
+            return handleResponse(e.response);
+        }
+    }
+    
+    async changeDegree(degreeId: number) {
+        try {
+            // Delete current semester
+            const delRes = await axiosService.authAxiosWrapper(
+              axiosService.DELETE,
+              `${path}/${this.getUserId()}/plan`,
+              {}
+            );
+            
+            if(!delRes || delRes.status !== 204) 
+                throw new Error();
+            
+            // Change degree ID
+            const body = { degreeId };
+            const res = await axiosService.authAxiosWrapper(
+              axiosService.PATCH,
+              `${path}/${this.getUserId()}`,
+              {},
+              body
+            );
+            
+            await this.updateCachedUser();
+            window.location.reload();
+            
+            return handleResponse(res);
+        } catch (e: any) {
+            return handleResponse(e.response);
+        }
+    }
+    
+    async changeUsername(userName: string) {
+        try {
+            const body = { userName };
+            const res = await axiosService.authAxiosWrapper(
+              axiosService.PATCH,
+              `${path}/${this.getUserId()}`,
+              {},
+              body
+            );
+            
+            await this.updateCachedUser();
+            window.location.reload();
+            
+            return handleResponse(res);
+        } catch (e: any) {
+            return handleResponse(e.response);
+        }
+    }
+    
+    async changePicture(file: File) {
+        try {
+            const res = await axiosService.authAxiosWrapper(
+              axiosService.POST,
+              `${path}/${this.getUserId()}/picture`,
+              {
+                  headers: {
+                    'Content-Type': file.name.endsWith(".png") ? "image/png" : "image/jpeg"
+                  }
+              },
+              await file.arrayBuffer()
+            );
+            
+            await this.updateCachedUser();
+            window.location.reload();
+            
+            return handleResponse(res);
+        } catch (e: any) {
+            return handleResponse(e.response);
+        }
     }
 }

@@ -55,7 +55,8 @@ afterEach(() => {
     mockedGet.mockRejectedValueOnce({});
 
     const response = await reviewService.getReviewsBySubject("31.08", 1, "difficulty", "desc")
-    expect(response).toBeUndefined();
+    console.log(response)
+    expect(response.failure).toBeTruthy();
 
   });
 

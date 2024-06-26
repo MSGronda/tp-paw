@@ -29,7 +29,6 @@ export class SubjectService {
                 dir: dir
             };
             const res = await axiosService.authAxiosWrapper(axiosService.GET, `${path}`, config);
-            console.log(res)
             return handleResponse(res);
         } catch (error: any) {
             return handleResponse(error.response);
@@ -108,7 +107,7 @@ export class SubjectService {
         }
 
         const bySemester: Record<number, Subject[]> = {};
-        res.data.forEach((subject: Subject) => {
+        res.data.subjects.forEach((subject: Subject) => {
             if(!subject.semester) return;
 
             if (!bySemester[subject.semester]) {

@@ -84,32 +84,16 @@ public class SubjectController {
             dir
         );
 
-        final List<SubjectDto> subjectsDtos;
-        if(degree != null && semester == null){
-            subjectsDtos = subs.stream().map(subject -> SubjectDto.fromSubjectWithSemesters(uriInfo, subject, degree)).collect(Collectors.toList());
-        } else {
-            subjectsDtos = subs.stream().map(subject -> SubjectDto.fromSubject(uriInfo, subject)).collect(Collectors.toList());
-        }
-        
-        if(subjectsDtos.isEmpty())
+        if (subs.isEmpty()){
             return Response.noContent().build();
-
-        if (query != null ) {
-            int lastPage = subjectService.getTotalPagesForSearch(
-                    user,
-                    query,
-                    credits,
-                    department,
-                    difficulty,
-                    timeDemand,
-                    orderBy
-            );
-            Map<String, List<String>> filters = subjectService.getRelevantFiltersForSearch(user, query, credits, department, difficulty, timeDemand, orderBy);
-            Response.ResponseBuilder responseBuilder = Response.ok(new SubjectsFiltersDto(subjectsDtos, filters));
-            PaginationLinkBuilder.getResponsePaginationLinks(responseBuilder, uriInfo, page, lastPage);
-            return responseBuilder.build();
         }
-        Response.ResponseBuilder responseBuilder = Response.ok(new GenericEntity<List<SubjectDto>>(subjectsDtos){});
+
+        Response.ResponseBuilder responseBuilder = Response.ok(new SubjectsFiltersDto(
+                subs.stream().map(subject -> SubjectDto.fromSubjectWithSemesters(uriInfo, subject, degree, semester)).collect(Collectors.toList()),
+                subjectService.getRelevantFilters(user, query, credits, department, difficulty, timeDemand, orderBy)
+        ));
+
+        PaginationLinkBuilder.getResponsePaginationLinks(responseBuilder, uriInfo, page, subjectService.getTotalPages(user, query, credits, department, difficulty, timeDemand, orderBy));
         return responseBuilder.build();
     }
 

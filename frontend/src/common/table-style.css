@@ -16,6 +16,9 @@ thead th {
     font-weight: 600;
     padding: 0.6rem;
     border-bottom: 1px solid #e9ecef;
+    position: sticky;
+    background-color: #f8f9fa;
+    top: 0
 }
 tbody th{
     text-align: left;
