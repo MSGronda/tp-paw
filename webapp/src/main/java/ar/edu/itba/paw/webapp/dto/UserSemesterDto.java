@@ -26,7 +26,10 @@ public class UserSemesterDto {
         final UserSemesterDto planDto = new UserSemesterDto();
 
         planDto.userId = user.getId();
-        planDto.dateFinished = dateFinished.getEpochSecond();
+
+        if(dateFinished != null){
+            planDto.dateFinished = dateFinished.getEpochSecond();
+        }
 
         planDto.classes = new HashMap<>();
         userSemesterList.forEach(s -> planDto.classes.put(s.getSubjectClass().getSubject().getId(), s.getSubjectClass().getClassId()));

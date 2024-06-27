@@ -48,6 +48,7 @@ public class SubjectController {
             @QueryParam("future") final Long future,
 
             @QueryParam("plan") final Long plan,
+            @QueryParam("planFinishDate") final Long planFinishedDate,
 
             @QueryParam("q") final String query,
             @QueryParam("credits") final Integer credits,
@@ -73,6 +74,7 @@ public class SubjectController {
             done,
             future,
             plan,
+            planFinishedDate,
             query,
             credits,
             department,

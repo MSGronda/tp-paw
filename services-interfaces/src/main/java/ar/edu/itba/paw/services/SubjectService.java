@@ -38,6 +38,7 @@ public interface SubjectService {
             final Long done,
             final Long future,
             final Long plan,
+            final Long planFinishedDate,
             final String query,
             final Integer credits,
             final String department,
