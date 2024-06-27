@@ -1,9 +1,11 @@
 package ar.edu.itba.paw.webapp.controller;
 
 import ar.edu.itba.paw.models.User;
+import ar.edu.itba.paw.models.UserSemester;
 import ar.edu.itba.paw.models.exceptions.*;
 import ar.edu.itba.paw.services.*;
 import ar.edu.itba.paw.webapp.controller.utils.PATCH;
+import ar.edu.itba.paw.webapp.dto.ReviewVoteDto;
 import ar.edu.itba.paw.webapp.dto.UserProgressDto;
 import ar.edu.itba.paw.webapp.dto.UserSemesterDto;
 import ar.edu.itba.paw.webapp.dto.UserDto;
@@ -18,7 +20,9 @@ import javax.validation.Valid;
 import javax.ws.rs.*;
 import javax.ws.rs.core.*;
 import java.net.URI;
+import java.time.Instant;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Path("users")
@@ -103,11 +107,16 @@ public class UserController {
     public Response getUserSemester(@PathParam("id") final Long id){
         final User user = userService.findById(id).orElseThrow(UserNotFoundException::new);
 
-        if(!user.hasSemester()){
-            return Response.noContent().build();
-        }
+        final Map<Instant, List<UserSemester>> semesters = userService.getUserSemesters(user);
 
-        return Response.ok(UserSemesterDto.fromUser(uriInfo, user)).build();
+        if(semesters.isEmpty())
+            return Response.noContent().build();
+
+        final List<UserSemesterDto> semesterDtos = semesters.entrySet().stream().map(e ->
+                UserSemesterDto.fromSemesterEntry(uriInfo, user, e.getKey(), e.getValue())
+        ).collect(Collectors.toList());
+
+        return Response.ok(new GenericEntity<List<UserSemesterDto>>(semesterDtos){}).build();
     }
 
     @POST
@@ -120,7 +129,8 @@ public class UserController {
     ){
         final User currentUser = authUserService.getCurrentUser();
         userService.createUserSemester(currentUser, id, userSemesterForm.getIdSub(), userSemesterForm.getIdClass());
-        return Response.ok(UserSemesterDto.fromUser(uriInfo, currentUser)).build();
+
+        return Response.ok(UserSemesterDto.fromSemesterEntry(uriInfo, currentUser, userService.getCurrentUserSemester(currentUser))).build();
     }
 
     @PUT

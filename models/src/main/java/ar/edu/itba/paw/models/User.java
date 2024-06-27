@@ -97,7 +97,7 @@ public class User {
     }
 
     public boolean hasSemester(){
-        return !userSemester.isEmpty();
+        return userSemester.stream().anyMatch(UserSemester::isActive);
     }
 
     public int getCreditsDone(){

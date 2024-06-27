@@ -6,28 +6,32 @@ import ar.edu.itba.paw.models.UserSemester;
 
 import javax.ws.rs.core.UriInfo;
 import java.net.URI;
+import java.time.Instant;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class UserSemesterDto {
     private Long userId;
+    private Long dateFinished;
     private Map<String, String> classes;
     private URI planSubjects;
-    private URI subjectProgress;
+    private URI subjectProgress;        // TODO: remove?
 
-    public static UserSemesterDto fromUser(final UriInfo uriInfo, final User user){
+    public static UserSemesterDto fromSemesterEntry(final UriInfo uriInfo, final User user, final List<UserSemester> userSemesterList){
+        return fromSemesterEntry(uriInfo, user, null, userSemesterList);
+    }
+
+    public static UserSemesterDto fromSemesterEntry(final UriInfo uriInfo, final User user, final Instant dateFinished, final List<UserSemester> userSemesterList){
         final UserSemesterDto planDto = new UserSemesterDto();
 
         planDto.userId = user.getId();
+        planDto.dateFinished = dateFinished.getEpochSecond();
+
         planDto.classes = new HashMap<>();
+        userSemesterList.forEach(s -> planDto.classes.put(s.getSubjectClass().getSubject().getId(), s.getSubjectClass().getClassId()));
 
-        for(final UserSemester us : user.getUserSemester()){
-            if(us.isActive()){
-                planDto.classes.put(us.getSubjectClass().getSubject().getId(), us.getSubjectClass().getClassId());
-            }
-        }
-
-        planDto.planSubjects = uriInfo.getBaseUriBuilder().path("subjects").queryParam("plan", String.valueOf(user.getId())).build();
+        planDto.planSubjects = uriInfo.getBaseUriBuilder().path("subjects").queryParam("plan", String.valueOf(user.getId())).build();   // TODO: fix
 
         planDto.subjectProgress = uriInfo.getBaseUriBuilder().path("users").path(String.valueOf(user.getId())).path("progress").build();
 
@@ -64,5 +68,13 @@ public class UserSemesterDto {
 
     public void setSubjectProgress(URI subjectProgress) {
         this.subjectProgress = subjectProgress;
+    }
+
+    public Long getDateFinished() {
+        return dateFinished;
+    }
+
+    public void setDateFinished(Long dateFinished) {
+        this.dateFinished = dateFinished;
     }
 }

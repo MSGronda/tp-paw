@@ -25,6 +25,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.security.SecureRandom;
+import java.time.Instant;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -287,6 +288,31 @@ public class UserServiceImpl implements UserService {
             userDao.setLocale(user, locale);
             LOGGER.info("Set locale for user with id: {} to '{}'", user.getId(), locale);
         }
+    }
+
+    public List<UserSemester> getCurrentUserSemester(final User user){
+        return user.getUserSemester().stream().filter(UserSemester::isActive).collect(Collectors.toList());
+    }
+
+    @Override
+    public Map<Instant, List<UserSemester>> getUserSemesters(final User user) {
+        final List<UserSemester> userSemesters = user.getUserSemester();
+
+        final Map<Instant, List<UserSemester>> resp = new HashMap<>();
+
+        userSemesters.forEach(s -> {
+            final Instant finishedDate = s.getDateFinished();
+            if(resp.containsKey(s.getDateFinished())){
+                resp.get(finishedDate).add(s);
+            }
+            else{
+                final List<UserSemester> value = new ArrayList<>();
+                value.add(s);
+                resp.put(finishedDate, value);
+            }
+        });
+
+        return resp;
     }
 
     @Transactional
