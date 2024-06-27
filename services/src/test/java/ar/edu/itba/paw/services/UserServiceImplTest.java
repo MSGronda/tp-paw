@@ -115,8 +115,9 @@ public class UserServiceImplTest {
         final String classId = "A";
         final Subject testSubject = Subject.builder().id("31.08").name("Sistemas de Representación").department("Ciencias Exactas y Naturales").credits(3).build();
         final SubjectClass subjectClass = new SubjectClass(classId, testSubject);
+        final UserSemester userSemester = new UserSemester(testUser, subjectClass);
         testSubject.getClasses().add(subjectClass);
-        testUser.getUserSemester().add(subjectClass);
+        testUser.getUserSemester().add(userSemester);
 
         when(subjectService.findById(testSubject.getId())).thenReturn(Optional.of(testSubject));
 
@@ -128,8 +129,9 @@ public class UserServiceImplTest {
         final String classId = "A";
         final Subject testSubject = Subject.builder().id("31.08").name("Sistemas de Representación").department("Ciencias Exactas y Naturales").credits(3).build();
         final SubjectClass subjectClass = new SubjectClass(classId, testSubject);
+        final UserSemester userSemester = new UserSemester(testUser, subjectClass);
         testSubject.getClasses().add(subjectClass);
-        testUser.getUserSemester().add(subjectClass);
+        testUser.getUserSemester().add(userSemester);
         when(subjectService.findById(testSubject.getId())).thenReturn(Optional.of(testSubject));
 
         userService.removeFromCurrentSemester(testUser,  testSubject.getId(), classId);

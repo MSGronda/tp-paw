@@ -73,8 +73,6 @@ public interface UserService {
 
     String getSemesterSubmitRedirectUrl(final User user);
 
-    void finishSemester(final User user, final List<String> subjectIds);
-
     void clearDegree(final User user);
 
     void updateUser(final Long userId, final User user, final String username, final String oldPassword, final String newPassword, final Long degreeId, final List<String> subjectIds) throws OldPasswordDoesNotMatchException;

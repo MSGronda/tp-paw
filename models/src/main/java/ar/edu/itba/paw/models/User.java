@@ -62,16 +62,8 @@ public class User {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL,  orphanRemoval = true)
     private List<ReviewVote> votes;
 
-    @ManyToMany
-    @JoinTable(
-            name = "userSemester",
-            joinColumns = @JoinColumn(name = "iduser"),
-            inverseJoinColumns = {
-                    @JoinColumn(name = "idclass"),
-                    @JoinColumn(name = "idsub")
-            }
-    )
-    private Set<SubjectClass> userSemester;
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL,  orphanRemoval = true)
+    private List<UserSemester> userSemester;
 
     @OneToOne(mappedBy = "user", cascade = CascadeType.REMOVE, orphanRemoval = true)
     private RecoveryToken recoveryToken;
@@ -95,12 +87,12 @@ public class User {
         this.reviews = new ArrayList<>();
         this.votes = new ArrayList<>();
         this.allSubjectProgress = new HashMap<>();
-        this.userSemester = new HashSet<>();
+        this.userSemester = new ArrayList<>();
     }
 
     protected User() {}
 
-    public Set<SubjectClass> getUserSemester() {
+    public List<UserSemester> getUserSemester() {
         return userSemester;
     }
 

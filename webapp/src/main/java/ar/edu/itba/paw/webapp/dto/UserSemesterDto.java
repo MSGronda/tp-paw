@@ -2,6 +2,8 @@ package ar.edu.itba.paw.webapp.dto;
 
 import ar.edu.itba.paw.models.SubjectClass;
 import ar.edu.itba.paw.models.User;
+import ar.edu.itba.paw.models.UserSemester;
+
 import javax.ws.rs.core.UriInfo;
 import java.net.URI;
 import java.util.HashMap;
@@ -11,7 +13,6 @@ public class UserSemesterDto {
     private Long userId;
     private Map<String, String> classes;
     private URI planSubjects;
-
     private URI subjectProgress;
 
     public static UserSemesterDto fromUser(final UriInfo uriInfo, final User user){
@@ -20,8 +21,10 @@ public class UserSemesterDto {
         planDto.userId = user.getId();
         planDto.classes = new HashMap<>();
 
-        for(final SubjectClass sc : user.getUserSemester()){
-            planDto.classes.put(sc.getSubject().getId(), sc.getClassId());
+        for(final UserSemester us : user.getUserSemester()){
+            if(us.isActive()){
+                planDto.classes.put(us.getSubjectClass().getSubject().getId(), us.getSubjectClass().getClassId());
+            }
         }
 
         planDto.planSubjects = uriInfo.getBaseUriBuilder().path("subjects").queryParam("plan", String.valueOf(user.getId())).build();

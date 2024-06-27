@@ -257,8 +257,8 @@ public class SubjectServiceImpl implements SubjectService {
     public List<Subject> getUserSemester(final User user){
         final List<Subject> subjects = new ArrayList<>();
 
-        for(final SubjectClass sc : user.getUserSemester()){
-            subjects.add(sc.getSubject());
+        for(final UserSemester sc : user.getUserSemester()){
+            subjects.add(sc.getSubjectClass().getSubject());
         }
 
         return subjects;

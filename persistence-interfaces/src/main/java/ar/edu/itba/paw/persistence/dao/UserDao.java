@@ -2,7 +2,6 @@ package ar.edu.itba.paw.persistence.dao;
 
 import ar.edu.itba.paw.models.*;
 import ar.edu.itba.paw.models.enums.SubjectProgress;
-import ar.edu.itba.paw.models.exceptions.EmailAlreadyTakenException;
 
 import java.util.List;
 import java.util.Locale;
@@ -37,5 +36,6 @@ public interface UserDao {
 
     void addToCurrentSemester(final User user, final SubjectClass subjectClass);
     void removeFromCurrentSemester(final User user, final SubjectClass subjectClass);
-    void clearSemester(final User user);
+    void clearCurrentSemester(final User user);
+    void finishSemester(final User user);
 }
