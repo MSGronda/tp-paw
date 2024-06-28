@@ -9,6 +9,7 @@ import org.springframework.stereotype.Repository;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
+import java.sql.Timestamp;
 import java.time.Instant;
 import java.util.*;
 
@@ -159,7 +160,7 @@ public class UserJpaDao implements UserDao {
     public void finishSemester(final User user){
         final List<UserSemester> semester =  user.getUserSemester();
 
-        final Instant now = Instant.now();
+        final Timestamp now = new Timestamp(System.currentTimeMillis());
 
         semester.forEach(s -> {
             if(s.isActive()) {

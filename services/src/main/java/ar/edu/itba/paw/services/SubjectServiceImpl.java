@@ -261,7 +261,7 @@ public class SubjectServiceImpl implements SubjectService {
         for(final UserSemester us : user.getUserSemester()){
             if(
                 (planFinishedDate == null && us.isActive()) ||
-                (us.isActive() && Objects.equals(planFinishedDate, us.getDateFinished().getEpochSecond()))
+                (!us.isActive() && Objects.equals(planFinishedDate, us.getDateFinished().getTime()))
             ){
                 subjects.add(us.getSubjectClass().getSubject());
             }

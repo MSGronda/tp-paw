@@ -1,12 +1,11 @@
 package ar.edu.itba.paw.webapp.dto;
 
-import ar.edu.itba.paw.models.SubjectClass;
 import ar.edu.itba.paw.models.User;
 import ar.edu.itba.paw.models.UserSemester;
 
 import javax.ws.rs.core.UriInfo;
 import java.net.URI;
-import java.time.Instant;
+import java.sql.Timestamp;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -22,13 +21,13 @@ public class UserSemesterDto {
         return fromSemesterEntry(uriInfo, user, null, userSemesterList);
     }
 
-    public static UserSemesterDto fromSemesterEntry(final UriInfo uriInfo, final User user, final Instant dateFinished, final List<UserSemester> userSemesterList){
+    public static UserSemesterDto fromSemesterEntry(final UriInfo uriInfo, final User user, final Timestamp dateFinished, final List<UserSemester> userSemesterList){
         final UserSemesterDto planDto = new UserSemesterDto();
 
         planDto.userId = user.getId();
 
         if(dateFinished != null){
-            planDto.dateFinished = dateFinished.getEpochSecond();
+            planDto.dateFinished = dateFinished.getTime();
         }
 
         planDto.classes = new HashMap<>();

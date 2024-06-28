@@ -20,6 +20,7 @@ import javax.validation.Valid;
 import javax.ws.rs.*;
 import javax.ws.rs.core.*;
 import java.net.URI;
+import java.sql.Timestamp;
 import java.time.Instant;
 import java.util.List;
 import java.util.Map;
@@ -107,7 +108,7 @@ public class UserController {
     public Response getUserSemester(@PathParam("id") final Long id){
         final User user = userService.findById(id).orElseThrow(UserNotFoundException::new);
 
-        final Map<Instant, List<UserSemester>> semesters = userService.getUserSemesters(user);
+        final Map<Timestamp, List<UserSemester>> semesters = userService.getUserSemesters(user);
 
         if(semesters.isEmpty())
             return Response.noContent().build();

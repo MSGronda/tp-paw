@@ -25,6 +25,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.security.SecureRandom;
+import java.sql.Timestamp;
 import java.time.Instant;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -295,14 +296,14 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Map<Instant, List<UserSemester>> getUserSemesters(final User user) {
+    public Map<Timestamp, List<UserSemester>> getUserSemesters(final User user) {
         final List<UserSemester> userSemesters = user.getUserSemester();
 
-        final Map<Instant, List<UserSemester>> resp = new HashMap<>();
+        final Map<Timestamp, List<UserSemester>> resp = new HashMap<>();
 
         userSemesters.forEach(s -> {
-            final Instant finishedDate = s.getDateFinished();
-            if(resp.containsKey(s.getDateFinished())){
+            final Timestamp finishedDate = s.getDateFinished();
+            if(resp.containsKey(finishedDate)){
                 resp.get(finishedDate).add(s);
             }
             else{

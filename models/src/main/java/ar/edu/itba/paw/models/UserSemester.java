@@ -2,6 +2,7 @@ package ar.edu.itba.paw.models;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.sql.Timestamp;
 import java.time.Instant;
 import java.util.Objects;
 
@@ -11,12 +12,12 @@ public class UserSemester {
     @EmbeddedId
     private Key key;
 
-    @ManyToOne(optional = false, fetch = FetchType.LAZY)
+    @ManyToOne(optional = false)
     @MapsId("iduser")
     @JoinColumn(name = "iduser")
     private User user;
 
-    @ManyToOne(optional = false, fetch = FetchType.LAZY)
+    @ManyToOne(optional = false)
     @JoinColumns({
             @JoinColumn(name = "idsub", referencedColumnName = "idsub", insertable = false, updatable = false), // TODO: POR FAVOR CHEQUEA ESTO
             @JoinColumn(name = "idclass", referencedColumnName = "idclass", insertable = false, updatable = false) // TODO: POR FAVOR CHEQUEA ESTO
@@ -24,11 +25,11 @@ public class UserSemester {
     private SubjectClass subjectClass;
 
     @Column(name = "datefinished")
-    private Instant dateFinished;
+    private Timestamp dateFinished;
 
     protected UserSemester() {}
 
-    public UserSemester(final User user, final SubjectClass subjectClass, final Instant dateFinished) {
+    public UserSemester(final User user, final SubjectClass subjectClass, final Timestamp dateFinished) {
         this.user = user;
         this.subjectClass = subjectClass;
         this.dateFinished = dateFinished;
@@ -50,7 +51,7 @@ public class UserSemester {
         return subjectClass;
     }
 
-    public Instant getDateFinished() {
+    public Timestamp getDateFinished() {
         return dateFinished;
     }
 
@@ -58,7 +59,7 @@ public class UserSemester {
         return dateFinished == null;
     }
 
-    public void setDateFinished(Instant dateFinished) {
+    public void setDateFinished(Timestamp dateFinished) {
         this.dateFinished = dateFinished;
     }
 
