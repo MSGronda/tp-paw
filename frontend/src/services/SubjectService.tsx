@@ -84,10 +84,11 @@ export class SubjectService {
         return this.getUserSubject(config);
     }
 
-    async getUserPlanSubjects(userId: number) {
+    async getUserPlanSubjects(userId: number, dateFinished?: number) {
         const config: any = {};
         config.params = {
-            plan: userId
+            plan: userId,
+            planFinishedDate: dateFinished == undefined ? null : dateFinished
         }
         return this.getUserSubject(config);
     }

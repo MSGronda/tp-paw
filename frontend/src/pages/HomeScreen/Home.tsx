@@ -62,7 +62,6 @@ export default function Home() {
         const user = handleService(userData, navigate)
         setUser(user);
 
-
         // User semester
         const respSubjects = await subjectService.getUserPlanSubjects(user.id);
         const dataSubjects = handleService(respSubjects, navigate);

@@ -3,11 +3,18 @@ import {Subject} from "../models/Subject.ts";
 import {SelectedSubject} from "../models/SelectedSubject.ts";
 import Class from "../models/Class.ts";
 
-export function createSelectedSubjects(userPlan: UserPlan, subjects: Subject[]): SelectedSubject[] {
+export function createSelectedSubjects(userPlan: UserPlan[], subjects: Subject[]): SelectedSubject[] {
     const selected: SelectedSubject[] = [];
+
+    const currentPlan = userPlan.find((u) => u.dateFinished == null);
+
+    if(!currentPlan){
+        return selected;
+    }
+
     subjects.forEach((subject) => {
 
-        const subjectClassPair = userPlan.classes.entry.find((t) => t.key == subject.id)
+        const subjectClassPair = currentPlan.classes.entry.find((t) => t.key == subject.id)
 
         const idClass = subjectClassPair ? subjectClassPair.value : "";
 
