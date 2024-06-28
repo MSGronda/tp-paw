@@ -363,5 +363,11 @@ export const TRANSLATIONS_ES = {
         subjectNumber: "Materias",
         nothingFound: "No se encontraron materias",
         createDegree: "Crear Carrera"
+    },
+    Curriculum: {
+        title: "Plan de estudios",
+        semester: "{{number}}º Cuatrimestre",
+        electives: "Electivas",
+        filter: "Filtrar"
     }
 }

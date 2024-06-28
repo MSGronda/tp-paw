@@ -365,6 +365,11 @@ export const TRANSLATIONS_EN = {
         subjectNumber: "Subjects",
         nothingFound: "No subjects found",
         createDegree: "Create Degree"
-
+    },
+    Curriculum: {
+        title: "Curriculum",
+        semester: "Semester {{number}}",
+        electives: "Electives",
+        filter: "Filter",
     }
 }

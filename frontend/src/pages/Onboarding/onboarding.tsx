@@ -164,7 +164,7 @@ function SubjectSelectionStep({degree, onChangeSelected}: SubjectSelectionProps)
   const [subjectsBySemester, setSubjectsBySemester] = useState<Record<number, Subject[]>>({});
 
   useEffect(() => {
-    subjectService.getSubjectsBySemester(degree.id).then(res => setSubjectsBySemester(res))
+    subjectService.getSubjectsGroupedBySemester(degree.id).then(res => setSubjectsBySemester(res))
       .catch(err => console.log(err));
   }, [degree.id]);
 

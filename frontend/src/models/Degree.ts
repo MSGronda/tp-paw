@@ -1,6 +1,6 @@
 export interface Degree {
   id: number;
   name: string;
-  semesterSubjectURLs: string[],
+  semesterSubjects: string[],
   totalCredits: number;
 }

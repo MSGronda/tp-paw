@@ -100,7 +100,7 @@ export class SubjectService {
             return handleResponse(error.response);
         }
     }
-    async getSubjectsBySemester(degreeId: number): Promise<Record<number,Subject[]>> {
+    async getSubjectsGroupedBySemester(degreeId: number): Promise<Record<number,Subject[]>> {
         const res = await axiosService.authAxiosWrapper(axiosService.GET, `/subjects?degree=${degreeId}`);
         if (!res || res.status !== 200) {
             throw new Error("Unable to get subjects")
@@ -118,5 +118,14 @@ export class SubjectService {
         });
 
         return bySemester;
+    }
+    
+    async getSemesterSubjects(degreeId: number, semester: number): Promise<Subject[]> {
+        const res = await axiosService.authAxiosWrapper(axiosService.GET, `/subjects?degree=${degreeId}&semester=${semester}`);
+        if (!res || res.status !== 200) {
+            throw new Error("Unable to get subjects")
+        }
+
+        return res.data.subjects;
     }
 }

@@ -215,6 +215,10 @@ public class SubjectServiceImpl implements SubjectService {
     ){
         if(degree != null && semester != null){
             final Degree deg = degreeService.findById(degree).orElseThrow(DegreeNotFoundException::new);
+            
+            if(semester == -1)
+                return deg.getElectives();
+            
             final List<DegreeSemester> semesters =  deg.getSemesters();
 
             if(semesters.size() < semester)
