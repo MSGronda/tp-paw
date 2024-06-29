@@ -16,11 +16,18 @@ import {
   useCombobox,
 } from "@mantine/core";
 import { TimeInput } from "@mantine/dates";
-import { useState } from "react";
+import {useEffect, useState} from "react";
 import Title from "../../components/title/title";
+import {degreeService, subjectService} from "../../services";
+import {handleService} from "../../handlers/serviceHandler.tsx";
+import {Subject} from "../../models/Subject.ts";
+import {useNavigate} from "react-router-dom";
+import {Degree} from "../../models/Degree.ts";
 
 export function CreateSubject() {
   const { t } = useTranslation();
+  const navigate = useNavigate();
+
 
   const [activeTab, setActiveTab] = useState<string | null>("general-info");
   const [department, setDepartment] = useState<string>("");
@@ -34,9 +41,40 @@ export function CreateSubject() {
   const [openedDegreeModal, setOpenedDegreeModal] = useState(false);
   const [openedProfessorModal, setOpenedProfessorModal] = useState(false);
   const [openedClassModal, setOpenedClassModal] = useState(false);
-
+  const [subjects, setSubjects] = useState<Subject[]>([]);
+  const [maxPage, setMaxPage] = useState(2);
+  const [degrees, setDegrees] = useState<Degree[]>([]);
   const MINIMUM_CREDITS = 1;
   const MAXIMUM_CREDITS = 12;
+
+  const searchSubjects = async (page: number) => {
+    const res = await subjectService.getSubjects(page);
+    const data = handleService(res, navigate);
+    if (res) {
+      setSubjects(data.subjects);
+      setMaxPage(res.maxPage || 1);
+    }
+  }
+
+  const searchDegrees = async () => {
+    const res = await degreeService.getDegrees();
+    const data = handleService(res, navigate);
+    if (res) {
+      setDegrees(data);
+    }
+  }
+
+  useEffect(() => {
+    let currentPage = 1;
+    while(currentPage <= maxPage) {
+      searchSubjects(currentPage);
+      currentPage = currentPage + 1;
+    }
+  }, [maxPage]);
+
+  useEffect(() => {
+    searchDegrees();
+  }, []);
 
   const departments = [
     "Ambiente y Movilidad",
@@ -46,7 +84,7 @@ export function CreateSubject() {
     "Sistemas Complejos y Energía",
     "Sistemas Digitales y Datos",
   ];
-  const degrees = [
+  const degrees2 = [
     "Ingeniería Informática",
     "Ingeniería Mecánica",
     "Ingeniería Química",

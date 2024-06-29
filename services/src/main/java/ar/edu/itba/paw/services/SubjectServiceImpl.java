@@ -335,7 +335,7 @@ public class SubjectServiceImpl implements SubjectService {
     @Override
     public int getTotalPages(
             final User user,
-            final String name,
+            String name,
             final Integer credits,
             final String department,
             final Integer difficulty,
@@ -343,7 +343,7 @@ public class SubjectServiceImpl implements SubjectService {
             final String orderBy
     ){
         if (name == null ){
-            return 1;
+            name = "";
         }
         if(user.isEditor()){
             return subjectDao.getTotalPagesForSearchAll(

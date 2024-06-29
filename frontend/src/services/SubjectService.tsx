@@ -92,9 +92,13 @@ export class SubjectService {
         return this.getUserSubject(config);
     }
 
-    async getSubjects() {
+    async getSubjects(page: number) {
         try{
-            const res = await axiosService.authAxiosWrapper(axiosService.GET, `${path}`, {});
+            const config: any = {};
+            config.params = {
+                page: page
+            }
+            const res = await axiosService.authAxiosWrapper(axiosService.GET, `${path}`, config);
             return handleResponse(res);
         } catch (error: any) {
             return handleResponse(error.response);
