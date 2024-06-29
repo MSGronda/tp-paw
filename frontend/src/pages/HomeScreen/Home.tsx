@@ -110,7 +110,7 @@ export default function Home() {
     const searchFutureSubjects = async (userId: number, page: number) => {
         const res = await subjectService.getAvailableSubjects(userId,page);
         const data = handleService(res, navigate);
-        if(res) {
+        if(res && data.subjects) {
             setFutureSubjects(data.subjects);
         }
     }
@@ -122,7 +122,7 @@ export default function Home() {
     const searchPastSubjects = async (userId: number, page: number) => {
         const res = await subjectService.getDoneSubjects(userId,page);
         const data = handleService(res,navigate);
-        if(res) {
+        if(res && data.subjects) {
             setPastSubjects(data.subjects);
         }
     }
