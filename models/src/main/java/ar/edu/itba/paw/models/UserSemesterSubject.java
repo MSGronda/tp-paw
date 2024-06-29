@@ -1,14 +1,12 @@
 package ar.edu.itba.paw.models;
 
 import javax.persistence.*;
-import java.io.Serializable;
 import java.sql.Timestamp;
-import java.time.Instant;
 import java.util.Objects;
 
 @Entity
 @Table(name = "userSemester")
-public class UserSemester {
+public class UserSemesterSubject {
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "usersemester_id_seq")
@@ -29,16 +27,16 @@ public class UserSemester {
     @Column(name = "datefinished")
     private Timestamp dateFinished;
 
-    protected UserSemester() {}
+    protected UserSemesterSubject() {}
 
-    public UserSemester(final Long id, final User user, final SubjectClass subjectClass, final Timestamp dateFinished) {
+    public UserSemesterSubject(final Long id, final User user, final SubjectClass subjectClass, final Timestamp dateFinished) {
         this.id = id;
         this.user = user;
         this.subjectClass = subjectClass;
         this.dateFinished = dateFinished;
     }
 
-    public UserSemester(final User user, final SubjectClass subjectClass) {
+    public UserSemesterSubject(final User user, final SubjectClass subjectClass) {
         this.user = user;
         this.subjectClass = subjectClass;
         this.dateFinished = null;
@@ -83,8 +81,8 @@ public class UserSemester {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof UserSemester)) return false;
-        UserSemester that = (UserSemester) o;
+        if (!(o instanceof UserSemesterSubject)) return false;
+        UserSemesterSubject that = (UserSemesterSubject) o;
         return Objects.equals(id, that.id);
     }
 

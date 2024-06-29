@@ -10,13 +10,10 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.util.ResourceUtils;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.util.*;
@@ -25,7 +22,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.doCallRealMethod;
 import static org.mockito.Mockito.when;
 
 
@@ -115,7 +111,7 @@ public class UserServiceImplTest {
         final String classId = "A";
         final Subject testSubject = Subject.builder().id("31.08").name("Sistemas de Representación").department("Ciencias Exactas y Naturales").credits(3).build();
         final SubjectClass subjectClass = new SubjectClass(classId, testSubject);
-        final UserSemester userSemester = new UserSemester(testUser, subjectClass);
+        final UserSemesterSubject userSemester = new UserSemesterSubject(testUser, subjectClass);
         testSubject.getClasses().add(subjectClass);
         testUser.getUserSemester().add(userSemester);
 
@@ -129,7 +125,7 @@ public class UserServiceImplTest {
         final String classId = "A";
         final Subject testSubject = Subject.builder().id("31.08").name("Sistemas de Representación").department("Ciencias Exactas y Naturales").credits(3).build();
         final SubjectClass subjectClass = new SubjectClass(classId, testSubject);
-        final UserSemester userSemester = new UserSemester(testUser, subjectClass);
+        final UserSemesterSubject userSemester = new UserSemesterSubject(testUser, subjectClass);
         testSubject.getClasses().add(subjectClass);
         testUser.getUserSemester().add(userSemester);
         when(subjectService.findById(testSubject.getId())).thenReturn(Optional.of(testSubject));

@@ -26,7 +26,6 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.security.SecureRandom;
 import java.sql.Timestamp;
-import java.time.Instant;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -291,15 +290,15 @@ public class UserServiceImpl implements UserService {
         }
     }
 
-    public List<UserSemester> getCurrentUserSemester(final User user){
-        return user.getUserSemester().stream().filter(UserSemester::isActive).collect(Collectors.toList());
+    public List<UserSemesterSubject> getCurrentUserSemester(final User user){
+        return user.getUserSemester().stream().filter(UserSemesterSubject::isActive).collect(Collectors.toList());
     }
 
     @Override
-    public Map<Timestamp, List<UserSemester>> getUserSemesters(final User user) {
-        final List<UserSemester> userSemesters = user.getUserSemester();
+    public Map<Timestamp, List<UserSemesterSubject>> getUserSemesters(final User user) {
+        final List<UserSemesterSubject> userSemesters = user.getUserSemester();
 
-        final Map<Timestamp, List<UserSemester>> resp = new HashMap<>();
+        final Map<Timestamp, List<UserSemesterSubject>> resp = new HashMap<>();
 
         userSemesters.forEach(s -> {
             final Timestamp finishedDate = s.getDateFinished();
@@ -307,7 +306,7 @@ public class UserServiceImpl implements UserService {
                 resp.get(finishedDate).add(s);
             }
             else{
-                final List<UserSemester> value = new ArrayList<>();
+                final List<UserSemesterSubject> value = new ArrayList<>();
                 value.add(s);
                 resp.put(finishedDate, value);
             }
@@ -338,7 +337,7 @@ public class UserServiceImpl implements UserService {
     }
 
     private boolean semesterAlreadyContainsSubject(final User user, final SubjectClass subjectClass){
-        for(final UserSemester sb : user.getUserSemester()){
+        for(final UserSemesterSubject sb : user.getUserSemester()){
             if(sb.isActive() && Objects.equals(sb.getSubjectClass().getSubject().getId(), subjectClass.getSubject().getId())){
                 return true;
             }
@@ -444,7 +443,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public String getSemesterSubmitRedirectUrl(final User user) {
         final List<String> subjectIds = user.getUserSemester().stream()
-                .map(UserSemester::getSubjectClass)
+                .map(UserSemesterSubject::getSubjectClass)
                 .map(SubjectClass::getSubject)
                 .map(Subject::getId)
                 .collect(Collectors.toList());

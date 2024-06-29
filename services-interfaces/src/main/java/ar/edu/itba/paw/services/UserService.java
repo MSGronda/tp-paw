@@ -6,7 +6,6 @@ import ar.edu.itba.paw.models.exceptions.*;
 import ar.edu.itba.paw.services.enums.UserSemesterEditType;
 
 import java.sql.Timestamp;
-import java.time.Instant;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -54,8 +53,8 @@ public interface UserService {
     void confirmUser(final String token) throws InvalidTokenException;
 
     void setLocale(final User user, final Locale locale);
-    List<UserSemester> getCurrentUserSemester(final User user);
-    Map<Timestamp, List<UserSemester>> getUserSemesters(final User user);
+    List<UserSemesterSubject> getCurrentUserSemester(final User user);
+    Map<Timestamp, List<UserSemesterSubject>> getUserSemesters(final User user);
     void addToCurrentSemester(final User user, final String subjectId, final String classId)
         throws SubjectNotFoundException, SubjectClassNotFoundException;
 

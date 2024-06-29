@@ -1,7 +1,7 @@
 package ar.edu.itba.paw.webapp.dto;
 
 import ar.edu.itba.paw.models.User;
-import ar.edu.itba.paw.models.UserSemester;
+import ar.edu.itba.paw.models.UserSemesterSubject;
 
 import javax.ws.rs.core.UriInfo;
 import java.net.URI;
@@ -17,11 +17,11 @@ public class UserSemesterDto {
     private URI planSubjects;
     private URI subjectProgress;        // TODO: remove?
 
-    public static UserSemesterDto fromSemesterEntry(final UriInfo uriInfo, final User user, final List<UserSemester> userSemesterList){
+    public static UserSemesterDto fromSemesterEntry(final UriInfo uriInfo, final User user, final List<UserSemesterSubject> userSemesterList){
         return fromSemesterEntry(uriInfo, user, null, userSemesterList);
     }
 
-    public static UserSemesterDto fromSemesterEntry(final UriInfo uriInfo, final User user, final Timestamp dateFinished, final List<UserSemester> userSemesterList){
+    public static UserSemesterDto fromSemesterEntry(final UriInfo uriInfo, final User user, final Timestamp dateFinished, final List<UserSemesterSubject> userSemesterList){
         final UserSemesterDto planDto = new UserSemesterDto();
 
         planDto.userId = user.getId();

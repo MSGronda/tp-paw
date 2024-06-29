@@ -258,7 +258,7 @@ public class SubjectServiceImpl implements SubjectService {
     public List<Subject> getUserSemester(final User user, final Long planFinishedDate){
         final List<Subject> subjects = new ArrayList<>();
 
-        for(final UserSemester us : user.getUserSemester()){
+        for(final UserSemesterSubject us : user.getUserSemester()){
             if(
                 (planFinishedDate == null && us.isActive()) ||
                 (!us.isActive() && Objects.equals(planFinishedDate, us.getDateFinished().getTime()))

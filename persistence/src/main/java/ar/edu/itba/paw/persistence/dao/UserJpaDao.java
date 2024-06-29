@@ -10,7 +10,6 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
 import java.sql.Timestamp;
-import java.time.Instant;
 import java.util.*;
 
 @Repository
@@ -137,28 +136,28 @@ public class UserJpaDao implements UserDao {
 
     @Override
     public void addToCurrentSemester(final User user, final SubjectClass subjectClass){
-        final List<UserSemester> semester =  user.getUserSemester();
+        final List<UserSemesterSubject> semester =  user.getUserSemester();
 
-        semester.add(new UserSemester(user, subjectClass));
+        semester.add(new UserSemesterSubject(user, subjectClass));
     }
 
     @Override
     public void removeFromCurrentSemester(final User user, final SubjectClass subjectClass){
-        final List<UserSemester> semester =  user.getUserSemester();
+        final List<UserSemesterSubject> semester =  user.getUserSemester();
 
         semester.removeIf(s -> s.isActive() && s.getSubjectClass().equals(subjectClass));
     }
 
     @Override
     public void clearCurrentSemester(final User user){
-        final List<UserSemester> semester =  user.getUserSemester();
+        final List<UserSemesterSubject> semester =  user.getUserSemester();
 
-        semester.removeIf(UserSemester::isActive);
+        semester.removeIf(UserSemesterSubject::isActive);
     }
 
     @Override
     public void finishSemester(final User user){
-        final List<UserSemester> semester =  user.getUserSemester();
+        final List<UserSemesterSubject> semester =  user.getUserSemester();
 
         final Timestamp now = new Timestamp(System.currentTimeMillis());
 

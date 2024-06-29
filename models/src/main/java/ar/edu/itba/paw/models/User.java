@@ -63,7 +63,7 @@ public class User {
     private List<ReviewVote> votes;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL,  orphanRemoval = true)
-    private List<UserSemester> userSemester;
+    private List<UserSemesterSubject> userSemester;
 
     @OneToOne(mappedBy = "user", cascade = CascadeType.REMOVE, orphanRemoval = true)
     private RecoveryToken recoveryToken;
@@ -92,12 +92,12 @@ public class User {
 
     protected User() {}
 
-    public List<UserSemester> getUserSemester() {
+    public List<UserSemesterSubject> getUserSemester() {
         return userSemester;
     }
 
     public boolean hasSemester(){
-        return userSemester.stream().anyMatch(UserSemester::isActive);
+        return userSemester.stream().anyMatch(UserSemesterSubject::isActive);
     }
 
     public int getCreditsDone(){
