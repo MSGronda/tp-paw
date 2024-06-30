@@ -26,6 +26,7 @@ export default function UserSemesters() {
         }
 
         const plan: UserPlan[] = handleService(await userService.getUserPlan(userId), navigate);
+        plan.sort((u1, u2) => {return u2.dateFinished - u1.dateFinished})
         setUserSemesters(plan);
 
         const newSemesterSubjects: Map<number,Subject[]> = new Map();
