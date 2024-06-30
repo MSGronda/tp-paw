@@ -17,6 +17,7 @@ export function Navbar() {
     { link: '/', label: t('Navbar.home') },
     { link: '/curriculum', label: t('Navbar.curriculum') },
     { link: '/builder', label: t('Navbar.semesterbuilder') },
+    {link: '/your-semesters', label: t('Navbar.yourSemesters')}
   ];
   const editorLinks = [
     { link: '/degrees', label: t('Navbar.degrees') },
