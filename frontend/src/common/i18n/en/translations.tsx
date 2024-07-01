@@ -369,7 +369,7 @@ export const TRANSLATIONS_EN = {
     },
     Curriculum: {
         title: "Curriculum",
-        semester: "Semester {{number}}",
+        semester: "Year {{year}} Semester {{semester}}",
         electives: "Electives",
         filter: "Filter",
 

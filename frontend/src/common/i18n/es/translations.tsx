@@ -367,7 +367,7 @@ export const TRANSLATIONS_ES = {
     },
     Curriculum: {
         title: "Plan de estudios",
-        semester: "{{number}}º Cuatrimestre",
+        semester: "Año {{year}} {{semester}}º Cuatrimestre",
         electives: "Electivas",
         filter: "Filtrar"
     },

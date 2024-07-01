@@ -34,9 +34,11 @@ export default function CurriculumPage() {
   const tabPanels: ReactElement[] = [];
   if (degree) {
     for (let i = 1; i < degree.semesterSubjects.length; i++) {
+      const year = Math.floor((i-1) / 2) + 1;
+      const semester = ((i-1) % 2) + 1;
       tabs.push(
         <Tabs.Tab value={i.toString()} key={i}>
-          {t("semester", {number: i})}
+          {t("semester", {year: year, semester: semester})}
         </Tabs.Tab>
       );
       tabPanels.push(<Tabs.Panel value={i.toString()}><SemesterTabPanel key={i} degreeId={degreeId}
