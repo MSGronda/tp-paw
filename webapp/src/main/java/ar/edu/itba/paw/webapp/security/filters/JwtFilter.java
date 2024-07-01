@@ -25,6 +25,9 @@ import java.util.Base64;
 
 @Component
 public class JwtFilter extends OncePerRequestFilter {
+    private static final String AUTH_TOKEN_HEADER = "X-Auth";
+    private static final String REFRESH_TOKEN_HEADER = "X-Refresh";
+    
     @Autowired
     private JwtUtils jwtUtils;
 
@@ -85,7 +88,7 @@ public class JwtFilter extends OncePerRequestFilter {
                 return;
             }
 
-            res.setHeader(HttpHeaders.AUTHORIZATION, "Bearer " + jwtUtils.generateToken(email, userDetails.getRoles(), userDetails.getId()));
+            res.setHeader(AUTH_TOKEN_HEADER, "Bearer " + jwtUtils.generateToken(email, userDetails.getRoles(), userDetails.getId()));
         }
 
         final UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
@@ -134,8 +137,8 @@ public class JwtFilter extends OncePerRequestFilter {
             return;
         }
 
-        res.setHeader(HttpHeaders.AUTHORIZATION, "Bearer " + jwtUtils.generateToken(email, user.getRoles(), user.getId()));
-        res.setHeader("X-Refresh", "Bearer " + jwtUtils.generateRefreshToken(email));
+        res.setHeader(AUTH_TOKEN_HEADER, "Bearer " + jwtUtils.generateToken(email, user.getRoles(), user.getId()));
+        res.setHeader(REFRESH_TOKEN_HEADER, "Bearer " + jwtUtils.generateRefreshToken(email));
 
         authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(req));
         SecurityContextHolder.getContext().setAuthentication(authentication);

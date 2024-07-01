@@ -14,7 +14,7 @@ const login = async (mail: string, password: string, rememberMe: boolean) => {
             return false;
         }
         
-        const token = response.headers.authorization;
+        const token = response.headers['x-auth'];
         const refresh = response.headers['x-refresh'];
         
         if (rememberMe){

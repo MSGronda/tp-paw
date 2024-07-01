@@ -8,15 +8,15 @@ export interface AuthContextInterface {
     isAuthenticated: boolean;
     logoutHandler: () => void;
     loginHandler: (token: string, refreshToken?: string) => Promise<void>;
-    authKey?: string | undefined;
-    refreshToken?: string | undefined;
-    role: string | undefined;
-    email: string | undefined;
-    userId?: number | undefined;
-    profileImage: String;
-    updateProfileImage: (image: String) => void;
-    setToken: React.Dispatch<React.SetStateAction<string | undefined>>;
-    setRefreshToken: React.Dispatch<React.SetStateAction<string | undefined>>;
+    authKey?: string;
+    refreshToken?: string;
+    role?: string;
+    email?: string;
+    userId?: number;
+    profileImage: string;
+    updateProfileImage: (image: string) => void;
+    setToken: (token?: string) => void;
+    setRefreshToken: (refresh?: string) => void;
 
 }
 
@@ -34,8 +34,8 @@ const AuthContext = React.createContext<AuthContextInterface>({
 });
 
 export const AuthContextProvider = ({ children }: { children: React.ReactNode }) => {
-    const isInLocalStorage = localStorage.hasOwnProperty("token");
-    const isInSessionStorage = sessionStorage.hasOwnProperty("token");
+    const isInLocalStorage = !!localStorage.getItem("token");
+    const isInSessionStorage = !!sessionStorage.getItem("token");
     const [isAuthenticated, setIsAuthenticated] = useState<boolean>(isInLocalStorage || isInSessionStorage);
 
     const token = isInLocalStorage ? localStorage.getItem("token") as string : sessionStorage.getItem("token") as string;
@@ -116,8 +116,8 @@ export const AuthContextProvider = ({ children }: { children: React.ReactNode })
                 email,
                 profileImage,
                 updateProfileImage,
-                setAuthKey,
-                setRefreshTokenKey,
+                setToken: setAuthKey,
+                setRefreshToken: setRefreshTokenKey,
             }}
         >
             {children}

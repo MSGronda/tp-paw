@@ -31,7 +31,7 @@ export class AxiosService {
       res = await this.axiosWrapper(action, path, config, data);
       if (!res) throw new Error("Unable to connect to server");
 
-      const token = res.headers.authorization;
+      const token = res.headers['x-auth'];
 
       if (localStorage.getItem('token')) localStorage.setItem('token', token);
       else sessionStorage.setItem('token', token);
