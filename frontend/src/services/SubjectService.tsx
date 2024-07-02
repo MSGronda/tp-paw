@@ -126,11 +126,41 @@ export class SubjectService {
     }
     
     async getSemesterSubjects(degreeId: number, semester: number): Promise<Subject[]> {
-        const res = await axiosService.authAxiosWrapper(axiosService.GET, `/subjects?degree=${degreeId}&semester=${semester}`);
+        const config = {
+            params: {
+                degree: degreeId,
+                semester: semester
+            }
+        }
+        const res = await axiosService.authAxiosWrapper(axiosService.GET, path, config);
         if (!res || res.status !== 200) {
             throw new Error("Unable to get subjects")
         }
 
         return res.data.subjects;
+    }
+    
+    async getSubjectFiltersForDegree(degreeId: number): Promise<Record<string, [string]>> {
+        const config = {
+            params: {
+                q: "",
+                degree: degreeId,
+                page: 1
+            }
+        };
+        const res = await axiosService.authAxiosWrapper(axiosService.GET, path, config);
+        
+        if(!res || res.status !== 200) {
+            throw new Error("Unable to get filters")
+        }
+        
+        if(!res.data.filters) return {};
+        
+        const filters: Record<string, [string]> = {};
+        res.data.filters.entry.forEach((entry: Record<string,any>) => {
+            filters[entry.key.toLowerCase()] = entry.value;
+        });
+        
+        return filters;
     }
 }
