@@ -5,8 +5,10 @@ import ar.edu.itba.paw.models.enums.SubjectProgress;
 import ar.edu.itba.paw.models.exceptions.*;
 import ar.edu.itba.paw.services.enums.UserSemesterEditType;
 
+import java.sql.Timestamp;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Optional;
 
 public interface UserService {
@@ -51,7 +53,8 @@ public interface UserService {
     void confirmUser(final String token) throws InvalidTokenException;
 
     void setLocale(final User user, final Locale locale);
-
+    List<UserSemesterSubject> getCurrentUserSemester(final User user);
+    Map<Timestamp, List<UserSemesterSubject>> getUserSemesters(final User user);
     void addToCurrentSemester(final User user, final String subjectId, final String classId)
         throws SubjectNotFoundException, SubjectClassNotFoundException;
 
@@ -72,8 +75,6 @@ public interface UserService {
     void deleteUserSemester(final User currentUser, final Long userId);
 
     String getSemesterSubmitRedirectUrl(final User user);
-
-    void finishSemester(final User user, final List<String> subjectIds);
 
     void clearDegree(final User user);
 

@@ -203,6 +203,7 @@ public class SubjectServiceImpl implements SubjectService {
             final Long done,
             final Long future,
             final Long plan,
+            final Long planFinishedDate,
             final String query,
             final Integer credits,
             final String department,
@@ -247,7 +248,7 @@ public class SubjectServiceImpl implements SubjectService {
             return findAllThatUserHasNotDone(user, page, orderBy, dir);
         }
         if(plan != null){
-            return getUserSemester(user);
+            return getUserSemester(user, planFinishedDate);
         }
         if(query != null){
             return search(user, query, page, orderBy, dir, credits, department, difficulty, timeDemand);
@@ -258,11 +259,16 @@ public class SubjectServiceImpl implements SubjectService {
         return getAll(page,orderBy, dir);
     }
 
-    public List<Subject> getUserSemester(final User user){
+    public List<Subject> getUserSemester(final User user, final Long planFinishedDate){
         final List<Subject> subjects = new ArrayList<>();
 
-        for(final SubjectClass sc : user.getUserSemester()){
-            subjects.add(sc.getSubject());
+        for(final UserSemesterSubject us : user.getUserSemester()){
+            if(
+                (planFinishedDate == null && us.isActive()) ||
+                (!us.isActive() && Objects.equals(planFinishedDate, us.getDateFinished().getTime()))
+            ){
+                subjects.add(us.getSubjectClass().getSubject());
+            }
         }
 
         return subjects;

@@ -25,6 +25,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.security.SecureRandom;
+import java.sql.Timestamp;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -289,6 +290,31 @@ public class UserServiceImpl implements UserService {
         }
     }
 
+    public List<UserSemesterSubject> getCurrentUserSemester(final User user){
+        return user.getUserSemester().stream().filter(UserSemesterSubject::isActive).collect(Collectors.toList());
+    }
+
+    @Override
+    public Map<Timestamp, List<UserSemesterSubject>> getUserSemesters(final User user) {
+        final List<UserSemesterSubject> userSemesters = user.getUserSemester();
+
+        final Map<Timestamp, List<UserSemesterSubject>> resp = new HashMap<>();
+
+        userSemesters.forEach(s -> {
+            final Timestamp finishedDate = s.getDateFinished();
+            if(resp.containsKey(finishedDate)){
+                resp.get(finishedDate).add(s);
+            }
+            else{
+                final List<UserSemesterSubject> value = new ArrayList<>();
+                value.add(s);
+                resp.put(finishedDate, value);
+            }
+        });
+
+        return resp;
+    }
+
     @Transactional
     @Override
     public void addToCurrentSemester(final User user, final String subjectId, final String classId) {
@@ -311,8 +337,8 @@ public class UserServiceImpl implements UserService {
     }
 
     private boolean semesterAlreadyContainsSubject(final User user, final SubjectClass subjectClass){
-        for(final SubjectClass sb : user.getUserSemester()){
-            if(Objects.equals(sb.getSubject().getId(), subjectClass.getSubject().getId())){
+        for(final UserSemesterSubject sb : user.getUserSemester()){
+            if(sb.isActive() && Objects.equals(sb.getSubjectClass().getSubject().getId(), subjectClass.getSubject().getId())){
                 return true;
             }
         }
@@ -365,9 +391,9 @@ public class UserServiceImpl implements UserService {
                 break;
             case FINISH_SEMESTER:
 
-                // Debera hacer un PATCH a {id}/progress para marcar como curzadas las materias
+                // Esto solo marca como completado el cuatri, no altera el progress.
 
-                userDao.clearSemester(currentUser);
+                userDao.finishSemester(currentUser);
         }
     }
 
@@ -394,7 +420,7 @@ public class UserServiceImpl implements UserService {
         if(currentUser.getId() != userId){
             throw new UnauthorizedException();
         }
-        userDao.clearSemester(currentUser);
+        userDao.clearCurrentSemester(currentUser);
     }
 
     @Transactional
@@ -406,7 +432,7 @@ public class UserServiceImpl implements UserService {
         if(subjectIds.size() != classIds.size()){
             throw new InvalidUserSemesterIds();
         }
-        userDao.clearSemester(currentUser);
+        userDao.clearCurrentSemester(currentUser);
 
         for(int i=0; i<subjectIds.size(); i++){
             addToCurrentSemester(currentUser, subjectIds.get(i), classIds.get(i));
@@ -417,6 +443,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public String getSemesterSubmitRedirectUrl(final User user) {
         final List<String> subjectIds = user.getUserSemester().stream()
+                .map(UserSemesterSubject::getSubjectClass)
                 .map(SubjectClass::getSubject)
                 .map(Subject::getId)
                 .collect(Collectors.toList());
@@ -435,33 +462,6 @@ public class UserServiceImpl implements UserService {
 
         return sb.toString();
     }
-
-    @Transactional
-    @Override
-    public void finishSemester(final User user, final List<String> subjectIds) {
-        if(!validFinishedSemesterSubjectIds(user, subjectIds)){
-            throw new InvalidUserSemesterIds();
-        }
-        updateMultipleSubjectProgress(user, subjectIds, SubjectProgress.DONE);
-        userDao.clearSemester(user);
-    }
-
-    private boolean validFinishedSemesterSubjectIds(final User user, final List<String> subjectIds){
-        for(String idSub : subjectIds) {
-            boolean valid = false;
-            for(SubjectClass subject : user.getUserSemester()){
-                if (subject.getSubject().getId().equals(idSub)) {
-                    valid = true;
-                    break;
-                }
-            }
-            if(!valid){
-                return false;
-            }
-        }
-        return true;
-    }
-
     @Transactional
     @Override
     public void addRole(final User user, final Role role) {
@@ -485,7 +485,7 @@ public class UserServiceImpl implements UserService {
     @Transactional
     @Override
     public void clearDegree(final User user) {
-        userDao.clearSemester(user);
+        userDao.clearCurrentSemester(user);
         userDao.updateUserDegree(user, null);
     }
 

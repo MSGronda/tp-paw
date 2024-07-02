@@ -56,7 +56,7 @@ public class SubjectServiceImplTest {
                 Degree.builderFrom(testDegree).subjects(new ArrayList<>(Collections.singletonList(testDegreeSubject))).build()
         ));
 
-        final List<Subject> subjects = subjectService.get(testUser, degreeId, semesterId, null, null, null, null, null, null, null, null, null, null, null, defaultPage, defaultOrderBy, defaultDir);
+        final List<Subject> subjects = subjectService.get(testUser, degreeId, semesterId, null, null, null, null, null, null, null, null, null, null, null, null, defaultPage, defaultOrderBy, defaultDir);
 
         assertEquals(1, subjects.size());
         assertTrue(subjects.containsAll(new ArrayList<>(Collections.singletonList(testSubject))));
@@ -68,7 +68,7 @@ public class SubjectServiceImplTest {
             new ArrayList<>(Collections.singletonList(testSubject))
         );
 
-        final List<Subject> subjects = subjectService.get(testUser, null, null, userId, null, null, null, null, null, null, null, null, null, null, defaultPage, defaultOrderBy, defaultDir);
+        final List<Subject> subjects = subjectService.get(testUser, null, null, userId, null, null, null, null, null,null, null, null, null, null, null, defaultPage, defaultOrderBy, defaultDir);
 
         assertEquals(1, subjects.size());
         assertTrue(subjects.containsAll(new ArrayList<>(Collections.singletonList(testSubject))));
@@ -80,7 +80,7 @@ public class SubjectServiceImplTest {
                 new ArrayList<>(Collections.singletonList(testSubject))
         );
 
-        final List<Subject> subjects = subjectService.get(testUser, null, null, null, userId, null, null, null, null, null, null, null, null, null, defaultPage, defaultOrderBy, defaultDir);
+        final List<Subject> subjects = subjectService.get(testUser, null, null, null, userId, null, null, null, null,null, null, null, null, null, null, defaultPage, defaultOrderBy, defaultDir);
 
         assertEquals(1, subjects.size());
         assertTrue(subjects.containsAll(new ArrayList<>(Collections.singletonList(testSubject))));
@@ -92,7 +92,7 @@ public class SubjectServiceImplTest {
                 new ArrayList<>(Collections.singletonList(testSubject))
         );
 
-        final List<Subject> subjects = subjectService.get(testUser, null, null, null, null, userId, null, null, null, null, null, null, null, null, defaultPage, defaultOrderBy, defaultDir);
+        final List<Subject> subjects = subjectService.get(testUser, null, null, null, null, userId, null, null, null,null, null, null, null, null, null, defaultPage, defaultOrderBy, defaultDir);
 
         assertEquals(1, subjects.size());
         assertTrue(subjects.containsAll(new ArrayList<>(Collections.singletonList(testSubject))));
@@ -104,7 +104,7 @@ public class SubjectServiceImplTest {
                 new ArrayList<>(Collections.singletonList(testSubject))
         );
 
-        final List<Subject> subjects = subjectService.get(testUser, null, null, null, null, null, userId, null, null, null, null, null, null, null, defaultPage, defaultOrderBy, defaultDir);
+        final List<Subject> subjects = subjectService.get(testUser, null, null, null, null, null, userId, null, null,null, null, null, null, null, null, defaultPage, defaultOrderBy, defaultDir);
 
         assertEquals(1, subjects.size());
         assertTrue(subjects.containsAll(new ArrayList<>(Collections.singletonList(testSubject))));
@@ -119,7 +119,7 @@ public class SubjectServiceImplTest {
         when(subjectDao.search(testUser, name, defaultPage, filterMap, SubjectOrderField.parse(defaultOrderBy),OrderDir.parse(defaultDir)))
             .thenReturn(expected);
 
-        final List<Subject> subjects = subjectService.get(testUser, null, null,  null, null, null, null, null, name, null, null, null, null, null, defaultPage, defaultOrderBy, defaultDir);
+        final List<Subject> subjects = subjectService.get(testUser, null, null,  null, null, null, null, null,null, name, null, null, null, null, null, defaultPage, defaultOrderBy, defaultDir);
 
         assertEquals(1, subjects.size());
         assertTrue(subjects.containsAll(expected));

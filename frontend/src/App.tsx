@@ -31,6 +31,7 @@ import {CreateDegree} from "./pages/CreateDegree/createDegree.tsx";
 import Onboarding from "./pages/Onboarding/onboarding.tsx";
 import {AnyRoute} from "./AnyRoute.tsx";
 import CurriculumPage from "./pages/Curriculum/curriculumPage.tsx";
+import UserSemesters from "./pages/UserSemesters/user_semesters.tsx";
 
 export default function App() {
 
@@ -65,6 +66,7 @@ export default function App() {
           <Route path="user/:id" element={<PrivateRoute component={User} roles={['ADMIN', 'USER']}/>}></Route>
           <Route path="curriculum" element={<PrivateRoute component={CurriculumPage} roles={['ADMIN', 'USER']}/>}></Route>
           <Route path="degree/:id" element={<PrivateRoute component={CurriculumPage} roles={['ADMIN', 'USER']}/>}></Route>
+          <Route path="your-semesters" element={<PrivateRoute component={UserSemesters} roles={['ADMIN', 'USER']}/>}></Route>
         </Routes>
       </Router>
       </AuthContextProvider>

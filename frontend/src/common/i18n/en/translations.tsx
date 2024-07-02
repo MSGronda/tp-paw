@@ -123,7 +123,8 @@ export const TRANSLATIONS_EN = {
         degrees: "Degrees",
         createSubject: "Create new subject",
         createDegree: "Create new degree",
-        editorTools: "Editor Tools"
+        editorTools: "Editor Tools",
+        yourSemesters: "Your semesters"
     },
     ReviewCard: {
         showMore: "Show more",
@@ -371,5 +372,15 @@ export const TRANSLATIONS_EN = {
         semester: "Semester {{number}}",
         electives: "Electives",
         filter: "Filter",
+
+    },
+    UserSemesters: {
+        title: "Your Semesters",
+        bodyTitle: "Your semesters:",
+        cardTitleCurrent: "Current semester",
+        cardTitle: "Semester {{n}}",
+        active: "Active",
+        completed: "Completed: {{n}}",
+        credits: "{{n}} credits"
     }
 }

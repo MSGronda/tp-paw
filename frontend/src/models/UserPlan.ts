@@ -9,5 +9,6 @@ interface Entries {
 export interface UserPlan {
     userId: number,
     classes: Entries,
-    planSubjects: string
+    planSubjects: string,
+    dateFinished: number
 }

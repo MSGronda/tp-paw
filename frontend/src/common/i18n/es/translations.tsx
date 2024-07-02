@@ -124,7 +124,8 @@ export const TRANSLATIONS_ES = {
         degrees: "Carreras",
         createSubject: "Crear nueva materia",
         createDegree: "Crear nueva carrera",
-        editorTools: "Herramientas de Editor"
+        editorTools: "Herramientas de Editor",
+        yourSemesters: "Tus cuatrimestres"
     },
     ReviewCard: {
         showMore: "Mostrar más",
@@ -369,5 +370,14 @@ export const TRANSLATIONS_ES = {
         semester: "{{number}}º Cuatrimestre",
         electives: "Electivas",
         filter: "Filtrar"
+    },
+    UserSemesters: {
+        title: "Tus cuatrimestres",
+        bodyTitle: "Tus cuatrimestres:",
+        cardTitleCurrent: "Cuatrimestre actual",
+        cardTitle: "Cuatrimestre {{n}}",
+        active: "Activo",
+        completed: "Completado: {{n}}",
+        credits: "{{n}} creditos"
     }
 }
