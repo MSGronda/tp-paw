@@ -335,6 +335,7 @@
   </dependencyManagement>
 
   <modules>
+    <module>frontend</module>
     <module>webapp</module>
     <module>services</module>
     <module>persistence</module>
@@ -377,6 +378,20 @@
   </profiles>
 
   <build>
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-war-plugin</artifactId>
+          <version>${maven-war-plugin.version}</version>
+        </plugin>
+        <plugin>
+          <groupId>com.github.eirslett</groupId>
+          <artifactId>frontend-maven-plugin</artifactId>
+          <version>1.9.1</version>
+        </plugin>
+      </plugins>
+    </pluginManagement>
     <plugins>
       <plugin>
         <groupId>org.eclipse.jetty</groupId>
@@ -391,7 +406,6 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-war-plugin</artifactId>
-        <version>${maven-war-plugin.version}</version>
       </plugin>
     </plugins>
   </build>

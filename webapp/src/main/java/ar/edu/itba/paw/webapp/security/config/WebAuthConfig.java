@@ -93,30 +93,30 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
         CharacterEncodingFilter filter = new CharacterEncodingFilter();
         filter.setEncoding("UTF-8");
         filter.setForceEncoding(true);
-        http
-                .cors().and().csrf().disable()
+        http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
+                .cors().and()
+                .csrf().disable()
                 .exceptionHandling()
                 .authenticationEntryPoint(new UniAuthenticationEntryPoint())
                 .accessDeniedHandler(accessDeniedHandler())
-                .and().sessionManagement()
-                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and().headers()
                 .cacheControl().disable()
                 .and().authorizeRequests()
 
                 // TODO COMPLETE (!!!)
-               .antMatchers(HttpMethod.POST, "/users", "/verification-token").anonymous()
+               .antMatchers(HttpMethod.POST, "/api/users", "/api/verification-token").anonymous()
 //                .antMatchers("/login","/register", "/recover/**", "/verification/**").anonymous()
 //                .antMatchers("/user/{id:\\d+}/moderator", "/degrees", "/create-subject", "/subject/{id:\\d+\\.\\d+}/delete-subject", "/subject/{id:\\d+\\.\\d+}/edit").hasRole(Role.RoleEnum.EDITOR.getName())
 //                .antMatchers("/").permitAll()\
-                .antMatchers("/images/**").permitAll()
-                .antMatchers("/**").authenticated()
+                .antMatchers("/api/images/**").permitAll()
+                .antMatchers("/api/**").authenticated()
+                .antMatchers("/**").permitAll()
                 .and().addFilterBefore(jwtFilter, FilterSecurityInterceptor.class);
     }
 
     @Override
     public void configure(WebSecurity web) {
-        web.ignoring().antMatchers("/static/**","/css/**", "/js/**", "/img/**", "favicon.ico");
+        web.ignoring().antMatchers("/static/**","/css/**", "/js/**", "/img/**", "/assets/**", "favicon.ico");
     }
 
     @Bean

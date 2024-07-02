@@ -216,5 +216,18 @@
         </excludes>
       </resource>
     </resources>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-war-plugin</artifactId>
+        <configuration>
+          <webResources>
+            <resource>
+              <directory>../frontend/dist</directory>
+            </resource>
+          </webResources>
+        </configuration>
+      </plugin>
+    </plugins>
   </build>
 </project>

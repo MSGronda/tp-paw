@@ -1,6 +1,6 @@
 import axios from 'axios'
 
-export const API_URL = "http://localhost:8080/paw-2023a-06"
+export const API_URL = "http://localhost:8080/paw-2023a-06/api"
 
 const axiosInstance = axios.create({
     baseURL: API_URL,

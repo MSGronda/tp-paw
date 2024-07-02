@@ -10,4 +10,5 @@ export default defineConfig({
     react(),
     pluginRewriteAll()
   ],
+  base: '/paw-2023a-06'
 })

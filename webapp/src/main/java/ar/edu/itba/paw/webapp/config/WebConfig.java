@@ -158,4 +158,15 @@ public class WebConfig extends WebMvcConfigurerAdapter {
     public void addFormatters(FormatterRegistry registry) {
         registry.addConverter(new StringToLocalTimeConverter());
     }
+
+    @Override
+    public void addResourceHandlers(ResourceHandlerRegistry registry) {
+        super.addResourceHandlers(registry);
+        
+        registry.addResourceHandler("/assets/**")
+            .addResourceLocations("/assets/");
+        
+        registry.addResourceHandler("/favicon.ico")
+            .addResourceLocations("/favicon.ico");
+    }
 }
