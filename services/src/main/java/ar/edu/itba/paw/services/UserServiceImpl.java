@@ -530,7 +530,10 @@ public class UserServiceImpl implements UserService {
             changePassword(user, newPassword, oldPassword);
         }
         if(degreeId != null) {
-            updateDegree(user, degreeService.findById(degreeId).orElseThrow(DegreeNotFoundException::new));
+            if(degreeId == -1) 
+                clearDegree(user);
+            else 
+                updateDegree(user, degreeService.findById(degreeId).orElseThrow(DegreeNotFoundException::new));
         }
         if(subjectIds != null){
             updateMultipleSubjectProgress(user, subjectIds, SubjectProgress.DONE);

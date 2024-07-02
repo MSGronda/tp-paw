@@ -582,46 +582,17 @@ function ChangePassModal({ opened, onClose }: { opened: boolean, onClose: () => 
 function ChangeDegreeModal({ opened, onClose }: { opened: boolean, onClose: () => void }) {
   const { t } = useTranslation();
 
-  const [degrees, setDegrees] = useState<Degree[]>([]);
-  const [selected, setSelected] = useState<Degree | null>(null);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<boolean>(false);
 
   const user = userService.getUserData();
   const curDegId = user?.degreeId;
 
-  const combobox = useCombobox({
-    onDropdownClose: () => combobox.resetSelectedOption(),
-    onDropdownOpen: (eventSource) => {
-      if (eventSource === 'keyboard') {
-        combobox.selectActiveOption();
-      } else {
-        combobox.updateSelectedOptionIndex('active');
-      }
-    },
-  });
-
-  useEffect(() => {
-    degreeService.getDegrees().then(res => {
-      if (res.failure) {
-        console.error("Unable to get degrees");
-        return;
-      }
-
-      const degrees = res.data as Degree[];
-      const currentDegree = degrees.find(d => d.id === user?.degreeId);
-
-      setDegrees(degrees);
-
-      if (currentDegree) setSelected(currentDegree);
-    });
-  }, [user?.degreeId]);
-
   async function submit() {
     setSubmitting(true);
     setError(false);
 
-    const res = await userService.changeDegree(selected!.id);
+    const res = await userService.changeDegree();
 
     if (res.failure) {
       setError(true);
@@ -632,56 +603,17 @@ function ChangeDegreeModal({ opened, onClose }: { opened: boolean, onClose: () =
   }
 
   return <>
-    <Modal opened={opened} onClose={onClose} title={t("Profile.change_degree")} centered>
+    <Modal opened={opened} onClose={onClose} centered>
       <div className={classes.modal}>
-        {degrees.length == 0 ? <Center><Loader /></Center> : <>
           <Alert mb="lg" variant="light" color="red" title="Error" icon={<IconExclamationCircle />} hidden={!error}>
             {t('Profile.changeDegreeError')}
           </Alert>
-          <Combobox
-            store={combobox}
-            resetSelectionOnOptionHover
-            // withinPortal={false}
-            onOptionSubmit={(val) => {
-              const selected = degrees.find(d => d.id.toString() === val) ?? null;
-              setSelected(selected);
-              combobox.updateSelectedOptionIndex('active');
-              combobox.closeDropdown();
-            }}
-          >
-            <Combobox.Target targetType="button">
-              <InputBase
-                component="button"
-                type="button"
-                pointer
-                rightSection={<Combobox.Chevron />}
-                rightSectionPointerEvents="none"
-                onClick={() => combobox.toggleDropdown()}
-              >
-                {selected?.name ??
-                  <Input.Placeholder>{t('Profile.chooseDegree')}</Input.Placeholder>
-                }
-              </InputBase>
-            </Combobox.Target>
-
-            <Combobox.Dropdown>
-              <Combobox.Options>
-                {degrees.map(degree => (
-                  <Combobox.Option value={degree.id.toString()} key={degree.id} active={selected?.id === degree.id}>
-                    {degree.name}
-                  </Combobox.Option>
-                ))}
-              </Combobox.Options>
-            </Combobox.Dropdown>
-          </Combobox>
-          <Text c="red" fz="sm" p="sm"><b>{t('Profile.warning')}</b>{t('Profile.changeDegreeWarning')}</Text>
+          <Text c="red" fz="sm" p="sm" mt="-1.5rem"><b>{t('Profile.warning')}</b>{t('Profile.changeDegreeWarning')}</Text>
           <Center>
-            <Button color="green" onClick={() => submit()} disabled={submitting || selected?.id === curDegId}>
-              {t("Profile.submit")}
+            <Button color="red" onClick={() => submit()} disabled={submitting}>
+              {t("Profile.change_degree")}
             </Button>
           </Center>
-        </>
-        }
       </div>
     </Modal>
   </>;

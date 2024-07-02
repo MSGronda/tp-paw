@@ -158,7 +158,7 @@ export class UserService {
         }
     }
     
-    async changeDegree(degreeId: number) {
+    async changeDegree() {
         try {
             // Delete current semester
             const delRes = await axiosService.authAxiosWrapper(
@@ -171,7 +171,7 @@ export class UserService {
                 throw new Error();
             
             // Change degree ID
-            const body = { degreeId };
+            const body = { degreeId: -1 };
             const res = await axiosService.authAxiosWrapper(
               axiosService.PATCH,
               `${path}/${this.getUserId()}`,
