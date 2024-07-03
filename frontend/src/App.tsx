@@ -32,6 +32,7 @@ import Onboarding from "./pages/Onboarding/onboarding.tsx";
 import {AnyRoute} from "./AnyRoute.tsx";
 import CurriculumPage from "./pages/Curriculum/curriculumPage.tsx";
 import UserSemesters from "./pages/UserSemesters/user_semesters.tsx";
+import NotFound from './pages/NotFound/notFound.tsx';
 
 export default function App() {
 
@@ -67,6 +68,7 @@ export default function App() {
           <Route path="curriculum" element={<PrivateRoute component={CurriculumPage} roles={['ADMIN', 'USER']}/>}></Route>
           <Route path="degree/:id" element={<PrivateRoute component={CurriculumPage} roles={['ADMIN', 'USER']}/>}></Route>
           <Route path="your-semesters" element={<PrivateRoute component={UserSemesters} roles={['ADMIN', 'USER']}/>}></Route>
+          <Route path="*" element={<NotFound/>}></Route>
         </Routes>
       </Router>
       </AuthContextProvider>

@@ -1,0 +1,39 @@
+.fullsize{
+    width: 100%;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: #efefef;
+}
+
+.fullWidth{
+    width: 100%;
+}
+
+.center{
+    width: 30%;
+    height: 60%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.titleSize {
+    font-size: 2.5rem;
+}
+
+.subtitleSize {
+    font-size: large;
+}
+
+.buttonDiv {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding-top: 3rem;
+}
+
+.homeButton {
+    width: 40%;
+}

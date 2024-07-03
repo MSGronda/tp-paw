@@ -396,5 +396,11 @@ export const TRANSLATIONS_EN = {
         active: "Active",
         completed: "Completed: {{n}}",
         credits: "{{n}} credits"
+    },
+    NotFound: {
+        title: "Error",
+        header: "The page does not exist",
+        subtitle: "The page you are trying to view does not exist.",
+        returnHome: "Return home"
     }
 }
