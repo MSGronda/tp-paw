@@ -32,7 +32,7 @@ import Onboarding from "./pages/Onboarding/onboarding.tsx";
 import {AnyRoute} from "./AnyRoute.tsx";
 import CurriculumPage from "./pages/Curriculum/curriculumPage.tsx";
 import UserSemesters from "./pages/UserSemesters/user_semesters.tsx";
-import NotFound from './pages/NotFound/notFound.tsx';
+import Error from './pages/Error/error.tsx';
 
 export default function App() {
 
@@ -52,23 +52,24 @@ export default function App() {
           <Route path="register" element={<AnonymousRoute component={Register}/>}/>
           <Route path="confirm" element={<AnonymousRoute component={ConfirmEmail}/>}/>
           <Route path="login" element={<AnonymousRoute component={Login}/>}/>
-          <Route path="onboarding" element={<PrivateRoute component={Onboarding} roles={['ADMIN', 'USER']}/>} />
-          <Route path="search" element={<PrivateRoute component={Search} roles={['ADMIN', 'USER']}/>}/>
-          <Route path="profile" element={<PrivateRoute component={User} roles={['ADMIN', 'USER']}/>}/>
-          <Route path="builder" element={<PrivateRoute component={SemesterBuilder} roles={['ADMIN', 'USER']}/>}/>
-          <Route path="builder/finish" element={<PrivateRoute component={FinishSemester} roles={['ADMIN', 'USER']}/>}/>
-          <Route path="subject/:id" element={<PrivateRoute component={SubjectPage} roles={['ADMIN', 'USER']}/>}/>
-          <Route path="review/:id" element={<PrivateRoute component={ReviewSubject} roles={['ADMIN', 'USER']}/>}/>
-          <Route path="review/:subjectId/edit/:reviewId" element={<PrivateRoute component={EditReview} roles={['ADMIN', 'USER']}/>}/>
-          <Route path="multi-review" element={<PrivateRoute component={MultiReview} roles={['ADMIN', 'USER']}/>}/>
-          <Route path="create-subject" element={<PrivateRoute component={CreateSubject} roles={['ADMIN']}/>}></Route>
-          <Route path="degrees" element={<PrivateRoute component={Degrees} roles={['ADMIN']}/>}></Route>
-          <Route path="create-degree" element={<PrivateRoute component={CreateDegree} roles={['ADMIN']}/>}></Route>
-          <Route path="user/:id" element={<PrivateRoute component={User} roles={['ADMIN', 'USER']}/>}></Route>
-          <Route path="curriculum" element={<PrivateRoute component={CurriculumPage} roles={['ADMIN', 'USER']}/>}></Route>
-          <Route path="degree/:id" element={<PrivateRoute component={CurriculumPage} roles={['ADMIN', 'USER']}/>}></Route>
-          <Route path="your-semesters" element={<PrivateRoute component={UserSemesters} roles={['ADMIN', 'USER']}/>}></Route>
-          <Route path="*" element={<NotFound/>}></Route>
+          <Route path="onboarding" element={<PrivateRoute component={Onboarding} roles={['EDITOR', 'USER']}/>} />
+          <Route path="search" element={<PrivateRoute component={Search} roles={['EDITOR', 'USER']}/>}/>
+          <Route path="profile" element={<PrivateRoute component={User} roles={['EDITOR', 'USER']}/>}/>
+          <Route path="builder" element={<PrivateRoute component={SemesterBuilder} roles={['EDITOR', 'USER']}/>}/>
+          <Route path="builder/finish" element={<PrivateRoute component={FinishSemester} roles={['EDITOR', 'USER']}/>}/>
+          <Route path="subject/:id" element={<PrivateRoute component={SubjectPage} roles={['EDITOR', 'USER']}/>}/>
+          <Route path="review/:id" element={<PrivateRoute component={ReviewSubject} roles={['EDITOR', 'USER']}/>}/>
+          <Route path="review/:subjectId/edit/:reviewId" element={<PrivateRoute component={EditReview} roles={['EDITOR', 'USER']}/>}/>
+          <Route path="multi-review" element={<PrivateRoute component={MultiReview} roles={['EDITOR', 'USER']}/>}/>
+          <Route path="create-subject" element={<PrivateRoute component={CreateSubject} roles={['EDITOR']}/>}></Route>
+          <Route path="degrees" element={<PrivateRoute component={Degrees} roles={['EDITOR']}/>}></Route>
+          <Route path="create-degree" element={<PrivateRoute component={CreateDegree} roles={['EDITOR']}/>}></Route>
+          <Route path="user/:id" element={<PrivateRoute component={User} roles={['EDITOR', 'USER']}/>}></Route>
+          <Route path="curriculum" element={<PrivateRoute component={CurriculumPage} roles={['EDITOR', 'USER']}/>}></Route>
+          <Route path="degree/:id" element={<PrivateRoute component={CurriculumPage} roles={['EDITOR', 'USER']}/>}></Route>
+          <Route path="your-semesters" element={<PrivateRoute component={UserSemesters} roles={['EDITOR', 'USER']}/>}></Route>
+          <Route path="error" element={<Error/>}></Route>
+          <Route path="*" element={<Error/>}></Route>
         </Routes>
       </Router>
       </AuthContextProvider>

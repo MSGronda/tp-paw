@@ -10,7 +10,7 @@ interface Props {
 }
 
 export const PrivateRoute: React.FC<Props> = ({ component: RouteComponent, roles }) => {
-  const { isAuthenticated /*, role*/} = useContext(AuthContext);
+  const { isAuthenticated , role} = useContext(AuthContext);
   const location = useLocation();
   const user = userService.getUserData();
   
@@ -18,11 +18,11 @@ export const PrivateRoute: React.FC<Props> = ({ component: RouteComponent, roles
     return <Navigate to={"/onboarding"}/>
   }
 
-  if (isAuthenticated /*&& roles.includes(role as string)*/) {
+  if (isAuthenticated && roles.includes(role as string)) {
     return <RouteComponent />
   }
 
-  if (isAuthenticated /*&& !roles.includes(role as string)*/) {
+  if (isAuthenticated && !roles.includes(role as string)) {
     return <Navigate to="/error?code=403" />
   }
 

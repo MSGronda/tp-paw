@@ -397,10 +397,23 @@ export const TRANSLATIONS_EN = {
         completed: "Completed: {{n}}",
         credits: "{{n}} credits"
     },
-    NotFound: {
+    Error :{
         title: "Error",
-        header: "The page does not exist",
-        subtitle: "The page you are trying to view does not exist.",
-        returnHome: "Return home"
+        NotFound: {
+            header: "The page does not exist",
+            subtitle: "The page you are trying to view does not exist.",
+            returnHome: "Return home"
+        },
+        Unauthorized: {
+            header: "Unauthorized",
+            subtitle: "You do not have permission to view this page",
+            returnHome: "Return"
+        },
+        ServerError: {
+            header: "Server error",
+            subtitle: "An error occurred on the server. Please try again later.",
+            returnHome: "Return home"
+        }
     }
+    
 }

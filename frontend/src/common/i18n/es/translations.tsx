@@ -394,10 +394,23 @@ export const TRANSLATIONS_ES = {
         completed: "Completado: {{n}}",
         credits: "{{n}} creditos"
     },
-    NotFound: {
+    Error: {
         title: "Error",
-        header: "La página no existe",
-        subtitle: "La página que estás intentando ver no existe.",
-        returnHome: "Volver al inicio"
+        NotFound: {
+            header: "La página no existe",
+            subtitle: "La página que estás intentando ver no existe.",
+            returnHome: "Volver al inicio"
+        },
+        Unauthorized: {
+            header: "No autorizado",
+            subtitle: "No tienes permisos para ver esta página.",
+            returnHome: "Volver"
+        },
+        ServerError: {
+            header: "Error del servidor",
+            subtitle: "Ocurrió un error en el servidor. Por favor intentá de nuevo más tarde.",
+            returnHome: "Volver"
+        }
     }
+    
 }
