@@ -4,6 +4,7 @@ import ar.edu.itba.paw.models.*;
 import ar.edu.itba.paw.models.enums.OrderDir;
 import ar.edu.itba.paw.models.enums.SubjectFilterField;
 import ar.edu.itba.paw.models.enums.SubjectOrderField;
+import ar.edu.itba.paw.models.utils.SubjectSearchParams;
 
 import java.time.LocalTime;
 import java.util.List;
@@ -58,6 +59,10 @@ public interface SubjectDao {
     List<Subject> findAllThatUserHasNotDone(final User user, final int page, final SubjectOrderField orderBy, final OrderDir dir);
     List<Subject> findAllThatUserHasDone(final User user, final int page, final SubjectOrderField orderBy, final OrderDir dir);
     List<Subject> findAllThatUserCouldUnlock(final User user, final int page, final SubjectOrderField orderBy, final OrderDir dir);
+
+    List<Subject> superSearch(final SubjectSearchParams params, final int page, final SubjectOrderField orderBy, final OrderDir dir);
+    int superSearchTotalPages(final SubjectSearchParams params);
+    Map<SubjectFilterField, List<String>> superSearchRelevantFilters(final SubjectSearchParams params);
 
     void addPrerequisites(final Subject sub, final List<String> correlativesList);
 

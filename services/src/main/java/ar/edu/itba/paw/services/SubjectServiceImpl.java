@@ -3,6 +3,7 @@ package ar.edu.itba.paw.services;
 import ar.edu.itba.paw.models.*;
 import ar.edu.itba.paw.models.enums.*;
 import ar.edu.itba.paw.models.exceptions.*;
+import ar.edu.itba.paw.models.utils.SubjectSearchParams;
 import ar.edu.itba.paw.persistence.dao.SubjectDao;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -258,6 +259,26 @@ public class SubjectServiceImpl implements SubjectService {
         }
         return getAll(page,orderBy, dir);
     }
+
+    @Override
+    public List<Subject> superSearch(final SubjectSearchParams params, final int page, final String orderBy,final String dir){
+
+        // TODO: check lo del page
+        return subjectDao.superSearch(params, page, SubjectOrderField.parse(orderBy), OrderDir.parse(dir));
+    }
+    @Override
+    public int superSearchTotalPages(final SubjectSearchParams params){
+        return subjectDao.superSearchTotalPages(params);
+    }
+
+    @Override
+    public Map<String, List<String>> superSearchRelevantFilters(final SubjectSearchParams params){
+        return subjectDao.superSearchRelevantFilters(params)
+                .entrySet()
+                .stream()
+                .collect(Collectors.toMap(e -> e.getKey().name(),Map.Entry::getValue));
+    }
+
 
     public List<Subject> getUserSemester(final User user, final Long planFinishedDate){
         final List<Subject> subjects = new ArrayList<>();

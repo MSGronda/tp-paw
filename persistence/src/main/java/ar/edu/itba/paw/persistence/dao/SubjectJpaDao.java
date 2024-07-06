@@ -7,6 +7,7 @@ import ar.edu.itba.paw.models.enums.SubjectOrderField;
 import ar.edu.itba.paw.models.exceptions.SubjectClassIdAlreadyExistsException;
 import ar.edu.itba.paw.models.exceptions.SubjectIdAlreadyExistsException;
 import ar.edu.itba.paw.models.exceptions.SubjectNotFoundException;
+import ar.edu.itba.paw.models.utils.SubjectSearchParams;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
@@ -178,6 +179,204 @@ public class SubjectJpaDao implements SubjectDao {
                 }
         );
     }
+    // - - - - - - - - - - SUPER SEARCH - - - - - - - - - -
+
+    private String appendSubjectSearchParams(final StringBuilder queryString, final List<Object> paramValues, final SubjectSearchParams params){
+
+        if(params.hasDegree()) {
+            queryString.append(" s.id IN (SELECT sd.idsub FROM subjectsdegrees sd WHERE sd.iddeg = ?) AND ");
+            paramValues.add(params.getDegree());
+        }
+
+        if(params.hasSemester()){
+            queryString.append(" s.id IN (SELECT sd.idsub FROM subjectsdegrees sd WHERE sd.semester = ?) AND ");
+            paramValues.add(params.getSemester());
+        }
+
+        if(params.hasAvailable()){
+            queryString.append(" s.id IN (SELECT sd.idsub FROM subjectsdegrees sd JOIN users u ON u.degreeid = sd.iddeg WHERE u.id = ?) AND ");
+            paramValues.add(params.getAvailable());
+
+            queryString.append(" NOT EXISTS (SELECT id FROM prereqsubjects p1 WHERE p1.idsub = s.id AND " +
+                    "NOT EXISTS (SELECT * FROM usersubjectprogress usp1  WHERE usp1.idsub = p1.idprereq  AND usp1.iduser = ? )) AND ");
+            paramValues.add(params.getAvailable());
+
+            queryString.append(" s.id NOT IN (SELECT usp2.idsub FROM usersubjectprogress usp2 WHERE usp2.iduser = ?) AND ");
+            paramValues.add(params.getAvailable());
+        }
+
+        if(params.hasUnLockable()){
+            queryString.append(" s.id IN (SELECT sd.idsub FROM subjectsdegrees sd JOIN users u ON u.degreeid = sd.iddeg WHERE u.id = ?) AND ");
+            paramValues.add(params.getUnLockable());
+
+            queryString.append(" s.id NOT IN (SELECT up.idsub FROM usersubjectprogress up WHERE up.subjectstate = 1 AND up.iduser = ?) AND ");
+            paramValues.add(params.getUnLockable());
+
+            queryString.append("s.id NOT IN  (SELECT s2.id FROM subjects s2 WHERE " +
+                    " NOT EXISTS (SELECT id FROM prereqsubjects p2 WHERE p2.idsub = s2.id " +
+                    " AND NOT EXISTS (SELECT * FROM usersubjectprogress usp WHERE usp.idsub = p2.idprereq AND usp.iduser = ?)) " +
+                    " AND s2.id NOT IN (SELECT idsub FROM usersubjectprogress up2 WHERE up2.iduser = ?)) AND ");
+            paramValues.add(params.getUnLockable());
+            paramValues.add(params.getUnLockable());
+
+            queryString.append(" NOT EXISTS ( SELECT * FROM prereqsubjects p3 WHERE s.id = p3.idsub " +
+                    " AND p3.idprereq NOT IN ( SELECT up3.idsub FROM usersubjectprogress up3 WHERE up3.subjectstate = 1 AND up3.iduser = ? ) " +
+                    " AND p3.idprereq NOT IN ( SELECT s3.id FROM subjects s3 WHERE NOT EXISTS ( SELECT id FROM prereqsubjects p4 WHERE p4.idsub = s3.id " +
+                    " AND NOT EXISTS ( SELECT * FROM usersubjectprogress up3 WHERE up3.idsub = p4.idprereq AND up3.iduser = ? )) " +
+                    " AND s3.id NOT IN (SELECT idsub FROM usersubjectprogress up4 WHERE up4.iduser = ? ))) AND ");
+            paramValues.add(params.getUnLockable());
+            paramValues.add(params.getUnLockable());
+            paramValues.add(params.getUnLockable());
+        }
+
+        if(params.hasDone()){
+            queryString.append(" s.id IN (SELECT up.idsub FROM usersubjectprogress up WHERE up.subjectstate = 1 AND up.iduser = ?) AND ");
+            paramValues.add(params.getDone());
+        }
+
+        if(params.hasFuture()){
+            queryString.append(" s.id IN (SELECT sd.idsub FROM subjectsdegrees sd JOIN users u ON u.degreeid = sd.iddeg WHERE u.id = ?) AND ");
+            paramValues.add(params.getFuture());
+
+            queryString.append("s.id NOT IN (SELECT up.idsub FROM usersubjectprogress up WHERE up.subjectstate = 1 AND up.iduser = ?) AND ");
+            paramValues.add(params.getFuture());
+        }
+
+        if(params.hasPlan()){
+            queryString.append(" s.id IN ( SELECT us.idsub FROM usersemester us WHERE us.iduser = ? AND ");
+            paramValues.add(params.getPlan());
+
+            if(params.hasPlanFinishedDate()) {
+                queryString.append(" us.dateFinished = ? ) AND ");
+                paramValues.add(params.getPlanFinishedDate());
+            }
+            else{
+                queryString.append(" dateFinished = null ) AND ");
+            }
+        }
+
+        if(params.hasQuery()){
+            queryString.append(" s.subname ILIKE ? AND ");
+            paramValues.add("%" + sanitizeWildcards(params.getQuery()) + "%");      // TODO: move %
+        }
+
+        if(params.hasCredits()){
+            queryString.append(" s.credits = ? AND ");
+            paramValues.add(params.getCredits());
+        }
+
+        if(params.hasDepartment()){
+            queryString.append(" s.department = ? AND ");
+            paramValues.add(params.getDepartment());
+        }
+
+        if(params.hasDifficulty()){
+            queryString.append(" s.id IN ( SELECT srs.idsub FROM subjectreviewstatistics srs WHERE srs.difficulty = ? ) AND ");
+            paramValues.add(params.getDifficulty());
+        }
+
+        if(params.hasTimeDemand()){
+            queryString.append(" s.id IN ( SELECT srs.idsub FROM subjectreviewstatistics srs WHERE srs.timedemanding = ? ) AND ");
+            paramValues.add(params.getTimeDemand());
+        }
+
+        if(params.hasUserReviews()){
+            queryString.append(" s.id IN ( SELECT r.idsub FROM reviews r WHERE r.iduser = ? ) AND ");
+            paramValues.add(params.hasUserReviews());
+        }
+
+        return removeExcessSQL(queryString.toString());
+    }
+    private String removeExcessSQL(String query) {
+        String and = " AND ";
+        String where = " WHERE ";
+
+        if(query.endsWith(and)){
+            return query.substring(0, query.length() - and.length());
+        }
+        if(query.endsWith(where)){
+            return query.substring(0, query.length() - where.length());
+        }
+        return query;
+    }
+    private Query createNativeQuery(final String finalizedQuery, final List<Object> paramValues){
+        final Query nativeQuery = em.createNativeQuery(finalizedQuery);
+
+        int queryParamNum = 1;
+        for(Object paramValue : paramValues){
+            nativeQuery.setParameter(queryParamNum++, paramValue);
+        }
+        return nativeQuery;
+    }
+
+    @Override
+    public List<Subject> superSearch(final SubjectSearchParams params, final int page, final SubjectOrderField orderBy, final OrderDir dir){
+        // Chau performance
+
+        final List<Object> paramValues = new ArrayList<>();
+        final StringBuilder queryString = new StringBuilder("SELECT s.id FROM subjects s WHERE ");
+
+        final String finalizedQuery = appendSubjectSearchParams(queryString, paramValues, params);
+
+        System.out.println(finalizedQuery); // TODO: remove
+
+        final Query nativeQuery = createNativeQuery(finalizedQuery, paramValues);
+
+        @SuppressWarnings("unchecked") final List<Integer> ids = nativeQuery.setFirstResult((page - 1) * PAGE_SIZE).setMaxResults(PAGE_SIZE).getResultList();
+
+        if (ids.isEmpty()) return Collections.emptyList();
+
+        final StringBuilder query = new StringBuilder("from Subject s where s.id in :ids");
+
+        appendOrderHql(query, orderBy, dir);
+
+        return em.createQuery(query.toString(), Subject.class)
+                .setParameter("ids", ids)
+                .getResultList();
+    }
+
+    @Override
+    public int superSearchTotalPages(final SubjectSearchParams params){
+        final List<Object> paramValues = new ArrayList<>();
+        final StringBuilder queryString = new StringBuilder("SELECT count(*) FROM subjects s WHERE ");
+
+        final String finalizedQuery = appendSubjectSearchParams(queryString, paramValues, params);
+
+        final Query nativeQuery = createNativeQuery(finalizedQuery, paramValues);
+
+        return (int) Math.max(1, Math.ceil(((Number) nativeQuery.getSingleResult()).doubleValue() / PAGE_SIZE));
+    }
+
+    public Map<SubjectFilterField, List<String>> superSearchRelevantFilters(final SubjectSearchParams params){
+        final Map<SubjectFilterField, List<String>> relevant = new HashMap<>();
+
+        for (SubjectFilterField field : SubjectFilterField.values()) {
+            final List<Object> paramValues = new ArrayList<>();
+            final StringBuilder queryString = new StringBuilder("SELECT DISTINCT " + field.getColumn() + " FROM subjects s LEFT JOIN subjectreviewstatistics srs ON s.id = srs.idsub WHERE ");
+
+            final String finalizedQuery = appendSubjectSearchParams(queryString, paramValues, params);
+
+            final Query nativeQuery = createNativeQuery(finalizedQuery, paramValues);
+
+
+            @SuppressWarnings("unchecked") final List<Object> fieldValues = nativeQuery.getResultList();
+
+            final List<String> relevantValues =
+                    new HashSet<>(fieldValues)
+                            .stream()
+                            .filter(Objects::nonNull)
+                            .sorted()
+                            .map(Object::toString)
+                            .filter(s -> !s.isEmpty())
+                            .collect(Collectors.toList());
+
+            relevant.put(field, relevantValues);
+        }
+
+        return relevant;
+    }
+
+    // - - - - - - - - - - - - - - - -  - - - - - - - - - -
 
     @Override
     public Optional<Subject> findById(final String id) {

@@ -2,6 +2,8 @@ package ar.edu.itba.paw.services;
 
 import ar.edu.itba.paw.models.Subject;
 import ar.edu.itba.paw.models.User;
+import ar.edu.itba.paw.models.enums.SubjectFilterField;
+import ar.edu.itba.paw.models.utils.SubjectSearchParams;
 
 import java.time.LocalTime;
 import java.util.List;
@@ -49,6 +51,10 @@ public interface SubjectService {
             final String orderBy,
             final String dir
     );
+
+    List<Subject> superSearch(final SubjectSearchParams params, final int page, final String orderBy, final String dir);
+    int superSearchTotalPages(final SubjectSearchParams params);
+    Map<String, List<String>> superSearchRelevantFilters(final SubjectSearchParams params);
 
     List<Subject> getAll(final int page, final String orderBy, final String dir);
 

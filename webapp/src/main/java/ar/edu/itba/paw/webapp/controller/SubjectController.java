@@ -3,6 +3,7 @@ package ar.edu.itba.paw.webapp.controller;
 import ar.edu.itba.paw.models.Subject;
 import ar.edu.itba.paw.models.User;
 import ar.edu.itba.paw.models.exceptions.*;
+import ar.edu.itba.paw.models.utils.SubjectSearchParams;
 import ar.edu.itba.paw.services.*;
 import ar.edu.itba.paw.webapp.controller.utils.PaginationLinkBuilder;
 import ar.edu.itba.paw.webapp.dto.SubjectDto;
@@ -63,28 +64,24 @@ public class SubjectController {
             @QueryParam("dir") @DefaultValue("asc") final String dir
         ){
 
-        final User user = userService.getRelevantUser(available, unLockable, done, future, plan).orElseThrow(UserNotFoundException::new);
-
-        final List<Subject> subs = subjectService.get(
-            user,
-            degree,
-            semester,
-            available,
-            unLockable,
-            done,
-            future,
-            plan,
-            planFinishedDate,
-            query,
-            credits,
-            department,
-            difficulty,
-            timeDemand,
-            userReviews,
-            page,
-            orderBy,
-            dir
+        final SubjectSearchParams params = new SubjectSearchParams(
+                degree,
+                semester,
+                available,
+                unLockable,
+                done,
+                future,
+                plan,
+                planFinishedDate,
+                query,
+                credits,
+                department,
+                difficulty,
+                timeDemand,
+                userReviews
         );
+
+        final List<Subject> subs = subjectService.superSearch(params, page, orderBy, dir);
 
         if (subs.isEmpty()){
             return Response.noContent().build();
@@ -92,10 +89,10 @@ public class SubjectController {
 
         Response.ResponseBuilder responseBuilder = Response.ok(new SubjectsFiltersDto(
                 subs.stream().map(subject -> SubjectDto.fromSubjectWithSemesters(uriInfo, subject, degree, semester)).collect(Collectors.toList()),
-                subjectService.getRelevantFilters(user, query, credits, department, difficulty, timeDemand, orderBy)
+                subjectService.superSearchRelevantFilters(params)
         ));
 
-        PaginationLinkBuilder.getResponsePaginationLinks(responseBuilder, uriInfo, page, subjectService.getTotalPages(user, query, credits, department, difficulty, timeDemand, orderBy));
+        PaginationLinkBuilder.getResponsePaginationLinks(responseBuilder, uriInfo, page, subjectService.superSearchTotalPages(params));
         return responseBuilder.build();
     }
 
