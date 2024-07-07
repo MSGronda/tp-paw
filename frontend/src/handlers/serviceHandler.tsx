@@ -9,10 +9,10 @@ export const handleService = (response: any, navigate: any, defaultValue= undefi
                 navigate('/login')
                 return;
             } else if( response.status === 404){
-                navigate('/404')
+                navigate('/error?code=404')
                 return;
             }else{
-                navigate('/500')
+                navigate('/error?code=500')
                 return;
             }
         } else{
