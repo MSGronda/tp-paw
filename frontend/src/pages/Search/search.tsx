@@ -23,6 +23,33 @@ export default function Search() {
     const orderBy = searchParams.get('ob');
     const dir = searchParams.get('dir');
 
+    const CREDITS = 0;
+    const TIME = 1;
+    const DEPARTMENT = 2;
+    const DIFFICULTY = 3;
+
+    function timeDemandToText(timeDemand: string) {
+        switch (timeDemand) {
+            case '0':
+                return t("Curriculum.low")
+            case '1':
+                return t("Curriculum.medium")
+            case '2':
+                return t("Curriculum.high")
+        }
+    }
+
+    function difficultyToText(difficulty: string) {
+        switch (difficulty) {
+            case '0':
+                return t("Curriculum.easy")
+            case '1':
+                return t("Curriculum.medium")
+            case '2':
+                return t("Curriculum.hard")
+        }
+    }
+
     const [showAscArrow, setShowAscArrow] = useState(false);
 
     const [nameFilter, setNameFilter] = useState(false);
@@ -122,9 +149,11 @@ export default function Search() {
                 ? `${queryParams}&${type}=${encodedFilter}&dir=asc`
                 : `${type}=${encodedFilter}&dir=asc`;
         } else {
-            if( (department !== null && selectedFilter === department) || (credits !== null && selectedFilter === credits) || (difficulty !== null && selectedFilter === difficulty) || (timeDemand !== null && selectedFilter === timeDemand)){
+            if ( type === 'department' && department !== null || type === 'credits' && credits !== null || type === 'difficulty' && difficulty !== null || type === 'time' && timeDemand !== null){
                 return;
             }
+
+            queryParams.set('page', '1');   
             // Construct the new query string
             newQueryString = queryParams
                 ? `${queryParams}&${type}=${encodedFilter}`
@@ -153,7 +182,8 @@ export default function Search() {
         // Update the URL with the new page number when pagination changes
         const queryParams = new URLSearchParams(window.location.search);
         queryParams.set('page', newPage.toString());
-        navigate(`${window.location.pathname}?${queryParams}`);
+        window.location.href = `${window.location.pathname}?${queryParams}`;
+        window.location.reload();
     }
 
     const toggleFilterSection = () => {
@@ -186,7 +216,7 @@ export default function Search() {
                                         <Divider orientation='vertical' className={classes.vert_divider} />
                                         <div className={classes.filter_option}>
                                             <h5>{t("Search.filterDepartment")}</h5>
-                                            {((filters[1]['value'] as string[]) || []).map((element: string) => (
+                                            {((filters[DEPARTMENT]['value'] as string[]) || []).map((element: string) => (
                                                 <>
                                                     <div className={classes.orderBy_button}>
                                                     <span id={element} onClick={() => handleFilterClick("department", element)} className={classes.filter_option_button}>{element}</span>
@@ -199,7 +229,7 @@ export default function Search() {
                                         <Divider orientation='vertical' className={classes.vert_divider} />
                                         <div className={classes.filter_option}>
                                             <h5>{t("Search.filterCredits")}</h5>
-                                            {((filters[0]['value'] as string[]) || []).map((element: string) => (
+                                            {((filters[CREDITS]['value'] as string[]) || []).map((element: string) => (
                                                 <>
                                                     <div className={classes.orderBy_button}>
                                                     <span id={element} onClick={() => handleFilterClick("credits", element)} className={classes.filter_option_button}  >{element}</span>
@@ -212,10 +242,10 @@ export default function Search() {
                                         <Divider orientation='vertical' className={classes.vert_divider} />
                                         <div className={classes.filter_option}>
                                             <h5>{t("Search.filterDifficulty")}</h5>
-                                            {((filters[2]['value'] as string[]) || []).map((element: string) => (
+                                            {((filters[DIFFICULTY]['value'] as string[]) || []).map((element: string) => (
                                                 <>
                                                     <div className={classes.orderBy_button}>
-                                                    <span id={element} onClick={() => handleFilterClick("difficulty", element)} className={classes.filter_option_button}  >{element}</span>
+                                                    <span id={element} onClick={() => handleFilterClick("difficulty", element)} className={classes.filter_option_button}  >{difficultyToText(element)}</span>
                                                     {difficulty !== null ? <CloseButton onClick={() => closeFilter("difficulty")} variant="transparent" className={classes.closeButton}/> : <></>}
                                                     </div>
                                                     <br />
@@ -225,10 +255,10 @@ export default function Search() {
                                         <Divider orientation='vertical' className={classes.vert_divider} />
                                         <div className={classes.filter_option}>
                                             <h5>{t("Search.filterTimeDemand")}</h5>
-                                            {((filters[3]['value'] as string[]) || []).map((element: string) => (
+                                            {((filters[TIME]['value'] as string[]) || []).map((element: string) => (
                                                 <>
                                                     <div className={classes.orderBy_button}>
-                                                    <span id={element} onClick={() => handleFilterClick("time", element)} className={classes.filter_option_button}  >{element}</span>
+                                                    <span id={element} onClick={() => handleFilterClick("time", element)} className={classes.filter_option_button}  >{timeDemandToText(element)}</span>
                                                     {timeDemand !== null ? <CloseButton onClick={() => closeFilter("time")} variant="transparent" className={classes.closeButton}/> : <></>}
                                                     </div>
                                                     <br />

@@ -24,7 +24,7 @@ export class AxiosService {
     } catch (err) {
       if(!(err instanceof AxiosError) || !err.response) throw new Error("Unable to connect to server");
       if ( err.response.status == 404 || err.response.status == 403 || err.response.status == 500) {
-        window.location.href = "/error?code=" + err.response.status;
+        window.location.href = "/paw-2023a-06/error?code=" + err.response.status;
         return;
       }
       if (err.response.status !== 401) throw err;
@@ -44,7 +44,7 @@ export class AxiosService {
     } catch (err) {
       if(!(err instanceof AxiosError) || !err.response) throw new Error("Unable to connect to server");
       if ( err.response.status == 404 || err.response.status == 403 || err.response.status == 500) {
-        window.location.href = "/error?code=" + err.response.status;
+        window.location.href = "/paw-2023a-06/error?code=" + err.response.status;
         return;
       }
       if (err.response.status === 401) {
