@@ -5,6 +5,7 @@ import ar.edu.itba.paw.models.DegreeSubject;
 import ar.edu.itba.paw.models.Subject;
 import ar.edu.itba.paw.models.User;
 import ar.edu.itba.paw.models.exceptions.SubjectNotFoundException;
+import ar.edu.itba.paw.models.utils.SubjectSearchParams;
 import ar.edu.itba.paw.persistence.dao.DegreeDao;
 import ar.edu.itba.paw.persistence.dao.SubjectDao;
 import ar.edu.itba.paw.services.enums.OperationType;
@@ -172,14 +173,4 @@ public class DegreeServiceImpl implements DegreeService {
         return degreeDao.getAll();
     }
 
-    @Override
-    public Map<String, List<String>> getRelevantFiltersForDegree(Degree degree) {
-        return subjectDao.getRelevantFiltersForSearch(degree,"", null, null)
-                .entrySet()
-                .stream()
-                .collect(Collectors.toMap(
-                        e -> e.getKey().name(),
-                        Map.Entry::getValue
-                ));
-    }
 }

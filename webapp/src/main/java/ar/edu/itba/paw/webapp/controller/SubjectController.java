@@ -29,8 +29,6 @@ public class SubjectController {
     @Autowired
     private AuthUserService authUserService;
     @Autowired
-    private UserService userService;
-    @Autowired
     private ProfessorService professorService;
     @Autowired
     private DegreeService degreeService;

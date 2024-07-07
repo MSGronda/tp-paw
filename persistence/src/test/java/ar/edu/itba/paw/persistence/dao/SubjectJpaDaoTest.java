@@ -94,15 +94,6 @@ public class SubjectJpaDaoTest {
 
     @Rollback
     @Test
-    public void testFindAllUserHasDone() {
-        final List<Subject> subjects = subjectJpaDao.findAllThatUserHasDone(UserMockData.getUser1(), PageMockData.DEFAULT_PAGE, PageMockData.DEFAULT_ORDER_SUBJECT, PageMockData.DEFAULT_DIR);
-
-        assertEquals(1, subjects.size());
-        assertTrue(subjects.contains(SubjectMockData.getSubject1()));
-    }
-
-    @Rollback
-    @Test
     public void testAddPrerequisites() {
         final Subject subject = em.find(Subject.class, SubjectMockData.SUB1_ID);
 

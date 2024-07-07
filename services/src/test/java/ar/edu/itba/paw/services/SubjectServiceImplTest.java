@@ -36,7 +36,6 @@ public class SubjectServiceImplTest {
     private static final String defaultOrderBy = "name";
     private static final String defaultDir = "asc";
 
-
     @Mock
     private SubjectDao subjectDao;
     @Mock
@@ -46,84 +45,6 @@ public class SubjectServiceImplTest {
     @InjectMocks
     private SubjectServiceImpl subjectService;
 
-
-    // Tests nuevos
-    @Test
-    public void testFindSubjectByDegreeAndSemester() {
-        final long degreeId = 1;
-        final long semesterId = 1;
-        when(degreeService.findById(degreeId)).thenReturn(Optional.of(
-                Degree.builderFrom(testDegree).subjects(new ArrayList<>(Collections.singletonList(testDegreeSubject))).build()
-        ));
-
-        final List<Subject> subjects = subjectService.get(testUser, degreeId, semesterId, null, null, null, null, null, null, null, null, null, null, null, null, defaultPage, defaultOrderBy, defaultDir);
-
-        assertEquals(1, subjects.size());
-        assertTrue(subjects.containsAll(new ArrayList<>(Collections.singletonList(testSubject))));
-    }
-
-    @Test
-    public void testFindSubjectsUserCanDo() {
-        when(subjectDao.findAllThatUserCanDo(testUser, defaultPage, SubjectOrderField.parse(defaultOrderBy), OrderDir.parse(defaultDir))).thenReturn(
-            new ArrayList<>(Collections.singletonList(testSubject))
-        );
-
-        final List<Subject> subjects = subjectService.get(testUser, null, null, userId, null, null, null, null, null,null, null, null, null, null, null, defaultPage, defaultOrderBy, defaultDir);
-
-        assertEquals(1, subjects.size());
-        assertTrue(subjects.containsAll(new ArrayList<>(Collections.singletonList(testSubject))));
-    }
-
-    @Test
-    public void testFindUnlockableSubjectsForUser() {
-        when(subjectDao.findAllThatUserCouldUnlock(testUser, defaultPage, SubjectOrderField.parse(defaultOrderBy), OrderDir.parse(defaultDir))).thenReturn(
-                new ArrayList<>(Collections.singletonList(testSubject))
-        );
-
-        final List<Subject> subjects = subjectService.get(testUser, null, null, null, userId, null, null, null, null,null, null, null, null, null, null, defaultPage, defaultOrderBy, defaultDir);
-
-        assertEquals(1, subjects.size());
-        assertTrue(subjects.containsAll(new ArrayList<>(Collections.singletonList(testSubject))));
-    }
-
-    @Test
-    public void testFindDoneSubjects() {
-        when(subjectDao.findAllThatUserHasDone(testUser, defaultPage, SubjectOrderField.parse(defaultOrderBy), OrderDir.parse(defaultDir))).thenReturn(
-                new ArrayList<>(Collections.singletonList(testSubject))
-        );
-
-        final List<Subject> subjects = subjectService.get(testUser, null, null, null, null, userId, null, null, null,null, null, null, null, null, null, defaultPage, defaultOrderBy, defaultDir);
-
-        assertEquals(1, subjects.size());
-        assertTrue(subjects.containsAll(new ArrayList<>(Collections.singletonList(testSubject))));
-    }
-
-    @Test
-    public void testFindNotDoneSubjects() {
-        when(subjectDao.findAllThatUserHasNotDone(testUser, defaultPage, SubjectOrderField.parse(defaultOrderBy), OrderDir.parse(defaultDir))).thenReturn(
-                new ArrayList<>(Collections.singletonList(testSubject))
-        );
-
-        final List<Subject> subjects = subjectService.get(testUser, null, null, null, null, null, userId, null, null,null, null, null, null, null, null, defaultPage, defaultOrderBy, defaultDir);
-
-        assertEquals(1, subjects.size());
-        assertTrue(subjects.containsAll(new ArrayList<>(Collections.singletonList(testSubject))));
-    }
-
-    @Test
-    public void testSubjectSearchByName() {
-        final String name = "Sistemas";
-        final Map<SubjectFilterField, String> filterMap = subjectService.getFilterMap(null, null, null, null);
-        final List<Subject> expected = new ArrayList<>(Collections.singletonList(testSubject));
-        when(subjectDao.getTotalPagesForSearch(testUser, name, filterMap, SubjectOrderField.parse(defaultOrderBy))).thenReturn(1);
-        when(subjectDao.search(testUser, name, defaultPage, filterMap, SubjectOrderField.parse(defaultOrderBy),OrderDir.parse(defaultDir)))
-            .thenReturn(expected);
-
-        final List<Subject> subjects = subjectService.get(testUser, null, null,  null, null, null, null, null,null, name, null, null, null, null, null, defaultPage, defaultOrderBy, defaultDir);
-
-        assertEquals(1, subjects.size());
-        assertTrue(subjects.containsAll(expected));
-    }
 
     @Test
     public void testSubjectCreation() {

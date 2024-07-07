@@ -16,50 +16,8 @@ public interface SubjectDao {
     Subject create(final Subject subject);
     Optional<Subject> findById(final String id);
     List<Subject> getAll(final int page, final SubjectOrderField orderBy, final OrderDir dir);
-
-    List<Subject> search(
-            User user,
-            String name,
-            int page,
-            Map<SubjectFilterField, String> filters,
-            SubjectOrderField orderBy, OrderDir dir
-    );
-    List<Subject> searchAll(
-            String name,
-            int page,
-            Map<SubjectFilterField, String> filters,
-            SubjectOrderField orderBy, OrderDir dir
-    );
-    int getTotalPagesForSearch(
-            final User user,
-            final String name,
-            final Map<SubjectFilterField, String> filters,
-            final SubjectOrderField orderBy
-    );
-    int getTotalPagesForSearchAll(
-            final String name,
-            final Map<SubjectFilterField, String> filters,
-            final SubjectOrderField orderBy
-    );
-    Map<SubjectFilterField, List<String>> getRelevantFiltersForSearch(
-            final String name,
-            final Map<SubjectFilterField,String> filters,
-            final SubjectOrderField orderBy
-    );
-    Map<SubjectFilterField, List<String>> getRelevantFiltersForSearch(
-            final Degree degree,
-            final String name,
-            final Map<SubjectFilterField,String> filters,
-            final SubjectOrderField orderBy
-    );
     Map<User,Set<Subject>> getAllUserUnreviewedNotificationSubjects();
     void updateUnreviewedNotificationTime();
-
-    List<Subject> findAllThatUserCanDo(final User user, final int page, final SubjectOrderField orderBy, final OrderDir dir);
-    List<Subject> findAllThatUserHasNotDone(final User user, final int page, final SubjectOrderField orderBy, final OrderDir dir);
-    List<Subject> findAllThatUserHasDone(final User user, final int page, final SubjectOrderField orderBy, final OrderDir dir);
-    List<Subject> findAllThatUserCouldUnlock(final User user, final int page, final SubjectOrderField orderBy, final OrderDir dir);
-
     List<Subject> superSearch(final SubjectSearchParams params, final int page, final SubjectOrderField orderBy, final OrderDir dir);
     int superSearchTotalPages(final SubjectSearchParams params);
     Map<SubjectFilterField, List<String>> superSearchRelevantFilters(final SubjectSearchParams params);

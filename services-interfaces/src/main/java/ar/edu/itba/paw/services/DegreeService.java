@@ -14,8 +14,6 @@ public interface DegreeService {
     Optional<Degree> findByName(final String name);
     Optional<Degree> findParentDegree(final Subject subject, final User user);
     OptionalInt findSubjectYearForParentDegree(final Subject subject, final User user);
-    Map<String, List<String>> getRelevantFiltersForDegree(final Degree degree);
-
     Degree create(final Degree.Builder builder);
     void addSubjectToDegrees(final Subject subject, final List<Long> degreeIds, final List<Integer> semesters);
     void addSemestersToDegree(final Degree degree, final Map<Integer, List<String>> semesterSubjects);
