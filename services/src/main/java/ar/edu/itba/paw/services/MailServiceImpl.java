@@ -20,6 +20,7 @@ import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
 import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
@@ -104,10 +105,11 @@ public class MailServiceImpl implements MailService {
         model.put("baseUrl", baseUrl);
         model.put("logoUrl", logoUrl);
 
-        final Context ctx = new Context(to.getLocale());
+        final Locale locale = Locale.forLanguageTag(to.getLocale());
+        final Context ctx = new Context(locale);
         ctx.setVariables(model);
 
-        final String subject = mailMessages.getMessage(template + ".subject", null, to.getLocale());
+        final String subject = mailMessages.getMessage(template + ".subject", null, locale);
         final String body = templateEngine.process(template, ctx);
 
         sendMail(to.getEmail(), subject, body, true);

@@ -110,8 +110,9 @@ public class UserJpaDao implements UserDao {
     }
 
     @Override
-    public void setLocale(final User user, final Locale locale) {
+    public void setLocale(final User user, final String locale) {
         user.setLocale(locale);
+        em.merge(user);
     }
 
     @Override

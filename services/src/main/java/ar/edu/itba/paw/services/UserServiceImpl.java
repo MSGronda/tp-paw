@@ -11,6 +11,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -281,11 +282,15 @@ public class UserServiceImpl implements UserService {
         autoLogin(user);
     }
 
+    @Async
     @Transactional
     @Override
     public void setLocale(final User user, final Locale locale) {
-        if(!user.getLocale().equals(locale)){
-            userDao.setLocale(user, locale);
+        if(locale == null) return;
+        
+        final String localeStr = locale.toLanguageTag();
+        if(!user.getLocale().equals(localeStr)){
+            userDao.setLocale(user, localeStr);
             LOGGER.info("Set locale for user with id: {} to '{}'", user.getId(), locale);
         }
     }

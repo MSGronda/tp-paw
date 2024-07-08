@@ -1,5 +1,6 @@
 package ar.edu.itba.paw.webapp.config;
 
+import ar.edu.itba.paw.webapp.security.filters.LocaleCaptureFilter;
 import ar.edu.itba.paw.webapp.form.converters.StringToLocalTimeConverter;
 import org.flywaydb.core.Flyway;
 import org.slf4j.Logger;
@@ -31,8 +32,8 @@ import java.nio.charset.StandardCharsets;
 import java.util.Properties;
 import java.util.concurrent.TimeUnit;
 
-@EnableAsync
 @EnableTransactionManagement
+@EnableAsync
 @EnableScheduling
 @ComponentScan({
         "ar.edu.itba.paw.webapp.controller",

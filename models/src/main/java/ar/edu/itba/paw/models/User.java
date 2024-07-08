@@ -41,8 +41,8 @@ public class User {
     @Column(name = "confirmed")
     private boolean verified;
 
-    @Column(length = 32)
-    private Locale locale;
+    @Column(name = "locale", length = 32)
+    private String locale;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "degreeid")
@@ -80,7 +80,7 @@ public class User {
         this.username = builder.username;
         this.imageId = builder.imageId;
         this.verificationToken = builder.confirmToken;
-        this.locale = builder.locale;
+        this.locale = builder.locale == null ? null : builder.locale.toLanguageTag();
         this.verified = builder.confirmed;
         this.degree = builder.degree;
         this.roles = new HashSet<>();
@@ -157,8 +157,8 @@ public class User {
         return progress == null ? SubjectProgress.PENDING : progress;
     }
 
-    public Locale getLocale(){
-        return locale == null ? Locale.getDefault() : locale;
+    public String getLocale(){
+        return locale == null ? Locale.getDefault().toLanguageTag() : locale;
     }
 
     public Set<Role> getRoles() {
@@ -257,7 +257,7 @@ public class User {
         this.verified = confirmed;
     }
 
-    public void setLocale(Locale locale) {
+    public void setLocale(String locale) {
         this.locale = locale;
     }
 
@@ -311,7 +311,7 @@ public class User {
             this.imageId = user.imageId;
             this.confirmToken = user.verificationToken;
             this.confirmed = user.verified;
-            this.locale = user.locale;
+            this.locale = Locale.forLanguageTag(user.locale);
             this.degree = user.degree;
         }
 

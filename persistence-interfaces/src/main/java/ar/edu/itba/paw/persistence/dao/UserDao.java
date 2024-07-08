@@ -28,7 +28,7 @@ public interface UserDao {
 
     void confirmUser(final User user);
 
-    void setLocale(final User user, final Locale locale);
+    void setLocale(final User user, final String locale);
 
     void updateVerificationToken(final User user, final String token);
 

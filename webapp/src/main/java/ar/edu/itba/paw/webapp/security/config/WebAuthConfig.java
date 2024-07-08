@@ -4,6 +4,7 @@ import ar.edu.itba.paw.models.User;
 import ar.edu.itba.paw.services.UserService;
 import ar.edu.itba.paw.models.Role;
 import ar.edu.itba.paw.webapp.security.filters.JwtFilter;
+import ar.edu.itba.paw.webapp.security.filters.LocaleCaptureFilter;
 import ar.edu.itba.paw.webapp.security.handlers.UniAccessDeniedHandler;
 import ar.edu.itba.paw.webapp.security.handlers.UniAuthenticationEntryPoint;
 import ar.edu.itba.paw.webapp.security.services.UniUserDetailsService;
@@ -42,7 +43,8 @@ import java.util.Optional;
 
 
 @EnableWebSecurity
-@ComponentScan({"ar.edu.itba.paw.webapp.security.services",
+@ComponentScan({
+        "ar.edu.itba.paw.webapp.security.services",
         "ar.edu.itba.paw.webapp.security.filters",
     })
 @Configuration
@@ -59,6 +61,9 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
 
     @Autowired
     private JwtFilter jwtFilter;
+    
+    @Autowired
+    private LocaleCaptureFilter localeCaptureFilter;
 
     @Bean
     public PasswordEncoder passwordEncoder(){
@@ -111,7 +116,9 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/api/images/**").permitAll()
                 .antMatchers("/api/**").authenticated()
                 .antMatchers("/**").permitAll()
-                .and().addFilterBefore(jwtFilter, FilterSecurityInterceptor.class);
+                .and()
+                    .addFilterBefore(jwtFilter, FilterSecurityInterceptor.class)
+                    .addFilterAfter(localeCaptureFilter, FilterSecurityInterceptor.class);
     }
 
     @Override
