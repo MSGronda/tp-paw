@@ -2,6 +2,7 @@ import { useTranslation } from "react-i18next";
 import { Navbar } from "../../components/navbar/navbar";
 import classes from "./createsubject.module.css";
 import {
+  ActionIcon,
   Button,
   Combobox,
   ComboboxOption,
@@ -9,7 +10,7 @@ import {
   Flex,
   InputBase,
   Modal,
-  NumberInput,
+  NumberInput, rem,
   Table,
   Tabs,
   Textarea,
@@ -23,27 +24,40 @@ import {handleService} from "../../handlers/serviceHandler.tsx";
 import {Subject} from "../../models/Subject.ts";
 import {useNavigate} from "react-router-dom";
 import {Degree} from "../../models/Degree.ts";
+import {IconCross, IconX} from "@tabler/icons-react";
 
 export function CreateSubject() {
   const { t } = useTranslation();
   const navigate = useNavigate();
 
-
+  // UI components states
   const [activeTab, setActiveTab] = useState<string | null>("general-info");
+  const [openedDegreeModal, setOpenedDegreeModal] = useState(false);
+  const [openedProfessorModal, setOpenedProfessorModal] = useState(false);
+  const [openedClassModal, setOpenedClassModal] = useState(false);
+  const [maxPage, setMaxPage] = useState(2);
+
+  // Form related states
   const [department, setDepartment] = useState<string>("");
-  const [degree, setDegree] = useState<string>("");
-  const [semester, setSemester] = useState<string>("");
+  const [semesters, setSemesters] = useState<number[]>("");
   const [prerequisite, setPrerequisite] = useState<string>("");
   const [professor, setProfessor] = useState<string>("");
   const [classProfessor, setClassProfessor] = useState<string>("");
   const [classDay, setClassDay] = useState<string>("");
   const [credits, setCredits] = useState<string | number>(3);
-  const [openedDegreeModal, setOpenedDegreeModal] = useState(false);
-  const [openedProfessorModal, setOpenedProfessorModal] = useState(false);
-  const [openedClassModal, setOpenedClassModal] = useState(false);
-  const [subjects, setSubjects] = useState<Subject[]>([]);
-  const [maxPage, setMaxPage] = useState(2);
+  const [selectedDegrees, setSelectedDegrees] = useState<number[]>([]);
+  const [selectedSemesters, setSelectedSemesters] = useState<number[]>([]);
+
+  // Fetched Values
   const [degrees, setDegrees] = useState<Degree[]>([]);
+  const [subjects, setSubjects] = useState<Subject[]>([]);
+
+  // Current selected values
+  const [currentDegree, setCurrentDegree] = useState<number>(1);
+  const [currentSemester, setCurrentSemester] = useState<string>("");
+  const [currentSemesterOptions, setCurrentSemesterOptions] = useState<JSX.Element[]>([]);
+
+
   const MINIMUM_CREDITS = 1;
   const MAXIMUM_CREDITS = 12;
 
@@ -76,6 +90,19 @@ export function CreateSubject() {
     searchDegrees();
   }, []);
 
+  const carreerSemester = new Map<string, string[]>();
+  useEffect(() => {
+    for (let i = 0; i < degrees.length; i++) {
+      carreerSemester.set(degrees[i].id.toString(), []);
+      if(degrees[i].semesterSubjects) {
+        for (let j = 1; j < degrees[i].semesterSubjects.length; j++) {
+          carreerSemester.get(degrees[i].id.toString())?.push(t("CreateSubject.semesterOption", { number: j }));
+        }
+      }
+      carreerSemester.get(degrees[i].id.toString())?.push(t("CreateSubject.elective"));
+    }
+  }, [degrees]);
+
   const departments = [
     "Ambiente y Movilidad",
     "Ciencias Exactas y Naturales",
@@ -84,21 +111,7 @@ export function CreateSubject() {
     "Sistemas Complejos y Energía",
     "Sistemas Digitales y Datos",
   ];
-  const degrees2 = [
-    "Ingeniería Informática",
-    "Ingeniería Mecánica",
-    "Ingeniería Química",
-    "Ingeniería Naval",
-    "Ingeniería Civil",
-    "Ingeniería Electrónica",
-    "Ingeniería Industrial",
-    "Ingeniería en Petróleo",
-  ];
-  const semesters = [];
-  for (let i = 1; i < 11; i++) {
-    semesters.push(t("CreateSubject.semesterOption", { number: i }));
-  }
-  semesters.push(t("CreateSubject.elective"));
+
   const prerequisites = [
     "Química",
     "Física I",
@@ -123,19 +136,66 @@ export function CreateSubject() {
     t("CreateSubject.day7"),
   ];
 
+  useEffect(() => {
+    if(carreerSemester != undefined && currentDegree != undefined && carreerSemester.get(currentDegree.toString()) != undefined) {
+      setCurrentSemesterOptions(carreerSemester.get(currentDegree.toString()).map((semester) => (
+          <ComboboxOption key={semester} value={semester}>
+            {semester}
+          </ComboboxOption>
+      )));
+    }
+  }, [currentDegree, carreerSemester]);
+
+  // Degrees/Semester Utils
+  function searchForDegreeId(degreeName: string) {
+    for(let i = 0; i < degrees.length; i++) {
+      if(degrees[i].name === degreeName) {
+        return degrees[i].id;
+      }
+    }
+    return 0;
+  }
+
+  function searchForDegreeName(degreeId: number) {
+    for(let i = 0; i < degrees.length; i++) {
+      if(degrees[i].id === degreeId) {
+        return degrees[i].name;
+      }
+    }
+    return "";
+  }
+
+  function extractNumberFromSemesterName(semesterName: string) {
+    return Number(semesterName.match(RegExp('[0-9][0-9]?'))) != 0 ? Number(semesterName.match(RegExp('[0-9][0-9]?'))) : -1
+  }
+
+  function handleSelectedDegreeSemesters() {
+    let index = 0;
+    if((index = selectedDegrees.indexOf(currentDegree)) !== -1) {
+      selectedDegrees[index] = currentDegree;
+      selectedSemesters[index] = extractNumberFromSemesterName(currentSemester);
+    } else {
+      setSelectedDegrees((selectedDegrees) => [...selectedDegrees, currentDegree]);
+      setSelectedSemesters((selectedSemesters) => [...selectedSemesters, extractNumberFromSemesterName(currentSemester)]);
+    }
+    setOpenedDegreeModal(false);
+  }
+
+  function handleRemoveSelectedDegree(degreeId: number) {
+    const index = selectedDegrees.indexOf(degreeId);
+    setSelectedDegrees([...selectedDegrees.slice(0,index), ...selectedDegrees.slice(index + 1)]);
+    setSelectedSemesters([...selectedSemesters.slice(0,index), ...selectedSemesters.slice(index + 1)]);
+  }
+
+  // Combobox Options
   const deaprtmentOptions = departments.map((departament) => (
     <Combobox.Option key={departament} value={departament}>
       {departament}
     </Combobox.Option>
   ));
   const degreesOptions = degrees.map((degree) => (
-    <ComboboxOption key={degree} value={degree}>
-      {degree}
-    </ComboboxOption>
-  ));
-  const semestersOptions = semesters.map((semester) => (
-    <ComboboxOption key={semester} value={semester}>
-      {semester}
+    <ComboboxOption key={degree.id} value={degree.name}>
+      {degree.name}
     </ComboboxOption>
   ));
   const prerequisiteOptions = prerequisites.map((prerequisite) => (
@@ -201,7 +261,7 @@ export function CreateSubject() {
           <Combobox
             store={comboboxDegree}
             onOptionSubmit={(value) => {
-              setDegree(value);
+              setCurrentDegree(searchForDegreeId(value));
               comboboxDegree.closeDropdown();
             }}
           >
@@ -215,7 +275,7 @@ export function CreateSubject() {
                 rightSectionPointerEvents="none"
                 onClick={() => comboboxDegree.toggleDropdown()}
               >
-                {degree}
+                {searchForDegreeName(currentDegree)}
               </InputBase>
             </Combobox.Target>
             <Combobox.Dropdown>
@@ -235,7 +295,7 @@ export function CreateSubject() {
           <Combobox
             store={comboboxSemester}
             onOptionSubmit={(value) => {
-              setSemester(value);
+              setCurrentSemester(value);
               comboboxSemester.closeDropdown();
             }}
           >
@@ -249,11 +309,11 @@ export function CreateSubject() {
                 rightSectionPointerEvents="none"
                 onClick={() => comboboxSemester.toggleDropdown()}
               >
-                {semester}
+                { currentSemester }
               </InputBase>
             </Combobox.Target>
             <Combobox.Dropdown>
-              <ComboboxOptions>{semestersOptions}</ComboboxOptions>
+              <ComboboxOptions>{currentSemesterOptions}</ComboboxOptions>
             </Combobox.Dropdown>
           </Combobox>
         </Flex>
@@ -265,7 +325,7 @@ export function CreateSubject() {
           direction="row"
           wrap="wrap"
         >
-          <Button color="green">{t("CreateSubject.add")}</Button>
+          <Button color="green" onClick={() => handleSelectedDegreeSemesters()}>{t("CreateSubject.add")}</Button>
         </Flex>
       </Modal>
       <Modal
@@ -561,12 +621,22 @@ export function CreateSubject() {
                 wrap="wrap"
               >
                 {t("CreateSubject.degree")}
-                <Button
-                  className={classes.departmentDropdown}
-                  onClick={() => setOpenedDegreeModal(true)}
-                >
-                  {t("CreateSubject.addDegree")}
-                </Button>
+                <Flex  direction="column">
+                  { selectedDegrees.length > 0 &&
+                    selectedDegrees.map((degree) =>
+                        <Flex direction="row" align="center">
+                          <p>{searchForDegreeName(degree)}</p>
+                          <ActionIcon size={24} variant="default" onClick={() => handleRemoveSelectedDegree(degree)}>
+                            <IconX style={{ width: rem(24), height: rem(24) }} />
+                          </ActionIcon>
+                        </Flex>)
+                  }
+                  <Button
+                      onClick={() => setOpenedDegreeModal(true)}
+                  >
+                    {t("CreateSubject.addDegree")}
+                  </Button>
+                </Flex>
               </Flex>
               <Flex
                 mih={50}
