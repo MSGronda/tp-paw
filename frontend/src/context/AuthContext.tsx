@@ -34,19 +34,19 @@ const AuthContext = React.createContext<AuthContextInterface>({
 });
 
 export const AuthContextProvider = ({ children }: { children: React.ReactNode }) => {
-    const isInLocalStorage = !!localStorage.getItem("token");
-    const isInSessionStorage = !!sessionStorage.getItem("token");
+    const isInLocalStorage = !!localStorage.getItem("token") || !!localStorage.getItem("refresh");
+    const isInSessionStorage = !!sessionStorage.getItem("token") || !!sessionStorage.getItem("refresh");
     const [isAuthenticated, setIsAuthenticated] = useState<boolean>(isInLocalStorage || isInSessionStorage);
 
     const token = isInLocalStorage ? localStorage.getItem("token") as string : sessionStorage.getItem("token") as string;
     const [authKey, setAuthKey] = useState<string | undefined>(token);
 
-    const refreshTokenstorage = isInLocalStorage ? localStorage.getItem("refreshToken") as string : sessionStorage.getItem("refreshToken") as string;
+    const refreshTokenstorage = isInLocalStorage ? localStorage.getItem("refresh") as string : sessionStorage.getItem("refresh") as string;
     const [refreshToken, setRefreshTokenKey] = useState<string | undefined>(refreshTokenstorage);
 
     const [email, setEmail] = useState<string | undefined>(() => {
         try {
-            return jwtDecode<CustomJwtPayload>(token as string).sub as string;
+            return jwtDecode<CustomJwtPayload>(refreshToken as string).sub as string;
         } catch (e) {
             if (isAuthenticated) {
                 console.error(e);
@@ -56,7 +56,7 @@ export const AuthContextProvider = ({ children }: { children: React.ReactNode })
 
     const [role, setRole] = useState<string | undefined>(() => {
         try {
-            return jwtDecode<CustomJwtPayload>(token as string).role as string;
+            return jwtDecode<CustomJwtPayload>(refreshToken as string).role as string;
         } catch (error) {
             if (isAuthenticated) {
                 console.error(error);
@@ -66,7 +66,7 @@ export const AuthContextProvider = ({ children }: { children: React.ReactNode })
 
     const [userId, setUserId] = useState<number | undefined>(() => {
         try {
-            return jwtDecode<CustomJwtPayload>(token as string).userId;
+            return jwtDecode<CustomJwtPayload>(refreshToken as string).userId;
         } catch (error) {
             if (isAuthenticated)
                 console.error(error);
@@ -76,8 +76,8 @@ export const AuthContextProvider = ({ children }: { children: React.ReactNode })
     const logoutHandler = () => {
         localStorage.removeItem("token");
         sessionStorage.removeItem("token");
-        localStorage.removeItem("refreshToken");
-        sessionStorage.removeItem("refreshToken");
+        localStorage.removeItem("refresh");
+        sessionStorage.removeItem("refresh");
         setIsAuthenticated(false);
         setAuthKey(undefined);
         setRefreshTokenKey(undefined);

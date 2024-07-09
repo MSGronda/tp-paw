@@ -25,19 +25,16 @@ public class JwtUtils {
     private Environment environment;
 
     public String generateToken(String email, Set<Role> roles, long userId) {
-//        final Claims claims = Jwts.claims()
-//                .subject(email)
-//                .expiration(new Date(System.currentTimeMillis() + EXPIRATION_TIME))
-//                .build();
+        final Claims claims = Jwts.claims()
+                .subject(email)
+                .expiration(new Date(System.currentTimeMillis() + EXPIRATION_TIME))
+                .add("role", getRole(roles))
+                .add("userId", userId)
+                .build();
 
-        Map <String, Object> claimsMap = new HashMap<>();
-        claimsMap.put("role", getRole(roles));
-        claimsMap.put("userId", userId);
 
         return Jwts.builder()
-                .setClaims(claimsMap)
-                .setSubject(email)
-                .setExpiration(new Date(System.currentTimeMillis() + EXPIRATION_TIME))
+                .claims(claims)
                 .signWith(getSigningKey())
                 .compact();
     }
@@ -51,10 +48,12 @@ public class JwtUtils {
         return "USER";
     }
 
-    public String generateRefreshToken(String email) {
+    public String generateRefreshToken(String email, Set<Role> roles, long userId) {
         final Claims claims = Jwts.claims()
                 .subject(email)
                 .expiration(new Date(System.currentTimeMillis() + REFRESH_EXPIRATION_TIME))
+                .add("role", getRole(roles))
+                .add("userId", userId)
                 .add("refresh", true)
                 .build();
 

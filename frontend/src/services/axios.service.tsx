@@ -37,7 +37,7 @@ export class AxiosService {
 
       const token = res.headers['x-auth'];
 
-      if (localStorage.getItem('token')) localStorage.setItem('token', token);
+      if (localStorage.getItem('token') || localStorage.getItem("refresh")) localStorage.setItem('token', token);
       else sessionStorage.setItem('token', token);
 
       return res;
@@ -48,7 +48,9 @@ export class AxiosService {
         return;
       }
       if (err.response.status === 401) {
+        console.log("Invalid refresh token");
         authService.logout();
+        window.location.href = "/paw-2023a-06/login"
         throw new Error("Unauthorized");
       }
       throw err;

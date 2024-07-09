@@ -138,7 +138,7 @@ public class JwtFilter extends OncePerRequestFilter {
         }
 
         res.setHeader(AUTH_TOKEN_HEADER, "Bearer " + jwtUtils.generateToken(email, user.getRoles(), user.getId()));
-        res.setHeader(REFRESH_TOKEN_HEADER, "Bearer " + jwtUtils.generateRefreshToken(email));
+        res.setHeader(REFRESH_TOKEN_HEADER, "Bearer " + jwtUtils.generateRefreshToken(email, user.getRoles(), user.getId()));
 
         authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(req));
         SecurityContextHolder.getContext().setAuthentication(authentication);
