@@ -17,8 +17,13 @@ public class RecoveryJpaDao implements RecoveryDao {
 
     @Override
     public RecoveryToken create(final String token, final User user) {
+        em.createQuery("delete from RecoveryToken where user.id = :userid")
+            .setParameter("userid", user.getId())
+            .executeUpdate();
+        
         final RecoveryToken recToken = new RecoveryToken(token, user);
         em.persist(recToken);
+        
         LOGGER.info("Created recovery token for user with id: {}", user.getId());
         return recToken;
     }

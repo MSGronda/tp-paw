@@ -1,7 +1,6 @@
 import {axiosService} from "./index";
 
 const USER_PATH: string = "users";
-const CONFIRM_PATH = "verification-token";
 
 const login = async (mail: string, password: string, rememberMe: boolean) => {
     try {
@@ -48,7 +47,16 @@ export interface RegisterForm {
 }
 const register = async (form: RegisterForm) => {
     try {
-        const res = await axiosService.axiosWrapper(axiosService.POST, USER_PATH, {}, form);
+        const res = await axiosService.axiosWrapper(
+          axiosService.POST,
+          USER_PATH,
+          {
+              headers: {
+                  'Content-Type': 'application/vnd.user.register.v1+json'
+              }
+          },
+          form
+        );
         if(!res || res.status !== 201){
             console.error("Unable to register");
             return false;
@@ -63,7 +71,16 @@ const register = async (form: RegisterForm) => {
 
 const confirmEmail = async (token: string) => {
     try {
-        const res = await axiosService.axiosWrapper(axiosService.POST, CONFIRM_PATH, {}, token);
+        const res = await axiosService.axiosWrapper(
+            axiosService.POST,
+            USER_PATH,
+            {
+                headers: {
+                    'Content-Type': 'application/vnd.user.confirm.v1+json'
+                }
+            },
+          { token }
+        );
         if(!res || res.status !== 200){
             console.error("Unable to confirm email");
             return false;
@@ -73,6 +90,54 @@ const confirmEmail = async (token: string) => {
     }
     catch (err) {
         console.error(err);
+        return false;
+    }
+};
+
+const requestRecoverPassword = async (email: string) => {
+    try {
+        const res = await axiosService.axiosWrapper(
+            axiosService.POST,
+            USER_PATH,
+            {
+                headers: {
+                    'Content-Type': 'application/vnd.user.recover.request.v1+json'
+                }
+            },
+          { email }
+        );
+        if(!res || res.status !== 202) {
+          console.error("Error requesting password recovery");
+          return false;
+        }
+        
+        return true;
+    } catch(e) {
+        console.error(e);
+        return false;
+    }
+}
+
+const recoverPassword = async (token: string, password: string) => {
+    try {
+        const res = await axiosService.axiosWrapper(
+            axiosService.POST,
+            USER_PATH,
+            {
+                headers: {
+                    'Content-Type': 'application/vnd.user.recover.v1+json'
+                }
+            },
+          { token, password }
+        );
+        if(!res || res.status !== 200) {
+          console.error("Error recovering password");
+          return false;
+        }
+        
+        return true;
+    } catch (e) {
+        console.error(e);
         return false;
     }
 };
@@ -90,5 +155,7 @@ export default {
     register,
     confirmEmail,
     getCurrentUser,
-    logout
+    logout,
+    requestRecoverPassword,
+    recoverPassword
 };

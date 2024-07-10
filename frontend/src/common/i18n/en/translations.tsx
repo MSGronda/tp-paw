@@ -69,6 +69,30 @@ export const TRANSLATIONS_EN = {
         recover: "Recover",
         invalid_credentials: "The credentials provided are invalid"
     },
+    Recover: {
+        title: "Recover Password",
+        email: "Email",
+        error: "An error occurred, please try again later",
+        error_alert_title: "Error",
+        success: "An email has been sent to you with instructions to recover your password",
+        success_alert_title: "Sent",
+        invalid_email: "Invalid email",
+        submit: "Submit",
+        
+        WithToken: {
+            title: "Set New Password",
+            error: "An error occurred, please try again later",
+            error_alert_title: "Error",
+            success: "Password successfully changed",
+            success_alert_title: "Changed",
+            invalid_password: "Must be between 8 and 25 characters",
+            passwords_dont_match: "Passwords don't match",
+            password: "New Password",
+            password_confirm: "Confirm New Password",
+            submit: "Submit",
+            back_home: "Back to home"
+        }
+    },
     Home: {
         title: "Home",
         currentSemester: "Current Semester",

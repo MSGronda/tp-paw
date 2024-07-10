@@ -33,6 +33,7 @@ import {AnyRoute} from "./AnyRoute.tsx";
 import CurriculumPage from "./pages/Curriculum/curriculumPage.tsx";
 import UserSemesters from "./pages/UserSemesters/user_semesters.tsx";
 import Error from './pages/Error/error.tsx';
+import Recover from "./pages/Recover/recover.tsx";
 
 export default function App() {
 
@@ -52,6 +53,8 @@ export default function App() {
           <Route path="register" element={<AnonymousRoute component={Register}/>}/>
           <Route path="confirm" element={<AnonymousRoute component={ConfirmEmail}/>}/>
           <Route path="login" element={<AnonymousRoute component={Login}/>}/>
+          <Route path="recover" element={<AnonymousRoute component={Recover}/>}/>
+          <Route path="recover/:token" element={<AnonymousRoute component={Recover}/>}/>
           <Route path="onboarding" element={<PrivateRoute component={Onboarding} roles={['EDITOR', 'USER']}/>} />
           <Route path="search" element={<PrivateRoute component={Search} roles={['EDITOR', 'USER']}/>}/>
           <Route path="profile" element={<PrivateRoute component={User} roles={['EDITOR', 'USER']}/>}/>

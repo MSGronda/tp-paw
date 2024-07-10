@@ -7,7 +7,7 @@ import {
 } from "../../utils/register_utils.ts";
 import {useContext, useEffect, useState} from "react";
 import {t} from "i18next";
-import {useNavigate} from "react-router-dom";
+import {Link, useNavigate} from "react-router-dom";
 import AuthService from "../../services/AuthService.ts";
 import AuthContext from "../../context/AuthContext.tsx";
 import React from "react";
@@ -96,9 +96,11 @@ export default function Login(){
                     </p>
                     <p>
                         {t("Login.forgotPassword")}
-                        <Button onClick={() => navigate('/recovery')} variant="transparent">
-                            {t("Login.recover")}
-                        </Button>
+                        <Link to="/recover">
+                            <Button variant="transparent">
+                                {t("Login.recover")}
+                            </Button>
+                        </Link>
                     </p>
                 </div>
             </div>

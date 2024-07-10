@@ -9,6 +9,8 @@ import ar.edu.itba.paw.webapp.dto.UserProgressDto;
 import ar.edu.itba.paw.webapp.dto.UserSemesterDto;
 import ar.edu.itba.paw.webapp.dto.UserDto;
 import ar.edu.itba.paw.webapp.form.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Component;
@@ -26,6 +28,8 @@ import java.util.stream.Collectors;
 @Path("users")
 @Component
 public class UserController {
+    private static final Logger LOGGER = LoggerFactory.getLogger(UserController.class);
+    
     @Autowired
     private UserService userService;
     @Autowired
@@ -36,7 +40,7 @@ public class UserController {
     // Register ahora se va a encargar de unicamente crear un usuario
     // Posteriormente se va a hacer un patch para cargar el degree y los subjects mediante un interceptor
     @POST
-    @Consumes(MediaType.APPLICATION_JSON)
+    @Consumes("application/vnd.user.register.v1+json")
     public Response registerUser(
             @Valid @ModelAttribute("userForm") final UserForm userForm){
         final User newUser = userService.create(
@@ -49,6 +53,42 @@ public class UserController {
         );
         final URI userUri = uriInfo.getBaseUriBuilder().path("/users").path(String.valueOf(newUser.getId())).build();
         return Response.created(userUri).build();
+    }
+    
+    @POST
+    @Consumes("application/vnd.user.confirm.v1+json")
+    public Response confirm(@Valid ConfirmUserForm form) {
+        try {
+            userService.confirmUser(form.getToken());
+            return Response.ok().build();
+        } catch (InvalidTokenException e) {
+            LOGGER.info("Invalid confirmation token '{}'", form.getToken());
+            return Response.status(Response.Status.BAD_REQUEST).build();
+        }
+    }
+    
+    @POST
+    @Consumes("application/vnd.user.recover.request.v1+json")
+    public Response requestRecover(@Valid RecoverPasswordRequestForm form) {
+        try {
+            userService.sendPasswordRecoveryEmail(form.getEmail());
+        } catch(UserNotFoundException e) {
+            LOGGER.info("Invalid email for recovery '{}'", form.getEmail());
+        }
+        
+        return Response.accepted().build();
+    }
+    
+    @POST
+    @Consumes("application/vnd.user.recover.v1+json")
+    public Response recover(@Valid RecoverPasswordForm form) {
+        try {
+            userService.recoverPassword(form.getToken(), form.getPassword());
+            return Response.ok().build();
+        } catch (InvalidTokenException e) {
+            LOGGER.info("Invalid token for recovery '{}'", form.getToken());
+            return Response.status(Response.Status.BAD_REQUEST).build();
+        }
     }
 
     @PATCH

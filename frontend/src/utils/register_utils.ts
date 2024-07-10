@@ -32,7 +32,7 @@ export const validateUsername = (value: string, setErrorFunction: Function) => {
 
 // Function to validate password
 export const validatePassword = (value: string, setErrorFunction: Function) => {
-    if (!value || value.length == 0 || value.length > 25 || value.length < 8) {
+    if (!value || value.length > 25 || value.length < 8) {
         setErrorFunction(t("Register.password_error"));
         return false;
     } else {

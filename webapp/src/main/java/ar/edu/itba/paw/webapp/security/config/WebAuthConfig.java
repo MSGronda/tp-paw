@@ -109,7 +109,7 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
                 .and().authorizeRequests()
 
                 // TODO COMPLETE (!!!)
-               .antMatchers(HttpMethod.POST, "/api/users", "/api/verification-token").anonymous()
+               .antMatchers(HttpMethod.POST, "/api/users").anonymous()
 //                .antMatchers("/login","/register", "/recover/**", "/verification/**").anonymous()
 //                .antMatchers("/user/{id:\\d+}/moderator", "/degrees", "/create-subject", "/subject/{id:\\d+\\.\\d+}/delete-subject", "/subject/{id:\\d+\\.\\d+}/edit").hasRole(Role.RoleEnum.EDITOR.getName())
 //                .antMatchers("/").permitAll()\

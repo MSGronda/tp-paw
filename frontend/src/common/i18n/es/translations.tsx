@@ -70,6 +70,30 @@ export const TRANSLATIONS_ES = {
         invalid_credentials: "Las credenciales provistas no son válidas"
 
     },
+    Recover: {
+        title: "Recuperar Contraseña",
+        email: "Correo Electrónico",
+        error: "Ocurrió un error, por favor intentá de nuevo más tarde",
+        error_alert_title: "Error",
+        success: "Te enviamos un correo con instrucciones para recuperar tu contraseña",
+        success_alert_title: "Enviado",
+        invalid_email: "Correo Electrónico inválido",
+        submit: "Enviar",
+
+        WithToken: {
+            title: "Elegir nueva contraseña",
+            error: "Ocurrió un error, por favor intentá de nuevo más tarde",
+            error_alert_title: "Error",
+            success: "Contraseña cambiada exitosamente",
+            success_alert_title: "Enviada",
+            invalid_password: "Debe tener entre 8 y 25 caracteres",
+            passwords_dont_match: "Las contraseñas no coinciden",
+            password: "Nueva contraseña",
+            password_confirm: "Confirmar contraseña",
+            submit: "Enviar",
+            back_home: "Volver al inicio"
+        }
+    },
     Home: {
         title: "Inicio",
         currentSemester: "Cuatrimestre Actual",
