@@ -6,7 +6,7 @@ import {
   Button,
   Combobox,
   ComboboxOption,
-  ComboboxOptions, Divider,
+  ComboboxOptions,
   Flex, Grid,
   InputBase,
   Modal,
@@ -17,16 +17,14 @@ import {
   useCombobox,
 } from "@mantine/core";
 import { TimeInput } from "@mantine/dates";
-import React, {useEffect, useState} from "react";
+import {useEffect, useState} from "react";
 import Title from "../../components/title/title";
 import {degreeService, subjectService} from "../../services";
 import {handleService} from "../../handlers/serviceHandler.tsx";
 import {Subject} from "../../models/Subject.ts";
 import {useNavigate} from "react-router-dom";
 import {Degree} from "../../models/Degree.ts";
-import {IconCross, IconX} from "@tabler/icons-react";
-import PaginationComponent from "../../components/pagination/pagination.tsx";
-import BuilderSubjectCard from "../../components/builder-subject-card/builder_subject_card.tsx";
+import {IconX} from "@tabler/icons-react";
 import ChooseSubjectCard from "../../components/choose-subject-card/choose-subject-card.tsx";
 
 export function CreateSubject() {
@@ -44,7 +42,6 @@ export function CreateSubject() {
 
   // Form related states
   const [department, setDepartment] = useState<string>("");
-  const [semesters, setSemesters] = useState<number[]>("");
   const [professor, setProfessor] = useState<string>("");
   const [classProfessor, setClassProfessor] = useState<string>("");
   const [classDay, setClassDay] = useState<string>("");

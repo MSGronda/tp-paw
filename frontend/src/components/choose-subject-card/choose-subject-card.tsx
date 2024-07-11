@@ -1,6 +1,5 @@
 import {Card, ActionIcon} from "@mantine/core";
 import classes from "../builder-subject-card/builder_subject_card.module.css";
-import DifficultyChip from "../difficulty-chip/difficulty-chip.tsx";
 import {IconCheck, IconPlus} from "@tabler/icons-react";
 import {t} from "i18next";
 import {Subject} from "../../models/Subject.ts";
