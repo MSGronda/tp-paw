@@ -328,7 +328,7 @@ public class SubjectJpaDao implements SubjectDao {
 
         if (ids.isEmpty()) return Collections.emptyList();
 
-        final StringBuilder query = new StringBuilder("from Subject s where s.id in :ids");
+        final StringBuilder query = new StringBuilder("select s from Subject s left join s.reviewStats where id in :ids");
 
         appendOrderHql(query, orderBy, dir);
 
