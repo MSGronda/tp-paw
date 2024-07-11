@@ -357,7 +357,9 @@ export const TRANSLATIONS_ES = {
         day5: "Viernes",
         day6: "Sábado",
         day7: "Domingo",
-        createSubject: "Crear materia"
+        createSubject: "Crear materia",
+        addPrereq: "Agregar correlativa",
+        prereqAdvice: "Agregá una carrera!"
     },
     Degrees: {
         title: "Carreras",

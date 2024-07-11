@@ -359,7 +359,9 @@ export const TRANSLATIONS_EN = {
         day5: "Friday",
         day6: "Saturday",
         day7: "Sunday",
-        createSubject: "Create Subject"
+        createSubject: "Create Subject",
+        addPrereq: "Add Prerequisite",
+        prereqAdvice: "Add a degree first!"
     },
     Degrees: {
         title: "Degrees",

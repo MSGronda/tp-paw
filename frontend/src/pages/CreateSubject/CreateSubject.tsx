@@ -6,18 +6,18 @@ import {
   Button,
   Combobox,
   ComboboxOption,
-  ComboboxOptions,
-  Flex,
+  ComboboxOptions, Divider,
+  Flex, Grid,
   InputBase,
   Modal,
-  NumberInput, rem,
+  NumberInput, Pagination, rem,
   Table,
   Tabs,
-  Textarea,
+  Textarea, Tooltip,
   useCombobox,
 } from "@mantine/core";
 import { TimeInput } from "@mantine/dates";
-import {useEffect, useState} from "react";
+import React, {useEffect, useState} from "react";
 import Title from "../../components/title/title";
 import {degreeService, subjectService} from "../../services";
 import {handleService} from "../../handlers/serviceHandler.tsx";
@@ -25,6 +25,9 @@ import {Subject} from "../../models/Subject.ts";
 import {useNavigate} from "react-router-dom";
 import {Degree} from "../../models/Degree.ts";
 import {IconCross, IconX} from "@tabler/icons-react";
+import PaginationComponent from "../../components/pagination/pagination.tsx";
+import BuilderSubjectCard from "../../components/builder-subject-card/builder_subject_card.tsx";
+import ChooseSubjectCard from "../../components/choose-subject-card/choose-subject-card.tsx";
 
 export function CreateSubject() {
   const { t } = useTranslation();
@@ -33,20 +36,22 @@ export function CreateSubject() {
   // UI components states
   const [activeTab, setActiveTab] = useState<string | null>("general-info");
   const [openedDegreeModal, setOpenedDegreeModal] = useState(false);
+  const [openedPrereqModal, setOpenedPrereqModal] = useState(false);
   const [openedProfessorModal, setOpenedProfessorModal] = useState(false);
   const [openedClassModal, setOpenedClassModal] = useState(false);
+  const [currentPrereqPage, setCurrentPrereqPage] = useState<number>(1);
   const [maxPage, setMaxPage] = useState(2);
 
   // Form related states
   const [department, setDepartment] = useState<string>("");
   const [semesters, setSemesters] = useState<number[]>("");
-  const [prerequisite, setPrerequisite] = useState<string>("");
   const [professor, setProfessor] = useState<string>("");
   const [classProfessor, setClassProfessor] = useState<string>("");
   const [classDay, setClassDay] = useState<string>("");
   const [credits, setCredits] = useState<string | number>(3);
   const [selectedDegrees, setSelectedDegrees] = useState<number[]>([]);
   const [selectedSemesters, setSelectedSemesters] = useState<number[]>([]);
+  const [selectedPrereqs, setSelectedPrereqs] = useState<number[]>([]);
 
   // Fetched Values
   const [degrees, setDegrees] = useState<Degree[]>([]);
@@ -79,12 +84,11 @@ export function CreateSubject() {
   }
 
   useEffect(() => {
-    let currentPage = 1;
-    while(currentPage <= maxPage) {
-      searchSubjects(currentPage);
-      currentPage = currentPage + 1;
+    if(selectedDegrees.length > 0) {
+      searchSubjects(currentPrereqPage);
     }
-  }, [maxPage]);
+
+  }, [selectedDegrees, currentPrereqPage]);
 
   useEffect(() => {
     searchDegrees();
@@ -110,14 +114,6 @@ export function CreateSubject() {
     "Economia y Negocios",
     "Sistemas Complejos y Energía",
     "Sistemas Digitales y Datos",
-  ];
-
-  const prerequisites = [
-    "Química",
-    "Física I",
-    "Física II",
-    "Física III",
-    "Física IV",
   ];
   const professors = [
     "Sotuyo Dodero, Juan Martín",
@@ -169,8 +165,9 @@ export function CreateSubject() {
     return Number(semesterName.match(RegExp('[0-9][0-9]?'))) != 0 ? Number(semesterName.match(RegExp('[0-9][0-9]?'))) : -1
   }
 
+  // Handlers
   function handleSelectedDegreeSemesters() {
-    let index = 0;
+    let index;
     if((index = selectedDegrees.indexOf(currentDegree)) !== -1) {
       selectedDegrees[index] = currentDegree;
       selectedSemesters[index] = extractNumberFromSemesterName(currentSemester);
@@ -187,6 +184,24 @@ export function CreateSubject() {
     setSelectedSemesters([...selectedSemesters.slice(0,index), ...selectedSemesters.slice(index + 1)]);
   }
 
+  function handlePrereqSelection(subjectId: string) {
+    if(!selectedPrereqs.includes(Number(subjectId))) {
+      setSelectedPrereqs([...selectedPrereqs, Number(subjectId)]);
+      console.log("prereqs: ", selectedPrereqs);
+    }
+  }
+
+  function handlePrereqRemoval(subjectId: string) {
+    if(selectedPrereqs.includes(Number(subjectId))) {
+      const index = selectedPrereqs.indexOf(Number(subjectId));
+      setSelectedPrereqs([...selectedPrereqs.slice(0,index), ...selectedPrereqs.slice(index + 1)]);
+    }
+  }
+
+  function isPrereqSelected(subjectId: string) {
+    return selectedPrereqs.includes(Number(subjectId));
+  }
+
   // Combobox Options
   const deaprtmentOptions = departments.map((departament) => (
     <Combobox.Option key={departament} value={departament}>
@@ -196,11 +211,6 @@ export function CreateSubject() {
   const degreesOptions = degrees.map((degree) => (
     <ComboboxOption key={degree.id} value={degree.name}>
       {degree.name}
-    </ComboboxOption>
-  ));
-  const prerequisiteOptions = prerequisites.map((prerequisite) => (
-    <ComboboxOption key={prerequisite} value={prerequisite}>
-      {prerequisite}
     </ComboboxOption>
   ));
   const professorsOptions = professors.map((professor) => (
@@ -244,6 +254,7 @@ export function CreateSubject() {
   return (
     <div className={classes.background}>
       <Title text={t("CreateSubject.pageTitle")}/>
+      { /* Degree Modal */}
       <Modal
         opened={openedDegreeModal}
         onClose={() => setOpenedDegreeModal(false)}
@@ -328,11 +339,23 @@ export function CreateSubject() {
           <Button color="green" onClick={() => handleSelectedDegreeSemesters()}>{t("CreateSubject.add")}</Button>
         </Flex>
       </Modal>
-      <Modal
-        opened={openedProfessorModal}
-        onClose={() => setOpenedProfessorModal(false)}
-        title={t("CreateSubject.createProfessor")}
-      >
+      {/* Prereqs Modal */}
+      <Modal opened={openedPrereqModal} onClose={() => setOpenedPrereqModal(false)} title={t("CreateSubject.addPrereq")} centered size="80%">
+        <Flex justify="center" direction="column" align="center" gap="md">
+          <Grid >
+            {subjects.map((subject) => (
+                <Grid.Col span={2}>
+                  <ChooseSubjectCard subject={subject} selectionCallback={handlePrereqSelection} selected={isPrereqSelected(subject.id)} removalCallback={handlePrereqRemoval} />
+                </Grid.Col>
+            ))}
+          </Grid>
+          <Flex>
+            <Pagination total={maxPage} value={currentPrereqPage} onChange={setCurrentPrereqPage}/>
+          </Flex>
+        </Flex>
+      </Modal>
+      {/* Professor Modal */}
+      <Modal opened={openedProfessorModal} onClose={() => setOpenedProfessorModal(false)} title={t("CreateSubject.createProfessor")}>
         <Flex
           mih={50}
           gap="xl"
@@ -652,29 +675,18 @@ export function CreateSubject() {
                     ({t("CreateSubject.optional")})
                   </h6>
                 </div>
-                <Combobox
-                  store={comboboxPrerequisiste}
-                  width={300}
-                  onOptionSubmit={(value) => {
-                    setPrerequisite(value);
-                    comboboxPrerequisiste.closeDropdown();
-                  }}
-                >
-                  <Combobox.Target>
-                    <InputBase
-                      className={classes.departmentDropdown}
-                      component="button"
-                      type="button"
-                      pointer
-                      rightSection={<Combobox.Chevron />}
-                      rightSectionPointerEvents="none"
-                      onClick={() => comboboxPrerequisiste.toggleDropdown()}
-                    >
-                      {prerequisite}
-                    </InputBase>
-                  </Combobox.Target>
-                  <Combobox.Dropdown>{prerequisiteOptions}</Combobox.Dropdown>
-                </Combobox>
+                {selectedDegrees.length > 0 ?
+                    <Button
+                      onClick={() => setOpenedPrereqModal(true)}>
+                        {t("CreateSubject.addPrereq")}
+                    </Button> :
+                    <Tooltip label={t("CreateSubject.prereqAdvice")}>
+                      <Button disabled>
+                        {t("CreateSubject.addPrereq")}
+                      </Button>
+                    </Tooltip>
+
+                }
               </Flex>
               <Flex
                 mih={50}
