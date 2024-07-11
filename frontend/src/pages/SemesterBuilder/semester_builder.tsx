@@ -36,7 +36,6 @@ import {subjectService, userService} from '../../services';
 import {handleService} from "../../handlers/serviceHandler.tsx";
 import {useNavigate} from "react-router-dom";
 import FloatingButton from "../../components/floating-button/floating-button.tsx";
-import {UserPlan} from "../../models/UserPlan.ts";
 import FloatingMessage from "../../components/floating-message/floating_message.tsx";
 import Title from "../../components/title/title.tsx";
 import {createEmptySubjectClass, createSelectedSubjects} from "../../utils/user_plan_utils.ts";
@@ -53,8 +52,10 @@ export default function SemesterBuilder() {
     const [available, setAvailable] = useState<Subject[]>([]);
     const getAvailable = async () => {
         const userId = userService.getUserId();
-        if(!userId)
+        if(!userId){
             navigate('/login');
+            return;
+        }
 
         const resp = await subjectService.getAvailableSubjects(userId);
         const data = handleService(resp, navigate);
@@ -68,8 +69,10 @@ export default function SemesterBuilder() {
     const [selectedSubjects, setSelectedSubjects] = useState<SelectedSubject[]>([]);
     const getUserPlan = async () => {
         const userId = userService.getUserId();
-        if(!userId)
+        if(!userId){
             navigate('/login');
+            return;
+        }
 
         const respSubjects = await subjectService.getUserPlanSubjects(userId);
         const dataSubjects = handleService(respSubjects, navigate);
@@ -112,8 +115,10 @@ export default function SemesterBuilder() {
     const [doneSubjects, setDoneSubjects] = useState<Subject[]>([]);
     const getDone = async () => {
         const userId = userService.getUserId();
-        if(!userId)
+        if(!userId){
             navigate('/login');
+            return;
+        }
 
         const resp = await subjectService.getDoneSubjects(userId);
         const data = handleService(resp, navigate);
@@ -123,8 +128,10 @@ export default function SemesterBuilder() {
     const [unlockables, setUnlockables] = useState<Subject[]>([]);
     const getUnlockable = async () => {
         const userId = userService.getUserId();
-        if(!userId)
+        if(!userId){
             navigate('/login');
+            return;
+        }
 
         const resp = await subjectService.getUnlockableSubjects(userId);
         const data = handleService(resp, navigate);
@@ -133,10 +140,10 @@ export default function SemesterBuilder() {
 
     // API Calls
     useEffect( () => {
-        getDone()
-        getAvailable()
-        getUnlockable()
-        getUserPlan()
+        getDone();
+        getAvailable();
+        getUnlockable();
+        getUserPlan();
     }, []);
 
     // Conditional rendering
@@ -219,9 +226,6 @@ export default function SemesterBuilder() {
         if(subject.classes.length == 0){
             return true;
         }
-        if(subject.name == "Química"){
-            console.log("A")
-        }
         for(const sc of subject.classes){
             if(classEnabled(sc)){
                 return true;    // Con que una comision sea viable, toda la materia es viable
@@ -274,7 +278,7 @@ export default function SemesterBuilder() {
 
             // TODO: quizas usar un Set / Bloom filter
 
-            if(!doneSubjects.find((s) => s.id == prereq) && !selectedSubjects.find((s) => s.subject.id == prereq)){
+            if(doneSubjects && !doneSubjects.find((s) => s.id == prereq) && !selectedSubjects.find((s) => s.subject.id == prereq)){
                 return false;
             }
         }
@@ -334,8 +338,10 @@ export default function SemesterBuilder() {
 
     const saveSchedule = async () => {
         const userId = userService.getUserId();
-        if(!userId)
+        if(!userId){
             navigate('/login');
+            return;
+        }
 
         const resp = await userService.setUserSemester(userId, selectedSubjects);
         if(resp && resp.status == 202){

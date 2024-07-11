@@ -251,7 +251,7 @@ public class SubjectJpaDao implements SubjectDao {
                 paramValues.add(params.getPlanFinishedDate());
             }
             else{
-                queryString.append(" dateFinished = null ) AND ");
+                queryString.append(" us.dateFinished IS NULL ) AND ");
             }
         }
 
