@@ -15,6 +15,8 @@ import org.springframework.stereotype.Repository;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
+import java.sql.Timestamp;
+import java.time.Instant;
 import java.time.LocalTime;
 import java.util.*;
 import java.util.function.Function;
@@ -248,7 +250,7 @@ public class SubjectJpaDao implements SubjectDao {
 
             if(params.hasPlanFinishedDate()) {
                 queryString.append(" us.dateFinished = ? ) AND ");
-                paramValues.add(params.getPlanFinishedDate());
+                paramValues.add(new Timestamp(params.getPlanFinishedDate()));
             }
             else{
                 queryString.append(" us.dateFinished IS NULL ) AND ");
