@@ -76,10 +76,11 @@ export class SubjectService {
         return this.getUserSubject(config);
     }
 
-    async getUnlockableSubjects(userId: number) {
+    async getUnlockableSubjects(userId: number, page: number = 1) {
         const config: any = {};
         config.params = {
             unLockable: userId,
+            page: page
         }
         return this.getUserSubject(config);
     }

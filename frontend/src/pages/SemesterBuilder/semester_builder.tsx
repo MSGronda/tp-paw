@@ -33,12 +33,13 @@ import BuilderSelectClassCard from "../../components/builder-select-class-card/b
 import Class from "../../models/Class.ts";
 import {t} from "i18next";
 import {subjectService, userService} from '../../services';
-import {handleService} from "../../handlers/serviceHandler.tsx";
+import {handlePagedService, handleService} from "../../handlers/serviceHandler.tsx";
 import {useNavigate} from "react-router-dom";
 import FloatingButton from "../../components/floating-button/floating-button.tsx";
 import FloatingMessage from "../../components/floating-message/floating_message.tsx";
 import Title from "../../components/title/title.tsx";
 import {createEmptySubjectClass, createSelectedSubjects} from "../../utils/user_plan_utils.ts";
+import {NavigateFunction} from "react-router/dist/lib/hooks";
 
 const COLS = 7
 const ROWS = 29
@@ -57,9 +58,11 @@ export default function SemesterBuilder() {
             return;
         }
 
-        const resp = await subjectService.getAvailableSubjects(userId);
-        const data = handleService(resp, navigate);
-        setAvailable(removeInvalidSubjects(data.subjects != "" ? data.subjects : [])); // TODO: cambiar esto a algo mejor
+        const subjects = await getAllSubjects(subjectService.getAvailableSubjects.bind(subjectService), userId, navigate);
+
+        if(!subjects){return;}
+
+        setAvailable(subjects);
     }
 
     // Select class - para cuando tenes que elegir comision de materia
@@ -119,10 +122,12 @@ export default function SemesterBuilder() {
             navigate('/login');
             return;
         }
+        
+        const subjects = await getAllSubjects(subjectService.getDoneSubjects.bind(subjectService), userId, navigate);
+        
+        if(!subjects){return;}
 
-        const resp = await subjectService.getDoneSubjects(userId);
-        const data = handleService(resp, navigate);
-        setDoneSubjects(data.subjects != "" ? data.subjects : []); // TODO: cambiar esto a algo mejor
+        setDoneSubjects(subjects)
     }
 
     const [unlockables, setUnlockables] = useState<Subject[]>([]);
@@ -132,10 +137,12 @@ export default function SemesterBuilder() {
             navigate('/login');
             return;
         }
+        
+        const subjects = await getAllSubjects(subjectService.getUnlockableSubjects.bind(subjectService), userId, navigate);
 
-        const resp = await subjectService.getUnlockableSubjects(userId);
-        const data = handleService(resp, navigate);
-        setUnlockables(data.subjects != "" ? data.subjects : []); // TODO: cambiar esto a algo mejor
+        if(!subjects){return;}
+
+        setUnlockables(subjects)
     }
 
     // API Calls
@@ -660,4 +667,27 @@ function isOverlapped(day: number, startTime: string, endTime: string, scheduleA
 
 function removeInvalidSubjects(subjects: Subject[]) {
     return subjects.filter((subject) => subject.credits != 0);
+}
+
+async function getAllSubjects(serviceGet: (userId:number, page:number) => Promise<any>, userId: number, navigate: NavigateFunction) {
+
+    const subjects: Subject[] = []
+
+    let page = 1;
+    let gotAllPages = false;
+    while (!gotAllPages) {
+        const resp = handlePagedService(await serviceGet(userId, page), navigate);
+        if (!resp) {return;}
+        const [data, nextPage] = resp;
+
+        subjects.push(...removeInvalidSubjects(data.subjects != "" ? data.subjects : [])); // TODO: cambiar esto a algo mejor
+
+        if (page == nextPage) {
+            gotAllPages = true;
+        } else {
+            page += 1;
+        }
+    }
+
+    return subjects;
 }
