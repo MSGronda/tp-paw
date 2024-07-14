@@ -95,7 +95,7 @@ export default function Home() {
         ]
         if(user && user.progressByYear){
             let i = 0;
-            for (const progress of user?.progressByYear){
+            for (const progress of user.progressByYear){
                 resp[i++].progress = progress;
             }
         }
@@ -108,10 +108,11 @@ export default function Home() {
     const [currentFutureSubjectsPage, setCurrentFutureSubjectsPage] = useState(INITIAL_PAGE);
     const [futureSubjectsMaxPage, setFutureSubjectsMaxPage] = useState(1);
     const searchFutureSubjects = async (userId: number, page: number) => {
-        const res = await subjectService.getAvailableSubjects(userId,page);
+        const res = await subjectService.getFutureSubjects(userId,page);
         const data = handleService(res, navigate);
-        if(res && data.subjects) {
+        if(res && data.subjects && res.maxPage) {
             setFutureSubjects(data.subjects);
+            setFutureSubjectsMaxPage(res.maxPage);
         }
     }
 
@@ -122,8 +123,9 @@ export default function Home() {
     const searchPastSubjects = async (userId: number, page: number) => {
         const res = await subjectService.getDoneSubjects(userId,page);
         const data = handleService(res,navigate);
-        if(res && data.subjects) {
+        if(res && data.subjects && res.maxPage) {
             setPastSubjects(data.subjects);
+            setPastSubjectsMaxPage(res.maxPage);
         }
     }
 
@@ -135,11 +137,17 @@ export default function Home() {
 
     useEffect(() => {
         const userId = userService.getUserId();
+
+        if(!userId){return;}
+
         searchFutureSubjects(userId, currentFutureSubjectsPage);
     },[currentFutureSubjectsPage]);
 
     useEffect(() => {
         const userId = userService.getUserId();
+
+        if(!userId){return;}
+
         searchPastSubjects(userId, currentPastSubjectsPage);
     },[currentPastSubjectsPage]);
 

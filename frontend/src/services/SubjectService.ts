@@ -58,6 +58,15 @@ export class SubjectService {
         }
     }
 
+    async getFutureSubjects(userId: number, page: number = 1) {
+        const config: any = {};
+        config.params = {
+            future: userId,
+            page: page
+        }
+        return this.getUserSubject(config);
+    }
+
     async getAvailableSubjects(userId: number, page: number = 1) {
         const config: any = {};
         config.params = {
