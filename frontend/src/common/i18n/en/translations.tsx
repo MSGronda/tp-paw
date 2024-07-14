@@ -302,7 +302,7 @@ export const TRANSLATIONS_EN = {
         publicHelp: "Otros usuarios podran ver que esta reseña es tuya",
         submit: "Submit!",
         editSubmit: "Edit review",
-        editSucces: "Review edited successfully",
+        editSuccess: "Review edited successfully",
         editFailure: "An error occured, please try again later",
         deleteSuccess: "Review deleted successfully",
         deleteFailure: "An error occured, please try again later",
