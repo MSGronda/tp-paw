@@ -71,6 +71,9 @@ export default function FinishSemester() {
             setTimeout(() => {setSavedUnsuccessfully(false)}, 3000);
         }
     }
+    const backToHome = () => {
+        navigate('/');
+    }
 
     return (
         <div className={classes.general_area}>
@@ -95,7 +98,7 @@ export default function FinishSemester() {
                     <Card.Section>
                         <Divider />
                         <div className={classes.button_row}>
-                            <Button size={"md"} variant={"default"}>
+                            <Button onClick={backToHome} size={"md"} variant={"default"}>
                                 {t("BuilderFinish.cancel")}
                             </Button>
                             <Button onClick={submit} size={"md"} color={"green.7"}>
