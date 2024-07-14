@@ -18,8 +18,10 @@ export default function FinishSemester() {
     const [subjects, setSubjects] = useState<Subject[]>([]);
     const getSubjects = async () => {
         const userId = userService.getUserId();
-        if(!userId)
-            navigate('/login')
+        if(!userId){
+            navigate('/login');
+            return;
+        }
 
         const resp = await subjectService.getUserPlanSubjects(userId)
         const data = handleService(resp, navigate);
@@ -53,8 +55,10 @@ export default function FinishSemester() {
     }
     const submit = async () => {
         const userId = userService.getUserId();
-        if(!userId)
-            navigate('/login')
+        if(!userId){
+            navigate('/login');
+            return;
+        }
 
         const respSemester = await userService.completeSemester(userId);
         const respProgress = await userService.setFinishedSubjects(userId, completedSubjects, [])

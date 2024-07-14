@@ -1,13 +1,11 @@
-import { useContext, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { reviewService } from "../../services";
-import AuthContext from "../../context/AuthContext";
 import { Button, SegmentedControl, Textarea } from "@mantine/core";
 import { Navbar } from "../../components/navbar/navbar";
 import classes from './editReview.module.css';
 import { getDifficultyValue, getTimeDemandValue } from "../../models/Subject";
-import { Helmet } from "react-helmet";
 import Title from "../../components/title/title";
 
 

@@ -13,7 +13,6 @@ import {
   Button,
   Card, Center,
   Combobox, Group,
-  Input, InputBase,
   Loader, Modal, Paper, PasswordInput, rem,
   Table,
   Text, TextInput, useCombobox
@@ -37,7 +36,6 @@ import { useForm } from "@mantine/form";
 import { validateConfirmPassword, validatePassword, validateUsername } from "../../utils/register_utils.ts";
 import authService from "../../services/AuthService.ts";
 import { Dropzone, MIME_TYPES } from "@mantine/dropzone";
-import Title from "../../components/title/title.tsx";
 
 
 export default function User() {
@@ -584,10 +582,6 @@ function ChangeDegreeModal({ opened, onClose }: { opened: boolean, onClose: () =
 
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<boolean>(false);
-
-  const user = userService.getUserData();
-  const curDegId = user?.degreeId;
-
   async function submit() {
     setSubmitting(true);
     setError(false);

@@ -49,8 +49,8 @@ export function SubjectPage() {
     const [maxPage, setMaxPage] = useState(1);
     const [editShowAlert, setEditShowAlert] = useState(false);
     const [deleteShowAlert, setDeleteShowAlert] = useState(false);
-    const [editReviewValue, setEditReviewValue] = useState<Boolean>();
-    const [deletedReviewValue, setDeletedReviewValue] = useState<Boolean>();
+    const [editReviewValue, setEditReviewValue] = useState<boolean>();
+    const [deletedReviewValue, setDeletedReviewValue] = useState<boolean>();
     const [progress, setProgress] = useState("PENDING");
 
     const INITIAL_PAGE = 1;
@@ -91,7 +91,6 @@ export function SubjectPage() {
 
     const getReviewFromUser = async (subjectId: string, userId: number) => {
         const res = await reviewService.getReviewFromSubjectAndUser(subjectId, userId);
-        const data = handleService(res, navigate);
         if (res) {
             res.status === 204 ? setDidUserReview(false) : setDidUserReview(true);
         }

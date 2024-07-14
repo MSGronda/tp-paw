@@ -66,7 +66,7 @@ export default function Review() {
         if( id === undefined) {
             return;
         }
-        const res = await reviewService.publishReview(id, review, parseInt(difficultyValue) , parseInt(timeDemandValue), AnonymousValue === "true");
+        await reviewService.publishReview(id, review, parseInt(difficultyValue) , parseInt(timeDemandValue), AnonymousValue === "true");
 
         navigate('/subject/' + id)
     }
