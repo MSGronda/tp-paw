@@ -245,12 +245,12 @@ function ReviewCard(props: ReviewCardProps): JSX.Element {
             <Divider className={classes.divider} />
             <div slot="footer" className={classes.like_buttons}>
                 {!(didUserUpVote) ?
-                    <ActionIcon variant="outline" className={classes.like_button}
+                    <ActionIcon variant="transparent" className={classes.like_button}
                                 onClick={() => voteAction(id, VoteValue.UpVote)}
                     >
                         <IconThumbUp/>
                     </ActionIcon> :
-                    <ActionIcon variant="filled" className={classes.like_button}
+                    <ActionIcon variant="transparent" className={classes.like_button}
                                 onClick={() => unVoteAction(id, userId)}
                     >
                         <IconThumbUp/>
@@ -258,12 +258,12 @@ function ReviewCard(props: ReviewCardProps): JSX.Element {
                 }
                 <span>{upVotes}</span>
                 {!(didUserDownVote) ?
-                    <ActionIcon variant="outline" className={classes.like_button}
+                    <ActionIcon variant="transparent" className={classes.like_button}
                                 onClick={() => voteAction(id, VoteValue.DownVote)}
                     >
                         <IconThumbDown/>
                     </ActionIcon> :
-                    <ActionIcon variant="filled" className={classes.like_button}
+                    <ActionIcon variant="transparent" className={classes.like_button}
                                 onClick={() => unVoteAction(id, userId)}
                     >
                         <IconThumbDown/>
