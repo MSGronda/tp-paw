@@ -2,20 +2,21 @@ import classes from './degrees.module.css';
 import { Navbar } from "../../components/navbar/navbar";
 import { Footer } from "../../components/footer/footer";
 import { useTranslation } from "react-i18next";
-import { degreeService } from "../../services";
+import {degreeService, userService} from "../../services";
 import { useEffect, useState } from 'react';
 import { handleService } from '../../handlers/serviceHandler';
 import { useNavigate } from 'react-router-dom';
 import {ActionIcon, Button, Card, Tooltip} from '@mantine/core';
 import {IconTrash} from "@tabler/icons-react";
 import Title from '../../components/title/title';
+import {Degree} from "../../models/Degree.ts";
 
 
 export default function Degrees() {
     const { t } = useTranslation();
     const navigate = useNavigate();
 
-    const [degrees, setDegrees] = useState<any>([]);
+    const [degrees, setDegrees] = useState<Degree[]>([]);
     const [loading, setLoading] = useState(true);
     const [openedTooltips, setOpenedTooltips] = useState<{ [key: number]: boolean}>({});
 
@@ -31,7 +32,8 @@ export default function Degrees() {
     const handleDeleteDegree = async (id: number) => {
         const res = await degreeService.deleteDegree(id);
         handleService(res, navigate);
-        searchDegrees();
+        await userService.getAndCacheUser();    // Una solucion fea por si se borra la carrera en la cual estas
+        await searchDegrees();
     }
 
     const toggleTooltip = (id: number) => {
@@ -53,7 +55,7 @@ export default function Degrees() {
                 {!loading && (
                     <>
                         <h1>{t('Degrees.title')}</h1>
-                        {degrees.map((degree: any) => (
+                        {degrees.map((degree) => (
                             <Card
                                 key={degree.id}
                                 withBorder

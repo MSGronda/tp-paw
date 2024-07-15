@@ -1,0 +1,1 @@
+ALTER TABLE users ADD CONSTRAINT degree_fk  FOREIGN KEY (degreeid) REFERENCES degrees(id) ON DELETE SET NULL;

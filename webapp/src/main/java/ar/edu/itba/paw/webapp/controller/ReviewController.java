@@ -59,15 +59,6 @@ public class ReviewController {
         Response.ResponseBuilder responseBuilder = Response.ok(new GenericEntity<List<ReviewDto>>(reviewDtos){});
         PaginationLinkBuilder.getResponsePaginationLinks(responseBuilder, uriInfo, page, lastPage);
         return responseBuilder.build();
-
-//        if (userId != null){
-//            final User user = userService.findById(userId).orElseThrow(UserNotFoundException::new);
-//            int lastPage = reviewService.getTotalPagesForUserReviews(user);
-//
-//
-//        }
-//
-//        return Response.ok(new GenericEntity<List<ReviewDto>>(reviewDtos){}).build();
     }
 
     @POST

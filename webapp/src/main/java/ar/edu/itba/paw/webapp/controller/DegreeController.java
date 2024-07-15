@@ -39,9 +39,7 @@ public class DegreeController {
 
     @GET
     @Produces("application/vnd.degree-list.v1+json")
-    public Response getDegrees(
-        // TODO: params (?)
-    ) {
+    public Response getDegrees() {
         final List<Degree> degrees = degreeService.getAll();
         final List<DegreeDto> degreeDtos = degrees.stream().map(degree -> DegreeDto.fromDegree(uriInfo, degree)).collect(Collectors.toList());
         if(degreeDtos.isEmpty()) {

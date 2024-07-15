@@ -106,7 +106,7 @@ export class UserService {
         }
     }
     
-    async updateCachedUser() {
+    async getAndCacheUser() {
         let user = await this.getUser();
         if(user.failure) throw new Error("Unable to get user data");
         user = user.data;
@@ -133,7 +133,7 @@ export class UserService {
             throw new Error("Unable to set degree and subjects");
         }
         
-        await this.updateCachedUser();
+        await this.getAndCacheUser();
     }
     
     async changePassword(oldPassword: string, newPassword: string) {
@@ -179,7 +179,7 @@ export class UserService {
               body
             );
             
-            await this.updateCachedUser();
+            await this.getAndCacheUser();
             window.location.reload();
             
             return handleResponse(res);
@@ -198,7 +198,7 @@ export class UserService {
               body
             );
             
-            await this.updateCachedUser();
+            await this.getAndCacheUser();
             window.location.reload();
             
             return handleResponse(res);
@@ -232,7 +232,7 @@ export class UserService {
             );
 
 
-            await this.updateCachedUser();
+            await this.getAndCacheUser();
             window.location.reload();
             
             return handleResponse(res);

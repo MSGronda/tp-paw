@@ -55,27 +55,23 @@ export default function Home() {
 
     const [user, setUser] = useState<User>();
     const getUserData = async () => {
-        const userData = await userService.getUser();
-        if(!userData)
-            navigate('/login');
 
+        const userData = await userService.getUser();
+        if(!userData){
+            navigate('/login');
+        }
         const user = handleService(userData, navigate)
         setUser(user);
 
         // User semester
-        const respSubjects = await subjectService.getUserPlanSubjects(user.id);
-        const dataSubjects = handleService(respSubjects, navigate);
-
-        const respPlan = await userService.getUserPlan(user.id);
-        const dataPlan = handleService(respPlan, navigate);
-
+        const dataSubjects = handleService(await subjectService.getUserPlanSubjects(user.id), navigate);
+        const dataPlan = handleService(await userService.getUserPlan(user.id), navigate);
         setUserSemester(createSelectedSubjects(dataPlan, dataSubjects.subjects));
 
         // User degree
-        const degreeData = await degreeService.getDegreeById(user.id);
-        const degree = handleService(degreeData, navigate)
-        setTotalCreditsInDegree(degree.totalCredits)
-        setOverallProgress((user.creditsDone / degree.totalCredits) * 100)
+        const degree = handleService(await degreeService.getDegreeById(user.degreeId), navigate);
+        setTotalCreditsInDegree(degree.totalCredits);
+        setOverallProgress((user.creditsDone / degree.totalCredits) * 100);
     }
 
     // = = = Current semester = = =
