@@ -7,6 +7,7 @@
 }
 
 .container_70 {
+    min-height: 45rem;
     width: min(max(800px, 70%), 100%);
     padding-left: 2rem;
     padding-right: 2rem;

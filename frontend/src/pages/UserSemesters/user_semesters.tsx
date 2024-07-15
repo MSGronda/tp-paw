@@ -1,6 +1,6 @@
 import {subjectService, userService} from "../../services";
 import {handleService} from "../../handlers/serviceHandler.tsx";
-import {useNavigate} from "react-router-dom";
+import {Link, useNavigate} from "react-router-dom";
 import {useEffect, useState} from "react";
 import {UserPlan} from "../../models/UserPlan.ts";
 import {Subject} from "../../models/Subject.ts";
@@ -54,19 +54,30 @@ export default function UserSemesters() {
                 <h2 style={{margin: ".5rem", fontSize: "2rem"}}>{t("UserSemesters.bodyTitle")}</h2>
                 <div style={{ borderBottom: '1px solid #ccc', margin: '10px 0' }}></div>
             </div>
-            <div className={classes.semester_area}>
-                {
-                    userSemesters.map((semester, i) =>
-                        <SemesterCard
-                            key={i}
-                            dateFinished={semester.dateFinished}
-                            subjects={semesterSubjects.get(semester.dateFinished) ?? []}
-                            index={i}
-                            totalSemester={userSemesters.length}
-                        />
-                    )
-                }
-            </div>
+            {
+                userSemesters.length == 0 ?
+                    <div>
+                        <h3 className={classes.emptyTabInfo}>
+                            {t("UserSemesters.emptySemester")}
+                            <Link to={{pathname:`/builder`}}>
+                                {t("UserSemesters.emptySemesterLink")}
+                            </Link>
+                        </h3>
+                    </div> :
+                    <div className={classes.semester_area}>
+                        {
+                            userSemesters.map((semester, i) =>
+                                <SemesterCard
+                                    key={i}
+                                    dateFinished={semester.dateFinished}
+                                    subjects={semesterSubjects.get(semester.dateFinished) ?? []}
+                                    index={i}
+                                    totalSemester={userSemesters.length}
+                                />
+                            )
+                        }
+                    </div>
+            }
         </div>
 
     </div>);

@@ -484,7 +484,7 @@ export default function SemesterBuilder() {
                                     <IconCalendarEvent style={{ width: '70%', height: '70%' }} stroke={1.5} />
                                 </ActionIcon>
                             </div>
-                            <Divider/>
+                            <Divider style={{marginTop: '1rem'}}/>
                         </Card.Section>
                         <div className={classes.selected_list}>
                             {selectedSubjects.map((selected) => (
@@ -508,7 +508,7 @@ export default function SemesterBuilder() {
                             <div className={classes.selected_header}>
                                 <h4 className={classes.section_titles}>{t("Builder.overview")}</h4>
                             </div>
-                            <Divider/>
+                            <Divider style={{marginTop: '1rem'}}/>
                         </Card.Section>
                         <div>
                             <div className={classes.info_card}>

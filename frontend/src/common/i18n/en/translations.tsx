@@ -421,7 +421,9 @@ export const TRANSLATIONS_EN = {
         cardTitle: "Semester {{n}}",
         active: "Active",
         completed: "Completed: {{n}}",
-        credits: "{{n}} credits"
+        credits: "{{n}} credits",
+        emptySemester: "It seems like you don't have any semesters. You can build one using the",
+        emptySemesterLink: " semester builder.",
     },
     Error :{
         title: "Error",

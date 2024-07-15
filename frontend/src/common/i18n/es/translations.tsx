@@ -418,7 +418,9 @@ export const TRANSLATIONS_ES = {
         cardTitle: "Cuatrimestre {{n}}",
         active: "Activo",
         completed: "Completado: {{n}}",
-        credits: "{{n}} creditos"
+        credits: "{{n}} creditos",
+        emptySemester: "No tienes cuatrimestres hechos. Podes construir uno usando el",
+        emptySemesterLink: " constructor de cuatrimestre.",
     },
     Error: {
         title: "Error",

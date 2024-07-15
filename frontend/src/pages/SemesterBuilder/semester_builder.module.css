@@ -49,6 +49,8 @@
     display: grid;
     grid-template-columns: repeat(2, 1fr);
     overflow-y: auto;
+    align-items: center;
+    justify-items: center;
 }
 
 .available_sorting {
