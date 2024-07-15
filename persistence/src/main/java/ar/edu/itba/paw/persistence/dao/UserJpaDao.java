@@ -88,6 +88,10 @@ public class UserJpaDao implements UserDao {
     public void changeUsername(final User user, final String username) {
         user.setUsername(username);
     }
+    @Override
+    public void changeImage(final User user, final Image image) {
+        user.setImageId(image.getId());
+    }
 
     @Override
     public void addRole(final User user, final Role role) {

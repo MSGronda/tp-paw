@@ -10,19 +10,23 @@ import java.util.List;
 import java.util.Objects;
 
 public class EditUserForm {
-
     @Size(max = 20)
     @Pattern(regexp = "^\\p{L}(\\p{L}|\\s|_)*$")
     private String userName;
-
     private String oldPassword;
-
     @Size(min = 8, max = 25)
     private String newPassword;
-
     private Long degreeId;
-
     private List<String> subjectIds;
+    private Long imageId;
+
+
+    public Long getImageId() {
+        return imageId;
+    }
+    public void setImageId(Long imageId) {
+        this.imageId = imageId;
+    }
 
     public Long getDegreeId() {
         return degreeId;
@@ -35,7 +39,6 @@ public class EditUserForm {
     public List<String> getSubjectIds() {
         return subjectIds;
     }
-
     public void setSubjectIds(List<String> subjectIds) {
         this.subjectIds = subjectIds;
     }
@@ -43,10 +46,10 @@ public class EditUserForm {
     public String getUserName() {
         return userName;
     }
-
     public void setUserName(String userName) {
         this.userName = userName;
     }
+
     public void setNewPassword(String newPassword) {
         this.newPassword = newPassword;
     }

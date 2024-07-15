@@ -23,6 +23,7 @@ public interface UserDao {
 
     void changePassword(final User user, final String password);
     void changeUsername(final User user, final String username);
+    void changeImage(final User user, final Image image);
 
     void addRole(final User user, final Role role);
 

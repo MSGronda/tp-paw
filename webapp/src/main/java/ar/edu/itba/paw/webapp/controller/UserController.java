@@ -100,20 +100,10 @@ public class UserController {
                 editUserForm.getOldPassword(),
                 editUserForm.getNewPassword(),
                 editUserForm.getDegreeId(),
-                editUserForm.getSubjectIds()
+                editUserForm.getSubjectIds(),
+                editUserForm.getImageId()
         );
         return Response.ok().build();
-    }
-    
-    @POST
-    @Path("/{id}/picture")
-    @Consumes({"image/jpeg", "image/png"})
-    public Response updatePicture(@PathParam("id") final Long id, final byte[] picture){
-        final User user = userService.findById(id).orElseThrow(UserNotFoundException::new);
-        userService.updateProfilePicture(user, picture);
-        
-        final URI imgUri = uriInfo.getBaseUriBuilder().path("image").path(String.valueOf(user.getImageId())).build();
-        return Response.created(imgUri).build();
     }
 
     @GET

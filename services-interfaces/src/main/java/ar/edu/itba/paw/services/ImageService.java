@@ -8,4 +8,6 @@ import java.util.Optional;
 public interface ImageService {
     Optional<Image> findById(final long id);
     List<Image> getAll();
+
+    Image createImage(final byte[] picture);
 }

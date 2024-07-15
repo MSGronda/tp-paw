@@ -44,8 +44,6 @@ public class UserServiceImpl implements UserService {
     private final ReviewService reviewService;
 
     private final AuthUserService authUserService;
-
-    private static final int MAX_IMAGE_SIZE = 1024 * 1024 * 5;
     private static final Logger LOGGER = LoggerFactory.getLogger(UserServiceImpl.class);
 
     @Autowired
@@ -157,13 +155,10 @@ public class UserServiceImpl implements UserService {
 
     @Transactional
     @Override
-    public void updateProfilePicture(final User user, final byte[] newImage) throws InvalidImageSizeException {
-        if (newImage.length > MAX_IMAGE_SIZE || newImage.length == 0) {
-            throw new InvalidImageSizeException();
-        }
+    public void updateProfilePicture(final User user, final long imageId) {
+        final Image image = imageDao.findById(imageId).orElseThrow(ImageNotFoundException::new);
 
-        final Image image = imageDao.findById(user.getImageId()).orElseThrow(IllegalStateException::new);
-        imageDao.update(image, newImage);
+        userDao.changeImage(user, image);
     }
 
     @Override
@@ -524,7 +519,16 @@ public class UserServiceImpl implements UserService {
     }
     @Transactional
     @Override
-    public void updateUser(final Long userId, final User user, final String username, final String oldPassword, final String newPassword, final Long degreeId, final List<String> subjectIds) throws OldPasswordDoesNotMatchException{
+    public void updateUser(
+            final Long userId,
+            final User user,
+            final String username,
+            final String oldPassword,
+            final String newPassword,
+            final Long degreeId,
+            final List<String> subjectIds,
+            final Long imageId
+    ) throws OldPasswordDoesNotMatchException{
         if( user.getId() != userId) {
             throw new ProfileNotOwnedException();
         }
@@ -542,6 +546,9 @@ public class UserServiceImpl implements UserService {
         }
         if(subjectIds != null){
             updateMultipleSubjectProgress(user, subjectIds, SubjectProgress.DONE);
+        }
+        if(imageId != null){
+            updateProfilePicture(user, imageId);
         }
     }
 

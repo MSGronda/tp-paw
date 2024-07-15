@@ -90,9 +90,9 @@ public class UserServiceImplTest {
 
     @Test(expected = InvalidImageSizeException.class)
     public void testUpdateProfilePictureLargeImage() throws InvalidImageSizeException, IOException {
-        byte[] image = Files.readAllBytes(new File("src\\test\\resources\\large_image.jpg").toPath());
+        byte[] bytes = Files.readAllBytes(new File("src\\test\\resources\\large_image.jpg").toPath());
 
-        userService.updateProfilePicture(testUser, image);
+        imageDao.create(bytes);
     }
 
     @Test

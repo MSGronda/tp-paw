@@ -211,7 +211,7 @@ export class UserService {
         try {
             const res = await axiosService.authAxiosWrapper(
               axiosService.POST,
-              `${path}/${this.getUserId()}/picture`,
+              `/images`,
               {
                   headers: {
                     'Content-Type': file.name.endsWith(".png") ? "image/png" : "image/jpeg"
@@ -219,7 +219,19 @@ export class UserService {
               },
               await file.arrayBuffer()
             );
-            
+
+            const paths = new URL(res.headers.location).pathname.split('/');
+            const imageId = paths[paths.length - 1];
+
+            const body = { imageId };
+            const res2 = await axiosService.authAxiosWrapper(
+                axiosService.PATCH,
+                `${path}/${this.getUserId()}`,
+                {},
+                body
+            );
+
+
             await this.updateCachedUser();
             window.location.reload();
             
