@@ -1,6 +1,7 @@
 package ar.edu.itba.paw.services;
 
 import ar.edu.itba.paw.models.Image;
+import ar.edu.itba.paw.models.exceptions.InvalidImageSizeException;
 import ar.edu.itba.paw.persistence.dao.ImageDao;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -8,6 +9,9 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -52,5 +56,12 @@ public class ImageServiceImplTest {
         assertEquals(2, actual.size());
         assertEquals(DATA, actual.get(0).getImage());
         assertEquals(DATA2, actual.get(1).getImage());
+    }
+
+    @Test(expected = InvalidImageSizeException.class)
+    public void testUploadPictureLargeImage() throws InvalidImageSizeException, IOException {
+        byte[] bytes = Files.readAllBytes(new File("src\\test\\resources\\large_image.jpg").toPath());
+
+        imageService.createImage(bytes);
     }
 }

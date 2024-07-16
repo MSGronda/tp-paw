@@ -87,14 +87,6 @@ public class UserServiceImplTest {
         userService.changePassword(testUser, "new_password1", wrongPassword);
     }
 
-
-    @Test(expected = InvalidImageSizeException.class)
-    public void testUpdateProfilePictureLargeImage() throws InvalidImageSizeException, IOException {
-        byte[] bytes = Files.readAllBytes(new File("src\\test\\resources\\large_image.jpg").toPath());
-
-        imageDao.create(bytes);
-    }
-
     @Test
     public void testAddSubjectToUserSemester() {
         final String classId = "A";
