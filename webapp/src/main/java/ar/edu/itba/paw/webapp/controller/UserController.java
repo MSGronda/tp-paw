@@ -41,8 +41,7 @@ public class UserController {
     // Posteriormente se va a hacer un patch para cargar el degree y los subjects mediante un interceptor
     @POST
     @Consumes("application/vnd.user.register.v1+json")
-    public Response registerUser(
-            @Valid @ModelAttribute("userForm") final UserForm userForm){
+    public Response registerUser(@Valid @ModelAttribute("userForm") final UserForm userForm){
         final User newUser = userService.create(
                 User.builder()
                         .email(userForm.getEmail())
@@ -57,7 +56,7 @@ public class UserController {
     
     @POST
     @Consumes("application/vnd.user.confirm.v1+json")
-    public Response confirm(@Valid ConfirmUserForm form) {
+    public Response confirm(@Valid final ConfirmUserForm form) {
         try {
             userService.confirmUser(form.getToken());
             return Response.ok().build();
@@ -69,7 +68,7 @@ public class UserController {
     
     @POST
     @Consumes("application/vnd.user.recover.request.v1+json")
-    public Response requestRecover(@Valid RecoverPasswordRequestForm form) {
+    public Response requestRecover(@Valid final RecoverPasswordRequestForm form) {
         try {
             userService.sendPasswordRecoveryEmail(form.getEmail());
         } catch(UserNotFoundException e) {
@@ -81,7 +80,7 @@ public class UserController {
     
     @POST
     @Consumes("application/vnd.user.recover.v1+json")
-    public Response recover(@Valid RecoverPasswordForm form) {
+    public Response recover(@Valid final RecoverPasswordForm form) {
         try {
             userService.recoverPassword(form.getToken(), form.getPassword());
             return Response.ok().build();
@@ -112,11 +111,15 @@ public class UserController {
             @QueryParam("subjectId") final String subjectId,
             @QueryParam("page") @DefaultValue("0") final Integer page
     ){
+        final User currentUser = authUserService.getCurrentUser();
+
         final List<User> users = userService.getUsers(subjectId, page);
-        if( users.isEmpty() ){
+
+        if(users.isEmpty()){
             return Response.noContent().build();
         }
-        final List<UserDto> userDtos = users.stream().map(u -> UserDto.fromUser(uriInfo, u)).collect(Collectors.toList());
+
+        final List<UserDto> userDtos = users.stream().map(u -> UserDto.fromUser(uriInfo, currentUser, u)).collect(Collectors.toList());
         return Response.ok(new GenericEntity<List<UserDto>>(userDtos){}).build();
     }
 
@@ -125,8 +128,11 @@ public class UserController {
     @Path("/{id}")
     @Produces("application/vnd.user.v1+json")
     public Response getUser(@PathParam("id") final Long id){
+        final User currentUser = authUserService.getCurrentUser();
+
         final User user = userService.findById(id).orElseThrow(UserNotFoundException::new);
-        return Response.ok(UserDto.fromUser(uriInfo, user)).build();
+
+        return Response.ok(UserDto.fromUser(uriInfo, currentUser, user)).build();
     }
 
     @GET

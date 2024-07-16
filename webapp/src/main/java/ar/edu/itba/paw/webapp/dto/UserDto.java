@@ -22,14 +22,19 @@ public class UserDto {
     private URI reviews;
     private URI userSemester;
 
-    public static UserDto fromUser(final UriInfo uriInfo, final User user){
-        if(user == null)
+    public static UserDto fromUser(final UriInfo uriInfo, final User currentUser, final User user){
+        if(user == null){
             return null;
+        }
 
         final UserDto userDto = new UserDto();
 
         userDto.id = user.getId();
-        userDto.email = user.getEmail();
+
+        if(user.equals(currentUser)){
+            userDto.email = user.getEmail();
+        }
+
         userDto.username = user.getUsername();
         userDto.image = uriInfo.getBaseUriBuilder().path("images").path(String.valueOf(user.getImageId())).build();
         userDto.roles = user.getRoles().stream().map(Role::getName).collect(Collectors.toList());
