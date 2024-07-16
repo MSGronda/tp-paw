@@ -22,7 +22,8 @@ export const TRANSLATIONS_EN = {
         password_error: "Invalid password",
         confirm_password: "Repeat Password",
         confirm_password_error: "Passwords do not match",
-        register: "Register"
+        register: "Register",
+        emailTaken: "Unable to register with this email!"
     },
     RegisterComplete: {
         title: "Registration successful",

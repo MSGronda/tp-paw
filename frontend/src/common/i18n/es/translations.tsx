@@ -22,7 +22,8 @@ export const TRANSLATIONS_ES = {
         password_error: "Contraseña inválida",
         confirm_password: "Repetir Contraseña",
         confirm_password_error: "Las contraseñas no coinciden",
-        register: "Registrarse"
+        register: "Registrarse",
+        emailTaken: "¡No se ha podido registrar usando ese email!"
     },
     RegisterComplete: {
         title: "Registro completado!",

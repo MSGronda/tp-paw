@@ -34,20 +34,26 @@ export default function Register() {
     
     const [registerComplete, setRegisterComplete] = useState(false);
 
+    const [emailTaken, setEmailTaken] = useState<boolean>(false);
+
     // Handle form submission
     function handleFormSubmit(e: { preventDefault: () => void; })  {
         e.preventDefault();
 
-                
         const form: RegisterForm = {
             email,
             name: username,
             password,
             passwordConfirmation: confirmPassword
         }
-        AuthService.register(form).then((res) => {
-            if(!res) return; //error
-            
+        AuthService.register(form).then(async (res) => {
+            if (!res) {
+                setEmailTaken(true);
+                await new Promise(r => setTimeout(r, 7000));
+                setEmailTaken(false);
+                return;
+            }
+
             setRegisterComplete(true);
         })
     }
@@ -97,6 +103,9 @@ export default function Register() {
                         className={classes.padding}
                         error={confirmPasswordError}
                     />
+                    <div>
+                        {emailTaken ? <span style={{color: "red"}}>{t("Register.emailTaken")}</span> : <></> }
+                    </div>
                     <div className={classes.register_button_div}>
                         <Button type='submit' color='green.7' disabled={isSubmitDisabled}>
                             {t("Register.register")}
