@@ -218,81 +218,6 @@ public class ReviewJpaDao implements ReviewDao {
         return (int) Math.max(1, Math.ceil(((Number) nativeQuery.getSingleResult()).doubleValue() / PAGE_SIZE));
     }
 
-    @Override
-    public List<Review> getAllSubjectReviews(
-            final Subject subject,
-            final int page,
-            final ReviewOrderField orderBy,
-            final OrderDir dir
-    ){
-        final StringBuilder nativeQuerySb = new StringBuilder("SELECT id FROM reviews WHERE idsub = ?");
-        appendOrderSql(nativeQuerySb, orderBy, dir);
-
-        @SuppressWarnings("unchecked") final List<Long> ids = (List<Long>) em.createNativeQuery(nativeQuerySb.toString())
-                .setParameter(1, subject.getId())
-                .setFirstResult((page - 1) * PAGE_SIZE)
-                .setMaxResults(PAGE_SIZE)
-                .getResultList().stream().map(n -> ((Number)n).longValue()).collect(Collectors.toList());
-
-        if(ids.isEmpty()) return Collections.emptyList();
-
-        final StringBuilder hqlQuerySb = new StringBuilder("from Review where id in :ids");
-        appendOrderHql(hqlQuerySb, orderBy, dir);
-
-        return em.createQuery(hqlQuerySb.toString(), Review.class)
-                .setParameter("ids", ids)
-                .getResultList();
-    }
-
-    @Override
-    public List<Review> getAllUserReviews(
-            final User user,
-            final int page,
-            final ReviewOrderField orderBy,
-            final OrderDir dir
-    ){
-        final StringBuilder nativeQuerySb = new StringBuilder("SELECT id FROM reviews WHERE iduser = ?");
-        appendOrderSql(nativeQuerySb, orderBy, dir);
-
-        @SuppressWarnings("unchecked")
-        final List<Long> ids = (List<Long>) em.createNativeQuery(nativeQuerySb.toString())
-                .setParameter(1, user.getId())
-                .setFirstResult((page - 1) * PAGE_SIZE)
-                .setMaxResults(PAGE_SIZE)
-                .getResultList().stream().map(n -> ((Number)n).longValue()).collect(Collectors.toList());
-
-
-        if(ids.isEmpty()) return Collections.emptyList();
-
-
-        final StringBuilder hqlQuerySb = new StringBuilder("from Review where id in :ids");
-        appendOrderHql(hqlQuerySb, orderBy, dir);
-
-        return em.createQuery(hqlQuerySb.toString(), Review.class)
-                .setParameter("ids", ids)
-                .getResultList();
-    }
-
-    @Override
-    public int getTotalPagesForUserReviews(final User user) {
-        final int totalReviews = ((Number) em.createQuery("select count(*) from Review where user = :user")
-                .setParameter("user", user)
-                .getSingleResult()).intValue();
-
-        return (int) Math.max(1, Math.ceil((double) totalReviews / PAGE_SIZE));
-    }
-
-    @Override
-    public int getTotalPagesForSubjectReviews(final Subject subject) {
-        final int totalReviews = ((Number) em.createQuery("select count(*) from Review where subject = :subject")
-                .setParameter("subject", subject)
-                .getSingleResult()).intValue();
-
-        return (int) Math.max(1, Math.ceil((double) totalReviews / PAGE_SIZE));
-    }
-
-
-
     private void appendOrderHql(final StringBuilder sb, final ReviewOrderField orderBy, final OrderDir dir) {
         if (orderBy == null) return;
 
@@ -303,13 +228,5 @@ public class ReviewJpaDao implements ReviewDao {
                 .append(orderBy.getFieldName())
                 .append(" ")
                 .append(dirToUse.getQueryString());
-    }
-
-    @Override
-    public List<Review> getReviewFromSubjectAndUser(final Subject subject, final User user) {
-        return em.createQuery("from Review where subject = :subject and user = :user", Review.class)
-                .setParameter("subject", subject)
-                .setParameter("user", user)
-                .getResultList();
     }
 }

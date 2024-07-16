@@ -103,19 +103,8 @@ public class ReviewJpaDaoTest {
 
     @Rollback
     @Test
-    public void testReviewVoting() {
-//        final ReviewVote reviewVote = reviewJpaDao.voteReview(testUser, testReview, ReviewVoteType.UPVOTE);
-//        em.flush();
-//
-//        assertEquals(testReviewVote.getReview(), reviewVote.getReview());
-//        assertEquals(testReviewVote.getUser(), reviewVote.getUser());
-//        assertEquals(testReviewVote.getVote(), reviewVote.getVote());
-    }
-
-    @Rollback
-    @Test
     public void testGetAllUserReviews() {
-        final List<Review> userReviews = reviewJpaDao.getAllUserReviews(UserMockData.getUser2(), PageMockData.DEFAULT_PAGE, PageMockData.DEFAULT_ORDER_REVIEW, PageMockData.DEFAULT_DIR);
+        final List<Review> userReviews = reviewJpaDao.reviewSearch(UserMockData.getUser2(), null, UserMockData.getUser2().getId(), PageMockData.DEFAULT_PAGE, PageMockData.DEFAULT_ORDER_REVIEW, PageMockData.DEFAULT_DIR);
 
         assertEquals(1, userReviews.size());
         assertTrue(userReviews.contains(ReviewMockData.getReview2()));
@@ -124,7 +113,7 @@ public class ReviewJpaDaoTest {
     @Rollback
     @Test
     public void testGetAllSubjectReviews() {
-        final List<Review> subjectReviews = reviewJpaDao.getAllSubjectReviews(SubjectMockData.getSubject2(), PageMockData.DEFAULT_PAGE, PageMockData.DEFAULT_ORDER_REVIEW, PageMockData.DEFAULT_DIR);
+        final List<Review> subjectReviews = reviewJpaDao.reviewSearch(UserMockData.getUser2(), SubjectMockData.getSubject2().getId(), null, PageMockData.DEFAULT_PAGE, PageMockData.DEFAULT_ORDER_REVIEW, PageMockData.DEFAULT_DIR);
 
         assertEquals(1, subjectReviews.size());
         assertTrue(subjectReviews.contains(ReviewMockData.getReview2()));

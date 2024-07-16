@@ -27,14 +27,6 @@ public interface ReviewDao {
     Optional<ReviewVote> getUserVote(final User user, final Review review);
     List<ReviewVote> getReviewVotes(final Review review, final int page);
 
-    List<Review> getAllUserReviews(final User user, final int page, final ReviewOrderField orderBy, final OrderDir dir);
-    int getTotalPagesForUserReviews(final User user);
-
-    List<Review> getAllSubjectReviews(final Subject subject, final int page, final ReviewOrderField orderBy, final OrderDir dir);
-    int getTotalPagesForSubjectReviews(final Subject subject);
-
-    List<Review> getReviewFromSubjectAndUser(final Subject subject, final User user);
-
     List<Review> reviewSearch(
             final User currentUser,
             final String subjectId,
