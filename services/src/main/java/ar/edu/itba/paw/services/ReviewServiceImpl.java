@@ -18,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class ReviewServiceImpl implements ReviewService {
@@ -55,59 +56,23 @@ public class ReviewServiceImpl implements ReviewService {
     }
 
     @Override
-    public List<Review> get(final Long userId, final String subjectId, final int page, final String orderBy, final String dir){
-        if(userId != null){
-            Optional<User> user = userService.findById(userId);
-
-            if(!user.isPresent()) throw new UserNotFoundException();
-
-
-            if(page > getTotalPagesForUserReviews(user.get()) || page < 1) throw new InvalidPageNumberException();
-
-            if(subjectId == null){
-                return reviewDao.getAllUserReviews(user.get(), page, ReviewOrderField.parse(orderBy), OrderDir.parse(dir));
-            }
-            else{
-                Optional<Subject> subject = subjectService.findById(subjectId);
-                if(!subject.isPresent()) throw new SubjectNotFoundException();
-                return reviewDao.getReviewFromSubjectAndUser(subject.get(), user.get());
-            }
+    public List<Review> get(final User currentUser, final Long userId, final String subjectId, final int page, final String orderBy, final String dir){
+        if(page < 1 || page > reviewDao.reviewSearchTotalPages(currentUser, subjectId, userId)){
+            throw new InvalidPageNumberException();
         }
-        else if(subjectId != null){
-            Optional<Subject> subject = subjectService.findById(subjectId);
 
-            if(!subject.isPresent()) throw new SubjectNotFoundException();
-
-            if(page < 1 || page > getTotalPagesForSubjectReviews(subject.get())) throw new InvalidPageNumberException();
-
-            return reviewDao.getAllSubjectReviews(subject.get(), page, ReviewOrderField.parse(orderBy), OrderDir.parse(dir));
-        }
-        return new ArrayList<>();
+        return reviewDao.reviewSearch(currentUser, subjectId, userId, page, ReviewOrderField.parse(orderBy), OrderDir.parse(dir));
     }
+
+    @Override
+    public int getTotalPages(final User currentUser, final Long userId, final String subjectId){
+        return reviewDao.reviewSearchTotalPages(currentUser, subjectId, userId);
+    }
+
 
     @Override
     public Optional<Review> findById(final long id) {
         return reviewDao.findById(id);
-    }
-
-    @Override
-    public int getTotalPages(Long userId, String subjetId) {
-        if ( userId != null ){
-            return getTotalPagesForUserReviews(userService.findById(userId).orElseThrow(UserNotFoundException::new));
-        }else {
-            return getTotalPagesForSubjectReviews(subjectService.findById(subjetId).orElseThrow(SubjectNotFoundException::new));
-        }
-    }
-
-    @Override
-    public int getTotalPagesForUserReviews(final User user){
-        return reviewDao.getTotalPagesForUserReviews(user);
-    }
-
-
-    @Override
-    public int getTotalPagesForSubjectReviews(final Subject subject){
-        return reviewDao.getTotalPagesForSubjectReviews(subject);
     }
 
     @Transactional

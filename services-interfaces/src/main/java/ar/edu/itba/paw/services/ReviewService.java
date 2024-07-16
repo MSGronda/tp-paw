@@ -13,14 +13,11 @@ import java.util.Optional;
 
 public interface ReviewService {
 
-    List<Review> get(final Long userId, final String subjectId, final int page, final String orderBy, final String dir);
+    List<Review> get(final User currentUser, final Long userId, final String subjectId, final int page, final String orderBy, final String dir);
+    int getTotalPages(final User currentUser, final Long userId, final String subjectId);
     Review create(final String subjectId, final Review.Builder review);
 
     Optional<Review> findById(final long id);
-
-    int getTotalPagesForUserReviews(final User user);
-
-    int getTotalPagesForSubjectReviews(final Subject subject);
 
     ReviewVote voteReview(final long reviewId, final ReviewVoteType vote);
 
@@ -33,6 +30,4 @@ public interface ReviewService {
     List<ReviewVote> getVotes(final Long reviewId, final Long userId, final int page);
 
     void deleteReviewVote(final long reviewId, final long userId);
-
-    int getTotalPages(Long userId, String subjectId);
 }

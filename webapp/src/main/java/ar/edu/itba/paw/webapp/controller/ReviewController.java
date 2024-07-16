@@ -48,14 +48,18 @@ public class ReviewController {
             @QueryParam("userId") final Long userId,
             @QueryParam("subjectId") final String subjectId
     ){
-        final List<Review> reviews = reviewService.get(userId, subjectId, page, orderBy, dir);
+        final User currentUser = authUserService.getCurrentUser();
 
-        if(reviews.isEmpty())
+        final List<Review> reviews = reviewService.get(currentUser, userId, subjectId, page, orderBy, dir);
+
+        if(reviews.isEmpty()){
             return Response.noContent().build();
+        }
 
-        final List<ReviewDto> reviewDtos = reviews.stream().map(review -> ReviewDto.fromReview(uriInfo, review)).collect(Collectors.toList());
+        final List<ReviewDto> reviewDtos = reviews.stream().map(review -> ReviewDto.fromReview(uriInfo, currentUser, review)).collect(Collectors.toList());
 
-        int lastPage = reviewService.getTotalPages(userId, subjectId);
+        int lastPage = reviewService.getTotalPages(currentUser, userId, subjectId);
+
         Response.ResponseBuilder responseBuilder = Response.ok(new GenericEntity<List<ReviewDto>>(reviewDtos){});
         PaginationLinkBuilder.getResponsePaginationLinks(responseBuilder, uriInfo, page, lastPage);
         return responseBuilder.build();
@@ -85,8 +89,10 @@ public class ReviewController {
     public Response getReviewById(
             @PathParam("id") final Long reviewId
     ){
+        final User currentUser = authUserService.getCurrentUser();
+
         final Review review = reviewService.findById(reviewId).orElseThrow(ReviewNotFoundException::new);
-        return Response.ok(ReviewDto.fromReview(uriInfo, review)).build();
+        return Response.ok(ReviewDto.fromReview(uriInfo, currentUser, review)).build();
     }
 
     @PUT

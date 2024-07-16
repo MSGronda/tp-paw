@@ -1,6 +1,8 @@
 package ar.edu.itba.paw.services;
 
 import ar.edu.itba.paw.models.*;
+import ar.edu.itba.paw.models.enums.OrderDir;
+import ar.edu.itba.paw.models.enums.ReviewOrderField;
 import ar.edu.itba.paw.models.enums.SubjectProgress;
 import ar.edu.itba.paw.models.exceptions.*;
 import ar.edu.itba.paw.persistence.dao.ImageDao;
@@ -553,23 +555,31 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<User> getUsersThatReviewedSubject(final String subjectId, final int page){
-        List<User> userList = new ArrayList<>();
-        if( page != 0){
-            List<Review> reviews = reviewService.get(null, subjectId, page, "difficulty", "desc");
-            for( Review review : reviews){
-                userList.add(review.getUser());
-            }
+    public List<User> getUsersThatReviewedSubject(final User currentUser, final String subjectId, final int page){
+        final List<User> userList = new ArrayList<>();
+        if(page == 0){
+            return userList;
         }
+
+        reviewService.get(
+                currentUser,
+                null,
+                subjectId,
+                page,
+                ReviewOrderField.DIFFICULTY.getFieldName(),
+                OrderDir.DESCENDING.getQueryString()
+            )
+            .stream().filter(r -> !r.isAnonymous() || (r.getUser().equals(currentUser))).forEach(r -> userList.add(r.getUser()));
+
         return userList;
     }
 
     @Override
-    public List<User> getUsers(final String subjectId, final int page){
+    public List<User> getUsers(final User currentUser, final String subjectId, final int page){
         if(subjectId != null){
-            return getUsersThatReviewedSubject(subjectId, page);
+            return getUsersThatReviewedSubject(currentUser, subjectId, page);
         }
-        List<User> userList = new ArrayList<>();
+        final List<User> userList = new ArrayList<>();
         userList.add(authUserService.getCurrentUser());
         return userList;
     }

@@ -1,5 +1,7 @@
 package ar.edu.itba.paw.webapp.dto;
 import ar.edu.itba.paw.models.Review;
+import ar.edu.itba.paw.models.User;
+
 import javax.ws.rs.core.UriInfo;
 import java.net.URI;
 
@@ -16,7 +18,7 @@ public class ReviewDto {
 
     private URI votes;
 
-    public static ReviewDto fromReview(final UriInfo uriInfo, final Review review){
+    public static ReviewDto fromReview(final UriInfo uriInfo, final User currentUser, final Review review){
         final ReviewDto reviewDto =  new ReviewDto();
 
         reviewDto.id = review.getId();
@@ -27,7 +29,10 @@ public class ReviewDto {
         reviewDto.anonymous = review.isAnonymous();
         reviewDto.upVotes = review.getUpvotes();
         reviewDto.downVotes = review.getDownvotes();
-        reviewDto.userId = review.getUser().getId();
+
+        if(!reviewDto.anonymous || (review.getUser().equals(currentUser))){
+            reviewDto.userId = review.getUser().getId();
+        }
 
         reviewDto.votes = uriInfo.getBaseUriBuilder().path("reviews").path(String.valueOf(reviewDto.id)).path("votes").build();
 

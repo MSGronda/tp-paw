@@ -231,7 +231,6 @@ export default function User() {
             <div className={classes.reviewsColumn}>
               {
                 !loadingReviews && reviews.length > 0 && reviews.map((review) => (
-                  !review.anonymous &&
                   <ReviewCard
                     key={review.id}
                     subjectId={review.subjectId}

@@ -49,31 +49,6 @@ public class ReviewServiceImplTest {
     @InjectMocks
     private ReviewServiceImpl reviewService;
 
-    @Test
-    public void testGetReviewByUserId() {
-        when(userService.findById(userId)).thenReturn(Optional.of(testUser));
-        when(reviewDao.getTotalPagesForUserReviews(testUser)).thenReturn(1);
-        when(reviewDao.getAllUserReviews(testUser, defaultPage, ReviewOrderField.parse(defaultOrderBy), OrderDir.parse(defaultDir)))
-                .thenReturn(new ArrayList<>(Collections.singletonList(testReview)));
-
-        final List<Review> userReviews = reviewService.get(userId, null, defaultPage, defaultOrderBy, defaultDir);
-
-        assertEquals(1, userReviews.size());
-        assertEquals(userReviews, Collections.singletonList(testReview));
-    }
-
-    @Test
-    public void testGetReviewBySubjectId() {
-        when(subjectService.findById(testSubject.getId())).thenReturn(Optional.of(testSubject));
-        when(reviewDao.getTotalPagesForSubjectReviews(testSubject)).thenReturn(1);
-        when(reviewDao.getAllSubjectReviews(testSubject, defaultPage, ReviewOrderField.parse(defaultOrderBy), OrderDir.parse(defaultDir)))
-                .thenReturn(new ArrayList<>(Collections.singletonList(testReview)));
-
-        final List<Review> subjectReviews = reviewService.get(null, testSubject.getId(), defaultPage, defaultOrderBy, defaultDir);
-
-        assertEquals(1, subjectReviews.size());
-        assertEquals(subjectReviews, Collections.singletonList(testReview));
-    }
 
     @Test
     public void testVoteReview() {

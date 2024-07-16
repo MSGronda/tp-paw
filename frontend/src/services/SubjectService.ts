@@ -39,7 +39,7 @@ export class SubjectService {
         try{
             let config: any = {};
             config.params = {
-                reviewed: userId,
+                userReviews: userId,
                 page: page
             };
             const res = await axiosService.authAxiosWrapper(axiosService.GET, `${path}`, config);

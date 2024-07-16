@@ -45,7 +45,7 @@ export function SubjectPage() {
     const [loading, setLoading] = useState(true);
     const [reviews, setReviews] = useState<Review[]>([]);
     const [didUserReview, setDidUserReview] = useState(true);
-    const [users, setUsers] = useState([{} as User]);
+    const [users, setUsers] = useState<User[]>([]);
     const [maxPage, setMaxPage] = useState(1);
     const [editShowAlert, setEditShowAlert] = useState(false);
     const [deleteShowAlert, setDeleteShowAlert] = useState(false);
@@ -84,7 +84,7 @@ export function SubjectPage() {
     const getUsersFromReviews = async (subjectId: string, page: number) => {
         const res = await userService.getUsersThatReviewedSubject(subjectId, page);
         const data = handleService(res, navigate);
-        if (res) {
+        if (res && res.data != "") {
             setUsers(data);
         }
     }

@@ -113,7 +113,7 @@ public class UserController {
     ){
         final User currentUser = authUserService.getCurrentUser();
 
-        final List<User> users = userService.getUsers(subjectId, page);
+        final List<User> users = userService.getUsers(currentUser, subjectId, page);
 
         if(users.isEmpty()){
             return Response.noContent().build();

@@ -284,7 +284,7 @@ public class SubjectJpaDao implements SubjectDao {
 
         if(params.hasUserReviews()){
             queryString.append(" s.id IN ( SELECT r.idsub FROM reviews r WHERE r.iduser = ? ) AND ");
-            paramValues.add(params.hasUserReviews());
+            paramValues.add(params.getUserReviews());
         }
 
         return removeExcessSQL(queryString.toString());

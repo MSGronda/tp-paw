@@ -7,12 +7,12 @@ import ar.edu.itba.paw.models.User;
 import ar.edu.itba.paw.models.enums.OrderDir;
 import ar.edu.itba.paw.models.enums.ReviewOrderField;
 import ar.edu.itba.paw.models.enums.ReviewVoteType;
-import org.hibernate.Query;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -114,6 +114,110 @@ public class ReviewJpaDao implements ReviewDao {
                 .getResultList().isEmpty();
     }
 
+    private StringBuilder removeExcessSQL(StringBuilder query) {
+        String and = " AND ";
+        String where = " WHERE ";
+
+        if(query.toString().endsWith(and)){
+            return new StringBuilder(query.substring(0, query.length() - and.length()));
+        }
+        if(query.toString().endsWith(where)){
+            return new StringBuilder(query.substring(0, query.length() - where.length()));
+        }
+        return query;
+    }
+
+    private StringBuilder addSearchFilters(
+            final StringBuilder nativeQuerySb,
+            final List<Object> params,
+            final User currentUser,
+            final String subjectId,
+            final Long userId
+    ){
+        if(subjectId != null) {
+            nativeQuerySb.append(" idsub = ? AND ");
+            params.add(subjectId);
+        }
+        if(userId != null) {
+            nativeQuerySb.append(" iduser = ?  AND ");
+
+            if(userId != currentUser.getId()){
+                nativeQuerySb.append(" useranonymous IS NOT TRUE AND ");
+            }
+
+            params.add(userId);
+        }
+        return removeExcessSQL(nativeQuerySb);
+    }
+
+    private StringBuilder appendOrderSql(final StringBuilder sb, final ReviewOrderField orderBy, final OrderDir dir) {
+        if (orderBy == null) return sb;
+
+        OrderDir dirToUse = dir;
+        if (dir == null) dirToUse = OrderDir.ASCENDING;
+
+        sb.append(" ORDER BY ")
+                .append(orderBy.getTableColumn())
+                .append(" ")
+                .append(dirToUse.getQueryString());
+
+        return sb;
+    }
+    private Query createNativeQuery(final StringBuilder nativeQuerySb, final List<Object> params){
+        System.out.println(nativeQuerySb);
+
+        final Query nativeQuery = em.createNativeQuery(nativeQuerySb.toString());
+
+        int i=1;
+        for(Object param : params){
+            nativeQuery.setParameter(i++, param);
+        }
+
+        return nativeQuery;
+    }
+
+    @Override
+    public List<Review> reviewSearch(
+            final User currentUser,
+            final String subjectId,
+            final Long userId,
+            final int page,
+            final ReviewOrderField orderBy,
+            final OrderDir dir
+    ){
+        final StringBuilder nativeQuerySb = new StringBuilder("SELECT id FROM reviews WHERE " );
+        final List<Object> params = new ArrayList<>();
+
+        final Query nativeQuery = createNativeQuery(appendOrderSql(addSearchFilters(nativeQuerySb, params, currentUser, subjectId, userId),orderBy, dir), params);
+
+        @SuppressWarnings("unchecked")
+        final List<Long> ids = (List<Long>) nativeQuery.setFirstResult((page - 1) * PAGE_SIZE)
+                .setMaxResults(PAGE_SIZE)
+                .getResultList().stream().map(n -> ((Number)n).longValue()).collect(Collectors.toList());
+
+        if(ids.isEmpty()) return Collections.emptyList();
+
+        final StringBuilder hqlQuerySb = new StringBuilder("from Review where id in :ids");
+        appendOrderHql(hqlQuerySb, orderBy, dir);
+
+        return em.createQuery(hqlQuerySb.toString(), Review.class)
+                .setParameter("ids", ids)
+                .getResultList();
+    }
+    @Override
+    public int reviewSearchTotalPages(
+            final User currentUser,
+            final String subjectId,
+            final Long userId
+    ){
+        final StringBuilder nativeQuerySb = new StringBuilder("SELECT count(*) FROM reviews WHERE " );
+        final List<Object> params = new ArrayList<>();
+
+        final Query nativeQuery = createNativeQuery(addSearchFilters(nativeQuerySb, params, currentUser, subjectId, userId), params);
+
+        return (int) Math.max(1, Math.ceil(((Number) nativeQuery.getSingleResult()).doubleValue() / PAGE_SIZE));
+    }
+
     @Override
     public List<Review> getAllSubjectReviews(
             final Subject subject,
@@ -124,8 +228,7 @@ public class ReviewJpaDao implements ReviewDao {
         final StringBuilder nativeQuerySb = new StringBuilder("SELECT id FROM reviews WHERE idsub = ?");
         appendOrderSql(nativeQuerySb, orderBy, dir);
 
-        @SuppressWarnings("unchecked")
-        final List<Long> ids = (List<Long>) em.createNativeQuery(nativeQuerySb.toString())
+        @SuppressWarnings("unchecked") final List<Long> ids = (List<Long>) em.createNativeQuery(nativeQuerySb.toString())
                 .setParameter(1, subject.getId())
                 .setFirstResult((page - 1) * PAGE_SIZE)
                 .setMaxResults(PAGE_SIZE)
@@ -188,17 +291,7 @@ public class ReviewJpaDao implements ReviewDao {
         return (int) Math.max(1, Math.ceil((double) totalReviews / PAGE_SIZE));
     }
 
-    private void appendOrderSql(final StringBuilder sb, final ReviewOrderField orderBy, final OrderDir dir) {
-        if (orderBy == null) return;
 
-        OrderDir dirToUse = dir;
-        if (dir == null) dirToUse = OrderDir.ASCENDING;
-
-        sb.append(" ORDER BY ")
-                .append(orderBy.getTableColumn())
-                .append(" ")
-                .append(dirToUse.getQueryString());
-    }
 
     private void appendOrderHql(final StringBuilder sb, final ReviewOrderField orderBy, final OrderDir dir) {
         if (orderBy == null) return;

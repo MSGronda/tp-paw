@@ -12,9 +12,13 @@ export class ReviewService {
             config.params = {
                 subjectId: subjectId,
                 page: page,
-                orderBy: orderBy,
-                dir: dir
             };
+            if(orderBy != ""){
+                config.params.orderBy = orderBy;
+            }
+            if(dir != ""){
+                config.params.dir = dir;
+            }
             const res = await axiosService.authAxiosWrapper(axiosService.GET, `${path}`, config);
             return handleResponse(res);
         } catch (error: any) {
