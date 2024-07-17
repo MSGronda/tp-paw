@@ -50,7 +50,7 @@ public interface UserService {
 
     void makeModerator(final User requesterUser, final long toMakeModeratorId) throws UserNotFoundException, UnauthorizedException;
 
-    void confirmUser(final String token) throws InvalidTokenException;
+    void confirmUser(final String token);
 
     void setLocale(final User user, final Locale locale);
     List<UserSemesterSubject> getCurrentUserSemester(final User user);

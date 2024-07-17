@@ -260,14 +260,21 @@ public class UserServiceImpl implements UserService {
 
     @Transactional
     @Override
-    public void sendPasswordRecoveryEmail(String email) throws UserNotFoundException {
-        final User user = userDao.findByEmail(email).orElseThrow(UserNotFoundException::new);
+    public void sendPasswordRecoveryEmail(final String email) throws UserNotFoundException {
+        final Optional<User> maybeUser = userDao.findByEmail(email);
+        if(!maybeUser.isPresent()){
+            LOGGER.info("Invalid email for recovery '{}'", email);
+            throw new UserNotFoundException();
+        }
+
+        final User user = maybeUser.get();
+
         mailService.sendRecover(user, createRecoveryToken(user));
     }
 
     @Transactional
     @Override
-    public void confirmUser(final String token) throws InvalidTokenException {
+    public void confirmUser(final String token) {
         final Optional<User> optUser = userDao.findByConfirmToken(token);
         if (!optUser.isPresent()) {
             LOGGER.warn("Invalid token when trying to confirm user for token: {}", token);

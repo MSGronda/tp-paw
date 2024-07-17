@@ -28,8 +28,6 @@ import java.util.stream.Collectors;
 @Path("users")
 @Component
 public class UserController {
-    private static final Logger LOGGER = LoggerFactory.getLogger(UserController.class);
-    
     @Autowired
     private UserService userService;
     @Autowired
@@ -57,37 +55,23 @@ public class UserController {
     @POST
     @Consumes("application/vnd.user.confirm.v1+json")
     public Response confirm(@Valid final ConfirmUserForm form) {
-        try {
-            userService.confirmUser(form.getToken());
-            return Response.ok().build();
-        } catch (InvalidTokenException e) {
-            LOGGER.info("Invalid confirmation token '{}'", form.getToken());
-            return Response.status(Response.Status.BAD_REQUEST).build();
-        }
+
+        userService.confirmUser(form.getToken());
+        return Response.ok().build();
     }
     
     @POST
     @Consumes("application/vnd.user.recover.request.v1+json")
     public Response requestRecover(@Valid final RecoverPasswordRequestForm form) {
-        try {
-            userService.sendPasswordRecoveryEmail(form.getEmail());
-        } catch(UserNotFoundException e) {
-            LOGGER.info("Invalid email for recovery '{}'", form.getEmail());
-        }
-        
+        userService.sendPasswordRecoveryEmail(form.getEmail());
         return Response.accepted().build();
     }
     
     @POST
     @Consumes("application/vnd.user.recover.v1+json")
     public Response recover(@Valid final RecoverPasswordForm form) {
-        try {
-            userService.recoverPassword(form.getToken(), form.getPassword());
-            return Response.ok().build();
-        } catch (InvalidTokenException e) {
-            LOGGER.info("Invalid token for recovery '{}'", form.getToken());
-            return Response.status(Response.Status.BAD_REQUEST).build();
-        }
+        userService.recoverPassword(form.getToken(), form.getPassword());
+        return Response.ok().build();
     }
 
     @PATCH
