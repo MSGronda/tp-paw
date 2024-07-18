@@ -392,7 +392,8 @@ export const TRANSLATIONS_EN = {
         semester: "Semester",
         subjectNumber: "Subjects",
         nothingFound: "No subjects found",
-        createDegree: "Create Degree"
+        createDegree: "Create Degree",
+        electives: "Electives",
     },
     Curriculum: {
         title: "Curriculum",

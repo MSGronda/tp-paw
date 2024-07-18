@@ -16,31 +16,40 @@ export function CreateDegree() {
     const [activeTab, setActiveTab] = useState<string | null>("general-info")
     const [appendedElements, setAppendedElements] = useState<JSX.Element[]>([]);
     const [opened, { open, close }] = useDisclosure(false);
-    const [searchId, setSearchId] = useState<string>("");
+    const [subjectSearchId, setSubjectSearchId] = useState<string>("");
+    const [electiveSearchId, setElectiveSearchId] = useState<string>("");
     const [subjects, setSubjects] = useState<any[]>([]);
     const [semesterNum, setSemesterNum] = useState<string | number>('');
     const [selectedSubjects, setSelectedSubjects] = useState<{ semesterNumber: number, subjects: string[] }[]>([]);
     const [subjectId, setSubjectId] = useState([]);
     const [credits, setCredits] = useState<string | number>('');
     const [degreeName, setDegreeName] = useState<string>('');
+    const [electiveId, setElectiveId] = useState([]);
 
     const handleSearchValue = (value: string) => {
-        setSearchId(value);
-        if(value.length > 1 && value.length < 5) {
-            getSubjects();
+        setSubjectSearchId(value);
+        if(value.length > 1) {
+            getSubjects(subjectSearchId);
         }
-
+    }
+    const handleElectiveSearchValue = (value: string) => {
+        setElectiveSearchId(value);
+        if(value.length > 1) {
+            getSubjects(electiveSearchId);
+        }
     }
     const OpenModal = () => {
+        setSubjects([]);
         setSemesterNum('');
         setSubjectId([]);
+        console.log(electiveId);
         open();
     }
 
-    const getSubjects = async() => {
+    const getSubjects = async (searchId: string) => {
         const res = await subjectService.getSubjectsByName(searchId,1, null, null, null, null, null, null);
         const data = handleService(res, navigate)
-        setSubjects(data.subjects);
+        setSubjects(filterSubjects(data.subjects));
     }
 
     const handleDeleteSemester = (semesterNumDelete: Number) => {
@@ -76,6 +85,7 @@ export function CreateDegree() {
     }, [selectedSubjects]);
 
     const handleAddSemester = () => {
+        setSubjects([]);
         const newSelectedSubjects = {semesterNumber: Number(semesterNum), subjects: subjectId};
         if(newSelectedSubjects.subjects.length != 0) {
             setSelectedSubjects(prevState =>[...prevState, newSelectedSubjects]
@@ -92,12 +102,30 @@ export function CreateDegree() {
         }
 
         const res1 = await degreeService.createDegree(degreeName, Number(credits));
-        console.log(res1)
+
         if(res1?.data) {
-            await degreeService.addSemestersToDegree(res1.data.id, selectedSubjects);
+            //agregar electiveId a selectedSubjects
+
+            const electives = {semesterNumber: Number(-1), subjects: electiveId};
+            const subjects = [...selectedSubjects, electives];
+
+            await degreeService.addSemestersToDegree(res1.data.id, subjects);
             console.log(res1?.data);
-            navigate("/degrees/"+res1.data.id);
+            navigate("/degree/"+res1.data.id);
         }
+    }
+
+    const filterSubjects = (subjects: any[]): any[] => {
+        // Combine selected subjects from all semesters and electives
+        const allSelectedSubjects: string[] = [
+            ...selectedSubjects.reduce((acc: string[], curr) => {
+                return [...acc, ...curr.subjects];
+            }, []),
+            ...electiveId
+        ];
+
+        // Filter out selected subjects from the available subjects
+        return subjects.filter(subject => !allSelectedSubjects.includes(subject.id));
     }
 
     return (
@@ -208,7 +236,7 @@ export function CreateDegree() {
                                         {t("CreateDegree.subjectNumber")}
                                         <MultiSelect
                                             searchable
-                                            searchValue={searchId}
+                                            searchValue={subjectSearchId}
                                             onSearchChange={handleSearchValue}
                                             data=
                                                 {subjects != undefined?  subjects.map((subject: { id: string; name: string }) => (
@@ -257,6 +285,38 @@ export function CreateDegree() {
                                     {appendedElements}
                                 </Table.Tbody>
                             </Table>
+                            <br />
+                            <br />
+                            <Table>
+                                <Table.Thead>
+                                    <Table.Tr>
+                                        <Table.Th>
+                                            {t("CreateDegree.electives")}
+                                        </Table.Th>
+                                    </Table.Tr>
+                                </Table.Thead>
+                                <Table.Tbody>
+                                    <Table.Tr>
+                                        <Table.Td>
+                                            <MultiSelect
+                                                searchable
+                                                searchValue={electiveSearchId}
+                                                onSearchChange={handleElectiveSearchValue}
+                                                data=
+                                                    {subjects != undefined?  subjects.map((subject: { id: string; name: string }) => (
+                                                        { value: subject.id, label: subject.id +" - "+ subject.name }
+                                                    ))  : []}
+                                                value={electiveId}
+                                                onChange={setElectiveId}
+                                                nothingFoundMessage={t("CreateDegree.nothingFound")}
+                                                hidePickedOptions
+                                                limit={10}
+                                                maxDropdownHeight={200}
+                                            />
+                                        </Table.Td>
+                                    </Table.Tr>
+                                </Table.Tbody>
+                            </Table>
                             <Flex
                                 mih={50}
                                 gap="xl"
@@ -275,11 +335,7 @@ export function CreateDegree() {
                             </Flex>
                         </Tabs.Panel>
                     </Tabs>
-
-
-
                 </form>
-
             </div>
         </div>
     )
