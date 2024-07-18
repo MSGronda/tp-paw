@@ -1,11 +1,7 @@
-.container50 {
-    width: min(max(800px, 50%), 100%);
-    padding-left: 2rem;
-    padding-right: 2rem;
-    align-self: center;
-    justify-self: center;
-    margin: 0 auto;
-
+html, body {
+    margin: 0; /* Remove default margins */
+    height: 100%; /* Ensure full height for scrolling */
+    overflow: hidden; /* Prevent body scroll, allow only the inner container to scroll */
 }
 
 .background {
@@ -13,13 +9,27 @@
     display: flex;
     flex-direction: column;
     background-color: #efefef;
-    height: 200vh;
+    min-height: 100vh; /* Make sure it covers the full viewport height */
 }
+
+.container50 {
+    width: min(max(800px, 50%), 100%);
+    padding-left: 2rem;
+    padding-right: 2rem;
+    align-self: center;
+    justify-self: center;
+    margin: 0 auto;
+    flex: 1; /* Allow this container to expand and fill the remaining space */
+    display: flex; /* Ensure child elements can use flex properties */
+    flex-direction: column; /* Stack children vertically */
+}
+
 .title {
     font-size: xx-large;
     display: flex;
     justify-content: center;
 }
+
 .form {
     width: 80%;
 }
