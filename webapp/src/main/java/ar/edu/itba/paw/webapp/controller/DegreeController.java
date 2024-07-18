@@ -28,14 +28,20 @@ import java.util.stream.Collectors;
 @Path("degrees")
 @Component
 public class DegreeController {
-    @Autowired
-    private DegreeService degreeService;
-    @Autowired
-    private AuthUserService authUserService;
-    @Autowired
-    private SubjectService subjectService;
+
+    private final DegreeService degreeService;
+    private final AuthUserService authUserService;
+    private final SubjectService subjectService;
+
     @Context
     private UriInfo uriInfo;
+
+    @Autowired
+    public DegreeController(final DegreeService degreeService, final AuthUserService authUserService, final SubjectService subjectService){
+        this.degreeService = degreeService;
+        this.authUserService = authUserService;
+        this.subjectService = subjectService;
+    }
 
     @GET
     @Produces("application/vnd.degree-list.v1+json")

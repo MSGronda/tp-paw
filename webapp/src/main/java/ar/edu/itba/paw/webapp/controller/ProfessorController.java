@@ -18,10 +18,14 @@ import java.util.stream.Collectors;
 @Path("professors")
 @Controller
 public class ProfessorController {
-    @Autowired
-    private ProfessorService professorService;
+    private final ProfessorService professorService;
+
     @Context
     private UriInfo uriInfo;
+    @Autowired
+    public ProfessorController(final ProfessorService professorService){
+        this.professorService = professorService;
+    }
 
     @GET
     @Produces("application/vnd.professor-list.v1+json")

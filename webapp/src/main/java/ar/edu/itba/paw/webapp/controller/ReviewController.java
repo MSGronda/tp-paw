@@ -28,16 +28,17 @@ import java.util.stream.Collectors;
 @Path("reviews")
 @Controller
 public class ReviewController {
-    private static final Logger LOGGER = LoggerFactory.getLogger(ReviewController.class);
-    @Autowired
-    private ReviewService reviewService;
-    @Autowired
-    private AuthUserService authUserService;
+    private final ReviewService reviewService;
+    private final AuthUserService authUserService;
 
-    @Autowired
-    private UserService userService;
     @Context
     private UriInfo uriInfo;
+
+    @Autowired
+    public ReviewController(final ReviewService reviewService, final AuthUserService authUserService){
+        this.reviewService = reviewService;
+        this.authUserService = authUserService;
+    }
 
     @GET
     @Produces("application/vnd.review-list.v1+json")

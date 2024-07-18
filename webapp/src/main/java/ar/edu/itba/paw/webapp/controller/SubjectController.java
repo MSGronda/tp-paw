@@ -23,17 +23,25 @@ import java.util.stream.Collectors;
 @Path("subjects")
 @Component
 public class SubjectController {
+    private final SubjectService subjectService;
+    private final AuthUserService authUserService;
+    private final ProfessorService professorService;
+    private final DegreeService degreeService;
 
-    @Autowired
-    private SubjectService subjectService;
-    @Autowired
-    private AuthUserService authUserService;
-    @Autowired
-    private ProfessorService professorService;
-    @Autowired
-    private DegreeService degreeService;
     @Context
     private UriInfo uriInfo;
+    @Autowired
+    public SubjectController(
+            final SubjectService subjectService,
+            final AuthUserService authUserService,
+            final ProfessorService professorService,
+            final DegreeService degreeService
+    ){
+        this.subjectService = subjectService;
+        this.authUserService = authUserService;
+        this.professorService = professorService;
+        this.degreeService = degreeService;
+    }
     
     @GET
     @Produces("application/vnd.subject-list.v1+json")

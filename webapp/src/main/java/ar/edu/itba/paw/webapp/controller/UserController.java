@@ -28,12 +28,15 @@ import java.util.stream.Collectors;
 @Path("users")
 @Component
 public class UserController {
-    @Autowired
-    private UserService userService;
-    @Autowired
-    private AuthUserService authUserService;
+    private final UserService userService;
+    private final AuthUserService authUserService;
     @Context
     private UriInfo uriInfo;
+    @Autowired
+    public UserController(final UserService userService, final AuthUserService authUserService){
+        this.authUserService = authUserService;
+        this.userService = userService;
+    }
 
     // Register ahora se va a encargar de unicamente crear un usuario
     // Posteriormente se va a hacer un patch para cargar el degree y los subjects mediante un interceptor

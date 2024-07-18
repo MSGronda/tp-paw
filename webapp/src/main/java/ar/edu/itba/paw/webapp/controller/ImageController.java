@@ -19,13 +19,16 @@ import java.time.Duration;
 @Path("images")
 @Component
 public class ImageController {
+    private static final int MAX_CACHE_AGE = (int) Duration.ofDays(365).getSeconds();
 
-    @Autowired
-    private ImageService imgService;
+    private final ImageService imgService;
     @Context
     private UriInfo uriInfo;
 
-    private static final int MAX_CACHE_AGE = (int) Duration.ofDays(365).getSeconds();
+    @Autowired
+    public ImageController(final ImageService imgService){
+        this.imgService = imgService;
+    }
 
 
     @GET

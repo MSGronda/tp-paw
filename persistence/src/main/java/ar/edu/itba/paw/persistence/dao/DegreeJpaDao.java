@@ -47,12 +47,14 @@ public class DegreeJpaDao implements DegreeDao {
     @Override
     public Degree editName(final Degree degree, final String name) {
         degree.setName(name);
+        LOGGER.info("Changing degree name with id: {}, to {}", degree.getId(), name);
         return degree;
     }
 
     @Override
     public Degree editTotalCredits(final Degree degree, final int totalCredits) {
         degree.setTotalCredits(totalCredits);
+        LOGGER.info("Changing degree credits with id: {}, to {}", degree.getId(), totalCredits);
         return degree;
     }
 
