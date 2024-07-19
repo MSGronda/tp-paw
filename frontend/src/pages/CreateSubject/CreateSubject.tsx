@@ -52,6 +52,7 @@ export function CreateSubject() {
   const [selectedSemesters, setSelectedSemesters] = useState<number[]>([]);
   const [selectedPrereqs, setSelectedPrereqs] = useState<number[]>([]);
   const [selectedProfessors, setSelectedProfessors] = useState<string[]>([]);
+  const [createdProfessors, setCreatedProfessors] = useState<string[]>([]);
   const [selectedClasses, setSelectedClasses] = useState<Class[]>([]);
 
   // Fetched Values
@@ -66,7 +67,6 @@ export function CreateSubject() {
   const [currentProfessorCreation, setCurrentProfessorCreation] = useState<string>("");
   const [currentClassName, setCurrentClassName] = useState<string>("");
   const [currentClassProfessors, setCurrentClassProfessors] = useState<string[]>([]);
-
 
   const MINIMUM_CREDITS = 1;
   const MAXIMUM_CREDITS = 12;
@@ -132,7 +132,6 @@ export function CreateSubject() {
     "Sistemas Complejos y Energía",
     "Sistemas Digitales y Datos",
   ];
-  const classProfessors = professors.slice(0, 2);
   const classDays = [
     t("CreateSubject.day1"),
     t("CreateSubject.day2"),
@@ -215,11 +214,33 @@ export function CreateSubject() {
   function handleProfessorCreation() {
     if(!selectedProfessors.includes(currentProfessorCreation)){
       setSelectedProfessors([...selectedProfessors, currentProfessorCreation]);
-      console.log(selectedProfessors);
     }
-    setProfessors([...professors, {name: currentProfessorCreation, subjects: []}])
+    setProfessors([...professors, {name: currentProfessorCreation, subjects: []}]);
+    setCreatedProfessors([...createdProfessors, currentProfessorCreation]);
     setCurrentProfessorCreation("");
     setOpenedProfessorModal(false);
+  }
+
+  function handleRemoveCreatedProfessor(professor: string) {
+    let index;
+    if( ( index = createdProfessors.indexOf(professor)) != -1) {
+      setCreatedProfessors([...createdProfessors.slice(0,index), ...createdProfessors.slice(index + 1)]);
+    }
+    let selectedIndex;
+    if( (selectedIndex = selectedProfessors.indexOf(professor)) != -1) {
+      setSelectedProfessors([...selectedProfessors.slice(0,selectedIndex), ...selectedProfessors.slice(index + 1)]);
+    }
+  }
+
+  function handleProfessorRemove(professor: string) {
+    let index;
+    if( ( index = selectedProfessors.indexOf(professor)) != -1) {
+      setSelectedProfessors([...selectedProfessors.slice(0,index), ...selectedProfessors.slice(index + 1)]);
+    }
+  }
+
+  function handleProfessorAddition(professor: string) {
+    setSelectedProfessors([...selectedProfessors, professor]);
   }
 
   // Combobox Options
@@ -233,9 +254,6 @@ export function CreateSubject() {
       {degree.name}
     </ComboboxOption>
   ));
-  //const professorsOptions = professors.map((professor) => (
-  //   `${professor.name}`
-  //));
   const professorsOptions = professors.slice(0,100).map((professor) => (
       `${professor.name}`
   ))
@@ -271,42 +289,21 @@ export function CreateSubject() {
   const comboboxClassDays = useCombobox({
     onDropdownClose: () => comboboxClassDays.resetSelectedOption(),
   });
-
   return (
     <div className={classes.background}>
       <Title text={t("CreateSubject.pageTitle")}/>
+
       { /* Degree Modal */}
-      <Modal
-        opened={openedDegreeModal}
-        onClose={() => setOpenedDegreeModal(false)}
-        title={t("CreateSubject.addDegree")}
-      >
-        <Flex
-          mih={50}
-          gap="xl"
-          justify="space-between"
-          align="center"
-          direction="row"
-          wrap="wrap"
-        >
+      <Modal opened={openedDegreeModal} onClose={() => setOpenedDegreeModal(false)} title={t("CreateSubject.addDegree")}>
+        <Flex mih={50} gap="xl" justify="space-between" align="center" direction="row" wrap="wrap">
           {t("CreateSubject.degreeModalDegree")}
-          <Combobox
-            store={comboboxDegree}
-            onOptionSubmit={(value) => {
+          <Combobox store={comboboxDegree} onOptionSubmit={(value) => {
               setCurrentDegree(searchForDegreeId(value));
               comboboxDegree.closeDropdown();
-            }}
-          >
+            }}>
             <Combobox.Target>
-              <InputBase
-                className={classes.degreeDropdown}
-                component="button"
-                type="button"
-                pointer
-                rightSection={<Combobox.Chevron />}
-                rightSectionPointerEvents="none"
-                onClick={() => comboboxDegree.toggleDropdown()}
-              >
+              <InputBase className={classes.degreeDropdown} component="button" type="button" pointer rightSection={<Combobox.Chevron />}
+                rightSectionPointerEvents="none" onClick={() => comboboxDegree.toggleDropdown()}>
                 {searchForDegreeName(currentDegree)}
               </InputBase>
             </Combobox.Target>
@@ -315,32 +312,16 @@ export function CreateSubject() {
             </Combobox.Dropdown>
           </Combobox>
         </Flex>
-        <Flex
-          mih={50}
-          gap="xl"
-          justify="space-between"
-          align="center"
-          direction="row"
-          wrap="wrap"
-        >
+        <Flex mih={50} gap="xl" justify="space-between" align="center" direction="row" wrap="wrap">
           {t("CreateSubject.semester")}
-          <Combobox
-            store={comboboxSemester}
+          <Combobox store={comboboxSemester}
             onOptionSubmit={(value) => {
               setCurrentSemester(value);
               comboboxSemester.closeDropdown();
-            }}
-          >
+            }}>
             <Combobox.Target>
-              <InputBase
-                className={classes.degreeDropdown}
-                component="button"
-                type="button"
-                pointer
-                rightSection={<Combobox.Chevron />}
-                rightSectionPointerEvents="none"
-                onClick={() => comboboxSemester.toggleDropdown()}
-              >
+              <InputBase className={classes.degreeDropdown} component="button" type="button" pointer rightSection={<Combobox.Chevron />}
+                rightSectionPointerEvents="none" onClick={() => comboboxSemester.toggleDropdown()}>
                 { currentSemester }
               </InputBase>
             </Combobox.Target>
@@ -349,17 +330,11 @@ export function CreateSubject() {
             </Combobox.Dropdown>
           </Combobox>
         </Flex>
-        <Flex
-          mih={50}
-          gap="xl"
-          justify="center"
-          align="center"
-          direction="row"
-          wrap="wrap"
-        >
+        <Flex mih={50} gap="xl" justify="center" align="center" direction="row" wrap="wrap">
           <Button color="green" onClick={() => handleSelectedDegreeSemesters()}>{t("CreateSubject.add")}</Button>
         </Flex>
       </Modal>
+
       {/* Prereqs Modal */}
       <Modal opened={openedPrereqModal} onClose={() => setOpenedPrereqModal(false)} title={t("CreateSubject.addPrereq")} centered size="80%">
         <Flex justify="center" direction="column" align="center" gap="md">
@@ -377,88 +352,36 @@ export function CreateSubject() {
       </Modal>
       {/* Professor Modal */}
       <Modal opened={openedProfessorModal} onClose={() => setOpenedProfessorModal(false)} title={t("CreateSubject.createProfessor")}>
-        <Flex
-          mih={50}
-          gap="xl"
-          justify="center"
-          align="center"
-          direction="row"
-          wrap="wrap"
-        >
+        <Flex mih={50} gap="xl" justify="center" align="center" direction="row" wrap="wrap">
           {t("CreateSubject.professorName")}
           <TextInput className={classes.degreeDropdown} value={currentProfessorCreation} onChange={(event) => setCurrentProfessorCreation(event.target.value)} />
         </Flex>
-        <Flex
-          mih={50}
-          gap="xl"
-          justify="right"
-          align="center"
-          direction="row"
-          wrap="wrap"
-        >
+        <Flex mih={50} gap="xl" justify="right" align="center" direction="row" wrap="wrap">
           <Button color="green" onClick={() => handleProfessorCreation()}>{t("CreateSubject.add")}</Button>
         </Flex>
       </Modal>
+
       {/* Class Modal */}
-      <Modal
-        opened={openedClassModal}
-        onClose={() => setOpenedClassModal(false)}
-        title={t("CreateSubject.addClasses")}
-      >
-        <Flex
-          mih={50}
-          gap="xl"
-          justify="space-between"
-          align="center"
-          direction="row"
-          wrap="wrap"
-        >
+      <Modal opened={openedClassModal} onClose={() => setOpenedClassModal(false)} title={t("CreateSubject.addClasses")}>
+        <Flex mih={50} gap="xl" justify="space-between" align="center" direction="row" wrap="wrap">
           {t("CreateSubject.class")}
           <Textarea className={classes.degreeDropdown} autosize value={currentClassName}
                     onChange={(event) => setCurrentClassName(event.currentTarget.value)}/>
         </Flex>
-        <Flex
-          mih={50}
-          gap="xl"
-          justify="space-between"
-          align="center"
-          direction="row"
-          wrap="wrap"
-        >
+        <Flex mih={50} gap="xl" justify="space-between" align="center" direction="row" wrap="wrap">
           {t("CreateSubject.professors")}
-          <MultiSelect
-              placeholder={t("CreateSubject.professorLabel")}
-              data={selectedProfessors}
-              value={currentClassProfessors}
-              onChange={setCurrentClassProfessors}
-          />
+          <MultiSelect placeholder={t("CreateSubject.professorLabel")} data={selectedProfessors} value={currentClassProfessors} onChange={setCurrentClassProfessors}/>
         </Flex>
-        <Flex
-          mih={50}
-          gap="xl"
-          justify="space-between"
-          align="center"
-          direction="row"
-          wrap="wrap"
-        >
+        {/*<Flex mih={50} gap="xl" justify="space-between" align="center" direction="row" wrap="wrap">
           {t("CreateSubject.day")}
-          <Combobox
-            store={comboboxClassDays}
-            onOptionSubmit={(value) => {
-              setClassDay(value);
-              comboboxClassDays.closeDropdown();
-            }}
-          >
+          <Combobox store={comboboxClassDays} onOptionSubmit={(value) => {
+            setClassDay(value);
+            comboboxClassDays.closeDropdown();
+          }}>
             <Combobox.Target>
-              <InputBase
-                className={classes.degreeDropdown}
-                component="button"
-                type="button"
-                pointer
-                rightSection={<Combobox.Chevron />}
-                rightSectionPointerEvents="none"
-                onClick={() => comboboxClassDays.toggleDropdown()}
-              >
+              <InputBase className={classes.degreeDropdown} component="button" type="button" pointer
+                         rightSection={<Combobox.Chevron/>} rightSectionPointerEvents="none"
+                         onClick={() => comboboxClassDays.toggleDropdown()}>
                 {classDay}
               </InputBase>
             </Combobox.Target>
@@ -467,72 +390,32 @@ export function CreateSubject() {
             </Combobox.Dropdown>
           </Combobox>
         </Flex>
-        <Flex
-          mih={50}
-          gap="xl"
-          justify="space-between"
-          align="center"
-          direction="row"
-          wrap="wrap"
-        >
-          {t("CreateSubject.timeStart")}
-          <TimeInput className={classes.degreeDropdown} />
-        </Flex>
-        <Flex
-          mih={50}
-          gap="xl"
-          justify="space-between"
-          align="center"
-          direction="row"
-          wrap="wrap"
-        >
-          {t("CreateSubject.timeEnd")}
-          <TimeInput className={classes.degreeDropdown} />
-        </Flex>
-        <Flex
-          mih={50}
-          gap="xl"
-          justify="space-between"
-          align="center"
-          direction="row"
-          wrap="wrap"
-        >
-          {t("CreateSubject.mode")}
-          <Textarea className={classes.degreeDropdown} autosize></Textarea>
-        </Flex>
-        <Flex
-          mih={50}
-          gap="xl"
-          justify="space-between"
-          align="center"
-          direction="row"
-          wrap="wrap"
-        >
-          {t("CreateSubject.building")}
-          <Textarea className={classes.degreeDropdown} autosize></Textarea>
-        </Flex>
-        <Flex
-          mih={50}
-          gap="xl"
-          justify="space-between"
-          align="center"
-          direction="row"
-          wrap="wrap"
-        >
-          {t("CreateSubject.classroom")}
-          <Textarea className={classes.degreeDropdown} autosize></Textarea>
-        </Flex>
-        <Flex
-          mih={50}
-          gap="xl"
-          justify="right"
-          align="center"
-          direction="row"
-          wrap="wrap"
-        >
-          <Button color="green">{t("CreateSubject.add")}</Button>
-        </Flex>
+          <Flex mih={50} gap="xl" justify="space-between" align="center" direction="row" wrap="wrap">
+        {t("CreateSubject.timeStart")}
+        <TimeInput className={classes.degreeDropdown}/>
+      </Flex>
+      <Flex mih={50} gap="xl" justify="space-between" align="center" direction="row" wrap="wrap">
+        {t("CreateSubject.timeEnd")}
+        <TimeInput className={classes.degreeDropdown}/>
+      </Flex>
+      <Flex mih={50} gap="xl" justify="space-between" align="center" direction="row" wrap="wrap">
+        {t("CreateSubject.mode")}
+        <Textarea className={classes.degreeDropdown} autosize></Textarea>
+      </Flex>
+      <Flex mih={50} gap="xl" justify="space-between" align="center" direction="row" wrap="wrap">
+        {t("CreateSubject.building")}
+        <Textarea className={classes.degreeDropdown} autosize></Textarea>
+      </Flex>
+      <Flex mih={50} gap="xl" justify="space-between" align="center" direction="row" wrap="wrap">
+        {t("CreateSubject.classroom")}
+        <Textarea className={classes.degreeDropdown} autosize></Textarea>
+      </Flex>
+      <Flex mih={50} gap="xl" justify="right" align="center" direction="row" wrap="wrap">
+        <Button color="green">{t("CreateSubject.add")}</Button>
+      </Flex>*/}
       </Modal>
+
+      { /* Actual Page */ }
       <Navbar />
       <div className={classes.container50}>
         <form className={classes.form}>
@@ -547,96 +430,42 @@ export function CreateSubject() {
               <Tabs.Tab value="classes">{t("CreateSubject.classes")}</Tabs.Tab>
             </Tabs.List>
 
+            { /* General Informaiton Tab */ }
             <Tabs.Panel value="general-info">
-              <Flex
-                mih={50}
-                gap="xl"
-                justify="space-between"
-                align="center"
-                direction="row"
-                wrap="wrap"
-              >
+              <Flex mih={50} gap="xl" justify="space-between" align="center" direction="row" wrap="wrap">
                 <div>
                   {t("CreateSubject.id")}
                   <h6 className={classes.optional}>
                     {t("CreateSubject.idHelp")}
                   </h6>
                 </div>
-                <Textarea
-                  className={classes.departmentDropdown}
-                  autosize
-                  error={t("CreateSubject.idError")}
+                <Textarea className={classes.departmentDropdown} autosize error={t("CreateSubject.idError")}
                 />
               </Flex>
-              <Flex
-                mih={50}
-                gap="xl"
-                justify="space-between"
-                align="center"
-                direction="row"
-                wrap="wrap"
-              >
+              <Flex mih={50} gap="xl" justify="space-between" align="center" direction="row" wrap="wrap">
                 {t("CreateSubject.name")}
                 <Textarea className={classes.departmentDropdown} autosize />
               </Flex>
-              <Flex
-                mih={50}
-                gap="xl"
-                justify="space-between"
-                align="center"
-                direction="row"
-                wrap="wrap"
-              >
+              <Flex mih={50} gap="xl" justify="space-between" align="center" direction="row" wrap="wrap">
                 {t("CreateSubject.department")}
-                <Combobox
-                  store={comboboxDepartment}
-                  width={300}
-                  onOptionSubmit={(value) => {
+                <Combobox store={comboboxDepartment} width={300} onOptionSubmit={(value) => {
                     setDepartment(value);
                     comboboxDepartment.closeDropdown();
-                  }}
-                >
+                  }}>
                   <Combobox.Target>
-                    <InputBase
-                      className={classes.departmentDropdown}
-                      component="button"
-                      type="button"
-                      pointer
-                      rightSection={<Combobox.Chevron />}
-                      rightSectionPointerEvents="none"
-                      onClick={() => comboboxDepartment.toggleDropdown()}
-                    >
+                    <InputBase className={classes.departmentDropdown} component="button" type="button" pointer
+                               rightSection={<Combobox.Chevron />} rightSectionPointerEvents="none" onClick={() => comboboxDepartment.toggleDropdown()}>
                       {department}
                     </InputBase>
                   </Combobox.Target>
                   <Combobox.Dropdown>{deaprtmentOptions}</Combobox.Dropdown>
                 </Combobox>
               </Flex>
-              <Flex
-                mih={50}
-                gap="xl"
-                justify="space-between"
-                align="center"
-                direction="row"
-                wrap="wrap"
-              >
+              <Flex mih={50} gap="xl" justify="space-between" align="center" direction="row" wrap="wrap">
                 {t("CreateSubject.credits")}
-                <NumberInput
-                  className={classes.departmentDropdown}
-                  value={credits}
-                  min={MINIMUM_CREDITS}
-                  max={MAXIMUM_CREDITS}
-                  onChange={setCredits}
-                />
+                <NumberInput className={classes.departmentDropdown} value={credits} min={MINIMUM_CREDITS} max={MAXIMUM_CREDITS} onChange={setCredits}/>
               </Flex>
-              <Flex
-                mih={50}
-                gap="xl"
-                justify="space-between"
-                align="center"
-                direction="row"
-                wrap="wrap"
-              >
+              <Flex mih={50} gap="xl" justify="space-between" align="center" direction="row" wrap="wrap">
                 {t("CreateSubject.degree")}
                 <Flex  direction="column">
                   { selectedDegrees.length > 0 &&
@@ -648,21 +477,12 @@ export function CreateSubject() {
                           </ActionIcon>
                         </Flex>)
                   }
-                  <Button
-                      onClick={() => setOpenedDegreeModal(true)}
-                  >
+                  <Button onClick={() => setOpenedDegreeModal(true)}>
                     {t("CreateSubject.addDegree")}
                   </Button>
                 </Flex>
               </Flex>
-              <Flex
-                mih={50}
-                gap="xl"
-                justify="space-between"
-                align="center"
-                direction="row"
-                wrap="wrap"
-              >
+              <Flex mih={50} gap="xl" justify="space-between" align="center" direction="row" wrap="wrap">
                 <div>
                   {t("CreateSubject.prerequisites")}
                   <h6 className={classes.optional}>
@@ -678,65 +498,36 @@ export function CreateSubject() {
                       <Button disabled>
                         {t("CreateSubject.addPrereq")}
                       </Button>
-                    </Tooltip>
-
-                }
+                    </Tooltip>}
               </Flex>
-              <Flex
-                mih={50}
-                miw={500}
-                gap="xl"
-                justify="space-between"
-                align="center"
-                direction="row"
-                wrap="wrap"
-              >
+              <Flex mih={50} miw={500} gap="xl" justify="space-between" align="center" direction="row" wrap="wrap">
                 {t("CreateSubject.professor")}
-                <MultiSelect
-                    placeholder={t("CreateSubject.professorLabel")}
-                    data={professorsOptions}
-                    searchable
-                    onChange={setSelectedProfessors}
-
-                />
+                <MultiSelect placeholder={t("CreateSubject.professorLabel")} data={professorsOptions} searchable  onOptionSubmit={(professor) => handleProfessorAddition(professor)} onRemove={(professor) => handleProfessorRemove(professor)}/>
               </Flex>
-              <Flex
-                mih={50}
-                gap="xl"
-                justify="right"
-                align="center"
-                direction="row"
-                wrap="wrap"
-              >
+              <Flex mih={50} gap="xl" justify="right" align="center" direction="row" wrap="wrap">
+                { createdProfessors.length > 0 &&
+                    createdProfessors.map((professor) =>
+                        <Flex direction="row" align="center">
+                          <p>{professor}</p>
+                          <ActionIcon size={24} variant="default" onClick={() => handleRemoveCreatedProfessor(professor)}>
+                            <IconX style={{ width: rem(24), height: rem(24) }} />
+                          </ActionIcon>
+                        </Flex>)
+                }
                 <Button onClick={() => setOpenedProfessorModal(true)}>
                   {t("CreateSubject.createProfessor")}
                 </Button>
               </Flex>
-              <Flex
-                mih={50}
-                gap="xl"
-                justify="center"
-                align="center"
-                direction="row"
-                wrap="wrap"
-              >
-                <Button
-                  variant="default"
-                  onClick={() => setActiveTab("classes")}
-                >
+              <Flex mih={50} gap="xl" justify="center" align="center" direction="row" wrap="wrap">
+                <Button variant="default" onClick={() => setActiveTab("classes")}>
                   {t("CreateSubject.next")}
                 </Button>
               </Flex>
             </Tabs.Panel>
+
+            { /* Classes Tab */ }
             <Tabs.Panel value="classes">
-              <Flex
-                mih={50}
-                gap="xl"
-                justify="space-between"
-                align="center"
-                direction="row"
-                wrap="wrap"
-              >
+              <Flex mih={50} gap="xl" justify="space-between" align="center" direction="row" wrap="wrap">
                 {t("CreateSubject.classes")}
                 <Button onClick={() => setOpenedClassModal(true)}>
                   {t("CreateSubject.addClasses")}
@@ -757,14 +548,7 @@ export function CreateSubject() {
                 </Table.Thead>
                 <Table.Tbody></Table.Tbody>
               </Table>
-              <Flex
-                mih={50}
-                gap="xl"
-                justify="center"
-                align="center"
-                direction="row"
-                wrap="wrap"
-              >
+              <Flex mih={50} gap="xl" justify="center" align="center" direction="row" wrap="wrap">
                 <Button variant="default"
                   onClick={() => setActiveTab("general-info")}>{t("CreateSubject.previous")}</Button>
                 <Button color="green">{t("CreateSubject.createSubject")}</Button>
