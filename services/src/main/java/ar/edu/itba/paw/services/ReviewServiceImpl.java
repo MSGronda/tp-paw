@@ -84,12 +84,9 @@ public class ReviewServiceImpl implements ReviewService {
 
     @Transactional
     @Override
-    public void deleteReviewVote(final long reviewId, final long userId){
-        final Review review = findById(reviewId).orElseThrow(ReviewNotFoundException::new);
-        final User user = authUserService.getCurrentUser();
-
-        if(userId != user.getId()){
-            LOGGER.warn("Unauthorized user with id: {} attempted to delete review vote with id: {}", userId, reviewId);
+    public void deleteReviewVote(final Review review, final User user){
+        if(review.getUser().getId() != user.getId()){
+            LOGGER.warn("Unauthorized user with id: {} attempted to delete review vote with id: {}", user.getId(), review.getId());
             throw new UnauthorizedException();
         }
 
@@ -101,17 +98,11 @@ public class ReviewServiceImpl implements ReviewService {
         return reviewDao.didUserReview(subject, user);
     }
 
-    @Override
-    public boolean canUserEditReview(final User user, final Review review) {
-        return user.equals(review.getUser());
-    }
-
     @Transactional
     @Override
-    public Review update(final Review.Builder reviewBuilder) {
-        final User user = authUserService.getCurrentUser();
-        if(!user.isEditor() && !reviewBuilder.getUser().equals(user)){
-            LOGGER.warn("Unauthorized user with id: {} attempted to update review with id: {}", user.getId(), reviewBuilder.getId());
+    public Review update(final Review.Builder reviewBuilder, final User currentUser) {
+        if(!reviewBuilder.getUser().equals(currentUser)){
+            LOGGER.warn("Unauthorized user with id: {} attempted to update review with id: {}", currentUser.getId(), reviewBuilder.getId());
             throw new UnauthorizedException();
         }
 
@@ -120,23 +111,14 @@ public class ReviewServiceImpl implements ReviewService {
 
     @Transactional
     @Override
-    public void delete(final Review review) throws UnauthorizedException {
-        final User user = authUserService.getCurrentUser();
-        if(!user.isEditor() && !review.getUser().equals(user)){
-            LOGGER.warn("Unauthorized user with id: {} attempted to delete review with id: {}", user.getId(), review.getId());
+    public void delete(final User currentUser, final Review review) {
+        if(!currentUser.isEditor() && !review.getUser().equals(currentUser)){
+            LOGGER.warn("Unauthorized user with id: {} attempted to delete review with id: {}", currentUser.getId(), review.getId());
             throw new UnauthorizedException();
         }
 
         reviewDao.delete(review);
     }
-
-    @Transactional
-    @Override
-    public void delete(long reviewId) {
-        final Review review = findById(reviewId).orElseThrow(ReviewNotFoundException::new);
-        delete(review);
-    }
-
     @Override
     public List<ReviewVote> getVotes(final Long reviewId, final Long userId, final int page){
         if(page < 1)

@@ -22,12 +22,10 @@ public interface ReviewService {
     ReviewVote voteReview(final long reviewId, final ReviewVoteType vote);
 
     boolean didUserReview(final Subject subject, final User user);
-    boolean canUserEditReview(final User user, final Review review);
-
-    Review update(final Review.Builder review) throws UnauthorizedException;
-    void delete(final Review review) throws UnauthorizedException;
-    void delete(final long reviewId);
+    Review update(final Review.Builder reviewBuilder, final User currentUser);
+    void delete(final User currentUser, final Review review);
     List<ReviewVote> getVotes(final Long reviewId, final Long userId, final int page);
 
-    void deleteReviewVote(final long reviewId, final long userId);
+    void deleteReviewVote(final Review review, final User user);
+
 }

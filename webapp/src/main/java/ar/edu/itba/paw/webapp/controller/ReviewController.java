@@ -103,17 +103,16 @@ public class ReviewController {
             @PathParam("id") final Long reviewId,
             @Valid @ModelAttribute("reviewForm") final ReviewForm reviewForm
     ){
-        // TODO check: si el review no existe, tira: "405 HTTP method PUT is not supported by this URL".
-        // No se por que.
-
-        // TODO: esto pero en un paso (?)
         final Review review = reviewService.findById(reviewId).orElseThrow(ReviewNotFoundException::new);
+        final User currentUser = authUserService.getCurrentUser();
+
         reviewService.update(
             Review.builderFrom(review)
                     .text(reviewForm.getText())
                     .difficulty(reviewForm.getDifficultyEnum())
                     .timeDemanding(reviewForm.getTimeDemandingEnum())
-                    .anonymous(reviewForm.getAnonymous())
+                    .anonymous(reviewForm.getAnonymous()),
+            currentUser
         );
 
         return Response.ok().build();
@@ -124,7 +123,10 @@ public class ReviewController {
     public Response deleteReview(
             @PathParam("id") final Long reviewId
     ){
-        reviewService.delete(reviewId);
+        final Review review = reviewService.findById(reviewId).orElseThrow(ReviewNotFoundException::new);
+        final User currentUser = authUserService.getCurrentUser();
+
+        reviewService.delete(currentUser, review);
         return Response.noContent().build();
     }
 
@@ -161,7 +163,10 @@ public class ReviewController {
             @PathParam("reviewId") final Long reviewId,
             @PathParam("userId") final Long userId
     ){
-        reviewService.deleteReviewVote(reviewId, userId);
+        final Review review = reviewService.findById(reviewId).orElseThrow(ReviewNotFoundException::new);
+        final User user = authUserService.getCurrentUser();
+
+        reviewService.deleteReviewVote(review, user);
 
         return Response.noContent().build();
     }

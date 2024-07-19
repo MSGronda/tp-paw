@@ -76,19 +76,17 @@ public class ReviewServiceImplTest {
         final String newText = "Very hard!";
         final Review newReview = Review.builderFrom(testReview).anonymous(newAnonymous).difficulty(newDifficulty).text(newText).build();
         final Review.Builder newReviewBuilder = Review.builderFrom(newReview);
-        when(authUserService.getCurrentUser()).thenReturn(testUser);
         when(reviewDao.update(newReviewBuilder)).thenReturn(newReview);
 
-        final Review updatedReview = reviewService.update(newReviewBuilder);
+        final Review updatedReview = reviewService.update(newReviewBuilder, testUser);
 
         assertEquals(updatedReview, newReview);
     }
 
     @Test(expected = UnauthorizedException.class)
     public void testUpdateReviewUnauthorized() {
-        when(authUserService.getCurrentUser()).thenReturn(User.builder().id(2).build());
-
-        final Review updatedReview = reviewService.update(Review.builderFrom(testReview));
+        final User user = User.builder().id(2).build();
+        reviewService.update(Review.builderFrom(testReview), user);
         Assert.fail("Should have thrown UnauthorizedException");
     }
 }
