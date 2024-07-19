@@ -4,7 +4,7 @@ import classes from './createDegree.module.css';
 import {Navbar} from "../../components/navbar/navbar.tsx";
 import {Button, Flex, Tabs, Textarea, Modal, MultiSelect, NumberInput, ActionIcon, Table} from "@mantine/core";
 import {useEffect, useState} from "react";
-import {useDisclosure} from "@mantine/hooks";
+import {useDebouncedCallback, useDisclosure} from "@mantine/hooks";
 import {degreeService, subjectService} from "../../services";
 import {handleService} from "../../handlers/serviceHandler.tsx";
 import {IconTrash} from "@tabler/icons-react";
@@ -46,11 +46,11 @@ export function CreateDegree() {
         open();
     }
 
-    const getSubjects = async (searchId: string) => {
+    const getSubjects = useDebouncedCallback( async (searchId: string) => {
         const res = await subjectService.getSubjectsByName(searchId,1, null, null, null, null, null, null);
         const data = handleService(res, navigate)
         setSubjects(filterSubjects(data.subjects));
-    }
+    }, 750);
 
     const handleDeleteSemester = (semesterNumDelete: Number) => {
         setSelectedSubjects(prevState => prevState.filter(subject => subject.semesterNumber !== semesterNumDelete));
