@@ -108,12 +108,66 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
                 .cacheControl().disable()
                 .and().authorizeRequests()
 
-                // TODO COMPLETE (!!!)
-               .antMatchers(HttpMethod.POST, "/api/users").anonymous()
-//                .antMatchers("/login","/register", "/recover/**", "/verification/**").anonymous()
-//                .antMatchers("/user/{id:\\d+}/moderator", "/degrees", "/create-subject", "/subject/{id:\\d+\\.\\d+}/delete-subject", "/subject/{id:\\d+\\.\\d+}/edit").hasRole(Role.RoleEnum.EDITOR.getName())
-//                .antMatchers("/").permitAll()\
-                .antMatchers("/api/images/**").permitAll()
+                // Users
+                .antMatchers(HttpMethod.POST, "/api/users").anonymous()
+                .antMatchers(HttpMethod.GET, "/api/users").authenticated()
+                .antMatchers(HttpMethod.PATCH, "/api/users/{id}").authenticated()
+                .antMatchers(HttpMethod.GET, "/api/users/{id}").authenticated()
+
+                // User plan
+                .antMatchers(HttpMethod.GET, "/api/users/{id}/plan").authenticated()
+                .antMatchers(HttpMethod.POST, "/api/users/{id}/plan").authenticated()
+                .antMatchers(HttpMethod.PUT, "/api/users/{id}/plan").authenticated()
+                .antMatchers(HttpMethod.PATCH, "/api/users/{id}/plan").authenticated()
+                .antMatchers(HttpMethod.DELETE, "/api/users/{id}/plan").authenticated()
+
+                // User progress
+                .antMatchers(HttpMethod.GET, "/api/users/{id}/progress").authenticated()
+                .antMatchers(HttpMethod.PATCH, "/api/users/{id}/progress").authenticated()
+
+                // Subjects
+                .antMatchers(HttpMethod.GET, "/api/subjects").authenticated()
+                .antMatchers(HttpMethod.POST, "/api/subjects").hasRole(Role.RoleEnum.EDITOR.getName())
+                .antMatchers(HttpMethod.GET, "/api/subjects/{id}").authenticated()
+                .antMatchers(HttpMethod.DELETE, "/api/subjects/{id}").hasRole(Role.RoleEnum.EDITOR.getName())
+                .antMatchers(HttpMethod.PUT, "/api/subjects/{id}").hasRole(Role.RoleEnum.EDITOR.getName())
+
+                // Degree
+                .antMatchers(HttpMethod.GET, "/api/degrees").authenticated()
+                .antMatchers(HttpMethod.POST, "/api/degrees").hasRole(Role.RoleEnum.EDITOR.getName())
+                .antMatchers(HttpMethod.GET, "/api/degrees/{id}").authenticated()
+                .antMatchers(HttpMethod.DELETE, "/api/degrees/{id}").hasRole(Role.RoleEnum.EDITOR.getName())
+                .antMatchers(HttpMethod.PUT, "/api/degrees/{id}").hasRole(Role.RoleEnum.EDITOR.getName())
+
+                // Degree semesters
+                .antMatchers(HttpMethod.GET, "/api/degrees/{degreeId}/semesters").authenticated()
+                .antMatchers(HttpMethod.GET, "/api/degrees/{degreeId}/semesters/{id}").authenticated()
+                .antMatchers(HttpMethod.POST, "/api/degrees/{degreeId}/semesters").hasRole(Role.RoleEnum.EDITOR.getName())
+                .antMatchers(HttpMethod.PATCH, "/api/degrees/{degreeId}/semesters").hasRole(Role.RoleEnum.EDITOR.getName())
+                .antMatchers(HttpMethod.DELETE, "/api/degrees/{degreeId}/semesters/{id}").hasRole(Role.RoleEnum.EDITOR.getName())
+
+                .antMatchers(HttpMethod.GET, "/api/degrees/{subjectId}/year").authenticated()
+                .antMatchers(HttpMethod.GET, "/api/degrees/{subjectId}/degree").authenticated()
+
+                // Review
+                .antMatchers(HttpMethod.GET, "/api/reviews").authenticated()
+                .antMatchers(HttpMethod.POST, "/api/reviews").authenticated()
+                .antMatchers(HttpMethod.GET, "/api/reviews/{id}").authenticated()
+                .antMatchers(HttpMethod.PUT, "/api/reviews/{id}").authenticated()
+                .antMatchers(HttpMethod.DELETE, "/api/reviews/{id}").authenticated()
+
+                // Review votes
+                .antMatchers(HttpMethod.GET, "/api/reviews/{id}/votes").authenticated()
+                .antMatchers(HttpMethod.POST, "/api/reviews/{id}/votes").authenticated()
+                .antMatchers(HttpMethod.DELETE, "/api/reviews/{id}/votes/{userId}").authenticated()
+
+                // Professor
+                .antMatchers(HttpMethod.GET, "/api/professors").authenticated()
+
+                // Images
+                .antMatchers(HttpMethod.GET, "/api/images/{id}").permitAll()
+                .antMatchers(HttpMethod.POST, "/api/images").authenticated()
+
                 .antMatchers("/api/**").authenticated()
                 .antMatchers("/**").permitAll()
                 .and()
