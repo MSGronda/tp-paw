@@ -1,4 +1,4 @@
-html, body {
+html.createDegree, body.createDegree {
     margin: 0; /* Remove default margins */
     height: 100%; /* Ensure full height for scrolling */
     overflow: hidden; /* Prevent body scroll, allow only the inner container to scroll */
