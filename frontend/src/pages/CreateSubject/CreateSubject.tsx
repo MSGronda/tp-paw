@@ -9,23 +9,25 @@ import {
   ComboboxOptions,
   Flex, Grid,
   InputBase,
-  Modal,
+  Modal, MultiSelect,
   NumberInput, Pagination, rem,
   Table,
   Tabs,
-  Textarea, Tooltip,
+  Textarea, TextInput, Tooltip,
   useCombobox,
 } from "@mantine/core";
 import { TimeInput } from "@mantine/dates";
 import {useEffect, useState} from "react";
 import Title from "../../components/title/title";
-import {degreeService, subjectService} from "../../services";
+import {degreeService, subjectService, professorService} from "../../services";
 import {handleService} from "../../handlers/serviceHandler.tsx";
 import {Subject} from "../../models/Subject.ts";
 import {useNavigate} from "react-router-dom";
 import {Degree} from "../../models/Degree.ts";
 import {IconX} from "@tabler/icons-react";
 import ChooseSubjectCard from "../../components/choose-subject-card/choose-subject-card.tsx";
+import {Professor} from "../../models/Professor.ts";
+import Class from "../../models/Class.ts";
 
 export function CreateSubject() {
   const { t } = useTranslation();
@@ -49,15 +51,21 @@ export function CreateSubject() {
   const [selectedDegrees, setSelectedDegrees] = useState<number[]>([]);
   const [selectedSemesters, setSelectedSemesters] = useState<number[]>([]);
   const [selectedPrereqs, setSelectedPrereqs] = useState<number[]>([]);
+  const [selectedProfessors, setSelectedProfessors] = useState<string[]>([]);
+  const [selectedClasses, setSelectedClasses] = useState<Class[]>([]);
 
   // Fetched Values
   const [degrees, setDegrees] = useState<Degree[]>([]);
   const [subjects, setSubjects] = useState<Subject[]>([]);
+  const [professors, setProfessors] = useState<Professor[]>([]);
 
   // Current selected values
   const [currentDegree, setCurrentDegree] = useState<number>(1);
   const [currentSemester, setCurrentSemester] = useState<string>("");
   const [currentSemesterOptions, setCurrentSemesterOptions] = useState<JSX.Element[]>([]);
+  const [currentProfessorCreation, setCurrentProfessorCreation] = useState<string>("");
+  const [currentClassName, setCurrentClassName] = useState<string>("");
+  const [currentClassProfessors, setCurrentClassProfessors] = useState<string[]>([]);
 
 
   const MINIMUM_CREDITS = 1;
@@ -80,6 +88,14 @@ export function CreateSubject() {
     }
   }
 
+  const searchProfessors = async() => {
+    const res = await professorService.getProfessors();
+    const data = handleService(res, navigate);
+    if(res) {
+      setProfessors(data);
+    }
+  }
+
   useEffect(() => {
     if(selectedDegrees.length > 0) {
       searchSubjects(currentPrereqPage);
@@ -89,6 +105,10 @@ export function CreateSubject() {
 
   useEffect(() => {
     searchDegrees();
+  }, []);
+
+  useEffect(() => {
+    searchProfessors();
   }, []);
 
   const carreerSemester = new Map<string, string[]>();
@@ -111,12 +131,6 @@ export function CreateSubject() {
     "Economia y Negocios",
     "Sistemas Complejos y Energía",
     "Sistemas Digitales y Datos",
-  ];
-  const professors = [
-    "Sotuyo Dodero, Juan Martín",
-    "Roig, Ana María",
-    "Valles, Santiago",
-    "Meola, Franco",
   ];
   const classProfessors = professors.slice(0, 2);
   const classDays = [
@@ -184,7 +198,6 @@ export function CreateSubject() {
   function handlePrereqSelection(subjectId: string) {
     if(!selectedPrereqs.includes(Number(subjectId))) {
       setSelectedPrereqs([...selectedPrereqs, Number(subjectId)]);
-      console.log("prereqs: ", selectedPrereqs);
     }
   }
 
@@ -199,6 +212,16 @@ export function CreateSubject() {
     return selectedPrereqs.includes(Number(subjectId));
   }
 
+  function handleProfessorCreation() {
+    if(!selectedProfessors.includes(currentProfessorCreation)){
+      setSelectedProfessors([...selectedProfessors, currentProfessorCreation]);
+      console.log(selectedProfessors);
+    }
+    setProfessors([...professors, {name: currentProfessorCreation, subjects: []}])
+    setCurrentProfessorCreation("");
+    setOpenedProfessorModal(false);
+  }
+
   // Combobox Options
   const deaprtmentOptions = departments.map((departament) => (
     <Combobox.Option key={departament} value={departament}>
@@ -210,12 +233,13 @@ export function CreateSubject() {
       {degree.name}
     </ComboboxOption>
   ));
-  const professorsOptions = professors.map((professor) => (
-    <ComboboxOption key={professor} value={professor}>
-      {professor}
-    </ComboboxOption>
-  ));
-  const classProfessorsOptions = classProfessors.map((classProfessor) => (
+  //const professorsOptions = professors.map((professor) => (
+  //   `${professor.name}`
+  //));
+  const professorsOptions = professors.slice(0,100).map((professor) => (
+      `${professor.name}`
+  ))
+  const classProfessorsOptions = selectedProfessors.map((classProfessor) => (
     <ComboboxOption key={classProfessor} value={classProfessor}>
       {classProfessor}
     </ComboboxOption>
@@ -362,18 +386,7 @@ export function CreateSubject() {
           wrap="wrap"
         >
           {t("CreateSubject.professorName")}
-          <Textarea className={classes.degreeDropdown} autosize />
-        </Flex>
-        <Flex
-          mih={50}
-          gap="xl"
-          justify="center"
-          align="center"
-          direction="row"
-          wrap="wrap"
-        >
-          {t("CreateSubject.professorLastName")}
-          <Textarea className={classes.degreeDropdown} autosize />
+          <TextInput className={classes.degreeDropdown} value={currentProfessorCreation} onChange={(event) => setCurrentProfessorCreation(event.target.value)} />
         </Flex>
         <Flex
           mih={50}
@@ -383,9 +396,10 @@ export function CreateSubject() {
           direction="row"
           wrap="wrap"
         >
-          <Button color="green">{t("CreateSubject.add")}</Button>
+          <Button color="green" onClick={() => handleProfessorCreation()}>{t("CreateSubject.add")}</Button>
         </Flex>
       </Modal>
+      {/* Class Modal */}
       <Modal
         opened={openedClassModal}
         onClose={() => setOpenedClassModal(false)}
@@ -400,7 +414,8 @@ export function CreateSubject() {
           wrap="wrap"
         >
           {t("CreateSubject.class")}
-          <Textarea className={classes.degreeDropdown} autosize></Textarea>
+          <Textarea className={classes.degreeDropdown} autosize value={currentClassName}
+                    onChange={(event) => setCurrentClassName(event.currentTarget.value)}/>
         </Flex>
         <Flex
           mih={50}
@@ -411,30 +426,12 @@ export function CreateSubject() {
           wrap="wrap"
         >
           {t("CreateSubject.professors")}
-          <Combobox
-            store={comboboxClassProfessor}
-            onOptionSubmit={(value) => {
-              setClassProfessor(value);
-              comboboxClassProfessor.closeDropdown();
-            }}
-          >
-            <Combobox.Target>
-              <InputBase
-                className={classes.degreeDropdown}
-                component="button"
-                type="button"
-                pointer
-                rightSection={<Combobox.Chevron />}
-                rightSectionPointerEvents="none"
-                onClick={() => comboboxClassProfessor.toggleDropdown()}
-              >
-                {classProfessor}
-              </InputBase>
-            </Combobox.Target>
-            <Combobox.Dropdown>
-              <ComboboxOptions>{classProfessorsOptions}</ComboboxOptions>
-            </Combobox.Dropdown>
-          </Combobox>
+          <MultiSelect
+              placeholder={t("CreateSubject.professorLabel")}
+              data={selectedProfessors}
+              value={currentClassProfessors}
+              onChange={setCurrentClassProfessors}
+          />
         </Flex>
         <Flex
           mih={50}
@@ -687,6 +684,7 @@ export function CreateSubject() {
               </Flex>
               <Flex
                 mih={50}
+                miw={500}
                 gap="xl"
                 justify="space-between"
                 align="center"
@@ -694,29 +692,13 @@ export function CreateSubject() {
                 wrap="wrap"
               >
                 {t("CreateSubject.professor")}
-                <Combobox
-                  store={comboboxProfessor}
-                  width={300}
-                  onOptionSubmit={(value) => {
-                    setProfessor(value);
-                    comboboxProfessor.closeDropdown();
-                  }}
-                >
-                  <Combobox.Target>
-                    <InputBase
-                      className={classes.departmentDropdown}
-                      component="button"
-                      type="button"
-                      pointer
-                      rightSection={<Combobox.Chevron />}
-                      rightSectionPointerEvents="none"
-                      onClick={() => comboboxProfessor.toggleDropdown()}
-                    >
-                      {professor}
-                    </InputBase>
-                  </Combobox.Target>
-                  <Combobox.Dropdown>{professorsOptions}</Combobox.Dropdown>
-                </Combobox>
+                <MultiSelect
+                    placeholder={t("CreateSubject.professorLabel")}
+                    data={professorsOptions}
+                    searchable
+                    onChange={setSelectedProfessors}
+
+                />
               </Flex>
               <Flex
                 mih={50}

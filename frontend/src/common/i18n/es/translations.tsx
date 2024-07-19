@@ -336,8 +336,7 @@ export const TRANSLATIONS_ES = {
         optional: "Opcional",
         professor: "Profesor",
         createProfessor: "Crear Profesor",
-        professorName: "Nombre del profesor",
-        professorLastName: "Apellido del profesor",
+        professorName: "Nombre completo del profesor",
         next: "Siguiente",
         previous: "Previous",
         generalInfo: "Información general",
@@ -360,7 +359,8 @@ export const TRANSLATIONS_ES = {
         day7: "Domingo",
         createSubject: "Crear materia",
         addPrereq: "Agregar correlativa",
-        prereqAdvice: "Agregá una carrera!"
+        prereqAdvice: "Agregá una carrera!",
+        professorLabel: "Busca un nombre de profesor"
     },
     Degrees: {
         title: "Carreras",
