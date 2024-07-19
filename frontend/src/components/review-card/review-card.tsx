@@ -1,11 +1,12 @@
 import { ActionIcon, Badge, Button, Card, Divider, Tooltip } from "@mantine/core";
 import classes from './review-card.module.css';
 import { IconEdit, IconThumbDown, IconThumbUp, IconTrash } from "@tabler/icons-react";
-import {useContext, useEffect, useState} from "react";
+import {useContext, useState} from "react";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
 import AuthContext from "../../context/AuthContext";
 import { reviewService } from "../../services";
+import {ReviewVote, VoteValue} from "../../models/ReviewVote.ts";
 
 
 interface ReviewCardProps {
@@ -21,11 +22,7 @@ interface ReviewCardProps {
     forSubject: boolean
     upvotes: number
     downvotes: number
-}
-enum VoteValue {
-    UpVote = 1,
-    DownVote = -1,
-
+    votes: ReviewVote[]
 }
 
 function GetVoteValue(voteValue: VoteValue): number {
@@ -41,14 +38,14 @@ function GetVoteValue(voteValue: VoteValue): number {
 
 function ReviewCard(props: ReviewCardProps): JSX.Element {
     const { t } = useTranslation();
-    const { userId } = useContext(AuthContext)
-    const { subjectId, subjectName, text, timeDemand, difficulty, UserId, userName, anonymous, id, forSubject, upvotes, downvotes } = props;
+    const {userId } = useContext(AuthContext);
+    const {subjectId, subjectName, text, timeDemand, difficulty, UserId, userName, anonymous, id, forSubject, upvotes, downvotes, votes } = props;
     const [openedTooltip, setOpenedTooltip] = useState(false);
     const [showMore, setShowMore] = useState(false);
-    const [didUserUpVote, setDidUserUpVote] = useState(false);
-    const [didUserDownVote, setDidUserDownVote] = useState(false);
-    const [upVotes, setUpVotes] = useState(upvotes)
-    const [downVotes, setDownVotes] = useState(downvotes)
+    const [didUserUpVote, setDidUserUpVote] = useState<boolean>(getVoteFromUser(votes, userId, VoteValue.UpVote));
+    const [didUserDownVote, setDidUserDownVote] = useState<boolean>(getVoteFromUser(votes, userId, VoteValue.DownVote));
+    const [upVotes, setUpVotes] = useState(upvotes);
+    const [downVotes, setDownVotes] = useState(downvotes);
     const toggleShowMore = () => {
         setShowMore(!showMore);
     };
@@ -62,17 +59,28 @@ function ReviewCard(props: ReviewCardProps): JSX.Element {
         window.location.reload()
     }
     const voteAction = async (reviewId: number, vote: VoteValue) => {
-        const res = await reviewService.voteReview(reviewId, GetVoteValue(vote))
+        const res = await reviewService.voteReview(reviewId, GetVoteValue(vote));
         localStorage.setItem('reviewVoted', JSON.stringify(!res?.failure))
         if (vote === VoteValue.UpVote) {
-            setDidUserDownVote(false)
-            setDidUserUpVote(true)
+
+            setUpVotes(upVotes + 1);
+
+            if(didUserDownVote){
+                setDownVotes(downVotes - 1);
+            }
+
+            setDidUserDownVote(false);
+            setDidUserUpVote(true);
         } else  {
-            setDidUserDownVote(true)
-            setDidUserUpVote(false)
+            setDownVotes(downVotes + 1);
+
+            if(didUserUpVote){
+                setUpVotes(upVotes - 1);
+            }
+
+            setDidUserDownVote(true);
+            setDidUserUpVote(false);
         }
-        console.log("vote")
-        await fetchVotes()
     }
 
     const unVoteAction = async (reviewId: number, userId: number | undefined) => {
@@ -80,71 +88,17 @@ function ReviewCard(props: ReviewCardProps): JSX.Element {
         localStorage.setItem('reviewUnVoted', JSON.stringify(!res?.failure))
         if (didUserUpVote) {
             setDidUserUpVote(false)
+            setUpVotes(upVotes - 1);
         } else {
-            setDidUserDownVote(false)
-        }
-        await fetchVotes()
-    }
-
-    const getVoteFromUser = async (reviewId:number, userId:number) => {
-        const res = await reviewService.getVotes(reviewId)
-        const vote = res?.data.find((v: { userId: number; }) => v.userId === userId)
-        if(vote !== undefined) {
-            if(vote.vote === 1) {
-                setDidUserUpVote(true)
-                setDidUserDownVote(false)
-            } else if(vote.vote === -1) {
-                setDidUserUpVote(false)
-                setDidUserDownVote(true)
-            }
+            setDidUserDownVote(false);
+            setDownVotes(downVotes - 1);
         }
     }
-    const fetchVotes = async () => {
-        try {
-            const res= await reviewService.getVotes(id)
-            if(res?.status === 204) {
-                setUpVotes(0)
-                setDownVotes(0)
-                return
-            }
-            const data = res?.data
-            let upVotes = 0
-            let downVotes = 0
-            data.forEach((vote: { vote: number; }) => {
-                if (vote.vote === 1) {
-                    upVotes++
-                } else if (vote.vote === -1) {
-                    downVotes++
-                }
-            })
-            setUpVotes(upVotes)
-            setDownVotes(downVotes)
-
-        }
-        catch (error) {
-            console.log('Error fetching votes', error)
-        }
-    }
-
-    useEffect(() => {
-        if(userId !== undefined) {
-            if(id !== undefined) {
-                getVoteFromUser(id, userId)
-            }
-        }
-    })
-    useEffect( () => {
-
-        const voteFetchInterval = setInterval(fetchVotes, 30000)
-
-        return () => clearInterval(voteFetchInterval)
-    })
-
 
     return (
         <Card className={classes.card}>
             <div slot="header" className={classes.header}>
-                {forSubject === false ?
+                {!forSubject ?
                     <Link className={classes.username_redirect} to={"/subject/" + subjectId}>
                         {subjectId} - {subjectName}
                     </Link>
@@ -273,6 +227,11 @@ function ReviewCard(props: ReviewCardProps): JSX.Element {
             </div>
         </Card>
     );
+}
+
+function getVoteFromUser(votes: ReviewVote[], userId:number|undefined, voteType: number){
+    const vote = votes.find((v: { userId: number; }) => v.userId === userId)
+    return vote != undefined && vote.vote == voteType;
 }
 
 

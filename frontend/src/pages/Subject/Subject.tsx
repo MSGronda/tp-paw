@@ -27,6 +27,7 @@ import { Review } from "../../models/Review.ts";
 import PaginationComponent from "../../components/pagination/pagination.tsx";
 import { User } from "../../models/User.ts";
 import { Degree } from "../../models/Degree.ts";
+import {ReviewVote} from "../../models/ReviewVote.ts";
 
 
 export function SubjectPage() {
@@ -44,6 +45,7 @@ export function SubjectPage() {
     const [prerequisites, setPrerequisites] = useState([{} as SimpleSubject]);
     const [loading, setLoading] = useState(true);
     const [reviews, setReviews] = useState<Review[]>([]);
+    const [reviewVotes, setReviewVotes] = useState<Map<number, ReviewVote[]>>(new Map());
     const [didUserReview, setDidUserReview] = useState(true);
     const [users, setUsers] = useState<User[]>([]);
     const [maxPage, setMaxPage] = useState(1);
@@ -78,8 +80,14 @@ export function SubjectPage() {
         if (res) {
             setReviews(data);
         }
+
+        const votes = await reviewService.getAllVotes(res.data);
+
+        setReviewVotes(votes);
+
         setLoading(false);
     }
+
 
     const getUsersFromReviews = async (subjectId: string, page: number) => {
         const res = await userService.getUsersThatReviewedSubject(subjectId, page);
@@ -538,8 +546,7 @@ export function SubjectPage() {
                                     forSubject={true}
                                     upvotes={review.upVotes}
                                     downvotes={review.downVotes}
-
-
+                                    votes={reviewVotes.get(review.id) ?? []}
                                 />
                             ))
                         }

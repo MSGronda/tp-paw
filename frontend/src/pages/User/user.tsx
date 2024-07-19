@@ -36,6 +36,7 @@ import { useForm } from "@mantine/form";
 import { validateConfirmPassword, validatePassword, validateUsername } from "../../utils/register_utils.ts";
 import authService from "../../services/AuthService.ts";
 import { Dropzone, MIME_TYPES } from "@mantine/dropzone";
+import {ReviewVote} from "../../models/ReviewVote.ts";
 
 
 export default function User() {
@@ -49,6 +50,7 @@ export default function User() {
   const [planSubjects, setPlanSubjects] = useState<Subject[]>([]);
   const [degree, setDegree] = useState({} as Degree);
   const [reviews, setReviews] = useState<Review[]>([]);
+  const [reviewVotes, setReviewVotes] = useState<Map<number, ReviewVote[]>>(new Map());
   const [subjects, setSubjects] = useState<Subject[]>([]);
   const [maxPage, setMaxPage] = useState(1);
 
@@ -96,6 +98,9 @@ export default function User() {
       setReviews(res.data);
       setMaxPage(res.maxPage || 1);
     }
+
+    setReviewVotes(await reviewService.getAllVotes(res.data));
+
     setLoadingReviews(false);
   }
 
@@ -245,6 +250,7 @@ export default function User() {
                     forSubject={false}
                     upvotes={review.upVotes}
                     downvotes={review.downVotes}
+                    votes={reviewVotes.get(review.id) ?? []}
                   />
                 ))
               }

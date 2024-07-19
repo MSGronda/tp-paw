@@ -1,5 +1,7 @@
-import {axiosService} from "./index.tsx";
+import {axiosService, reviewService} from "./index.tsx";
 import {handleResponse} from "../handlers/responseHandler.tsx";
+import {ReviewVote} from "../models/ReviewVote.ts";
+import {Review} from "../models/Review.ts";
 
 
 const path = "/reviews"
@@ -126,5 +128,26 @@ export class ReviewService {
         } catch (error: any) {
             return handleResponse(error.response);
         }
+    }
+
+    async getAllVotes(reviews: Review[]) {
+        const votes = new Map<number, ReviewVote[]>();
+
+        // Hacemos los pedidos en paralelo
+        await Promise.all(reviews.map(async (review: Review) => {
+            return await this.getReviewVotes(review.id);
+        })).then((values) =>
+            values.forEach((v) => votes.set(v[0], v[1]))
+        );
+
+        return votes;
+    }
+
+    private async getReviewVotes (id: number): Promise<[number, ReviewVote[]]> {
+        const res= await reviewService.getVotes(id);
+        if(!res || res.data == ""){
+            return [id, [] as ReviewVote[]];
+        }
+        return [id, res.data as ReviewVote[]];
     }
 }
