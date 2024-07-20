@@ -10,8 +10,8 @@ import PaginationComponent from '../../components/pagination/pagination';
 import Title from '../../components/title/title';
 import {Subject} from "../../models/Subject.ts";
 import {Loader} from "@mantine/core";
-import {parseSearchParams} from "../../utils/searchUtils.ts";
 import SubjectFilters from "../../components/subject-filters/subjectFilters.tsx";
+import {parseSearchParams} from "../../utils/searchUtils.ts";
 
 export default function Search() {
     const { t } = useTranslation(undefined, { keyPrefix: "Search" });
