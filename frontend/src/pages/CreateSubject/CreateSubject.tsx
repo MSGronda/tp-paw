@@ -23,11 +23,12 @@ import {handleService} from "../../handlers/serviceHandler.tsx";
 import {Subject} from "../../models/Subject.ts";
 import {useNavigate} from "react-router-dom";
 import {Degree} from "../../models/Degree.ts";
-import {IconInfoCircle, IconPencil, IconPlus, IconX} from "@tabler/icons-react";
+import {IconInfoCircle, IconPencil, IconX} from "@tabler/icons-react";
 import ChooseSubjectCard from "../../components/choose-subject-card/choose-subject-card.tsx";
 import {Professor} from "../../models/Professor.ts";
 import Class from "../../models/Class.ts";
 import {TimeInput} from "@mantine/dates";
+import ClassTime from "../../models/ClassTime.ts";
 
 export function CreateSubject() {
   const { t } = useTranslation();
@@ -47,7 +48,8 @@ export function CreateSubject() {
   ];
   const weekDaysMap = new Map<string,number>();
   classDays.forEach((clas, index) => weekDaysMap.set(clas, index));
-
+  //const availableCreditsPerClass = new Map<string,number>();
+  const [availableCreditsPerClass, setAvailableCreditsPerClass] = useState<Map<string,number>>(new Map());
 
   // UI components states
   const [activeTab, setActiveTab] = useState<string | null>("general-info");
@@ -269,25 +271,25 @@ export function CreateSubject() {
 
   function handleClassCreation() {
     const newClass = {idClass: currentClassName, idSubject: subjectId, locations: [], professors: currentClassProfessors};
-    let idClassRepeated = false;
     for(const clas of selectedClasses) {
       if(clas.idClass === currentClassName){
         //TODO Error message that cannot repeat idClass name
-        idClassRepeated = true;
+        return;
       }
     }
-
-    if(!idClassRepeated) {
-      setSelectedClasses([...selectedClasses, newClass]);
-      setCurrentClassName("");
-      setCurrentClassProfessors([]);
-      setOpenedClassModal(false);
-    }
+    availableCreditsPerClass.set(newClass.idClass, credits);
+    setAvailableCreditsPerClass(new Map<string,number>(availableCreditsPerClass));
+    setSelectedClasses([...selectedClasses, newClass]);
+    setCurrentClassName("");
+    setCurrentClassProfessors([]);
+    setOpenedClassModal(false);
   }
 
   function handleRemoveClass(clas: Class) {
     let index;
     if( (index = selectedClasses.indexOf(clas) ) != -1) {
+      availableCreditsPerClass.delete(clas.idClass);
+      setAvailableCreditsPerClass(new Map<string,number>(availableCreditsPerClass))
       setSelectedClasses([...selectedClasses.slice(0,index), ...selectedClasses.slice(index + 1)]);
     }
   }
@@ -298,7 +300,6 @@ export function CreateSubject() {
     let index;
     if( (index = selectedClasses.indexOf(clas) ) != -1 ){
       setSelectedClasses([...selectedClasses.slice(0,index), ...selectedClasses.slice(index + 1)]);
-
     }
     setOpenedClassEditModal(true);
   }
@@ -324,15 +325,26 @@ export function CreateSubject() {
   }
 
   function handleClassTimeCreation() {
+    let actualCredits;
+    if (currentClassSelected){
+      if(availableCreditsPerClass.get(currentClassSelected.idClass) === undefined){
+        availableCreditsPerClass.set(currentClassSelected.idClass, credits);
+        setAvailableCreditsPerClass(new Map<string,number>(availableCreditsPerClass))
+      }
+      actualCredits = availableCreditsPerClass.get(currentClassSelected.idClass);
+    }
     if( currentClassTimeDay === "" || currentClassTimeClassroom === "" || currentClassTimeMode === "" || currentClassTimeBuilding === "" ||
-      startTimeRef.current == undefined || endTimeRef.current == undefined ||
-        (extractHoursFromTimeStamp(endTimeRef.current.value) - extractHoursFromTimeStamp(startTimeRef.current.value)) > credits){
+      startTimeRef.current == undefined || endTimeRef.current == undefined || actualCredits == undefined ||
+        (extractHoursFromTimeStamp(endTimeRef.current.value) - extractHoursFromTimeStamp(startTimeRef.current.value)) > actualCredits){
       setMissingClassTimeFields(true);
       return;
     }
     const newClassTime = {day: extractNumberFromWeekDay(currentClassTimeDay), startTime: startTimeRef.current.value,
       endTime: endTimeRef.current.value, mode:currentClassTimeMode, building: currentClassTimeBuilding, location: currentClassTimeClassroom}
-    if(!currentClassSelected?.locations.includes(newClassTime)){
+    if(currentClassSelected && !currentClassSelected.locations.includes(newClassTime)){
+      const creditsLeft = (extractHoursFromTimeStamp(endTimeRef.current.value) - extractHoursFromTimeStamp(startTimeRef.current.value));
+      availableCreditsPerClass.set(currentClassSelected.idClass, actualCredits - creditsLeft);
+      setAvailableCreditsPerClass(new Map<string,number>(availableCreditsPerClass))
       currentClassSelected?.locations.push(newClassTime);
     }
     setMissingClassTimeFields(false);
@@ -343,6 +355,22 @@ export function CreateSubject() {
     startTimeRef.current.value = "";
     endTimeRef.current.value = "";
     setOpenedClassTimeModal(false);
+  }
+
+  function handleRemoveClassTime(classTime : ClassTime, clas: Class) {
+    const creditsGained =  (extractHoursFromTimeStamp(classTime.endTime) - extractHoursFromTimeStamp(classTime.startTime));
+    let actualCredits;
+    if( (actualCredits = availableCreditsPerClass.get(clas.idClass)) !== undefined )
+    availableCreditsPerClass.set(clas.idClass, actualCredits + creditsGained );
+    setAvailableCreditsPerClass(new Map<string,number>(availableCreditsPerClass))
+    const index = clas.locations.indexOf(classTime);
+    if(index > -1){
+      clas.locations.splice(index, 1);
+      let classIndex;
+      if((classIndex = selectedClasses.indexOf(clas)) != -1){
+        setSelectedClasses([...selectedClasses.slice(0,classIndex), clas ,...selectedClasses.slice(classIndex + 1)]);
+      }
+    }
   }
 
   // Combobox Options
@@ -589,7 +617,7 @@ export function CreateSubject() {
               </Flex>
               <Flex mih={50} gap="xl" justify="space-between" align="center" direction="row" wrap="wrap">
                 {t("CreateSubject.credits")}
-                <NumberInput className={classes.departmentDropdown} value={credits} min={MINIMUM_CREDITS} max={MAXIMUM_CREDITS} onChange={setCredits}/>
+                <NumberInput className={classes.departmentDropdown} value={credits} min={MINIMUM_CREDITS} max={MAXIMUM_CREDITS} onChange={(value) => setCredits(Number(value))}/>
               </Flex>
               <Flex mih={50} gap="xl" justify="space-between" align="center" direction="row" wrap="wrap">
                 {t("CreateSubject.degree")}
@@ -664,12 +692,7 @@ export function CreateSubject() {
                   <Table.Tr>
                     <Table.Th>{t("CreateSubject.class")}</Table.Th>
                     <Table.Th>{t("CreateSubject.professors")}</Table.Th>
-                    <Table.Th>{t("CreateSubject.day")}</Table.Th>
-                    <Table.Th>{t("CreateSubject.timeStart")}</Table.Th>
-                    <Table.Th>{t("CreateSubject.timeEnd")}</Table.Th>
-                    <Table.Th>{t("CreateSubject.mode")}</Table.Th>
-                    <Table.Th>{t("CreateSubject.building")}</Table.Th>
-                    <Table.Th>{t("CreateSubject.classroom")}</Table.Th>
+                    <Table.Th></Table.Th>
                   </Table.Tr>
                 </Table.Thead>
                 <Table.Tbody>
@@ -686,18 +709,31 @@ export function CreateSubject() {
                       </Flex>
                     </Table.Th>
                     <Table.Th>{clas.professors.join(";")}</Table.Th>
-                    {clas.locations.length > 0 ? clas.locations.map((location) => <>
+                    <Table.Tr>
+                      <Table.Th>{t("CreateSubject.day")}</Table.Th>
+                      <Table.Th>{t("CreateSubject.timeStart")}</Table.Th>
+                      <Table.Th>{t("CreateSubject.timeEnd")}</Table.Th>
+                      <Table.Th>{t("CreateSubject.mode")}</Table.Th>
+                      <Table.Th>{t("CreateSubject.building")}</Table.Th>
+                      <Table.Th>{t("CreateSubject.classroom")}</Table.Th>
+                    </Table.Tr>
+                    { clas.locations.length > 0 && clas.locations.map((location) => <Table.Tr>
                       <Table.Th>{classDays[location.day]}</Table.Th>
                       <Table.Th>{location.startTime}</Table.Th>
                       <Table.Th>{location.endTime}</Table.Th>
                       <Table.Th>{location.mode}</Table.Th>
                       <Table.Th>{location.building}</Table.Th>
                       <Table.Th>{location.location}</Table.Th>
-                    </>) :
-                        <Table.Th><Button variant="default" onClick={() => handleOpenClassTimeModalCreation(clas)}>
-                          {t("CreateSubject.addClassTimes")}
-                        </Button></Table.Th>
+                      <Table.Th>
+                        <ActionIcon size={18} variant="default" onClick={() => handleRemoveClassTime(location, clas)}>
+                          <IconX style={{ width: rem(24), height: rem(24) }} />
+                        </ActionIcon>
+                      </Table.Th>
+                    </Table.Tr>)
                     }
+                    <Table.Th><Button variant="default" onClick={() => handleOpenClassTimeModalCreation(clas)}>
+                      {t("CreateSubject.addClassTimes")}
+                    </Button></Table.Th>
                   </Table.Tr>)}
                 </Table.Tbody>
               </Table>
