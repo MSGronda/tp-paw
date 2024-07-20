@@ -85,8 +85,9 @@ public class ReviewServiceImpl implements ReviewService {
     @Transactional
     @Override
     public void deleteReviewVote(final Review review, final User user){
-        if(review.getUser().getId() != user.getId()){
-            LOGGER.warn("Unauthorized user with id: {} attempted to delete review vote with id: {}", user.getId(), review.getId());
+        final Optional<ReviewVote> vote = reviewDao.getUserVote(user, review);
+        if(!vote.isPresent()){
+            LOGGER.warn("User with id: {} attempted to delete a vote in a review with id: {}", user.getId(), review.getId());
             throw new UnauthorizedException();
         }
 
@@ -120,25 +121,33 @@ public class ReviewServiceImpl implements ReviewService {
         reviewDao.delete(review);
     }
     @Override
-    public List<ReviewVote> getVotes(final Long reviewId, final Long userId, final int page){
-        if(page < 1)
+    public List<ReviewVote> getVotes(final Review review, final Long userId, final int page){
+        if(page < 1 || (userId == null && page > reviewDao.getTotalVotePages(review))){
             throw new InvalidPageNumberException();
+        }
 
-        final Review review = findById(reviewId).orElseThrow(ReviewNotFoundException::new);
-
-        if(userId == null)
+        if(userId == null){
             return reviewDao.getReviewVotes(review, page);
+        }
 
         final User user = userService.findById(userId).orElseThrow(UserNotFoundException::new);
 
         final Optional<ReviewVote> vote = reviewDao.getUserVote(user, review);
 
-        if(!vote.isPresent() || page > 1)
+        if(!vote.isPresent() || page > 1){
             return new ArrayList<>();
+        }
 
         final List<ReviewVote> reviewVotes = new ArrayList<>();
         reviewVotes.add(vote.get());
 
         return reviewVotes;
+    }
+
+    public int getVoteTotalPages(final Review review, final Long userId, final int page){
+        if(userId == null){
+            return reviewDao.getTotalVotePages(review);
+        }
+        return 1;
     }
 }

@@ -121,21 +121,12 @@ export class ReviewService {
         }
     }
 
-    async getVotes(reviewId: number) {
-        try {
-            const res = await axiosService.authAxiosWrapper(axiosService.GET, `${path}/${reviewId}/votes`);
-            return handleResponse(res);
-        } catch (error: any) {
-            return handleResponse(error.response);
-        }
-    }
-
-    async getAllVotes(reviews: Review[]) {
+    async getAllVotes(reviews: Review[], userId: number) {
         const votes = new Map<number, ReviewVote[]>();
 
         // Hacemos los pedidos en paralelo
         await Promise.all(reviews.map(async (review: Review) => {
-            return await this.getReviewVotes(review.id);
+            return await this.getReviewVotes(review.id, userId);
         })).then((values) =>
             values.forEach((v) => votes.set(v[0], v[1]))
         );
@@ -143,8 +134,19 @@ export class ReviewService {
         return votes;
     }
 
-    private async getReviewVotes (id: number): Promise<[number, ReviewVote[]]> {
-        const res= await reviewService.getVotes(id);
+    private async getReviewVotes (id: number, userId: number): Promise<[number, ReviewVote[]]> {
+        let res;
+        try {
+            const config: any = {};
+            config.params = {
+                userId: userId
+            }
+            const initialRes = await axiosService.authAxiosWrapper(axiosService.GET, `${path}/${id}/votes`, config);
+            res =  handleResponse(initialRes);
+        } catch (error: any) {
+            res =  handleResponse(error.response);
+        }
+
         if(!res || res.data == ""){
             return [id, [] as ReviewVote[]];
         }

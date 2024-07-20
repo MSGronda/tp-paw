@@ -104,7 +104,7 @@ export default function User() {
 
     // Obtenemos las review votes en base a las reviews
 
-    setReviewVotes(await reviewService.getAllVotes(res.data));
+    setReviewVotes(await reviewService.getAllVotes(res.data, userId));
 
     // Obtenemos los nombres de los subjects en base a los ids
     await getSubjectsFromReviews(rev);

@@ -27,6 +27,8 @@ public interface ReviewDao {
     Optional<ReviewVote> getUserVote(final User user, final Review review);
     List<ReviewVote> getReviewVotes(final Review review, final int page);
 
+    int getTotalVotePages(final Review review);
+
     List<Review> reviewSearch(
             final User currentUser,
             final String subjectId,

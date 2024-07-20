@@ -1,11 +1,11 @@
-import { ActionIcon, Badge, Button, Card, Divider, Tooltip } from "@mantine/core";
+import {ActionIcon, Badge, Button, Card, Divider, Tooltip} from "@mantine/core";
 import classes from './review-card.module.css';
-import { IconEdit, IconThumbDown, IconThumbUp, IconTrash } from "@tabler/icons-react";
-import {useContext, useState} from "react";
-import { useTranslation } from "react-i18next";
-import { Link } from "react-router-dom";
+import {IconEdit, IconThumbDown, IconThumbUp, IconTrash} from "@tabler/icons-react";
+import {useContext, useEffect, useState} from "react";
+import {useTranslation} from "react-i18next";
+import {Link} from "react-router-dom";
 import AuthContext from "../../context/AuthContext";
-import { reviewService } from "../../services";
+import {reviewService} from "../../services";
 import {ReviewVote, VoteValue} from "../../models/ReviewVote.ts";
 
 
@@ -37,15 +37,19 @@ function GetVoteValue(voteValue: VoteValue): number {
 }
 
 function ReviewCard(props: ReviewCardProps): JSX.Element {
+    const {subjectId, subjectName, text, timeDemand, difficulty, UserId, userName, anonymous, id, forSubject, upvotes, downvotes, votes } = props;
+
     const { t } = useTranslation();
     const {userId } = useContext(AuthContext);
-    const {subjectId, subjectName, text, timeDemand, difficulty, UserId, userName, anonymous, id, forSubject, upvotes, downvotes, votes } = props;
     const [openedTooltip, setOpenedTooltip] = useState(false);
     const [showMore, setShowMore] = useState(false);
-    const [didUserUpVote, setDidUserUpVote] = useState<boolean>(getVoteFromUser(votes, userId, VoteValue.UpVote));
-    const [didUserDownVote, setDidUserDownVote] = useState<boolean>(getVoteFromUser(votes, userId, VoteValue.DownVote));
+    const [didUserUpVote, setDidUserUpVote] = useState<boolean>(false);
+    const [didUserDownVote, setDidUserDownVote] = useState<boolean>(false);
     const [upVotes, setUpVotes] = useState(upvotes);
     const [downVotes, setDownVotes] = useState(downvotes);
+
+    const votedColor = "#f5a623";
+
     const toggleShowMore = () => {
         setShowMore(!showMore);
     };
@@ -94,6 +98,19 @@ function ReviewCard(props: ReviewCardProps): JSX.Element {
             setDownVotes(downVotes - 1);
         }
     }
+
+    const userVoted = (voteType: number) => {
+        return votes.some((v) => v.userId == userId && v.vote == voteType);
+    }
+
+    useEffect(() => {
+        const up = userVoted(VoteValue.UpVote);
+        const down = userVoted(VoteValue.DownVote);
+
+        setDidUserUpVote(up);
+        setDidUserDownVote(down)
+
+    }, []);
 
     return (
         <Card className={classes.card}>
@@ -207,7 +224,7 @@ function ReviewCard(props: ReviewCardProps): JSX.Element {
                     <ActionIcon variant="transparent" className={classes.like_button}
                                 onClick={() => unVoteAction(id, userId)}
                     >
-                        <IconThumbUp/>
+                        <IconThumbUp color={votedColor}/>
                     </ActionIcon>
                 }
                 <span>{upVotes}</span>
@@ -220,7 +237,7 @@ function ReviewCard(props: ReviewCardProps): JSX.Element {
                     <ActionIcon variant="transparent" className={classes.like_button}
                                 onClick={() => unVoteAction(id, userId)}
                     >
-                        <IconThumbDown/>
+                        <IconThumbDown color={votedColor}/>
                     </ActionIcon>
                 }
                 <span>{downVotes}</span>
@@ -229,10 +246,7 @@ function ReviewCard(props: ReviewCardProps): JSX.Element {
     );
 }
 
-function getVoteFromUser(votes: ReviewVote[], userId:number|undefined, voteType: number){
-    const vote = votes.find((v: { userId: number; }) => v.userId === userId)
-    return vote != undefined && vote.vote == voteType;
-}
+
 
 
 export default ReviewCard;

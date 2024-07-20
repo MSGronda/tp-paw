@@ -77,15 +77,15 @@ export function SubjectPage() {
     const getReviewsFromSubject = async (subjectId: string, page: number, orderBy: string, dir: string) => {
         const res = await reviewService.getReviewsBySubject(subjectId, page, orderBy, dir);
         const data = handleService(res, navigate);
-                
+
         setReviews(data);
+        
+        if(data != "" && userId){
 
-        if(data != ""){
-            const votes = await reviewService.getAllVotes(res.data);
-
+            const votes = await reviewService.getAllVotes(res.data, userId);
             setReviewVotes(votes);
-        }
 
+        }
         setLoading(false);
     }
 
@@ -534,12 +534,14 @@ export function SubjectPage() {
                     <div className={classes.reviewsColumn}>
                         {reviews &&
                             reviews.map((review) => (
-                                <ReviewCard subjectId={subject?.id}
+                                <ReviewCard
+                                    key={review.id}
+
+                                    subjectId={subject?.id}
                                     subjectName={subject.name}
                                     difficulty={review.difficulty}
                                     timeDemand={review.timeDemand}
                                     text={review.text}
-                                    key={review.id}
                                     UserId={review.userId}
                                     userName={findUserName(review.userId)}
                                     anonymous={review.anonymous}

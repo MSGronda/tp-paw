@@ -137,14 +137,20 @@ public class ReviewController {
             @QueryParam("userId") final Long userId,
             @QueryParam("page") @DefaultValue("1") final int page
     ){
-        final List<ReviewVote> votes = reviewService.getVotes(reviewId, userId, page);
+        final Review review = reviewService.findById(reviewId).orElseThrow(ReviewNotFoundException::new);
+
+        final List<ReviewVote> votes = reviewService.getVotes(review, userId, page);
 
         if(votes.isEmpty())
             return Response.noContent().build();
 
         final List<ReviewVoteDto> voteDtos = votes.stream().map(vote -> ReviewVoteDto.fromReviewVote(uriInfo, vote)).collect(Collectors.toList());
 
-        return Response.ok(new GenericEntity<List<ReviewVoteDto>>(voteDtos){}).build();
+        int lastPage = reviewService.getVoteTotalPages(review, userId, page);
+        Response.ResponseBuilder responseBuilder = Response.ok(new GenericEntity<List<ReviewVoteDto>>(voteDtos){});
+        PaginationLinkBuilder.getResponsePaginationLinks(responseBuilder, uriInfo, page, lastPage);
+
+        return responseBuilder.build();
     }
 
     @POST

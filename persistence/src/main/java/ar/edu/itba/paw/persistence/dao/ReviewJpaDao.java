@@ -96,6 +96,13 @@ public class ReviewJpaDao implements ReviewDao {
                 .getResultList();
     }
 
+    public int getTotalVotePages(final Review review) {
+        final Query nativeQuery = em.createNativeQuery("SELECT count(*) FROM reviewvote WHERE idreview = ?");
+        nativeQuery.setParameter(1, review.getId());
+
+        return (int) Math.max(1, Math.ceil(((Number) nativeQuery.getSingleResult()).doubleValue() / PAGE_SIZE));
+    }
+
 
 
     @Override
