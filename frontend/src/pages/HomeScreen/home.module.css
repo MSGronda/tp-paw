@@ -62,17 +62,17 @@
     flex-direction: row;
     justify-content: center;
     height: 100%;
-    width: 95%;
+    width: 100%;
     padding-top: 1rem;
 }
 
 .timeTableArea {
-    height: 86vh;
+    height: 88vh;
     width: 100%;
     overflow-y: auto;
 }
 .currentSemesterClassArea {
-    padding: 0.5rem 0.5rem;
+    padding: 0 0.5rem;
     width: 45%;
     height: 100%;
 }
@@ -132,4 +132,22 @@
     background: #efefef;
     min-width: 100%;
     min-height: 100%;
+}
+
+.future-subjects-area {
+    width: 90%;
+    min-height: 90%;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    padding: 1rem 1rem 1rem 1rem;
+    gap: 1rem;
+}
+
+.past-subjects-area {
+    width: 90%;
+    min-height: 90%;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    padding: 1rem 1rem 3rem 1rem;
+    gap: 1rem;
 }

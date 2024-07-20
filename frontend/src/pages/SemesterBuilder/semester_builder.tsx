@@ -503,7 +503,7 @@ export default function SemesterBuilder() {
                 {/* Overview */}
                 {
                     !showSchedule ?
-                    <Card className={classes.selected_card} withBorder>
+                    <Card className={classes.overview} withBorder>
                         <Card.Section>
                             <div className={classes.selected_header}>
                                 <h4 className={classes.section_titles}>{t("Builder.overview")}</h4>

@@ -164,8 +164,6 @@ public class ReviewJpaDao implements ReviewDao {
         return sb;
     }
     private Query createNativeQuery(final StringBuilder nativeQuerySb, final List<Object> params){
-        System.out.println(nativeQuerySb);
-
         final Query nativeQuery = em.createNativeQuery(nativeQuerySb.toString());
 
         int i=1;

@@ -10,8 +10,8 @@
     flex-direction: row;
     justify-content: space-evenly;
 
-    width: min(max(900px, 95%), 100%);
-    height: 92%;
+    width: min(max(900px, 99%), 100%);
+    height: 90%;
     padding-left: 2rem;
     padding-right: 2rem;
     margin: auto 0;
@@ -37,6 +37,7 @@
 /* Available Subjects */
 .available_card {
     width: 35rem;
+    max-width: 37%;
     height: 100%;
 }
 .available_header {
@@ -61,7 +62,8 @@
 
 /* Selected Classes */
 .selected_card {
-    width: 35rem;
+    width: 32rem;
+    max-width: 33%;
     height: 100%;
 }
 .selected_header {
@@ -75,6 +77,11 @@
 }
 
 /* Overview */
+.overview {
+    width: 30rem;
+    max-width: 28%;
+    height: 100%;
+}
 .info_card {
     padding: 0.5rem 0;
 }
@@ -88,7 +95,6 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    min-height: 30rem;
 }
 .unlock_button {
     padding: 0.5rem;

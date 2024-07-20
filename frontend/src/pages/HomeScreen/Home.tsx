@@ -3,7 +3,6 @@ import {
     Card,
     Divider,
     Flex,
-    Grid,
     Group,
     Pagination,
     RingProgress,
@@ -181,7 +180,7 @@ export default function Home() {
                                             </div>
 
                                             <div className={classes.currentSemesterClassArea}>
-                                                <Card  padding={0}>
+                                                <Card padding={0}>
                                                     <Card.Section w="100%">
                                                         <h4 style={{margin: "0.75rem"}} className={classes.section_titles}>{t("Home.thisSemester")}</h4>
                                                         <Divider/>
@@ -314,27 +313,24 @@ export default function Home() {
 
                             <Tabs.Panel value="future-subjects"  h="90%">
                                 <Flex gap="xl" align="center" justify="center" direction="column" mih={50} w="100%">
-                                    <Flex w="85%" pt="1.5rem" mih="80%">
-                                        <Grid w="100%" gutter="sm" columns={5}>
-                                            {
-                                                futureSubjects.map((subject) =>
-                                                    <Grid.Col span={1} key={subject.id} >
-                                                        <SubjectCard
-                                                            id={subject.id}
-                                                            credits={subject.credits}
-                                                            difficulty={subject.difficulty}
-                                                            name={subject.name}
-                                                            numReviews={subject.reviewCount}
-                                                            prerequisites={subject.prerequisites}
-                                                            timeDemand={subject.timeDemand}
-                                                            progress={""}
-                                                        />
-                                                    </Grid.Col>
-                                                )
-                                            }
-                                        </Grid>
-                                    </Flex>
-
+                                    {/*NO SE PORQUE PERO NO FUNCIONA SI TENEMOS EL CSS EN EL OTRO ARCHIVO*/}
+                                    <div style={{width: "90%", minHeight: '90%' , display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(250px, 1fr))', padding: '1rem 1rem 1rem 1rem', gap: '1rem'}}>
+                                        {
+                                            futureSubjects.map((subject) =>
+                                                    <SubjectCard
+                                                        key={subject.id}
+                                                        id={subject.id}
+                                                        credits={subject.credits}
+                                                        difficulty={subject.difficulty}
+                                                        name={subject.name}
+                                                        numReviews={subject.reviewCount}
+                                                        prerequisites={subject.prerequisites}
+                                                        timeDemand={subject.timeDemand}
+                                                        progress={""}
+                                                    />
+                                            )
+                                        }
+                                    </div>
                                     <Flex justify="center" align="center">
                                         <Pagination value={currentFutureSubjectsPage} total={futureSubjectsMaxPage} onChange={setCurrentFutureSubjectsPage} />
                                     </Flex>
@@ -343,21 +339,19 @@ export default function Home() {
 
                             <Tabs.Panel value="past-subjects" h="90%">
                                 <Flex gap="xl" align="center" justify="center" direction="column" h="100%" w="100%">
-                                    <Flex w="85%" pt="1.5rem" mih="80%">
-                                        <Grid w="100%" gutter="sm" columns={6} >
+                                    {/*NO SE PORQUE PERO NO FUNCIONA SI TENEMOS EL CSS EN EL OTRO ARCHIVO*/}
+                                        <div style={{width: "90%", minHeight: '90%' , display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', padding: '1rem 1rem 3rem 1rem', gap: '1rem'}}>
                                             {
                                                 pastSubjects.map((subject) =>
-                                                    <Grid.Col span={1} key={subject.id} >
-                                                        <PastSubjectCard
-                                                            id={subject.id}
-                                                            credits={subject.credits}
-                                                            name={subject.name}
-                                                        />
-                                                    </Grid.Col>
+                                                    <PastSubjectCard
+                                                        key={subject.id}
+                                                        id={subject.id}
+                                                        credits={subject.credits}
+                                                        name={subject.name}
+                                                    />
                                                 )
                                             }
-                                        </Grid>
-                                    </Flex>
+                                        </div>
                                     <Flex justify="center" align="center">
                                         <Pagination value={currentPastSubjectsPage} total={pastSubjectsMaxPage} onChange={setCurrentPastSubjectsPage} />
                                     </Flex>

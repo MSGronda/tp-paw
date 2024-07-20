@@ -27,7 +27,7 @@ export default function BuilderSubjectCard(props: BuilderSubjectCardProps): JSX.
             <div className={classes.card_row}>
                 <div className={classes.card_column}>
                     <h4 style={{color: getTextColor()}} className={classes.card_title}>{subject.name}</h4>
-                    <span style={{color: getTextColor()}}>{t("SubjectCard.credits", {n: subject.credits})}</span>
+                    <span style={{color: getTextColor()}} className={classes.card_title}>{t("SubjectCard.credits", {n: subject.credits})}</span>
                     <div>
                         <DifficultyChip numReviews={subject.reviewCount} difficulty={subject.difficulty}/>
                     </div>
