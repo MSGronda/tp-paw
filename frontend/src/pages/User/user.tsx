@@ -230,7 +230,7 @@ export default function User() {
           <div className={classes.container}>
             <div className={classes.body}>
               {isProfile ?
-                <ProfileSection user={user} />
+                <ProfileSection user={user} degree={degree} />
                 : <UserSection user={user} degree={degree} plan={planSubjects} />
               }
             </div>
@@ -435,27 +435,13 @@ function UserSection({ user, degree, plan }: { user?: User, degree?: Degree, pla
   </>;
 }
 
-function ProfileSection({ user }: { user?: User }) {
+function ProfileSection({ user, degree }: { user?: User, degree?: Degree }) {
   const { t } = useTranslation();
 
   const [openedPassModal, { open: openPassModal, close: closePassModal }] = useDisclosure(false);
   const [openedDegreeModal, { open: openDegreeModal, close: closeDegreeModal }] = useDisclosure(false);
   const [openedUsernameModal, { open: openUsernameModal, close: closeUsernameModal }] = useDisclosure(false);
   const [openedPictureModal, { open: openPictureModal, close: closePictureModal }] = useDisclosure(false);
-
-  const [degree, setDegree] = useState<Degree | null>(null);
-
-  useEffect(() => {
-    if (!user || !user.degreeId) return;
-
-    degreeService.getDegreeById(user.degreeId).then(res => {
-      if (res.failure) {
-        console.error("Unable to get degree: ", res.status);
-        return;
-      }
-      setDegree(res.data as Degree);
-    });
-  }, [user]);
 
   if (!user) return <Loader />;
 
