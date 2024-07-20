@@ -338,7 +338,7 @@ export const TRANSLATIONS_ES = {
         createProfessor: "Crear Profesor",
         professorName: "Nombre completo del profesor",
         next: "Siguiente",
-        previous: "Previous",
+        previous: "Atrás",
         generalInfo: "Información general",
         classes: "Comisiones",
         addClasses: "Agregar comisiones",
