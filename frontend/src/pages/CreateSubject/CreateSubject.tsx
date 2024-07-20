@@ -27,6 +27,7 @@ import {IconPencil, IconX} from "@tabler/icons-react";
 import ChooseSubjectCard from "../../components/choose-subject-card/choose-subject-card.tsx";
 import {Professor} from "../../models/Professor.ts";
 import Class from "../../models/Class.ts";
+import {TimeInput} from "@mantine/dates";
 
 export function CreateSubject() {
   const { t } = useTranslation();
@@ -421,7 +422,30 @@ export function CreateSubject() {
           {t("CreateSubject.professors")}
           <MultiSelect placeholder={t("CreateSubject.professorLabel")} data={selectedProfessors} value={currentClassProfessors} onChange={setCurrentClassProfessors}/>
         </Flex>
-        {/*<Flex mih={50} gap="xl" justify="space-between" align="center" direction="row" wrap="wrap">
+        <Flex mih={50} gap="xl" justify="right" align="center" direction="row" wrap="wrap">
+          <Button color="green" onClick={() => handleClassCreation()}>{t("CreateSubject.add")}</Button>
+        </Flex>
+      </Modal>
+
+      { /* Edit Class Modal */ }
+      <Modal opened={openedClassEditModal} onClose={() => handleClassEdit()} title={t("CreateSubject.editClasses")}>
+        <Flex mih={50} gap="xl" justify="space-between" align="center" direction="row" wrap="wrap">
+          {t("CreateSubject.class")}
+          <Textarea className={classes.degreeDropdown} autosize value={currentClassEditName}
+                    onChange={(event) => setCurrentClassEditName(event.currentTarget.value)}/>
+        </Flex>
+        <Flex mih={50} gap="xl" justify="space-between" align="center" direction="row" wrap="wrap">
+          {t("CreateSubject.professors")}
+          <MultiSelect placeholder={t("CreateSubject.professorLabel")} data={selectedProfessors} value={currentClassEditProfessors} onChange={setCurrentClassEditProfessors}/>
+        </Flex>
+        <Flex mih={50} gap="xl" justify="right" align="center" direction="row" wrap="wrap">
+          <Button color="green" onClick={() => handleClassEdit()}>{t("CreateSubject.edit")}</Button>
+        </Flex>
+      </Modal>
+
+      { /* Edit Class Time Modal */ }
+      <Modal opened={openedClassModal} onClose={() => setOpenedClassModal(false)} title={t("CreateSubject.addClasses")}>
+        <Flex mih={50} gap="xl" justify="space-between" align="center" direction="row" wrap="wrap">
           {t("CreateSubject.day")}
           <Combobox store={comboboxClassDays} onOptionSubmit={(value) => {
             setClassDay(value);
@@ -439,45 +463,28 @@ export function CreateSubject() {
             </Combobox.Dropdown>
           </Combobox>
         </Flex>
-          <Flex mih={50} gap="xl" justify="space-between" align="center" direction="row" wrap="wrap">
-        {t("CreateSubject.timeStart")}
-        <TimeInput className={classes.degreeDropdown}/>
-      </Flex>
-      <Flex mih={50} gap="xl" justify="space-between" align="center" direction="row" wrap="wrap">
-        {t("CreateSubject.timeEnd")}
-        <TimeInput className={classes.degreeDropdown}/>
-      </Flex>
-      <Flex mih={50} gap="xl" justify="space-between" align="center" direction="row" wrap="wrap">
-        {t("CreateSubject.mode")}
-        <Textarea className={classes.degreeDropdown} autosize></Textarea>
-      </Flex>
-      <Flex mih={50} gap="xl" justify="space-between" align="center" direction="row" wrap="wrap">
-        {t("CreateSubject.building")}
-        <Textarea className={classes.degreeDropdown} autosize></Textarea>
-      </Flex>
-      <Flex mih={50} gap="xl" justify="space-between" align="center" direction="row" wrap="wrap">
-        {t("CreateSubject.classroom")}
-        <Textarea className={classes.degreeDropdown} autosize></Textarea>
-      </Flex>
-      */}
-        <Flex mih={50} gap="xl" justify="right" align="center" direction="row" wrap="wrap">
-          <Button color="green" onClick={() => handleClassCreation()}>{t("CreateSubject.add")}</Button>
-        </Flex>
-      </Modal>
-
-      { /* Edit Class Modal */ }
-      <Modal opened={openedClassEditModal} onClose={() => setOpenedClassEditModal(false)} title={t("CreateSubject.addClasses")}>
         <Flex mih={50} gap="xl" justify="space-between" align="center" direction="row" wrap="wrap">
-          {t("CreateSubject.class")}
-          <Textarea className={classes.degreeDropdown} autosize value={currentClassEditName}
-                    onChange={(event) => setCurrentClassEditName(event.currentTarget.value)}/>
+          {t("CreateSubject.timeStart")}
+          <TimeInput className={classes.degreeDropdown}/>
         </Flex>
         <Flex mih={50} gap="xl" justify="space-between" align="center" direction="row" wrap="wrap">
-          {t("CreateSubject.professors")}
-          <MultiSelect placeholder={t("CreateSubject.professorLabel")} data={selectedProfessors} value={currentClassEditProfessors} onChange={setCurrentClassEditProfessors}/>
+          {t("CreateSubject.timeEnd")}
+          <TimeInput className={classes.degreeDropdown}/>
+        </Flex>
+        <Flex mih={50} gap="xl" justify="space-between" align="center" direction="row" wrap="wrap">
+          {t("CreateSubject.mode")}
+          <Textarea className={classes.degreeDropdown} autosize></Textarea>
+        </Flex>
+        <Flex mih={50} gap="xl" justify="space-between" align="center" direction="row" wrap="wrap">
+          {t("CreateSubject.building")}
+          <Textarea className={classes.degreeDropdown} autosize></Textarea>
+        </Flex>
+        <Flex mih={50} gap="xl" justify="space-between" align="center" direction="row" wrap="wrap">
+          {t("CreateSubject.classroom")}
+          <Textarea className={classes.degreeDropdown} autosize></Textarea>
         </Flex>
         <Flex mih={50} gap="xl" justify="right" align="center" direction="row" wrap="wrap">
-          <Button color="green" onClick={() => handleClassEdit()}>{t("CreateSubject.add")}</Button>
+          <Button color="green" onClick={() => handleClassEdit()}>{t("CreateSubject.edit")}</Button>
         </Flex>
       </Modal>
 

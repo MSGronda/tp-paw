@@ -360,7 +360,9 @@ export const TRANSLATIONS_ES = {
         createSubject: "Crear materia",
         addPrereq: "Agregar correlativa",
         prereqAdvice: "Agregá una carrera!",
-        professorLabel: "Busca un nombre de profesor"
+        professorLabel: "Busca un nombre de profesor",
+        editClasses: "Editar comisión",
+        edit: "Editar"
     },
     Degrees: {
         title: "Carreras",

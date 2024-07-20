@@ -362,7 +362,9 @@ export const TRANSLATIONS_EN = {
         createSubject: "Create Subject",
         addPrereq: "Add Prerequisite",
         prereqAdvice: "Add a degree first!",
-        professorLabel: "Search for a professor's name"
+        professorLabel: "Search for a professor's name",
+        editClasses: "Edit classes",
+        edit: "Edit"
     },
     Degrees: {
         title: "Degrees",
