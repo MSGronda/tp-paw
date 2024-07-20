@@ -287,6 +287,24 @@ public class SubjectJpaDao implements SubjectDao {
             paramValues.add(params.getUserReviews());
         }
 
+        if(params.hasIds()){
+            queryString.append(" s.id IN ( ");
+
+            int i = 0;
+            for(final String id : params.getIds()){
+                queryString.append(" ? ");
+
+                if(i < params.getIds().size() - 1){
+                    queryString.append(", ");
+                    i++;
+                }
+
+                paramValues.add(id);
+            }
+
+            queryString.append(" ) AND ");
+        }
+
         return removeExcessSQL(queryString.toString());
     }
     private String removeExcessSQL(String query) {
@@ -299,6 +317,7 @@ public class SubjectJpaDao implements SubjectDao {
         if(query.endsWith(where)){
             return query.substring(0, query.length() - where.length());
         }
+
         return query;
     }
     private Query createNativeQuery(final String finalizedQuery, final List<Object> paramValues){

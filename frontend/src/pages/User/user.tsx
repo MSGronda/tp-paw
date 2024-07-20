@@ -54,19 +54,19 @@ export default function User() {
   const [subjects, setSubjects] = useState<Subject[]>([]);
   const [maxPage, setMaxPage] = useState(1);
 
+  const orderParams = new URLSearchParams(location.search);
+  const initialOrderBy = orderParams.get('orderBy') ?? "difficulty";
+  const initialDir = orderParams.get('dir') ?? "asc";
+  const initialPage = orderParams.get('page') ?? "1";
+
+  const [page, setPage] = useState<number>(Number(initialPage));
+  const [orderBy, setOrderBy] = useState(initialOrderBy);
+  const [dir, setDir] = useState(initialDir);
+
   const params = useParams();
   const { userId } = useContext(AuthContext);
   const id = params.id || userId;
   const isProfile = !params.id;
-
-  const orderParams = new URLSearchParams(location.search);
-  const orderBy = orderParams.get('orderBy');
-  const dir = orderParams.get('dir');
-  const page: number = orderParams.get('page') === null ? 1 : parseInt(orderParams.get('page') as string, 10);
-
-  const INITIAL_PAGE = 1;
-  const INITIAL_ORDER: string = "difficulty";
-  const INITAL_DIR: string = "asc";
 
   const getUser = async () => {
     const res = await userService.getUserById(Number(id));
@@ -92,29 +92,42 @@ export default function User() {
     }
   }
 
-  const getReviewsFromUser = async (userId: number, page: number, orderBy: string, dir: string) => {
+  const getReviewsAndSubjectsFromUser = async (userId: number, page: number, orderBy: string, dir: string) => {
     const res = await reviewService.getReviewsFromUser(userId, page, orderBy, dir);
-    if (res?.data) {
-      setReviews(res.data);
-      setMaxPage(res.maxPage || 1);
+    if( !res || res.data == ""){
+      return;
     }
+    const rev: Review[] = res.data;
+
+    setReviews(rev);
+    setMaxPage(res.maxPage || 1);
+
+    // Obtenemos las review votes en base a las reviews
 
     setReviewVotes(await reviewService.getAllVotes(res.data));
+
+    // Obtenemos los nombres de los subjects en base a los ids
+    await getSubjectsFromReviews(rev);
 
     setLoadingReviews(false);
   }
 
-  const getSubjectsFromReviews = async (userId: number, page: number) => {
-    const res = await subjectService.getSubjectsFromReviews(userId, page);
+  const getSubjectsFromReviews = async (reviews: Review[]) => {
+    const ids: string[] = [];
+    reviews.forEach((s) => ids.push(s.subjectId));
+    const res = await subjectService.getSubjectsByIds(ids, 1);
     if (res?.data) {
       setSubjects(res.data.subjects);
     }
   }
 
   const handlePageChange = (newPage: number) => {
-    const queryParams = new URLSearchParams(window.location.search);
-    queryParams.set('page', newPage.toString());
-    window.location.search = queryParams.toString();
+    const params = new Map();
+    params.set('page', newPage.toString());
+    
+    updateQueryParams(params)
+
+    setPage(newPage);
   }
 
   useEffect(() => {
@@ -128,15 +141,62 @@ export default function User() {
 
   useEffect(() => {
     if (id != null) {
-      if (page == null || orderBy == null || dir == null) {
-        getReviewsFromUser(Number(id), INITIAL_PAGE, INITIAL_ORDER, INITAL_DIR).catch((e) => console.error(e));
-      } else {
-        getReviewsFromUser(Number(id), page, orderBy, dir).catch((e) => console.error(e));
-      }
-      getSubjectsFromReviews(Number(id), page).catch((e) => console.error(e));
+      getReviewsAndSubjectsFromUser(Number(id), page, orderBy, dir).catch((e) => console.error(e));
     }
 
   }, [dir, id, orderBy, page]);
+
+  const setOrderParameters = (value: string) => {
+    const params = new Map();
+
+    if (value === "ascending-difficulty") {
+      const newOrder = 'difficulty';
+      params.set('orderBy', newOrder);
+      setOrderBy(newOrder);
+
+      const newDir = 'asc';
+      params.set('dir', newDir);
+      setDir(newDir);
+    } else if (value === "descending-difficulty") {
+      const newOrder = 'difficulty';
+      params.set('orderBy', newOrder);
+      setOrderBy(newOrder);
+
+      const newDir = 'desc';
+      params.set('dir', newDir);
+      setDir(newDir);
+    } else if (value === "ascending-time") {
+      const newOrder = 'timedemanding';
+      params.set('orderBy', newOrder);
+      setOrderBy(newOrder);
+
+      const newDir = 'asc';
+      params.set('dir', newDir);
+      setDir(newDir);
+
+    } else if (value === "descending-time") {
+      const newOrder = 'timedemanding';
+      params.set('orderBy', newOrder);
+      setOrderBy(newOrder);
+
+      const newDir = 'desc';
+      params.set('dir', newDir);
+      setDir(newDir);
+    }
+    updateQueryParams(params);
+  }
+
+  const updateQueryParams = (newParams: Map<string, string>) => {
+    const searchParams = new URLSearchParams(window.location.search);
+
+    Object.keys(newParams).forEach(key => {
+      searchParams.set(key, newParams.get(key) ?? "");
+    });
+
+    navigate({
+      search: searchParams.toString()
+    }, { replace: true });
+  };
 
   const findSubjectName = (subjectId: string) => {
     let subjectName = "";
@@ -291,23 +351,7 @@ const CurrentFilterComponent: React.FC<CurrentFilterComponentProps> = ({ orderBy
   }
 };
 
-const setOrderParameters = (value: string) => {
-  const orderParams = new URLSearchParams();
-  if (value === "ascending-difficulty") {
-    orderParams.set('orderBy', 'difficulty');
-    orderParams.set('dir', 'asc');
-  } else if (value === "descending-difficulty") {
-    orderParams.set('orderBy', 'difficulty');
-    orderParams.set('dir', 'desc');
-  } else if (value === "ascending-time") {
-    orderParams.set('orderBy', 'timedemanding');
-    orderParams.set('dir', 'asc');
-  } else if (value === "descending-time") {
-    orderParams.set('orderBy', 'timedemanding');
-    orderParams.set('dir', 'desc');
-  }
-  window.location.search = orderParams.toString();
-}
+
 
 
 function UserSection({ user, degree, plan }: { user?: User, degree?: Degree, plan?: Subject[] }) {

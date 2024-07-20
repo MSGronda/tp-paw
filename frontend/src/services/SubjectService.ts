@@ -49,6 +49,20 @@ export class SubjectService {
         }
     }
 
+    async getSubjectsByIds(ids: string[], page: number) {
+        try{
+            let config: any = {};
+            config.params = {
+                ids: ids.join(","),
+                page: page
+            };
+            const res = await axiosService.authAxiosWrapper(axiosService.GET, `${path}`, config);
+            return handleResponse(res);
+        } catch (error: any){
+            return handleResponse(error.response);
+        }
+    }
+
     async getUserSubject(config: any) {
         try{
             const res = await axiosService.authAxiosWrapper(axiosService.GET, `${path}`, config);

@@ -2,6 +2,10 @@ package ar.edu.itba.paw.models.utils;
 
 import ar.edu.itba.paw.models.User;
 
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
+
 public class SubjectSearchParams {
     private Long degree;
     private Long semester;
@@ -18,6 +22,8 @@ public class SubjectSearchParams {
     private Integer difficulty;
     private Integer timeDemand;
 
+    private List<String> ids;
+
     public SubjectSearchParams(
             final Long degree,
             Long semester,
@@ -32,7 +38,8 @@ public class SubjectSearchParams {
             String department,
             Integer difficulty,
             Integer timeDemand,
-            Long userReviews
+            Long userReviews,
+            String ids
     ) {
         this.degree = degree;
         this.semester = semester;
@@ -48,6 +55,19 @@ public class SubjectSearchParams {
         this.difficulty = difficulty;
         this.timeDemand = timeDemand;
         this.userReviews = userReviews;
+        if(ids != null){
+            this.ids = Arrays.stream(ids.split(",")).collect(Collectors.toList());
+        }
+    }
+
+    public List<String> getIds() {
+        return ids;
+    }
+    public void setIds(List<String> ids) {
+        this.ids = ids;
+    }
+    public boolean hasIds(){
+        return ids != null;
     }
 
     public boolean hasDegree(){

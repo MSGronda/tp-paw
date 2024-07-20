@@ -16,7 +16,6 @@ import javax.validation.Valid;
 import javax.ws.rs.*;
 import javax.ws.rs.core.*;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 
@@ -65,6 +64,8 @@ public class SubjectController {
 
             @QueryParam("userReviews") final Long userReviews,
 
+            @QueryParam("ids") final String ids,
+
             @QueryParam("page") @DefaultValue("1") final int page,
             @QueryParam("orderBy") @DefaultValue("name") final String orderBy,
             @QueryParam("dir") @DefaultValue("asc") final String dir
@@ -84,7 +85,8 @@ public class SubjectController {
                 department,
                 difficulty,
                 timeDemand,
-                userReviews
+                userReviews,
+                ids
         );
 
         final List<Subject> subs = subjectService.superSearch(params, page, orderBy, dir);
