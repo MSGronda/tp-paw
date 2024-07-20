@@ -77,13 +77,14 @@ export function SubjectPage() {
     const getReviewsFromSubject = async (subjectId: string, page: number, orderBy: string, dir: string) => {
         const res = await reviewService.getReviewsBySubject(subjectId, page, orderBy, dir);
         const data = handleService(res, navigate);
-        if (res) {
-            setReviews(data);
+                
+        setReviews(data);
+
+        if(data != ""){
+            const votes = await reviewService.getAllVotes(res.data);
+
+            setReviewVotes(votes);
         }
-
-        const votes = await reviewService.getAllVotes(res.data);
-
-        setReviewVotes(votes);
 
         setLoading(false);
     }
