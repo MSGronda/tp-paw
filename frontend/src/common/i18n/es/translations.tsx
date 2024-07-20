@@ -366,7 +366,8 @@ export const TRANSLATIONS_ES = {
         addClassTimes: "Agregar horarios",
         missingFields: "Cuidado",
         completeFields: "El horario no sera creado hasta que se completen todos los campos y la cantidad de creditos no sea superada",
-        createClassTime: "Crear horario"
+        createClassTime: "Crear horario",
+        completeClassFields: "Es requerido completar el campo de profesorse y nombre de la comisión"
     },
     Degrees: {
         title: "Carreras",

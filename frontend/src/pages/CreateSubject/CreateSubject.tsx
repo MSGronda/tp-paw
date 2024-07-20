@@ -62,12 +62,11 @@ export function CreateSubject() {
   const [currentPrereqPage, setCurrentPrereqPage] = useState<number>(1);
   const [maxPage, setMaxPage] = useState(2);
   const [missingClassTimeFields, setMissingClassTimeFields] = useState(false);
+  const [missingClassFields, setMissingClassFields] = useState(false);
 
   // Form related states
   const [department, setDepartment] = useState<string>("");
   const [subjectId, setSubjectId] = useState<string>("");
-  const [classProfessor, setClassProfessor] = useState<string>("");
-  const [classDay, setClassDay] = useState<string>("");
   const [credits, setCredits] = useState<number>(MINIMUM_CREDITS);
   const [selectedDegrees, setSelectedDegrees] = useState<number[]>([]);
   const [selectedSemesters, setSelectedSemesters] = useState<number[]>([]);
@@ -271,9 +270,15 @@ export function CreateSubject() {
 
   function handleClassCreation() {
     const newClass = {idClass: currentClassName, idSubject: subjectId, locations: [], professors: currentClassProfessors};
+
+    if(currentClassName === "" || currentClassProfessors.length === 0) {
+      setMissingClassFields(true);
+      return;
+    }
+
     for(const clas of selectedClasses) {
       if(clas.idClass === currentClassName){
-        //TODO Error message that cannot repeat idClass name
+        setMissingClassFields(true);
         return;
       }
     }
@@ -282,6 +287,7 @@ export function CreateSubject() {
     setSelectedClasses([...selectedClasses, newClass]);
     setCurrentClassName("");
     setCurrentClassProfessors([]);
+    setMissingClassFields(false);
     setOpenedClassModal(false);
   }
 
@@ -306,19 +312,22 @@ export function CreateSubject() {
 
   function handleClassEdit() {
     const newClass = {idClass: currentClassEditName, idSubject: subjectId, locations: [], professors: currentClassEditProfessors};
+    if(currentClassEditProfessors.length === 0 || currentClassEditName === ""){
+      setMissingClassFields(true);
+      return;
+    }
     let index;
     if( (index = selectedClasses.indexOf(newClass)) != -1) {
       setSelectedClasses([...selectedClasses, newClass]);
-      setCurrentClassEditName("");
-      setCurrentClassEditProfessors([]);
-      setOpenedClassEditModal(false);
     } else {
       setSelectedClasses([...selectedClasses.slice(0,index), newClass, ...selectedClasses.slice(index + 1)]);
-      setCurrentClassEditName("");
-      setCurrentClassEditProfessors([]);
-      setOpenedClassEditModal(false);
     }
+    setCurrentClassEditName("");
+    setCurrentClassEditProfessors([]);
+    setMissingClassFields(false);
+    setOpenedClassEditModal(false);
   }
+
   function handleOpenClassTimeModalCreation(clas: Class) {
     setCurrentClassSelected(clas);
     setOpenedClassTimeModal(true);
@@ -476,18 +485,21 @@ export function CreateSubject() {
         </Flex>
       </Modal>
       {/* Professor Modal */}
-      <Modal opened={openedProfessorModal} onClose={() => setOpenedProfessorModal(false)} title={t("CreateSubject.createProfessor")}>
-        <Flex mih={50} gap="xl" justify="center" align="center" direction="row" wrap="wrap">
+      <Modal opened={openedProfessorModal} onClose={() => setOpenedProfessorModal(false)} title={t("CreateSubject.createProfessor")} size="35%">
+        <Flex mih={50} miw={500} gap="xl" justify="space-between" align="center" direction="row" wrap="wrap">
           {t("CreateSubject.professorName")}
           <TextInput className={classes.degreeDropdown} value={currentProfessorCreation} onChange={(event) => setCurrentProfessorCreation(event.target.value)} />
         </Flex>
-        <Flex mih={50} gap="xl" justify="right" align="center" direction="row" wrap="wrap">
+        <Flex direction="row" justify="center">
           <Button color="green" onClick={() => handleProfessorCreation()}>{t("CreateSubject.add")}</Button>
         </Flex>
       </Modal>
 
-      {/* Class Modal */}
-      <Modal opened={openedClassModal} onClose={() => setOpenedClassModal(false)} title={t("CreateSubject.addClasses")}>
+      {/* Create Class Modal */}
+      <Modal opened={openedClassModal} onClose={() => setOpenedClassModal(false)} title={t("CreateSubject.addClasses")} size="30%">
+        { missingClassFields && <Alert variant="light" color="yellow" title={t("CreateSubject.missingFields")} icon={<IconInfoCircle/>}>
+          {t("CreateSubject.completeClassFields")}
+        </Alert>}
         <Flex mih={50} gap="xl" justify="space-between" align="center" direction="row" wrap="wrap">
           {t("CreateSubject.class")}
           <Textarea className={classes.degreeDropdown} autosize value={currentClassName}
@@ -495,7 +507,9 @@ export function CreateSubject() {
         </Flex>
         <Flex mih={50} gap="xl" justify="space-between" align="center" direction="row" wrap="wrap">
           {t("CreateSubject.professors")}
-          <MultiSelect placeholder={t("CreateSubject.professorLabel")} data={selectedProfessors} value={currentClassProfessors} onChange={setCurrentClassProfessors}/>
+          <Flex direction="column" justify="flex-end" maw={220}>
+            <MultiSelect placeholder={t("CreateSubject.professorLabel")} data={selectedProfessors} value={currentClassProfessors} onChange={setCurrentClassProfessors}/>
+          </Flex>
         </Flex>
         <Flex mih={50} gap="xl" justify="right" align="center" direction="row" wrap="wrap">
           <Button color="green" onClick={() => handleClassCreation()}>{t("CreateSubject.add")}</Button>
@@ -503,7 +517,10 @@ export function CreateSubject() {
       </Modal>
 
       { /* Edit Class Modal */ }
-      <Modal opened={openedClassEditModal} onClose={() => handleClassEdit()} title={t("CreateSubject.editClasses")}>
+      <Modal opened={openedClassEditModal} onClose={() => handleClassEdit()} title={t("CreateSubject.editClasses")} size="30%">
+        { missingClassFields && <Alert variant="light" color="yellow" title={t("CreateSubject.missingFields")} icon={<IconInfoCircle/>}>
+          {t("CreateSubject.completeClassFields")}
+        </Alert>}
         <Flex mih={50} gap="xl" justify="space-between" align="center" direction="row" wrap="wrap">
           {t("CreateSubject.class")}
           <Textarea className={classes.degreeDropdown} autosize value={currentClassEditName}
@@ -511,7 +528,9 @@ export function CreateSubject() {
         </Flex>
         <Flex mih={50} gap="xl" justify="space-between" align="center" direction="row" wrap="wrap">
           {t("CreateSubject.professors")}
-          <MultiSelect placeholder={t("CreateSubject.professorLabel")} data={selectedProfessors} value={currentClassEditProfessors} onChange={setCurrentClassEditProfessors}/>
+          <Flex direction="column" justify="flex-end" maw={220}>
+            <MultiSelect placeholder={t("CreateSubject.professorLabel")} data={selectedProfessors} value={currentClassEditProfessors} onChange={setCurrentClassEditProfessors}/>
+          </Flex>
         </Flex>
         <Flex mih={50} gap="xl" justify="right" align="center" direction="row" wrap="wrap">
           <Button color="green" onClick={() => handleClassEdit()}>{t("CreateSubject.edit")}</Button>
@@ -593,8 +612,7 @@ export function CreateSubject() {
                     {t("CreateSubject.idHelp")}
                   </h6>
                 </div>
-                <Textarea className={classes.departmentDropdown} autosize error={t("CreateSubject.idError")}
-                />
+                <Textarea className={classes.departmentDropdown} autosize/>
               </Flex>
               <Flex mih={50} gap="xl" justify="space-between" align="center" direction="row" wrap="wrap">
                 {t("CreateSubject.name")}
@@ -656,7 +674,10 @@ export function CreateSubject() {
               </Flex>
               <Flex mih={50} miw={500} gap="xl" justify="space-between" align="center" direction="row" wrap="wrap">
                 {t("CreateSubject.professor")}
-                <MultiSelect placeholder={t("CreateSubject.professorLabel")} data={professorsOptions} searchable  onOptionSubmit={(professor) => handleProfessorAddition(professor)} onRemove={(professor) => handleProfessorRemove(professor)}/>
+                <Flex direction="column" justify="flex-end" maw={300}>
+                  <MultiSelect placeholder={t("CreateSubject.professorLabel")} data={professorsOptions} searchable
+                               onOptionSubmit={(professor) => handleProfessorAddition(professor)} onRemove={(professor) => handleProfessorRemove(professor)}/>
+                </Flex>
               </Flex>
               <Flex mih={50} gap="xl" justify="right" align="center" direction="row" wrap="wrap">
                 { createdProfessors.length > 0 &&

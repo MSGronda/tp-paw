@@ -369,6 +369,7 @@ export const TRANSLATIONS_EN = {
         missingFields: "Warning",
         completeFields: "Class Time won't be created until all fields are completed and the amount of credits aren't surpassed",
         createClassTime: "Add Class time",
+        completeClassFields: "Must complete class name and professors fields"
     },
     Degrees: {
         title: "Degrees",
