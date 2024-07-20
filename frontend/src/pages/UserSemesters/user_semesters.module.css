@@ -6,8 +6,8 @@
     flex-direction: column;
 }
 
-.container_70 {
-    width: min(max(800px, 60%), 100%);
+.container_80 {
+    width: min(max(800px, 80%), 100%);
     padding-left: 2rem;
     padding-right: 2rem;
     align-self: center;

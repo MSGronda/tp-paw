@@ -49,7 +49,7 @@ export default function UserSemesters() {
     <div className={classes.general_area}>
         <Title text={t('UserSemesters.title')}/>
         <Navbar />
-        <div className={classes.container_70}>
+        <div className={classes.container_80}>
             <div>
                 <h2 style={{margin: ".5rem", fontSize: "2rem"}}>{t("UserSemesters.bodyTitle")}</h2>
                 <div style={{ borderBottom: '1px solid #ccc', margin: '10px 0' }}></div>
@@ -64,7 +64,7 @@ export default function UserSemesters() {
                             </Link>
                         </h3>
                     </div> :
-                    <div className={classes.semester_area}>
+                    <div style={{width: "90%", minHeight: '80%' , display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(350px, 1fr))', padding: '1rem 1rem 1rem 1rem', gap: '2rem'}}>
                         {
                             userSemesters.map((semester, i) =>
                                 <SemesterCard

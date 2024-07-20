@@ -13,7 +13,6 @@ import {
   Loader,
   RangeSlider,
   SegmentedControl,
-  SimpleGrid,
   Stack,
   Tabs,
   Title as MantineTitle
@@ -77,10 +76,9 @@ export default function CurriculumPage() {
       <Navbar/>
 
       {!degree ? <Center m="3rem"><Loader/></Center> :
-
         <Container size="100%" w="70%">
           <MantineTitle mx="1rem" my="2rem">{degree.name}</MantineTitle>
-          
+
           <Filters filters={filters}/>
 
           <Divider my="1rem" color="#cccccc"/>
@@ -114,13 +112,12 @@ function SemesterTabPanel({degreeId, semester}: { degreeId: number, semester: nu
 
   return <div ref={ref}>
     {!subjects ? <Center m="5rem"><Loader/></Center> :
-      <SimpleGrid cols={4} p="1rem" mb="1rem">
-
-        { subjects.map((subject) => (
-          <SubjectCard {...subject} key={subject.id} progress="incomplete" numReviews={subject.reviewCount}/>
-        )) 
-        }
-      </SimpleGrid>
+        <div style={{width: "90%", minHeight: '90%' , display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(250px, 1fr))', padding: '1rem 1rem 1rem 1rem', gap: '1rem'}}>
+          { subjects.map((subject) => (
+              <SubjectCard {...subject} key={subject.id} progress="incomplete" numReviews={subject.reviewCount}/>
+          ))
+          }
+        </div>
     }
   </div>
 }
