@@ -36,6 +36,7 @@ export function CreateSubject() {
 
   const MINIMUM_CREDITS = 1;
   const MAXIMUM_CREDITS = 12;
+  const SUBJECT_ID_REGEX = "[0-9]{2}\\.[0-9]{2}";
 
   const classDays = [
     t("CreateSubject.day1"),
@@ -63,9 +64,11 @@ export function CreateSubject() {
   const [maxPage, setMaxPage] = useState(2);
   const [missingClassTimeFields, setMissingClassTimeFields] = useState(false);
   const [missingClassFields, setMissingClassFields] = useState(false);
+  const [wrongPatternInSubjectId, setWrongPatternInSubjectId] = useState(false);
 
   // Form related states
   const [department, setDepartment] = useState<string>("");
+  const [subjectName, setSubjectName] = useState<string>("");
   const [subjectId, setSubjectId] = useState<string>("");
   const [credits, setCredits] = useState<number>(MINIMUM_CREDITS);
   const [selectedDegrees, setSelectedDegrees] = useState<number[]>([]);
@@ -201,6 +204,15 @@ export function CreateSubject() {
   }
 
   // Handlers
+  function handleNewSubjectId(id: string){
+    setSubjectId(id);
+    if(id.match(SUBJECT_ID_REGEX)){
+      setWrongPatternInSubjectId(false);
+      return;
+    }
+    setWrongPatternInSubjectId(true);
+  }
+
   function handleSelectedDegreeSemesters() {
     let index;
     if((index = selectedDegrees.indexOf(currentDegree)) !== -1) {
@@ -612,11 +624,17 @@ export function CreateSubject() {
                     {t("CreateSubject.idHelp")}
                   </h6>
                 </div>
-                <Textarea className={classes.departmentDropdown} autosize/>
+                {wrongPatternInSubjectId?  <Textarea className={classes.departmentDropdown} autosize value={subjectId}
+                                                     onChange={(event) => handleNewSubjectId(event.currentTarget.value)}
+                                                    error={t("CreateSubject.idError")}/> :
+                    <Textarea className={classes.departmentDropdown} autosize value={subjectId}
+                                                      onChange={(event) => handleNewSubjectId(event.currentTarget.value)}/>}
+
               </Flex>
               <Flex mih={50} gap="xl" justify="space-between" align="center" direction="row" wrap="wrap">
                 {t("CreateSubject.name")}
-                <Textarea className={classes.departmentDropdown} autosize />
+                <Textarea className={classes.departmentDropdown} autosize value={subjectName}
+                          onChange={(event) => setSubjectName(event.currentTarget.value)}/>
               </Flex>
               <Flex mih={50} gap="xl" justify="space-between" align="center" direction="row" wrap="wrap">
                 {t("CreateSubject.department")}
