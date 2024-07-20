@@ -262,9 +262,14 @@ public class SubjectJpaDao implements SubjectDao {
             paramValues.add("%" + sanitizeWildcards(params.getQuery()) + "%");      // TODO: move %
         }
 
-        if(params.hasCredits()){
-            queryString.append(" s.credits = ? AND ");
-            paramValues.add(params.getCredits());
+        if(params.hasMinCredits()){
+            queryString.append(" s.credits >= ? AND ");
+            paramValues.add(params.getMinCredits());
+        }
+
+        if(params.hasMaxCredits()){
+            queryString.append(" s.credits <= ? AND ");
+            paramValues.add(params.getMaxCredits());
         }
 
         if(params.hasDepartment()){
@@ -272,14 +277,24 @@ public class SubjectJpaDao implements SubjectDao {
             paramValues.add(params.getDepartment());
         }
 
-        if(params.hasDifficulty()){
-            queryString.append(" s.id IN ( SELECT srs.idsub FROM subjectreviewstatistics srs WHERE srs.difficulty = ? ) AND ");
-            paramValues.add(params.getDifficulty());
+        if(params.hasMinDifficulty()){
+            queryString.append(" s.id IN ( SELECT srs.idsub FROM subjectreviewstatistics srs WHERE srs.difficulty >= ? ) AND ");
+            paramValues.add(params.getMinDifficulty());
         }
 
-        if(params.hasTimeDemand()){
-            queryString.append(" s.id IN ( SELECT srs.idsub FROM subjectreviewstatistics srs WHERE srs.timedemanding = ? ) AND ");
-            paramValues.add(params.getTimeDemand());
+        if(params.hasMaxDifficulty()){
+            queryString.append(" s.id IN ( SELECT srs.idsub FROM subjectreviewstatistics srs WHERE srs.difficulty <= ? ) AND ");
+            paramValues.add(params.getMaxDifficulty());
+        }
+
+        if(params.hasMinTimeDemand()){
+            queryString.append(" s.id IN ( SELECT srs.idsub FROM subjectreviewstatistics srs WHERE srs.timedemanding >= ? ) AND ");
+            paramValues.add(params.getMinTimeDemand());
+        }
+
+        if(params.hasMaxTimeDemand()){
+            queryString.append(" s.id IN ( SELECT srs.idsub FROM subjectreviewstatistics srs WHERE srs.timedemanding <= ? ) AND ");
+            paramValues.add(params.getMaxTimeDemand());
         }
 
         if(params.hasUserReviews()){

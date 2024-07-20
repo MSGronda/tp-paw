@@ -41,7 +41,7 @@ public class SubjectController {
         this.professorService = professorService;
         this.degreeService = degreeService;
     }
-    
+
     @GET
     @Produces("application/vnd.subject-list.v1+json")
     public Response getSubjects(
@@ -57,10 +57,13 @@ public class SubjectController {
             @QueryParam("planFinishedDate") final Long planFinishedDate,
 
             @QueryParam("q") final String query,
-            @QueryParam("credits") final Integer credits,
+            @QueryParam("minCredits") final Integer minCredits,
+            @QueryParam("maxCredits") final Integer maxCredits,
             @QueryParam("department") final String department,
-            @QueryParam("difficulty") final Integer difficulty,
-            @QueryParam("timeDemand") final Integer timeDemand,
+            @QueryParam("minDifficulty") final Integer minDifficulty,
+            @QueryParam("maxDifficulty") final Integer maxDifficulty,
+            @QueryParam("minTimeDemand") final Integer minTimeDemand,
+            @QueryParam("maxTimeDemand") final Integer maxTimeDemand,
 
             @QueryParam("userReviews") final Long userReviews,
 
@@ -81,10 +84,13 @@ public class SubjectController {
                 plan,
                 planFinishedDate,
                 query,
-                credits,
+                minCredits,
+                maxCredits,
                 department,
-                difficulty,
-                timeDemand,
+                minDifficulty,
+                maxDifficulty,
+                minTimeDemand,
+                maxTimeDemand,
                 userReviews,
                 ids
         );

@@ -15,20 +15,37 @@ export class SubjectService {
         }
     }
 
-    async getSubjectsByName(name: string, page: number, credits: number | null, department: string | null, difficulty: number | null, timeDemand: number | null, orderBy: string | null, dir: string | null){
+    async search(
+      query?: string,
+      page?: number,
+      minCredits?: number,
+      maxCredits?: number,
+      department?: string,
+      minDifficulty?: number,
+      maxDifficulty?: number,
+      minTimeDemand?: number,
+      maxTimeDemand?: number,
+      orderBy?: string,
+      dir?: string,
+      degree?: number
+    ){
         try{
-            let config: any = {}; // Add type annotation to config object
+            const config: any = {}; // Add type annotation to config object
             config.params = { // Access 'params' property directly
-                q: name,
-                page: page,
-                credits: credits,
-                department: department,
-                difficulty: difficulty,
-                timeDemand: timeDemand,
-                orderBy: orderBy,
-                dir: dir
+                q: query,
+                page,
+                minCredits,
+                maxCredits,
+                department,
+                minDifficulty,
+                maxDifficulty,
+                minTimeDemand,
+                maxTimeDemand,
+                orderBy,
+                dir,
+                degree
             };
-            const res = await axiosService.authAxiosWrapper(axiosService.GET, `${path}`, config);
+            const res = await axiosService.authAxiosWrapper(axiosService.GET, path, config);
             return handleResponse(res);
         } catch (error: any) {
             return handleResponse(error.response);

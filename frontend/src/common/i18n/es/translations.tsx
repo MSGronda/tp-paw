@@ -401,10 +401,12 @@ export const TRANSLATIONS_ES = {
     },
     Curriculum: {
         title: "Plan de estudios",
-        semester: "Año {{year}} {{semester}}º Cuatrimestre",
+        semester: "{{year}}º Año {{semester}}º Cuatrimestre",
         electives: "Electivas",
         filter: "Filtrar",
+        department: "Departamento",
         applyFilters: "Aplicar Filtros",
+        reset: "Resetear",
         credits: "Créditos",
         difficulty: "Dificultad",
         name: "Nombre",

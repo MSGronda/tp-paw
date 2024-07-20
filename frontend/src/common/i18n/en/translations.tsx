@@ -408,6 +408,7 @@ export const TRANSLATIONS_EN = {
         filter: "Filter",
         department: "Department",
         applyFilters: "Apply Filters",
+        reset: "Reset",
         credits: "Credits",
         difficulty: "Difficulty",
         name: "Name",

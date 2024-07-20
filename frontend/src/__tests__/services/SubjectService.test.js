@@ -49,7 +49,7 @@ test("It should return a list of subjects", async () => {
         headers: {}
     });
 
-    const response = await subjectService.getSubjectsByName("Sistemas", 1, null, null, null, null, null, null)
+    const response = await subjectService.search("Sistemas", 1, null, null, null, null, null, null)
 
 
     expect(response.data.length).toBe(2);
@@ -68,7 +68,7 @@ test("It should return a list with subjects of 6 credits", async () => {
       headers: {}
   });
 
-  const response = await subjectService.getSubjectsByName("Sistemas", 1, 6, null, null, null, null, null)
+  const response = await subjectService.search("Sistemas", 1, 6, null, null, null, null, null)
 
   expect(response.data.length).toBe(1);
   expect(response.data).toEqual([subject2]);

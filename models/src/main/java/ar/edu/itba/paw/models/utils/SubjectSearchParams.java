@@ -17,10 +17,13 @@ public class SubjectSearchParams {
     private Long planFinishedDate;
     private Long userReviews;
     private String query;
-    private Integer credits;
+    private Integer minCredits;
+    private Integer maxCredits;
     private String department;
-    private Integer difficulty;
-    private Integer timeDemand;
+    private Integer minDifficulty;
+    private Integer maxDifficulty;
+    private Integer minTimeDemand;
+    private Integer maxTimeDemand;
 
     private List<String> ids;
 
@@ -34,10 +37,13 @@ public class SubjectSearchParams {
             Long plan,
             Long planFinishedDate,
             String query,
-            Integer credits,
+            Integer minCredits,
+            Integer maxCredits,
             String department,
-            Integer difficulty,
-            Integer timeDemand,
+            Integer minDifficulty,
+            Integer maxDifficulty,
+            Integer minTimeDemand,
+            Integer maxTimeDemand,
             Long userReviews,
             String ids
     ) {
@@ -50,10 +56,13 @@ public class SubjectSearchParams {
         this.plan = plan;
         this.planFinishedDate = planFinishedDate;
         this.query = query;
-        this.credits = credits;
+        this.minCredits = minCredits;
+        this.maxCredits = maxCredits;
         this.department = department;
-        this.difficulty = difficulty;
-        this.timeDemand = timeDemand;
+        this.minDifficulty = minDifficulty;
+        this.maxDifficulty = maxDifficulty;
+        this.minTimeDemand = minTimeDemand;
+        this.maxTimeDemand = maxTimeDemand;
         this.userReviews = userReviews;
         if(ids != null){
             this.ids = Arrays.stream(ids.split(",")).collect(Collectors.toList());
@@ -132,11 +141,19 @@ public class SubjectSearchParams {
         this.query = query;
     }
 
-    public boolean hasCredits(){
-        return credits != null;
+    public boolean hasMinCredits(){
+        return minCredits != null;
     }
-    public void setCredits(Integer credits) {
-        this.credits = credits;
+    public void setMinCredits(Integer minCredits) {
+        this.minCredits = minCredits;
+    }
+
+    public boolean hasMaxCredits() {
+        return maxCredits != null;
+    }
+
+    public void setMaxCredits(Integer maxCredits) {
+        this.maxCredits = maxCredits;
     }
 
     public boolean hasDepartment(){
@@ -146,18 +163,32 @@ public class SubjectSearchParams {
         this.department = department;
     }
 
-    public boolean hasDifficulty(){
-        return difficulty != null;
+    public boolean hasMinDifficulty(){
+        return minDifficulty != null;
     }
-    public void setDifficulty(Integer difficulty) {
-        this.difficulty = difficulty;
+    public void setMinDifficulty(Integer minDifficulty) {
+        this.minDifficulty = minDifficulty;
     }
 
-    public boolean hasTimeDemand(){
-        return timeDemand != null;
+    public boolean hasMaxDifficulty(){
+        return maxDifficulty != null;
     }
-    public void setTimeDemand(Integer timeDemand) {
-        this.timeDemand = timeDemand;
+    public void setMaxDifficulty(Integer maxDifficulty) {
+        this.maxDifficulty = maxDifficulty;
+    }
+
+    public boolean hasMinTimeDemand(){
+        return minTimeDemand != null;
+    }
+    public void setMinTimeDemand(Integer minTimeDemand) {
+        this.minTimeDemand = minTimeDemand;
+    }
+
+    public boolean hasMaxTimeDemand(){
+        return maxTimeDemand != null;
+    }
+    public void setMaxTimeDemand(Integer maxTimeDemand) {
+        this.maxTimeDemand = maxTimeDemand;
     }
 
     public boolean hasUserReviews(){
@@ -203,20 +234,32 @@ public class SubjectSearchParams {
         return query;
     }
 
-    public Integer getCredits() {
-        return credits;
+    public Integer getMinCredits() {
+        return minCredits;
+    }
+
+    public Integer getMaxCredits() {
+        return maxCredits;
     }
 
     public String getDepartment() {
         return department;
     }
 
-    public Integer getDifficulty() {
-        return difficulty;
+    public Integer getMinDifficulty() {
+        return minDifficulty;
     }
 
-    public Integer getTimeDemand() {
-        return timeDemand;
+    public Integer getMaxDifficulty() {
+        return maxDifficulty;
+    }
+
+    public Integer getMinTimeDemand() {
+        return minTimeDemand;
+    }
+
+    public Integer getMaxTimeDemand() {
+        return maxTimeDemand;
     }
 
     public Long getUserReviews() {
