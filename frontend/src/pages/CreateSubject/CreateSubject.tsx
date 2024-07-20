@@ -66,7 +66,7 @@ export function CreateSubject() {
   const [subjectId, setSubjectId] = useState<string>("");
   const [classProfessor, setClassProfessor] = useState<string>("");
   const [classDay, setClassDay] = useState<string>("");
-  const [credits, setCredits] = useState<string | number>(MINIMUM_CREDITS);
+  const [credits, setCredits] = useState<number>(MINIMUM_CREDITS);
   const [selectedDegrees, setSelectedDegrees] = useState<number[]>([]);
   const [selectedSemesters, setSelectedSemesters] = useState<number[]>([]);
   const [selectedPrereqs, setSelectedPrereqs] = useState<number[]>([]);
@@ -195,6 +195,10 @@ export function CreateSubject() {
     return weekDaysMap.get(weekDay) || 0;
   }
 
+  function extractHoursFromTimeStamp(timestamp: string) {
+    return Number(timestamp.slice(0,2));
+  }
+
   // Handlers
   function handleSelectedDegreeSemesters() {
     let index;
@@ -321,7 +325,8 @@ export function CreateSubject() {
 
   function handleClassTimeCreation() {
     if( currentClassTimeDay === "" || currentClassTimeClassroom === "" || currentClassTimeMode === "" || currentClassTimeBuilding === "" ||
-      startTimeRef.current == undefined || endTimeRef.current == undefined){
+      startTimeRef.current == undefined || endTimeRef.current == undefined ||
+        (extractHoursFromTimeStamp(endTimeRef.current.value) - extractHoursFromTimeStamp(startTimeRef.current.value)) > credits){
       setMissingClassTimeFields(true);
       return;
     }
@@ -331,6 +336,12 @@ export function CreateSubject() {
       currentClassSelected?.locations.push(newClassTime);
     }
     setMissingClassTimeFields(false);
+    setCurrentClassTimeDay("");
+    setCurrentClassTimeBuilding("");
+    setCurrentClassTimeMode("");
+    setCurrentClassTimeClassroom("");
+    startTimeRef.current.value = "";
+    endTimeRef.current.value = "";
     setOpenedClassTimeModal(false);
   }
 
