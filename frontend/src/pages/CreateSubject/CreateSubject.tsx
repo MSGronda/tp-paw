@@ -37,6 +37,7 @@ export function CreateSubject() {
   const MINIMUM_CREDITS = 1;
   const MAXIMUM_CREDITS = 12;
   const SUBJECT_ID_REGEX = "[0-9]{2}\\.[0-9]{2}";
+  const CLASS_NAME_REGEX = "[A-Za-z]+";
 
   const classDays = [
     t("CreateSubject.day1"),
@@ -283,7 +284,7 @@ export function CreateSubject() {
   function handleClassCreation() {
     const newClass = {idClass: currentClassName, idSubject: subjectId, locations: [], professors: currentClassProfessors};
 
-    if(currentClassName === "" || currentClassProfessors.length === 0) {
+    if(currentClassName === "" || currentClassProfessors.length === 0 || !currentClassName.match(CLASS_NAME_REGEX)) {
       setMissingClassFields(true);
       return;
     }
