@@ -16,7 +16,6 @@ import {
   Textarea, TextInput, Tooltip,
   useCombobox,
 } from "@mantine/core";
-import { TimeInput } from "@mantine/dates";
 import {useEffect, useState} from "react";
 import Title from "../../components/title/title";
 import {degreeService, subjectService, professorService} from "../../services";
@@ -24,7 +23,7 @@ import {handleService} from "../../handlers/serviceHandler.tsx";
 import {Subject} from "../../models/Subject.ts";
 import {useNavigate} from "react-router-dom";
 import {Degree} from "../../models/Degree.ts";
-import {IconX} from "@tabler/icons-react";
+import {IconPencil, IconX} from "@tabler/icons-react";
 import ChooseSubjectCard from "../../components/choose-subject-card/choose-subject-card.tsx";
 import {Professor} from "../../models/Professor.ts";
 import Class from "../../models/Class.ts";
@@ -44,7 +43,7 @@ export function CreateSubject() {
 
   // Form related states
   const [department, setDepartment] = useState<string>("");
-  const [professor, setProfessor] = useState<string>("");
+  const [subjectId, setSubjectId] = useState<string>("");
   const [classProfessor, setClassProfessor] = useState<string>("");
   const [classDay, setClassDay] = useState<string>("");
   const [credits, setCredits] = useState<string | number>(3);
@@ -243,6 +242,37 @@ export function CreateSubject() {
     setSelectedProfessors([...selectedProfessors, professor]);
   }
 
+  function handleClassCreation() {
+    const newClass = {idClass: currentClassName, idSubject: subjectId, locations: [], professors: currentClassProfessors};
+    let idClassRepeated = false;
+    for(const clas of selectedClasses) {
+      if(clas.idClass === currentClassName){
+        //TODO Error message that cannot repeat idClass name
+        idClassRepeated = true;
+      }
+    }
+
+    if(!idClassRepeated) {
+      setSelectedClasses([...selectedClasses, newClass]);
+      setCurrentClassName("");
+      setCurrentClassProfessors([]);
+      setOpenedClassModal(false);
+    }
+  }
+
+  function handleRemoveClass(clas: Class) {
+    let index;
+    if( (index = selectedClasses.indexOf(clas) ) != -1) {
+      setSelectedClasses([...selectedClasses.slice(0,index), ...selectedClasses.slice(index + 1)]);
+    }
+  }
+
+  function handleClassEdit(clas: Class) {
+    setCurrentClassName(clas.idClass);
+    setCurrentClassProfessors(clas.professors);
+    setOpenedClassModal(true);
+  }
+
   // Combobox Options
   const deaprtmentOptions = departments.map((departament) => (
     <Combobox.Option key={departament} value={departament}>
@@ -256,11 +286,6 @@ export function CreateSubject() {
   ));
   const professorsOptions = professors.slice(0,100).map((professor) => (
       `${professor.name}`
-  ))
-  const classProfessorsOptions = selectedProfessors.map((classProfessor) => (
-    <ComboboxOption key={classProfessor} value={classProfessor}>
-      {classProfessor}
-    </ComboboxOption>
   ));
   const classDayOptions = classDays.map((classDay) => (
     <ComboboxOption key={classDay} value={classDay}>
@@ -410,9 +435,10 @@ export function CreateSubject() {
         {t("CreateSubject.classroom")}
         <Textarea className={classes.degreeDropdown} autosize></Textarea>
       </Flex>
-      <Flex mih={50} gap="xl" justify="right" align="center" direction="row" wrap="wrap">
-        <Button color="green">{t("CreateSubject.add")}</Button>
-      </Flex>*/}
+      */}
+        <Flex mih={50} gap="xl" justify="right" align="center" direction="row" wrap="wrap">
+          <Button color="green" onClick={() => handleClassCreation()}>{t("CreateSubject.add")}</Button>
+        </Flex>
       </Modal>
 
       { /* Actual Page */ }
@@ -546,7 +572,23 @@ export function CreateSubject() {
                     <Table.Th>{t("CreateSubject.classroom")}</Table.Th>
                   </Table.Tr>
                 </Table.Thead>
-                <Table.Tbody></Table.Tbody>
+                <Table.Tbody>
+                  {selectedClasses.length > 0 && selectedClasses.map((clas) => <Table.Tr>
+                    <Table.Th>
+                      <Flex direction="row" justify="space-between">
+                        {clas.idClass}
+                        <ActionIcon size={18} variant="default" onClick={() => handleClassEdit(clas)}>
+                          <IconPencil style={{ width: rem(24), height: rem(24) }} />
+                        </ActionIcon>
+                        <ActionIcon size={18} variant="default" onClick={() => handleRemoveClass(clas)}>
+                          <IconX style={{ width: rem(24), height: rem(24) }} />
+                        </ActionIcon>
+                      </Flex>
+                    </Table.Th>
+                    <Table.Th>{clas.professors.join(";")}</Table.Th>
+                    <Table.Th></Table.Th>
+                  </Table.Tr>)}
+                </Table.Tbody>
               </Table>
               <Flex mih={50} gap="xl" justify="center" align="center" direction="row" wrap="wrap">
                 <Button variant="default"
