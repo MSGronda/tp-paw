@@ -38,6 +38,7 @@ export function CreateSubject() {
   const [openedPrereqModal, setOpenedPrereqModal] = useState(false);
   const [openedProfessorModal, setOpenedProfessorModal] = useState(false);
   const [openedClassModal, setOpenedClassModal] = useState(false);
+  const [openedClassEditModal, setOpenedClassEditModal] = useState(false);
   const [currentPrereqPage, setCurrentPrereqPage] = useState<number>(1);
   const [maxPage, setMaxPage] = useState(2);
 
@@ -66,6 +67,8 @@ export function CreateSubject() {
   const [currentProfessorCreation, setCurrentProfessorCreation] = useState<string>("");
   const [currentClassName, setCurrentClassName] = useState<string>("");
   const [currentClassProfessors, setCurrentClassProfessors] = useState<string[]>([]);
+  const [currentClassEditName, setCurrentClassEditName] = useState<string>("");
+  const [currentClassEditProfessors, setCurrentClassEditProfessors] = useState<string[]>([]);
 
   const MINIMUM_CREDITS = 1;
   const MAXIMUM_CREDITS = 12;
@@ -267,10 +270,31 @@ export function CreateSubject() {
     }
   }
 
-  function handleClassEdit(clas: Class) {
-    setCurrentClassName(clas.idClass);
-    setCurrentClassProfessors(clas.professors);
-    setOpenedClassModal(true);
+  function handleClassEditModal(clas: Class) {
+    setCurrentClassEditName(clas.idClass);
+    setCurrentClassEditProfessors(clas.professors);
+    let index;
+    if( (index = selectedClasses.indexOf(clas) ) != -1 ){
+      setSelectedClasses([...selectedClasses.slice(0,index), ...selectedClasses.slice(index + 1)]);
+
+    }
+    setOpenedClassEditModal(true);
+  }
+
+  function handleClassEdit() {
+    const newClass = {idClass: currentClassEditName, idSubject: subjectId, locations: [], professors: currentClassEditProfessors};
+    let index;
+    if( (index = selectedClasses.indexOf(newClass)) != -1) {
+      setSelectedClasses([...selectedClasses, newClass]);
+      setCurrentClassEditName("");
+      setCurrentClassEditProfessors([]);
+      setOpenedClassEditModal(false);
+    } else {
+      setSelectedClasses([...selectedClasses.slice(0,index), newClass, ...selectedClasses.slice(index + 1)]);
+      setCurrentClassEditName("");
+      setCurrentClassEditProfessors([]);
+      setOpenedClassEditModal(false);
+    }
   }
 
   // Combobox Options
@@ -441,6 +465,22 @@ export function CreateSubject() {
         </Flex>
       </Modal>
 
+      { /* Edit Class Modal */ }
+      <Modal opened={openedClassEditModal} onClose={() => setOpenedClassEditModal(false)} title={t("CreateSubject.addClasses")}>
+        <Flex mih={50} gap="xl" justify="space-between" align="center" direction="row" wrap="wrap">
+          {t("CreateSubject.class")}
+          <Textarea className={classes.degreeDropdown} autosize value={currentClassEditName}
+                    onChange={(event) => setCurrentClassEditName(event.currentTarget.value)}/>
+        </Flex>
+        <Flex mih={50} gap="xl" justify="space-between" align="center" direction="row" wrap="wrap">
+          {t("CreateSubject.professors")}
+          <MultiSelect placeholder={t("CreateSubject.professorLabel")} data={selectedProfessors} value={currentClassEditProfessors} onChange={setCurrentClassEditProfessors}/>
+        </Flex>
+        <Flex mih={50} gap="xl" justify="right" align="center" direction="row" wrap="wrap">
+          <Button color="green" onClick={() => handleClassEdit()}>{t("CreateSubject.add")}</Button>
+        </Flex>
+      </Modal>
+
       { /* Actual Page */ }
       <Navbar />
       <div className={classes.container50}>
@@ -577,7 +617,7 @@ export function CreateSubject() {
                     <Table.Th>
                       <Flex direction="row" justify="space-between">
                         {clas.idClass}
-                        <ActionIcon size={18} variant="default" onClick={() => handleClassEdit(clas)}>
+                        <ActionIcon size={18} variant="default" onClick={() => handleClassEditModal(clas)}>
                           <IconPencil style={{ width: rem(24), height: rem(24) }} />
                         </ActionIcon>
                         <ActionIcon size={18} variant="default" onClick={() => handleRemoveClass(clas)}>
