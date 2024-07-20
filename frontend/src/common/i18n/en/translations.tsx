@@ -364,7 +364,11 @@ export const TRANSLATIONS_EN = {
         prereqAdvice: "Add a degree first!",
         professorLabel: "Search for a professor's name",
         editClasses: "Edit classes",
-        edit: "Edit"
+        edit: "Edit",
+        addClassTimes: "Add Class times",
+        missingFields: "Warning",
+        completeFields: "Class Time won't be created until all fields are completed",
+        createClassTime: "Add Class time",
     },
     Degrees: {
         title: "Degrees",

@@ -362,7 +362,11 @@ export const TRANSLATIONS_ES = {
         prereqAdvice: "Agregá una carrera!",
         professorLabel: "Busca un nombre de profesor",
         editClasses: "Editar comisión",
-        edit: "Editar"
+        edit: "Editar",
+        addClassTimes: "Agregar horarios",
+        missingFields: "Cuidado",
+        completeFields: "El horario no sera creado hasta que se completen todos los campos",
+        createClassTime: "Crear horario"
     },
     Degrees: {
         title: "Carreras",

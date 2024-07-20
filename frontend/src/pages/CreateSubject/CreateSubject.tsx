@@ -2,7 +2,7 @@ import { useTranslation } from "react-i18next";
 import { Navbar } from "../../components/navbar/navbar";
 import classes from "./createsubject.module.css";
 import {
-  ActionIcon,
+  ActionIcon, Alert,
   Button,
   Combobox,
   ComboboxOption,
@@ -16,14 +16,14 @@ import {
   Textarea, TextInput, Tooltip,
   useCombobox,
 } from "@mantine/core";
-import {useEffect, useState} from "react";
+import {useEffect, useRef, useState} from "react";
 import Title from "../../components/title/title";
 import {degreeService, subjectService, professorService} from "../../services";
 import {handleService} from "../../handlers/serviceHandler.tsx";
 import {Subject} from "../../models/Subject.ts";
 import {useNavigate} from "react-router-dom";
 import {Degree} from "../../models/Degree.ts";
-import {IconPencil, IconX} from "@tabler/icons-react";
+import {IconInfoCircle, IconPencil, IconPlus, IconX} from "@tabler/icons-react";
 import ChooseSubjectCard from "../../components/choose-subject-card/choose-subject-card.tsx";
 import {Professor} from "../../models/Professor.ts";
 import Class from "../../models/Class.ts";
@@ -33,6 +33,22 @@ export function CreateSubject() {
   const { t } = useTranslation();
   const navigate = useNavigate();
 
+  const MINIMUM_CREDITS = 1;
+  const MAXIMUM_CREDITS = 12;
+
+  const classDays = [
+    t("CreateSubject.day1"),
+    t("CreateSubject.day2"),
+    t("CreateSubject.day3"),
+    t("CreateSubject.day4"),
+    t("CreateSubject.day5"),
+    t("CreateSubject.day6"),
+    t("CreateSubject.day7"),
+  ];
+  const weekDaysMap = new Map<string,number>();
+  classDays.forEach((clas, index) => weekDaysMap.set(clas, index));
+
+
   // UI components states
   const [activeTab, setActiveTab] = useState<string | null>("general-info");
   const [openedDegreeModal, setOpenedDegreeModal] = useState(false);
@@ -40,15 +56,17 @@ export function CreateSubject() {
   const [openedProfessorModal, setOpenedProfessorModal] = useState(false);
   const [openedClassModal, setOpenedClassModal] = useState(false);
   const [openedClassEditModal, setOpenedClassEditModal] = useState(false);
+  const [openedClassTimeModal, setOpenedClassTimeModal] = useState(false);
   const [currentPrereqPage, setCurrentPrereqPage] = useState<number>(1);
   const [maxPage, setMaxPage] = useState(2);
+  const [missingClassTimeFields, setMissingClassTimeFields] = useState(false);
 
   // Form related states
   const [department, setDepartment] = useState<string>("");
   const [subjectId, setSubjectId] = useState<string>("");
   const [classProfessor, setClassProfessor] = useState<string>("");
   const [classDay, setClassDay] = useState<string>("");
-  const [credits, setCredits] = useState<string | number>(3);
+  const [credits, setCredits] = useState<string | number>(MINIMUM_CREDITS);
   const [selectedDegrees, setSelectedDegrees] = useState<number[]>([]);
   const [selectedSemesters, setSelectedSemesters] = useState<number[]>([]);
   const [selectedPrereqs, setSelectedPrereqs] = useState<number[]>([]);
@@ -70,9 +88,13 @@ export function CreateSubject() {
   const [currentClassProfessors, setCurrentClassProfessors] = useState<string[]>([]);
   const [currentClassEditName, setCurrentClassEditName] = useState<string>("");
   const [currentClassEditProfessors, setCurrentClassEditProfessors] = useState<string[]>([]);
-
-  const MINIMUM_CREDITS = 1;
-  const MAXIMUM_CREDITS = 12;
+  const [currentClassTimeDay, setCurrentClassTimeDay] = useState<string>("");
+  const startTimeRef = useRef<HTMLInputElement>(null);
+  const endTimeRef = useRef<HTMLInputElement>(null);
+  const [currentClassTimeBuilding, setCurrentClassTimeBuilding] = useState<string>("");
+  const [currentClassTimeMode, setCurrentClassTimeMode] = useState<string>("");
+  const [currentClassTimeClassroom, setCurrentClassTimeClassroom] = useState<string>("");
+  const [currentClassSelected, setCurrentClassSelected] = useState<Class>();
 
   const searchSubjects = async (page: number) => {
     const res = await subjectService.getSubjects(page);
@@ -135,15 +157,6 @@ export function CreateSubject() {
     "Sistemas Complejos y Energía",
     "Sistemas Digitales y Datos",
   ];
-  const classDays = [
-    t("CreateSubject.day1"),
-    t("CreateSubject.day2"),
-    t("CreateSubject.day3"),
-    t("CreateSubject.day4"),
-    t("CreateSubject.day5"),
-    t("CreateSubject.day6"),
-    t("CreateSubject.day7"),
-  ];
 
   useEffect(() => {
     if(carreerSemester != undefined && currentDegree != undefined && carreerSemester.get(currentDegree.toString()) != undefined) {
@@ -176,6 +189,10 @@ export function CreateSubject() {
 
   function extractNumberFromSemesterName(semesterName: string) {
     return Number(semesterName.match(RegExp('[0-9][0-9]?'))) != 0 ? Number(semesterName.match(RegExp('[0-9][0-9]?'))) : -1
+  }
+
+  function extractNumberFromWeekDay(weekDay: string) {
+    return weekDaysMap.get(weekDay) || 0;
   }
 
   // Handlers
@@ -296,6 +313,25 @@ export function CreateSubject() {
       setCurrentClassEditProfessors([]);
       setOpenedClassEditModal(false);
     }
+  }
+  function handleOpenClassTimeModalCreation(clas: Class) {
+    setCurrentClassSelected(clas);
+    setOpenedClassTimeModal(true);
+  }
+
+  function handleClassTimeCreation() {
+    if( currentClassTimeDay === "" || currentClassTimeClassroom === "" || currentClassTimeMode === "" || currentClassTimeBuilding === "" ||
+      startTimeRef.current == undefined || endTimeRef.current == undefined){
+      setMissingClassTimeFields(true);
+      return;
+    }
+    const newClassTime = {day: extractNumberFromWeekDay(currentClassTimeDay), startTime: startTimeRef.current.value,
+      endTime: endTimeRef.current.value, mode:currentClassTimeMode, building: currentClassTimeBuilding, location: currentClassTimeClassroom}
+    if(!currentClassSelected?.locations.includes(newClassTime)){
+      currentClassSelected?.locations.push(newClassTime);
+    }
+    setMissingClassTimeFields(false);
+    setOpenedClassTimeModal(false);
   }
 
   // Combobox Options
@@ -443,19 +479,22 @@ export function CreateSubject() {
         </Flex>
       </Modal>
 
-      { /* Edit Class Time Modal */ }
-      <Modal opened={openedClassModal} onClose={() => setOpenedClassModal(false)} title={t("CreateSubject.addClasses")}>
+      { /* Add Class Time Modal */ }
+      <Modal opened={openedClassTimeModal} onClose={() => setOpenedClassTimeModal(false)} title={t("CreateSubject.addClassTimes")}>
+        {missingClassTimeFields && <Alert variant="light" color="yellow" title={t("CreateSubject.missingFields")} icon={<IconInfoCircle />}>
+          {t("CreateSubject.completeFields")}
+        </Alert>}
         <Flex mih={50} gap="xl" justify="space-between" align="center" direction="row" wrap="wrap">
           {t("CreateSubject.day")}
           <Combobox store={comboboxClassDays} onOptionSubmit={(value) => {
-            setClassDay(value);
+            setCurrentClassTimeDay(value);
             comboboxClassDays.closeDropdown();
           }}>
             <Combobox.Target>
               <InputBase className={classes.degreeDropdown} component="button" type="button" pointer
                          rightSection={<Combobox.Chevron/>} rightSectionPointerEvents="none"
                          onClick={() => comboboxClassDays.toggleDropdown()}>
-                {classDay}
+                {currentClassTimeDay}
               </InputBase>
             </Combobox.Target>
             <Combobox.Dropdown>
@@ -465,26 +504,29 @@ export function CreateSubject() {
         </Flex>
         <Flex mih={50} gap="xl" justify="space-between" align="center" direction="row" wrap="wrap">
           {t("CreateSubject.timeStart")}
-          <TimeInput className={classes.degreeDropdown}/>
+          <TimeInput className={classes.degreeDropdown} ref={startTimeRef} />
         </Flex>
         <Flex mih={50} gap="xl" justify="space-between" align="center" direction="row" wrap="wrap">
           {t("CreateSubject.timeEnd")}
-          <TimeInput className={classes.degreeDropdown}/>
+          <TimeInput className={classes.degreeDropdown} ref={endTimeRef}/>
         </Flex>
         <Flex mih={50} gap="xl" justify="space-between" align="center" direction="row" wrap="wrap">
           {t("CreateSubject.mode")}
-          <Textarea className={classes.degreeDropdown} autosize></Textarea>
+          <Textarea className={classes.degreeDropdown} autosize value={currentClassTimeMode}
+                    onChange={(event) => setCurrentClassTimeMode(event.currentTarget.value)}/>
         </Flex>
         <Flex mih={50} gap="xl" justify="space-between" align="center" direction="row" wrap="wrap">
           {t("CreateSubject.building")}
-          <Textarea className={classes.degreeDropdown} autosize></Textarea>
+          <Textarea className={classes.degreeDropdown} autosize value={currentClassTimeBuilding}
+                    onChange={(event) => setCurrentClassTimeBuilding(event.currentTarget.value)}/>
         </Flex>
         <Flex mih={50} gap="xl" justify="space-between" align="center" direction="row" wrap="wrap">
           {t("CreateSubject.classroom")}
-          <Textarea className={classes.degreeDropdown} autosize></Textarea>
+          <Textarea className={classes.degreeDropdown} autosize value={currentClassTimeClassroom}
+                    onChange={(event) => setCurrentClassTimeClassroom(event.currentTarget.value)}/>
         </Flex>
         <Flex mih={50} gap="xl" justify="right" align="center" direction="row" wrap="wrap">
-          <Button color="green" onClick={() => handleClassEdit()}>{t("CreateSubject.edit")}</Button>
+          <Button color="green" onClick={() => handleClassTimeCreation()}>{t("CreateSubject.createClassTime")}</Button>
         </Flex>
       </Modal>
 
@@ -633,7 +675,18 @@ export function CreateSubject() {
                       </Flex>
                     </Table.Th>
                     <Table.Th>{clas.professors.join(";")}</Table.Th>
-                    <Table.Th></Table.Th>
+                    {clas.locations.length > 0 ? clas.locations.map((location) => <>
+                      <Table.Th>{classDays[location.day]}</Table.Th>
+                      <Table.Th>{location.startTime}</Table.Th>
+                      <Table.Th>{location.endTime}</Table.Th>
+                      <Table.Th>{location.mode}</Table.Th>
+                      <Table.Th>{location.building}</Table.Th>
+                      <Table.Th>{location.location}</Table.Th>
+                    </>) :
+                        <Table.Th><Button variant="default" onClick={() => handleOpenClassTimeModalCreation(clas)}>
+                          {t("CreateSubject.addClassTimes")}
+                        </Button></Table.Th>
+                    }
                   </Table.Tr>)}
                 </Table.Tbody>
               </Table>
