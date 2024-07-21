@@ -5,6 +5,8 @@ import ar.edu.itba.paw.models.UserSemesterSubject;
 import ar.edu.itba.paw.models.exceptions.*;
 import ar.edu.itba.paw.services.*;
 import ar.edu.itba.paw.webapp.controller.utils.PATCH;
+import ar.edu.itba.paw.webapp.controller.utils.PaginationLinkBuilder;
+import ar.edu.itba.paw.webapp.dto.ReviewDto;
 import ar.edu.itba.paw.webapp.dto.UserProgressDto;
 import ar.edu.itba.paw.webapp.dto.UserSemesterDto;
 import ar.edu.itba.paw.webapp.dto.UserDto;
@@ -107,8 +109,14 @@ public class UserController {
             return Response.noContent().build();
         }
 
+
         final List<UserDto> userDtos = users.stream().map(u -> UserDto.fromUser(uriInfo, currentUser, u)).collect(Collectors.toList());
-        return Response.ok(new GenericEntity<List<UserDto>>(userDtos){}).build();
+        int lastPage = userService.getTotalPagesOfUsersThatReviewedSubject(currentUser, subjectId);
+
+        final Response.ResponseBuilder responseBuilder = Response.ok(new GenericEntity<List<UserDto>>(userDtos){});
+        PaginationLinkBuilder.getResponsePaginationLinks(responseBuilder, uriInfo, page, lastPage);
+
+        return responseBuilder.build();
     }
 
 

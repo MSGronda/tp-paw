@@ -598,6 +598,11 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public int getTotalPagesOfUsersThatReviewedSubject(final User currentUser, final String subjectId){
+        return reviewService.getTotalPages(currentUser,null,subjectId);
+    }
+
+    @Override
     public List<User> getUsers(final User currentUser, final String subjectId, final int page){
         if(subjectId != null){
             return getUsersThatReviewedSubject(currentUser, subjectId, page);

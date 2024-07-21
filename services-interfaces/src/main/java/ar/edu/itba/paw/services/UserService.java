@@ -95,4 +95,5 @@ public interface UserService {
     List<User> getUsersThatReviewedSubject(final User currentUser,final String subjectId, final int page);
 
     List<User> getUsers(final User currentUser, final String subjectId, final int page);
+    int getTotalPagesOfUsersThatReviewedSubject(final User currentUser, final String subjectId);
 }

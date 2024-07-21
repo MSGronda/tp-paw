@@ -61,7 +61,7 @@ public class ReviewController {
 
         int lastPage = reviewService.getTotalPages(currentUser, userId, subjectId);
 
-        Response.ResponseBuilder responseBuilder = Response.ok(new GenericEntity<List<ReviewDto>>(reviewDtos){});
+        final Response.ResponseBuilder responseBuilder = Response.ok(new GenericEntity<List<ReviewDto>>(reviewDtos){});
         PaginationLinkBuilder.getResponsePaginationLinks(responseBuilder, uriInfo, page, lastPage);
         return responseBuilder.build();
     }
@@ -147,7 +147,7 @@ public class ReviewController {
         final List<ReviewVoteDto> voteDtos = votes.stream().map(vote -> ReviewVoteDto.fromReviewVote(uriInfo, vote)).collect(Collectors.toList());
 
         int lastPage = reviewService.getVoteTotalPages(review, userId, page);
-        Response.ResponseBuilder responseBuilder = Response.ok(new GenericEntity<List<ReviewVoteDto>>(voteDtos){});
+        final Response.ResponseBuilder responseBuilder = Response.ok(new GenericEntity<List<ReviewVoteDto>>(voteDtos){});
         PaginationLinkBuilder.getResponsePaginationLinks(responseBuilder, uriInfo, page, lastPage);
 
         return responseBuilder.build();
