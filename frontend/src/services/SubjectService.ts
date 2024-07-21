@@ -213,4 +213,25 @@ export class SubjectService {
             return handleResponse(error.response);
         }
     }
+
+    async editSubject(id: string, name: string, department: string, credits: number, degreeIds: number[], semesters: number[],
+                      requirementsIds: string[], professors: string[], subjectClasses: Class[]) {
+        try {
+            const data = {
+                id: id,
+                name: name,
+                department: department,
+                credits: credits,
+                degreeIds: degreeIds,
+                semesters: semesters,
+                requirementIds: requirementsIds,
+                professors: professors,
+                subjectClasses: subjectClasses
+            }
+            const res = await axiosService.authAxiosWrapper(axiosService.PUT, `${path}/${id}`, {}, data);
+            return handleResponse(res);
+        } catch (error: any) {
+            return handleResponse(error.response);
+        }
+    }
 }

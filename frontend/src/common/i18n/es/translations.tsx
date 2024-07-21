@@ -374,7 +374,9 @@ export const TRANSLATIONS_ES = {
         emptyDepartment: "Seleccione un departamento para la materia",
         emptyDegree: "Seleccione una carrera y semestre para la materia",
         emptyClasses: "Las comisiones son necesarias para la materia",
-        wrongCredits: "Asegúrese de igualar la cantidad de horas por semana con la cantidad de créditos, para cada comisión"
+        wrongCredits: "Asegúrese de igualar la cantidad de horas por semana con la cantidad de créditos, para cada comisión",
+        disabledSubjectIdField: "No se puede modificar el ID de la materia",
+        editSubjectTitle: "Editar materia"
     },
     Degrees: {
         title: "Carreras",

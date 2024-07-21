@@ -34,6 +34,7 @@ import CurriculumPage from "./pages/Curriculum/curriculumPage.tsx";
 import UserSemesters from "./pages/UserSemesters/user_semesters.tsx";
 import Error from './pages/Error/error.tsx';
 import Recover from "./pages/Recover/recover.tsx";
+import {EditSubject} from "./pages/EditSubject/editSubject.tsx";
 
 export default function App() {
 
@@ -65,6 +66,7 @@ export default function App() {
           <Route path="review/:subjectId/edit/:reviewId" element={<PrivateRoute component={EditReview} roles={['EDITOR', 'USER']}/>}/>
           <Route path="multi-review" element={<PrivateRoute component={MultiReview} roles={['EDITOR', 'USER']}/>}/>
           <Route path="create-subject" element={<PrivateRoute component={CreateSubject} roles={['EDITOR']}/>}></Route>
+          <Route path="edit-subject/:id" element={<PrivateRoute component={EditSubject} roles={['EDITOR']}/>}></Route>
           <Route path="degrees" element={<PrivateRoute component={Degrees} roles={['EDITOR']}/>}></Route>
           <Route path="create-degree" element={<PrivateRoute component={CreateDegree} roles={['EDITOR']}/>}></Route>
           <Route path="user/:id" element={<PrivateRoute component={User} roles={['EDITOR', 'USER']}/>}></Route>

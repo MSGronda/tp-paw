@@ -376,7 +376,9 @@ export const TRANSLATIONS_EN = {
         emptyDepartment: "Pick a department for the subject",
         emptyDegree: "Pick a degree and a semester for the subject",
         emptyClasses: "Classes are required for the subject",
-        wrongCredits: "Make sure to match the amount of hours of class with the amount of credits for every class"
+        wrongCredits: "Make sure to match the amount of hours of class with the amount of credits for every class",
+        disabledSubjectIdField: "Cannot edit subject ID",
+        editSubjectTitle: "Edit subject",
     },
     Degrees: {
         title: "Degrees",
