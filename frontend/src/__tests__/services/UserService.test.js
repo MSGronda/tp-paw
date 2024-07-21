@@ -4,7 +4,7 @@ import {userService, } from '../../services/index.tsx';
 import {afterEach, vi} from 'vitest';
 import axiosInstance from '../../api.tsx';
 import {user1, user2, class1, class2, selectedSubject1, selectedSubject2} from '../mocks/index';
-import AuthService, {RegisterForm} from "../../services/AuthService.ts";
+import AuthService from "../../services/AuthService.ts";
 
 
 

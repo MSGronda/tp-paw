@@ -123,11 +123,14 @@ test("It should return a list of subjects that are unlockable", async() => {
     })
 
     const response = await subjectService.getUnlockableSubjects(43)
+
+
+
     expect(response.data.length).toBe(2);
     expect(response.data).toEqual([subject1, subject2]);
     expect(response.failure).toBeFalsy();
     expect(mockedGet).toHaveBeenCalledTimes(1);
-    expect(mockedGet).toHaveBeenCalledWith("/subjects", expect.objectContaining({params: {unLockable: 43}}))
+    expect(mockedGet).toHaveBeenCalledWith("/subjects", expect.objectContaining({params: {unLockable: 43, page: 1}}))
 })
 
 test("It should return a list of subjects that are in the user's plan", async() => {
@@ -143,7 +146,7 @@ test("It should return a list of subjects that are in the user's plan", async() 
     expect(response.data).toEqual([subject1, subject2]);
     expect(response.failure).toBeFalsy();
     expect(mockedGet).toHaveBeenCalledTimes(1);
-    expect(mockedGet).toHaveBeenCalledWith("/subjects", expect.objectContaining({params: {plan: 43}}))
+    expect(mockedGet).toHaveBeenCalledWith("/subjects", expect.objectContaining({params: {plan: 43, planFinishedDate: null}}))
 })
 
 

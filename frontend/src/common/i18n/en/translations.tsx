@@ -91,7 +91,7 @@ export const TRANSLATIONS_EN = {
             password: "New Password",
             password_confirm: "Confirm New Password",
             submit: "Submit",
-            back_home: "Back to home"
+            back_home: "Back to login"
         }
     },
     Home: {

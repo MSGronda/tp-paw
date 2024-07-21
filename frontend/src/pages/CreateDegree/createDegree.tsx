@@ -52,7 +52,7 @@ export function CreateDegree() {
         setSubjects(filterSubjects(data.subjects));
     }, 750);
 
-    const handleDeleteSemester = (semesterNumDelete: Number) => {
+    const handleDeleteSemester = (semesterNumDelete: number) => {
         setSelectedSubjects(prevState => prevState.filter(subject => subject.semesterNumber !== semesterNumDelete));
         setAppendedElements(prevState => prevState.filter((element) => Number(element.key) !== semesterNumDelete));
     }
@@ -151,14 +151,17 @@ export function CreateDegree() {
                             justify="space-between"
                             align="center"
                             direction="row"
-                            wrap="wrap">
+                            wrap="wrap"
+                            >
                                 {t("CreateDegree.name")}
                                 <Textarea
                                     value={degreeName}
                                     onChange={(event) => setDegreeName(event.currentTarget.value)}
                                     autosize
+                                    style={{width:'20rem'}}
                                 />
                             </Flex>
+                            <br/>
                             <Flex
                                 justify="space-between"
                                 align="center"
