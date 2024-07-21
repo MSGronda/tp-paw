@@ -536,7 +536,7 @@ export function CreateSubject() {
       <Title text={t("CreateSubject.pageTitle")}/>
 
       { /* Degree Modal */}
-      <Modal opened={openedDegreeModal} onClose={() => setOpenedDegreeModal(false)} title={t("CreateSubject.addDegree")}>
+      <Modal opened={openedDegreeModal} onClose={() => setOpenedDegreeModal(false)} title={t("CreateSubject.addDegree")} size="35%">
         <Flex mih={50} gap="xl" justify="space-between" align="center" direction="row" wrap="wrap">
           {t("CreateSubject.degreeModalDegree")}
           <Combobox store={comboboxDegree} onOptionSubmit={(value) => {
