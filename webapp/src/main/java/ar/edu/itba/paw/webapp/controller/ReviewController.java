@@ -3,21 +3,18 @@ package ar.edu.itba.paw.webapp.controller;
 import ar.edu.itba.paw.models.Review;
 import ar.edu.itba.paw.models.ReviewVote;
 import ar.edu.itba.paw.models.User;
-import ar.edu.itba.paw.models.exceptions.*;
+import ar.edu.itba.paw.models.exceptions.ReviewNotFoundException;
 import ar.edu.itba.paw.services.AuthUserService;
 import ar.edu.itba.paw.services.ReviewService;
-import ar.edu.itba.paw.services.SubjectService;
-import ar.edu.itba.paw.services.UserService;
 import ar.edu.itba.paw.webapp.controller.utils.PaginationLinkBuilder;
 import ar.edu.itba.paw.webapp.dto.ReviewDto;
 import ar.edu.itba.paw.webapp.dto.ReviewVoteDto;
 import ar.edu.itba.paw.webapp.form.ReviewForm;
 import ar.edu.itba.paw.webapp.form.ReviewVoteForm;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.stereotype.Component;
+import org.springframework.web.bind.annotation.ModelAttribute;
+
 import javax.validation.Valid;
 import javax.ws.rs.*;
 import javax.ws.rs.core.*;
@@ -26,7 +23,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Path("reviews")
-@Controller
+@Component
 public class ReviewController {
     private final ReviewService reviewService;
     private final AuthUserService authUserService;
