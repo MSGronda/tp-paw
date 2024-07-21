@@ -13,7 +13,7 @@ import {
   NumberInput, Pagination, rem,
   Table,
   Tabs,
-  Textarea, TextInput, Tooltip,
+  Textarea, TextInput,
   useCombobox,
 } from "@mantine/core";
 import {useEffect, useRef, useState} from "react";
@@ -39,6 +39,7 @@ export function CreateSubject() {
   const SUBJECT_ID_REGEX = "[0-9]{2}\\.[0-9]{2}";
   const CLASS_NAME_REGEX = "[A-Za-z]+";
   const DEPARTMENT = "DEPARTMENT";
+  const icon = <IconInfoCircle />;
 
   const classDays = [
     t("CreateSubject.day1"),
@@ -64,9 +65,15 @@ export function CreateSubject() {
   const [openedClassTimeModal, setOpenedClassTimeModal] = useState(false);
   const [currentPrereqPage, setCurrentPrereqPage] = useState<number>(1);
   const [maxPage, setMaxPage] = useState(2);
+
+  // Error related
   const [missingClassTimeFields, setMissingClassTimeFields] = useState(false);
   const [missingClassFields, setMissingClassFields] = useState(false);
   const [wrongPatternInSubjectId, setWrongPatternInSubjectId] = useState(false);
+  const [emptySubjectName, setEmptySubjectName] = useState(false);
+  const [errorAlert, setErrorAlert] = useState(false);
+  const [errorMessageTitle, setErrorMessageTitle] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
 
   // Form related states
   const [department, setDepartment] = useState<string>("");
@@ -221,9 +228,7 @@ export function CreateSubject() {
   function calculateHoursDifference(startTime: string, endTime: string): number {
     const minutes1 = timeStringToMinutes(startTime);
     const minutes2 = timeStringToMinutes(endTime);
-
-    const differenceInMinutes = Math.abs(minutes2 - minutes1);
-    return Math.floor(differenceInMinutes / 60);
+    return Math.abs(minutes2 - minutes1) / 60;
   }
 
   // Handlers
@@ -357,6 +362,8 @@ export function CreateSubject() {
     } else {
       setSelectedClasses([...selectedClasses.slice(0,index), newClass, ...selectedClasses.slice(index + 1)]);
     }
+    availableCreditsPerClass.set(newClass.idClass, credits);
+    setAvailableCreditsPerClass(new Map<string,number>(availableCreditsPerClass));
     setCurrentClassEditName("");
     setCurrentClassEditProfessors([]);
     setMissingClassFields(false);
@@ -372,10 +379,12 @@ export function CreateSubject() {
     let actualCredits;
     if (currentClassSelected){
       if(availableCreditsPerClass.get(currentClassSelected.idClass) === undefined){
+        console.log("entre",credits)
         availableCreditsPerClass.set(currentClassSelected.idClass, credits);
         setAvailableCreditsPerClass(new Map<string,number>(availableCreditsPerClass));
       }
       actualCredits = availableCreditsPerClass.get(currentClassSelected.idClass);
+      console.log(actualCredits)
     }
     if( currentClassTimeDay === "" || currentClassTimeClassroom === "" || currentClassTimeMode === "" || currentClassTimeBuilding === "" ||
       startTimeRef.current == undefined || endTimeRef.current == undefined || actualCredits == undefined ||
@@ -383,6 +392,8 @@ export function CreateSubject() {
       /*{
       (extractHoursFromTimeStamp(endTimeRef.current.value) - extractHoursFromTimeStamp(startTimeRef.current.value)) > actualCredits
     )*/
+      console.log(calculateHoursDifference(startTimeRef.current.value, endTimeRef.current.value));
+
       setMissingClassTimeFields(true);
       return;
     }
@@ -420,8 +431,51 @@ export function CreateSubject() {
     }
   }
 
+  function handleCreditChange(credit: number){
+    setCredits(credit);
+  }
+
+  function handleErrorAlert(errorMessage: string){
+    setErrorAlert(true);
+    setErrorMessageTitle(t("CreateSubject.missingFields"));
+    setErrorMessage(errorMessage);
+  }
+
   function handleSubjectCreation(){
     // Check that there are no missing values
+    if(wrongPatternInSubjectId){
+      handleErrorAlert(t("CreateSubject.wrongSubjectId"));
+      return;
+    }
+    setWrongPatternInSubjectId(false);
+    if(subjectName.length == 0){
+      setEmptySubjectName(true);
+      handleErrorAlert(t("CreateSubject.emptySubjectNameError"));
+      return;
+    }
+    setEmptySubjectName(false);
+
+    if(department.length == 0){
+      handleErrorAlert(t("CreateSubject.emptyDepartment"));
+      return;
+    }
+    if(selectedDegrees.length == 0 || selectedDegrees.length != selectedSemesters.length){
+      handleErrorAlert(t("CreateSubject.emptyDegree"));
+      return;
+    }
+    if(selectedClasses.length == 0){
+      handleErrorAlert(t("CreateSubject.emptyClasses"));
+    }
+    for(const clas of selectedClasses){
+      let actualCredits = 0;
+      clas.locations.forEach((classTime: ClassTime) => {
+        actualCredits += calculateHoursDifference(classTime.startTime, classTime.endTime);
+      });
+      if(actualCredits != credits){
+        handleErrorAlert(t("CreateSubject.wrongCredits"))
+        return;
+      }
+    }
 
   }
 
@@ -638,6 +692,16 @@ export function CreateSubject() {
           <h1 className={classes.title}>{t("CreateSubject.title")}</h1>
 
           <br />
+          {errorAlert &&
+              <Alert variant="light" color="yellow" title={errorMessageTitle} icon={icon}>
+                <Flex direction="row" justify="space-between" wrap="wrap">
+                  {errorMessage}
+                  <ActionIcon size={24} variant="transparent" color="gray" onClick={() => setErrorAlert(false)}>
+                    <IconX style={{ width: rem(24), height: rem(24) }} />
+                  </ActionIcon>
+                </Flex>
+              </Alert>}
+
           <Tabs value={activeTab} onChange={(value) => setActiveTab(value)}>
             <Tabs.List>
               <Tabs.Tab value="general-info">
@@ -663,8 +727,10 @@ export function CreateSubject() {
               </Flex>
               <Flex mih={50} gap="xl" justify="space-between" align="center" direction="row" wrap="wrap">
                 {t("CreateSubject.name")}
-                <Textarea className={classes.departmentDropdown} autosize value={subjectName}
-                          onChange={(event) => setSubjectName(event.currentTarget.value)}/>
+                {emptySubjectName ? <Textarea className={classes.departmentDropdown} autosize value={subjectName}
+                                              onChange={(event) => setSubjectName(event.currentTarget.value)} error={t("CreateSubject.emptySubjectName")}/>:
+                    <Textarea className={classes.departmentDropdown} autosize value={subjectName}
+                                              onChange={(event) => setSubjectName(event.currentTarget.value)}/>}
               </Flex>
               <Flex mih={50} gap="xl" justify="space-between" align="center" direction="row" wrap="wrap">
                 {t("CreateSubject.department")}
@@ -683,7 +749,7 @@ export function CreateSubject() {
               </Flex>
               <Flex mih={50} gap="xl" justify="space-between" align="center" direction="row" wrap="wrap">
                 {t("CreateSubject.credits")}
-                <NumberInput className={classes.departmentDropdown} value={credits} min={MINIMUM_CREDITS} max={MAXIMUM_CREDITS} onChange={(value) => setCredits(Number(value))}/>
+                <NumberInput className={classes.departmentDropdown} value={credits} min={MINIMUM_CREDITS} max={MAXIMUM_CREDITS} onChange={(value) => handleCreditChange(value)}/>
               </Flex>
               <Flex mih={50} gap="xl" justify="space-between" align="center" direction="row" wrap="wrap">
                 {t("CreateSubject.degree")}
@@ -692,7 +758,7 @@ export function CreateSubject() {
                     selectedDegrees.map((degree) =>
                         <Flex direction="row" align="center">
                           <p>{searchForDegreeName(degree)}</p>
-                          <ActionIcon size={24} variant="default" onClick={() => handleRemoveSelectedDegree(degree)}>
+                          <ActionIcon size={24} variant="transparent" onClick={() => handleRemoveSelectedDegree(degree)}>
                             <IconX style={{ width: rem(24), height: rem(24) }} />
                           </ActionIcon>
                         </Flex>)
@@ -716,7 +782,7 @@ export function CreateSubject() {
               </Flex>
               <Flex mih={50} miw={500} gap="xl" justify="space-between" align="center" direction="row" wrap="wrap">
                 {t("CreateSubject.professor")}
-                <Flex direction="column" justify="flex-end" maw={300}>
+                <Flex direction="column" justify="flex-end" maw={400}>
                   <MultiSelect placeholder={t("CreateSubject.professorLabel")} data={professorsOptions} searchable
                                onOptionSubmit={(professor) => handleProfessorAddition(professor)} onRemove={(professor) => handleProfessorRemove(professor)}/>
                 </Flex>
@@ -726,7 +792,7 @@ export function CreateSubject() {
                     createdProfessors.map((professor) =>
                         <Flex direction="row" align="center">
                           <p>{professor}</p>
-                          <ActionIcon size={24} variant="default" onClick={() => handleRemoveCreatedProfessor(professor)}>
+                          <ActionIcon size={24} variant="transparent" onClick={() => handleRemoveCreatedProfessor(professor)}>
                             <IconX style={{ width: rem(24), height: rem(24) }} />
                           </ActionIcon>
                         </Flex>)

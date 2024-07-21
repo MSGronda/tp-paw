@@ -369,7 +369,14 @@ export const TRANSLATIONS_EN = {
         missingFields: "Warning",
         completeFields: "Class Time won't be created until all fields are completed and the amount of credits aren't surpassed",
         createClassTime: "Add Class time",
-        completeClassFields: "Must complete class name, professors fields and use only letters for the class name"
+        completeClassFields: "Must complete class name, professors fields and use only letters for the class name",
+        emptySubjectName: "This field is required",
+        emptySubjectNameError: "Subject name is required",
+        wrongSubjectId: "Subject ID is required and needs to follow the format suggested",
+        emptyDepartment: "Pick a department for the subject",
+        emptyDegree: "Pick a degree and a semester for the subject",
+        emptyClasses: "Classes are required for the subject",
+        wrongCredits: "Make sure to match the amount of hours of class with the amount of credits for every class"
     },
     Degrees: {
         title: "Degrees",

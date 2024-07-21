@@ -364,10 +364,17 @@ export const TRANSLATIONS_ES = {
         editClasses: "Editar comisión",
         edit: "Editar",
         addClassTimes: "Agregar horarios",
-        missingFields: "Cuidado",
-        completeFields: "El horario no sera creado hasta que se completen todos los campos y la cantidad de creditos no sea superada",
+        missingFields: "Atención",
+        completeFields: "El horario no sera creado hasta que se completen todos los campos y la cantidad de creditos no sea alcanzada",
         createClassTime: "Crear horario",
-        completeClassFields: "Es requerido completar el campo de profesores, nombre de la comisión y usar solo letras para el nombre de la comisión"
+        completeClassFields: "Es requerido completar el campo de profesores, nombre de la comisión y usar solo letras para el nombre de la comisión",
+        emptySubjectName: "Este campo es requerido",
+        emptySubjectNameError: "El nombre de la materia es requerido",
+        wrongSubjectId: "El ID de materia en necesario y requiere que siga el formato indicado",
+        emptyDepartment: "Seleccione un departamento para la materia",
+        emptyDegree: "Seleccione una carrera y semestre para la materia",
+        emptyClasses: "Las comisiones son necesarias para la materia",
+        wrongCredits: "Asegúrese de igualar la cantidad de horas por semana con la cantidad de créditos, para cada comisión"
     },
     Degrees: {
         title: "Carreras",
