@@ -69,8 +69,8 @@ public class User {
     private RecoveryToken recoveryToken;
 
     @Formula("(SELECT COALESCE(SUM(s.credits), 0) " +
-            "FROM subjects s JOIN usersubjectprogress up ON s.id = up.idsub " +
-            "WHERE up.subjectstate = 1 AND up.iduser = id )")
+            "FROM subjects s JOIN subjectsdegrees sd ON s.id = sd.idsub JOIN usersubjectprogress up ON s.id = up.idsub " +
+            "WHERE up.subjectstate = 1 AND up.iduser = id AND sd.iddeg = degreeid)")
     private int creditsDone;
 
     private User(final Builder builder) {
