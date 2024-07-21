@@ -297,11 +297,6 @@ public class SubjectJpaDao implements SubjectDao {
             paramValues.add(params.getMaxTimeDemand());
         }
 
-        if(params.hasUserReviews()){
-            queryString.append(" s.id IN ( SELECT r.idsub FROM reviews r WHERE r.iduser = ? ) AND ");
-            paramValues.add(params.getUserReviews());
-        }
-
         if(params.hasIds()){
             queryString.append(" s.id IN ( ");
 

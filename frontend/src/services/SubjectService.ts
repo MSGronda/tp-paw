@@ -54,20 +54,6 @@ export class SubjectService {
         }
     }
 
-    async getSubjectsFromReviews(userId: number, page: number){
-        try{
-            let config: any = {};
-            config.params = {
-                userReviews: userId,
-                page: page
-            };
-            const res = await axiosService.authAxiosWrapper(axiosService.GET, `${path}`, config);
-            return handleResponse(res);
-        } catch (error: any){
-            return handleResponse(error.response);
-        }
-    }
-
     async getSubjectsByIds(ids: string[], page: number) {
         try{
             let config: any = {};

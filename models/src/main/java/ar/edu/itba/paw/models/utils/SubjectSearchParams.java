@@ -15,7 +15,6 @@ public class SubjectSearchParams {
     private Long future;
     private Long plan;
     private Long planFinishedDate;
-    private Long userReviews;
     private String query;
     private Integer minCredits;
     private Integer maxCredits;
@@ -44,7 +43,6 @@ public class SubjectSearchParams {
             Integer maxDifficulty,
             Integer minTimeDemand,
             Integer maxTimeDemand,
-            Long userReviews,
             String ids
     ) {
         this.degree = degree;
@@ -63,7 +61,6 @@ public class SubjectSearchParams {
         this.maxDifficulty = maxDifficulty;
         this.minTimeDemand = minTimeDemand;
         this.maxTimeDemand = maxTimeDemand;
-        this.userReviews = userReviews;
         if(ids != null){
             this.ids = Arrays.stream(ids.split(",")).collect(Collectors.toList());
         }
@@ -190,14 +187,6 @@ public class SubjectSearchParams {
     public void setMaxTimeDemand(Integer maxTimeDemand) {
         this.maxTimeDemand = maxTimeDemand;
     }
-
-    public boolean hasUserReviews(){
-        return userReviews != null;
-    }
-    public void setUserReviews(Long userReviews) {
-        this.userReviews = userReviews;
-    }
-
     public Long getDegree() {
         return degree;
     }
@@ -260,9 +249,5 @@ public class SubjectSearchParams {
 
     public Integer getMaxTimeDemand() {
         return maxTimeDemand;
-    }
-
-    public Long getUserReviews() {
-        return userReviews;
     }
 }

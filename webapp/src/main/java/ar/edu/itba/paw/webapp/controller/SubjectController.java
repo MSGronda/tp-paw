@@ -65,8 +65,6 @@ public class SubjectController {
             @QueryParam("minTimeDemand") final Integer minTimeDemand,
             @QueryParam("maxTimeDemand") final Integer maxTimeDemand,
 
-            @QueryParam("userReviews") final Long userReviews,
-
             @QueryParam("ids") final String ids,
 
             @QueryParam("page") @DefaultValue("1") final int page,
@@ -91,7 +89,6 @@ public class SubjectController {
                 maxDifficulty,
                 minTimeDemand,
                 maxTimeDemand,
-                userReviews,
                 ids
         );
 
