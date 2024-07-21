@@ -144,10 +144,8 @@ export function CreateSubject() {
                               selectedSemesters: number[], prereqs: string[], professors: string[], selectedClasses: any[]) => {
     const res = await subjectService.createSubject(subjectId, subjectName, department, credits, selectedDegrees, selectedSemesters, prereqs, professors, selectedClasses);
     if(res){
-      console.log(res);
-      console.log(res.status);
       if(res.status === 201){
-        // Success message
+        navigate('/subject/' + subjectId)
       } else {
         // Error message
       }
@@ -478,13 +476,13 @@ export function CreateSubject() {
     // Merge created professors
     setSelectedProfessors([...selectedProfessors, ...createdProfessors]);
 
-    // Cast prereqs
+    // Cast prereqs to strings
     const prereqs = selectedPrereqs.map((prereq: number) => prereq.toString());
 
     const subjectClasses = [];
     for(const clas of selectedClasses){
       subjectClasses.push({code: clas.idClass, professors: clas.professors,
-              classTimes: clas.locations});
+        classTimes: clas.locations});
     }
 
     createSubject(subjectId, subjectName, department, credits, selectedDegrees, selectedSemesters, prereqs, selectedProfessors, subjectClasses);
