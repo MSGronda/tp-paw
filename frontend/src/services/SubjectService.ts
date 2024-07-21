@@ -1,6 +1,8 @@
 import {axiosService} from "."
 import { handleResponse } from "../handlers/responseHandler";
 import {Subject} from "../models/Subject.ts";
+import {List} from "postcss/lib/list";
+import Class from "../models/Class.ts";
 
 const path = "/subjects"
 
@@ -203,5 +205,26 @@ export class SubjectService {
         });
         
         return filters;
+    }
+
+    async createSubject(id: string, name: string, department: string, credits: number, degreeIds: number[], semesters: number[],
+                        requirementsIds: string[], professors: string[], subjectClasses: Class[]) {
+        try {
+            const data = {
+                id: id,
+                name: name,
+                department: department,
+                credits: credits,
+                degreeIds: degreeIds,
+                semesters: semesters,
+                requirementIds: requirementsIds,
+                professors: professors,
+                subjectClasses: subjectClasses
+            }
+            const res = await axiosService.authAxiosWrapper(axiosService.POST, `${path}`, {}, data);
+            return handleResponse(res);
+        } catch (error: any) {
+            return handleResponse(error.response);
+        }
     }
 }

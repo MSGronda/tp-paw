@@ -140,6 +140,20 @@ export function CreateSubject() {
     }
   }
 
+  const createSubject = async(subjectId: string, subjectName: string, department: string, credits: number, selectedDegrees: number[],
+                              selectedSemesters: number[], prereqs: string[], professors: string[], selectedClasses: any[]) => {
+    const res = await subjectService.createSubject(subjectId, subjectName, department, credits, selectedDegrees, selectedSemesters, prereqs, professors, selectedClasses);
+    if(res){
+      console.log(res);
+      console.log(res.status);
+      if(res.status === 201){
+        // Success message
+      } else {
+        // Error message
+      }
+    }
+  }
+
   useEffect(() => {
     searchSubjects(currentPrereqPage);
   }, [selectedDegrees, currentPrereqPage]);
@@ -168,15 +182,6 @@ export function CreateSubject() {
       carreerSemester.get(degrees[i].id.toString())?.push(t("CreateSubject.elective"));
     }
   }, [degrees]);
-
-  /*const departments = [
-    "Ambiente y Movilidad",
-    "Ciencias Exactas y Naturales",
-    "Ciencias de la Vida",
-    "Economía y Negocios",
-    "Sistemas Complejos y Energía",
-    "Sistemas Digitales y Datos",
-  ];*/
 
   useEffect(() => {
     if(carreerSemester != undefined && currentDegree != undefined && carreerSemester.get(currentDegree.toString()) != undefined) {
@@ -379,21 +384,14 @@ export function CreateSubject() {
     let actualCredits;
     if (currentClassSelected){
       if(availableCreditsPerClass.get(currentClassSelected.idClass) === undefined){
-        console.log("entre",credits)
         availableCreditsPerClass.set(currentClassSelected.idClass, credits);
         setAvailableCreditsPerClass(new Map<string,number>(availableCreditsPerClass));
       }
       actualCredits = availableCreditsPerClass.get(currentClassSelected.idClass);
-      console.log(actualCredits)
     }
     if( currentClassTimeDay === "" || currentClassTimeClassroom === "" || currentClassTimeMode === "" || currentClassTimeBuilding === "" ||
       startTimeRef.current == undefined || endTimeRef.current == undefined || actualCredits == undefined ||
         calculateHoursDifference(startTimeRef.current.value, endTimeRef.current.value) > actualCredits) {
-      /*{
-      (extractHoursFromTimeStamp(endTimeRef.current.value) - extractHoursFromTimeStamp(startTimeRef.current.value)) > actualCredits
-    )*/
-      console.log(calculateHoursDifference(startTimeRef.current.value, endTimeRef.current.value));
-
       setMissingClassTimeFields(true);
       return;
     }
@@ -477,6 +475,19 @@ export function CreateSubject() {
       }
     }
 
+    // Merge created professors
+    setSelectedProfessors([...selectedProfessors, ...createdProfessors]);
+
+    // Cast prereqs
+    const prereqs = selectedPrereqs.map((prereq: number) => prereq.toString());
+
+    const subjectClasses = [];
+    for(const clas of selectedClasses){
+      subjectClasses.push({code: clas.idClass, professors: clas.professors,
+              classTimes: clas.locations});
+    }
+
+    createSubject(subjectId, subjectName, department, credits, selectedDegrees, selectedSemesters, prereqs, selectedProfessors, subjectClasses);
   }
 
   // Combobox Options
