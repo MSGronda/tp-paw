@@ -19,7 +19,14 @@ public class EditUserForm {
     private Long degreeId;
     private List<String> subjectIds;
     private Long imageId;
+    private Boolean makeModerator;
 
+    public void setMakeModerator(Boolean makeModerator) {
+        this.makeModerator = makeModerator;
+    }
+    public Boolean getMakeModerator() {
+        return makeModerator;
+    }
 
     public Long getImageId() {
         return imageId;

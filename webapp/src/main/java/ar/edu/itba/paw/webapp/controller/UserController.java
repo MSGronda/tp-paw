@@ -87,7 +87,8 @@ public class UserController {
                 editUserForm.getNewPassword(),
                 editUserForm.getDegreeId(),
                 editUserForm.getSubjectIds(),
-                editUserForm.getImageId()
+                editUserForm.getImageId(),
+                editUserForm.getMakeModerator()
         );
         return Response.ok().build();
     }

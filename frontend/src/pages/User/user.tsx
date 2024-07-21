@@ -37,6 +37,7 @@ import { validateConfirmPassword, validatePassword, validateUsername } from "../
 import authService from "../../services/AuthService.ts";
 import { Dropzone, MIME_TYPES } from "@mantine/dropzone";
 import {ReviewVote} from "../../models/ReviewVote.ts";
+import {Roles} from "../../models/Roles.ts";
 
 
 export default function User() {
@@ -357,8 +358,18 @@ const CurrentFilterComponent: React.FC<CurrentFilterComponentProps> = ({ orderBy
 function UserSection({ user, degree, plan }: { user?: User, degree?: Degree, plan?: Subject[] }) {
   const { t } = useTranslation();
   const { role } = useContext(AuthContext);
+  const [isMod, setIsMod] = useState<boolean>(isModerator(user));
 
   if (!user || !degree || !plan) return <></>;
+
+  const  makeModerator = async () => {
+      const res = await userService.makeModerator(user.id);
+
+      if(res.status == 200){
+          user.roles.push(Roles.EDITOR.toString());
+          setIsMod(true);
+      }
+  }
 
   return <>
     <div className={classes.header}>
@@ -380,16 +391,16 @@ function UserSection({ user, degree, plan }: { user?: User, degree?: Degree, pla
           <h1 className={classes.userName}>
             {user.username}
           </h1>
-          {isModerator(user) &&
+          {isMod &&
             <h2 className={classes.editor_text}>
               {t("User.moderator")}
             </h2>
           }
         </div>
       </div>
-      {role === "EDITOR" && !isModerator(user) &&
+      {role === "EDITOR" && !isMod &&
         <div className={classes.moderator_tag}>
-          <Button variant="outline"> {/* TODO Ver endpoint de make moderator y conectarlo*/}
+          <Button variant="outline" onClick={makeModerator}>
             {t("User.makeModerator")}
           </Button>
         </div>

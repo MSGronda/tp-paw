@@ -86,7 +86,8 @@ public interface UserService {
             final String newPassword,
             final Long degreeId,
             final List<String> subjectIds,
-            final Long imageId
+            final Long imageId,
+            final Boolean makeModerator
     ) throws OldPasswordDoesNotMatchException;
 
     void updateMultipleSubjectProgress(final User currentUser, final Long id, final List<String> newPassedSubjects, final List<String> newNotPassedSubjects);

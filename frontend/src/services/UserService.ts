@@ -157,6 +157,24 @@ export class UserService {
             return handleResponse(e.response);
         }
     }
+
+    async makeModerator(userId: number){
+        try {
+            const body = {
+                makeModerator: true
+            }
+            const res = await axiosService.authAxiosWrapper(
+                axiosService.PATCH,
+                `${path}/${userId}`,
+                {},
+                body
+            );
+
+            return handleResponse(res);
+        } catch(e: any) {
+            return handleResponse(e.response);
+        }
+    }
     
     async changeDegree() {
         try {

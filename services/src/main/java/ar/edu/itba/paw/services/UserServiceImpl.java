@@ -530,34 +530,50 @@ public class UserServiceImpl implements UserService {
     @Override
     public void updateUser(
             final Long userId,
-            final User user,
+            final User currentUser,
             final String username,
             final String oldPassword,
             final String newPassword,
             final Long degreeId,
             final List<String> subjectIds,
-            final Long imageId
+            final Long imageId,
+            final Boolean makeModerator
     ) throws OldPasswordDoesNotMatchException{
-        if( user.getId() != userId) {
+
+        // Solo moderador / editor puede hacerlo moderador.
+        if(makeModerator != null) {
+            if(!currentUser.isEditor()){
+                throw new UnauthorizedException();
+            }
+
+            final User user = findById(userId).orElseThrow(UserNotFoundException::new);
+
+            userDao.addRole(user, Role.RoleEnum.EDITOR.getRole());
+
+            // No se permite editar ningun otro campo, dado que es otro usuario el que lo esta haciendo.
+            return;
+        }
+
+        if(currentUser.getId() != userId) {
             throw new ProfileNotOwnedException();
         }
-        if (username != null ){
-            editProfile(user, username);
+        if (username != null){
+            editProfile(currentUser, username);
         }
         if( oldPassword != null && newPassword != null) {
-            changePassword(user, newPassword, oldPassword);
+            changePassword(currentUser, newPassword, oldPassword);
         }
         if(degreeId != null) {
             if(degreeId == -1) 
-                clearDegree(user);
+                clearDegree(currentUser);
             else 
-                updateDegree(user, degreeService.findById(degreeId).orElseThrow(DegreeNotFoundException::new));
+                updateDegree(currentUser, degreeService.findById(degreeId).orElseThrow(DegreeNotFoundException::new));
         }
         if(subjectIds != null){
-            updateMultipleSubjectProgress(user, subjectIds, SubjectProgress.DONE);
+            updateMultipleSubjectProgress(currentUser, subjectIds, SubjectProgress.DONE);
         }
         if(imageId != null){
-            updateProfilePicture(user, imageId);
+            updateProfilePicture(currentUser, imageId);
         }
     }
 
