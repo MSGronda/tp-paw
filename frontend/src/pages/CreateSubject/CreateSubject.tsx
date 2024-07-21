@@ -38,6 +38,7 @@ export function CreateSubject() {
   const MAXIMUM_CREDITS = 12;
   const SUBJECT_ID_REGEX = "[0-9]{2}\\.[0-9]{2}";
   const CLASS_NAME_REGEX = "[A-Za-z]+";
+  const DEPARTMENT = "DEPARTMENT";
 
   const classDays = [
     t("CreateSubject.day1"),
@@ -83,6 +84,7 @@ export function CreateSubject() {
   const [degrees, setDegrees] = useState<Degree[]>([]);
   const [subjects, setSubjects] = useState<Subject[]>([]);
   const [professors, setProfessors] = useState<Professor[]>([]);
+  const [departments, setDepartments] = useState<string[]>([]);
 
   // Current selected values
   const [currentDegree, setCurrentDegree] = useState<number>(1);
@@ -106,6 +108,11 @@ export function CreateSubject() {
     const data = handleService(res, navigate);
     if (res) {
       setSubjects(data.subjects);
+      data.filters?.entry?.forEach((entry: {key:string, value:string[]}) => {
+        if(entry.key == DEPARTMENT){
+          setDepartments(entry.value);
+        }
+      });
       setMaxPage(res.maxPage || 1);
     }
   }
@@ -127,10 +134,7 @@ export function CreateSubject() {
   }
 
   useEffect(() => {
-    if(selectedDegrees.length > 0) {
-      searchSubjects(currentPrereqPage);
-    }
-
+    searchSubjects(currentPrereqPage);
   }, [selectedDegrees, currentPrereqPage]);
 
   useEffect(() => {
@@ -139,6 +143,10 @@ export function CreateSubject() {
 
   useEffect(() => {
     searchProfessors();
+  }, []);
+
+  useEffect(() => {
+    searchSubjects(1);
   }, []);
 
   const carreerSemester = new Map<string, string[]>();
@@ -154,14 +162,14 @@ export function CreateSubject() {
     }
   }, [degrees]);
 
-  const departments = [
+  /*const departments = [
     "Ambiente y Movilidad",
     "Ciencias Exactas y Naturales",
     "Ciencias de la Vida",
-    "Economia y Negocios",
+    "Economía y Negocios",
     "Sistemas Complejos y Energía",
     "Sistemas Digitales y Datos",
-  ];
+  ];*/
 
   useEffect(() => {
     if(carreerSemester != undefined && currentDegree != undefined && carreerSemester.get(currentDegree.toString()) != undefined) {
@@ -196,12 +204,26 @@ export function CreateSubject() {
     return Number(semesterName.match(RegExp('[0-9][0-9]?'))) != 0 ? Number(semesterName.match(RegExp('[0-9][0-9]?'))) : -1
   }
 
+  // Week day and time formats
   function extractNumberFromWeekDay(weekDay: string) {
     return weekDaysMap.get(weekDay) || 0;
   }
 
   function extractHoursFromTimeStamp(timestamp: string) {
     return Number(timestamp.slice(0,2));
+  }
+
+  function timeStringToMinutes(time: string): number {
+    const [hours, minutes] = time.split(':').map(Number);
+    return hours * 60 + minutes;
+  }
+
+  function calculateHoursDifference(startTime: string, endTime: string): number {
+    const minutes1 = timeStringToMinutes(startTime);
+    const minutes2 = timeStringToMinutes(endTime);
+
+    const differenceInMinutes = Math.abs(minutes2 - minutes1);
+    return Math.floor(differenceInMinutes / 60);
   }
 
   // Handlers
@@ -351,20 +373,23 @@ export function CreateSubject() {
     if (currentClassSelected){
       if(availableCreditsPerClass.get(currentClassSelected.idClass) === undefined){
         availableCreditsPerClass.set(currentClassSelected.idClass, credits);
-        setAvailableCreditsPerClass(new Map<string,number>(availableCreditsPerClass))
+        setAvailableCreditsPerClass(new Map<string,number>(availableCreditsPerClass));
       }
       actualCredits = availableCreditsPerClass.get(currentClassSelected.idClass);
     }
     if( currentClassTimeDay === "" || currentClassTimeClassroom === "" || currentClassTimeMode === "" || currentClassTimeBuilding === "" ||
       startTimeRef.current == undefined || endTimeRef.current == undefined || actualCredits == undefined ||
-        (extractHoursFromTimeStamp(endTimeRef.current.value) - extractHoursFromTimeStamp(startTimeRef.current.value)) > actualCredits){
+        calculateHoursDifference(startTimeRef.current.value, endTimeRef.current.value) > actualCredits) {
+      /*{
+      (extractHoursFromTimeStamp(endTimeRef.current.value) - extractHoursFromTimeStamp(startTimeRef.current.value)) > actualCredits
+    )*/
       setMissingClassTimeFields(true);
       return;
     }
     const newClassTime = {day: extractNumberFromWeekDay(currentClassTimeDay), startTime: startTimeRef.current.value,
       endTime: endTimeRef.current.value, mode:currentClassTimeMode, building: currentClassTimeBuilding, location: currentClassTimeClassroom}
     if(currentClassSelected && !currentClassSelected.locations.includes(newClassTime)){
-      const creditsLeft = (extractHoursFromTimeStamp(endTimeRef.current.value) - extractHoursFromTimeStamp(startTimeRef.current.value));
+      const creditsLeft = calculateHoursDifference(startTimeRef.current.value, endTimeRef.current.value);
       availableCreditsPerClass.set(currentClassSelected.idClass, actualCredits - creditsLeft);
       setAvailableCreditsPerClass(new Map<string,number>(availableCreditsPerClass))
       currentClassSelected?.locations.push(newClassTime);
@@ -393,6 +418,11 @@ export function CreateSubject() {
         setSelectedClasses([...selectedClasses.slice(0,classIndex), clas ,...selectedClasses.slice(classIndex + 1)]);
       }
     }
+  }
+
+  function handleSubjectCreation(){
+    // Check that there are no missing values
+
   }
 
   // Combobox Options
@@ -630,7 +660,6 @@ export function CreateSubject() {
                                                     error={t("CreateSubject.idError")}/> :
                     <Textarea className={classes.departmentDropdown} autosize value={subjectId}
                                                       onChange={(event) => handleNewSubjectId(event.currentTarget.value)}/>}
-
               </Flex>
               <Flex mih={50} gap="xl" justify="space-between" align="center" direction="row" wrap="wrap">
                 {t("CreateSubject.name")}
@@ -680,16 +709,10 @@ export function CreateSubject() {
                     ({t("CreateSubject.optional")})
                   </h6>
                 </div>
-                {selectedDegrees.length > 0 ?
-                    <Button
-                      onClick={() => setOpenedPrereqModal(true)}>
-                        {t("CreateSubject.addPrereq")}
-                    </Button> :
-                    <Tooltip label={t("CreateSubject.prereqAdvice")}>
-                      <Button disabled>
-                        {t("CreateSubject.addPrereq")}
-                      </Button>
-                    </Tooltip>}
+                {<Button
+                    onClick={() => setOpenedPrereqModal(true)}>
+                  {t("CreateSubject.addPrereq")}
+                </Button>}
               </Flex>
               <Flex mih={50} miw={500} gap="xl" justify="space-between" align="center" direction="row" wrap="wrap">
                 {t("CreateSubject.professor")}
@@ -779,8 +802,11 @@ export function CreateSubject() {
               </Table>
               <Flex mih={50} gap="xl" justify="center" align="center" direction="row" wrap="wrap">
                 <Button variant="default"
-                  onClick={() => setActiveTab("general-info")}>{t("CreateSubject.previous")}</Button>
-                <Button color="green">{t("CreateSubject.createSubject")}</Button>
+                  onClick={() => setActiveTab("general-info")}>{t("CreateSubject.previous")}
+                </Button>
+                <Button color="green" onClick={() => handleSubjectCreation()}>
+                  {t("CreateSubject.createSubject")}
+                </Button>
               </Flex>
             </Tabs.Panel>
           </Tabs>
