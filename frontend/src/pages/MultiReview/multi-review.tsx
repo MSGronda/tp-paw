@@ -132,7 +132,7 @@ export default function MultiReview() {
             subjects.length > 0 ?
             <div className={classes.container_50}>
                 <div className={classes.flex}>
-                    <h1 className={classes.title}> {t("Review.title", {subjectName: subjects[currentPos].name})} </h1>
+                    <h2 className={classes.title}> {t("Review.title", {subjectName: subjects[currentPos].name})} </h2>
 
                     <form onSubmit={handleReviewSubmit} className={classes.form}>
                         <div className={classes.general_area}>
