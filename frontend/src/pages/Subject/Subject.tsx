@@ -324,7 +324,9 @@ export function SubjectPage() {
                                                     {prerequisites && prerequisites.length === 0 ? <>{t("Subject.emptyPrerequisites")}</> : <></>}
                                                     {   prerequisites && subject.prerequisites && prerequisites.length === subject.prerequisites.length ?
                                                         prerequisites.map((simpleSubject, index) => (
-                                                            <Link key={index} to={{pathname:`/subject/${simpleSubject.id}`}}>{simpleSubject.name}, </Link>
+                                                            <Link key={index} to={{pathname:`/subject/${simpleSubject.id}`}}>
+                                                                {simpleSubject.name}{ index < prerequisites.length - 1 ? ', ' : null}
+                                                            </Link>
                                                         )) : <></>
                                                     }
                                                 </Table.Td>
@@ -569,12 +571,17 @@ function getProfessors(subject: Subject) {
     if (subject.classes === null || subject.classes === undefined) {
         return <></>;
     }
+    const professors = new Set<string>();
     subject.classes.forEach((classItem) => {
         classItem.professors.forEach((professor: string) => {
-            professorsComponents.push(
-                <Badge color="blue">{professor}</Badge>
-            );
-            professorsComponents.push(<> </>);
+            if(!professors.has(professor)){
+                professors.add(professor);
+
+                professorsComponents.push(
+                    <Badge color="blue">{professor}</Badge>
+                );
+                professorsComponents.push(<> </>);
+            }
         })
     })
     return professorsComponents;
