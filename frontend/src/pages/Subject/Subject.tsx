@@ -16,7 +16,7 @@ import {
     useCombobox,
     Notification,
 } from '@mantine/core';
-import { IconArrowsSort, IconCheck, IconX } from "@tabler/icons-react";
+import {IconArrowsSort, IconCheck, IconPencil, IconX} from "@tabler/icons-react";
 import {SimpleSubject, Subject} from "../../models/Subject.ts";
 import { Navbar } from "../../components/navbar/navbar.tsx";
 import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
@@ -38,6 +38,7 @@ export function SubjectPage() {
     const subjectId = useParams();
     const navigate = useNavigate();
     const { userId } = useContext(AuthContext);
+    const { role } = useContext(AuthContext);
 
     const [subject, setSubject] = useState({} as Subject);
     const [subjectYear, setSubjectYear] = useState(0);
@@ -297,7 +298,11 @@ export function SubjectPage() {
                         </div>
                         <div className={classes.editDeleteButtons}>
                             <Text size="xl" fw={500}> {subject.name} - {subject?.id}</Text>
-                            <></>
+                            { role === 'EDITOR' && <Button radius="lg" rightSection={<IconPencil size={14}/>} onClick={() => {
+                                navigate("/edit-subject/" + subject.id);
+                            }}>
+                                {t("Subject.editSubject")}
+                            </Button>}
                         </div>
                         <Card className={classes.mainBody}>
                             <Tabs defaultValue="general">
