@@ -6,6 +6,7 @@ import ar.edu.itba.paw.models.User;
 import ar.edu.itba.paw.models.exceptions.DegreeNotFoundException;
 import ar.edu.itba.paw.models.exceptions.SemesterNotFoundException;
 import ar.edu.itba.paw.models.exceptions.SubjectNotFoundException;
+import ar.edu.itba.paw.models.utils.DegreeSearchParams;
 import ar.edu.itba.paw.services.AuthUserService;
 import ar.edu.itba.paw.services.DegreeService;
 import ar.edu.itba.paw.services.SubjectService;
@@ -45,8 +46,12 @@ public class DegreeController {
 
     @GET
     @Produces("application/vnd.degree-list.v1+json")
-    public Response getDegrees() {
-        final List<Degree> degrees = degreeService.getAll();
+    public Response getDegrees(
+            @QueryParam("subjectId") final String subjectId
+    ) {
+        final DegreeSearchParams params = new DegreeSearchParams(subjectId);
+        final List<Degree> degrees = degreeService.searchDegrees(params);
+
         final List<DegreeDto> degreeDtos = degrees.stream().map(degree -> DegreeDto.fromDegree(uriInfo, degree)).collect(Collectors.toList());
         if(degreeDtos.isEmpty()) {
             return Response.noContent().build();

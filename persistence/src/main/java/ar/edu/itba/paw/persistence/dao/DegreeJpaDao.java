@@ -3,12 +3,15 @@ package ar.edu.itba.paw.persistence.dao;
 import ar.edu.itba.paw.models.Degree;
 import ar.edu.itba.paw.models.DegreeSubject;
 import ar.edu.itba.paw.models.Subject;
+import ar.edu.itba.paw.models.utils.DegreeSearchParams;
 import org.springframework.stereotype.Repository;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import java.util.List;
-import java.util.Optional;
-import java.util.OptionalInt;
+import javax.persistence.Query;
+import javax.persistence.TypedQuery;
+import java.util.*;
+import java.util.stream.Collectors;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -60,7 +63,7 @@ public class DegreeJpaDao implements DegreeDao {
 
     @Override
     public void replaceSubjectDegrees(final Subject subject, final List<Long> degreeIds, final List<Integer> semesters){
-        for(final Degree degree : getAll()){
+        for(final Degree degree : searchDegrees(new DegreeSearchParams(null))){
             degree.getDegreeSubjects().removeIf(ds -> {
                 if(ds.getSubject().equals(subject)){
                     for(int i=0; i < degreeIds.size() && i < semesters.size(); i++) {
@@ -99,9 +102,25 @@ public class DegreeJpaDao implements DegreeDao {
     }
 
     @Override
-    public List<Degree> getAll() {
-        return em.createQuery("from Degree", Degree.class)
-                .getResultList();
+    public List<Degree> searchDegrees(final DegreeSearchParams params) {
+        final List<Object> paramValues = new ArrayList<>();
+        final StringBuilder queryString = new StringBuilder("SELECT d.id FROM degrees d WHERE ");
+
+        final String finalizedQuery = appendDegreeSearchParams(queryString, paramValues, params);
+        
+        final Query nativeQuery = createNativeQuery(finalizedQuery, paramValues);
+
+
+        @SuppressWarnings("unchecked") final List<Long> degreeIds = (List<Long>) nativeQuery
+                .getResultList().stream().map(n -> ((Number)n).longValue()).collect(Collectors.toList());;
+
+        if (degreeIds.isEmpty()) return Collections.emptyList();
+
+        TypedQuery<Degree> query = em.createQuery("FROM Degree WHERE id IN (:degreeIds)", Degree.class);
+
+        query.setParameter("degreeIds",degreeIds);
+
+        return query.getResultList();
     }
 
     @Override
@@ -113,6 +132,40 @@ public class DegreeJpaDao implements DegreeDao {
                 .stream().findFirst();
 
         return res.map(OptionalInt::of).orElseGet(OptionalInt::empty);
+    }
+
+    private String appendDegreeSearchParams(StringBuilder queryString, List<Object> paramValues, DegreeSearchParams params) {
+
+        if(params.hasSubject()) {
+           queryString.append("d.id IN (SELECT sd.iddeg FROM subjectsdegrees sd WHERE sd.idsub = ? )");
+           paramValues.add(params.getSubjectId());
+        }
+
+        return removeExcessSQL(queryString.toString());
+    }
+
+    private String removeExcessSQL(String query) {
+        String and = " AND ";
+        String where = " WHERE ";
+
+        if(query.endsWith(and)){
+            return query.substring(0, query.length() - and.length());
+        }
+        if(query.endsWith(where)){
+            return query.substring(0, query.length() - where.length());
+        }
+
+        return query;
+    }
+
+    private Query createNativeQuery(final String finalizedQuery, final List<Object> paramValues){
+        final Query nativeQuery = em.createNativeQuery(finalizedQuery);
+
+        int queryParamNum = 1;
+        for(Object paramValue : paramValues){
+            nativeQuery.setParameter(queryParamNum++, paramValue);
+        }
+        return nativeQuery;
     }
 }
 

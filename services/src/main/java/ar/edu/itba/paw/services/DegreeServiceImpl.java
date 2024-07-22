@@ -5,6 +5,7 @@ import ar.edu.itba.paw.models.DegreeSubject;
 import ar.edu.itba.paw.models.Subject;
 import ar.edu.itba.paw.models.User;
 import ar.edu.itba.paw.models.exceptions.SubjectNotFoundException;
+import ar.edu.itba.paw.models.utils.DegreeSearchParams;
 import ar.edu.itba.paw.models.utils.SubjectSearchParams;
 import ar.edu.itba.paw.persistence.dao.DegreeDao;
 import ar.edu.itba.paw.persistence.dao.SubjectDao;
@@ -169,8 +170,8 @@ public class DegreeServiceImpl implements DegreeService {
     }
 
     @Override
-    public List<Degree> getAll() {
-        return degreeDao.getAll();
+    public List<Degree> searchDegrees(final DegreeSearchParams params) {
+        return degreeDao.searchDegrees(params);
     }
 
 }
