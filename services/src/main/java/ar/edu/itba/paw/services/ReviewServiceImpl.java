@@ -144,7 +144,7 @@ public class ReviewServiceImpl implements ReviewService {
         return reviewVotes;
     }
 
-    public int getVoteTotalPages(final Review review, final Long userId, final int page){
+    public int getVoteTotalPages(final Review review, final Long userId){
         if(userId == null){
             return reviewDao.getTotalVotePages(review);
         }

@@ -25,7 +25,7 @@ public interface ReviewService {
     Review update(final Review.Builder reviewBuilder, final User currentUser);
     void delete(final User currentUser, final Review review);
     List<ReviewVote> getVotes(final Review review, final Long userId, final int page);
-    int getVoteTotalPages(final Review review, final Long userId, final int page);
+    int getVoteTotalPages(final Review review, final Long userId);
 
     void deleteReviewVote(final Review review, final User user);
 

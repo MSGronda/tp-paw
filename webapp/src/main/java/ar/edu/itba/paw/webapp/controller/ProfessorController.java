@@ -4,7 +4,9 @@ package ar.edu.itba.paw.webapp.controller;
 import ar.edu.itba.paw.models.Professor;
 import ar.edu.itba.paw.models.exceptions.ProfessorNotFoundException;
 import ar.edu.itba.paw.services.ProfessorService;
+import ar.edu.itba.paw.webapp.controller.utils.PaginationLinkBuilder;
 import ar.edu.itba.paw.webapp.dto.ProfessorDto;
+import ar.edu.itba.paw.webapp.dto.ReviewVoteDto;
 import ar.edu.itba.paw.webapp.dto.SubjectDto;
 import ar.edu.itba.paw.webapp.form.ProfessorForm;
 import ar.edu.itba.paw.webapp.form.SubjectForm;
@@ -32,15 +34,24 @@ public class ProfessorController {
 
     @GET
     @Produces("application/vnd.professor-list.v1+json")
-    public Response getProfessors() {
-        final List<Professor> professors = professorService.getAll();
-        final List<ProfessorDto> professorsDtos = professors.stream().map(professor -> ProfessorDto.fromProfessor(uriInfo, professor)).collect(Collectors.toList());
+    public Response getProfessors(
+            @QueryParam("subjectId") final String subjectId,
+            @QueryParam("classId") final String classId,
+            @QueryParam("page") @DefaultValue("1") final int page
+    ) {
+        final List<Professor> professors = professorService.searchProfessors(subjectId, classId, page);
 
-        if (professorsDtos.isEmpty()){
+        if(professors.isEmpty()){
             return Response.noContent().build();
         }
 
-        return Response.ok(new GenericEntity<List<ProfessorDto>>(professorsDtos){}).build();
+        final List<ProfessorDto> professorsDtos = professors.stream().map(professor -> ProfessorDto.fromProfessor(uriInfo, professor)).collect(Collectors.toList());
+
+        int lastPage = professorService.getTotalPagesForSearch(subjectId, classId);
+        final Response.ResponseBuilder responseBuilder = Response.ok(new GenericEntity<List<ProfessorDto>>(professorsDtos){});
+        PaginationLinkBuilder.getResponsePaginationLinks(responseBuilder, uriInfo, page, lastPage);
+
+        return responseBuilder.build();
     }
 
     @GET

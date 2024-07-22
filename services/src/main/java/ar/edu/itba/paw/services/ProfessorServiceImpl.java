@@ -3,6 +3,7 @@ package ar.edu.itba.paw.services;
 import ar.edu.itba.paw.models.Professor;
 import ar.edu.itba.paw.models.Subject;
 import ar.edu.itba.paw.models.SubjectClass;
+import ar.edu.itba.paw.models.exceptions.InvalidPageNumberException;
 import ar.edu.itba.paw.models.exceptions.ProfessorAlreadyExistsWithNameException;
 import ar.edu.itba.paw.persistence.dao.ProfessorDao;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,6 +43,19 @@ public class ProfessorServiceImpl implements ProfessorService {
     @Override
     public void replaceClassProfessors(final SubjectClass subjectClass, final List<String> professors) {
         professorDao.replaceClassProfessors(subjectClass, professors);
+    }
+
+    @Override
+    public List<Professor> searchProfessors(final String subjectId, final String classId, int page){
+        if(page < 1 || page > getTotalPagesForSearch(subjectId, classId)){
+            throw new InvalidPageNumberException();
+        }
+        return professorDao.searchProfessors(subjectId, classId, page);
+    }
+
+    @Override
+    public int getTotalPagesForSearch(final String subjectId, final String classId){
+        return professorDao.getTotalPagesForSearch(subjectId, classId);
     }
 
     @Override
