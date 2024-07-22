@@ -1,6 +1,7 @@
 package ar.edu.itba.paw.services;
 
 import ar.edu.itba.paw.models.Degree;
+import ar.edu.itba.paw.models.DegreeSemester;
 import ar.edu.itba.paw.models.Subject;
 import ar.edu.itba.paw.models.User;
 import ar.edu.itba.paw.models.utils.DegreeSearchParams;
@@ -21,6 +22,8 @@ public interface DegreeService {
 
     void editName(final Degree degree, final String name);
     void editTotalCredits(final Degree degree, final int totalCredits);
+
+    List<DegreeSemester> getDegreeSemesters(final Long degreeId, final String subjectId);
 
     void deleteSemesterFromDegree(final Degree degree, final int semesterId);
     void delete(final Degree degree);

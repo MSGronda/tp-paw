@@ -1,6 +1,7 @@
 package ar.edu.itba.paw.webapp.controller;
 
 import ar.edu.itba.paw.models.Degree;
+import ar.edu.itba.paw.models.DegreeSemester;
 import ar.edu.itba.paw.models.Subject;
 import ar.edu.itba.paw.models.User;
 import ar.edu.itba.paw.models.exceptions.DegreeNotFoundException;
@@ -111,11 +112,12 @@ public class DegreeController {
     @GET
     @Path("/{id}/semesters")
     @Produces("application/vnd.degree.semesters.list.v1+json")
-    public Response getDegreeSemesters(@PathParam("id") final long id) {
+    public Response getDegreeSemesters(@PathParam("id") final long id, @QueryParam("subjectId") final String subjectId) {
         final Degree degree = degreeService.findById(id).orElseThrow(DegreeNotFoundException::new);
-        final List<SemesterDto> semesters = degree.getSemesters().stream().map(semester -> SemesterDto.fromSemester(uriInfo, degree, semester.getNumber())).collect(Collectors.toList());
+        final List<DegreeSemester> semesters = degreeService.getDegreeSemesters(id, subjectId);
+        final List<SemesterDto> semestersDtos = semesters.stream().map(semester -> SemesterDto.fromSemester(uriInfo, degree, semester.getNumber())).collect(Collectors.toList());
 
-        return Response.ok(new GenericEntity<List<SemesterDto>>(semesters){}).build();
+        return Response.ok(new GenericEntity<List<SemesterDto>>(semestersDtos){}).build();
     }
 
     @GET
