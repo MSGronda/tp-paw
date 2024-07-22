@@ -98,10 +98,10 @@ public class SubjectController {
             return Response.noContent().build();
         }
 
-        Response.ResponseBuilder responseBuilder = Response.ok(new SubjectsFiltersDto(
-                subs.stream().map(subject -> SubjectDto.fromSubjectWithSemesters(uriInfo, subject, degree, semester)).collect(Collectors.toList()),
-                subjectService.superSearchRelevantFilters(params)
-        ));
+        Response.ResponseBuilder responseBuilder = Response.ok(new GenericEntity<List<SubjectDto>>(
+                subs.stream().map(subject -> SubjectDto.fromSubjectWithSemesters(uriInfo, subject, degree, semester))
+                    .collect(Collectors.toList())) {}
+        );
 
         PaginationLinkBuilder.getResponsePaginationLinks(responseBuilder, uriInfo, page, subjectService.superSearchTotalPages(params));
         return responseBuilder.build();
