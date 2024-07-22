@@ -3,6 +3,7 @@ package ar.edu.itba.paw.services;
 import ar.edu.itba.paw.models.Professor;
 import ar.edu.itba.paw.models.Subject;
 import ar.edu.itba.paw.models.SubjectClass;
+import ar.edu.itba.paw.models.exceptions.ProfessorAlreadyExistsWithNameException;
 import ar.edu.itba.paw.persistence.dao.ProfessorDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -52,4 +53,17 @@ public class ProfessorServiceImpl implements ProfessorService {
     public List<Professor> getAll() {
         return professorDao.getAll();
     }
+
+    @Transactional
+    @Override
+    public Professor createProfessor(final String name) {
+        final Professor newProfessor = new Professor(name);
+
+        if(professorDao.getByName(name).isPresent()){
+            throw new ProfessorAlreadyExistsWithNameException();
+        }
+
+        return professorDao.create(newProfessor);
+    }
+
 }
