@@ -6,9 +6,13 @@ const path = "/degrees"
 
 export class DegreeService {
     
-    async getDegrees(){
+    async getDegrees(subjectId?: string){
         try{
-            const res = await axiosService.authAxiosWrapper(axiosService.GET, `${path}`, {});
+            const config: any = {}; // Add type annotation to config object
+            config.params = { // Access 'params' property directly
+                subjectId: subjectId
+            };
+            const res = await axiosService.authAxiosWrapper(axiosService.GET, `${path}`, config);
             return handleResponse(res);
         } catch (error: any) {
             return handleResponse(error.response);
@@ -52,6 +56,19 @@ export class DegreeService {
     async deleteDegree(degreeId: number) {
         try {
             const res = await axiosService.authAxiosWrapper(axiosService.DELETE, `${path}/${degreeId}`, {});
+            return handleResponse(res);
+        } catch (error: any) {
+            return handleResponse(error.response);
+        }
+    }
+
+    async getSemesters(degreeId: number, subjectId?: string) {
+        try {
+            const config: any = {};
+            config.params = {
+                subjectId: subjectId
+            };
+            const res = await axiosService.authAxiosWrapper(axiosService.GET, `${path}/${degreeId}/semesters`, config);
             return handleResponse(res);
         } catch (error: any) {
             return handleResponse(error.response);

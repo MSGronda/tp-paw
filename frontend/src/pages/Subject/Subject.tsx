@@ -30,6 +30,11 @@ import { Degree } from "../../models/Degree.ts";
 import {ReviewVote} from "../../models/ReviewVote.ts";
 import {Professor} from "../../models/Professor.ts";
 
+interface Semester {
+    semester: number,
+    subjects: string,
+}
+
 
 export function SubjectPage() {
     const iconSort = <IconArrowsSort size={14} />;
@@ -41,8 +46,9 @@ export function SubjectPage() {
     const { userId } = useContext(AuthContext);
     const { role } = useContext(AuthContext);
 
-    const [subject, setSubject] = useState<Subject>({} as Subject);
-    const [subjectYear, setSubjectYear] = useState(0);
+    const [subject, setSubject] = useState({} as Subject);
+    const [subjectSemester, setSubjectSemester] = useState({} as Semester);
+    const [user, setUser] = useState<User>();
     const [degree, setDegree] = useState({} as Degree);
     const [prerequisites, setPrerequisites] = useState([{} as SimpleSubject]);
     const [loading, setLoading] = useState(true);
@@ -89,7 +95,7 @@ export function SubjectPage() {
 
         setReviews(data);
         
-        if(data != "" && userId){
+        if( data && data != "" && userId){
 
             const votes = await reviewService.getAllVotes(res.data, userId);
             setReviewVotes(votes);
@@ -123,7 +129,7 @@ export function SubjectPage() {
     const getUserProgress = async (userId: number) => {
         const res = await userService.getUserProgress(userId);
         const data = handleService(res, navigate);
-        if (res && subjectId.id !== undefined) {
+        if (res && subjectId.id !== undefined && res.data) {
             for (let i = 0; i < data.subjectProgress.entry.length; i += 1) {
                 if (data.subjectProgress.entry[i].key === subjectId.id) {
                     setProgress(data.subjectProgress.entry[i].value);
@@ -132,19 +138,29 @@ export function SubjectPage() {
         }
     }
 
-    const getSubjectYear = async (subjectId: string)=> {
-        const res = await degreeService.getSubjectYear(subjectId);
-        const data = handleService(res, navigate);
-        if (res) {
-            setSubjectYear(data.semester);
+    const getUser = async () => {
+        if(userId) {
+            const res = await userService.getUserById(userId);
+            const data = handleService(res, navigate);
+            if(res){
+                setUser(data);
+            }
         }
     }
 
-    const getDegree = async (subjectId: string)=> {
-        const res = await degreeService.getDegreeForSubject(subjectId);
+    const getDegree = async (degreeId: number)=> {
+        const res = await degreeService.getDegreeById(degreeId);
         const data = handleService(res, navigate);
-        if (res) {
+        if(res){
             setDegree(data);
+        }
+    }
+
+    const getSubjectSemester = async (degreeId: number, subjectId: string) => {
+        const res = await degreeService.getSemesters(degreeId, subjectId);
+        const data = handleService(res, navigate);
+        if(res){
+            setSubjectSemester(data[0]);
         }
     }
 
@@ -209,19 +225,26 @@ export function SubjectPage() {
         }
     }, [userId]);
 
-    // Subject Year Lookup
-    useEffect( () => {
+    // User Lookup
+    useEffect(() => {
         if(subjectId.id !== undefined) {
-            getSubjectYear(subjectId.id);
+            getUser();
         }
     }, [subjectId.id]);
 
     // Degree Lookup
     useEffect(() => {
-        if(subjectId.id !== undefined) {
-            getDegree(subjectId.id);
+        if(user && user.degreeId){
+            getDegree(user.degreeId);
         }
-    }, [subjectId.id]);
+    }, [user]);
+
+    // Semester Lookup
+    useEffect(() => {
+        if(subjectId.id !== undefined && degree && degree.id){
+            getSubjectSemester(degree.id, subjectId.id);
+        }
+    }, [subjectId.id, degree]);
 
     // Prerequisites Names Lookup
     useEffect(() => {
@@ -291,14 +314,14 @@ export function SubjectPage() {
                         }
 
                         <div className={classes.breadcrumbArea}>
-                            {degree !== null ?
+                            {degree !== null && subjectSemester !== undefined?
                                 <Breadcrumbs separator="→">
                                     <Link to={"/degree/" + degree.id}>
                                         {degree.name}
                                     </Link>
-                                    {subjectYear === 0 ?
+                                    {subjectSemester.semester === -1 ?
                                         <Link to={"/degree/" + degree.id + "?tab=electives"}>{t("Subject.electives")}</Link> :
-                                        <Link to={"/degree/" + degree.id + "?tab=" + subjectYear}>{t("Subject.year")} {subjectYear}</Link>
+                                        <Link to={"/degree/" + degree.id + "?tab=" + subjectSemester.semester}>{t("Subject.semester")} {subjectSemester.semester}</Link>
                                     }
                                 </Breadcrumbs> :
                                 <></>

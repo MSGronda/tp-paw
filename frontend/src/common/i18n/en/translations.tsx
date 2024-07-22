@@ -253,6 +253,7 @@ export const TRANSLATIONS_EN = {
         ascTime: "Ascending Time Demand",
         descTime: "Descending Time Demand",
         editSubject: "Edit Subject",
+        semester: "Semester"
     },
     Builder: {
         title: "Semester Builder",

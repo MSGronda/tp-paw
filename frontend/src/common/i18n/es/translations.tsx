@@ -251,7 +251,8 @@ export const TRANSLATIONS_ES = {
         descDiff: "Mayor Dificultad",
         ascTime: "Menor Tiempo a Dedicar",
         descTime: "Mayor Tiempo a Dedicar",
-        editSubject: "Editar materia"
+        editSubject: "Editar materia",
+        semester: "Semestre"
     },
     Builder: {
         title: "Constructor de Semester",
