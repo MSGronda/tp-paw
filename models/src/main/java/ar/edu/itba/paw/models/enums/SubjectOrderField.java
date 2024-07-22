@@ -4,8 +4,8 @@ public enum SubjectOrderField {
     ID("id", "id"),
     NAME("subname", "subname"),
     CREDITS("credits", "credits"),
-    DIFFICULTY("reviewStats.difficulty", "difficulty"),
-    TIMEDEMAND("reviewStats.timeDemanding", "timeDemanding");
+    DIFFICULTY("difficulty", "difficulty"),
+    TIMEDEMAND("timeDemanding", "timeDemanding");
 
     private final String fieldName;
     private final String tableColumn;
