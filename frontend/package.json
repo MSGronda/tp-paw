@@ -8,6 +8,7 @@
     "start": "npm run dev",
     "dev": "vite",
     "build": "vite build && node ./post-build.js",
+    "build-prod": "cross-env VITE_UNI_ENV=prod vite build && node ./post-build.js",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview",
     "test": "vitest"
@@ -29,6 +30,7 @@
     "@web3-storage/parse-link-header": "^3.1.0",
     "axios": "^1.6.2",
     "axios-mock-adapter": "^1.22.0",
+    "cross-env": "^7.0.3",
     "dayjs": "^1.11.9",
     "embla-carousel-react": "^7.1.0",
     "i18next": "^23.7.7",
