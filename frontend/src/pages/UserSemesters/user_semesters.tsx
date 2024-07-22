@@ -29,13 +29,8 @@ export default function UserSemesters() {
         plan.sort((u1, u2) => {return u2.dateFinished - u1.dateFinished})
         setUserSemesters(plan);
 
-        const newSemesterSubjects: Map<number,Subject[]> = new Map();
+        const newSemesterSubjects = await subjectService.getAllUserPlanSubjects(plan);
 
-        for(const semester of plan){
-            const subjectData = handleService(await subjectService.getUserPlanSubjects(userId, semester.dateFinished), navigate);
-            newSemesterSubjects.set(semester.dateFinished, subjectData);
-
-        }
         setSemesterSubjects(newSemesterSubjects);
     }
 

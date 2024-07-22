@@ -63,11 +63,16 @@ export default function FinishSemester() {
         const respSemester = await userService.completeSemester(userId);
         const respProgress = await userService.setFinishedSubjects(userId, completedSubjects, [])
         if(respSemester && respSemester.status == 202 && respProgress && respProgress.status == 202){
-            let path = '/multi-review?r=';
-            
-            completedSubjects.forEach((s) => {path = path.concat(s).concat(' ')});
+            if(completedSubjects.length > 0){
+                let path = '/multi-review?r=';
+                completedSubjects.forEach((s) => {path = path.concat(s).concat(' ')});
 
-            navigate(path);
+                navigate(path);
+            }
+            else{
+                navigate("/");
+            }
+
         }
         else {
             setSavedUnsuccessfully(true);

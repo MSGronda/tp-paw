@@ -2,6 +2,8 @@ import {axiosService} from "."
 import { handleResponse } from "../handlers/responseHandler";
 import {Subject} from "../models/Subject.ts";
 import Class from "../models/Class.ts";
+import {Professor} from "../models/Professor.ts";
+import {UserPlan} from "../models/UserPlan.ts";
 
 const path = "/subjects"
 
@@ -119,6 +121,29 @@ export class SubjectService {
             planFinishedDate: dateFinished == undefined ? null : dateFinished
         }
         return this.getUserSubject(config);
+    }
+
+    async getAllUserPlanSubjects(plan: UserPlan[]){
+        const resp: Map<number, Subject[]> = new Map();
+
+        const results = await Promise.all(plan.map(async (p: UserPlan): Promise<[number, Subject[]]> => {
+            const res = await this.getUserPlanSubjects(p.userId, p.dateFinished);
+
+            if(res.status == 200){
+                return [p.dateFinished, res.data];
+            }
+            return [p.dateFinished, []]
+        }));
+
+        results.forEach(([dateFinished, subjects]) => {
+            if (resp.has(dateFinished)) {
+                resp.get(dateFinished)?.push(...subjects);
+            } else {
+                resp.set(dateFinished, subjects);
+            }
+        });
+
+        return resp;
     }
 
     async getSubjects(page: number) {
