@@ -46,16 +46,16 @@ public class ProfessorServiceImpl implements ProfessorService {
     }
 
     @Override
-    public List<Professor> searchProfessors(final String subjectId, final String classId, int page){
-        if(page < 1 || page > getTotalPagesForSearch(subjectId, classId)){
+    public List<Professor> searchProfessors(final String subjectId, final String classId, final String q, int page){
+        if(page < 1 || page > getTotalPagesForSearch(subjectId, classId, q)){
             throw new InvalidPageNumberException();
         }
-        return professorDao.searchProfessors(subjectId, classId, page);
+        return professorDao.searchProfessors(subjectId, classId, q, page);
     }
 
     @Override
-    public int getTotalPagesForSearch(final String subjectId, final String classId){
-        return professorDao.getTotalPagesForSearch(subjectId, classId);
+    public int getTotalPagesForSearch(final String subjectId, final String classId, final String q){
+        return professorDao.getTotalPagesForSearch(subjectId, classId, q);
     }
 
     @Override

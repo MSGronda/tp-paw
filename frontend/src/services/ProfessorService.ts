@@ -8,7 +8,7 @@ const path = "/professors";
 
 export class ProfessorService {
 
-    async getProfessors(subjectId?: string, classId?: string) {
+    async getProfessors(subjectId?: string, classId?: string, q?: string) {
         try {
             const config: any = {params: {}};
             if(subjectId != undefined){
@@ -16,6 +16,9 @@ export class ProfessorService {
             }
             if(classId != undefined){
                 config.params.classId = classId;
+            }
+            if(q != undefined){
+                config.params.q = q;
             }
 
             const res = await axiosService.authAxiosWrapper(axiosService.GET, `${path}`, config);

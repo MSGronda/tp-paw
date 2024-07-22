@@ -1,7 +1,6 @@
 package ar.edu.itba.paw.persistence.dao;
 
 import ar.edu.itba.paw.models.Professor;
-import ar.edu.itba.paw.models.Review;
 import ar.edu.itba.paw.models.Subject;
 import ar.edu.itba.paw.models.SubjectClass;
 import org.slf4j.Logger;
@@ -98,25 +97,38 @@ public class ProfessorJpaDao implements ProfessorDao {
                 .stream().findFirst();
     }
 
-    private Query createQuery(final String base, final String subjectId, final String classId){
+    private String sanitizeWildcards(final String s) {
+        return s.replaceAll("%", "\\\\%").replaceAll("_", "\\\\_");
+    }
+
+    private Query createQuery(final String base, final String subjectId, final String classId, final String q){
         final StringBuilder nativeQuerySb = new StringBuilder(base);
         final List<Object> params = new ArrayList<>();
 
 
         if(subjectId != null){
             if(classId == null){
-                nativeQuerySb.append(" JOIN professorssubjects ps ON p.id = ps.idprof WHERE ps.idsub = ?");
+                nativeQuerySb.append(" JOIN professorssubjects ps ON p.id = ps.idprof WHERE ps.idsub = ? ");
                 params.add(subjectId);
             }
             else{
-                nativeQuerySb.append(" JOIN classprofessors c ON p.id = c.idprof WHERE c.idsub = ? AND c.idclass = ?");
+                nativeQuerySb.append(" JOIN classprofessors c ON p.id = c.idprof WHERE c.idsub = ? AND c.idclass = ? ");
                 params.add(subjectId);
                 params.add(classId);
             }
         }
         else if(classId != null){
-            nativeQuerySb.append(" JOIN classprofessors c ON p.id = c.idprof WHERE c.idclass = ?");
+            nativeQuerySb.append(" JOIN classprofessors c ON p.id = c.idprof WHERE c.idclass = ? ");
             params.add(classId);
+        }
+        if(q != null){
+            if(subjectId != null || classId != null){
+                nativeQuerySb.append(" AND p.profname ILIKE ? ");
+            }
+            else{
+                nativeQuerySb.append(" WHERE p.profname ILIKE ? ");
+            }
+            params.add("%" + sanitizeWildcards(q) + "%");
         }
 
         final Query nativeQuery = em.createNativeQuery(nativeQuerySb.toString());
@@ -130,9 +142,9 @@ public class ProfessorJpaDao implements ProfessorDao {
     }
 
     @Override
-    public List<Professor> searchProfessors(final String subjectId, final String classId, int page) {
+    public List<Professor> searchProfessors(final String subjectId, final String classId, final String q, int page) {
 
-        final Query nativeQuery = createQuery("SELECT id FROM professors p", subjectId, classId);
+        final Query nativeQuery = createQuery("SELECT id FROM professors p ", subjectId, classId, q);
 
         @SuppressWarnings("unchecked")
         final List<Long> ids = (List<Long>) nativeQuery.setFirstResult((page - 1) * PAGE_SIZE)
@@ -147,9 +159,9 @@ public class ProfessorJpaDao implements ProfessorDao {
     }
 
     @Override
-    public int getTotalPagesForSearch(final String subjectId, final String classId) {
+    public int getTotalPagesForSearch(final String subjectId, final String classId, final String q) {
 
-        final Query nativeQuery = createQuery("SELECT count(*) FROM professors p", subjectId, classId);
+        final Query nativeQuery = createQuery("SELECT count(*) FROM professors p ", subjectId, classId, q);
 
         return (int) Math.max(1, Math.ceil(((Number) nativeQuery.getSingleResult()).doubleValue() / PAGE_SIZE));
     }

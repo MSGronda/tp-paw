@@ -38,9 +38,10 @@ public class ProfessorController {
     public Response getProfessors(
             @QueryParam("subjectId") final String subjectId,
             @QueryParam("classId") final String classId,
+            @QueryParam("q") final String q,
             @QueryParam("page") @DefaultValue("1") final int page
     ) {
-        final List<Professor> professors = professorService.searchProfessors(subjectId, classId, page);
+        final List<Professor> professors = professorService.searchProfessors(subjectId, classId, q, page);
 
         if(professors.isEmpty()){
             return Response.noContent().build();
@@ -48,7 +49,7 @@ public class ProfessorController {
 
         final List<ProfessorDto> professorsDtos = professors.stream().map(professor -> ProfessorDto.fromProfessor(uriInfo, professor)).collect(Collectors.toList());
 
-        int lastPage = professorService.getTotalPagesForSearch(subjectId, classId);
+        int lastPage = professorService.getTotalPagesForSearch(subjectId, classId, q);
         final Response.ResponseBuilder responseBuilder = Response.ok(new GenericEntity<List<ProfessorDto>>(professorsDtos){});
         PaginationLinkBuilder.getResponsePaginationLinks(responseBuilder, uriInfo, page, lastPage);
 

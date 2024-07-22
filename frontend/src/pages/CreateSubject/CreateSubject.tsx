@@ -137,12 +137,12 @@ export function CreateSubject() {
       setDegrees(data);
     }
   }
-
-  const searchProfessors = async() => {
-    const res = await professorService.getProfessors();
-    const data = handleService(res, navigate);
-    if(res) {
-      setProfessors(data);
+  const handleSearchProfessors = async (value: string) => {
+    if(value.length > 1) {
+      const res = await professorService.getProfessors(undefined, undefined, value);
+      if(res.status == 200 && res.data && res.data != ""){
+          setProfessors(res.data);
+      }
     }
   }
 
@@ -166,9 +166,6 @@ export function CreateSubject() {
     searchDegrees();
   }, []);
 
-  useEffect(() => {
-    searchProfessors();
-  }, []);
 
   useEffect(() => {
     searchSubjects(1);
@@ -505,9 +502,7 @@ export function CreateSubject() {
       {degree.name}
     </ComboboxOption>
   ));
-  const professorsOptions = professors.slice(0,100).map((professor) => (
-      `${professor.name}`
-  ));
+
   const classDayOptions = classDays.map((classDay) => (
     <ComboboxOption key={classDay} value={classDay}>
       {classDay}
@@ -798,8 +793,14 @@ export function CreateSubject() {
               <Flex mih={50} miw={500} gap="xl" justify="space-between" align="center" direction="row" wrap="wrap">
                 {t("CreateSubject.professor")}
                 <Flex direction="column" justify="flex-end" maw={400}>
-                  <MultiSelect placeholder={t("CreateSubject.professorLabel")} data={professorsOptions} searchable
-                               onOptionSubmit={(professor) => handleProfessorAddition(professor)} onRemove={(professor) => handleProfessorRemove(professor)}/>
+                  <MultiSelect
+                      placeholder={t("CreateSubject.professorLabel")}
+                      data={professors.map((p) => p.name)}
+                      onSearchChange={handleSearchProfessors}
+                      searchable
+                      onOptionSubmit={(professor) => handleProfessorAddition(professor)}
+                      onRemove={(professor) => handleProfessorRemove(professor)}
+                  />
                 </Flex>
               </Flex>
               <Flex mih={50} gap="xl" justify="right" align="center" direction="row" wrap="wrap">

@@ -14,9 +14,9 @@ public interface ProfessorService {
 
     Professor createProfessor(final String name);
 
-    List<Professor> searchProfessors(final String subjectId, final String classId, int page);
+    List<Professor> searchProfessors(final String subjectId, final String classId, final String q, int page);
 
-    int getTotalPagesForSearch(final String subjectId, final String classId);
+    int getTotalPagesForSearch(final String subjectId, final String classId, final String q);
 
     void addSubjectToProfessors(final Subject subject, final List<String> professors);
 
