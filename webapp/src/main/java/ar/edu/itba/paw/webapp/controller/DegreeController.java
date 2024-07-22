@@ -11,6 +11,7 @@ import ar.edu.itba.paw.models.utils.DegreeSearchParams;
 import ar.edu.itba.paw.services.AuthUserService;
 import ar.edu.itba.paw.services.DegreeService;
 import ar.edu.itba.paw.services.SubjectService;
+import ar.edu.itba.paw.webapp.controller.utils.UriUtils;
 import ar.edu.itba.paw.webapp.dto.DegreeDto;
 import ar.edu.itba.paw.webapp.dto.SemesterDto;
 import ar.edu.itba.paw.webapp.form.DegreeForm;
@@ -27,7 +28,7 @@ import java.net.URI;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@Path("degrees")
+@Path(UriUtils.DEGREE_BASE)
 @Component
 public class DegreeController {
 
@@ -69,10 +70,7 @@ public class DegreeController {
                 .totalCredits(degreeForm.getTotalCredits())
         );
 
-        // TODO: CHECK si es correcto hacerlo aca
-        final URI uri = uriInfo.getBaseUriBuilder().path("degrees").path(String.valueOf(degree.getId())).build();
-
-        return Response.created(uri).entity(DegreeDto.fromDegree(uriInfo, degree)) .build();
+        return Response.created(UriUtils.createdDegreeUri(uriInfo, degree)).build();
     }
 
 
@@ -142,9 +140,8 @@ public class DegreeController {
         final Degree degree = degreeService.findById(id).orElseThrow(DegreeNotFoundException::new);
         degreeService.addSemestersToDegree(degree, degreeSemesterForm.getSemesterMap());
 
-        return Response.status(Response.Status.CREATED.getStatusCode()).build();
+        return Response.created(UriUtils.createdDegreeSemestersUri(uriInfo, degree)).build();
     }
-
 
     @PATCH
     @Path("/{degreeId}/semesters")

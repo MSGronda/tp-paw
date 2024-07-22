@@ -7,6 +7,7 @@ import ar.edu.itba.paw.models.exceptions.ReviewNotFoundException;
 import ar.edu.itba.paw.services.AuthUserService;
 import ar.edu.itba.paw.services.ReviewService;
 import ar.edu.itba.paw.webapp.controller.utils.PaginationLinkBuilder;
+import ar.edu.itba.paw.webapp.controller.utils.UriUtils;
 import ar.edu.itba.paw.webapp.dto.ReviewDto;
 import ar.edu.itba.paw.webapp.dto.ReviewVoteDto;
 import ar.edu.itba.paw.webapp.form.ReviewForm;
@@ -22,7 +23,7 @@ import java.net.URI;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@Path("reviews")
+@Path(UriUtils.REVIEW_BASE)
 @Component
 public class ReviewController {
     private final ReviewService reviewService;
@@ -77,9 +78,7 @@ public class ReviewController {
             .user(authUserService.getCurrentUser())
         );
 
-        final URI reviewUri = uriInfo.getBaseUriBuilder().path("/reviews/").path(String.valueOf(newReview.getId())).build();
-
-        return Response.created(reviewUri).build();
+        return Response.created(UriUtils.createdReviewUri(uriInfo, newReview)).build();
     }
 
     @GET
@@ -143,7 +142,7 @@ public class ReviewController {
 
         final List<ReviewVoteDto> voteDtos = votes.stream().map(vote -> ReviewVoteDto.fromReviewVote(uriInfo, vote)).collect(Collectors.toList());
 
-        int lastPage = reviewService.getVoteTotalPages(review, userId, page);
+        int lastPage = reviewService.getVoteTotalPages(review, userId);
         final Response.ResponseBuilder responseBuilder = Response.ok(new GenericEntity<List<ReviewVoteDto>>(voteDtos){});
         PaginationLinkBuilder.getResponsePaginationLinks(responseBuilder, uriInfo, page, lastPage);
 
@@ -157,7 +156,8 @@ public class ReviewController {
             @Valid @ModelAttribute("reviewVoteForm") final ReviewVoteForm reviewVoteForm
     ){
         final ReviewVote vote = reviewService.voteReview(reviewId, reviewVoteForm.getVoteType());
-        return Response.ok(ReviewVoteDto.fromReviewVote(uriInfo, vote)).build();
+
+        return Response.created(UriUtils.createdReviewVoteUri(uriInfo, vote)).build();
     }
 
     @DELETE

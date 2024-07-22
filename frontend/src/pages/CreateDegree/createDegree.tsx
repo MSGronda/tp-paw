@@ -103,15 +103,18 @@ export function CreateDegree() {
 
         const res1 = await degreeService.createDegree(degreeName, Number(credits));
 
-        if(res1?.data) {
+        if(res1.status == 201) {
+            const url = new URL(res1.headers.location);
+            const paths = url.pathname.split('/');
+            const id = paths[paths.length - 1];
+
             //agregar electiveId a selectedSubjects
 
             const electives = {semesterNumber: Number(-1), subjects: electiveId};
             const subjects = [...selectedSubjects, electives];
 
-            await degreeService.addSemestersToDegree(res1.data.id, subjects);
-            console.log(res1?.data);
-            navigate("/degree/"+res1.data.id);
+            await degreeService.addSemestersToDegree(parseInt(id), subjects);
+            navigate("/degree/" + id);
         }
     }
 

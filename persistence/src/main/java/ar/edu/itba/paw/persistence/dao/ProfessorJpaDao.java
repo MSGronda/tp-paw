@@ -1,6 +1,7 @@
 package ar.edu.itba.paw.persistence.dao;
 
 import ar.edu.itba.paw.models.Professor;
+import ar.edu.itba.paw.models.Review;
 import ar.edu.itba.paw.models.Subject;
 import ar.edu.itba.paw.models.SubjectClass;
 import org.slf4j.Logger;
@@ -8,12 +9,15 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
 import java.util.*;
+import java.util.stream.Collectors;
 
 
 @Repository
 public class ProfessorJpaDao implements ProfessorDao {
     private final static Logger LOGGER = LoggerFactory.getLogger(ProfessorJpaDao.class);
+    private final static int PAGE_SIZE = 20;
     @PersistenceContext
     private EntityManager em;
 
@@ -93,6 +97,63 @@ public class ProfessorJpaDao implements ProfessorDao {
                 .getResultList()
                 .stream().findFirst();
     }
+
+    private Query createQuery(final String base, final String subjectId, final String classId){
+        final StringBuilder nativeQuerySb = new StringBuilder(base);
+        final List<Object> params = new ArrayList<>();
+
+
+        if(subjectId != null){
+            if(classId == null){
+                nativeQuerySb.append(" JOIN professorssubjects ps ON p.id = ps.idprof WHERE ps.idsub = ?");
+                params.add(subjectId);
+            }
+            else{
+                nativeQuerySb.append(" JOIN classprofessors c ON p.id = c.idprof WHERE c.idsub = ? AND c.idclass = ?");
+                params.add(subjectId);
+                params.add(classId);
+            }
+        }
+        else if(classId != null){
+            nativeQuerySb.append(" JOIN classprofessors c ON p.id = c.idprof WHERE c.idclass = ?");
+            params.add(classId);
+        }
+
+        final Query nativeQuery = em.createNativeQuery(nativeQuerySb.toString());
+
+        int i=1;
+        for(Object param : params){
+            nativeQuery.setParameter(i++, param);
+        }
+
+        return nativeQuery;
+    }
+
+    @Override
+    public List<Professor> searchProfessors(final String subjectId, final String classId, int page) {
+
+        final Query nativeQuery = createQuery("SELECT id FROM professors p", subjectId, classId);
+
+        @SuppressWarnings("unchecked")
+        final List<Long> ids = (List<Long>) nativeQuery.setFirstResult((page - 1) * PAGE_SIZE)
+                .setMaxResults(PAGE_SIZE)
+                .getResultList().stream().map(n -> ((Number)n).longValue()).collect(Collectors.toList());
+
+        if(ids.isEmpty()) return Collections.emptyList();
+
+        return em.createQuery("from Professor where id in :ids", Professor.class)
+                .setParameter("ids", ids)
+                .getResultList();
+    }
+
+    @Override
+    public int getTotalPagesForSearch(final String subjectId, final String classId) {
+
+        final Query nativeQuery = createQuery("SELECT count(*) FROM professors p", subjectId, classId);
+
+        return (int) Math.max(1, Math.ceil(((Number) nativeQuery.getSingleResult()).doubleValue() / PAGE_SIZE));
+    }
+
 
     @Override
     public List<Professor> getAll() {

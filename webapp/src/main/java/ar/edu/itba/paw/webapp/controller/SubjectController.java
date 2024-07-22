@@ -6,6 +6,7 @@ import ar.edu.itba.paw.models.exceptions.*;
 import ar.edu.itba.paw.models.utils.SubjectSearchParams;
 import ar.edu.itba.paw.services.*;
 import ar.edu.itba.paw.webapp.controller.utils.PaginationLinkBuilder;
+import ar.edu.itba.paw.webapp.controller.utils.UriUtils;
 import ar.edu.itba.paw.webapp.dto.SubjectDto;
 import ar.edu.itba.paw.webapp.dto.SubjectsFiltersDto;
 import ar.edu.itba.paw.webapp.form.SubjectForm;
@@ -19,7 +20,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 
-@Path("subjects")
+@Path(UriUtils.SUBJECT_BASE)
 @Component
 public class SubjectController {
     private final SubjectService subjectService;
@@ -134,7 +135,7 @@ public class SubjectController {
                 subjectForm.getCollectedModes()
         );
 
-        return Response.status(Response.Status.CREATED.getStatusCode()).build();
+        return Response.created(UriUtils.createdSubjectUri(uriInfo, newSub)).build();
     }
 
     @GET

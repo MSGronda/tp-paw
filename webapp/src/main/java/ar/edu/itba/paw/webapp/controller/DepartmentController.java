@@ -1,6 +1,7 @@
 package ar.edu.itba.paw.webapp.controller;
 
 import ar.edu.itba.paw.services.DepartmentService;
+import ar.edu.itba.paw.webapp.controller.utils.UriUtils;
 import ar.edu.itba.paw.webapp.dto.DepartmentDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -14,7 +15,7 @@ import javax.ws.rs.core.Response;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@Path("departments")
+@Path(UriUtils.DEPARTMENT_BASE)
 @Component
 public class DepartmentController {
     private final DepartmentService departmentService;

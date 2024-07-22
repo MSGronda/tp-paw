@@ -4,6 +4,7 @@ import ar.edu.itba.paw.models.Image;
 import ar.edu.itba.paw.models.exceptions.ImageNotFoundException;
 import ar.edu.itba.paw.services.ImageService;
 import ar.edu.itba.paw.webapp.controller.utils.CacheHelper;
+import ar.edu.itba.paw.webapp.controller.utils.UriUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Controller;
@@ -46,7 +47,6 @@ public class ImageController {
     public Response uploadImage(final byte[] picture){
         final Image image = imgService.createImage(picture);
 
-        final URI uri = uriInfo.getBaseUriBuilder().path("images").path(String.valueOf(image.getId())).build();
-        return Response.created(uri).build();
+        return Response.created(UriUtils.createdImageUri(uriInfo, image)).build();
     }
 }

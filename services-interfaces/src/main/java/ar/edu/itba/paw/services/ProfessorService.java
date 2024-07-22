@@ -12,6 +12,12 @@ public interface ProfessorService {
 
     List<Professor> getAll();
 
+    Professor createProfessor(final String name);
+
+    List<Professor> searchProfessors(final String subjectId, final String classId, int page);
+
+    int getTotalPagesForSearch(final String subjectId, final String classId);
+
     void addSubjectToProfessors(final Subject subject, final List<String> professors);
 
     void addProfessorsToClass(final SubjectClass subjectClass, final List<String> classProfessors);

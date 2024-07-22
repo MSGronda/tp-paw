@@ -3,6 +3,8 @@ package ar.edu.itba.paw.services;
 import ar.edu.itba.paw.models.Professor;
 import ar.edu.itba.paw.models.Subject;
 import ar.edu.itba.paw.models.SubjectClass;
+import ar.edu.itba.paw.models.exceptions.InvalidPageNumberException;
+import ar.edu.itba.paw.models.exceptions.ProfessorAlreadyExistsWithNameException;
 import ar.edu.itba.paw.persistence.dao.ProfessorDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -44,6 +46,19 @@ public class ProfessorServiceImpl implements ProfessorService {
     }
 
     @Override
+    public List<Professor> searchProfessors(final String subjectId, final String classId, int page){
+        if(page < 1 || page > getTotalPagesForSearch(subjectId, classId)){
+            throw new InvalidPageNumberException();
+        }
+        return professorDao.searchProfessors(subjectId, classId, page);
+    }
+
+    @Override
+    public int getTotalPagesForSearch(final String subjectId, final String classId){
+        return professorDao.getTotalPagesForSearch(subjectId, classId);
+    }
+
+    @Override
     public Optional<Professor> findById(final long id) {
         return professorDao.findById(id);
     }
@@ -52,4 +67,17 @@ public class ProfessorServiceImpl implements ProfessorService {
     public List<Professor> getAll() {
         return professorDao.getAll();
     }
+
+    @Transactional
+    @Override
+    public Professor createProfessor(final String name) {
+        final Professor newProfessor = new Professor(name);
+
+        if(professorDao.getByName(name).isPresent()){
+            throw new ProfessorAlreadyExistsWithNameException();
+        }
+
+        return professorDao.create(newProfessor);
+    }
+
 }
