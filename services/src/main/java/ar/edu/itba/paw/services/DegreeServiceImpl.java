@@ -108,18 +108,12 @@ public class DegreeServiceImpl implements DegreeService {
 
     @Override
     public List<DegreeSemester> getDegreeSemesters(final Long degreeId, final String subjectId){
-        final Degree degree = degreeDao.findById(degreeId).orElseThrow(DegreeNotFoundException::new);
+        final Degree degree = findById(degreeId).orElseThrow(DegreeNotFoundException::new);
         if(subjectId == null){
-            return degree.getSemesters();
-        } else {
-            final Subject subject = subjectDao.findById(subjectId).orElseThrow(SubjectNotFoundException::new);
-
-            OptionalInt semesterId = degreeDao.findSubjectSemesterForDegree(subject, degree);
-
-            if(!semesterId.isPresent()) return Collections.emptyList();
-
-            return new ArrayList<>(Collections.singletonList(degree.getSemesters().get(semesterId.getAsInt())));
+            return degreeDao.getDegreeSemesters(degree);
         }
+        final Subject subject = subjectDao.findById(subjectId).orElseThrow(SubjectNotFoundException::new);
+        return degreeDao.getDegreeSemesterForSubject(degree, subject);
     }
 
     @Transactional

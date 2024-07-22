@@ -1,6 +1,7 @@
 package ar.edu.itba.paw.persistence.dao;
 
 import ar.edu.itba.paw.models.Degree;
+import ar.edu.itba.paw.models.DegreeSemester;
 import ar.edu.itba.paw.models.DegreeSubject;
 import ar.edu.itba.paw.models.Subject;
 import ar.edu.itba.paw.models.utils.DegreeSearchParams;
@@ -25,6 +26,10 @@ public interface DegreeDao {
     Degree editName(final Degree degree, final String name);
 
     Degree editTotalCredits(final Degree degree, final int totalCredits);
+
+    List<DegreeSemester> getDegreeSemesterForSubject(final Degree degree, final Subject subject);
+
+    List<DegreeSemester> getDegreeSemesters(final Degree degree);
 
     void delete(Degree degree);
 
