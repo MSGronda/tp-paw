@@ -6,6 +6,7 @@ import ar.edu.itba.paw.models.exceptions.*;
 import ar.edu.itba.paw.services.*;
 import ar.edu.itba.paw.webapp.controller.utils.PATCH;
 import ar.edu.itba.paw.webapp.controller.utils.PaginationLinkBuilder;
+import ar.edu.itba.paw.webapp.controller.utils.UriUtils;
 import ar.edu.itba.paw.webapp.dto.ReviewDto;
 import ar.edu.itba.paw.webapp.dto.UserProgressDto;
 import ar.edu.itba.paw.webapp.dto.UserSemesterDto;
@@ -27,7 +28,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-@Path("users")
+@Path(UriUtils.USER_BASE)
 @Component
 public class UserController {
     private final UserService userService;
@@ -53,8 +54,7 @@ public class UserController {
                         .locale(LocaleContextHolder.getLocale())
                         .build()
         );
-        final URI userUri = uriInfo.getBaseUriBuilder().path("/users").path(String.valueOf(newUser.getId())).build();
-        return Response.created(userUri).build();
+        return Response.created(UriUtils.createdUserUri(uriInfo, newUser)).build();
     }
     
     @POST
@@ -160,7 +160,7 @@ public class UserController {
         final User currentUser = authUserService.getCurrentUser();
         userService.createUserSemester(currentUser, id, userSemesterForm.getIdSub(), userSemesterForm.getIdClass());
 
-        return Response.ok(UserSemesterDto.fromSemesterEntry(uriInfo, currentUser, userService.getCurrentUserSemester(currentUser))).build();
+        return Response.created(UriUtils.createdUserSemesterUri(uriInfo, currentUser)).build();
     }
 
     @PUT

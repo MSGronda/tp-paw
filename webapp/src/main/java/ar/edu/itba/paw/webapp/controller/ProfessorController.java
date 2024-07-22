@@ -5,6 +5,7 @@ import ar.edu.itba.paw.models.Professor;
 import ar.edu.itba.paw.models.exceptions.ProfessorNotFoundException;
 import ar.edu.itba.paw.services.ProfessorService;
 import ar.edu.itba.paw.webapp.controller.utils.PaginationLinkBuilder;
+import ar.edu.itba.paw.webapp.controller.utils.UriUtils;
 import ar.edu.itba.paw.webapp.dto.ProfessorDto;
 import ar.edu.itba.paw.webapp.dto.ReviewVoteDto;
 import ar.edu.itba.paw.webapp.dto.SubjectDto;
@@ -20,7 +21,7 @@ import javax.ws.rs.core.*;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@Path("professors")
+@Path(UriUtils.PROFESSOR_BASE)
 @Component
 public class ProfessorController {
     private final ProfessorService professorService;
@@ -67,9 +68,7 @@ public class ProfessorController {
     public Response createProfessor(@Valid @ModelAttribute("professorForm") final ProfessorForm professorForm){
         final Professor professor = professorService.createProfessor(professorForm.getName());
 
-        return Response.created(
-                uriInfo.getBaseUriBuilder().path("professors").path(String.valueOf(professor.getId())).build()
-        ).build();
+        return Response.created(UriUtils.createdProfessorUri(uriInfo, professor)).build();
     }
 
 }
