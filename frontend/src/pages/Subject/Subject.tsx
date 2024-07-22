@@ -21,13 +21,14 @@ import {SimpleSubject, Subject} from "../../models/Subject.ts";
 import { Navbar } from "../../components/navbar/navbar.tsx";
 import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
 import ReviewCard from "../../components/review-card/review-card.tsx";
-import {subjectService, reviewService, userService, degreeService} from "../../services";
+import {subjectService, reviewService, userService, degreeService, professorService} from "../../services";
 import { handleService } from "../../handlers/serviceHandler.tsx";
 import { Review } from "../../models/Review.ts";
 import PaginationComponent from "../../components/pagination/pagination.tsx";
 import { User } from "../../models/User.ts";
 import { Degree } from "../../models/Degree.ts";
 import {ReviewVote} from "../../models/ReviewVote.ts";
+import {Professor} from "../../models/Professor.ts";
 
 
 export function SubjectPage() {
@@ -40,7 +41,7 @@ export function SubjectPage() {
     const { userId } = useContext(AuthContext);
     const { role } = useContext(AuthContext);
 
-    const [subject, setSubject] = useState({} as Subject);
+    const [subject, setSubject] = useState<Subject>({} as Subject);
     const [subjectYear, setSubjectYear] = useState(0);
     const [degree, setDegree] = useState({} as Degree);
     const [prerequisites, setPrerequisites] = useState([{} as SimpleSubject]);
@@ -56,6 +57,8 @@ export function SubjectPage() {
     const [deletedReviewValue, setDeletedReviewValue] = useState<boolean>();
     const [progress, setProgress] = useState("PENDING");
 
+    const [professors, setProfessors] = useState<Map<string, Professor[]>>(new Map());
+
     const INITIAL_PAGE = 1;
     const INITIAL_ORDER: string = "difficulty";
     const INITAL_DIR: string = "asc";
@@ -69,10 +72,15 @@ export function SubjectPage() {
 
     const searchSubject = async (subjectId: string) => {
         const res = await subjectService.getSubjectById(subjectId);
-        const data = handleService(res, navigate);
+        const data: Subject = handleService(res, navigate);
         if (res) {
             setSubject(data);
+
+            await getProfessors(data);
         }
+    }
+    const getProfessors = async (subject: Subject) => {
+        setProfessors(await professorService.getProfessorsForSubject(subject));
     }
 
     const getReviewsFromSubject = async (subjectId: string, page: number, orderBy: string, dir: string) => {
@@ -340,7 +348,9 @@ export function SubjectPage() {
                                                 <Table.Th>{t("Subject.professors")}</Table.Th>
                                                 <Table.Td>
                                                     {subject.classes && subject.classes.length === 0 ? <>{t("Subject.emptyProfessors")}</> : <></>}
-                                                    {getProfessors(subject)}
+                                                    {
+                                                        getAllProfessors(professors).map((professor) => <Badge color="blue">{professor}</Badge>)
+                                                    }
                                                 </Table.Td>
                                             </Table.Tr>
                                             <Table.Tr>
@@ -431,8 +441,8 @@ export function SubjectPage() {
                                                 <Table.Tr>
                                                     <Table.Td>{item.idClass}</Table.Td>
                                                     <Table.Td>
-                                                        {item.professors.map((professor) => (
-                                                            <Badge color="blue">{professor}</Badge>
+                                                        {professors.get(item.idClass)?.map((p) => (
+                                                            <Badge color="blue">{p.name}</Badge>
                                                         ))}
                                                     </Table.Td>
                                                 </Table.Tr>
@@ -570,27 +580,16 @@ export function SubjectPage() {
     );
 }
 
+function getAllProfessors(professors: Map<string, Professor[]>): string[] {
+    const allProfs: Set<string> = new Set();
+    const resp: string[] = []
 
-function getProfessors(subject: Subject) {
-    const professorsComponents: JSX.Element[] = [];
-    if (subject.classes === null || subject.classes === undefined) {
-        return <></>;
-    }
-    const professors = new Set<string>();
-    subject.classes.forEach((classItem) => {
-        classItem.professors.forEach((professor: string) => {
-            if(!professors.has(professor)){
-                professors.add(professor);
+    professors.forEach((v) => v.forEach((p) => allProfs.add(p.name)));
+    allProfs.forEach((p) => resp.push(p));
 
-                professorsComponents.push(
-                    <Badge color="blue">{professor}</Badge>
-                );
-                professorsComponents.push(<> </>);
-            }
-        })
-    })
-    return professorsComponents;
+    return resp;
 }
+
 
 function getDayOfTheWeek(day: number) {
     return "TimeTable.day" + day;
