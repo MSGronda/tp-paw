@@ -29,7 +29,7 @@ export default function FinishSemester() {
         if(data == ""){
             navigate('/');
         }
-        setSubjects(data.subjects);
+        setSubjects(data);
     }
     useEffect(() => {
         getSubjects()

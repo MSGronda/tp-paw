@@ -33,7 +33,7 @@ export default function UserSemesters() {
 
         for(const semester of plan){
             const subjectData = handleService(await subjectService.getUserPlanSubjects(userId, semester.dateFinished), navigate);
-            newSemesterSubjects.set(semester.dateFinished, subjectData.subjects);
+            newSemesterSubjects.set(semester.dateFinished, subjectData);
 
         }
         setSemesterSubjects(newSemesterSubjects);

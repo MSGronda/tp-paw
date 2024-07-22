@@ -5,13 +5,13 @@ import {Button, Chip, ChipGroup, Group, RangeSlider, SegmentedControl, Stack} fr
 import {IconFilter} from "@tabler/icons-react";
 import {Title as MantineTitle} from "@mantine/core";
 import {parseSearchParams} from "../../utils/searchUtils.ts";
+import {departmentService} from "../../services";
 
 interface SubjectFiltersProps {
-  relevantFilters?: Record<string, string[]>,
   redirect?: boolean,
   degree?: number
 }
-export default function SubjectFilters({ relevantFilters, redirect, degree }: SubjectFiltersProps) {
+export default function SubjectFilters({ redirect, degree }: SubjectFiltersProps) {
   const { t } = useTranslation(undefined, {keyPrefix: "Curriculum"});
   const navigate = useNavigate();
   
@@ -19,6 +19,7 @@ export default function SubjectFilters({ relevantFilters, redirect, degree }: Su
   
   const parsedParams = parseSearchParams(params);
 
+  const [departmentOptions, setDepartmentOptions] = useState<string[]|undefined>(undefined);
   const [visible, setVisible] = useState(parsedParams.hasFilters());
   const [department, setDepartment] 
     = useState<string|undefined>(parsedParams.department);
@@ -37,6 +38,13 @@ export default function SubjectFilters({ relevantFilters, redirect, degree }: Su
       setReset(false);
       onApply();
     }
+    
+    if(!departmentOptions) {
+      departmentService.getDepartments()
+        .then(d => setDepartmentOptions(d))
+        .catch(err => console.error("Failed to get departments: ", err));
+    }
+    
   }, [department, creditRange, difficultyRange, timeDemandRange, orderBy, orderByDir]);
 
   const maxCredits = 12;
@@ -123,78 +131,74 @@ export default function SubjectFilters({ relevantFilters, redirect, degree }: Su
       <IconFilter size={20} style={{marginRight: "0.5rem"}}/>
       {t("filter")}
     </Button>
-    { visible && relevantFilters &&
+    { visible &&
         <Stack mx="3rem">
-          { relevantFilters.department &&
+          { departmentOptions &&
               <Stack>
-                  <MantineTitle order={4}>{t("department")}</MantineTitle>
-                  <ChipGroup onChange={onChangeDepartment} value={department}>
-                      <Group gap="0.5rem">
-                        { relevantFilters.department.map(dept =>
-                          <Chip key={dept} value={dept} variant="outline">{dept}</Chip>
-                        )}
-                      </Group>
-                  </ChipGroup>
+                <MantineTitle order={4}>{t("department")}</MantineTitle>
+                <ChipGroup onChange={onChangeDepartment} value={department}>
+                  <Group gap="0.5rem">
+                    { departmentOptions.map(dept =>
+                      <Chip key={dept} value={dept} variant="outline">{dept}</Chip>
+                    )}
+                  </Group>
+                </ChipGroup>
               </Stack>
           }
             <Group w="100%" gap="4rem" align="start">
-              { relevantFilters.credits &&
-                  <Stack>
-                      <MantineTitle order={4}>{t("credits")}</MantineTitle>
-                      <RangeSlider
-                          defaultValue={creditRange as [number, number]}
-                          step={3}
-                          min={minCredits}
-                          max={maxCredits}
-                          minRange={0}
-                          label={null}
-                          marks={creditMarks}
-                          onChange={setCreditRange}
+              <Stack>
+                <MantineTitle order={4}>{t("credits")}</MantineTitle>
+                <RangeSlider 
+                  defaultValue={creditRange as [number, number]}
+                  step={3}
+                  min={minCredits}
+                  max={maxCredits}
+                  minRange={0}
+                  label={null}
+                  marks={creditMarks}
+                  onChange={setCreditRange}
 
-                          mb="2rem"
-                          w="225px"
-                      />
-                  </Stack>
-              }
-              { relevantFilters.difficulty &&
-                  <Stack>
-                      <MantineTitle order={4}>{t("difficulty")}</MantineTitle>
-                      <RangeSlider
-                          defaultValue={difficultyRange as [number, number]}
-                          step={1}
-                          min={0}
-                          max={2}
-                          minRange={0}
-                          label={null}
-                          marks={difficultyMarks}
-                          onChange={setDifficultyRange}
+                  mb="2rem"
+                  w="225px"
+                />
+              </Stack>
+              <Stack>
+                <MantineTitle order={4}>{t("difficulty")}</MantineTitle>
+                <RangeSlider
+                  defaultValue={difficultyRange as [number, number]}
+                  step={1}
+                  min={0}
+                  max={2}
+                  minRange={0}
+                  label={null}
+                  marks={difficultyMarks}
+                  onChange={setDifficultyRange}
 
-                          mb="2rem"
-                          w="225px"
-                      />
-                  </Stack>
-              }
-                <Stack>
-                    <MantineTitle order={4}>{t("timeDemand")}</MantineTitle>
-                    <RangeSlider
-                        defaultValue={timeDemandRange as [number, number]}
-                        step={1}
-                        min={0}
-                        max={2}
-                        minRange={0}
-                        label={null}
-                        marks={timeDemandMarks}
-                        onChange={setTimeDemandRange}
+                  mb="2rem"
+                  w="225px"
+                />
+              </Stack>
+            <Stack>
+              <MantineTitle order={4}>{t("timeDemand")}</MantineTitle>
+              <RangeSlider
+                defaultValue={timeDemandRange as [number, number]}
+                step={1}
+                min={0}
+                max={2}
+                minRange={0}
+                label={null}
+                marks={timeDemandMarks}
+                onChange={setTimeDemandRange}
 
-                        mb="2rem"
-                        w="225px"
-                    />
-                </Stack>
+                mb="2rem"
+                w="225px"
+              />
+            </Stack>
             </Group>
             <Stack w="500px">
-                <MantineTitle order={4}>{t('orderBy')}</MantineTitle>
-                <SegmentedControl data={orderByOptions} defaultValue={orderBy} onChange={setOrderBy} mb="-1rem" mt="-0.5rem"/>
-                <SegmentedControl data={orderByDirOptions} defaultValue={orderByDir} onChange={setOrderByDir} />
+              <MantineTitle order={4}>{t('orderBy')}</MantineTitle>
+              <SegmentedControl data={orderByOptions} defaultValue={orderBy} onChange={setOrderBy} mb="-1rem" mt="-0.5rem"/>
+              <SegmentedControl data={orderByDirOptions} defaultValue={orderByDir} onChange={setOrderByDir} />
             </Stack>
             <Group>
               <Button onClick={onReset} variant="light">{t("reset")}</Button>

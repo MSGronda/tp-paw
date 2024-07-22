@@ -1,24 +1,30 @@
-import { useTranslation } from "react-i18next";
-import { Navbar } from "../../components/navbar/navbar";
+import {useTranslation} from "react-i18next";
+import {Navbar} from "../../components/navbar/navbar";
 import classes from "./createsubject.module.css";
 import {
-  ActionIcon, Alert,
+  ActionIcon,
+  Alert,
   Button,
   Combobox,
   ComboboxOption,
   ComboboxOptions,
-  Flex, Grid,
+  Flex,
+  Grid,
   InputBase,
-  Modal, MultiSelect,
-  NumberInput, Pagination, rem,
+  Modal,
+  MultiSelect,
+  NumberInput,
+  Pagination,
+  rem,
   Table,
   Tabs,
-  Textarea, TextInput,
+  Textarea,
+  TextInput,
   useCombobox,
 } from "@mantine/core";
 import {useEffect, useRef, useState} from "react";
 import Title from "../../components/title/title";
-import {degreeService, subjectService, professorService} from "../../services";
+import {degreeService, departmentService, professorService, subjectService} from "../../services";
 import {handleService} from "../../handlers/serviceHandler.tsx";
 import {Subject} from "../../models/Subject.ts";
 import {useNavigate} from "react-router-dom";
@@ -38,7 +44,6 @@ export function CreateSubject() {
   const MAXIMUM_CREDITS = 12;
   const SUBJECT_ID_REGEX = "[0-9]{2}\\.[0-9]{2}";
   const CLASS_NAME_REGEX = "[A-Za-z]+";
-  const DEPARTMENT = "DEPARTMENT";
   const icon = <IconInfoCircle />;
 
   const classDays = [
@@ -114,13 +119,14 @@ export function CreateSubject() {
     const res = await subjectService.getSubjects(page);
     const data = handleService(res, navigate);
     if (res) {
-      setSubjects(data.subjects);
-      data.filters?.entry?.forEach((entry: {key:string, value:string[]}) => {
-        if(entry.key == DEPARTMENT){
-          setDepartments(entry.value);
-        }
-      });
+      setSubjects(data);
       setMaxPage(res.maxPage || 1);
+      
+      try {
+        setDepartments(await departmentService.getDepartments());
+      } catch (e) {
+        console.error(e);
+      }
     }
   }
 

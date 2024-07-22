@@ -105,8 +105,8 @@ export default function Home() {
     const searchFutureSubjects = async (userId: number, page: number) => {
         const res = await subjectService.getFutureSubjects(userId,page);
         const data = handleService(res, navigate);
-        if(res && data.subjects && res.maxPage) {
-            setFutureSubjects(data.subjects);
+        if(res && data && res.maxPage) {
+            setFutureSubjects(data);
             setFutureSubjectsMaxPage(res.maxPage);
         }
     }
@@ -118,8 +118,8 @@ export default function Home() {
     const searchPastSubjects = async (userId: number, page: number) => {
         const res = await subjectService.getDoneSubjects(userId,page);
         const data = handleService(res,navigate);
-        if(res && data.subjects && res.maxPage) {
-            setPastSubjects(data.subjects);
+        if(res && data && res.maxPage) {
+            setPastSubjects(data);
             setPastSubjectsMaxPage(res.maxPage);
         }
     }

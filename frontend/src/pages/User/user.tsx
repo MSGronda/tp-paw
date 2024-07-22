@@ -81,7 +81,7 @@ export default function User() {
   const getUserPlan = async () => {
     const res = await subjectService.getUserPlanSubjects(Number(id));
     if (res?.data) {
-      setPlanSubjects(res.data.subjects);
+      setPlanSubjects(res.data);
     }
   }
 
@@ -118,7 +118,7 @@ export default function User() {
     reviews.forEach((s) => ids.push(s.subjectId));
     const res = await subjectService.getSubjectsByIds(ids, 1);
     if (res?.data) {
-      setSubjects(res.data.subjects);
+      setSubjects(res.data);
     }
   }
 

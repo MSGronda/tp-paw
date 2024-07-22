@@ -680,7 +680,7 @@ async function getAllSubjects(serviceGet: (userId:number, page:number) => Promis
         if (!resp) {return;}
         const [data, nextPage] = resp;
 
-        subjects.push(...removeInvalidSubjects(data.subjects != "" ? data.subjects : [])); // TODO: cambiar esto a algo mejor
+        subjects.push(...removeInvalidSubjects(data != "" ? data : [])); // TODO: cambiar esto a algo mejor
 
         if (page == nextPage) {
             gotAllPages = true;

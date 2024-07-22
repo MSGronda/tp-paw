@@ -17,8 +17,6 @@ export default function CurriculumPage() {
   const params = useParams();
 
   const [degree, setDegree] = useState<Degree|undefined>(undefined);
-  const [relevantFilters, setRelevantFilters]
-    = useState<Record<string,[string]>|undefined>(undefined);
 
   const degreeId = params.id ? parseInt(params.id) : userService.getUserData()!.degreeId!;
 
@@ -29,9 +27,7 @@ export default function CurriculumPage() {
         return;
       }
       setDegree(res.data);
-    }).then(() => subjectService.getSubjectFiltersForDegree(degreeId))
-      .then((filters => setRelevantFilters(filters)))
-      .catch(err => console.error("Failed to get degree and filters: ", err));
+    }).catch(err => console.error("Failed to get degree: ", err));
 
   }, [degreeId]);
 
@@ -66,7 +62,7 @@ export default function CurriculumPage() {
         <Container size="100%" w="70%">
           <MantineTitle mx="1rem" mt="2rem">{degree.name}</MantineTitle>
 
-          <SubjectFilters relevantFilters={relevantFilters} degree={degreeId} redirect/>
+          <SubjectFilters degree={degreeId} redirect/>
 
           <Divider my="1rem" color="#cccccc"/>
 

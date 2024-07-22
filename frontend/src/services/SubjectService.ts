@@ -1,7 +1,6 @@
 import {axiosService} from "."
 import { handleResponse } from "../handlers/responseHandler";
 import {Subject} from "../models/Subject.ts";
-import {List} from "postcss/lib/list";
 import Class from "../models/Class.ts";
 
 const path = "/subjects"
@@ -141,7 +140,7 @@ export class SubjectService {
         }
 
         const bySemester: Record<number, Subject[]> = {};
-        res.data.subjects.forEach((subject: Subject) => {
+        res.data.forEach((subject: Subject) => {
             if(!subject.semester) return;
 
             if (!bySemester[subject.semester]) {
@@ -166,31 +165,7 @@ export class SubjectService {
             throw new Error("Unable to get subjects")
         }
 
-        return res.data.subjects;
-    }
-    
-    async getSubjectFiltersForDegree(degreeId: number): Promise<Record<string, [string]>> {
-        const config = {
-            params: {
-                q: "",
-                degree: degreeId,
-                page: 1
-            }
-        };
-        const res = await axiosService.authAxiosWrapper(axiosService.GET, path, config);
-        
-        if(!res || res.status !== 200) {
-            throw new Error("Unable to get filters")
-        }
-        
-        if(!res.data.filters) return {};
-        
-        const filters: Record<string, [string]> = {};
-        res.data.filters.entry.forEach((entry: Record<string,any>) => {
-            filters[entry.key.toLowerCase()] = entry.value;
-        });
-        
-        return filters;
+        return res.data;
     }
 
     async createSubject(id: string, name: string, department: string, credits: number, degreeIds: number[], semesters: number[],

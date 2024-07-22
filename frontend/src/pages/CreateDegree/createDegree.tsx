@@ -49,7 +49,7 @@ export function CreateDegree() {
     const getSubjects = useDebouncedCallback( async (searchId: string) => {
         const res = await subjectService.search(searchId,1, undefined, undefined, undefined, undefined, undefined, undefined);
         const data = handleService(res, navigate)
-        setSubjects(filterSubjects(data.subjects));
+        setSubjects(filterSubjects(data));
     }, 750);
 
     const handleDeleteSemester = (semesterNumDelete: number) => {

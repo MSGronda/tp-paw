@@ -19,7 +19,6 @@ export default function Search() {
     const [params, setParams] = useSearchParams();
     
     const [subjects, setSubjects] = useState<Subject[]>([]);
-    const [filters, setFilters] = useState<Record<string, string[]>|undefined>(undefined)
     const [loading, setLoading] = useState(true);
     const [maxPage, setMaxPage] = useState(1);
     
@@ -54,15 +53,8 @@ export default function Search() {
                 
                 const data = handleService(res, navigate);
                 if (res) {
-                    setSubjects(data.subjects);
+                    setSubjects(data);
                     setMaxPage(res.maxPage || 1);
-                    
-                    const filters: Record<string, string[]> = {};
-                    data.filters?.entry?.forEach((entry: {key:string, value:string[]}) => {
-                        const key = entry.key.toLowerCase();
-                        filters[key] = entry.value;
-                    });
-                    setFilters(filters);
                 }
                 
             } catch(err) {
@@ -82,9 +74,9 @@ export default function Search() {
             <div className={classes.container_70}>
                 <div>
                     {loading ? <Loader/> :
-                        subjects && subjects.length > 0 && filters ? (
+                        subjects && subjects.length > 0 ? (
                             <>
-                                <SubjectFilters relevantFilters={filters}/>
+                                <SubjectFilters />
                                 <div className={classes.results_area}>
                                     <div className={classes.search_area}>
                                         {subjects.map(subject => (

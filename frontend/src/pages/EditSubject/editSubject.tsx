@@ -6,7 +6,7 @@ import Class from "../../models/Class.ts";
 import {Degree} from "../../models/Degree.ts";
 import {Subject} from "../../models/Subject.ts";
 import {Professor} from "../../models/Professor.ts";
-import {degreeService, professorService, subjectService} from "../../services";
+import {degreeService, departmentService, professorService, subjectService} from "../../services";
 import {handleService} from "../../handlers/serviceHandler.tsx";
 import {
     ActionIcon,
@@ -38,7 +38,6 @@ export function EditSubject() {
     const MAXIMUM_CREDITS = 12;
     const SUBJECT_ID_REGEX = "[0-9]{2}\\.[0-9]{2}";
     const CLASS_NAME_REGEX = "[A-Za-z]+";
-    const DEPARTMENT = "DEPARTMENT";
     const icon = <IconInfoCircle />;
 
     const classDays = [
@@ -115,13 +114,14 @@ export function EditSubject() {
         const res = await subjectService.getSubjects(page);
         const data = handleService(res, navigate);
         if (res) {
-            setSubjects(data.subjects);
-            data.filters?.entry?.forEach((entry: {key:string, value:string[]}) => {
-                if(entry.key == DEPARTMENT){
-                    setDepartments(entry.value);
-                }
-            });
+            setSubjects(data);
             setMaxPage(res.maxPage || 1);
+            
+            try {
+                setDepartments(await departmentService.getDepartments());
+            } catch (e) { 
+                console.error("Unable to get departments: ", e); 
+            }
         }
     }
 
