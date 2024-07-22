@@ -74,22 +74,4 @@ export class DegreeService {
             return handleResponse(error.response);
         }
     }
-
-    async getSubjectYear(subjectId: string) {
-        try {
-            const res = await axiosService.authAxiosWrapper(axiosService.GET, `${path}/${subjectId}/year`, {});
-            return handleResponse(res);
-        } catch (error: any) {
-            return handleResponse(error.response);
-        }
-    }
-
-    async getDegreeForSubject(subjectId: string) {
-        try {
-            const res = await axiosService.authAxiosWrapper(axiosService.GET, `${path}/${subjectId}/degree`, {});
-            return handleResponse(res);
-        } catch (error: any) {
-            return handleResponse(error.response);
-        }
-    }
 }

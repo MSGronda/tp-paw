@@ -168,30 +168,4 @@ public class DegreeController {
 
         return Response.status(Response.Status.NO_CONTENT.getStatusCode()).build();
     }
-
-    @GET
-    @Path("/{subjectId}/year")
-    public Response getSubjectYearForParentDegree(
-            @PathParam("subjectId") final String subjectId
-    ) {
-        final Subject subject = subjectService.findById(String.valueOf(subjectId)).orElseThrow(SubjectNotFoundException::new);
-        final User user = authUserService.getCurrentUser();
-        final Degree degree = degreeService.findParentDegree(subject, user).orElseThrow(DegreeNotFoundException::new);
-        final int semesterId = degreeService.findSubjectYearForParentDegree(subject, user).orElseThrow(SemesterNotFoundException::new);
-
-        return Response.ok(SemesterDto.fromSemester(uriInfo, degree, semesterId)).build();
-    }
-
-    @GET
-    @Path("/{subjectId}/degree")
-    public Response getDegreeForSubject(
-            @PathParam("subjectId") final String subjectId
-    ) {
-        final Subject subject = subjectService.findById(String.valueOf(subjectId)).orElseThrow(SubjectNotFoundException::new);
-        final User user = authUserService.getCurrentUser();
-        final Degree degree = degreeService.findParentDegree(subject, user).orElseThrow(DegreeNotFoundException::new);
-
-        return Response.ok(DegreeDto.fromDegree(uriInfo, degree)).build();
-    }
-
 }
