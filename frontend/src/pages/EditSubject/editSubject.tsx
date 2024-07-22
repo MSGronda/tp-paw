@@ -150,23 +150,21 @@ export function EditSubject() {
     }
 
     const searchSemesters = async (degreeIds: number[], subjectId: string) => {
-        for(const degreeId of degreeIds){
-            console.log("Before calling!")
+        for await(const degreeId of degreeIds) {
             const res = await degreeService.getSemesters(degreeId, subjectId);
             const data = handleService(res, navigate);
-            if(res) {
-                //setSelectedSemesters([...selectedSemesters, data.semester]);
-                console.log(data);
+            if(res && data) {
+                setSelectedSemesters([...selectedSemesters, data.semester]);
             }
         }
-
     }
 
-    const searchProfessors = async() => {
-        const res = await professorService.getProfessors();
-        const data = handleService(res, navigate);
-        if(res) {
-            setProfessors(data);
+    const handleSearchProfessors = async (value: string) => {
+        if(value.length > 1) {
+            const res = await professorService.getProfessors(undefined, undefined, value);
+            if(res.status == 200 && res.data && res.data != ""){
+                setProfessors(res.data);
+            }
         }
     }
 
@@ -200,11 +198,7 @@ export function EditSubject() {
         if(subjectId.length !== 0 && selectedDegrees.length !== 0){
             searchSemesters(selectedDegrees, subjectId);
         }
-    }, [subjectId]);
-
-    useEffect(() => {
-        searchProfessors();
-    }, []);
+    }, [subjectId, selectedDegrees]);
 
     useEffect(() => {
         searchSubjects(1);
@@ -858,8 +852,14 @@ export function EditSubject() {
                     <Flex mih={50} miw={500} gap="xl" justify="space-between" align="center" direction="row" wrap="wrap">
                         {t("CreateSubject.professor")}
                         <Flex direction="column" justify="flex-end" maw={400}>
-                            <MultiSelect placeholder={t("CreateSubject.professorLabel")} data={professorsOptions} searchable
-                                         onOptionSubmit={(professor) => handleProfessorAddition(professor)} onRemove={(professor) => handleProfessorRemove(professor)}/>
+                            <MultiSelect
+                                placeholder={t("CreateSubject.professorLabel")}
+                                data={professors.map((p) => p.name)}
+                                onSearchChange={handleSearchProfessors}
+                                searchable
+                                onOptionSubmit={(professor) => handleProfessorAddition(professor)}
+                                onRemove={(professor) => handleProfessorRemove(professor)}
+                            />
                         </Flex>
                     </Flex>
                     <Flex mih={50} gap="xl" justify="right" align="center" direction="row" wrap="wrap">
