@@ -34,7 +34,7 @@ export function EditSubject() {
     const navigate = useNavigate();
     const params = useParams();
 
-    const MINIMUM_CREDITS = 1;
+    const MINIMUM_CREDITS = 0;
     const MAXIMUM_CREDITS = 12;
     const SUBJECT_ID_REGEX = "[0-9]{2}\\.[0-9]{2}";
     const CLASS_NAME_REGEX = "[A-Za-z]+";
@@ -141,6 +141,27 @@ export function EditSubject() {
         }
     }
 
+    const searchDegreesForSubject = async (subjectId: string) => {
+        const res = await degreeService.getDegrees(subjectId);
+        const data = handleService(res, navigate);
+        if (res) {
+            setSelectedDegrees(data.map((degree: Degree) => degree.id));
+        }
+    }
+
+    const searchSemesters = async (degreeIds: number[], subjectId: string) => {
+        for(const degreeId of degreeIds){
+            console.log("Before calling!")
+            const res = await degreeService.getSemesters(degreeId, subjectId);
+            const data = handleService(res, navigate);
+            if(res) {
+                //setSelectedSemesters([...selectedSemesters, data.semester]);
+                console.log(data);
+            }
+        }
+
+    }
+
     const searchProfessors = async() => {
         const res = await professorService.getProfessors();
         const data = handleService(res, navigate);
@@ -168,6 +189,18 @@ export function EditSubject() {
     useEffect(() => {
         searchDegrees();
     }, []);
+
+    useEffect(() => {
+        if(subjectId.length !== 0){
+            searchDegreesForSubject(subjectId);
+        }
+    }, [subjectId]);
+
+    useEffect(() => {
+        if(subjectId.length !== 0 && selectedDegrees.length !== 0){
+            searchSemesters(selectedDegrees, subjectId);
+        }
+    }, [subjectId]);
 
     useEffect(() => {
         searchProfessors();
@@ -567,7 +600,7 @@ export function EditSubject() {
     });
     return (
         <div className={classes.background}>
-        <Title text={t("CreateSubject.pageTitle")}/>
+        <Title text={t("CreateSubject.editSubjectTitle")}/>
 
     { /* Degree Modal */}
     <Modal opened={openedDegreeModal} onClose={() => setOpenedDegreeModal(false)} title={t("CreateSubject.addDegree")} size="35%">
@@ -796,7 +829,7 @@ export function EditSubject() {
                     <Flex mih={50} gap="xl" justify="space-between" align="center" direction="row" wrap="wrap">
                         {t("CreateSubject.degree")}
                         <Flex  direction="column">
-                            { selectedDegrees.length > 0 &&
+                            { selectedDegrees.length > 0 && degrees.length > 0 &&
                                 selectedDegrees.map((degree) =>
                                     <Flex direction="row" align="center">
                                         <p>{searchForDegreeName(degree)}</p>
