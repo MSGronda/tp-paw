@@ -72,7 +72,6 @@ export default function Search() {
             <Title text={`${t("title")} ${parsedParams.q ?? ""}`}/>
             <Navbar />
             <div className={classes.container_70}>
-                <div>
                     {loading ? <Loader/> :
                         subjects && subjects.length > 0 ? (
                             <>
@@ -99,11 +98,10 @@ export default function Search() {
                                 </div>
                             </>
                         ) : (
-                            <div className={classes.not_found_area}>
-                                <h3>{t("Search.not_found", { query: parsedParams.q })}</h3>
-                            </div>
+                        <div className={classes.not_found_area}>
+                            <h3>{t("not_found", { query: parsedParams.q })}</h3>
+                        </div>
                         )}
-                </div>
             </div>
         </div>
     )
