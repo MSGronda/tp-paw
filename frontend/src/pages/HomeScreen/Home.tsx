@@ -65,7 +65,7 @@ export default function Home() {
         // User semester
         const dataSubjects = handleService(await subjectService.getUserPlanSubjects(user.id), navigate);
         const dataPlan = handleService(await userService.getUserPlan(user.id), navigate);
-        setUserSemester(createSelectedSubjects(dataPlan, dataSubjects.subjects));
+        setUserSemester(createSelectedSubjects(dataPlan, dataSubjects));
 
         // User degree
         const degree = handleService(await degreeService.getDegreeById(user.degreeId), navigate);
