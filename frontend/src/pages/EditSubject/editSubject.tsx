@@ -86,7 +86,6 @@ export function EditSubject() {
     const [selectedProfessors, setSelectedProfessors] = useState<string[]>([]);
     const [createdProfessors, setCreatedProfessors] = useState<string[]>([]);
     const [selectedClasses, setSelectedClasses] = useState<Class[]>([]);
-    const [professorsPerClass, setProfessorsPerClass] = useState<Map<string,string[]>>(new Map());
 
     // Fetched Values
     const [degrees, setDegrees] = useState<Degree[]>([]);
@@ -389,8 +388,7 @@ export function EditSubject() {
     }
 
     function handleClassCreation() {
-        const newClass = {idClass: currentClassName, idSubject: subjectId, locations: []};
-        const professors = currentClassProfessors;
+        const newClass = {idClass: currentClassName, idSubject: subjectId, locations: [], professors: currentClassProfessors};
 
         if(currentClassName === "" || currentClassProfessors.length === 0 || !currentClassName.match(CLASS_NAME_REGEX)) {
             setMissingClassFields(true);
