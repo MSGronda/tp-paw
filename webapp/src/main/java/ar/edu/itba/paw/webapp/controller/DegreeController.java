@@ -52,12 +52,14 @@ public class DegreeController {
             @QueryParam("subjectId") final String subjectId
     ) {
         final DegreeSearchParams params = new DegreeSearchParams(subjectId);
+        
         final List<Degree> degrees = degreeService.searchDegrees(params);
 
-        final List<DegreeDto> degreeDtos = degrees.stream().map(degree -> DegreeDto.fromDegree(uriInfo, degree)).collect(Collectors.toList());
-        if(degreeDtos.isEmpty()) {
+        if(degrees.isEmpty()) {
             return Response.noContent().build();
         }
+
+        final List<DegreeDto> degreeDtos = degrees.stream().map(degree -> DegreeDto.fromDegree(uriInfo, degree)).collect(Collectors.toList());
 
         return Response.ok(new GenericEntity<List<DegreeDto>>(degreeDtos){}).build();
     }
@@ -113,6 +115,11 @@ public class DegreeController {
     public Response getDegreeSemesters(@PathParam("id") final long id, @QueryParam("subjectId") final String subjectId) {
         final Degree degree = degreeService.findById(id).orElseThrow(DegreeNotFoundException::new);
         final List<DegreeSemester> semesters = degreeService.getDegreeSemesters(id, subjectId);
+
+        if(semesters.isEmpty()){
+            return Response.noContent().build();
+        }
+
         final List<SemesterDto> semestersDtos = semesters.stream().map(semester -> SemesterDto.fromSemester(uriInfo, degree, semester.getNumber())).collect(Collectors.toList());
 
         return Response.ok(new GenericEntity<List<SemesterDto>>(semestersDtos){}).build();

@@ -139,15 +139,15 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers(HttpMethod.DELETE, "/api/degrees/{id}").hasRole(Role.RoleEnum.EDITOR.getName())
                 .antMatchers(HttpMethod.PUT, "/api/degrees/{id}").hasRole(Role.RoleEnum.EDITOR.getName())
 
+                // Departments
+                .antMatchers(HttpMethod.GET, "/api/departments").authenticated()
+
                 // Degree semesters
                 .antMatchers(HttpMethod.GET, "/api/degrees/{degreeId}/semesters").authenticated()
                 .antMatchers(HttpMethod.GET, "/api/degrees/{degreeId}/semesters/{id}").authenticated()
                 .antMatchers(HttpMethod.POST, "/api/degrees/{degreeId}/semesters").hasRole(Role.RoleEnum.EDITOR.getName())
                 .antMatchers(HttpMethod.PATCH, "/api/degrees/{degreeId}/semesters").hasRole(Role.RoleEnum.EDITOR.getName())
                 .antMatchers(HttpMethod.DELETE, "/api/degrees/{degreeId}/semesters/{id}").hasRole(Role.RoleEnum.EDITOR.getName())
-
-                .antMatchers(HttpMethod.GET, "/api/degrees/{subjectId}/year").authenticated()
-                .antMatchers(HttpMethod.GET, "/api/degrees/{subjectId}/degree").authenticated()
 
                 // Review
                 .antMatchers(HttpMethod.GET, "/api/reviews").authenticated()
@@ -163,6 +163,8 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
 
                 // Professor
                 .antMatchers(HttpMethod.GET, "/api/professors").authenticated()
+                .antMatchers(HttpMethod.GET, "/api/professors/{id}").authenticated()
+                .antMatchers(HttpMethod.POST, "/api/professors").hasRole(Role.RoleEnum.EDITOR.getName())
 
                 // Images
                 .antMatchers(HttpMethod.GET, "/api/images/{id}").permitAll()
