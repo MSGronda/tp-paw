@@ -1,5 +1,5 @@
 import {useEffect, useState} from "react";
-import {Button, Center, Combobox, Group, InputBase, Loader, Transition, useCombobox} from "@mantine/core";
+import {Alert, Button, Center, Combobox, Group, InputBase, Loader, Transition, useCombobox} from "@mantine/core";
 import {degreeService, subjectService} from "../../services";
 
 import classes from './onboarding.module.css';
@@ -14,6 +14,7 @@ import {userService} from "../../services";
 import {Navigate, useNavigate} from "react-router-dom";
 import {useTranslation} from "react-i18next";
 import {Degree} from "../../models/Degree.ts";
+import {IconExclamationCircle} from "@tabler/icons-react";
 
 enum Step {
   DegreeSelection,
@@ -162,10 +163,14 @@ function SubjectSelectionStep({degree, onChangeSelected}: SubjectSelectionProps)
   const {t} = useTranslation();
 
   const [subjectsBySemester, setSubjectsBySemester] = useState<Record<number, Subject[]>>({});
+  const [error, setError] = useState(false);
 
   useEffect(() => {
     subjectService.getSubjectsGroupedBySemester(degree.id).then(res => setSubjectsBySemester(res))
-      .catch(err => console.log(err));
+      .catch(err => {
+        console.log(err);
+        setError(true);
+      });
   }, [degree.id]);
 
   const loading = Object.keys(subjectsBySemester).length === 0;
@@ -183,11 +188,15 @@ function SubjectSelectionStep({degree, onChangeSelected}: SubjectSelectionProps)
 
   return (
     <div>
-      {loading ? <Center><Loader/></Center> :
+      <Alert mt="lg" variant="light" color="red" title={t('error_alert_title')} icon={<IconExclamationCircle />} hidden={!error}>
+        {t("Onboarding.SubjectSelection.error")}
+      </Alert>
+      
+      {!error && (loading ? <Center><Loader/></Center> :
         <AccordionSelector onChangeSelected={onChangeSelected} miw="500">
           {sections}
         </AccordionSelector>
-      }
+      )}
     </div>
   );
 }
