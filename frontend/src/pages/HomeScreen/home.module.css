@@ -18,7 +18,7 @@
 }
 
 .tabs{
-    height: 100%;
+    min-height: 100%;
 }
 .future-subjects-area{
     display: flex;

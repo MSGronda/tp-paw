@@ -21,8 +21,8 @@ function SubjectCard(props: SubjectCardProps): JSX.Element {
     return (
         <Link to={{pathname:`/subject/${id}`}}>
             <Card className={classes.card_area}>
-                <h4 style={{height: "20%"}}>{name} - {id}</h4>
-                <div className={classes.badge_row}>
+                <h4 style={{margin: "0.25rem 0 0 0"}}>{name} - {id}</h4>
+                <div className={classes.badge_row} style={{flexGrow: 1, marginTop: "1rem"}}>
                     <Badge className={classes.badge_row_elem} color={'blue.7'}>{t("SubjectCard.credits", {n: credits})}</Badge>
                     {
                         prerequisites.length > 0 ?
@@ -42,7 +42,7 @@ function SubjectCard(props: SubjectCardProps): JSX.Element {
                 <Card.Section>
                     <div style={{ borderBottom: '1px solid #ccc', margin: '16px 0' }}></div>
                 </Card.Section>
-                <div className={classes.badge_row}>
+                <div className={classes.badge_row} style={{alignItems: "center", margin: "-0.1rem 0", height: "2rem", flexShrink: 1}}>
                     { numReviews > 0 && difficulty == 'EASY' ? <Badge className={classes.badge_row_elem} color={'green.7'}>{t("SubjectCard.easy")}</Badge> : null }
                     { numReviews > 0 && difficulty == 'MEDIUM' ? <Badge className={classes.badge_row_elem} color={'blue.7'}>{t("SubjectCard.normal")}</Badge> : null }
                     { numReviews > 0 && difficulty == 'HARD' ? <Badge className={classes.badge_row_elem} color={'red.7'}>{t("SubjectCard.hard")}</Badge> : null }
@@ -51,7 +51,8 @@ function SubjectCard(props: SubjectCardProps): JSX.Element {
                     { numReviews > 0 && timeDemand == 'MEDIUM' ? <Badge className={classes.badge_row_elem} color={'blue.7'}>{t("SubjectCard.medium")}</Badge> : null }
                     { numReviews > 0 && timeDemand == 'HIGH' ? <Badge className={classes.badge_row_elem} color={'red.7'}>{t("SubjectCard.high")}</Badge> : null }
 
-                    { numReviews > 0 ? <span>{t("SubjectCard.reviews", {n: numReviews})}</span> : null }
+                    { numReviews == 1 ? <span>{t("SubjectCard.one_review")}</span> : null }
+                    { numReviews > 1 ? <span>{t("SubjectCard.reviews", {n: numReviews})}</span> : null }
                     { numReviews == 0 ? <Badge color={'gray.7'}>{t("SubjectCard.no_reviews")}</Badge> : null }
                 </div>
             </Card>

@@ -15,7 +15,9 @@ function PastSubjectCard(props: PastSubjectCardProps): JSX.Element {
     return (
         <Link to={`/subject/${id}`}>
             <Card className={classes.card_area}>
-                <h4 style={{height: "25%", marginTop: "0.7rem"}}>{name} - {id}</h4>
+                <div style={{flexGrow: 1}}>
+                    <h4 style={{ margin: "0.25rem 0 0 0"}}>{name} - {id}</h4>
+                </div>
                 <Card.Section>
                     <div style={{ borderBottom: '1px solid #ccc', margin: '16px 0' }}></div>
                 </Card.Section>

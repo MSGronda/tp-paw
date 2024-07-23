@@ -1,16 +1,15 @@
 .card_area{
-    max-width: 20rem;
-    height: 13rem
+    min-width: 13rem;
+    min-height: 13rem;
 }
 
 .badge_row {
     display: flex;
-    align-items: center;
     width: 100%;
-    height: 20%;
+    min-height: 1rem;
     flex-wrap: wrap;
 }
 
 .badge_row_elem {
-    margin-right: 0.3rem;
+    margin: -0.2rem 0.3rem -0.2rem 0;
 }

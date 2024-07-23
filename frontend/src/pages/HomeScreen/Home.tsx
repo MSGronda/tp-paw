@@ -5,7 +5,7 @@ import {
     Flex,
     Group,
     Pagination,
-    RingProgress,
+    RingProgress, Space,
     Tabs,
     Text
 } from '@mantine/core';
@@ -311,10 +311,10 @@ export default function Home() {
                                 </div>
                             </Tabs.Panel>
 
-                            <Tabs.Panel value="future-subjects"  h="90%">
-                                <Flex gap="xl" align="center" justify="center" direction="column" mih={50} w="100%">
+                            <Tabs.Panel value="future-subjects">
+                                <Flex align="center" direction="column" mih="50vh" w="100%" mt={10}>
                                     {/*NO SE PORQUE PERO NO FUNCIONA SI TENEMOS EL CSS EN EL OTRO ARCHIVO*/}
-                                    <div style={{width: "90%", minHeight: '90%' , display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(250px, 1fr))', padding: '1rem 1rem 1rem 1rem', gap: '1rem'}}>
+                                    <div style={{width: "90%", display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(250px, 1fr))', padding: '1rem 1rem 1rem 1rem', gap: '1rem'}}>
                                         {
                                             futureSubjects.map((subject) =>
                                                     <SubjectCard
@@ -331,16 +331,16 @@ export default function Home() {
                                             )
                                         }
                                     </div>
-                                    <Flex justify="center" align="center">
+                                    <Flex justify="end" align="center" mb={15} mt={10}>
                                         <Pagination value={currentFutureSubjectsPage} total={futureSubjectsMaxPage} onChange={setCurrentFutureSubjectsPage} />
                                     </Flex>
                                 </Flex>
                             </Tabs.Panel>
 
-                            <Tabs.Panel value="past-subjects" h="90%">
-                                <Flex gap="xl" align="center" justify="center" direction="column" h="100%" w="100%">
+                            <Tabs.Panel value="past-subjects">
+                                <Flex align="center" direction="column" mih="50vh" w="100%" mt={10}>
                                     {/*NO SE PORQUE PERO NO FUNCIONA SI TENEMOS EL CSS EN EL OTRO ARCHIVO*/}
-                                        <div style={{width: "90%", minHeight: '90%' , display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', padding: '1rem 1rem 3rem 1rem', gap: '1rem'}}>
+                                        <div style={{width: "90%", display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(230px, 1fr))', padding: '1rem 1rem 1rem 1rem', gap: '1rem'}}>
                                             {
                                                 pastSubjects.map((subject) =>
                                                     <PastSubjectCard
@@ -352,7 +352,7 @@ export default function Home() {
                                                 )
                                             }
                                         </div>
-                                    <Flex justify="center" align="center">
+                                    <Flex justify="end" align="center" mb={15} mt={10}>
                                         <Pagination value={currentPastSubjectsPage} total={pastSubjectsMaxPage} onChange={setCurrentPastSubjectsPage} />
                                     </Flex>
                                 </Flex>

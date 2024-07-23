@@ -112,7 +112,7 @@ function SemesterTabPanel({degreeId, semester}: { degreeId: number, semester: nu
 
   return <div ref={ref}>
     {!subjects ? <Center m="5rem"><Loader/></Center> :
-        <div style={{width: "90%", minHeight: '90%' , display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(250px, 1fr))', padding: '1rem 1rem 1rem 1rem', gap: '1rem'}}>
+        <div style={{width: "100%", minHeight: '90%' , display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(250px, 1fr))', padding: '1rem 1rem 1rem 1rem', gap: '1rem'}}>
           { subjects.map((subject) => (
               <SubjectCard {...subject} key={subject.id} progress="incomplete" numReviews={subject.reviewCount}/>
           ))
