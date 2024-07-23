@@ -203,7 +203,7 @@ export function EditSubject() {
             if(res.status === 200){// 200 updated
                 navigate('/subject/' + subjectId)
             } else {
-                // Error message
+                handleErrorAlert(t("CreateSubject.oops"));
             }
         }
     }
