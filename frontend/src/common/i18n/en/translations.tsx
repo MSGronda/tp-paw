@@ -382,7 +382,7 @@ export const TRANSLATIONS_EN = {
         emptyClasses: "Classes are required for the subject",
         wrongCredits: "Make sure to match the amount of hours of class with the amount of credits for every class",
         disabledSubjectIdField: "Cannot edit subject ID",
-        editSubjectTitle: "Edit subject",
+        editSubjectTitle: "Edit Subject",
         userProfessorName: "The professor name submitted, already exists",
         idInUse: "The subject ID is already in use",
         oops: "Oops! Something went wrong..."

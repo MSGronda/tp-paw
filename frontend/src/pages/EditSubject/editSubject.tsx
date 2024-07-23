@@ -147,19 +147,22 @@ export function EditSubject() {
     const searchDegreesForSubject = async (subjectId: string) => {
         const res = await degreeService.getDegrees(subjectId);
         const data = handleService(res, navigate);
-        if (res) {
+        if (res && data.length > 0) {
             setSelectedDegrees(data.map((degree: Degree) => degree.id));
         }
     }
 
     const searchSemesters = async (degreeIds: number[], subjectId: string) => {
-        for await(const degreeId of degreeIds) {
+        const selSemesters = [];
+        for (const degreeId of degreeIds) {
             const res = await degreeService.getSemesters(degreeId, subjectId);
             const data = handleService(res, navigate);
-            if(res && data) {
-                setSelectedSemesters([...selectedSemesters, data.semester]);
+            if(res && data && data.length > 0) {
+                selSemesters.push(data[0].semester);
             }
         }
+        setSelectedSemesters([...selectedSemesters, ...selSemesters]);
+        setFetchedSelectedDegrees(true);
     }
 
     const handleSearchProfessors = async (value: string) => {
@@ -280,7 +283,7 @@ export function EditSubject() {
         }
     }, [currentDegree, carreerSemester]);
 
-    // Degrees/Semester Utils
+    // Utils
     function searchForDegreeId(degreeName: string) {
         for(let i = 0; i < degrees.length; i++) {
             if(degrees[i].name === degreeName) {
@@ -305,7 +308,7 @@ export function EditSubject() {
 
     // Week day and time formats
     function extractNumberFromWeekDay(weekDay: string) {
-        return weekDaysMap.get(weekDay) || 0;
+        return weekDaysMap.get(weekDay) || 1;
     }
 
     function extractHoursFromTimeStamp(timestamp: string) {
@@ -523,11 +526,7 @@ export function EditSubject() {
     }
 
     function handleSubjectEdit(){
-        // Check that there are no missing values
-        if(wrongPatternInSubjectId){
-            handleErrorAlert(t("CreateSubject.wrongSubjectId"));
-            return;
-        }
+        // Check values before submitting
         setWrongPatternInSubjectId(false);
         if(subjectName.length == 0){
             setEmptySubjectName(true);
