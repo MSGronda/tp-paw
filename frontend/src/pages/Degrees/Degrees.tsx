@@ -6,7 +6,7 @@ import {degreeService, userService} from "../../services";
 import { useEffect, useState } from 'react';
 import { handleService } from '../../handlers/serviceHandler';
 import { useNavigate } from 'react-router-dom';
-import {ActionIcon, Button, Card, Tooltip} from '@mantine/core';
+import {ActionIcon, Button, Card, Center, Loader, Tooltip} from '@mantine/core';
 import {IconTrash} from "@tabler/icons-react";
 import Title from '../../components/title/title';
 import {Degree} from "../../models/Degree.ts";
@@ -52,7 +52,7 @@ export default function Degrees() {
             <Title text={t("Degrees.title")}/>
             <Navbar />
             <div className={classes.container_70}>
-                {!loading && (
+                {loading ? <Center flex={1}><Loader size="xl"/></Center> : (
                     <>
                         <h1>{t('Degrees.title')}</h1>
                         {degrees.map((degree) => (
@@ -113,7 +113,7 @@ export default function Degrees() {
                     </>
                 )}
             </div>
-            <Footer />
+            {/*<Footer />*/}
         </div>
     );
 

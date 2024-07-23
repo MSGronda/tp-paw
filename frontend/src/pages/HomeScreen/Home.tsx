@@ -1,31 +1,18 @@
-import {
-    Button,
-    Card,
-    Divider,
-    Flex,
-    Group,
-    Pagination,
-    RingProgress, Space,
-    Tabs,
-    Text
-} from '@mantine/core';
-import { BarChart } from '@mantine/charts';
-import {Navbar } from "../../components/navbar/navbar";
+import {Button, Card, Center, Divider, Flex, Group, Loader, Pagination, RingProgress, Tabs, Text} from '@mantine/core';
+import {BarChart} from '@mantine/charts';
+import {Navbar} from "../../components/navbar/navbar";
 import classes from './home.module.css';
-import {
-    IconCheck,
-    IconPencil,
-} from "@tabler/icons-react";
+import {IconCheck, IconPencil,} from "@tabler/icons-react";
 import {useTranslation} from "react-i18next";
 import SubjectCard from "../../components/subject-card/subject-card.tsx";
-import { useContext, useEffect, useState } from 'react';
+import {useContext, useEffect, useState} from 'react';
 import AuthContext from '../../context/AuthContext.tsx';
 import Landing from '../Landing/landing.tsx';
 import {Subject} from "../../models/Subject.ts";
 import {Link, useNavigate} from "react-router-dom";
 import ClassInfoCard from '../../components/class-info-card/class-info-card.tsx';
 import {degreeService, subjectService, userService} from '../../services/index.tsx';
-import { handleService } from '../../handlers/serviceHandler.tsx';
+import {handleService} from '../../handlers/serviceHandler.tsx';
 import {SelectedSubject} from "../../models/SelectedSubject.ts";
 import {createSelectedSubjects} from "../../utils/user_plan_utils.ts";
 import PastSubjectCard from "../../components/past-subject-card/past-subject-card.tsx";
@@ -53,6 +40,7 @@ export default function Home() {
     const [activeTab, setActiveTab] = useState<string | null>("current-semester");
 
     const [user, setUser] = useState<User>();
+
     const getUserData = async () => {
 
         const userData = await userService.getUser();
@@ -64,7 +52,7 @@ export default function Home() {
 
         // User semester
         const dataSubjects = handleService(await subjectService.getUserPlanSubjects(user.id), navigate);
-        const dataPlan = handleService(await userService.getUserPlan(user.id), navigate);
+        const dataPlan = handleService(await userService.getUserPlan(user.id), navigate, []);
         setUserSemester(createSelectedSubjects(dataPlan, dataSubjects));
 
         // User degree
@@ -72,9 +60,8 @@ export default function Home() {
         setTotalCreditsInDegree(degree.totalCredits);
         setOverallProgress((user.creditsDone / degree.totalCredits) * 100);
     }
-
     // = = = Current semester = = =
-    const [userSemester, setUserSemester] = useState<SelectedSubject[]>([]);
+    const [userSemester, setUserSemester] = useState<SelectedSubject[]|undefined>(undefined);
 
     // = = = Overview = = =
     const [totalCreditsInDegree, setTotalCreditsInDegree] = useState(0);
@@ -172,50 +159,51 @@ export default function Home() {
 
                             <Tabs.Panel value="current-semester" w="100%">
                                 <Flex h="100%" w="100%" justify="center" align="center">
-                                    { userSemester.length !== 0?
-                                        <div className={classes.currentSemesterArea}>
+                                    {!userSemester ? <Center mt={120}><Loader size="xl"/></Center> : <>
+                                        { userSemester.length !== 0 ?
+                                            <div className={classes.currentSemesterArea}>
+                                                <div className={classes.timeTableArea}>
+                                                    <WeeklySchedule rows={ROWS} cols={COLS} subjectClasses={userSemester}/>
+                                                </div>
 
-                                            <div className={classes.timeTableArea}>
-                                                <WeeklySchedule rows={ROWS} cols={COLS} subjectClasses={userSemester}/>
-                                            </div>
+                                                <div className={classes.currentSemesterClassArea}>
+                                                    <Card padding={0}>
+                                                        <Card.Section w="100%">
+                                                            <h4 style={{margin: "0.75rem"}} className={classes.section_titles}>{t("Home.thisSemester")}</h4>
+                                                            <Divider/>
+                                                        </Card.Section>
+                                                        <Card.Section>
+                                                            <div style={{display: "flex", flexDirection: "column", alignItems: "center", width: "100%", height: "100%"}}>
+                                                                <div style={{maxHeight: "80vh" ,minHeight: "80vh", overflowY: "auto", flex: "1", width: "100%"}}>
+                                                                    {userSemester.map((subject) => (
+                                                                        <div style={{padding: "0.5rem 0.5rem"}}>
+                                                                            <Link  to={{pathname:`subject/` + subject.subject.id}}>
+                                                                                <ClassInfoCard subject={subject.subject} subjectClass={subject.selectedClass}/>
+                                                                            </Link>
+                                                                        </div>
 
-                                            <div className={classes.currentSemesterClassArea}>
-                                                <Card padding={0}>
-                                                    <Card.Section w="100%">
-                                                        <h4 style={{margin: "0.75rem"}} className={classes.section_titles}>{t("Home.thisSemester")}</h4>
-                                                        <Divider/>
-                                                    </Card.Section>
-                                                    <Card.Section>
-                                                        <div style={{display: "flex", flexDirection: "column", alignItems: "center", width: "100%", height: "100%"}}>
-                                                            <div style={{maxHeight: "80vh" ,minHeight: "80vh", overflowY: "auto", flex: "1", width: "100%"}}>
-                                                                {userSemester.map((subject) => (
-                                                                    <div style={{padding: "0.5rem 0.5rem"}}>
-                                                                        <Link  to={{pathname:`subject/` + subject.subject.id}}>
-                                                                            <ClassInfoCard subject={subject.subject} subjectClass={subject.selectedClass}/>
-                                                                        </Link>
-                                                                    </div>
-
-                                                                ))}
+                                                                    ))}
+                                                                </div>
                                                             </div>
-                                                        </div>
 
-                                                    </Card.Section>
+                                                        </Card.Section>
 
-                                                </Card>
+                                                    </Card>
+                                                </div>
+
                                             </div>
-
-                                        </div>
-                                        :
-                                        <div className={classes.emptyTabArea}>
-                                            <h3 className={classes.emptyTabInfo}>
-                                                {t("Home.emptySemester")}
-                                                <Link to={{pathname:`/builder`}}>
-                                                    {t("Home.emptySemesterLink")}
-                                                </Link>
-                                            </h3>
-                                        </div>
-                                    }
-                                    {userSemester.length !== 0 &&
+                                            :
+                                            <div className={classes.emptyTabArea}>
+                                                <h3 className={classes.emptyTabInfo}>
+                                                    {t("Home.emptySemester")}
+                                                    <Link to={{pathname:`/builder`}}>
+                                                        {t("Home.emptySemesterLink")}
+                                                    </Link>
+                                                </h3>
+                                            </div>
+                                        }
+                                    </>}
+                                    {userSemester && userSemester.length !== 0 &&
                                         <div className={classes.semesterEditArea}>
                                             <Link to={{pathname: `/builder`}}>
                                                 <Button size='lg' variant='default'  rightSection={<IconPencil size={20} />} className={classes.semesterEditButton}>

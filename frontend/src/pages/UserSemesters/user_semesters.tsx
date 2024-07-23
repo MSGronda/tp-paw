@@ -9,13 +9,14 @@ import Title from "../../components/title/title.tsx";
 import {t} from "i18next";
 import {Navbar} from "../../components/navbar/navbar.tsx";
 import {SemesterCard} from "../../components/semester-card/semester-card.tsx";
+import {Center, Loader} from "@mantine/core";
 
 export default function UserSemesters() {
     // Navigation
     const navigate = useNavigate();
 
     // User semesters
-    const [userSemesters, setUserSemesters] = useState<UserPlan[]>([]);
+    const [userSemesters, setUserSemesters] = useState<UserPlan[]|undefined>(undefined);
     const [semesterSubjects, setSemesterSubjects] = useState<Map<number, Subject[]>>(new Map());
     const getUserSemesters = async () => {
         const userId = userService.getUserId();
@@ -25,7 +26,7 @@ export default function UserSemesters() {
             return;
         }
 
-        const plan: UserPlan[] = handleService(await userService.getUserPlan(userId), navigate);
+        const plan: UserPlan[] = handleService(await userService.getUserPlan(userId), navigate, []);
         plan.sort((u1, u2) => {return u2.dateFinished - u1.dateFinished})
         setUserSemesters(plan);
 
@@ -49,30 +50,31 @@ export default function UserSemesters() {
                 <h2 style={{margin: ".5rem", fontSize: "2rem"}}>{t("UserSemesters.bodyTitle")}</h2>
                 <div style={{ borderBottom: '1px solid #ccc', margin: '10px 0' }}></div>
             </div>
-            {
-                userSemesters.length == 0 ?
-                    <div>
-                        <h3 className={classes.emptyTabInfo}>
-                            {t("UserSemesters.emptySemester")}
-                            <Link to={{pathname:`/builder`}}>
-                                {t("UserSemesters.emptySemesterLink")}
-                            </Link>
-                        </h3>
-                    </div> :
-                    <div style={{width: "90%", minHeight: '80%' , display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(350px, 1fr))', padding: '1rem 1rem 1rem 1rem', gap: '2rem'}}>
-                        {
-                            userSemesters.map((semester, i) =>
-                                <SemesterCard
-                                    key={i}
-                                    dateFinished={semester.dateFinished}
-                                    subjects={semesterSubjects.get(semester.dateFinished) ?? []}
-                                    index={i}
-                                    totalSemester={userSemesters.length}
-                                />
-                            )
-                        }
-                    </div>
-            }
+            { !userSemesters ? <Center mt={50}><Loader size="lg"/></Center> : <>
+                { userSemesters.length == 0 ?
+                        <div>
+                            <h3 className={classes.emptyTabInfo}>
+                                {t("UserSemesters.emptySemester")}
+                                <Link to={{pathname:`/builder`}}>
+                                    {t("UserSemesters.emptySemesterLink")}
+                                </Link>
+                            </h3>
+                        </div> :
+                        <div style={{width: "90%", minHeight: '80%' , display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(350px, 1fr))', padding: '1rem 1rem 1rem 1rem', gap: '2rem'}}>
+                            {
+                                userSemesters.map((semester, i) =>
+                                    <SemesterCard
+                                        key={i}
+                                        dateFinished={semester.dateFinished}
+                                        subjects={semesterSubjects.get(semester.dateFinished) ?? []}
+                                        index={i}
+                                        totalSemester={userSemesters.length}
+                                    />
+                                )
+                            }
+                        </div>
+                }
+            </> }
         </div>
 
     </div>);

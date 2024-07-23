@@ -2,8 +2,8 @@
     width: 100%;
     flex-direction: column;
     background-color: #efefef;
-    flex: content;
     min-height: 100vh;
+    display: flex;
 }
 
 .body {
@@ -11,12 +11,8 @@
     padding-left: 2rem;
     padding-right: 2rem;
     align-self: center;
-    justify-self: center;
     align-items: center;
-    justify-content: center;
-    margin: 0 auto;
     background-color: #efefef;
-    flex: 1 0 auto;
     display: flex;
     flex-direction: column;
     margin-top: 3rem;
@@ -24,10 +20,11 @@
 
 .container{
     width: 100%;
-    min-height: 100px;
-    justify-content: center;
-    align-content: space-between;
+    align-content: center;
     background-color: #efefef;
+    display: flex;
+    flex-direction: column;
+    flex: 1;
 }
 
 .header {

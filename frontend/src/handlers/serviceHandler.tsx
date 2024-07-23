@@ -2,12 +2,10 @@
 //TODO cambiar constantes   
 import {NavigateFunction} from "react-router/dist/lib/hooks";
 
-export const handleService = (response: any, navigate: NavigateFunction, defaultValue= undefined) => {
+export const handleService = (response: any, navigate: NavigateFunction, defaultValue: any= undefined) => {
     if (response){
         if( response.failure ){
-            if (response.status === 204){
-                return defaultValue
-            } else if( response.status === 401 ){
+            if( response.status === 401 ){
                 navigate('/login')
                 return;
             } else if( response.status === 404){
@@ -18,6 +16,10 @@ export const handleService = (response: any, navigate: NavigateFunction, default
                 return;
             }
         } else{
+            if (response.status === 204) {
+                return defaultValue
+            }
+            
             return response.data
         }
     }

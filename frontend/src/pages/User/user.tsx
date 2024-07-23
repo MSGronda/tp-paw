@@ -96,6 +96,7 @@ export default function User() {
   const getReviewsAndSubjectsFromUser = async (userId: number, page: number, orderBy: string, dir: string) => {
     const res = await reviewService.getReviewsFromUser(userId, page, orderBy, dir);
     if( !res || res.data == ""){
+      setLoadingReviews(false);
       return;
     }
     const rev: Review[] = res.data;
@@ -226,9 +227,9 @@ export default function User() {
   return (
     <div className={classes.fullsize}>
       <Navbar />
+      <div className={classes.container}>
       {
-        !loadingUser && <>
-          <div className={classes.container}>
+        loadingUser ? <Center flex={1}><Loader size="xl"/></Center> : <>
             <div className={classes.body}>
               {isProfile ?
                 <ProfileSection user={user} degree={degree} />
@@ -240,9 +241,9 @@ export default function User() {
             {
               reviews.length !== 0 &&
               <div className={classes.filter}>
-                <Text className={classes.userReviews}>{t("User.userReviews")}</Text>
-                {loadingReviews ? <></> :
-                  <CurrentFilterComponent orderBy={orderBy ? orderBy : ""} dir={dir ? dir : ""} />}
+                {loadingReviews ? <></> : <>
+                  <Text className={classes.userReviews}>{t("User.userReviews")}</Text>
+                  <CurrentFilterComponent orderBy={orderBy ? orderBy : ""} dir={dir ? dir : ""} />
                 <Combobox
                   store={combobox}
                   width={200}
@@ -285,6 +286,7 @@ export default function User() {
                     </Combobox.Options>
                   </Combobox.Dropdown>
                 </Combobox>
+                </>}
               </div>
             }
             <div className={classes.noReviewsTitle}>
@@ -296,7 +298,8 @@ export default function User() {
             </div>
             <div className={classes.reviewsColumn}>
               {
-                !loadingReviews && reviews.length > 0 && reviews.map((review) => (
+                loadingReviews ? <Center><Loader/></Center> :
+                  reviews.map((review) => (
                   <ReviewCard
                     key={review.id}
                     subjectId={review.subjectId}
@@ -320,11 +323,9 @@ export default function User() {
               }
 
             </div>
-          </div>
-
-
         </>
       }
+      </div>
     </div>
   )
 
@@ -456,11 +457,13 @@ function ProfileSection({ user, degree }: { user?: User, degree?: Degree }) {
 
   if (!user) return <Loader />;
 
-  const EditButton = (props: { onClick?: () => void, className?: string, filled?: boolean }) => (
-    <Button variant={props.filled ? "filled" : "outline"} w="42px" h="32px" p="0" {...props}>
+  const EditButton = (props: { onClick?: () => void, className?: string, filled?: boolean }) => ( <>
+    {/* eslint-disable-next-line @typescript-eslint/ban-ts-comment */}
+    {/* @ts-ignore */}
+    <Button variant={props.filled ? "filled" : "outline"} w="42px" h="32px" p="0" {...props} filled={undefined}>
       <IconPencil size="18px" />
     </Button>
-  );
+  </>);
 
   return <>
     <div className={classes.header}>

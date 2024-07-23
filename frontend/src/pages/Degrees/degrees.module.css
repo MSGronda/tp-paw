@@ -14,6 +14,8 @@
     align-self: center;
     justify-self: center;
     margin: 0 auto;
+    display: flex;
+    flex-direction: column;
 }
 
 .card_basic {
