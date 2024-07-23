@@ -38,7 +38,7 @@ public class ImageController {
     public Response getImage(@PathParam("id") final long id) {
         final byte[] img = imgService.findById(id).map(Image::getImage).orElseThrow(ImageNotFoundException::new);
 
-        return CacheHelper.setUnconditionalCache(Response.ok(img), MAX_CACHE_AGE).build();
+        return Response.ok(img).build();
     }
 
     @POST
