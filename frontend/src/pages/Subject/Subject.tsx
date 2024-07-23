@@ -14,7 +14,7 @@ import {
     Group,
     Combobox,
     useCombobox,
-    Notification,
+    Notification, Center, Loader,
 } from '@mantine/core';
 import {IconArrowsSort, IconCheck, IconPencil, IconX} from "@tabler/icons-react";
 import {SimpleSubject, Subject} from "../../models/Subject.ts";
@@ -53,7 +53,7 @@ export function SubjectPage() {
     const [degree, setDegree] = useState({} as Degree);
     const [prerequisites, setPrerequisites] = useState([{} as SimpleSubject]);
     const [loading, setLoading] = useState(true);
-    const [reviews, setReviews] = useState<Review[]>([]);
+    const [reviews, setReviews] = useState<Review[]|undefined>(undefined);
     const [reviewVotes, setReviewVotes] = useState<Map<number, ReviewVote[]>>(new Map());
     const [didUserReview, setDidUserReview] = useState(true);
     const [users, setUsers] = useState<User[]>([]);
@@ -162,7 +162,7 @@ export function SubjectPage() {
     const getSubjectSemester = async (degreeId: number, subjectId: string) => {
         const res = await degreeService.getSemesters(degreeId, subjectId);
         const data = handleService(res, navigate);
-        if(res){
+        if(res && data && data.length > 0){
             setSubjectSemester(data[0]);
         }
     }
@@ -272,7 +272,7 @@ export function SubjectPage() {
     return (
         <>
             <Navbar />
-            {loading ? <div /> :
+            {loading ? <Center mt={120}><Loader size="xl"/></Center> :
                 <div className={classes.container}>
                     <div className={classes.background}>
                         {editReviewValue ? (
@@ -317,7 +317,7 @@ export function SubjectPage() {
                         }
 
                         <div className={classes.breadcrumbArea}>
-                            {degree !== null && subjectSemester !== undefined ?
+                            {degree !== null && subjectSemester != undefined ?
                                 <Breadcrumbs separator="→">
                                     <Link to={"/degree/" + degree.id}>
                                         {degree.name}
@@ -435,7 +435,7 @@ export function SubjectPage() {
                                         <Table.Thead>
                                             {subject.classes?.map((item) => (
                                                 item.locations.map((classtime, index) => (
-                                                    <Table.Tr key={`${item.idClass}-${classtime.day}-${classtime.startTime}`}>
+                                                    <Table.Tr key={index}>
                                                         <Table.Td>
                                                             {index === 0 ? item.idClass : ""}
                                                         </Table.Td>
@@ -522,7 +522,7 @@ export function SubjectPage() {
                     <br />
                     <hr className={classes.hrSeparator} />
                     {
-                        reviews.length !== 0 &&
+                        reviews && reviews.length !== 0 &&
                         <div className={classes.filter}>
                             {loading ? <></> : <CurrentFilterComponent orderBy={orderBy ? orderBy : ""} dir={dir ? dir : ""} />}
                             <Combobox
@@ -570,7 +570,7 @@ export function SubjectPage() {
                     }
                     <div className={classes.noReviewsTitle}>
                         {
-                            reviews.length === 0 &&
+                            reviews && reviews.length === 0 &&
                             <Text fw={700} size={"xl"}>{t("Subject.noreviews")}</Text>
                         }
                     </div>
