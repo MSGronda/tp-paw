@@ -36,7 +36,6 @@ export function EditSubject() {
 
     const MINIMUM_CREDITS = 0;
     const MAXIMUM_CREDITS = 12;
-    const SUBJECT_ID_REGEX = "[0-9]{2}\\.[0-9]{2}";
     const CLASS_NAME_REGEX = "[A-Za-z]+";
     const icon = <IconInfoCircle />;
 
@@ -70,7 +69,6 @@ export function EditSubject() {
     // Error related
     const [missingClassTimeFields, setMissingClassTimeFields] = useState(false);
     const [missingClassFields, setMissingClassFields] = useState(false);
-    const [wrongPatternInSubjectId, setWrongPatternInSubjectId] = useState(false);
     const [emptySubjectName, setEmptySubjectName] = useState(false);
     const [errorAlert, setErrorAlert] = useState(false);
     const [errorMessageTitle, setErrorMessageTitle] = useState("");
@@ -88,6 +86,7 @@ export function EditSubject() {
     const [selectedProfessors, setSelectedProfessors] = useState<string[]>([]);
     const [createdProfessors, setCreatedProfessors] = useState<string[]>([]);
     const [selectedClasses, setSelectedClasses] = useState<Class[]>([]);
+    const [professorsPerClass, setProfessorsPerClass] = useState<Map<string,string[]>>(new Map());
 
     // Fetched Values
     const [degrees, setDegrees] = useState<Degree[]>([]);
@@ -179,7 +178,7 @@ export function EditSubject() {
         if(res){
             const selProfs: Professor[] = [];
             for(let i = 0; i < subject.classes.length; i++){
-                if(res.has(subject.classes[i].idClass)){
+                if(res.has(subject.classes[i].idClass) && res.get(subject.classes[i].idClass) !== undefined){
                     const classProfs = res.get(subject.classes[i].idClass);
                     subject.classes[i].professors = classProfs.map(prof => prof.name);
                     for(const prof of classProfs) {
@@ -326,15 +325,6 @@ export function EditSubject() {
     }
 
     // Handlers
-    function handleNewSubjectId(id: string){
-        setSubjectId(id);
-        if(id.match(SUBJECT_ID_REGEX)){
-            setWrongPatternInSubjectId(false);
-            return;
-        }
-        setWrongPatternInSubjectId(true);
-    }
-
     function handleSelectedDegreeSemesters() {
         let index;
         if((index = selectedDegrees.indexOf(currentDegree)) !== -1) {
@@ -399,7 +389,8 @@ export function EditSubject() {
     }
 
     function handleClassCreation() {
-        const newClass = {idClass: currentClassName, idSubject: subjectId, locations: [], professors: currentClassProfessors};
+        const newClass = {idClass: currentClassName, idSubject: subjectId, locations: []};
+        const professors = currentClassProfessors;
 
         if(currentClassName === "" || currentClassProfessors.length === 0 || !currentClassName.match(CLASS_NAME_REGEX)) {
             setMissingClassFields(true);
@@ -526,7 +517,6 @@ export function EditSubject() {
 
     function handleSubjectEdit(){
         // Check values before submitting
-        setWrongPatternInSubjectId(false);
         if(subjectName.length == 0){
             setEmptySubjectName(true);
             handleErrorAlert(t("CreateSubject.emptySubjectNameError"));
@@ -817,7 +807,7 @@ export function EditSubject() {
                             </h6>
                         </div>
                             <Textarea className={classes.departmentDropdown} autosize value={subjectId} description={t("CreateSubject.disabledSubjectIdField")}
-                                      onChange={(event) => handleNewSubjectId(event.currentTarget.value)} disabled/>
+                                      disabled/>
                     </Flex>
                     <Flex mih={50} gap="xl" justify="space-between" align="center" direction="row" wrap="wrap">
                         {t("CreateSubject.name")}
