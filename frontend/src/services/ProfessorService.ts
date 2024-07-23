@@ -49,4 +49,16 @@ export class ProfessorService {
         });
         return resp;
     }
+
+    async createProfessor(professorName: string){
+        try {
+            const data = {
+                name: professorName
+            }
+            const res = await axiosService.authAxiosWrapper(axiosService.POST, `${path}`, {}, data);
+            return handleResponse(res);
+        } catch (error: any) {
+            return handleResponse(error.response);
+        }
+    }
 }

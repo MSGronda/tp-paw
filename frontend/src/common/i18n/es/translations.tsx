@@ -324,7 +324,7 @@ export const TRANSLATIONS_ES = {
         id: "Código de materia",
         idHelp: "Deben ser 4 números en el formato: ##.##",
         name: "Nombre de la materia",
-        idError: "Una materia con este código ya existe",
+        idError: "ID en uso o no sigue el formato",
         department: "Departamento",
         credits: "Créditos",
         degree: "Carreras",
@@ -372,13 +372,16 @@ export const TRANSLATIONS_ES = {
         completeClassFields: "Es requerido completar el campo de profesores, nombre de la comisión y usar solo letras para el nombre de la comisión",
         emptySubjectName: "Este campo es requerido",
         emptySubjectNameError: "El nombre de la materia es requerido",
-        wrongSubjectId: "El ID de materia en necesario y requiere que siga el formato indicado",
+        wrongSubjectId: "El ID de materia es necesario y requiere que siga el formato indicado",
         emptyDepartment: "Seleccione un departamento para la materia",
         emptyDegree: "Seleccione una carrera y semestre para la materia",
         emptyClasses: "Las comisiones son necesarias para la materia",
         wrongCredits: "Asegúrese de igualar la cantidad de horas por semana con la cantidad de créditos, para cada comisión",
         disabledSubjectIdField: "No se puede modificar el ID de la materia",
-        editSubjectTitle: "Editar materia"
+        editSubjectTitle: "Editar materia",
+        userProfessorName: "El nombre de profesor que ingresó ya existe",
+        idInUse: "El ID de materia ya esta en uso",
+        oops: "Ups! Algo salió mal"
     },
     Degrees: {
         title: "Carreras",

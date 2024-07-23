@@ -326,7 +326,7 @@ export const TRANSLATIONS_EN = {
         id: "Subject ID",
         idHelp: "Must be 4 numbers in the format: ##.##",
         name: "Subject Name",
-        idError: "A subject with this code already exists",
+        idError: "ID is in use or doesn't follow the pattern",
         department: "Department",
         credits: "Credits",
         degree: "Degrees",
@@ -381,6 +381,9 @@ export const TRANSLATIONS_EN = {
         wrongCredits: "Make sure to match the amount of hours of class with the amount of credits for every class",
         disabledSubjectIdField: "Cannot edit subject ID",
         editSubjectTitle: "Edit subject",
+        userProfessorName: "The professor name submitted, already exists",
+        idInUse: "The subject ID is already in use",
+        oops: "Oops! Something went wrong..."
     },
     Degrees: {
         title: "Degrees",

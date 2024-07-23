@@ -40,9 +40,9 @@ export function CreateSubject() {
   const { t } = useTranslation();
   const navigate = useNavigate();
 
-  const MINIMUM_CREDITS = 1;
+  const MINIMUM_CREDITS = 0;
   const MAXIMUM_CREDITS = 12;
-  const SUBJECT_ID_REGEX = "[0-9]{2}\\.[0-9]{2}";
+  const SUBJECT_ID_REGEX = "[0-9][0-9]\\.[0-9][0-9]";
   const CLASS_NAME_REGEX = "[A-Za-z]+";
   const icon = <IconInfoCircle />;
 
@@ -59,6 +59,7 @@ export function CreateSubject() {
   classDays.forEach((clas, index) => weekDaysMap.set(clas, index));
   //const availableCreditsPerClass = new Map<string,number>();
   const [availableCreditsPerClass, setAvailableCreditsPerClass] = useState<Map<string,number>>(new Map());
+  const [carreerSemester, setCarreerSemester] = useState<Map<string, string[]>>(new Map());
 
   // UI components states
   const [activeTab, setActiveTab] = useState<string | null>("general-info");
@@ -79,6 +80,7 @@ export function CreateSubject() {
   const [errorAlert, setErrorAlert] = useState(false);
   const [errorMessageTitle, setErrorMessageTitle] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
+  const [usedProfessorName, setUsedProfessorName] = useState(false);
 
   // Form related states
   const [department, setDepartment] = useState<string>("");
@@ -99,7 +101,7 @@ export function CreateSubject() {
   const [departments, setDepartments] = useState<string[]>([]);
 
   // Current selected values
-  const [currentDegree, setCurrentDegree] = useState<number>(1);
+  const [currentDegree, setCurrentDegree] = useState<number>();
   const [currentSemester, setCurrentSemester] = useState<string>("");
   const [currentSemesterOptions, setCurrentSemesterOptions] = useState<JSX.Element[]>([]);
   const [currentProfessorCreation, setCurrentProfessorCreation] = useState<string>("");
@@ -146,14 +148,30 @@ export function CreateSubject() {
     }
   }
 
+  const createProfessor = async (professorName: string) => {
+    const res = await professorService.createProfessor(professorName);
+    if(res.status == 201){
+      //success message
+      setOpenedProfessorModal(false);
+      setUsedProfessorName(false);
+      setCurrentProfessorCreation("");
+    } else {
+      // error message
+      setUsedProfessorName(true);
+    }
+  }
+
   const createSubject = async(subjectId: string, subjectName: string, department: string, credits: number, selectedDegrees: number[],
                               selectedSemesters: number[], prereqs: string[], professors: string[], selectedClasses: any[]) => {
     const res = await subjectService.createSubject(subjectId, subjectName, department, credits, selectedDegrees, selectedSemesters, prereqs, professors, selectedClasses);
     if(res){
       if(res.status === 201){
-        navigate('/subject/' + subjectId)
+        navigate('/subject/' + subjectId);
+      } else if(res.status === 409) { // id is already in use
+        handleErrorAlert(t("CreateSubject.idInUse"));
+        setWrongPatternInSubjectId(true);
       } else {
-        // Error message
+        handleErrorAlert(t("CreateSubject.oops"))
       }
     }
   }
@@ -171,7 +189,7 @@ export function CreateSubject() {
     searchSubjects(1);
   }, []);
 
-  const carreerSemester = new Map<string, string[]>();
+
   useEffect(() => {
     for (let i = 0; i < degrees.length; i++) {
       carreerSemester.set(degrees[i].id.toString(), []);
@@ -182,6 +200,7 @@ export function CreateSubject() {
       }
       carreerSemester.get(degrees[i].id.toString())?.push(t("CreateSubject.elective"));
     }
+    setCarreerSemester(new Map(carreerSemester));
   }, [degrees]);
 
   useEffect(() => {
@@ -194,7 +213,7 @@ export function CreateSubject() {
     }
   }, [currentDegree, carreerSemester]);
 
-  // Degrees/Semester Utils
+  // Utils
   function searchForDegreeId(degreeName: string) {
     for(let i = 0; i < degrees.length; i++) {
       if(degrees[i].name === degreeName) {
@@ -237,10 +256,17 @@ export function CreateSubject() {
     return Math.abs(minutes2 - minutes1) / 60;
   }
 
+  function validSubjectIdPattern(subjectId: string){
+    if(subjectId.length !== 5){
+      return false;
+    }
+    return subjectId.match(SUBJECT_ID_REGEX);
+  }
+
   // Handlers
   function handleNewSubjectId(id: string){
     setSubjectId(id);
-    if(id.match(SUBJECT_ID_REGEX)){
+    if(validSubjectIdPattern(id)){
       setWrongPatternInSubjectId(false);
       return;
     }
@@ -283,13 +309,7 @@ export function CreateSubject() {
   }
 
   function handleProfessorCreation() {
-    if(!selectedProfessors.includes(currentProfessorCreation)){
-      setSelectedProfessors([...selectedProfessors, currentProfessorCreation]);
-    }
-    setProfessors([...professors, {name: currentProfessorCreation, subjects: []}]);
-    setCreatedProfessors([...createdProfessors, currentProfessorCreation]);
-    setCurrentProfessorCreation("");
-    setOpenedProfessorModal(false);
+    createProfessor(currentProfessorCreation);
   }
 
   function handleRemoveCreatedProfessor(professor: string) {
@@ -441,8 +461,8 @@ export function CreateSubject() {
   }
 
   function handleSubjectCreation(){
-    // Check that there are no missing values
-    if(wrongPatternInSubjectId){
+    // Check values before submitting
+    if(wrongPatternInSubjectId || !validSubjectIdPattern(subjectId)){
       handleErrorAlert(t("CreateSubject.wrongSubjectId"));
       return;
     }
@@ -487,7 +507,7 @@ export function CreateSubject() {
       subjectClasses.push({code: clas.idClass, professors: clas.professors,
         classTimes: clas.locations});
     }
-
+    console.log("Pase los checks!")
     createSubject(subjectId, subjectName, department, credits, selectedDegrees, selectedSemesters, prereqs, selectedProfessors, subjectClasses);
   }
 
@@ -593,6 +613,14 @@ export function CreateSubject() {
       </Modal>
       {/* Professor Modal */}
       <Modal opened={openedProfessorModal} onClose={() => setOpenedProfessorModal(false)} title={t("CreateSubject.createProfessor")} size="35%">
+        {usedProfessorName && <Alert variant="light" color="yellow" title={t("CreateSubject.missingFields")} icon={icon}>
+          <Flex direction="row" justify="space-between">
+            {t("CreateSubject.userProfessorName")}
+            <ActionIcon size={18} variant="transparent" color="gray" onClick={() => setUsedProfessorName(false)}>
+              <IconX style={{ width: rem(24), height: rem(24) }} />
+            </ActionIcon>
+          </Flex>
+        </Alert>}
         <Flex mih={50} miw={500} gap="xl" justify="space-between" align="center" direction="row" wrap="wrap">
           {t("CreateSubject.professorName")}
           <TextInput className={classes.degreeDropdown} value={currentProfessorCreation} onChange={(event) => setCurrentProfessorCreation(event.target.value)} />
