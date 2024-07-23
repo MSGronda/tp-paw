@@ -139,7 +139,7 @@ export const TRANSLATIONS_ES = {
         medium: "Demanda de tiempo normal",
         high: "Requiere mucho tiempo",
         reviews: "{{n}} reseñas",
-        oneReview: "1 review",
+        oneReview: "1 reseña",
         no_reviews: "No hay reseñas",
         no_info: "Sin informacion"
     },
