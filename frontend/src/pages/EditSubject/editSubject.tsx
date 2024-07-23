@@ -251,18 +251,8 @@ export function EditSubject() {
             setSubjectName(subject.name);
             setSubjectId(subject.id);
             setCredits(subject.credits);
-            // Hacer request para obtener los cuatris degrees donde estan
             setSelectedPrereqs(subject.prerequisites.map((prereq) => Number(prereq)));
-            const profs :string[] = [];
-            for(const clas of subject.classes){
-                for(const prof of clas.professors) {
-                    if(!profs.includes(prof)){
-                        profs.push(prof);
-                    }
-                }
-            }
-            setCreatedProfessors(profs);
-            setSelectedProfessors(profs);
+            getProfessorsForSubject(subject);
             setSelectedClasses(subject.classes);
         }
     }, [subject]);
