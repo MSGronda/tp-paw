@@ -375,7 +375,7 @@ export function SubjectPage() {
                                                 <Table.Td>
                                                     {subject.classes && subject.classes.length === 0 ? <>{t("Subject.emptyProfessors")}</> : <></>}
                                                     {
-                                                        getAllProfessors(professors).map((professor) => <Badge color="blue">{professor}</Badge>)
+                                                        getAllProfessors(professors).map((professor) => <Badge color="blue" key={professor}>{professor}</Badge>)
                                                     }
                                                 </Table.Td>
                                             </Table.Tr>
@@ -435,7 +435,7 @@ export function SubjectPage() {
                                         <Table.Thead>
                                             {subject.classes?.map((item) => (
                                                 item.locations.map((classtime, index) => (
-                                                    <Table.Tr>
+                                                    <Table.Tr key={`${item.idClass}-${classtime.day}-${classtime.startTime}`}>
                                                         <Table.Td>
                                                             {index === 0 ? item.idClass : ""}
                                                         </Table.Td>
@@ -464,11 +464,11 @@ export function SubjectPage() {
                                         </Table.Thead>
                                         <Table.Tbody>
                                             {subject.classes?.map((item) => (
-                                                <Table.Tr>
+                                                <Table.Tr key={item.idClass}>
                                                     <Table.Td>{item.idClass}</Table.Td>
                                                     <Table.Td>
                                                         {professors.get(item.idClass)?.map((p) => (
-                                                            <Badge color="blue">{p.name}</Badge>
+                                                            <Badge color="blue" key={p.name}>{p.name}</Badge>
                                                         ))}
                                                     </Table.Td>
                                                 </Table.Tr>
