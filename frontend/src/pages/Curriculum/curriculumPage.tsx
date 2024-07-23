@@ -6,7 +6,7 @@ import {Center, Container, Divider, Loader, Tabs, Title as MantineTitle} from "@
 import {ReactElement, useEffect, useRef, useState} from "react";
 import {degreeService, subjectService, userService} from "../../services";
 import {Degree} from "../../models/Degree.ts";
-import {useParams} from "react-router-dom";
+import {useParams, useSearchParams} from "react-router-dom";
 import {Subject} from "../../models/Subject.ts";
 import SubjectCard from "../../components/subject-card/subject-card.tsx";
 import {useIsVisible} from "../../hooks/useIsVisible.tsx";
@@ -15,10 +15,12 @@ import SubjectFilters from "../../components/subject-filters/subjectFilters.tsx"
 export default function CurriculumPage() {
   const {t} = useTranslation(undefined, {keyPrefix: "Curriculum"});
   const params = useParams();
+  const [queryParams] = useSearchParams();
 
   const [degree, setDegree] = useState<Degree|undefined>(undefined);
 
   const degreeId = params.id ? parseInt(params.id) : userService.getUserData()!.degreeId!;
+  const semester = queryParams.has("semester") ? queryParams.get("semester")! : "1";
 
   useEffect(() => {
     degreeService.getDegreeById(degreeId).then((res) => {
@@ -30,6 +32,21 @@ export default function CurriculumPage() {
     }).catch(err => console.error("Failed to get degree: ", err));
 
   }, [degreeId]);
+  
+  function setSemesterParam(semester: string) {
+    const currentUrl = `${location.protocol}//${location.host}${location.pathname}`;
+    
+    if(semester == "1") 
+      queryParams.delete("semester");
+    else {
+      queryParams.set("semester", semester.toString());
+    }
+    
+    const newUrl = queryParams.size == 0 ? currentUrl : `${currentUrl}?${queryParams.toString()}`;
+    
+    
+    window.history.pushState(null, '', newUrl);
+  }
 
   const tabs: ReactElement[] = [];
   const tabPanels: ReactElement[] = [];
@@ -38,7 +55,7 @@ export default function CurriculumPage() {
       const year = Math.floor((i-1) / 2) + 1;
       const semester = ((i-1) % 2) + 1;
       tabs.push(
-        <Tabs.Tab value={i.toString()} key={i}>
+        <Tabs.Tab value={i.toString()} key={i} onClick={() => setSemesterParam(i.toString())}>
           {t("semester", {year: year, semester: semester})}
         </Tabs.Tab>
       );
@@ -46,11 +63,11 @@ export default function CurriculumPage() {
                                                                         semester={i}/></Tabs.Panel>)
     }
     tabs.push(
-      <Tabs.Tab value="-1" key="-1">
+      <Tabs.Tab value="electives" key="electives" onClick={() => setSemesterParam("electives")}>
         {t("electives")}
       </Tabs.Tab>
     );
-    tabPanels.push(<Tabs.Panel value="-1" key="-1"><SemesterTabPanel key="-1" degreeId={degreeId} semester={-1}/></Tabs.Panel>);
+    tabPanels.push(<Tabs.Panel value="electives" key="electives"><SemesterTabPanel key="electives" degreeId={degreeId} semester={-1}/></Tabs.Panel>);
   }
 
   return <>
@@ -66,7 +83,7 @@ export default function CurriculumPage() {
 
           <Divider my="1rem" color="#cccccc"/>
 
-          <Tabs defaultValue="1">
+          <Tabs defaultValue={semester.toString()}>
             <Tabs.List key="list">
               {tabs}
             </Tabs.List>
