@@ -144,6 +144,7 @@ export default function MultiReview() {
                                 minRows={5}
                                 maxRows={8}
                                 autosize
+                                maxLength={2000}
                             />
 
                             <span style={{paddingTop: "1rem"}}>{t("Review.option")}</span>
