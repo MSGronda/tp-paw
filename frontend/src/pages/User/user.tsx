@@ -420,7 +420,7 @@ function UserSection({ user, degree, plan }: { user?: User, degree?: Degree, pla
                   {index == 0 && t("User.currentSemester")}
                 </Table.Td>
                 <Table.Td>
-                  <Link to={"/subjects/" + subject.id}>{subject.name}</Link>
+                  <Link to={"/subject/" + subject.id}>{subject.name}</Link>
                 </Table.Td>
               </Table.Tr>
             ))
