@@ -1,6 +1,12 @@
 import { Pagination } from '@mantine/core';
 
-const PaginationComponent = (props: any) => {
+interface PaginationProps {
+  lastPage: string|number;
+  page?: string|number;
+  setPage: (value: number) => void;
+}
+
+const PaginationComponent = (props: PaginationProps) => {
 
   const handleChange = (value: number) => {
     // Update the URL with the new page number
@@ -12,12 +18,15 @@ const PaginationComponent = (props: any) => {
     // Scroll to the top of the page
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
+  
+  const pageInt = props.page ? parseInt(props.page.toString()) : 1;
+  const lastPageInt = parseInt(props.lastPage.toString());
 
   return (
     <div>
-      <Pagination total={parseInt(props.lastPage)} 
+      <Pagination total={lastPageInt} 
                       variant="outlined" 
-                      value={parseInt(props.page)}
+                      value={pageInt}
                       onChange={handleChange}/>
     </div>
   );
