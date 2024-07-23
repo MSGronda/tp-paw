@@ -507,7 +507,6 @@ export function CreateSubject() {
       subjectClasses.push({code: clas.idClass, professors: clas.professors,
         classTimes: clas.locations});
     }
-    console.log("Pase los checks!")
     createSubject(subjectId, subjectName, department, credits, selectedDegrees, selectedSemesters, prereqs, selectedProfessors, subjectClasses);
   }
 
