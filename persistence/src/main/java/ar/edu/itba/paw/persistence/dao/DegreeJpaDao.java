@@ -73,8 +73,10 @@ public class DegreeJpaDao implements DegreeDao {
         ArrayList<DegreeSemester> semester = new ArrayList<>();
         if(semesterId.getAsInt() == Degree.getElectiveId()) {
             semester.add(new DegreeSemester(semesterId.getAsInt(),degree.getElectives()));
-        } else if(semesterId.getAsInt() - 1 < degree.getSemesters().size()){
-            semester.add(degree.getSemesters().get(semesterId.getAsInt()-1));
+        } else {
+            for(DegreeSemester degreeSemester : degree.getSemesters()){
+                if(degreeSemester.getNumber() == semesterId.getAsInt()) semester.add(degreeSemester);
+            }
         }
         return semester;
     }
