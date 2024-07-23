@@ -2,9 +2,7 @@ import {axiosService} from "."
 import { handleResponse } from "../handlers/responseHandler";
 import {Subject} from "../models/Subject.ts";
 import Class from "../models/Class.ts";
-import {Professor} from "../models/Professor.ts";
 import {UserPlan} from "../models/UserPlan.ts";
-import {handleService} from "../handlers/serviceHandler.tsx";
 
 const path = "/subjects"
 
@@ -258,6 +256,15 @@ export class SubjectService {
                 subjectClasses: subjectClasses
             }
             const res = await axiosService.authAxiosWrapper(axiosService.PUT, `${path}/${id}`, {}, data);
+            return handleResponse(res);
+        } catch (error: any) {
+            return handleResponse(error.response);
+        }
+    }
+
+    async deleteSubject(subjectId: string) {
+        try {
+            const res = await axiosService.authAxiosWrapper(axiosService.DELETE, `${path}/${subjectId}`);
             return handleResponse(res);
         } catch (error: any) {
             return handleResponse(error.response);

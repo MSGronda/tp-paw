@@ -254,7 +254,11 @@ export const TRANSLATIONS_ES = {
         ascTime: "Menor Tiempo a Dedicar",
         descTime: "Mayor Tiempo a Dedicar",
         editSubject: "Editar materia",
-        semester: "Semestre"
+        semester: "Semestre",
+        deleteSubject: "Borrar Materia",
+        warning: "Advertencia: ",
+        deleteSubjectAlertDescription: "¿Esta seguro de que quiere borrar la materia? Una vez hecho este cambio, no se puede revertir esta acción",
+        goBack: "Cerrar"
     },
     Builder: {
         title: "Constructor de Semester",

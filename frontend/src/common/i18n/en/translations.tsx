@@ -255,7 +255,11 @@ export const TRANSLATIONS_EN = {
         ascTime: "Ascending Time Demand",
         descTime: "Descending Time Demand",
         editSubject: "Edit Subject",
-        semester: "Semester"
+        semester: "Semester",
+        deleteSubject: "Delete Subject",
+        warning: "Warning: ",
+        deleteSubjectAlertDescription: "Are you sure you want to delete this subject. Once this action is performed, it can't be rolled back",
+        goBack: "Close"
     },
     Builder: {
         title: "Semester Builder",

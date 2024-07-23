@@ -14,9 +14,17 @@ import {
     Group,
     Combobox,
     useCombobox,
-    Notification, Center, Loader,
+    Notification, Center, Loader, Modal, Alert, Flex,
 } from '@mantine/core';
-import {IconArrowsSort, IconCheck, IconPencil, IconX} from "@tabler/icons-react";
+import {
+    IconAlarm,
+    IconAlertOctagon,
+    IconArrowsSort,
+    IconCheck,
+    IconPencil,
+    IconTrash,
+    IconX
+} from "@tabler/icons-react";
 import {SimpleSubject, Subject} from "../../models/Subject.ts";
 import { Navbar } from "../../components/navbar/navbar.tsx";
 import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
@@ -30,6 +38,7 @@ import { Degree } from "../../models/Degree.ts";
 import {ReviewVote} from "../../models/ReviewVote.ts";
 import {Professor} from "../../models/Professor.ts";
 import {getSemesterYearFormat} from "../../utils/subjectUtils.ts";
+import {useDisclosure} from "@mantine/hooks";
 
 interface Semester {
     semester?: number,
@@ -39,6 +48,8 @@ interface Semester {
 
 export function SubjectPage() {
     const iconSort = <IconArrowsSort size={14} />;
+    const warningIcon = <IconAlertOctagon />;
+
 
     const { t } = useTranslation();
     const location = useLocation();
@@ -63,6 +74,7 @@ export function SubjectPage() {
     const [editReviewValue, setEditReviewValue] = useState<boolean>();
     const [deletedReviewValue, setDeletedReviewValue] = useState<boolean>();
     const [progress, setProgress] = useState("PENDING");
+    const [openedDeleteSubjectModal, setOpenedDeleteSubjectModal] = useState<boolean>(false);
 
     const [professors, setProfessors] = useState<Map<string, Professor[]>>(new Map());
 
@@ -184,6 +196,24 @@ export function SubjectPage() {
         setPrerequisites(subjects);
     }
 
+    const deleteSubject = async(subjectId: string) => {
+        const res = await subjectService.deleteSubject(subjectId);
+        const data = handleService(res, navigate);
+        if (res.status === 200) {
+            //redirect to degree
+            //show message that subject was deleted
+        } else {
+            //show message that subject wasn't deleted
+        }
+    }
+
+    function handleDeleteSubjectButton() {
+        if(subjectId.id !== undefined && subjectId.id !== null) {
+            deleteSubject(subjectId.id);
+            navigate('/degree/' + degree.id);
+        }
+    }
+
     useEffect(() => {
         if (subjectId.id !== undefined) {
             searchSubject(subjectId.id);
@@ -271,6 +301,22 @@ export function SubjectPage() {
     });
     return (
         <>
+            <Modal opened={openedDeleteSubjectModal} onClose={() => setOpenedDeleteSubjectModal(false)}
+                   title={t("Subject.deleteSubject")} withCloseButton={true} size="30%">
+                <Flex direction="column" rowGap={20}>
+                    <Alert variant="filled" color="yellow" title={t("Subject.warning")} icon={warningIcon}>
+                        <Text>{t("Subject.deleteSubjectAlertDescription")}</Text>
+                    </Alert>
+                    <Flex direction="row" justify="space-between">
+                        <Button color="blue" onClick={() => setOpenedDeleteSubjectModal(false)}>
+                            {t("Subject.goBack")}
+                        </Button>
+                        <Button color="red" onClick={() => handleDeleteSubjectButton()}>
+                            {t("Subject.deleteSubject")}
+                        </Button>
+                    </Flex>
+                </Flex>
+            </Modal>
             <Navbar />
             {loading ? <Center mt={120}><Loader size="xl"/></Center> :
                 <div className={classes.container}>
@@ -332,11 +378,20 @@ export function SubjectPage() {
                         </div>
                         <div className={classes.editDeleteButtons}>
                             <Text size="xl" fw={500}> {subject.name} - {subject?.id}</Text>
-                            { role === 'EDITOR' && <Button radius="lg" rightSection={<IconPencil size={14}/>} onClick={() => {
-                                navigate("/edit-subject/" + subject.id);
-                            }}>
-                                {t("Subject.editSubject")}
-                            </Button>}
+                            { role === 'EDITOR' && <>
+                                <Button.Group>
+                                    <Button radius="lg" rightSection={<IconPencil size={14}/>} onClick={() => {
+                                        navigate("/edit-subject/" + subject.id);
+                                    }}>
+                                        {t("Subject.editSubject")}
+                                    </Button>
+                                    <Button radius="lg" color="red" rightSection={<IconTrash size={14}/>} onClick={() => {
+                                        setOpenedDeleteSubjectModal(true);
+                                    }}>
+                                        {t("Subject.deleteSubject")}
+                                    </Button>
+                                </Button.Group>
+                            </>}
                         </div>
                         <Card className={classes.mainBody}>
                             <Tabs defaultValue="general">
