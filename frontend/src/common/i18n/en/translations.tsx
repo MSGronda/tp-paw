@@ -52,7 +52,8 @@ export const TRANSLATIONS_EN = {
         SubjectSelection: {
             title: "Select the subjects you already passed",
             semester: "Semester {{n}}",
-            electives: "Electives"
+            electives: "Electives",
+            error: "An error occurred, please try again later",
         }
     },
     Login: {

@@ -4,6 +4,7 @@ import {Subject} from "../models/Subject.ts";
 import Class from "../models/Class.ts";
 import {Professor} from "../models/Professor.ts";
 import {UserPlan} from "../models/UserPlan.ts";
+import {handleService} from "../handlers/serviceHandler.tsx";
 
 const path = "/subjects"
 
@@ -159,13 +160,41 @@ export class SubjectService {
         }
     }
     async getSubjectsGroupedBySemester(degreeId: number): Promise<Record<number,Subject[]>> {
-        const res = await axiosService.authAxiosWrapper(axiosService.GET, `/subjects?degree=${degreeId}`);
-        if (!res || res.status !== 200) {
-            throw new Error("Unable to get subjects")
+        async function request(degree: number, page: number) {
+            const res = await axiosService.authAxiosWrapper(
+              axiosService.GET, 
+              `${path}?degree=${degree}&page=${page}`
+            );
+            
+            const handled = handleResponse(res);
+            
+            if(handled.failure) {
+                throw new Error("Unable to get subjects");
+            }
+            
+            return {
+                subjects: handled.data as Subject[],
+                page,
+                maxPage: handled.maxPage!
+            }
         }
+        
+        let subjects: Subject[] = [];
+        const first = await request(degreeId, 1);
+        subjects = subjects.concat(first.subjects);
+        
+        const promises = [];
+        for(let i = 2; i <= first.maxPage; i++) {
+            promises.push(request(degreeId, i));
+        }
+        
+        const results = await Promise.all(promises);
+        results.forEach((result) => {
+            subjects = subjects.concat(result.subjects);
+        });
 
         const bySemester: Record<number, Subject[]> = {};
-        res.data.forEach((subject: Subject) => {
+        subjects.forEach((subject: Subject) => {
             if(!subject.semester) return;
 
             if (!bySemester[subject.semester]) {
