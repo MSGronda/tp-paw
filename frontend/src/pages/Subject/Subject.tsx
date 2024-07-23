@@ -29,9 +29,10 @@ import { User } from "../../models/User.ts";
 import { Degree } from "../../models/Degree.ts";
 import {ReviewVote} from "../../models/ReviewVote.ts";
 import {Professor} from "../../models/Professor.ts";
+import {getSemesterYearFormat} from "../../utils/subjectUtils.ts";
 
 interface Semester {
-    semester: number,
+    semester?: number,
     subjects: string,
 }
 
@@ -47,7 +48,7 @@ export function SubjectPage() {
     const { role } = useContext(AuthContext);
 
     const [subject, setSubject] = useState({} as Subject);
-    const [subjectSemester, setSubjectSemester] = useState({} as Semester);
+    const [subjectSemester, setSubjectSemester] = useState(undefined as Semester|undefined);
     const [user, setUser] = useState<User>();
     const [degree, setDegree] = useState({} as Degree);
     const [prerequisites, setPrerequisites] = useState([{} as SimpleSubject]);
@@ -74,6 +75,8 @@ export function SubjectPage() {
     const orderBy = orderParams.get('orderBy');
     const dir = orderParams.get('dir');
     const page: number = orderParams.get('page') === null ? INITIAL_PAGE : parseInt(orderParams.get('page') as string, 10);
+    
+    const semesterFormat = subjectSemester?.semester ? getSemesterYearFormat(subjectSemester.semester) : undefined;
 
 
     const searchSubject = async (subjectId: string) => {
@@ -314,15 +317,15 @@ export function SubjectPage() {
                         }
 
                         <div className={classes.breadcrumbArea}>
-                            {degree !== null && subjectSemester !== undefined?
+                            {degree !== null && subjectSemester !== undefined ?
                                 <Breadcrumbs separator="→">
                                     <Link to={"/degree/" + degree.id}>
                                         {degree.name}
                                     </Link>
-                                    {subjectSemester.semester === -1 ?
-                                        <Link to={"/degree/" + degree.id + "?tab=electives"}>{t("Subject.electives")}</Link> :
-                                        <Link to={"/degree/" + degree.id + "?tab=" + subjectSemester.semester}>{t("Subject.semester")} {subjectSemester.semester}</Link>
-                                    }
+                                    {subjectSemester.semester && (subjectSemester.semester === -1 ?
+                                        <Link to={"/degree/" + degree.id + "?semester=electives"}>{t("Subject.electives")}</Link> :
+                                        <Link to={"/degree/" + degree.id + "?semester=" + subjectSemester.semester}>{t("Curriculum.semester", semesterFormat)}</Link>
+                                    )}
                                 </Breadcrumbs> :
                                 <></>
                             }
