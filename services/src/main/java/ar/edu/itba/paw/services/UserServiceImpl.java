@@ -260,7 +260,7 @@ public class UserServiceImpl implements UserService {
 
     @Transactional
     @Override
-    public void sendPasswordRecoveryEmail(final String email) throws UserNotFoundException {
+    public void sendPasswordRecoveryEmail(final String email, final Locale locale) throws UserNotFoundException {
         final Optional<User> maybeUser = userDao.findByEmail(email);
         if(!maybeUser.isPresent()){
             LOGGER.info("Invalid email for recovery '{}'", email);
@@ -269,7 +269,7 @@ public class UserServiceImpl implements UserService {
 
         final User user = maybeUser.get();
 
-        mailService.sendRecover(user, createRecoveryToken(user));
+        mailService.sendRecover(user, createRecoveryToken(user), locale);
     }
 
     @Transactional

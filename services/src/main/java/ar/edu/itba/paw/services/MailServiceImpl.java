@@ -62,7 +62,7 @@ public class MailServiceImpl implements MailService {
 
     @Async
     @Override
-    public void sendRecover(final User to, final String recoveryToken) {
+    public void sendRecover(final User to, final String recoveryToken, final Locale locale) {
         final Map<String,Object> mailModel = new HashMap<>();
         mailModel.put("url", baseUrl + "/recover/" + recoveryToken);
         sendMail(to, "recovery", mailModel);
@@ -102,14 +102,24 @@ public class MailServiceImpl implements MailService {
             final String template,
             final Map<String, Object> model
     ) throws MailException {
+        sendMail(to, template, model, Locale.forLanguageTag(to.getLocale()));
+    }
+    
+    private void sendMail(
+        final User to,
+        final String template,
+        final Map<String, Object> model,
+        final Locale locale
+    ) {
         model.put("baseUrl", baseUrl);
         model.put("logoUrl", logoUrl);
 
-        final Locale locale = Locale.forLanguageTag(to.getLocale());
         final Context ctx = new Context(locale);
         ctx.setVariables(model);
+        
+        final Locale nonNullLoc = locale == null ? Locale.getDefault() : locale;
 
-        final String subject = mailMessages.getMessage(template + ".subject", null, locale);
+        final String subject = mailMessages.getMessage(template + ".subject", null, nonNullLoc);
         final String body = templateEngine.process(template, ctx);
 
         sendMail(to.getEmail(), subject, body, true);

@@ -25,6 +25,7 @@ import javax.ws.rs.core.*;
 import java.net.URI;
 import java.sql.Timestamp;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -68,7 +69,7 @@ public class UserController {
     @POST
     @Consumes("application/vnd.user.recover.request.v1+json")
     public Response requestRecover(@Valid final RecoverPasswordRequestForm form) {
-        userService.sendPasswordRecoveryEmail(form.getEmail());
+        userService.sendPasswordRecoveryEmail(form.getEmail(), LocaleContextHolder.getLocale());
         return Response.accepted().build();
     }
     

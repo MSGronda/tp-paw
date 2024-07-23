@@ -44,7 +44,7 @@ public interface UserService {
 
     void recoverPassword(final String token, final String newPassword) throws InvalidTokenException;
 
-    void sendPasswordRecoveryEmail(final String email) throws UserNotFoundException;
+    void sendPasswordRecoveryEmail(final String email, final Locale locale) throws UserNotFoundException;
 
     void addRole(final User user, final Role role);
 
