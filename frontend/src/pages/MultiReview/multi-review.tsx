@@ -2,12 +2,13 @@ import {useLocation, useNavigate} from "react-router-dom";
 import classes from './multi-review.module.css';
 import {useEffect,  useState} from "react";
 import {Subject} from "../../models/Subject.ts";
-import {reviewService, subjectService} from "../../services";
+import {reviewService, subjectService, userService} from "../../services";
 import {handleService} from "../../handlers/serviceHandler.tsx";
 import {Progress} from "@mantine/core";
 import {Button, SegmentedControl, Textarea} from "@mantine/core";
 import {useTranslation} from "react-i18next";
 import Title from "../../components/title/title.tsx";
+import {User} from "../../models/User.ts";
 
 
 export default function MultiReview() {
@@ -32,7 +33,7 @@ export default function MultiReview() {
     const [AnonymousError, setAnonymousError] = useState(true)
 
     // Subject Behavior
-    const getSubject = async (id: string) => {
+    const getSubject = async (id: string): Promise<Subject> => {
         const resp = await subjectService.getSubjectById(id);
         const data = handleService(resp, navigate);
         if(data == "") {
@@ -43,10 +44,27 @@ export default function MultiReview() {
     const getSubjects = async () => {
         const ids = parseQueryParams(queryParams.get('r'));
 
-        const apiCalls = ids.map((id) => getSubject(id));
-        const resp = await Promise.all(apiCalls);    // Hacemos los llamados en paralelo
+        const user: User = handleService(await userService.getUser(), navigate);
 
-        setSubjects(sortById(ids, resp));
+        // Solo permitimos hacer reseñas de las materias que no hizo reviews
+        const unreviewedIds: string[] = [];
+        const reviewApiCalls = ids.map(async (id) => {
+            const resp = await reviewService.getReviewFromSubjectAndUser(id, user.id);
+            if(resp.status == 204){
+                unreviewedIds.push(id);
+            }
+        });
+        await Promise.all(reviewApiCalls);
+
+        const apiCalls = unreviewedIds.map((id) => getSubject(id));
+        const subs = await Promise.all(apiCalls);    // Hacemos los llamados en paralelo
+
+        if(subs.length == 0){
+            navigate("/");
+            return;
+        }
+
+        setSubjects(sortById(unreviewedIds, subs));
     }
 
     // Review Behavior
