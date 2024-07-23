@@ -50,8 +50,8 @@ export function EditSubject() {
         t("CreateSubject.day7"),
     ];
     const weekDaysMap = new Map<string,number>();
-    classDays.forEach((clas, index) => weekDaysMap.set(clas, index));
-    //const availableCreditsPerClass = new Map<string,number>();
+    classDays.forEach((clas, index) => weekDaysMap.set(clas, index+1));
+
     const [availableCreditsPerClass, setAvailableCreditsPerClass] = useState<Map<string,number>>(new Map());
     const [carreerSemester, setCarreerSemester] = useState<Map<string, string[]>>(new Map());
     const [fetchedSelectedDegrees, setFetchedSelectedDegrees] = useState<boolean>(false);
@@ -189,7 +189,6 @@ export function EditSubject() {
                     }
                 }
             }
-            setSubject(subject);
             setSelectedClasses(subject.classes);
             setSelectedProfessors(selProfs.map(prof => prof.name));
             setCreatedProfessors(selProfs.map(prof => prof.name));
@@ -583,8 +582,8 @@ export function EditSubject() {
             {degree.name}
         </ComboboxOption>
     ));
-    const classDayOptions = classDays.map((classDay) => (
-        <ComboboxOption key={classDay} value={classDay}>
+    const classDayOptions = classDays.map((classDay, index) => (
+        <ComboboxOption key={index + 1} value={classDay}>
             {classDay}
         </ComboboxOption>
     ));
@@ -948,7 +947,7 @@ export function EditSubject() {
                                     <Table.Th>{t("CreateSubject.classroom")}</Table.Th>
                                 </Table.Tr>
                                 { clas.locations.length > 0 && clas.locations.map((location) => <Table.Tr>
-                                    <Table.Th>{classDays[location.day]}</Table.Th>
+                                    <Table.Th>{classDays[location.day-1]}</Table.Th>
                                     <Table.Th>{location.startTime}</Table.Th>
                                     <Table.Th>{location.endTime}</Table.Th>
                                     <Table.Th>{location.mode}</Table.Th>
