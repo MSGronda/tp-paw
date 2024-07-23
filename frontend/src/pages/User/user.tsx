@@ -38,6 +38,7 @@ import authService from "../../services/AuthService.ts";
 import { Dropzone, MIME_TYPES } from "@mantine/dropzone";
 import {ReviewVote} from "../../models/ReviewVote.ts";
 import {Roles} from "../../models/Roles.ts";
+import Title from "../../components/title/title.tsx";
 
 
 export default function User() {
@@ -47,7 +48,7 @@ export default function User() {
 
   const [loadingUser, setLoadingUser] = useState(true);
   const [loadingReviews, setLoadingReviews] = useState(true);
-  const [user, setUser] = useState({} as User);
+  const [user, setUser] = useState<User|undefined>(undefined);
   const [planSubjects, setPlanSubjects] = useState<Subject[]>([]);
   const [degree, setDegree] = useState({} as Degree);
   const [reviews, setReviews] = useState<Review[]>([]);
@@ -214,19 +215,10 @@ export default function User() {
     onDropdownClose: () => combobox.resetSelectedOption(),
   });
 
-  useEffect(() => {
-    if (!isProfile) {
-      if (user.username !== undefined) {
-        document.title = user.username
-      }
-    } else {
-      document.title = t("Profile.loggeduser")
-    }
-  }, [user.username])
-
   return (
     <div className={classes.fullsize}>
       <Navbar />
+      <Title text={(isProfile || !user) ? t("Profile.loggeduser") : user.username}/>
       <div className={classes.container}>
       {
         loadingUser ? <Center flex={1}><Loader size="xl"/></Center> : <>
