@@ -69,40 +69,43 @@ export default function Search() {
 
     return (
         <div className={classes.fullsize}>
-            <Title text={`${t("title")} ${parsedParams.q ?? ""}`}/>
-            <Navbar />
-            <div className={classes.container_70}>
-                    {loading ? <Loader/> :
-                        subjects && subjects.length > 0 ? (
-                            <>
-                                <SubjectFilters />
-                                <div className={classes.results_area}>
-                                    <div className={classes.search_area}>
-                                        {subjects.map(subject => (
-                                            <SubjectCard
-                                                key={subject.id}
-                                                id={subject.id}
-                                                credits={subject.credits}
-                                                difficulty={subject.difficulty}
-                                                name={subject.name}
-                                                numReviews={subject.reviewCount}
-                                                prerequisites={[]}
-                                                timeDemand={subject.timeDemand}
-                                                progress={"incomplete"}
-                                            />
-                                        ))}
-                                    </div>
-                                    <div className={classes.center_pagination}>
-                                        <PaginationComponent page={parsedParams.page} lastPage={maxPage} setPage={changePage} />
-                                    </div>
-                                </div>
-                            </>
-                        ) : (
-                        <div className={classes.not_found_area}>
-                            <h3>{t("not_found", { query: parsedParams.q })}</h3>
-                        </div>
-                        )}
-            </div>
+          <Title text={`${t("title")} ${parsedParams.q ?? ""}`}/>
+          <Navbar />
+          <div className={classes.container_70}>
+            {loading ? <Loader/> :
+              <>
+                <SubjectFilters />
+                {subjects && subjects.length > 0 ? (
+                  <>
+                    <div className={classes.results_area}>
+                      <div className={classes.search_area}>
+                        {subjects.map(subject => (
+                          <SubjectCard
+                            key={subject.id}
+                            id={subject.id}
+                            credits={subject.credits}
+                            difficulty={subject.difficulty}
+                            name={subject.name}
+                            numReviews={subject.reviewCount}
+                            prerequisites={[]}
+                            timeDemand={subject.timeDemand}
+                            progress={"incomplete"}
+                          />
+                        ))}
+                      </div>
+                      <div className={classes.center_pagination}>
+                        <PaginationComponent page={parsedParams.page} lastPage={maxPage} setPage={changePage} />
+                      </div>
+                    </div>
+                  </>
+                ) : (
+                <div className={classes.not_found_area}>
+                  <h3>{t("not_found", { query: parsedParams.q })}</h3>
+                </div>
+                )}
+              </>
+            }
+          </div>
         </div>
     )
 }
