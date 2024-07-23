@@ -49,7 +49,7 @@ public class MailServiceImpl implements MailService {
         this.mailMessages = mailMessages;
 
         baseUrl = env.getRequiredProperty("baseUrl");
-        logoUrl = baseUrl + "/img/uni.png";
+        logoUrl = baseUrl + "/static/uni.png";
     }
 
     @Async

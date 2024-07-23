@@ -145,7 +145,10 @@ public class WebConfig extends WebMvcConfigurerAdapter {
         registry.addResourceHandler("/assets/**")
             .addResourceLocations("/assets/");
         
+        registry.addResourceHandler("/static/**")
+            .addResourceLocations("/static/");
+        
         registry.addResourceHandler("/favicon.ico")
-            .addResourceLocations("/favicon.ico");
+            .addResourceLocations("/static/favicon.ico");
     }
 }

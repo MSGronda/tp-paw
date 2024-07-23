@@ -7,7 +7,6 @@ import ar.edu.itba.paw.webapp.security.filters.JwtFilter;
 import ar.edu.itba.paw.webapp.security.filters.LocaleCaptureFilter;
 import ar.edu.itba.paw.webapp.security.handlers.UniAccessDeniedHandler;
 import ar.edu.itba.paw.webapp.security.handlers.UniAuthenticationEntryPoint;
-import ar.edu.itba.paw.webapp.security.services.UniUserDetailsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
@@ -179,7 +178,7 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     public void configure(WebSecurity web) {
-        web.ignoring().antMatchers("/static/**","/css/**", "/js/**", "/img/**", "/assets/**", "favicon.ico");
+        web.ignoring().antMatchers("/static/**","/css/**", "/js/**", "/static/**", "/assets/**", "favicon.ico");
     }
 
     @Bean
