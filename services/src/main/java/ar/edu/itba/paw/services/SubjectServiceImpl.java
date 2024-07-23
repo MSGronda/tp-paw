@@ -193,7 +193,7 @@ public class SubjectServiceImpl implements SubjectService {
     @Override
     public List<Subject> superSearch(final SubjectSearchParams params, final int page, final String orderBy,final String dir){
         if(page < 1 || page > superSearchTotalPages(params))
-            throw new InvalidPageNumberException();
+            return Collections.emptyList();
 
         return subjectDao.superSearch(params, page, SubjectOrderField.parse(orderBy), OrderDir.parse(dir));
     }

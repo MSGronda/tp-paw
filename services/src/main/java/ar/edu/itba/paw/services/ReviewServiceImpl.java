@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -57,9 +58,8 @@ public class ReviewServiceImpl implements ReviewService {
 
     @Override
     public List<Review> get(final User currentUser, final Long userId, final String subjectId, final int page, final String orderBy, final String dir){
-        if(page < 1 || page > reviewDao.reviewSearchTotalPages(currentUser, subjectId, userId)){
-            throw new InvalidPageNumberException();
-        }
+        if(page < 1 || page > reviewDao.reviewSearchTotalPages(currentUser, subjectId, userId))
+            return Collections.emptyList();
 
         return reviewDao.reviewSearch(currentUser, subjectId, userId, page, ReviewOrderField.parse(orderBy), OrderDir.parse(dir));
     }
@@ -122,9 +122,9 @@ public class ReviewServiceImpl implements ReviewService {
     }
     @Override
     public List<ReviewVote> getVotes(final Review review, final Long userId, final int page){
-        if(page < 1 || (userId == null && page > reviewDao.getTotalVotePages(review))){
-            throw new InvalidPageNumberException();
-        }
+        if(page < 1 || (userId == null && page > reviewDao.getTotalVotePages(review)))
+            return Collections.emptyList();
+        
 
         if(userId == null){
             return reviewDao.getReviewVotes(review, page);

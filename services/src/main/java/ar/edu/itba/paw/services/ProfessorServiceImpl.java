@@ -47,9 +47,9 @@ public class ProfessorServiceImpl implements ProfessorService {
 
     @Override
     public List<Professor> searchProfessors(final String subjectId, final String classId, final String q, int page){
-        if(page < 1 || page > getTotalPagesForSearch(subjectId, classId, q)){
-            throw new InvalidPageNumberException();
-        }
+        if(page < 1 || page > getTotalPagesForSearch(subjectId, classId, q))
+            return Collections.emptyList();
+        
         return professorDao.searchProfessors(subjectId, classId, q, page);
     }
 
