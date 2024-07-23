@@ -349,11 +349,15 @@ public class SubjectJpaDao implements SubjectDao {
         // Chau performance
 
         final List<Object> paramValues = new ArrayList<>();
-        final StringBuilder queryString = new StringBuilder("SELECT s.id FROM subjects s WHERE ");
+        final StringBuilder queryString = new StringBuilder(
+            "SELECT s.id FROM subjects s LEFT JOIN subjectreviewstatistics srs ON s.id = srs.idsub WHERE "
+        );
+        
+        final String preorderQuery = appendSubjectSearchParams(queryString, paramValues, params);
+        final StringBuilder finalSb = new StringBuilder(preorderQuery);
+        appendOrderSql(finalSb, orderBy, dir);
 
-        final String finalizedQuery = appendSubjectSearchParams(queryString, paramValues, params);
-
-        final Query nativeQuery = createNativeQuery(finalizedQuery, paramValues);
+        final Query nativeQuery = createNativeQuery(finalSb.toString(), paramValues);
 
         @SuppressWarnings("unchecked") final List<Integer> ids = nativeQuery.setFirstResult((page - 1) * PAGE_SIZE).setMaxResults(PAGE_SIZE).getResultList();
 
@@ -387,9 +391,9 @@ public class SubjectJpaDao implements SubjectDao {
             final List<Object> paramValues = new ArrayList<>();
             final StringBuilder queryString = new StringBuilder("SELECT DISTINCT " + field.getColumn() + " FROM subjects s LEFT JOIN subjectreviewstatistics srs ON s.id = srs.idsub WHERE ");
 
-            final String finalizedQuery = appendSubjectSearchParams(queryString, paramValues, params);
+            appendSubjectSearchParams(queryString, paramValues, params);
 
-            final Query nativeQuery = createNativeQuery(finalizedQuery, paramValues);
+            final Query nativeQuery = createNativeQuery(queryString.toString(), paramValues);
 
 
             @SuppressWarnings("unchecked") final List<Object> fieldValues = nativeQuery.getResultList();
@@ -488,6 +492,20 @@ public class SubjectJpaDao implements SubjectDao {
         sb.append(" order by ")
                 .append(orderBy.getFieldName())
                 .append(" ")
-                .append(dirToUse.getQueryString());
+                .append(dirToUse.getQueryString())
+                .append(" nulls last ");
+    }
+    
+    private void appendOrderSql(final StringBuilder sb, final SubjectOrderField orderBy, final OrderDir dir) {
+        if(orderBy == null) return;
+        
+        OrderDir dirToUse = dir;
+        if(dir == null) dirToUse = OrderDir.ASCENDING;
+        
+        sb.append(" ORDER BY ")
+            .append(orderBy.getTableColumn())
+            .append(" ")
+            .append(dirToUse.getQueryString())
+            .append(" NULLS LAST ");
     }
 }
