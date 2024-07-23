@@ -53,6 +53,8 @@ export function EditSubject() {
     classDays.forEach((clas, index) => weekDaysMap.set(clas, index));
     //const availableCreditsPerClass = new Map<string,number>();
     const [availableCreditsPerClass, setAvailableCreditsPerClass] = useState<Map<string,number>>(new Map());
+    const [carreerSemester, setCarreerSemester] = useState<Map<string, string[]>>(new Map());
+    const [fetchedSelectedDegrees, setFetchedSelectedDegrees] = useState<boolean>(false);
 
     // UI components states
     const [activeTab, setActiveTab] = useState<string | null>("general-info");
@@ -73,6 +75,7 @@ export function EditSubject() {
     const [errorAlert, setErrorAlert] = useState(false);
     const [errorMessageTitle, setErrorMessageTitle] = useState("");
     const [errorMessage, setErrorMessage] = useState("");
+    const [usedProfessorName, setUsedProfessorName] = useState(false);
 
     // Form related states
     const [department, setDepartment] = useState<string>("");
@@ -94,7 +97,7 @@ export function EditSubject() {
     const [subject, setSubject] = useState<Subject>();
 
     // Current selected values
-    const [currentDegree, setCurrentDegree] = useState<number>(1);
+    const [currentDegree, setCurrentDegree] = useState<number>();
     const [currentSemester, setCurrentSemester] = useState<string>("");
     const [currentSemesterOptions, setCurrentSemesterOptions] = useState<JSX.Element[]>([]);
     const [currentProfessorCreation, setCurrentProfessorCreation] = useState<string>("");
@@ -172,11 +175,24 @@ export function EditSubject() {
                               selectedSemesters: number[], prereqs: string[], professors: string[], selectedClasses: any[]) => {
         const res = await subjectService.editSubject(subjectId, subjectName, department, credits, selectedDegrees, selectedSemesters, prereqs, professors, selectedClasses);
         if(res){
-            if(res.status === 201 || res.status === 200){// 200 updated, 201 created
+            if(res.status === 200){// 200 updated
                 navigate('/subject/' + subjectId)
             } else {
                 // Error message
             }
+        }
+    }
+
+    const createProfessor = async (professorName: string) => {
+        const res = await professorService.createProfessor(professorName);
+        if(res.status == 201){
+            //success message
+            setOpenedProfessorModal(false);
+            setUsedProfessorName(false);
+            setCurrentProfessorCreation("");
+        } else {
+            // error message
+            setUsedProfessorName(true);
         }
     }
 
@@ -195,14 +211,10 @@ export function EditSubject() {
     }, [subjectId]);
 
     useEffect(() => {
-        if(subjectId.length !== 0 && selectedDegrees.length !== 0){
+        if(subjectId.length !== 0 && selectedDegrees.length !== 0 && !fetchedSelectedDegrees){
             searchSemesters(selectedDegrees, subjectId);
         }
     }, [subjectId, selectedDegrees]);
-
-    useEffect(() => {
-        searchSubjects(1);
-    }, []);
 
     useEffect(() => {
         if(params.id !== undefined) {
@@ -227,11 +239,11 @@ export function EditSubject() {
                 }
             }
             setCreatedProfessors(profs);
+            setSelectedProfessors(profs);
             setSelectedClasses(subject.classes);
         }
     }, [subject]);
 
-    const carreerSemester = new Map<string, string[]>();
     useEffect(() => {
         for (let i = 0; i < degrees.length; i++) {
             carreerSemester.set(degrees[i].id.toString(), []);
@@ -242,6 +254,7 @@ export function EditSubject() {
             }
             carreerSemester.get(degrees[i].id.toString())?.push(t("CreateSubject.elective"));
         }
+        setCarreerSemester(new Map(carreerSemester));
     }, [degrees]);
 
     useEffect(() => {
@@ -343,13 +356,7 @@ export function EditSubject() {
     }
 
     function handleProfessorCreation() {
-        if(!selectedProfessors.includes(currentProfessorCreation)){
-            setSelectedProfessors([...selectedProfessors, currentProfessorCreation]);
-        }
-        setProfessors([...professors, {name: currentProfessorCreation, subjects: []}]);
-        setCreatedProfessors([...createdProfessors, currentProfessorCreation]);
-        setCurrentProfessorCreation("");
-        setOpenedProfessorModal(false);
+        createProfessor(currentProfessorCreation);
     }
 
     function handleRemoveCreatedProfessor(professor: string) {
@@ -371,7 +378,9 @@ export function EditSubject() {
     }
 
     function handleProfessorAddition(professor: string) {
-        setSelectedProfessors([...selectedProfessors, professor]);
+        if(!selectedProfessors.includes(professor)){
+            setSelectedProfessors([...selectedProfessors, professor]);
+        }
     }
 
     function handleClassCreation() {
@@ -562,9 +571,6 @@ export function EditSubject() {
             {degree.name}
         </ComboboxOption>
     ));
-    const professorsOptions = professors.slice(0,100).map((professor) => (
-        `${professor.name}`
-    ));
     const classDayOptions = classDays.map((classDay) => (
         <ComboboxOption key={classDay} value={classDay}>
             {classDay}
@@ -655,6 +661,14 @@ export function EditSubject() {
     </Modal>
     {/* Professor Modal */}
     <Modal opened={openedProfessorModal} onClose={() => setOpenedProfessorModal(false)} title={t("CreateSubject.createProfessor")} size="35%">
+        {usedProfessorName && <Alert variant="light" color="yellow" title={t("CreateSubject.missingFields")} icon={icon}>
+            <Flex direction="row" justify="space-between">
+                {t("CreateSubject.userProfessorName")}
+                <ActionIcon size={18} variant="transparent" color="gray" onClick={() => setUsedProfessorName(false)}>
+                    <IconX style={{ width: rem(24), height: rem(24) }} />
+                </ActionIcon>
+            </Flex>
+        </Alert>}
         <Flex mih={50} miw={500} gap="xl" justify="space-between" align="center" direction="row" wrap="wrap">
             {t("CreateSubject.professorName")}
             <TextInput className={classes.degreeDropdown} value={currentProfessorCreation} onChange={(event) => setCurrentProfessorCreation(event.target.value)} />
@@ -946,7 +960,7 @@ export function EditSubject() {
                                 onClick={() => setActiveTab("general-info")}>{t("CreateSubject.previous")}
                         </Button>
                         <Button color="green" onClick={() => handleSubjectEdit()}>
-                            {t("CreateSubject.createSubject")}
+                            {t("CreateSubject.editSubjectTitle")}
                         </Button>
                     </Flex>
                 </Tabs.Panel>
