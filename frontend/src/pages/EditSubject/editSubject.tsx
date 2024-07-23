@@ -171,9 +171,32 @@ export function EditSubject() {
         }
     }
 
+    const getProfessorsForSubject = async (subject: Subject) => {
+        const res = await professorService.getProfessorsForSubject(subject);
+        if(res){
+            const selProfs: Professor[] = [];
+            for(let i = 0; i < subject.classes.length; i++){
+                if(res.has(subject.classes[i].idClass)){
+                    const classProfs = res.get(subject.classes[i].idClass);
+                    subject.classes[i].professors = classProfs.map(prof => prof.name);
+                    for(const prof of classProfs) {
+                        if(!selProfs.includes(prof)){
+                            selProfs.push(prof);
+                        }
+                    }
+                }
+            }
+            setSubject(subject);
+            setSelectedClasses(subject.classes);
+            setSelectedProfessors(selProfs.map(prof => prof.name));
+            setCreatedProfessors(selProfs.map(prof => prof.name));
+        }
+    }
+
     const editSubject = async(subjectId: string, subjectName: string, department: string, credits: number, selectedDegrees: number[],
                               selectedSemesters: number[], prereqs: string[], professors: string[], selectedClasses: any[]) => {
         const res = await subjectService.editSubject(subjectId, subjectName, department, credits, selectedDegrees, selectedSemesters, prereqs, professors, selectedClasses);
+        //const data = handleService(res, navigate);
         if(res){
             if(res.status === 200){// 200 updated
                 navigate('/subject/' + subjectId)
