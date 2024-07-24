@@ -378,6 +378,7 @@ export const TRANSLATIONS_EN = {
         missingFields: "Warning",
         completeFields: "Class Time won't be created until all fields are completed and the amount of credits aren't surpassed",
         repeatedClassId: "The class name you selected is already in use.",
+        invalidDegreeOrSemester: "You must select a degree and a corresponding semester.",
         createClassTime: "Add Class time",
         completeClassFields: "Must complete class name, professors fields and use only letters for the class name",
         emptySubjectName: "This field is required",

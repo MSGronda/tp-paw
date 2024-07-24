@@ -86,6 +86,7 @@ export function CreateSubject() {
   const [errorMessage, setErrorMessage] = useState("");
   const [usedProfessorName, setUsedProfessorName] = useState(false);
   const [repeatedClass, setRepetedClass] = useState<boolean>(false);
+  const [invalidDegreeOrSemester, setInvalidDegreeOrSemester] = useState<boolean>(false);
 
 
   // Form related states
@@ -256,6 +257,12 @@ export function CreateSubject() {
   }
 
   function handleSelectedDegreeSemesters() {
+    if(currentDegree == undefined || currentSemester == ""){
+      setInvalidDegreeOrSemester(true);
+      return;
+    }
+
+
     let index;
     if((index = selectedDegrees.indexOf(currentDegree)) !== -1) {
       selectedDegrees[index] = currentDegree;
@@ -264,6 +271,8 @@ export function CreateSubject() {
       setSelectedDegrees((selectedDegrees) => [...selectedDegrees, currentDegree]);
       setSelectedSemesters((selectedSemesters) => [...selectedSemesters, extractNumberFromSemesterName(currentSemester)]);
     }
+
+    setInvalidDegreeOrSemester(false);
     setOpenedDegreeModal(false);
   }
 
@@ -538,6 +547,10 @@ export function CreateSubject() {
       { /* Degree Modal */}
       <Modal opened={openedDegreeModal} onClose={() => setOpenedDegreeModal(false)} title={t("CreateSubject.addDegree")} size="35%">
         <Flex mih={50} gap="xl" justify="space-between" align="center" direction="row" wrap="wrap">
+          { invalidDegreeOrSemester && <Alert variant="light" color="yellow" title={t("CreateSubject.missingFields")} icon={<IconInfoCircle/>}>
+            {t("CreateSubject.invalidDegreeOrSemester")}
+          </Alert>}
+
           {t("CreateSubject.degreeModalDegree")}
           <Combobox store={comboboxDegree} onOptionSubmit={(value) => {
               setCurrentDegree(searchForDegreeId(value));
