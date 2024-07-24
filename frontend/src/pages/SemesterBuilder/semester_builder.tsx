@@ -83,7 +83,10 @@ export default function SemesterBuilder() {
         const respPlan = await userService.getUserPlan(userId);
         const dataPlan = handleService(respPlan, navigate);
 
-        const subjects = createSelectedSubjects(dataPlan, dataSubjects);
+        let subjects: SelectedSubject[] = []
+        if(dataSubjects && dataPlan && dataSubjects != "" && dataPlan != "") {
+            subjects = createSelectedSubjects(dataPlan, dataSubjects);
+        }
 
         // Tenemos que setear el arreglo con 1 si es que ya tenia materias anotadas
         replaceScheduleArray(subjects)
@@ -682,7 +685,7 @@ async function getAllSubjects(serviceGet: (userId:number, page:number) => Promis
 
         subjects.push(...removeInvalidSubjects(data != "" ? data : [])); // TODO: cambiar esto a algo mejor
 
-        if (page == nextPage) {
+        if (!nextPage || page == nextPage) {
             gotAllPages = true;
         } else {
             page += 1;

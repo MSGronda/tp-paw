@@ -4,6 +4,10 @@ import {SelectedSubject} from "../models/SelectedSubject.ts";
 import Class from "../models/Class.ts";
 
 export function createSelectedSubjects(userPlan: UserPlan[], subjects: Subject[]): SelectedSubject[] {
+    if(!userPlan || !subjects){
+        return [];
+    }
+
     const selected: SelectedSubject[] = [];
 
     const currentPlan = userPlan.find((u) => u.dateFinished == null);
