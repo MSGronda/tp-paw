@@ -302,7 +302,7 @@ export default function Home() {
                             <Tabs.Panel value="future-subjects">
                                 <Flex align="center" direction="column" mih="50vh" w="100%" mt={10}>
                                     {/*NO SE PORQUE PERO NO FUNCIONA SI TENEMOS EL CSS EN EL OTRO ARCHIVO*/}
-                                    <div style={{width: "90%", display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(250px, 1fr))', padding: '1rem 1rem 1rem 1rem', gap: '1rem'}}>
+                                    <div style={{width: "90%", display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(275px, 1fr))', padding: '1rem 1rem 1rem 1rem', gap: '1rem'}}>
                                         {
                                             futureSubjects.map((subject) =>
                                                     <SubjectCard
