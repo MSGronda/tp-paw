@@ -1,8 +1,8 @@
 import classes from './register.module.css';
-import { Default_Navbar } from "../../components/default-navbar/default_navbar";
-import { PasswordInput, TextInput, Button } from '@mantine/core';
-import { useTranslation } from 'react-i18next';
-import {useEffect, useState} from 'react';
+import {Default_Navbar} from "../../components/default-navbar/default_navbar";
+import {Button, PasswordInput, TextInput} from '@mantine/core';
+import {useTranslation} from 'react-i18next';
+import {useState} from 'react';
 import {
     validateConfirmPassword,
     validateEmail,
@@ -15,10 +15,6 @@ import Title from '../../components/title/title.tsx';
 
 export default function Register() {
     const { t } = useTranslation();
-
-    useEffect(() => {
-        document.title = t("Register.title")
-    }, [])
 
     // State variables to keep track of input values
     const [email, setEmail] = useState('');
@@ -34,8 +30,6 @@ export default function Register() {
     
     const [registerComplete, setRegisterComplete] = useState(false);
 
-    const [emailTaken, setEmailTaken] = useState<boolean>(false);
-
     // Handle form submission
     function handleFormSubmit(e: { preventDefault: () => void; })  {
         e.preventDefault();
@@ -45,17 +39,16 @@ export default function Register() {
             name: username,
             password,
             passwordConfirmation: confirmPassword
-        }
-        AuthService.register(form).then(async (res) => {
+        };
+        
+        AuthService.register(form).then(res => {
             if (!res) {
-                setEmailTaken(true);
-                await new Promise(r => setTimeout(r, 7000));
-                setEmailTaken(false);
+                setEmailError(t("Register.emailTaken"));
                 return;
             }
 
             setRegisterComplete(true);
-        })
+        });
     }
 
     const isSubmitDisabled = !email || !username || !password || !confirmPassword || !!emailError || !!usernameError || !!passwordError || !!confirmPasswordError;
@@ -103,9 +96,6 @@ export default function Register() {
                         className={classes.padding}
                         error={confirmPasswordError}
                     />
-                    <div>
-                        {emailTaken ? <span style={{color: "red"}}>{t("Register.emailTaken")}</span> : <></> }
-                    </div>
                     <div className={classes.register_button_div}>
                         <Button type='submit' color='green.7' disabled={isSubmitDisabled}>
                             {t("Register.register")}
