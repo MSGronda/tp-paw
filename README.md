@@ -1,6 +1,6 @@
 # UNI
 
-Uni is a webapp university students can use to create, manage and track their university careers. 
+Uni is a webapp where university students from ITBA can manage and track their progress through their careers. 
 
 ## Requirements
 
@@ -12,7 +12,7 @@ Uni is a webapp university students can use to create, manage and track their un
 Run the following commands: 
 1)
 ```
-    mvn jetty::run
+    mvn clean package
 ```
 ## Running the tests
 ```
@@ -27,10 +27,20 @@ Run the following commands:
   - Maven
   - Thymeleaf
   - FlyWay
+  - React Framework
+  - Mantine UI kit
+  - Jersey
+  - Mockito
+  - JUnit
 
 ## Versioning
 
-This is the first issue of the project due to 17/5/2023 at 19hs
+This is the first issue of the project due to 17/5/2023 at 19 hours
+This is the second issue of the project due to 26/06/2023 at 19 hours
+*This is the third issue of the project due to 24/07/2024 at 19 hours*
+
+## API rest documentation
+https://app.swaggerhub.com/apis-docs/MROJASPELLICCIA/paw-2023a-06/1.0.0
 
 ## Features
 
@@ -48,8 +58,9 @@ This is the first issue of the project due to 17/5/2023 at 19hs
   - Review sorting
   - Review Paging in subject information and user profile (10 reviews per page)
   - Semester Builder with insights 
-  - Progress tracking
-  - Subject creation, editing and removal
+  - Progress tracking and history
+  - Subject creation, editing and deletion
+  - Degree creation, editing and deletion
   - Logging
   - Mailing
   - Internationalization (English and Spanish)
@@ -61,7 +72,7 @@ This is the first issue of the project due to 17/5/2023 at 19hs
     - It is used to send a notification to a user when a subject is marked as completed but the user did not post review for it (within 10 minutes of completion).
   - User Roles: 
     - User can post and vote reviews, edit and delete their own reviews.
-    - Moderator can do everything a user can do, but can also delete any review and promote a user to Moderator.
+    - Moderator can do everything a user can do, but can also delete any review and promote a user to Moderator. Also create, edit and delete subjects and degrees.
   - Moderator Account:
     - Username: paw.uni.mod@gmail.com
     - Password: Pawuni23
