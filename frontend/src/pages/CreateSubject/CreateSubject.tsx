@@ -9,7 +9,6 @@ import {
   ComboboxOption,
   ComboboxOptions, Divider,
   Flex,
-  Grid,
   InputBase,
   Modal,
   MultiSelect,
@@ -22,7 +21,7 @@ import {
   TextInput,
   useCombobox,
 } from "@mantine/core";
-import React, {useEffect, useRef, useState} from "react";
+import  {useEffect, useRef, useState} from "react";
 import Title from "../../components/title/title";
 import {degreeService, departmentService, professorService, subjectService} from "../../services";
 import {handleService} from "../../handlers/serviceHandler.tsx";
@@ -191,11 +190,6 @@ export function CreateSubject() {
 
   useEffect(() => {
     searchDegrees();
-  }, []);
-
-
-  useEffect(() => {
-    searchSubjects(1);
   }, []);
 
 
@@ -593,21 +587,27 @@ export function CreateSubject() {
       {/* Prereqs Modal */}
       <Modal opened={openedPrereqModal} onClose={() => setOpenedPrereqModal(false)} title={t("CreateSubject.addPrereq")} centered size="80%">
         <Flex justify="center" direction="column" align="center" gap="md">
-          <Grid >
+          <div style={{
+            width: "100%",
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fill, minmax(190px, 1fr))',
+            padding: '1rem 1rem 1rem 1rem',
+            gap: '1rem'
+          }}>
             {subjects.map((subject) => (
-                <Grid.Col span={2}>
-                  <ChooseSubjectCard subject={subject} selectionCallback={handlePrereqSelection} selected={isPrereqSelected(subject.id)} removalCallback={handlePrereqRemoval} />
-                </Grid.Col>
+                <ChooseSubjectCard subject={subject} selectionCallback={handlePrereqSelection}
+                                   selected={isPrereqSelected(subject.id)} removalCallback={handlePrereqRemoval}/>
             ))}
-          </Grid>
+          </div>
           <Flex>
             <Pagination total={maxPage} value={currentPrereqPage} onChange={setCurrentPrereqPage}/>
           </Flex>
         </Flex>
       </Modal>
       {/* Professor Modal */}
-      <Modal opened={openedProfessorModal} onClose={() => setOpenedProfessorModal(false)} title={t("CreateSubject.createProfessor")} size="35%">
-        {usedProfessorName && <Alert variant="light" color="yellow" title={t("CreateSubject.missingFields")} icon={icon}>
+      <Modal opened={openedProfessorModal} onClose={() => setOpenedProfessorModal(false)}
+             title={t("CreateSubject.createProfessor")} size="35%">
+      {usedProfessorName && <Alert variant="light" color="yellow" title={t("CreateSubject.missingFields")} icon={icon}>
           <Flex direction="row" justify="space-between">
             {t("CreateSubject.userProfessorName")}
             <ActionIcon size={18} variant="transparent" color="gray" onClick={() => setUsedProfessorName(false)}>

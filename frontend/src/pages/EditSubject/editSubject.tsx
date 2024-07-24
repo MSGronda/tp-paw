@@ -126,12 +126,12 @@ export function EditSubject() {
         if (res) {
             setSubjects(data);
             setMaxPage(res.maxPage || 1);
-            
-            try {
-                setDepartments(await departmentService.getDepartments());
-            } catch (e) { 
-                console.error("Unable to get departments: ", e); 
-            }
+        }
+    }
+    const searchDepartments = async () => {
+        const res = await departmentService.getDepartments();
+        if(res){
+            setDepartments(res);
         }
     }
 
@@ -233,11 +233,17 @@ export function EditSubject() {
     }
 
     useEffect(() => {
-        searchSubjects(currentPrereqPage);
+        if(selectedDegrees.length > 0){
+            searchSubjects(currentPrereqPage);
+        }
     }, [selectedDegrees, currentPrereqPage]);
 
     useEffect(() => {
         searchDegrees();
+    }, []);
+
+    useEffect(() => {
+        searchDepartments()
     }, []);
 
     useEffect(() => {
@@ -649,21 +655,28 @@ export function EditSubject() {
     {/* Prereqs Modal */}
     <Modal opened={openedPrereqModal} onClose={() => setOpenedPrereqModal(false)} title={t("CreateSubject.addPrereq")} centered size="80%">
         <Flex justify="center" direction="column" align="center" gap="md">
-            <Grid >
+            <div style={{
+                width: "100%",
+                display: 'grid',
+                gridTemplateColumns: 'repeat(auto-fill, minmax(190px, 1fr))',
+                padding: '1rem 1rem 1rem 1rem',
+                gap: '1rem'
+            }}>
                 {subjects.map((subject) => (
-                    <Grid.Col span={2}>
-                        <ChooseSubjectCard subject={subject} selectionCallback={handlePrereqSelection} selected={isPrereqSelected(subject.id)} removalCallback={handlePrereqRemoval} />
-                    </Grid.Col>
+                    <ChooseSubjectCard subject={subject} selectionCallback={handlePrereqSelection}
+                                       selected={isPrereqSelected(subject.id)}
+                                       removalCallback={handlePrereqRemoval}/>
                 ))}
-            </Grid>
+            </div>
             <Flex>
                 <Pagination total={maxPage} value={currentPrereqPage} onChange={setCurrentPrereqPage}/>
             </Flex>
         </Flex>
     </Modal>
-    {/* Professor Modal */}
-    <Modal opened={openedProfessorModal} onClose={() => setOpenedProfessorModal(false)} title={t("CreateSubject.createProfessor")} size="35%">
-        {usedProfessorName && <Alert variant="light" color="yellow" title={t("CreateSubject.missingFields")} icon={icon}>
+            {/* Professor Modal */}
+            <Modal opened={openedProfessorModal} onClose={() => setOpenedProfessorModal(false)}
+                   title={t("CreateSubject.createProfessor")} size="35%">
+                {usedProfessorName && <Alert variant="light" color="yellow" title={t("CreateSubject.missingFields")} icon={icon}>
             <Flex direction="row" justify="space-between">
                 {t("CreateSubject.userProfessorName")}
                 <ActionIcon size={18} variant="transparent" color="gray" onClick={() => setUsedProfessorName(false)}>
