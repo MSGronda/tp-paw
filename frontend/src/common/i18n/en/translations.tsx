@@ -195,6 +195,7 @@ export const TRANSLATIONS_EN = {
     Search: {
         title: "Search",
         not_found: "We could not find a subject that matched: {{query}}",
+        search_for: "Search for '{{query}}'",
         filter: "Filter",
         filterCredits: "Credits",
         filterDepartment: "Department",

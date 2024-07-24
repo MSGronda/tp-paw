@@ -9,7 +9,7 @@ import SubjectCard from '../../components/subject-card/subject-card';
 import PaginationComponent from '../../components/pagination/pagination';
 import Title from '../../components/title/title';
 import {Subject} from "../../models/Subject.ts";
-import {Loader} from "@mantine/core";
+import {Loader, Title as MantineTitle} from "@mantine/core";
 import SubjectFilters from "../../components/subject-filters/subjectFilters.tsx";
 import {parseSearchParams} from "../../utils/searchUtils.ts";
 
@@ -74,6 +74,7 @@ export default function Search() {
           <div className={classes.container_70}>
             {loading ? <Loader/> :
               <>
+                  <MantineTitle mx="1rem" mt="2rem">{t("search_for", {query: parsedParams.q})}</MantineTitle>
                 <SubjectFilters />
                 {subjects && subjects.length > 0 ? (
                   <>

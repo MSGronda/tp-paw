@@ -194,6 +194,7 @@ export const TRANSLATIONS_ES = {
     Search: {
         search: "Buscar",
         not_found: "No pudimos encontrar una materia que coincida con: {{query}}",
+        search_for: "Búsqueda para '{{query}}'",
         filter: "Filtrar",
         filterCredits: "Créditos",
         filterDepartment: "Departamento",

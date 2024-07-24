@@ -3,7 +3,7 @@ import {IconChevronDown, IconSearch} from '@tabler/icons-react';
 import classes from './navbar.module.css';
 import UniLogo from '../../images/uni.png'
 import { useTranslation } from "react-i18next";
-import { useNavigate } from 'react-router-dom';
+import {useNavigate, useSearchParams} from 'react-router-dom';
 import React, {useContext} from 'react';
 import AuthContext from '../../context/AuthContext';
 
@@ -11,7 +11,8 @@ import AuthContext from '../../context/AuthContext';
 export function Navbar() {
   const { t } = useTranslation();
   const { role } = useContext(AuthContext);
-
+  
+  const [queryParams] = useSearchParams();
 
   const links = [
     { link: '/', label: t('Navbar.home') },
@@ -26,7 +27,8 @@ export function Navbar() {
   ];
 
   const navigate = useNavigate();
-  const [searchValue, setSearchValue] = React.useState('');
+  
+  const [searchValue, setSearchValue] = React.useState(queryParams.get('q') ?? '');
 
   const handleSearchChange = (value: string) => {
     setSearchValue(value);
@@ -57,6 +59,7 @@ export function Navbar() {
       {link.label}
     </a>
   ));
+  
 
   return (
     <header className={classes.header}>
