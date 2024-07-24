@@ -2,6 +2,7 @@ import {Subject} from "../../models/Subject.ts";
 import classes from "../semester-card/semester-card.module.css";
 import {Badge, Card} from "@mantine/core";
 import {t} from "i18next";
+import {Link} from "react-router-dom";
 
 interface SemesterCardProps{
     dateFinished: number | undefined,
@@ -45,9 +46,11 @@ export function SemesterCard(props: SemesterCardProps): JSX.Element {
             <ul className={classes.subject_list}>
                 {
                     subjects.map((subject) =>
-                        <li key={subject.id}>
-                            <span style={{fontWeight: 500}}>{subject.name}</span> - {subject.id}
-                        </li>
+                        <Link to={"/subject/" + subject.id}>
+                            <li key={subject.id}>
+                                <span style={{fontWeight: 500}}>{subject.name}</span> - {subject.id}
+                            </li>
+                        </Link>
                     )
                 }
             </ul>
