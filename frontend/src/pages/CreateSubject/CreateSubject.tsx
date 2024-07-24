@@ -59,7 +59,7 @@ export function CreateSubject() {
     t("CreateSubject.day7"),
   ];
   const weekDaysMap = new Map<string,number>();
-  classDays.forEach((clas, index) => weekDaysMap.set(clas, index));
+  classDays.forEach((clas, index) => weekDaysMap.set(clas, index+1));
   //const availableCreditsPerClass = new Map<string,number>();
   const [availableCreditsPerClass, setAvailableCreditsPerClass] = useState<Map<string,number>>(new Map());
   const [carreerSemester, setCarreerSemester] = useState<Map<string, string[]>>(new Map());
