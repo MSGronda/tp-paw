@@ -179,9 +179,14 @@ export function EditSubject() {
             for(let i = 0; i < subject.classes.length; i++){
                 if(res.has(subject.classes[i].idClass) && res.get(subject.classes[i].idClass) !== undefined){
                     const classProfs = res.get(subject.classes[i].idClass);
+
+                    if(!classProfs){
+                        continue;
+                    }
+
                     subject.classes[i].professors = classProfs.map(prof => prof.name);
                     for(const prof of classProfs) {
-                        if(!selProfs.includes(prof)){
+                        if(!selProfs.some((p) => p.name == prof.name)){
                             selProfs.push(prof);
                         }
                     }
@@ -420,11 +425,13 @@ export function EditSubject() {
     }
 
     function handleClassEditModal(clas: Class) {
+
+
         setCurrentClassEditName(clas.idClass);
-        setCurrentClassEditProfessors(clas.professors);
+        setCurrentClassEditProfessors(clas.professors ?? []);
         let index;
         if( (index = selectedClasses.indexOf(clas) ) != -1 ){
-            setSelectedClasses([...selectedClasses.slice(0,index), ...selectedClasses.slice(index + 1)]);
+                setSelectedClasses([...selectedClasses.slice(0,index), ...selectedClasses.slice(index + 1)]);
         }
         setOpenedClassEditModal(true);
     }
@@ -816,7 +823,7 @@ export function EditSubject() {
                     </Flex>
                     <Flex mih={50} gap="xl" justify="space-between" align="center" direction="row" wrap="wrap">
                         {t("CreateSubject.department")}
-                        <Combobox store={comboboxDepartment} width={300} onOptionSubmit={(value) => {
+                        <Combobox style={{width: "17rem"}} store={comboboxDepartment} width={300} onOptionSubmit={(value) => {
                             setDepartment(value);
                             comboboxDepartment.closeDropdown();
                         }}>
@@ -915,8 +922,9 @@ export function EditSubject() {
                         <Table.Tbody>
                             {selectedClasses.length > 0 && selectedClasses.map((clas) => <Table.Tr>
                                 <Table.Th>
-                                    <Flex direction="row" justify="space-between">
-                                        {clas.idClass}
+                                    <Flex direction="row" justify="space-between" align="center">
+                                        <span style={{paddingRight: "0.5rem"}}>{clas.idClass}</span>
+
                                         <ActionIcon size={18} variant="default" onClick={() => handleClassEditModal(clas)}>
                                             <IconPencil style={{ width: rem(24), height: rem(24) }} />
                                         </ActionIcon>
@@ -925,7 +933,7 @@ export function EditSubject() {
                                         </ActionIcon>
                                     </Flex>
                                 </Table.Th>
-                                <Table.Th>{clas.professors.join(";")}</Table.Th>
+                                <Table.Th>{clas.professors?.join(";")}</Table.Th>
                                 <Table.Tr>
                                     <Table.Th>{t("CreateSubject.day")}</Table.Th>
                                     <Table.Th>{t("CreateSubject.timeStart")}</Table.Th>

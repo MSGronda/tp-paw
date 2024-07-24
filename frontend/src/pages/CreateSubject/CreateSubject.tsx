@@ -368,7 +368,7 @@ export function CreateSubject() {
 
   function handleClassEditModal(clas: Class) {
     setCurrentClassEditName(clas.idClass);
-    setCurrentClassEditProfessors(clas.professors);
+    setCurrentClassEditProfessors(clas.professors ?? []);
     let index;
     if( (index = selectedClasses.indexOf(clas) ) != -1 ){
       setSelectedClasses([...selectedClasses.slice(0,index), ...selectedClasses.slice(index + 1)]);
@@ -771,7 +771,7 @@ export function CreateSubject() {
               </Flex>
               <Flex mih={50} gap="xl" justify="space-between" align="center" direction="row" wrap="wrap">
                 {t("CreateSubject.department")}
-                <Combobox store={comboboxDepartment} width={300} onOptionSubmit={(value) => {
+                <Combobox style={{width: "17rem"}} store={comboboxDepartment} width={300} onOptionSubmit={(value) => {
                     setDepartment(value);
                     comboboxDepartment.closeDropdown();
                   }}>
@@ -870,8 +870,8 @@ export function CreateSubject() {
                 <Table.Tbody>
                   {selectedClasses.length > 0 && selectedClasses.map((clas) => <Table.Tr>
                     <Table.Th>
-                      <Flex direction="row" justify="space-between">
-                        {clas.idClass}
+                      <Flex direction="row" justify="space-between" align="center">
+                        <span style={{paddingRight: "0.5rem"}}>{clas.idClass}</span>
                         <ActionIcon size={18} variant="default" onClick={() => handleClassEditModal(clas)}>
                           <IconPencil style={{ width: rem(24), height: rem(24) }} />
                         </ActionIcon>
@@ -880,7 +880,7 @@ export function CreateSubject() {
                         </ActionIcon>
                       </Flex>
                     </Table.Th>
-                    <Table.Th>{clas.professors.join(";")}</Table.Th>
+                    <Table.Th>{clas.professors?.join(";")}</Table.Th>
                     <Table.Tr>
                       <Table.Th>{t("CreateSubject.day")}</Table.Th>
                       <Table.Th>{t("CreateSubject.timeStart")}</Table.Th>
