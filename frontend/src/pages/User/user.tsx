@@ -135,7 +135,7 @@ export default function User() {
 
   useEffect(() => {
     if (!isProfile && id == userId) {
-      navigate('/profile');
+      navigate('/profile', { replace: true });
     } else {
       getUser().catch((e) => console.error(e));
       getUserPlan().catch((e) => console.error(e));

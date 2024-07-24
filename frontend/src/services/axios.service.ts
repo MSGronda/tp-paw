@@ -24,7 +24,7 @@ export class AxiosService {
     } catch (err) {
       if(!(err instanceof AxiosError) || !err.response) throw new Error("Unable to connect to server");
       if ( err.response.status == 404 || err.response.status == 403 || err.response.status == 500) {
-        window.location.href = "/paw-2023a-06/error?code=" + err.response.status;
+        window.location.replace("/paw-2023a-06/error?code=" + err.response.status);
         return;
       }
       if (err.response.status !== 401) throw err;
@@ -44,13 +44,13 @@ export class AxiosService {
     } catch (err) {
       if(!(err instanceof AxiosError) || !err.response) throw new Error("Unable to connect to server");
       if ( err.response.status == 404 || err.response.status == 403 || err.response.status == 500) {
-        window.location.href = "/paw-2023a-06/error?code=" + err.response.status;
+        window.location.replace("/paw-2023a-06/error?code=" + err.response.status);
         return;
       }
       if (err.response.status === 401) {
         console.log("Invalid refresh token");
         authService.logout();
-        window.location.href = "/paw-2023a-06/login"
+        window.location.replace("/paw-2023a-06/login");
         throw new Error("Unauthorized");
       }
       throw err;

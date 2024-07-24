@@ -9,10 +9,10 @@ export const handleService = (response: any, navigate: NavigateFunction, default
                 navigate('/login')
                 return;
             } else if( response.status === 404){
-                navigate('/error?code=404')
+                navigate('/error?code=404', {replace: true});
                 return;
             }else{
-                navigate('/error?code=500')
+                navigate('/error?code=500', {replace: true});
                 return;
             }
         } else{
@@ -38,13 +38,13 @@ export const handlePagedService = (response: any, navigate: NavigateFunction, de
             if (response.status === 204){
                 return defaultValue
             } else if( response.status === 401 ){
-                navigate('/login')
+                navigate('/login', {replace: true});
                 return;
             } else if( response.status === 404){
-                navigate('/error?code=404')
+                navigate('/error?code=404', {replace: true});
                 return;
             }else{
-                navigate('/error?code=500')
+                navigate('/error?code=500', {replace: true});
                 return;
             }
         } else{

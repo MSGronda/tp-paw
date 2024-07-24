@@ -15,5 +15,5 @@ if (!isAuthenticated) {
     return <RouteComponent />
 }
 
-return <Navigate to="/error?code=403" />
+return <Navigate to="/error?code=403" replace={true}/>
 }

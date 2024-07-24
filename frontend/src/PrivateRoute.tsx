@@ -23,7 +23,7 @@ export const PrivateRoute: React.FC<Props> = ({ component: RouteComponent, roles
   }
 
   if (isAuthenticated && !roles.includes(role as string)) {
-    return <Navigate to="/error?code=403" />
+    return <Navigate to="/error?code=403" replace={true} />
   }
 
   return <Navigate to='/login' state={{ prev: location.pathname }} />
