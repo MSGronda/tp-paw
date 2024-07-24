@@ -81,6 +81,8 @@ export function CreateSubject() {
   const [errorMessageTitle, setErrorMessageTitle] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
   const [usedProfessorName, setUsedProfessorName] = useState(false);
+  const [repeatedClass, setRepetedClass] = useState<boolean>(false);
+
 
   // Form related states
   const [department, setDepartment] = useState<string>("");
@@ -105,11 +107,14 @@ export function CreateSubject() {
   const [currentSemester, setCurrentSemester] = useState<string>("");
   const [currentSemesterOptions, setCurrentSemesterOptions] = useState<JSX.Element[]>([]);
   const [currentProfessorCreation, setCurrentProfessorCreation] = useState<string>("");
+
+  const [currentClassIndex, setCurrentClassIndex] = useState<number>();
   const [currentClassName, setCurrentClassName] = useState<string>("");
   const [currentClassProfessors, setCurrentClassProfessors] = useState<string[]>([]);
   const [currentClassEditName, setCurrentClassEditName] = useState<string>("");
   const [currentClassEditProfessors, setCurrentClassEditProfessors] = useState<string[]>([]);
   const [currentClassTimeDay, setCurrentClassTimeDay] = useState<string>("");
+
   const startTimeRef = useRef<HTMLInputElement>(null);
   const endTimeRef = useRef<HTMLInputElement>(null);
   const [currentClassTimeBuilding, setCurrentClassTimeBuilding] = useState<string>("");
@@ -342,12 +347,11 @@ export function CreateSubject() {
       return;
     }
 
-    for(const clas of selectedClasses) {
-      if(clas.idClass === currentClassName){
-        setMissingClassFields(true);
-        return;
-      }
+    if(selectedClasses.some((c) => c.idClass == currentClassName)){
+      setRepetedClass(true);
+      return;
     }
+
     availableCreditsPerClass.set(newClass.idClass, credits);
     setAvailableCreditsPerClass(new Map<string,number>(availableCreditsPerClass));
     setSelectedClasses([...selectedClasses, newClass]);
@@ -355,6 +359,7 @@ export function CreateSubject() {
     setCurrentClassProfessors([]);
     setMissingClassFields(false);
     setOpenedClassModal(false);
+    setRepetedClass(false);
   }
 
   function handleRemoveClass(clas: Class) {
@@ -367,29 +372,41 @@ export function CreateSubject() {
   }
 
   function handleClassEditModal(clas: Class) {
+    const index = selectedClasses.indexOf(clas);
+
     setCurrentClassEditName(clas.idClass);
     setCurrentClassEditProfessors(clas.professors ?? []);
-    let index;
-    if( (index = selectedClasses.indexOf(clas) ) != -1 ){
-      setSelectedClasses([...selectedClasses.slice(0,index), ...selectedClasses.slice(index + 1)]);
-    }
+    setCurrentClassIndex(index);
+
     setOpenedClassEditModal(true);
   }
 
   function handleClassEdit() {
-    const newClass = {idClass: currentClassEditName, idSubject: subjectId, locations: [], professors: currentClassEditProfessors};
+
+    if(currentClassIndex == undefined){
+      return;
+    }
+
     if(currentClassEditProfessors.length === 0 || currentClassEditName === ""){
       setMissingClassFields(true);
       return;
     }
-    let index;
-    if( (index = selectedClasses.indexOf(newClass)) != -1) {
-      setSelectedClasses([...selectedClasses, newClass]);
-    } else {
-      setSelectedClasses([...selectedClasses.slice(0,index), newClass, ...selectedClasses.slice(index + 1)]);
+
+    if(selectedClasses.some((c, i) => c.idClass == currentClassEditName && i != currentClassIndex)){
+      setRepetedClass(true);
+      return;
     }
-    availableCreditsPerClass.set(newClass.idClass, credits);
+
+    setRepetedClass(false)
+    setRepetedClass(false)
+
+    const editedClass = selectedClasses[currentClassIndex]
+    editedClass.idClass = currentClassEditName;
+    editedClass.professors = currentClassEditProfessors;
+
+    availableCreditsPerClass.set(editedClass.idClass, credits);
     setAvailableCreditsPerClass(new Map<string,number>(availableCreditsPerClass));
+
     setCurrentClassEditName("");
     setCurrentClassEditProfessors([]);
     setMissingClassFields(false);
@@ -634,6 +651,9 @@ export function CreateSubject() {
         { missingClassFields && <Alert variant="light" color="yellow" title={t("CreateSubject.missingFields")} icon={<IconInfoCircle/>}>
           {t("CreateSubject.completeClassFields")}
         </Alert>}
+        { repeatedClass && <Alert variant="light" color="yellow" title={t("CreateSubject.missingFields")} icon={<IconInfoCircle/>}>
+          {t("CreateSubject.repeatedClassId")}
+        </Alert>}
         <Flex mih={50} gap="xl" justify="space-between" align="center" direction="row" wrap="wrap">
           {t("CreateSubject.class")}
           <Textarea className={classes.degreeDropdown} autosize value={currentClassName}
@@ -654,6 +674,9 @@ export function CreateSubject() {
       <Modal opened={openedClassEditModal} onClose={() => handleClassEdit()} title={t("CreateSubject.editClasses")} size="30%">
         { missingClassFields && <Alert variant="light" color="yellow" title={t("CreateSubject.missingFields")} icon={<IconInfoCircle/>}>
           {t("CreateSubject.completeClassFields")}
+        </Alert>}
+        { repeatedClass && <Alert variant="light" color="yellow" title={t("CreateSubject.missingFields")} icon={<IconInfoCircle/>}>
+          {t("CreateSubject.repeatedClassId")}
         </Alert>}
         <Flex mih={50} gap="xl" justify="space-between" align="center" direction="row" wrap="wrap">
           {t("CreateSubject.class")}

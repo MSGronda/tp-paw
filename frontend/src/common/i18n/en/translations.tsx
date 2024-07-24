@@ -377,6 +377,7 @@ export const TRANSLATIONS_EN = {
         addClassTimes: "Add Class times",
         missingFields: "Warning",
         completeFields: "Class Time won't be created until all fields are completed and the amount of credits aren't surpassed",
+        repeatedClassId: "The class name you selected is already in use.",
         createClassTime: "Add Class time",
         completeClassFields: "Must complete class name, professors fields and use only letters for the class name",
         emptySubjectName: "This field is required",
