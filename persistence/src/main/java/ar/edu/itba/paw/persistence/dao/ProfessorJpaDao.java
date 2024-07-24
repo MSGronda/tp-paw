@@ -9,6 +9,7 @@ import org.springframework.stereotype.Repository;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
+import javax.swing.text.html.Option;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -43,7 +44,13 @@ public class ProfessorJpaDao implements ProfessorDao {
     @Override
     public void addSubjectToProfessors(final Subject subject, final List<String> professors) {
         for (String professorName : professors) {
-            final Professor professor = getOrGenerateProfessor(professorName);
+            final Optional<Professor> maybeProfessor = getByName(professorName);
+
+            if(!maybeProfessor.isPresent()){
+                continue;
+            }
+
+            final Professor professor = maybeProfessor.get();
 
             if(!professor.getSubjects().contains(subject)){
                 professor.getSubjects().add(subject);
@@ -55,7 +62,13 @@ public class ProfessorJpaDao implements ProfessorDao {
     @Override
     public void addProfessorsToClass(final SubjectClass subjectClass, final List<String> classProfessors){
         for(String professorName : classProfessors){
-            final Professor professor = getOrGenerateProfessor(professorName);
+            final Optional<Professor> maybeProfessor = getByName(professorName);
+
+            if(!maybeProfessor.isPresent()){
+                continue;
+            }
+
+            final Professor professor = maybeProfessor.get();
 
             if( !subjectClass.getProfessors().contains(professor)) {
                 subjectClass.getProfessors().add(professor);
@@ -68,7 +81,13 @@ public class ProfessorJpaDao implements ProfessorDao {
     public void replaceSubjectProfessors(final Subject subject, final List<String> professors){
         final Set<Professor> newProfessors = new HashSet<>();
         for(final String profName : professors){
-            newProfessors.add(getOrGenerateProfessor(profName));
+            final Optional<Professor> maybeProfessor = getByName(profName);
+
+            if(!maybeProfessor.isPresent()){
+                continue;
+            }
+
+            newProfessors.add(maybeProfessor.get());
         }
         subject.setProfessors(newProfessors);
         LOGGER.info("Replaced professors of subject with id: {}", subject.getId());
@@ -78,7 +97,13 @@ public class ProfessorJpaDao implements ProfessorDao {
     public void replaceClassProfessors(final SubjectClass subjectClass, final List<String> professors) {
         final List<Professor> newProfessors = new ArrayList<>();
         for(final String profName : professors){
-            newProfessors.add(getOrGenerateProfessor(profName));
+            final Optional<Professor> maybeProfessor = getByName(profName);
+
+            if(!maybeProfessor.isPresent()){
+                continue;
+            }
+
+            newProfessors.add(maybeProfessor.get());
         }
         subjectClass.setProfessors(newProfessors);
         LOGGER.info("Replaced professors of subjectClass with id: {}", subjectClass.getClassId());
