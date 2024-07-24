@@ -47,6 +47,14 @@ export function SubjectPage() {
     const iconSort = <IconArrowsSort size={14} />;
     const warningIcon = <IconAlertOctagon />;
 
+    const ORDER_DIFFICULTY = "difficulty";
+    const ORDER_TIME_DEMAND = "timedemanding";
+    const DIR_ASC = "asc";
+    const DIR_DESC = "desc";
+    const INITIAL_PAGE = 1;
+    const INITIAL_ORDER: string = "difficulty";
+    const INITAL_DIR: string = "asc";
+
 
     const { t } = useTranslation();
     const location = useLocation();
@@ -54,6 +62,7 @@ export function SubjectPage() {
     const navigate = useNavigate();
     const { userId } = useContext(AuthContext);
     const { role } = useContext(AuthContext);
+    const orderParams = new URLSearchParams(location.search);
 
     const [subject, setSubject] = useState({} as Subject);
     const [subjectSemester, setSubjectSemester] = useState(undefined as Semester|undefined);
@@ -73,17 +82,13 @@ export function SubjectPage() {
     const [progress, setProgress] = useState("PENDING");
     const [openedDeleteSubjectModal, setOpenedDeleteSubjectModal] = useState<boolean>(false);
 
+    const [orderBy, setOrderBy] = useState<string>(orderParams.get('orderBy') || INITIAL_ORDER);
+    const [dir, setDir] = useState<string>(orderParams.get('dir') || INITAL_DIR);
+    const [page, setPage] = useState<string>(orderParams.get('page') === null ? INITIAL_PAGE.toString() : orderParams.get('page') as string);
+
     const [professors, setProfessors] = useState<Map<string, Professor[]>>(new Map());
 
-    const INITIAL_PAGE = 1;
-    const INITIAL_ORDER: string = "difficulty";
-    const INITAL_DIR: string = "asc";
-
     const { state } = location;
-    const orderParams = new URLSearchParams(location.search);
-    const orderBy = orderParams.get('orderBy');
-    const dir = orderParams.get('dir');
-    const page: number = orderParams.get('page') === null ? INITIAL_PAGE : parseInt(orderParams.get('page') as string, 10);
     
     const semesterFormat = subjectSemester?.semester ? getSemesterYearFormat(subjectSemester.semester) : undefined;
 
@@ -136,9 +141,7 @@ export function SubjectPage() {
     }
 
     const handlePageChange = (newPage: number) => {
-        const queryParams = new URLSearchParams(window.location.search);
-        queryParams.set('page', newPage.toString());
-        window.location.search = queryParams.toString();
+        setPage(newPage.toString());
     }
 
     const getUserProgress = async (userId: number) => {
@@ -200,8 +203,7 @@ export function SubjectPage() {
         const res = await subjectService.deleteSubject(subjectId);
         const data = handleService(res, navigate);
         if (res.status === 200) {
-            //redirect to degree
-            //show message that subject was deleted
+            navigate('/degree/' + degree.id);
         } else {
             //show message that subject wasn't deleted
         }
@@ -210,9 +212,40 @@ export function SubjectPage() {
     function handleDeleteSubjectButton() {
         if(subjectId.id !== undefined && subjectId.id !== null) {
             deleteSubject(subjectId.id);
-            navigate('/degree/' + degree.id);
         }
     }
+
+    const setOrderParameters = (value: string) => {
+        if (value === "ascending-difficulty") {
+            setOrderBy(ORDER_DIFFICULTY);
+            setDir(DIR_ASC);
+        } else if (value === "descending-difficulty") {
+            setOrderBy(ORDER_DIFFICULTY);
+            setDir(DIR_DESC);
+        } else if (value === "ascending-time") {
+            setOrderBy(ORDER_TIME_DEMAND);
+            setDir(DIR_ASC);
+        } else if (value === "descending-time") {
+            setOrderBy(ORDER_TIME_DEMAND);
+            setDir(DIR_DESC);
+        }
+    }
+    const CurrentFilterComponent: React.FC<CurrentFilterComponentProps> = ({ orderBy, dir }) => {
+        const { t } = useTranslation();
+
+        if (orderBy === "" && dir === "") {
+            return <Text>{t("Subject.currentFilter") + ": " + t("Subject.orderDifficulty") + " " + t("Subject.directionAsc")}</Text>;
+        }
+        if (orderBy === "difficulty" && dir === "desc") {
+            return <Text>{t("Subject.currentFilter") + ": " + t("Subject.orderDifficulty") + " " + t("Subject.directionDesc")}</Text>;
+        } else if (orderBy === ORDER_TIME_DEMAND && dir === DIR_ASC) {
+            return <Text>{t("Subject.currentFilter") + ": " + t("Subject.orderTimeDemand") + " " + t("Subject.directionAsc")}</Text>;
+        } else if (orderBy === ORDER_TIME_DEMAND && dir === DIR_DESC) {
+            return <Text>{t("Subject.currentFilter") + ": " + t("Subject.orderTimeDemand") + " " + t("Subject.directionDesc")}</Text>;
+        } else {
+            return <Text>{t("Subject.currentFilter") + ": " + t("Subject.orderDifficulty") + " " + t("Subject.directionAsc")}</Text>;
+        }
+    };
 
     useEffect(() => {
         if (subjectId.id !== undefined) {
@@ -230,13 +263,13 @@ export function SubjectPage() {
         if (subjectId.id !== undefined) {
             if (userId !== undefined) {
                 getReviewFromUser(subjectId.id, userId);
-                getUsersFromReviews(subjectId.id, page);
+                getUsersFromReviews(subjectId.id, Number(page));
             }
 
             if (orderBy === null && dir === null && page === null) {
                 getReviewsFromSubject(subjectId.id, INITIAL_PAGE, INITIAL_ORDER, INITAL_DIR);
             } else {
-                getReviewsFromSubject(subjectId.id, page, orderBy ? orderBy : "", dir ? dir : "");
+                getReviewsFromSubject(subjectId.id, Number(page), orderBy ? orderBy : "", dir ? dir : "");
             }
         }
         if (state && state.reviewUpdated !== undefined) {
@@ -248,7 +281,7 @@ export function SubjectPage() {
             setDeletedReviewValue(localStorage.getItem('reviewDeleted') === "true");
             localStorage.removeItem('reviewDeleted');
         }
-    }, [subjectId.id]);
+    }, [subjectId.id, page, orderBy, dir]);
 
     // UserProgress Lookup
     useEffect(() => {
@@ -680,38 +713,4 @@ function getDayOfTheWeek(day: number) {
 interface CurrentFilterComponentProps {
     orderBy: string;
     dir: string;
-}
-const CurrentFilterComponent: React.FC<CurrentFilterComponentProps> = ({ orderBy, dir }) => {
-    const { t } = useTranslation();
-
-    if (orderBy === "" && dir === "") {
-        return <Text>{t("Subject.currentFilter") + ": " + t("Subject.orderDifficulty") + " " + t("Subject.directionAsc")}</Text>;
-    }
-    if (orderBy === "difficulty" && dir === "desc") {
-        return <Text>{t("Subject.currentFilter") + ": " + t("Subject.orderDifficulty") + " " + t("Subject.directionDesc")}</Text>;
-    } else if (orderBy === "timeDemand" && dir === "asc") {
-        return <Text>{t("Subject.currentFilter") + ": " + t("Subject.orderTimeDemand") + " " + t("Subject.directionAsc")}</Text>;
-    } else if (orderBy === "timeDemand" && dir === "desc") {
-        return <Text>{t("Subject.currentFilter") + ": " + t("Subject.orderTimeDemand") + " " + t("Subject.directionDesc")}</Text>;
-    } else {
-        return <Text>{t("Subject.currentFilter") + ": " + t("Subject.orderDifficulty") + " " + t("Subject.directionAsc")}</Text>;
-    }
-};
-
-const setOrderParameters = (value: string) => {
-    const orderParams = new URLSearchParams();
-    if (value === "ascending-difficulty") {
-        orderParams.set('orderBy', 'difficulty');
-        orderParams.set('dir', 'asc');
-    } else if (value === "descending-difficulty") {
-        orderParams.set('orderBy', 'difficulty');
-        orderParams.set('dir', 'desc');
-    } else if (value === "ascending-time") {
-        orderParams.set('orderBy', 'timedemanding');
-        orderParams.set('dir', 'asc');
-    } else if (value === "descending-time") {
-        orderParams.set('orderBy', 'timedemanding');
-        orderParams.set('dir', 'desc');
-    }
-    window.location.search = orderParams.toString();
 }
