@@ -276,8 +276,8 @@ export const TRANSLATIONS_EN = {
         sortTimeDemand: "Time Demand",
 
         overviewCredits: "Number of credits",
-        overviewDifficulty: "Time demand",
-        overviewTimeDemand: "Overall difficulty",
+        overviewDifficulty: "Overall difficulty",
+        overviewTimeDemand: "Time demand",
         unlock: "By doing this semester you unlock",
 
         done: "Done",
