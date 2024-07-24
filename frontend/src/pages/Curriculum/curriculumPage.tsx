@@ -11,6 +11,7 @@ import {Subject} from "../../models/Subject.ts";
 import SubjectCard from "../../components/subject-card/subject-card.tsx";
 import {useIsVisible} from "../../hooks/useIsVisible.tsx";
 import SubjectFilters from "../../components/subject-filters/subjectFilters.tsx";
+import PaginationComponent from "../../components/pagination/pagination.tsx";
 
 export default function CurriculumPage() {
   const {t} = useTranslation(undefined, {keyPrefix: "Curriculum"});
@@ -35,6 +36,8 @@ export default function CurriculumPage() {
   
   function setSemesterParam(semester: string) {
     const currentUrl = `${location.protocol}//${location.host}${location.pathname}`;
+    
+    queryParams.delete("page");
     
     if(semester == "1") 
       queryParams.delete("semester");
@@ -96,28 +99,54 @@ export default function CurriculumPage() {
 }
 
 function SemesterTabPanel({degreeId, semester}: { degreeId: number, semester: number }) {
-  const [cachedDegreeId, setCachedDegreeId] = useState<number | null>(null);
-  const [subjects, setSubjects] = useState<Subject[] | null>(null);
+  function getQueryParams() {
+    return new URLSearchParams(location.search);
+  }
+  const queryParams = getQueryParams();
+  
+  const [cachedDegreeId, setCachedDegreeId] = useState<number | undefined>(undefined);
+  const [cachedPage, setCachedPage] = useState<number | undefined>(undefined);
+  const [subjects, setSubjects] = useState<Subject[] | undefined>(undefined);
+  const [page, setPage] = useState<number|undefined>(queryParams.has("page") ? parseInt(queryParams.get("page")!) : undefined);
+  const [lastPage, setLastPage] = useState<number|undefined>(undefined);
+  
   const ref = useRef<HTMLDivElement>(null);
   const visible = useIsVisible(ref);
+  
 
   useEffect(() => {
-    if (cachedDegreeId == degreeId || !visible) return;
+    const queryParams = getQueryParams();
+    if ((queryParams.has("page") ? parseInt(queryParams.get("page")!) : undefined) != page) {
+      setPage(queryParams.has("page") ? parseInt(queryParams.get("page")!) : undefined);
+      return;
+    }
+    
+    if ((cachedDegreeId == degreeId && cachedPage == page) || !visible) return;
 
-    subjectService.getSemesterSubjects(degreeId, semester).then((res) => {
+    subjectService.getSemesterSubjects(degreeId, semester, page).then((res) => {
       setCachedDegreeId(degreeId);
-      setSubjects(res);
+      setSubjects(res.subjects);
+      setLastPage(res.lastPage);
+      setCachedPage(page);
     }).catch(err => console.error("Failed to get semester subjects: ", err));
-  }, [degreeId, semester, visible, subjects, cachedDegreeId]);
+  }, [degreeId, semester, visible, subjects, cachedDegreeId, page, cachedPage]);
+  
+  const freshData = !subjects || cachedPage != page || cachedDegreeId != degreeId;
 
   return <div ref={ref}>
-    {!subjects ? <Center m="5rem"><Loader/></Center> :
-        <div style={{width: "100%", minHeight: '90%' , display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(250px, 1fr))', padding: '1rem 1rem 1rem 1rem', gap: '1rem'}}>
-          { subjects.map((subject) => (
-              <SubjectCard {...subject} key={subject.id} progress="incomplete" numReviews={subject.reviewCount}/>
-          ))
-          }
-        </div>
+    {freshData ? <Center m="5rem"><Loader/></Center> : <>
+          <div style={{width: "100%", minHeight: '90%' , display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(250px, 1fr))', padding: '1rem 1rem 1rem 1rem', gap: '1rem'}}>
+            { subjects.map((subject) => (
+                <SubjectCard {...subject} key={subject.id} progress="incomplete" numReviews={subject.reviewCount}/>
+            ))
+            }
+          </div>
+            { (lastPage && lastPage > 1) &&
+                <Center mb={20}>
+                  <PaginationComponent page={page} setPage={setPage} lastPage={lastPage} />
+                </Center>
+            }
+        </>
     }
   </div>
 }

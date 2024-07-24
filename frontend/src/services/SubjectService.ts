@@ -3,6 +3,7 @@ import { handleResponse } from "../handlers/responseHandler";
 import {Subject} from "../models/Subject.ts";
 import Class from "../models/Class.ts";
 import {UserPlan} from "../models/UserPlan.ts";
+import {handlePagedService} from "../handlers/serviceHandler.tsx";
 
 const path = "/subjects"
 
@@ -205,19 +206,23 @@ export class SubjectService {
         return bySemester;
     }
     
-    async getSemesterSubjects(degreeId: number, semester: number): Promise<Subject[]> {
+    async getSemesterSubjects(degreeId: number, semester: number, page: number = 1)
+      : Promise<{subjects: Subject[], lastPage?: number}> {
         const config = {
             params: {
                 degree: degreeId,
-                semester: semester
+                semester,
+                page
             }
         }
         const res = await axiosService.authAxiosWrapper(axiosService.GET, path, config);
-        if (!res || res.status !== 200) {
+        const handledRes = handleResponse(res);
+        
+        if (handledRes.failure) {
             throw new Error("Unable to get subjects")
         }
 
-        return res.data;
+        return { subjects: handledRes.data, lastPage: handledRes.maxPage } ;
     }
 
     async createSubject(id: string, name: string, department: string, credits: number, degreeIds: number[], semesters: number[],
