@@ -15,6 +15,6 @@ public class DegreeNotFoundExceptionMapper implements ExceptionMapper<DegreeNotF
 
     @Override
     public Response toResponse(DegreeNotFoundException e) {
-        return Response.status(Response.Status.BAD_REQUEST).build();
+        return Response.status(Response.Status.NOT_FOUND).build();
     }
 }
