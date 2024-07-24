@@ -1,7 +1,7 @@
 import {useTranslation} from "react-i18next";
 import {useNavigate, useParams} from "react-router-dom";
 import {IconInfoCircle, IconPencil, IconX} from "@tabler/icons-react";
-import {useEffect, useRef, useState} from "react";
+import React, {useEffect, useRef, useState} from "react";
 import Class from "../../models/Class.ts";
 import {Degree} from "../../models/Degree.ts";
 import {Subject} from "../../models/Subject.ts";
@@ -14,11 +14,11 @@ import {
     Button,
     Combobox,
     ComboboxOption,
-    ComboboxOptions,
+    ComboboxOptions, Divider,
     Flex,
     Grid,
     InputBase,
-    Modal, MultiSelect, NumberInput, Pagination, rem, Table, Tabs, Textarea, TextInput,
+    Modal, MultiSelect, NumberInput, Pagination, rem, ScrollArea, Table, Tabs, Textarea, TextInput,
     useCombobox
 } from "@mantine/core";
 import ClassTime from "../../models/ClassTime.ts";
@@ -90,7 +90,6 @@ export function EditSubject() {
     const [selectedSemesters, setSelectedSemesters] = useState<number[]>([]);
     const [selectedPrereqs, setSelectedPrereqs] = useState<number[]>([]);
     const [selectedProfessors, setSelectedProfessors] = useState<string[]>([]);
-    const [createdProfessors, setCreatedProfessors] = useState<string[]>([]);
     const [selectedClasses, setSelectedClasses] = useState<Class[]>([]);
 
     // Fetched Values
@@ -203,7 +202,6 @@ export function EditSubject() {
             }
             setSelectedClasses(subject.classes);
             setSelectedProfessors(selProfs.map(prof => prof.name));
-            setCreatedProfessors(selProfs.map(prof => prof.name));
         }
     }
 
@@ -358,16 +356,6 @@ export function EditSubject() {
         createProfessor(currentProfessorCreation);
     }
 
-    function handleRemoveCreatedProfessor(professor: string) {
-        let index;
-        if( ( index = createdProfessors.indexOf(professor)) != -1) {
-            setCreatedProfessors([...createdProfessors.slice(0,index), ...createdProfessors.slice(index + 1)]);
-        }
-        let selectedIndex;
-        if( (selectedIndex = selectedProfessors.indexOf(professor)) != -1) {
-            setSelectedProfessors([...selectedProfessors.slice(0,selectedIndex), ...selectedProfessors.slice(index + 1)]);
-        }
-    }
 
     function handleProfessorRemove(professor: string) {
         let index;
@@ -550,9 +538,6 @@ export function EditSubject() {
                 return;
             }
         }
-
-        // Merge created professors
-        setSelectedProfessors([...selectedProfessors, ...createdProfessors]);
 
         // Cast prereqs to strings
         const prereqs = selectedPrereqs.map((prereq: number) => prereq.toString());
@@ -820,6 +805,7 @@ export function EditSubject() {
                             <Textarea className={classes.departmentDropdown} autosize value={subjectId} description={t("CreateSubject.disabledSubjectIdField")}
                                       disabled/>
                     </Flex>
+                    <Divider my="md"/>
                     <Flex mih={50} gap="xl" justify="space-between" align="center" direction="row" wrap="wrap">
                         {t("CreateSubject.name")}
                         {emptySubjectName ? <Textarea className={classes.departmentDropdown} autosize value={subjectName}
@@ -827,6 +813,7 @@ export function EditSubject() {
                             <Textarea className={classes.departmentDropdown} autosize value={subjectName}
                                       onChange={(event) => setSubjectName(event.currentTarget.value)}/>}
                     </Flex>
+                    <Divider my="md"/>
                     <Flex mih={50} gap="xl" justify="space-between" align="center" direction="row" wrap="wrap">
                         {t("CreateSubject.department")}
                         <Combobox style={{width: "17rem"}} store={comboboxDepartment} width={300} onOptionSubmit={(value) => {
@@ -842,28 +829,34 @@ export function EditSubject() {
                             <Combobox.Dropdown>{deaprtmentOptions}</Combobox.Dropdown>
                         </Combobox>
                     </Flex>
+                    <Divider my="md"/>
                     <Flex mih={50} gap="xl" justify="space-between" align="center" direction="row" wrap="wrap">
                         {t("CreateSubject.credits")}
                         <NumberInput className={classes.departmentDropdown} value={credits} min={MINIMUM_CREDITS} max={MAXIMUM_CREDITS} onChange={(value) => handleCreditChange(value)}/>
                     </Flex>
+                    <Divider my="md"/>
                     <Flex mih={50} gap="xl" justify="space-between" align="center" direction="row" wrap="wrap">
                         {t("CreateSubject.degree")}
-                        <Flex  direction="column">
-                            { selectedDegrees.length > 0 && degrees.length > 0 &&
-                                selectedDegrees.map((degree) =>
-                                    <Flex direction="row" align="center">
-                                        <p>{searchForDegreeName(degree)}</p>
-                                        <ActionIcon size={24} variant="transparent" onClick={() => handleRemoveSelectedDegree(degree)}>
-                                            <IconX style={{ width: rem(24), height: rem(24) }} />
-                                        </ActionIcon>
-                                    </Flex>)
-                            }
+                        <Flex direction="column">
+                            <ScrollArea h="10rem">
+                                { selectedDegrees.length > 0 && degrees.length > 0 &&
+                                    selectedDegrees.map((degree) =>
+                                        <Flex direction="row" align="center">
+                                            <p>{searchForDegreeName(degree)}</p>
+                                            <ActionIcon size={24} variant="transparent" onClick={() => handleRemoveSelectedDegree(degree)}>
+                                                <IconX style={{ width: rem(24), height: rem(24) }} />
+                                            </ActionIcon>
+                                        </Flex>)
+                                }
+
+                            </ScrollArea>
                             <Button onClick={() => setOpenedDegreeModal(true)}>
                                 {t("CreateSubject.addDegree")}
                             </Button>
                         </Flex>
                     </Flex>
-                    <Flex mih={50} gap="xl" justify="space-between" align="center" direction="row" wrap="wrap">
+                    <Divider my="md"/>
+                    <Flex pt={rem(5)} mih={50} gap="xl" justify="space-between" align="center" direction="row" wrap="wrap">
                         <div>
                             {t("CreateSubject.prerequisites")}
                             <h6 className={classes.optional}>
@@ -875,9 +868,10 @@ export function EditSubject() {
                             {t("CreateSubject.addPrereq")}
                         </Button>}
                     </Flex>
-                    <Flex mih={50} miw={500} gap="xl" justify="space-between" align="center" direction="row" wrap="wrap">
+                    <Divider my="md"/>
+                    <Flex pt={rem(5)} mih={50} miw={500} gap="xl" justify="space-between" align="center" direction="row" wrap="wrap">
                         {t("CreateSubject.professor")}
-                        <Flex direction="column" justify="flex-end" maw={400}>
+                        <Flex direction="column" justify="flex-end" maw={600}>
                             <MultiSelect
                                 placeholder={t("CreateSubject.professorLabel")}
                                 data={professors.map((p) => p.name)}
@@ -885,23 +879,18 @@ export function EditSubject() {
                                 searchable
                                 onOptionSubmit={(professor) => handleProfessorAddition(professor)}
                                 onRemove={(professor) => handleProfessorRemove(professor)}
+                                value={selectedProfessors}
+                                withScrollArea={true}
                             />
                         </Flex>
                     </Flex>
+                    <Divider my="md"/>
                     <Flex mih={50} gap="xl" justify="right" align="center" direction="row" wrap="wrap">
-                        { createdProfessors.length > 0 &&
-                            createdProfessors.map((professor) =>
-                                <Flex direction="row" align="center">
-                                    <p>{professor}</p>
-                                    <ActionIcon size={24} variant="transparent" onClick={() => handleRemoveCreatedProfessor(professor)}>
-                                        <IconX style={{ width: rem(24), height: rem(24) }} />
-                                    </ActionIcon>
-                                </Flex>)
-                        }
                         <Button onClick={() => setOpenedProfessorModal(true)}>
                             {t("CreateSubject.createProfessor")}
                         </Button>
                     </Flex>
+                    <Divider my="md"/>
                     <Flex mih={50} gap="xl" justify="center" align="center" direction="row" wrap="wrap">
                         <Button variant="default" onClick={() => setActiveTab("classes")}>
                             {t("CreateSubject.next")}
