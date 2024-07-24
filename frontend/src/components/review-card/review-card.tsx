@@ -40,7 +40,7 @@ function ReviewCard(props: ReviewCardProps): JSX.Element {
     const {subjectId, subjectName, text, timeDemand, difficulty, UserId, userName, anonymous, id, forSubject, upvotes, downvotes, votes } = props;
 
     const { t } = useTranslation();
-    const {userId } = useContext(AuthContext);
+    const {userId, role } = useContext(AuthContext);
     const [openedTooltip, setOpenedTooltip] = useState(false);
     const [showMore, setShowMore] = useState(false);
     const [didUserUpVote, setDidUserUpVote] = useState<boolean>(false);
@@ -139,7 +139,7 @@ function ReviewCard(props: ReviewCardProps): JSX.Element {
                         </Link>
                     }
                     {
-                        userId === UserId && //TODO: agregar rol de admin del authContext
+                        (userId === UserId || role === 'EDITOR') &&
                         <Tooltip label={
                             <div className={classes.clickable}>
                                 <Card>
