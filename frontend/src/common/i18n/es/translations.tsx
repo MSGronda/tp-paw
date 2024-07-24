@@ -51,7 +51,7 @@ export const TRANSLATIONS_ES = {
         },
         SubjectSelection: {
             title: "Seleccioná las materias que ya aprobaste",
-            semester: "{{n}}° Cuatrimestre",
+            semester: "{{year}}° Año {{semester}}° Cuatrimestre",
             electives: "Electivas",
             error: "Ocurrió un error. Por favor intentá de nuevo más tarde",
         }

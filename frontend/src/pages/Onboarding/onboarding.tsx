@@ -15,6 +15,7 @@ import {Navigate, useNavigate} from "react-router-dom";
 import {useTranslation} from "react-i18next";
 import {Degree} from "../../models/Degree.ts";
 import {IconExclamationCircle} from "@tabler/icons-react";
+import {getSemesterYearFormat} from "../../utils/subjectUtils.ts";
 
 enum Step {
   DegreeSelection,
@@ -178,7 +179,11 @@ function SubjectSelectionStep({degree, onChangeSelected}: SubjectSelectionProps)
   const sections = Object.entries(subjectsBySemester).map(entry => (
     <AccordionSelectorSection
       key={entry[0]}
-      title={entry[0] == "-1" ? t('Onboarding.SubjectSelection.electives') : t('Onboarding.SubjectSelection.semester', {n: entry[0]})}
+      title={
+        entry[0] == "-1" ? 
+          t('Onboarding.SubjectSelection.electives') 
+          : t('Onboarding.SubjectSelection.semester', getSemesterYearFormat(parseInt(entry[0])))
+      }
     >
       {entry[1].map(subject => (
         <AccordionSelectorItem key={subject.id} value={subject.id} title={`${subject.id} - ${subject.name}`}/>
