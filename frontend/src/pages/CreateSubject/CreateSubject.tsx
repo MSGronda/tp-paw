@@ -35,6 +35,11 @@ import {Professor} from "../../models/Professor.ts";
 import Class from "../../models/Class.ts";
 import {TimeInput} from "@mantine/dates";
 import ClassTime from "../../models/ClassTime.ts";
+import {
+  calculateHoursDifference, extractHoursFromTimeStamp,
+  extractNumberFromSemesterName,
+  validSubjectIdPattern
+} from "../../utils/subjectEditingUtils.ts";
 
 export function CreateSubject() {
   const { t } = useTranslation();
@@ -42,7 +47,6 @@ export function CreateSubject() {
 
   const MINIMUM_CREDITS = 0;
   const MAXIMUM_CREDITS = 12;
-  const SUBJECT_ID_REGEX = "[0-9][0-9]\\.[0-9][0-9]";
   const CLASS_NAME_REGEX = "[A-Za-z]+";
   const icon = <IconInfoCircle />;
 
@@ -237,35 +241,9 @@ export function CreateSubject() {
     return "";
   }
 
-  function extractNumberFromSemesterName(semesterName: string) {
-    return Number(semesterName.match(RegExp('[0-9][0-9]?'))) != 0 ? Number(semesterName.match(RegExp('[0-9][0-9]?'))) : -1
-  }
-
   // Week day and time formats
   function extractNumberFromWeekDay(weekDay: string) {
     return weekDaysMap.get(weekDay) || 0;
-  }
-
-  function extractHoursFromTimeStamp(timestamp: string) {
-    return Number(timestamp.slice(0,2));
-  }
-
-  function timeStringToMinutes(time: string): number {
-    const [hours, minutes] = time.split(':').map(Number);
-    return hours * 60 + minutes;
-  }
-
-  function calculateHoursDifference(startTime: string, endTime: string): number {
-    const minutes1 = timeStringToMinutes(startTime);
-    const minutes2 = timeStringToMinutes(endTime);
-    return Math.abs(minutes2 - minutes1) / 60;
-  }
-
-  function validSubjectIdPattern(subjectId: string){
-    if(subjectId.length !== 5){
-      return false;
-    }
-    return subjectId.match(SUBJECT_ID_REGEX);
   }
 
   // Handlers

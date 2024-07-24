@@ -27,6 +27,11 @@ import Title from "../../components/title/title.tsx";
 import ChooseSubjectCard from "../../components/choose-subject-card/choose-subject-card.tsx";
 import {TimeInput} from "@mantine/dates";
 import {Navbar} from "../../components/navbar/navbar.tsx";
+import {
+    calculateHoursDifference, extractHoursFromTimeStamp,
+    extractNumberFromSemesterName
+} from "../../utils/subjectEditingUtils.ts";
+
 
 
 export function EditSubject() {
@@ -308,28 +313,9 @@ export function EditSubject() {
         return "";
     }
 
-    function extractNumberFromSemesterName(semesterName: string) {
-        return Number(semesterName.match(RegExp('[0-9][0-9]?'))) != 0 ? Number(semesterName.match(RegExp('[0-9][0-9]?'))) : -1
-    }
-
     // Week day and time formats
     function extractNumberFromWeekDay(weekDay: string) {
         return weekDaysMap.get(weekDay) || 1;
-    }
-
-    function extractHoursFromTimeStamp(timestamp: string) {
-        return Number(timestamp.slice(0,2));
-    }
-
-    function timeStringToMinutes(time: string): number {
-        const [hours, minutes] = time.split(':').map(Number);
-        return hours * 60 + minutes;
-    }
-
-    function calculateHoursDifference(startTime: string, endTime: string): number {
-        const minutes1 = timeStringToMinutes(startTime);
-        const minutes2 = timeStringToMinutes(endTime);
-        return Math.abs(minutes2 - minutes1) / 60;
     }
 
     // Handlers
