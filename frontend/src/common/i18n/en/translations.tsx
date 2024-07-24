@@ -286,6 +286,9 @@ export const TRANSLATIONS_EN = {
         saveSuccessBody: "Your semester has been saved!",
         saveFailTitle: "Failed!",
         saveFailBody: "Your semester wasn't able to be saved!",
+
+        showSchedule: "Show schedule",
+        closeSchedule: "Close schedule"
     },
     BuilderFinish: {
         title: "Finish Semester",

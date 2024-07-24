@@ -1,7 +1,7 @@
 import {useEffect, useState} from "react";
 import classes from "../SemesterBuilder/semester_builder.module.css";
 import {Navbar} from "../../components/navbar/navbar.tsx";
-import {ActionIcon, Card, Divider, rem, Select, UnstyledButton} from "@mantine/core";
+import {ActionIcon, Button, Card, Divider, rem, Select, UnstyledButton} from "@mantine/core";
 import {
     Subject,
     getDifficultyValue,
@@ -462,9 +462,12 @@ export default function SemesterBuilder() {
                             <Card.Section>
                                 <div className={classes.selected_header}>
                                     <h4 className={classes.section_titles}>{t("Builder.timeTable")}</h4>
-                                    <ActionIcon variant="default" onClick={showScheduleAction}>
-                                        <IconList style={{ width: '70%', height: '70%' }} stroke={1.5} />
-                                    </ActionIcon>
+                                    <Button variant="default"
+                                            rightSection={<IconList style={{ width: '70%', height: '70%' }} stroke={1.5} />}
+                                            onClick={showScheduleAction}
+                                    >
+                                        {t("Builder.closeSchedule")}
+                                    </Button>
                                 </div>
                                 <Divider/>
                             </Card.Section>
@@ -483,9 +486,12 @@ export default function SemesterBuilder() {
                         <Card.Section>
                             <div className={classes.selected_header}>
                                 <h4 className={classes.section_titles}>{t("Builder.selected")}</h4>
-                                <ActionIcon variant="default" onClick={showScheduleAction}>
-                                    <IconCalendarEvent style={{ width: '70%', height: '70%' }} stroke={1.5} />
-                                </ActionIcon>
+                                <Button variant="default"
+                                        rightSection={<IconCalendarEvent style={{ width: '70%', height: '70%' }} stroke={1.5} />}
+                                        onClick={showScheduleAction}
+                                >
+                                    {t("Builder.showSchedule")}
+                                </Button>
                             </div>
                             <Divider style={{marginTop: '1rem'}}/>
                         </Card.Section>
@@ -555,7 +561,10 @@ export default function SemesterBuilder() {
                                         {
                                             unlockables.map((subject) =>
                                                 subjectUnlocked(subject) ?
-                                                <UnstyledButton style={{padding: "1rem", color: "#4a90e2"}} component={"a"} href={`/subject/${subject.id}`}>{subject.name}</UnstyledButton>
+                                                <UnstyledButton style={{padding: "0.5rem 0", color: "#4a90e2"}} component={"a"}
+                                                                onClick={() => {navigate(`/subject/${subject.id}`)}}>
+                                                    {subject.name}
+                                                </UnstyledButton>
                                                 :
                                                 <></>
                                             )

@@ -94,7 +94,8 @@
 .unlockable_area {
     display: flex;
     flex-direction: column;
-    align-items: center;
+    max-height: 14rem;
+    overflow-y: auto;
 }
 .unlock_button {
     padding: 0.5rem;

@@ -284,6 +284,9 @@ export const TRANSLATIONS_ES = {
         saveSuccessBody: "¡Tu semestre se guardo exitosamente!",
         saveFailTitle: "¡Error!",
         saveFailBody: "¡Tu semestre nos se ha podido guardar!",
+
+        showSchedule: "Mostrar calendario",
+        closeSchedule: "Cerrar calendario"
     },
     BuilderFinish: {
         title: "Finalizar Semester",
