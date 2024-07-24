@@ -74,8 +74,20 @@ public class MailServiceImpl implements MailService {
             final User to,
             final Set<Subject> subjects
     ) {
+        final StringBuilder urlBuilder = new StringBuilder()
+            .append(baseUrl)
+                .append("/multi-review?r=");
+        
+        for(Subject subject : subjects) {
+            urlBuilder.append(subject.getId())
+                .append(" ");
+        }
+        final String url = urlBuilder.toString().trim();
+        
         final Map<String,Object> mailModel = new HashMap<>();
         mailModel.put("subjects", subjects);
+        mailModel.put("url", url);
+        
         sendMail(to, "reviewnotif", mailModel);
     }
 

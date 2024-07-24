@@ -51,6 +51,16 @@
       .message {
           font-size: 20px;
       }
+
+      .button {
+        display: inline-block;
+        padding: 10px 20px;
+        background-color: #1a73e8;
+        color: white !important;
+        text-decoration: none;
+        border-radius: 5px;
+        font-size: 20px;
+      }
   </style>
 </head>
 <body class="body">
@@ -68,6 +78,7 @@
       </li>
     </ul>
     <p class="message" th:text="#{reviewnotif.message2}"></p>
+    <a class="button" th:text="#{reviewnotif.button}" th:href="${url}"></a>
   </div>
 </div>
 </body>

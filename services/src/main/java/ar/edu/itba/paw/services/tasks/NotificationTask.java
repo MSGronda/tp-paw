@@ -29,7 +29,7 @@ public class NotificationTask {
     }
 
     @Transactional
-    @Scheduled(fixedDelay = TASK_DELAY)
+    @Scheduled(fixedRate = TASK_DELAY)
     public void notifScheduledTask() {
         LOGGER.debug("Running notification task");
 
