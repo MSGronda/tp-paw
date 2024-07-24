@@ -1,44 +1,41 @@
-import React, { useContext, useEffect, useState } from "react";
-import { useTranslation } from "react-i18next";
+import React, {useContext, useEffect, useState} from "react";
+import {useTranslation} from "react-i18next";
 import classes from "./Subject.module.css";
 import AuthContext from "../../context/AuthContext";
 import {
+    Alert,
+    Badge,
+    Breadcrumbs,
+    Button,
     Card,
+    Center,
+    Combobox,
+    Flex,
+    Group,
+    Loader,
+    Modal,
+    Notification,
+    Table,
     Tabs,
     Text,
-    Table,
-    Badge,
-    Button,
-    Breadcrumbs,
     Tooltip,
-    Group,
-    Combobox,
     useCombobox,
-    Notification, Center, Loader, Modal, Alert, Flex,
 } from '@mantine/core';
-import {
-    IconAlarm,
-    IconAlertOctagon,
-    IconArrowsSort,
-    IconCheck,
-    IconPencil,
-    IconTrash,
-    IconX
-} from "@tabler/icons-react";
+import {IconAlertOctagon, IconArrowsSort, IconCheck, IconPencil, IconTrash, IconX} from "@tabler/icons-react";
 import {SimpleSubject, Subject} from "../../models/Subject.ts";
-import { Navbar } from "../../components/navbar/navbar.tsx";
-import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
+import {Navbar} from "../../components/navbar/navbar.tsx";
+import {Link, useLocation, useNavigate, useParams} from "react-router-dom";
 import ReviewCard from "../../components/review-card/review-card.tsx";
-import {subjectService, reviewService, userService, degreeService, professorService} from "../../services";
-import { handleService } from "../../handlers/serviceHandler.tsx";
-import { Review } from "../../models/Review.ts";
+import {degreeService, professorService, reviewService, subjectService, userService} from "../../services";
+import {handleService} from "../../handlers/serviceHandler.tsx";
+import {Review} from "../../models/Review.ts";
 import PaginationComponent from "../../components/pagination/pagination.tsx";
-import { User } from "../../models/User.ts";
-import { Degree } from "../../models/Degree.ts";
+import {User} from "../../models/User.ts";
+import {Degree} from "../../models/Degree.ts";
 import {ReviewVote} from "../../models/ReviewVote.ts";
 import {Professor} from "../../models/Professor.ts";
 import {getSemesterYearFormat} from "../../utils/subjectUtils.ts";
-import {useDisclosure} from "@mantine/hooks";
+import {handleResponse} from "../../handlers/responseHandler.tsx";
 
 interface Semester {
     semester?: number,
@@ -107,6 +104,9 @@ export function SubjectPage() {
     const getReviewsFromSubject = async (subjectId: string, page: number, orderBy: string, dir: string) => {
         const res = await reviewService.getReviewsBySubject(subjectId, page, orderBy, dir);
         const data = handleService(res, navigate);
+        
+        const pageData = handleResponse(res);
+        setMaxPage(pageData.maxPage!);
 
         setReviews(data);
         
@@ -239,7 +239,6 @@ export function SubjectPage() {
                 getReviewsFromSubject(subjectId.id, page, orderBy ? orderBy : "", dir ? dir : "");
             }
         }
-        setMaxPage(1 + subject.reviewCount / 10);
         if (state && state.reviewUpdated !== undefined) {
             setEditShowAlert(true);
             setEditReviewValue(state.reviewUpdated);
@@ -295,6 +294,8 @@ export function SubjectPage() {
         })
         return userName;
     }
+    
+    const allProfs = getAllProfessors(professors);
 
     const combobox = useCombobox({
         onDropdownClose: () => combobox.resetSelectedOption(),
@@ -415,7 +416,7 @@ export function SubjectPage() {
                                             <Table.Tr>
                                                 <Table.Th>{t("Subject.prerequisites")}</Table.Th>
                                                 <Table.Td>
-                                                    {prerequisites && prerequisites.length === 0 ? <>{t("Subject.emptyPrerequisites")}</> : <></>}
+                                                    {(!prerequisites || prerequisites.length === 0) ? <>{t("Subject.emptyPrerequisites")}</> : <></>}
                                                     {   prerequisites && subject.prerequisites && prerequisites.length === subject.prerequisites.length ?
                                                         prerequisites.map((simpleSubject, index) => (
                                                             <Link key={index} to={{pathname:`/subject/${simpleSubject.id}`}}>
@@ -428,7 +429,7 @@ export function SubjectPage() {
                                             <Table.Tr>
                                                 <Table.Th>{t("Subject.professors")}</Table.Th>
                                                 <Table.Td>
-                                                    {subject.classes && subject.classes.length === 0 ? <>{t("Subject.emptyProfessors")}</> : <></>}
+                                                    {(!allProfs || allProfs.length === 0) ? <>{t("Subject.emptyProfessors")}</> : <></>}
                                                     {
                                                         getAllProfessors(professors).map((professor) => <Badge color="blue" key={professor}>{professor}</Badge>)
                                                     }
@@ -623,12 +624,12 @@ export function SubjectPage() {
                             </Combobox>
                         </div>
                     }
-                    <div className={classes.noReviewsTitle}>
-                        {
-                            reviews && reviews.length === 0 &&
-                            <Text fw={700} size={"xl"}>{t("Subject.noreviews")}</Text>
-                        }
-                    </div>
+                    {
+                      (!reviews || reviews.length === 0) &&
+                            <div className={classes.noReviewsTitle}>
+                                <Text fw={700} size={"xl"}>{t("Subject.noreviews")}</Text>
+                            </div>
+                    }
                     <div className={classes.reviewsColumn}>
                         {reviews &&
                             reviews.map((review) => (
@@ -651,7 +652,7 @@ export function SubjectPage() {
                                 />
                             ))
                         }
-                        {reviews && maxPage > 1 &&
+                        {reviews && reviews.length > 0 &&
                             <PaginationComponent page={page} lastPage={maxPage} setPage={handlePageChange} />
                         }
                     </div>

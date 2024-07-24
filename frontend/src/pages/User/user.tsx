@@ -310,7 +310,7 @@ export default function User() {
                   />
                 ))
               }
-              {reviews && maxPage > 1 &&
+              {reviews && reviews.length > 0 &&
                 <PaginationComponent page={page} lastPage={maxPage} setPage={handlePageChange} />
               }
 

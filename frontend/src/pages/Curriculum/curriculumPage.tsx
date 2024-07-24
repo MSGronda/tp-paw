@@ -141,8 +141,8 @@ function SemesterTabPanel({degreeId, semester}: { degreeId: number, semester: nu
             ))
             }
           </div>
-            { (lastPage && lastPage > 1) &&
-                <Center mb={20}>
+            { lastPage && subjects && subjects.length > 0 &&
+                <Center mb={20} mt={5}>
                   <PaginationComponent page={page} setPage={setPage} lastPage={lastPage} />
                 </Center>
             }
