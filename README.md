@@ -29,6 +29,7 @@ Run the following commands:
   - Object Relational Mapper (ORM)
   - True REST API
   - Caching 
+  - Single Page Application (SPA)
 
 ## Technologies Used
 
@@ -85,11 +86,11 @@ https://app.swaggerhub.com/apis-docs/MROJASPELLICCIA/paw-2023a-06/1.0.0
 
 ## Authors
 
-  - Carro Wetzel, Andrés
-  - Casiraghi, Marcos
-  - Gronda, Marcos
-  - Morantes, Agustín
-  - Rojas Pelliccia, Máximo 
+  - [Carro Wetzel, Andrés](https://github.com/AndresCarro)
+  - [Casiraghi, Marcos](https://github.com/MarcosCasiraghi)
+  - [Gronda, Marcos](https://github.com/MSGronda)
+  - [Morantes, Agustín](https://github.com/agustinmorantes)
+  - [Rojas Pelliccia, Máximo](https://github.com/mrojaspell) 
 
 
 ## Acknowledgments
