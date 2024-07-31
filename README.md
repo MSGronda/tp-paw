@@ -8,11 +8,11 @@ Uni is a webapp where university students from ITBA can manage and track their p
 
 - Use Java 8.
 - Have a PostgresSQL running on port 5432
+- Complete the application-dev.properties file 
 
 ## Deployment
 
 Run the following commands: 
-1)
 ```
     mvn clean package
 ```
@@ -43,13 +43,7 @@ Run the following commands:
   - Mockito
   - JUnit
 
-## Versioning
-
-This is the first issue of the project due to 17/5/2023 at 19 hours
-This is the second issue of the project due to 26/06/2023 at 19 hours
-*This is the third issue of the project due to 24/07/2024 at 19 hours*
-
-## API rest documentation
+## REST API documentation
 https://app.swaggerhub.com/apis-docs/MROJASPELLICCIA/paw-2023a-06/1.0.0
 
 ## Features
