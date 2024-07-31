@@ -1,4 +1,4 @@
-![Uni](webapp/src/main/webapp/static/uni.png)
+<img src="webapp/src/main/webapp/static/uni-transparent.png" alt="Uni" width="200"/>
 
 ## Description
 
