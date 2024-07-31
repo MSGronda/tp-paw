@@ -1,6 +1,8 @@
-# UNI
+![Uni](webapp/src/main/webapp/static/uni.png)
 
-Uni is a webapp where university students from ITBA can manage and track their progress through their careers. 
+## Description
+
+Uni is a webapp where university students from ITBA can manage and track their progress through their careers and plan their semesters. 
 
 ## Requirements
 
@@ -19,17 +21,25 @@ Run the following commands:
     mvn test
 ```
 
+## Concepts implemented
+
+  - Layered Arquitecture Pattern
+  - Model View Controller (MVC)
+  - Authentication & Authorization
+  - Object Relational Mapper (ORM)
+  - True REST API
+  - Caching 
+
 ## Technologies Used
 
   - Java
-  - Spring MVC - Security
+  - Jersey
   - PostgreSQL
   - Maven
   - Thymeleaf
   - FlyWay
   - React Framework
   - Mantine UI kit
-  - Jersey
   - Mockito
   - JUnit
 
@@ -58,6 +68,7 @@ https://app.swaggerhub.com/apis-docs/MROJASPELLICCIA/paw-2023a-06/1.0.0
   - Review sorting
   - Review Paging in subject information and user profile (10 reviews per page)
   - Semester Builder with insights 
+  - Previous semesters
   - Progress tracking and history
   - Subject creation, editing and deletion
   - Degree creation, editing and deletion
@@ -66,6 +77,7 @@ https://app.swaggerhub.com/apis-docs/MROJASPELLICCIA/paw-2023a-06/1.0.0
   - Internationalization (English and Spanish)
 
 ### Feature Explanation
+
   - Mailing:
     - It is used to verify an email linked to a new user's account.
     - It is used to send a password recovery link to a user.
